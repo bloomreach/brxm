@@ -26,6 +26,7 @@ const ckeditorComponent = {
   bindings: {
     name: '@',
     ariaLabel: '@',
+    config: '<',
     isRequired: '@',
     onFocus: '&',
     onBlur: '&',

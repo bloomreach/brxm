@@ -24,17 +24,17 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
+import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RichTextFieldType extends StringFieldType {
+public class RichTextFieldType extends FormattedTextFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(RichTextFieldType.class);
 
     public RichTextFieldType() {
-        super();
-        setType(Type.HTML);
+        super(CKEditorConfig.DEFAULT_RICH_TEXT_CONFIG);
     }
 
     @Override

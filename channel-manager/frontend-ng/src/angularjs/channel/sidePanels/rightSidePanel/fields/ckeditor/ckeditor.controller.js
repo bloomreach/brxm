@@ -15,39 +15,38 @@
  */
 
 class CKEditorController {
-  constructor($scope, $element, CKEditorService) {
+  constructor($scope, $element, CKEditorService, ConfigService) {
     'ngInject';
 
-    this.scope = $scope;
+    this.$scope = $scope;
+    this.$element = $element;
     this.CKEditorService = CKEditorService;
-    this.CKEditorElement = $element;
+    this.ConfigService = ConfigService;
   }
 
   $onInit() {
     this.CKEditorService.loadCKEditor().then((CKEDITOR) => {
-      const textAreaElement = this.CKEditorElement.find('textarea')[0];
-      const editorConfig = this.CKEditorService.getConfigByType();
+      const textAreaElement = this.$element.find('textarea')[0];
 
-      this.editor = CKEDITOR.replace(textAreaElement, editorConfig);
+      this.config.language = this.ConfigService.locale;
+
+      this.editor = CKEDITOR.replace(textAreaElement, this.config);
       this.editor.setData(this.model.$viewValue);
 
       this.editor.on('change', () => {
         const html = this.editor.getData();
         this.model.$setViewValue(html);
-        this.scope.$apply();
       });
 
       this.editor.on('focus', () => {
-        this.onFocus();
-        this.scope.$apply();
+        this.$scope.$apply(() => this.onFocus());
       });
 
       this.editor.on('blur', () => {
-        this.onBlur();
-        this.scope.$apply();
+        this.$scope.$apply(() => this.onBlur());
       });
 
-      this.scope.$on('$destroy', () => {
+      this.$scope.$on('$destroy', () => {
         this.editor.destroy();
       });
     });

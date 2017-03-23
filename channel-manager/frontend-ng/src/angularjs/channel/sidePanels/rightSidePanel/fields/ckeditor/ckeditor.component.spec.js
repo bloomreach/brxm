@@ -20,7 +20,9 @@ describe('CKEditor Component', () => {
   let $ctrl;
   let $scope;
   let CKEditorService;
+  let ConfigService;
   let CKEditor;
+  let config;
   let editor;
   let $q;
   let model;
@@ -30,12 +32,19 @@ describe('CKEditor Component', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, $rootScope, _CKEditorService_, _$q_) => {
+    inject((_$componentController_,
+            $rootScope,
+            _CKEditorService_,
+            _ConfigService_,
+            _$q_) => {
       $componentController = _$componentController_;
       $scope = $rootScope.$new();
       CKEditorService = _CKEditorService_;
+      ConfigService = _ConfigService_;
       $q = _$q_;
     });
+
+    config = {};
 
     CKEditor = jasmine.createSpyObj('CKEditor', ['replace']);
     editor = jasmine.createSpyObj('editor', [
@@ -68,6 +77,7 @@ describe('CKEditor Component', () => {
       model,
       name: 'TestField',
       ariaLabel: 'TestAriaLabel',
+      config,
       onFocus,
       onBlur,
     });
@@ -91,8 +101,17 @@ describe('CKEditor Component', () => {
     expect($ctrl.model.$viewValue).toEqual = '<p>initial value</p>';
     expect($ctrl.name).toEqual('TestField');
     expect($ctrl.ariaLabel).toEqual('TestAriaLabel');
+    expect($ctrl.config).toEqual(config);
     expect($ctrl.onFocus).toBeDefined();
     expect($ctrl.onBlur).toBeDefined();
+  });
+
+  it('uses the current language', () => {
+    ConfigService.locale = 'fr';
+    init();
+    expect(CKEditor.replace).toHaveBeenCalledWith(jasmine.any(Object), {
+      language: 'fr',
+    });
   });
 
   it('update ckeditor value on change', () => {

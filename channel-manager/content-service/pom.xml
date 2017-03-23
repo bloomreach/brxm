@@ -29,6 +29,10 @@
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-ckeditor-config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services</artifactId>
     </dependency>
     <dependency>

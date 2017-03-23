@@ -16,8 +16,47 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import org.apache.commons.lang.StringUtils;
+import org.onehippo.ckeditor.CKEditorConfig;
+import org.onehippo.cms.channelmanager.content.documenttype.util.CKEditorUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class FormattedTextFieldType extends StringFieldType {
+
+    private static final Logger log = LoggerFactory.getLogger(FormattedTextFieldType.class);
+
+    private final String defaultConfig;
+
     public FormattedTextFieldType() {
+        this(CKEditorConfig.DEFAULT_FORMATTED_TEXT_CONFIG);
+    }
+
+    protected FormattedTextFieldType(final String defaultConfig) {
         setType(Type.HTML);
+        this.defaultConfig = defaultConfig;
+    }
+
+    public JsonNode getConfig() {
+        try {
+            final JsonNode config = CKEditorUtils.readConfig(defaultConfig);
+            disableCustomConfigLoadingIfNotConfigured(config);
+            return config;
+        } catch (IOException e) {
+            log.warn("Cannot read config of field '{}'", getId(), e);
+        }
+        return null;
+    }
+
+    private void disableCustomConfigLoadingIfNotConfigured(final JsonNode config) {
+        if (!config.has(CKEditorConfig.CUSTOM_CONFIG)) {
+            final ObjectNode mutableConfig = (ObjectNode) config;
+            mutableConfig.put(CKEditorConfig.CUSTOM_CONFIG, StringUtils.EMPTY);
+        }
     }
 }

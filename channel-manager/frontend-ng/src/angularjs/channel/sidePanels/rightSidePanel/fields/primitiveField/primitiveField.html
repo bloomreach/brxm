@@ -66,6 +66,7 @@
               ng-model="fieldValue.value"
               name="{{ ::$ctrl.getFieldName($index) }}"
               aria-label="{{ ::$ctrl.fieldType.displayName }}"
+              config="::$ctrl.fieldType.config"
               is-required="{{ ::$ctrl.fieldType.required }}"
               on-focus="$ctrl.focusPrimitive()"
               on-blur="$ctrl.blurPrimitive()">
