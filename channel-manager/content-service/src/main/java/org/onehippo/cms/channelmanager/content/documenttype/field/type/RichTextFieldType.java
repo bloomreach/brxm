@@ -16,14 +16,18 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.slf4j.Logger;
@@ -39,26 +43,25 @@ public class RichTextFieldType extends FormattedTextFieldType {
 
     @Override
     public Optional<List<FieldValue>> readFrom(final Node node) {
-        final List<FieldValue> values = readSingleValue(node);
+        final List<FieldValue> values = readValues(node);
 
         trimToMaxValues(values);
 
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }
 
-    private List<FieldValue> readSingleValue(final Node node) {
-        final String nodeName = getId();
-
+    private List<FieldValue> readValues(final Node node) {
         try {
-            final Node child = node.getNode(nodeName);
-            if (child.hasProperty(HippoStdNodeType.HIPPOSTD_CONTENT)) {
-                final String html = child.getProperty(HippoStdNodeType.HIPPOSTD_CONTENT).getString();
-                return Collections.singletonList(new FieldValue(html));
+            final NodeIterator children = node.getNodes(getId());
+            final List<FieldValue> values = new ArrayList<>((int)children.getSize());
+            for (Node child : new NodeIterable(children)) {
+                final String html = JcrUtils.getStringProperty(child, HippoStdNodeType.HIPPOSTD_CONTENT, null);
+                values.add(new FieldValue(html));
             }
-        } catch (final RepositoryException e) {
-            log.warn("Failed to read nodes for Rich Text Field type '{}'", getId(), e);
+            return values;
+        } catch (RepositoryException e) {
+            log.warn("Failed to read rich text field '{}'", getId(), e);
         }
-
         return Collections.emptyList();
     }
 }

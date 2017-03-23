@@ -54,6 +54,7 @@
     <easymock.version>3.4</easymock.version>
     <!-- Make sure that powermock and easymock are compatible -->
     <powermock.version>1.6.5</powermock.version>
+    <hippo.testutils.version>1.0.0-SNAPSHOT</hippo.testutils.version>
   </properties>
 
   <repositories>
@@ -184,6 +185,12 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-testutils</artifactId>
         <version>${hippo.repository.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-testutils</artifactId>
+        <version>${hippo.testutils.version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
