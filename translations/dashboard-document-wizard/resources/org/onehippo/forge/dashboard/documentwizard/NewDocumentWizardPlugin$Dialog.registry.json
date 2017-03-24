@@ -13,10 +13,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "hours-label" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "invalid.name" : {
       "status" : "CLEAN",
       "locales" : null
@@ -30,10 +26,6 @@
       "locales" : null
     },
     "name-label" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "minutes-label" : {
       "status" : "CLEAN",
       "locales" : null
     }
