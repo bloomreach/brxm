@@ -274,6 +274,12 @@ $picker-section-selection-border:   1px solid $light-gray;
 $picker-section-view-border:        1px solid $light-shade;
 $picker-doclist-head-bgcolor:       $lighter-shade;
 
+$reorder-border-color:              $light-gray;
+$reorder-selected-bgcolor:          $primary;
+$reorder-selected-color:            $white;
+$reorder-separator-color:           $light-shade;
+$reorder-buttons-width:             40px;
+
 // Ajax loader
 $ajax-loader-width:                 $main-menu-width;
 $ajax-loader-height:                3px;
