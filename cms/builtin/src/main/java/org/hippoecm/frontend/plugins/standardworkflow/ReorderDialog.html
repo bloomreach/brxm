@@ -20,10 +20,18 @@
       <div wicket:id="reorder-panel">
         <div class="hippo-reorder-border">
           <div class="hippo-reorder-buttons">
-              <button wicket:id="top" class="btn btn-default btn-block">&#8657;</button>
-              <button wicket:id="up" class="btn btn-default btn-block">&#8593;</button>
-              <button wicket:id="down" class="btn btn-default btn-block">&#8595;</button>
-              <button wicket:id="bottom" class="btn btn-default btn-block">&#8659;</button>
+              <button wicket:id="top" class="btn btn-default btn-block hi-rotate-180">
+                <span wicket:id="icon"/>
+              </button>
+              <button wicket:id="up" class="btn btn-default btn-block">
+                <span wicket:id="icon"/>
+              </button>
+              <button wicket:id="down" class="btn btn-default btn-block">
+                <span wicket:id="icon"/>
+              </button>
+              <button wicket:id="bottom" class="btn btn-default btn-block">
+                <span wicket:id="icon"/>
+              </button>
           </div>
           <div class="hippo-reorder-table-area">
             <table wicket:id="table">[table]</table>

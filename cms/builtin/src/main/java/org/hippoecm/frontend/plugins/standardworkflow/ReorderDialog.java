@@ -43,6 +43,7 @@ import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
@@ -53,6 +54,7 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvid
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -278,6 +280,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
                 }
             };
             add(top);
+            top.add(HippoIcon.fromSprite("icon", Icon.CARET_DOWN));
 
             up = new AjaxLink<Void>("up") {
                 @Override
@@ -294,6 +297,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
                 }
             };
             add(up);
+            up.add(HippoIcon.fromSprite("icon", Icon.CHEVRON_UP));
 
             down = new AjaxLink<Void>("down") {
                 @Override
@@ -310,6 +314,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
                 }
             };
             add(down);
+            down.add(HippoIcon.fromSprite("icon", Icon.CHEVRON_DOWN));
 
             bottom = new AjaxLink<Void>("bottom") {
                 @Override
@@ -326,6 +331,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
                 }
             };
             add(bottom);
+            bottom.add(HippoIcon.fromSprite("icon", Icon.CARET_DOWN));
 
            if (dataProvider.size() > 0) {
                 ListItem selection = dataProvider.iterator(0, 1).next();

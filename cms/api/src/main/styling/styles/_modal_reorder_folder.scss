@@ -78,17 +78,6 @@ $buttons-width: 40px;
     right: 0;
     top: 0;
     width: $buttons-width;
-
-    button {
-      margin-bottom: 4px;
-
-      &[disabled] {
-        background-color: $button-disabled-bgcolor;
-        border: 1px solid $button-disabled-border;
-        color: $button-disabled-color;
-
-      }
-    }
   }
 
   .hippo-reorder-table-area {
