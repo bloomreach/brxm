@@ -24,7 +24,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 import org.hippoecm.frontend.util.WebApplicationHelper;
-import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +37,7 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
     private static final Logger log = LoggerFactory.getLogger(WhitelistedClassesResourceGuard.class);
 
     private final List<String> classNamePrefixes;
+    private boolean initialized;
 
     public WhitelistedClassesResourceGuard() {
         classNamePrefixes = new ArrayList<>();
@@ -51,11 +51,21 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
 
     @Override
     public boolean accept(final Class<?> scope, final String absolutePath) {
+        synchronized (this) {
+            if (!initialized) {
+                onInit();
+                initialized = true;
+            }
+        }
+
         if (isUserLoggedIn() || isWhitelisted(scope)) {
             return super.accept(scope, absolutePath);
         }
         log.error("Public access denied to non-whitelisted (static) package resource: {}", absolutePath);
         return false;
+    }
+
+    protected void onInit() {
     }
 
     private boolean isWhitelisted(final Class<?> scope) {
@@ -74,12 +84,6 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
     private static boolean isUserLoggedIn() {
         final HttpServletRequest servletRequest = WebApplicationHelper.retrieveWebRequest().getContainerRequest();
         final HttpSession httpSession = servletRequest.getSession(false);
-
-        if (httpSession == null) {
-            return false;
-        }
-
-        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
-        return cmsSessionContext != null;
+        return httpSession != null && httpSession.getAttribute("hippo:username") != null;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,19 +34,29 @@ import org.hippoecm.repository.api.HippoNodeType;
  */
 public class IconRenderUtil {
 
+    public static final IconSize DEFAULT_SIZE = IconSize.L;
+
     private IconRenderUtil() {
     }
 
     public static HippoIcon getDocumentOrFolderIcon(final String id, final Node node) throws RepositoryException {
+        return getDocumentOrFolderIcon(id, node, DEFAULT_SIZE);
+    }
+
+    public static HippoIcon getDocumentOrFolderIcon(final String id, final Node node, IconSize size) throws RepositoryException {
+        if (size == null) {
+            size = DEFAULT_SIZE;
+        }
+
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-            return getIconForHandle(id, node);
+            return getIconForHandle(id, node, size);
         } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             if (node instanceof HippoNode) {
                 Node canonical;
                 try {
                     canonical = ((HippoNode) node).getCanonicalNode();
                     if (canonical == null) {
-                        return HippoIcon.fromSprite(id, Icon.FOLDER, IconSize.L);
+                        return HippoIcon.fromSprite(id, Icon.FOLDER, size);
                     }
                 } catch (ItemNotFoundException ex) {
                     return HippoIcon.fromSprite(id, Icon.EMPTY);
@@ -54,32 +64,32 @@ public class IconRenderUtil {
                 Node parent = canonical.getParent();
                 if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
                     if (!canonical.isSame(node)) {
-                        return HippoIcon.fromSprite(id, Icon.FILE_TEXT, IconSize.L);
+                        return HippoIcon.fromSprite(id, Icon.FILE_TEXT, size);
                     } else {
-                        return getIconForNodeType(id, node.getPrimaryNodeType(), Icon.FILE_TEXT, IconSize.L);
+                        return getIconForNodeType(id, node.getPrimaryNodeType(), Icon.FILE_TEXT, size);
                     }
                 }
             } else {
                 Node parent = node.getParent();
                 if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    return getIconForNodeType(id, node.getPrimaryNodeType(), Icon.FILE_TEXT, IconSize.L);
+                    return getIconForNodeType(id, node.getPrimaryNodeType(), Icon.FILE_TEXT, size);
                 }
             }
         }
 
         String type = node.getPrimaryNodeType().getName();
         if (type.equals(HippoNodeType.NT_TEMPLATETYPE)) {
-            return HippoIcon.fromSprite(id, Icon.FILE_TEXT, IconSize.L);
+            return HippoIcon.fromSprite(id, Icon.FILE_TEXT, size);
         }
-        return HippoIcon.fromSprite(id, Icon.FOLDER, IconSize.L);
+        return HippoIcon.fromSprite(id, Icon.FOLDER, size);
     }
 
-    private static HippoIcon getIconForHandle(final String id, final Node node) throws RepositoryException {
+    private static HippoIcon getIconForHandle(final String id, final Node node, final IconSize size) throws RepositoryException {
         if (node.hasNode(node.getName())) {
             Node child = node.getNode(node.getName());
-            return getIconForNodeType(id, child.getPrimaryNodeType(), Icon.FILE_TEXT, IconSize.L);
+            return getIconForNodeType(id, child.getPrimaryNodeType(), Icon.FILE_TEXT, size);
         }
-        return HippoIcon.fromSprite(id, Icon.FILE_TEXT, IconSize.L);
+        return HippoIcon.fromSprite(id, Icon.FILE_TEXT, size);
     }
 
     public static HippoIcon getIconForNodeType(final String id, final NodeType type, final Icon defaultIcon, final IconSize size) {

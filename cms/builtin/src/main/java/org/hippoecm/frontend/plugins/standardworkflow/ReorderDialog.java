@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -25,12 +24,9 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IDetachable;
@@ -38,17 +34,16 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.WorkflowDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
@@ -56,40 +51,34 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvider;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
+import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ReorderDialog extends AbstractWorkflowDialog {
-
-    private static final long serialVersionUID = 1L;
+class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
 
     private static final Logger log = LoggerFactory.getLogger(ReorderDialog.class);
-
-    static final CssResourceReference REORDER_CSS = new CssResourceReference(ReorderDialog.class, "reorder.css");
 
     private ReorderPanel panel;
     private List<String> mapping;
 
     static class ListItem implements IDetachable {
-        private static final long serialVersionUID = 1L;
 
         private String name;
         private IModel<String> displayName;
-        private AttributeModifier cellModifier;
         private JcrNodeModel nodeModel;
         private int index;
 
-        ListItem(JcrNodeModel nodeModel, DocumentTypeIconAttributeModifier attributeModifier) {
+        ListItem(JcrNodeModel nodeModel) {
             this.nodeModel = nodeModel;
             try {
                 name = nodeModel.getNode().getName();
                 index = nodeModel.getNode().getIndex();
                 displayName = new NodeNameModel(nodeModel);
-                cellModifier = attributeModifier.getCellAttributeModifier(nodeModel.getNode());
             } catch (RepositoryException e) {
                 log.error(e.getMessage(), e);
             }
@@ -103,12 +92,12 @@ class ReorderDialog extends AbstractWorkflowDialog {
             return name;
         }
 
-        public String getPathName() {
-            return name + (index > 1 ? "["+index+"]" : "");
+        public IModel<Node> getNodeModel() {
+            return nodeModel;
         }
 
-        public AttributeModifier getCellModifier() {
-            return cellModifier;
+        public String getPathName() {
+            return name + (index > 1 ? "["+index+"]" : "");
         }
 
         public void detach() {
@@ -137,17 +126,16 @@ class ReorderDialog extends AbstractWorkflowDialog {
     }
 
     static class ReorderDataProvider extends SortableDataProvider<ListItem> {
-        private static final long serialVersionUID = 1L;
 
         private final List<ListItem> listItems;
 
         ReorderDataProvider(DocumentsProvider documents) {
-            listItems = new LinkedList<ListItem>();
+            listItems = new LinkedList<>();
             Iterator<Node> it = documents.iterator(0, documents.size());
             while (it.hasNext()) {
                 IModel<Node> entry = documents.model(it.next());
                 if (entry instanceof JcrNodeModel) {
-                    listItems.add(new ListItem((JcrNodeModel) entry, DocumentTypeIconAttributeModifier.getInstance()));
+                    listItems.add(new ListItem((JcrNodeModel) entry));
                 }
             }
         }
@@ -159,7 +147,7 @@ class ReorderDialog extends AbstractWorkflowDialog {
 
         @Override
         public IModel<ListItem> model(ListItem object) {
-            return new Model<ListItem>(object);
+            return new Model<>(object);
         }
 
         @Override
@@ -207,7 +195,7 @@ class ReorderDialog extends AbstractWorkflowDialog {
         }
 
         public List<String> getMapping() {
-            LinkedList<String> newOrder = new LinkedList<String>();
+            LinkedList<String> newOrder = new LinkedList<>();
             for (ListItem item : listItems) {
                 newOrder.add(item.getPathName());
             }
@@ -216,7 +204,6 @@ class ReorderDialog extends AbstractWorkflowDialog {
     }
 
     class ReorderPanel extends WebMarkupContainer implements TableSelectionListener<ListItem> {
-        private static final long serialVersionUID = 1L;
 
         private TableDefinition<ListItem> tableDefinition;
         private ReorderDataProvider dataProvider;
@@ -234,26 +221,24 @@ class ReorderDialog extends AbstractWorkflowDialog {
             List<ListColumn<ListItem>> columns = new ArrayList<>();
 
             ListColumn<ListItem> column = new ListColumn<>(Model.of(""), "icon");
-            column.setRenderer(EmptyRenderer.getInstance());
-            column.setAttributeModifier(new AbstractListAttributeModifier<ListItem>() {
+            IconRenderer iconRenderer = new IconRenderer(IconSize.M);
+            column.setRenderer(new IListCellRenderer<ListItem>() {
                 @Override
-                public AttributeModifier[] getCellAttributeModifiers(IModel<ListItem> model) {
-                    ListItem item = model.getObject();
-                    return new AttributeModifier[] { item.getCellModifier() };
+                public Component getRenderer(final String id, final IModel<ListItem> model) {
+                    final IModel<Node> nodeModel = model.getObject().getNodeModel();
+                    return iconRenderer.getRenderer(id, nodeModel);
                 }
 
                 @Override
-                public AttributeModifier[] getColumnAttributeModifiers() {
-                    return new AttributeModifier[] {
-                            DocumentTypeIconAttributeModifier.getInstance().getColumnAttributeModifier()
-                    };
+                public IObservable getObservable(final IModel<ListItem> model) {
+                    final IModel<Node> nodeModel = model.getObject().getNodeModel();
+                    return iconRenderer.getObservable(nodeModel);
                 }
             });
             columns.add(column);
 
-            column = new ListColumn<ListItem>(Model.of(""), "name");
+            column = new ListColumn<>(Model.of(""), "name");
             column.setRenderer(new IListCellRenderer<ListItem>() {
-                private static final long serialVersionUID = 1L;
 
                 public Component getRenderer(String id, IModel<ListItem> model) {
                     ListItem item = model.getObject();
@@ -271,25 +256,23 @@ class ReorderDialog extends AbstractWorkflowDialog {
             });
             columns.add(column);
 
-            tableDefinition = new TableDefinition<ListItem>(columns, false);
-            DocumentsProvider documents = new DocumentsProvider(model, filter, new HashMap<String, Comparator<Node>>());
+            tableDefinition = new TableDefinition<>(columns, false);
+            DocumentsProvider documents = new DocumentsProvider(model, filter, new HashMap<>());
             dataProvider = new ReorderDataProvider(documents);
 
             pagingDefinition = new ListPagingDefinition();
             pagingDefinition.setPageSize(dataProvider.size() > 0 ? (int) dataProvider.size() : 1);
-            dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, this, false, pagingDefinition);
+            dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, this, false, pagingDefinition);
             add(dataTable);
 
             top = new AjaxLink<Void>("top") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftTop(selection.getObject());
 
                     ReorderPanel thisPanel = ReorderPanel.this;
-                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
+                    dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
                     dataTable.setScrollSelectedIntoView(true, true);
                     thisPanel.replace(dataTable);
@@ -297,17 +280,16 @@ class ReorderDialog extends AbstractWorkflowDialog {
                 }
             };
             add(top);
+            top.add(HippoIcon.fromSprite("icon", Icon.CARET_DOWN));
 
             up = new AjaxLink<Void>("up") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftUp(selection.getObject());
 
                     ReorderPanel thisPanel = ReorderPanel.this;
-                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
+                    dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
                     dataTable.setScrollSelectedIntoView(true, true);
                     thisPanel.replace(dataTable);
@@ -315,17 +297,16 @@ class ReorderDialog extends AbstractWorkflowDialog {
                 }
             };
             add(up);
+            up.add(HippoIcon.fromSprite("icon", Icon.CHEVRON_UP));
 
             down = new AjaxLink<Void>("down") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftDown(selection.getObject());
 
                     ReorderPanel thisPanel = ReorderPanel.this;
-                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
+                    dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
                     dataTable.setScrollSelectedIntoView(true, false);
                     thisPanel.replace(dataTable);
@@ -333,17 +314,16 @@ class ReorderDialog extends AbstractWorkflowDialog {
                 }
             };
             add(down);
+            down.add(HippoIcon.fromSprite("icon", Icon.CHEVRON_DOWN));
 
             bottom = new AjaxLink<Void>("bottom") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftBottom(selection.getObject());
 
                     ReorderPanel thisPanel = ReorderPanel.this;
-                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
+                    dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
                     dataTable.setScrollSelectedIntoView(true, false);
                     thisPanel.replace(dataTable);
@@ -351,6 +331,7 @@ class ReorderDialog extends AbstractWorkflowDialog {
                 }
             };
             add(bottom);
+            bottom.add(HippoIcon.fromSprite("icon", Icon.CARET_DOWN));
 
            if (dataProvider.size() > 0) {
                 ListItem selection = dataProvider.iterator(0, 1).next();
@@ -378,8 +359,10 @@ class ReorderDialog extends AbstractWorkflowDialog {
                 }
             }
             if (position != -1) {
+                top.setEnabled(position > 1);
                 up.setEnabled(position > 1);
                 down.setEnabled(position < size);
+                bottom.setEnabled(position < size);
             }
 
             dataTable.setModel(model);
@@ -389,14 +372,18 @@ class ReorderDialog extends AbstractWorkflowDialog {
             }
         }
 
-        public List<String> getMapping() {
+        List<String> getMapping() {
             return dataProvider.getMapping();
         }
     }
 
-    ReorderDialog(IWorkflowInvoker action, IPluginConfig pluginConfig,
-            WorkflowDescriptorModel model, List<String> mapping) {
-        super(model, action);
+    ReorderDialog(IWorkflowInvoker invoker, IPluginConfig pluginConfig, WorkflowDescriptorModel model,
+                  List<String> mapping) {
+        super(invoker, model);
+
+        setTitleKey("reorder");
+        setSize(DialogConstants.MEDIUM_AUTO);
+
         this.mapping = mapping;
 
         String name;
@@ -413,28 +400,9 @@ class ReorderDialog extends AbstractWorkflowDialog {
     }
 
     @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        response.render(CssHeaderItem.forReference(REORDER_CSS));
-    }
-
-    @Override
-    public IModel getTitle() {
-        return new StringResourceModel("reorder", this, null);
-    }
-
-    @Override
     protected void onOk() {
         mapping.clear();
         mapping.addAll(panel.getMapping());
         super.onOk();
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        IValueMap props = new ValueMap(super.getProperties());
-        props.put("width", 520);
-        props.put("height", 400);
-        return props;
     }
 }

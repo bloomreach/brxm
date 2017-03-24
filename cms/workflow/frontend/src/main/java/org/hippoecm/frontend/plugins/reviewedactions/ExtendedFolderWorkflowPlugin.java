@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,11 +32,10 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -48,6 +47,7 @@ import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.NodeIterable;
@@ -176,16 +176,18 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
         return (WorkflowDescriptorModel) super.getModel();
     }
 
-    public class ConfirmBulkWorkflowDialog extends AbstractWorkflowDialog {
+    public class ConfirmBulkWorkflowDialog extends WorkflowDialog<WorkflowDescriptor> {
 
-        private IModel<String> title;
         private Label affectedComponent;
         private final String workflowAction;
 
-        public ConfirmBulkWorkflowDialog(IWorkflowInvoker action, IModel<String> dialogTitle, IModel dialogText,
+        public ConfirmBulkWorkflowDialog(IWorkflowInvoker invoker, IModel<String> dialogTitle, IModel dialogText,
                                          IModel dialogSubText, IModel folderName, Set<String> documents, String workflowAction) {
-            super(ExtendedFolderWorkflowPlugin.this.getModel(), action);
-            this.title = dialogTitle;
+            super(invoker, ExtendedFolderWorkflowPlugin.this.getModel());
+
+            setTitle(dialogTitle);
+            setSize(DialogConstants.MEDIUM_AUTO);
+
             this.workflowAction = workflowAction;
             try {
                 Node folder = getWorkflowDescriptorModel().getNode();
@@ -239,16 +241,6 @@ public class ExtendedFolderWorkflowPlugin extends RenderPlugin {
 
         public WorkflowDescriptorModel getWorkflowDescriptorModel() {
             return (WorkflowDescriptorModel) super.getModel();
-        }
-
-        @Override
-        public IModel<String> getTitle() {
-            return title;
-        }
-
-        @Override
-        public IValueMap getProperties() {
-            return DialogConstants.MEDIUM;
         }
 
         @Override

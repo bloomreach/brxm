@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,20 +15,22 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <div wicket:id="text"/>
-    <table class="hippo-window-form">
-      <tr>
-        <td><wicket:message key="location-label" /></td>
-        <td><span wicket:id="location"/></td>
-      </tr>
-      <tr>
-        <td><span wicket:id="counttext"/></td>
-        <td><span wicket:id="count"/></td>
-      </tr>
-      <wicket:enclosure child="affected"><tr>
-        <td><wicket:message key="affected-label"/></td>
-        <td><span wicket:id="affected"/></td>
-      </tr></wicket:enclosure>
-    </table>
+    <div class="hippo-dialog-body">
+      <div class="label" wicket:id="text"/>
+      <table class="hippo-window-form no-left-padding top-margin">
+        <tr>
+          <td><wicket:message key="location-label" /></td>
+          <td><span wicket:id="location"/></td>
+        </tr>
+        <tr>
+          <td><span wicket:id="counttext"/></td>
+          <td><span wicket:id="count"/></td>
+        </tr>
+        <wicket:enclosure child="affected"><tr>
+          <td><wicket:message key="affected-label"/></td>
+          <td><span wicket:id="affected"/></td>
+        </tr></wicket:enclosure>
+      </table>
+    </div>
   </wicket:extend>
 </html>
