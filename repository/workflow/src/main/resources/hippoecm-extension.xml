@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2016 Hippo
+  Copyright 2007-2017 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -562,22 +562,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>4.0.0</sv:value>
-    </sv:property>
-  </sv:node>
-  <!-- Update workflow definition to fix REPO-1597, should be turned into reload-on-startup when we release 12.0 -->
-  <sv:node sv:name="hipposcxml-scxml-configuration-documentworkflow-delta">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>603.0</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:modules/scxmlregistry/hippo:moduleconfig/hipposcxml:definitions/documentworkflow/hipposcxml:source</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentpropset" sv:type="String">
-      <sv:value h:file="documentworkflow.scxml"/>
+      <sv:value>5.0.0</sv:value>
     </sv:property>
   </sv:node>
 
