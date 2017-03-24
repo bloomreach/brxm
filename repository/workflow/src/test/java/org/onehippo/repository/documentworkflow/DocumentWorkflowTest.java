@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -702,7 +702,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
     @Test
     public void testPublishState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
-        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
@@ -804,10 +804,10 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .states()
         );
 
-        workflowContext.setUserIdentity("system");
+        workflowContext.setUserIdentity("workflowuser");
         session.setPermissions(unpublishedVariant.getPath(), "hippo:editor", true);
 
-        // system, request, !editing, modified (unpublished!=published): requestPublication=true,publish=true
+        // workflowuser, request, !editing, modified (unpublished!=published): requestPublication=true,publish=true
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                         .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit()
                         .requestPublication(true).publish(true).requestDepublication(true)
@@ -823,7 +823,7 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
     @Test
     public void testDePublishState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
-        MockNode handleNode = (MockNode)session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        MockNode handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
@@ -922,10 +922,10 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                         .states()
         );
 
-        workflowContext.setUserIdentity("system");
+        workflowContext.setUserIdentity("workflowuser");
         session.setPermissions(publishedVariant.getPath(), "hippo:editor", true);
 
-        // system, request, !editing, live: requestDepublication=true,depublish=true
+        // workflowuser, request, !editing, live: requestDepublication=true,depublish=true
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                         .status(true).isLive(true).previewAvailable(true).checkModified(true).noEdit()
                         .requestPublication(false).requestDepublication(true).depublish(true)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -323,8 +323,8 @@
       <!-- state publishable is active when the  document is modified and not currently edited -->
       <state id="publishable">
         <onentry>
-          <if cond="!requestPending or user=='system'">
-            <!-- if no request pending OR invoked by the 'system' user (scheduled workflow jobs daemon):
+          <if cond="!requestPending or user=='workflowuser'">
+            <!-- if no request pending OR invoked by the 'workflowuser' user (scheduled workflow jobs daemon):
                  enable request publication operation -->
             <hippo:action action="requestPublication" enabledExpr="true"/>
             <if cond="workflowContext.isGranted(unpublished, 'hippo:editor')">
@@ -384,8 +384,8 @@
       <!-- state depublishable is active when the  document is live and not currently edited -->
       <state id="depublishable">
         <onentry>
-          <if cond="!requestPending or user=='system'">
-            <!-- if no request pending OR invoked by the 'system' user (scheduled workflow jobs daemon):
+          <if cond="!requestPending or user=='workflowuser'">
+            <!-- if no request pending OR invoked by the 'workflowuser' user (scheduled workflow jobs daemon):
                  enable request depublication operation -->
             <hippo:action action="requestDepublication" enabledExpr="true"/>
             <if cond="workflowContext.isGranted(published, 'hippo:editor')">
