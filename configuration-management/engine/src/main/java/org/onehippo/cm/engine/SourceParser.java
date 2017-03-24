@@ -449,6 +449,9 @@ public class SourceParser extends AbstractBaseParser {
             default:
                 final ValueImpl value = constructValueFromScalar(node);
                 if (value.getType() != expectedValueType) {
+                    if (checkForBinaryString(expectedValueType, value)) {
+                        return new ValueImpl(new String((byte[])value.getObject()));
+                    }
                     throw new ParserException(
                             MessageFormat.format(
                                     "Property value is not of the correct type, expected ''{0}'', found ''{1}''",
@@ -458,6 +461,10 @@ public class SourceParser extends AbstractBaseParser {
                 }
                 return value;
         }
+    }
+
+    private boolean checkForBinaryString(ValueType expectedValueType, ValueImpl value) {
+        return ValueType.BINARY.equals(value.getType()) && ValueType.STRING.equals(expectedValueType);
     }
 
     private ValueImpl constructDecimalValue(final Node node) throws ParserException {

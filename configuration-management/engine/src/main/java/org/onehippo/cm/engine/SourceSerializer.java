@@ -18,6 +18,7 @@ package org.onehippo.cm.engine;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -37,6 +38,7 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.reader.StreamReader;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -223,10 +225,23 @@ public class SourceSerializer extends AbstractBaseSerializer {
                 // these types are auto-detected by the parser, except when they are empty sequences
                 return property.getType() != PropertyType.SINGLE && property.getValues().length == 0;
             case STRING:
-                return false;
+                return shouldHaveExplicitType(property);
             default:
                 return true;
         }
+    }
+
+    private boolean shouldHaveExplicitType(DefinitionProperty property) {
+        if (property.getType() == PropertyType.SINGLE) {
+            String propertyValue = property.getValue().getString();
+            return !StreamReader.isPrintable(propertyValue);
+        } else {
+            return !allElementsArePrintable(property);
+        }
+    }
+
+    private boolean allElementsArePrintable(DefinitionProperty property) {
+        return Arrays.stream(property.getValues()).map(Value::getString).allMatch(StreamReader::isPrintable);
     }
 
     private boolean hasResourceValues(final DefinitionProperty property) {

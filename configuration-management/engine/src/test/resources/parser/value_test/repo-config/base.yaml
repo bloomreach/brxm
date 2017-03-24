@@ -22,6 +22,9 @@ definitions:
       decimal-multi-value:
         type: decimal
         value: ['42', '31415926535897932384626433832795028841971', '4.2E+314159265']
+      binary-multi-string:
+        type: string
+        value: [some, second, !!binary "Gw=="]
       name:
         type: name
         value: prefix:local-name
@@ -44,6 +47,10 @@ definitions:
         type: weakreference
         value: cafebabe-cafe-babe-cafe-babecafebabe
     /string:
+      strBinary:
+        type: string
+        value: !!binary |-
+          Gw==
       strBoolean: 'true'
       strDate: '2015-10-21T07:28:00.000+08:00'
       strDouble: '3.1415'

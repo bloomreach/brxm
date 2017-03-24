@@ -83,7 +83,7 @@ public class ParserValueTest extends AbstractBaseTest {
                 ValueType.NAME, new String[0]);
 
         final ConfigDefinition explicitDefinition = assertDefinition(source, 1, ConfigDefinition.class);
-        final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "explicit", explicitDefinition, 0, 9);
+        final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "explicit", explicitDefinition, 0, 10);
         assertProperty(explicitNode, "/explicit/decimal", "decimal", explicitDefinition, ValueType.DECIMAL,
                 new BigDecimal("31415926535897932384626433832795028841971"));
         assertProperty(explicitNode, "/explicit/decimal-multi-value", "decimal-multi-value", explicitDefinition,
@@ -93,6 +93,13 @@ public class ParserValueTest extends AbstractBaseTest {
                         new BigDecimal("31415926535897932384626433832795028841971"),
                         new BigDecimal("4.2E+314159265")
                 });
+
+        assertProperty(explicitNode, "/explicit/binary-multi-string", "binary-multi-string", explicitDefinition,
+                ValueType.STRING,
+                new String[] {
+                        "some","second", String.valueOf((char)27)
+                });
+
         assertProperty(explicitNode, "/explicit/name", "name", explicitDefinition, ValueType.NAME, "prefix:local-name");
         assertProperty(explicitNode, "/explicit/path", "path", explicitDefinition, ValueType.PATH, "/path/to/something");
         assertProperty(explicitNode, "/explicit/reference", "reference", explicitDefinition, ValueType.REFERENCE,
@@ -107,7 +114,8 @@ public class ParserValueTest extends AbstractBaseTest {
                 UUID.fromString("cafebabe-cafe-babe-cafe-babecafebabe"));
 
         final ConfigDefinition stringDefinition = assertDefinition(source, 2, ConfigDefinition.class);
-        final DefinitionNode stringNode = assertNode(stringDefinition, "/string", "string", stringDefinition, 0, 8);
+        final DefinitionNode stringNode = assertNode(stringDefinition, "/string", "string", stringDefinition, 0, 9);
+        assertProperty(stringNode, "/string/strBinary", "strBinary", stringDefinition, ValueType.STRING, String.valueOf((char)27));
         assertProperty(stringNode, "/string/strBoolean", "strBoolean", stringDefinition, ValueType.STRING, "true");
         assertProperty(stringNode, "/string/strDate", "strDate", stringDefinition, ValueType.STRING, "2015-10-21T07:28:00.000+08:00");
         assertProperty(stringNode, "/string/strDouble", "strDouble", stringDefinition, ValueType.STRING, "3.1415");
