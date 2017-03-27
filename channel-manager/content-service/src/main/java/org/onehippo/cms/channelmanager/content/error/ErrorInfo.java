@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,14 +54,14 @@ public class ErrorInfo {
     }
 
     public enum Reason {
+        ALREADY_DELETED,
+        CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
+        INVALID_DATA,
         NO_HOLDER,
+        NOT_A_DOCUMENT,
         OTHER_HOLDER,
         REQUEST_PENDING,
-        UNKNOWN_VALIDATOR,
-        ALREADY_DELETED,
-        INVALID_DATA,
-        CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
-        NOT_A_DOCUMENT
+        UNKNOWN_VALIDATOR
         // add more specific failure reasons here.
     }
 }
