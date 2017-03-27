@@ -1,11 +1,11 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,17 +15,16 @@
  */
 package org.onehippo.repository.util;
 
+import org.junit.Test;
+
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-import java.text.ParseException;
-
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class DateMathParserTest  {
 
-    public static final int DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 
     private static Calendar getNow() {
         Calendar startCal = Calendar.getInstance();
@@ -36,48 +35,48 @@ public class DateMathParserTest  {
     @Test
     public void testParseMathAddDays() throws ParseException {
         try {
-            Calendar now = getNow();
-            Date startDate = now.getTime();
-            Date endDate = DateMathParser.parseMath(now, "+7D").getTime();
-            assertNotNull(endDate);
-            long startTime = startDate.getTime();
-            long endTime = endDate.getTime();
-            long diffTime = endTime - startTime;
-            long diff = diffTime / DAY_IN_MILLIS;
-            Calendar nextWeek = getNow();
-            nextWeek.add(Calendar.DATE,7);
-            final long utcEndTime = endTime - nextWeek.getTimeZone().getOffset(endTime);
-            final long utcStartTime = startTime - now.getTimeZone().getOffset(startTime);
-            long utcDiff = utcEndTime - utcStartTime;
-            assertEquals(utcDiff/ DAY_IN_MILLIS, diff);
+            assertExpectedDuration(7, "+7D");
         }
         catch (IllegalStateException ex) {
             fail();
         }
     }
-    
+
     @Test
     public void testParseMathSubtractDays() throws ParseException {
         try {
-            Calendar now = getNow();
-            Date startDate = now.getTime();
-            Date endDate = DateMathParser.parseMath(now, "-7D").getTime();
-            assertNotNull(endDate);
-            long startTime = startDate.getTime();
-            long endTime = endDate.getTime();
-            long diff = (startTime / DAY_IN_MILLIS) - (endTime / DAY_IN_MILLIS);
-            Calendar previousWeek = getNow();
-            previousWeek.add(Calendar.DATE,-7);
-            final long utcStartTime = startTime - now.getTimeZone().getOffset(startTime);
-            final long utcEndTime = endTime - previousWeek.getTimeZone().getOffset(endTime);
-            long utcDiff = utcStartTime - utcEndTime;
-            assertEquals(utcDiff/ DAY_IN_MILLIS, diff);
+            assertExpectedDuration(-7, "-7D");
         }
         catch (IllegalStateException ex) {
             fail();
         }
     }
-    
+
+    private void assertExpectedDuration(int expectedDuration, String math) throws ParseException {
+        final Calendar startCalendar = getNow();
+        final Date startDate = startCalendar.getTime();
+        final Date endDate = DateMathParser.parseMath(startCalendar, math).getTime();
+        assertNotNull(endDate);
+        final long startTimeInMillis = startDate.getTime();
+        final long endTimeInMillis = endDate.getTime();
+        final long durationInMillis = endTimeInMillis - startTimeInMillis;
+
+
+        final Calendar endCalendar = (Calendar) startCalendar.clone();
+        endCalendar.add(Calendar.DATE, expectedDuration);
+        final int endTimeOffset = getOffset(endCalendar);
+        final int startTimeOffset = getOffset(startCalendar);
+        final long utcEndTimeInMillis = endTimeInMillis - endTimeOffset;
+        final long utcStartTimeInMillis = startTimeInMillis - startTimeOffset;
+        final long utcDurationInMillis = utcEndTimeInMillis - utcStartTimeInMillis;
+
+        assertEquals(utcDurationInMillis, durationInMillis);
+    }
+
+    private int getOffset(Calendar nextWeek) {
+        return nextWeek.getTimeZone().getOffset(nextWeek.getTimeInMillis());
+    }
+
     @Test
     public void testParseMathAddYears() throws ParseException {
         try {
