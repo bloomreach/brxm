@@ -45,7 +45,7 @@
 - * (double)
 + * (frontend:plugin) = frontend:plugin
 
-[frontend:clusterfolder] > nt:base orderable
+[frontend:clusterfolder] > nt:base
 + * (frontend:plugincluster) = frontend:plugincluster
 
 [frontend:application] > nt:base
