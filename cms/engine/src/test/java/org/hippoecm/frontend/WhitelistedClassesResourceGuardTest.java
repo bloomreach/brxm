@@ -19,7 +19,6 @@ import org.apache.wicket.protocol.http.mock.MockHttpSession;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.services.cmscontext.CmsContextServiceImpl;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -69,6 +68,6 @@ public class WhitelistedClassesResourceGuardTest {
     private void login() {
         final MockHttpSession httpSession = tester.getHttpSession();
         httpSession.setTemporary(false);
-        new CmsContextServiceImpl().create(httpSession);
+        httpSession.setAttribute("hippo:username", "testuser");
     }
 }

@@ -28,18 +28,16 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.feedback.FeedbackMessagesModel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.time.Duration;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.Dialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordValidationService;
@@ -48,6 +46,7 @@ import org.hippoecm.frontend.plugins.cms.admin.password.validation.PasswordValid
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.PasswordWidget;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.LoginException;
 import org.hippoecm.frontend.session.UserSession;
@@ -63,7 +62,6 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
     private static final long ONE_DAY_MS = 1000 * 3600 * 24;
     private static final String SECURITY_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
     private static final Pattern EXPIRATION_PATTERN = Pattern.compile(".*((day|hour|minute|second|millisecond)s?)$");
-    private static final IValueMap DIALOG_PROPERTIES = new ValueMap("width=400,height=380").makeImmutable();
 
     private final Label label;
     private final String username;
@@ -109,33 +107,30 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         };
         add(link);
 
-        final IModel<String> labelModel = new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                if (user.isPasswordExpired()) {
-                    return translate("password-is-expired");
-                } else if (isPasswordAboutToExpire(user)) {
-                    final long expirationTime = user.getPasswordExpirationTime();
-                    final Duration expirationDuration = Duration.valueOf(expirationTime - System.currentTimeMillis());
-                    String expiration = expirationDuration.toString(getLocale());
+        final IModel<String> labelModel = ReadOnlyModel.of(() -> {
+            if (user.isPasswordExpired()) {
+                return translate("password-is-expired");
+            } else if (isPasswordAboutToExpire(user)) {
+                final long expirationTime = user.getPasswordExpirationTime();
+                final Duration expirationDuration = Duration.valueOf(expirationTime - System.currentTimeMillis());
+                String expiration = expirationDuration.toString(getLocale());
 
-                    final Matcher matcher = EXPIRATION_PATTERN.matcher(expiration);
-                    if (matcher.matches()) {
-                        final String expirationMatch = matcher.group(1);
-                        expiration = expiration.replace(expirationMatch, translate(expirationMatch));
-                    }
-
-                    final StringResourceModel model = new StringResourceModel(
-                            "password-about-to-expire",
-                            ChangePasswordShortcutPlugin.this,
-                            null,
-                            null,
-                            expiration);
-                    return model.getObject();
+                final Matcher matcher = EXPIRATION_PATTERN.matcher(expiration);
+                if (matcher.matches()) {
+                    final String expirationMatch = matcher.group(1);
+                    expiration = expiration.replace(expirationMatch, translate(expirationMatch));
                 }
-                return StringUtils.EMPTY;
+
+                final StringResourceModel model = new StringResourceModel(
+                        "password-about-to-expire",
+                        ChangePasswordShortcutPlugin.this,
+                        null,
+                        null,
+                        expiration);
+                return model.getObject();
             }
-        };
+            return StringUtils.EMPTY;
+        });
         label = new Label("label", labelModel) {
             @Override
             public boolean isVisible() {
@@ -197,15 +192,23 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         return getString(key);
     }
 
+    // Helper method to simplify #getString call from innerClass that implements #getString as well
+    private String translate(final String key, final IModel<?> model) {
+        return getString(key, model);
+    }
+
     private class ChangePasswordDialog extends Dialog {
 
         private final PasswordWidget currentWidget;
         private final PasswordWidget newWidget;
         private final PasswordWidget checkWidget;
         private final IPasswordValidationService passwordValidationService;
+        private String feedbackLevel = "warning";
 
         public ChangePasswordDialog() {
             setOkLabel(translate("change-label"));
+            setSize(DialogConstants.MEDIUM_AUTO);
+            setTitle(Model.of(translate("change-password-label")));
 
             replace(feedback = new ChangePasswordFeedbackPanel("feedback") {
                 @Override
@@ -215,8 +218,9 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
             });
             feedback.setOutputMarkupId(true);
+            feedback.add(CssClass.append(ReadOnlyModel.of(() -> feedbackLevel)));
 
-            currentWidget = new PasswordWidget("current-password",
+                    currentWidget = new PasswordWidget("current-password",
                     PropertyModel.of(ChangePasswordShortcutPlugin.this, "currentPassword"),
                     Model.of(translate("old-password-label")));
             currentWidget.setOutputMarkupId(true);
@@ -312,6 +316,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                         log.warn("User '{}' changed its password but failed to automatically login again.", username, e);
                     }
                 }
+            } else {
+                feedbackLevel = "";
             }
 
             setFocus(currentWidget);
@@ -323,27 +329,16 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                 target.add(label);
             }
         }
-
-        @Override
-        public IModel<String> getTitle() {
-            return Model.of(translate("change-password-label"));
-        }
-
-        @Override
-        public IValueMap getProperties() {
-            return DIALOG_PROPERTIES;
-        }
     }
 
-    private class CannotChangePasswordDialog extends AbstractDialog {
+    private class CannotChangePasswordDialog extends Dialog {
 
         public CannotChangePasswordDialog() {
-            info(translate("cannot-change-password"));
+            setTitle(Model.of(translate("change-password-label")));
+            setSize(DialogConstants.MEDIUM_AUTO);
             setCancelVisible(false);
-        }
 
-        public IModel<String> getTitle() {
-            return Model.of(translate("change-password-label"));
+            info(translate("cannot-change-password", ReadOnlyModel.of(() -> ChangePasswordShortcutPlugin.this)));
         }
     }
 

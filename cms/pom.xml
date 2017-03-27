@@ -100,7 +100,7 @@
 
     <!-- Project Dependencies -->
     <commons-codec.version>1.4</commons-codec.version>
-    <commons-collections.version>3.1</commons-collections.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
     <commons-beanutils.version>1.7.0</commons-beanutils.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>1.4</commons-io.version>
@@ -114,7 +114,7 @@
     <wicket.version>6.19.0</wicket.version>
     <wicket-extjs.version>0.25.3</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
-    <httpclient.version>4.2.2</httpclient.version>
+    <httpclient.version>4.5.2</httpclient.version>
 
     <joda-time.version>2.0</joda-time.version>
     <json-lib.version>2.2.2</json-lib.version>

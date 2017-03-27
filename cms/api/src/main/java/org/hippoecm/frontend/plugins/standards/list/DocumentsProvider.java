@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,20 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
@@ -39,9 +25,17 @@ import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NodeComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvider;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import java.util.*;
 
 public class DocumentsProvider extends SortableDataProvider<Node> implements IObservable {
 
@@ -89,77 +83,90 @@ public class DocumentsProvider extends SortableDataProvider<Node> implements IOb
         if (entries != null) {
             return;
         }
-
-        Set<JcrNodeModel> observed = new HashSet<JcrNodeModel>();
-        entries = new ArrayList<Node>();
-        Node node = folder.getObject();
-        if (node != null) {
-            try {
-                NodeIterator subNodes = filter.filter(node, node.getNodes());
-                while (subNodes.hasNext()) {
-                    Node subNode = subNodes.nextNode();
-                    // Skip deleted documents
-                    if (subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        if (!subNode.hasNode(subNode.getName())) {
-                            observed.add(new JcrNodeModel(subNode));
+        Task documentProviderTask = null;
+        try {
+            if (HDC.isStarted()) {
+                documentProviderTask = HDC.getCurrentTask().startSubtask("DocumentsProvider.load");
+            }
+            Set<JcrNodeModel> observed = new HashSet<>();
+            entries = new ArrayList<>();
+            Node node = folder.getObject();
+            if (node != null) {
+                if (documentProviderTask != null) {
+                    documentProviderTask.setAttribute("node", JcrUtils.getNodePathQuietly(node));
+                }
+                try {
+                    NodeIterator subNodes = filter.filter(node, node.getNodes());
+                    while (subNodes.hasNext()) {
+                        Node subNode = subNodes.nextNode();
+                        // Skip deleted documents
+                        if (subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            if (!subNode.hasNode(subNode.getName())) {
+                                observed.add(new JcrNodeModel(subNode));
+                                continue;
+                            }
+                        }
+                        // skip translations
+                        if (subNode.isNodeType(HippoNodeType.NT_TRANSLATION)) {
                             continue;
                         }
+                        entries.add(subNode);
                     }
-                    // skip translations
-                    if (subNode.isNodeType(HippoNodeType.NT_TRANSLATION)) {
-                        continue;
-                    }
-                    entries.add(subNode);
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
                 }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
+            } else {
+                log.info("Jcr node in JcrNodeModel is null, returning empty list");
             }
-        } else {
-            log.info("Jcr node in JcrNodeModel is null, returning empty list");
-        }
 
-        for (Iterator<Map.Entry<IModel<Node>, IObserver>> iter = observers.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry<IModel<Node>, IObserver> entry = iter.next();
-            if (!observed.contains(entry.getKey())) {
-                iter.remove();
+            for (Iterator<Map.Entry<IModel<Node>, IObserver>> iter = observers.entrySet().iterator(); iter.hasNext();) {
+                Map.Entry<IModel<Node>, IObserver> entry = iter.next();
+                if (!observed.contains(entry.getKey())) {
+                    iter.remove();
+                }
             }
-        }
-        for (final JcrNodeModel model : observed) {
-            if (!observers.containsKey(model)) {
-                IObserver observer = new IObserver() {
-                    private static final long serialVersionUID = 1L;
+            for (final JcrNodeModel model : observed) {
+                if (!observers.containsKey(model)) {
+                    IObserver observer = new IObserver() {
+                        private static final long serialVersionUID = 1L;
 
-                    public IObservable getObservable() {
-                        return model;
-                    }
-
-                    public void onEvent(Iterator events) {
-                        if (obContext != null) {
-                            obContext.notifyObservers(new EventCollection(events));
+                        public IObservable getObservable() {
+                            return model;
                         }
-                    }
 
-                };
-                if (observing) {
-                    obContext.registerObserver(observer);
-                }
-                observers.put(model, observer);
-            }
-        }
+                        public void onEvent(Iterator events) {
+                            if (obContext != null) {
+                                obContext.notifyObservers(new EventCollection(events));
+                            }
+                        }
 
-        SortState sortState = getSortState();
-        if (sortState != null && sortState.isSorted()) {
-            String sortProperty = sortState.getProperty();
-            if (sortProperty != null) {
-                Comparator<Node> comparator = comparators.get(sortProperty);
-                if (comparator != null) {
-                    Collections.sort(entries, comparator);
-                    if (sortState.isDescending()) {
-                        Collections.reverse(entries);
+                    };
+                    if (observing) {
+                        obContext.registerObserver(observer);
                     }
-                    Collections.sort(entries, new FoldersFirstComparator());
+                    observers.put(model, observer);
                 }
             }
+
+            SortState sortState = getSortState();
+            if (sortState != null && sortState.isSorted()) {
+                String sortProperty = sortState.getProperty();
+                if (sortProperty != null) {
+                    Comparator<Node> comparator = comparators.get(sortProperty);
+                    if (comparator != null) {
+                        Collections.sort(entries, comparator);
+                        if (sortState.isDescending()) {
+                            Collections.reverse(entries);
+                        }
+                        Collections.sort(entries, new FoldersFirstComparator());
+                    }
+                }
+            }
+        } finally {
+            if (documentProviderTask != null) {
+                documentProviderTask.stop();
+            }
+
         }
     }
 

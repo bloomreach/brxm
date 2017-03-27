@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -589,6 +589,10 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
       expandUnit: function (position) {
         var unit = this.layout.getUnitByPosition(position);
         if (unit !== null) {
+          if (this.unitExpanded === null) {
+            // store collapsedWidth only if collapsed
+            this.unitCollapsedWidth = unit.get('width');
+          }
           this.unitExpanded = position;
           unit.set('width', this.layout.getSizes().doc.w);
           Dom.replaceClass(unit.body, 'yui-layout-collapsed', 'yui-layout-expanded');
@@ -596,14 +600,16 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
       },
 
       collapseUnit: function (position) {
-        var unit, config;
+        var unit, config, width;
 
         unit = this.layout.getUnitByPosition(position);
         if (unit !== null) {
           config = this.getUnitConfigByPosition(position);
           if (config !== null) {
             this.unitExpanded = null;
-            unit.set('width', Number(config.width));
+            width = this.unitCollapsedWidth || config.width;
+            this.unitCollapsedWidth = null;
+            unit.set('width', Number(width));
             Dom.replaceClass(unit.body, 'yui-layout-expanded', 'yui-layout-collapsed');
             this.children.forEach(this, function (k, v) {
               v.checkSizes();

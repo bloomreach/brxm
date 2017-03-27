@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -45,13 +45,14 @@
 - * (double)
 + * (frontend:plugin) = frontend:plugin
 
-[frontend:clusterfolder] > nt:base orderable
+[frontend:clusterfolder] > nt:base
 + * (frontend:plugincluster) = frontend:plugincluster
 
-[frontend:application] > nt:base orderable
+[frontend:application] > nt:base
 - frontend:saveonexit (boolean)
 - frontend:privileges (string)
 - frontend:privileges.path (string)
+- frontend:defaultcluster (string)
 + * (frontend:plugincluster) multiple
 + * (frontend:clusterfolder) multiple
 + * (nt:unstructured) multiple //FIXME, needed for cms-reports.xml

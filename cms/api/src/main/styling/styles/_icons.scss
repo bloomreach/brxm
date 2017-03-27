@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,32 +18,36 @@
 
 .hi {
   display: inline-block;
+  height: 0;
   vertical-align: text-bottom;
   width: 0;
-  height: 0;
 }
 
 .hi-s {
-  width: 10px;
   height: 10px;
+  width: 10px;
 }
 .hi-m {
-  width: 16px;
   height: 16px;
+  width: 16px;
 }
 .hi-l {
-  width: 32px;
   height: 32px;
+  width: 32px;
 }
 .hi-xl {
-  width: 48px;
   height: 48px;
+  width: 48px;
+}
+
+.hi-rotate-180 {
+  transform: rotate(180deg);
 }
 
 // Stacked icons
 .hi-stack {
-  position: relative;
   display: inline-block;
+  position: relative;
 
   > .hi {
     vertical-align: baseline;
@@ -61,10 +65,10 @@
 }
 
 .hi-vcenter {
-  top: 0;
   bottom: 0;
-  margin-top: auto;
   margin-bottom: auto;
+  margin-top: auto;
+  top: 0;
 }
 
 .hi-bottom {
@@ -77,9 +81,9 @@
 
 .hi-hcenter {
   left: 0;
-  right: 0;
   margin-left: auto;
   margin-right: auto;
+  right: 0;
 }
 
 .hi-right {
@@ -90,10 +94,10 @@
 .hi-stack {
   > .hi-folder + img,
   > .hi-folder-open + img {
-    top: auto;
-    left: auto;
     bottom: -1px;
+    left: auto;
     right: -1px;
+    top: auto;
   }
 }
 
@@ -129,18 +133,18 @@
 }
 
 .hi-minus-circle, .hi-times-circle {
-  fill: $danger;
   color: $white;
+  fill: $danger;
 }
 
 .hi-check-circle {
-  fill: $success;
   color: $white;
+  fill: $success;
 }
 
 .hi-exclamation-triangle {
-  fill: $warning;
   color: $darkest-shade;
+  fill: $warning;
 }
 
 .hi-overlay-plus {
@@ -162,8 +166,8 @@
   }
 
   .hi-minus-circle {
-    fill: $danger;
     color: $white;
+    fill: $danger;
   }
 
   .hi-minus-circle-clock {
@@ -179,8 +183,8 @@
   }
 
   .hi-check-circle {
-    fill: $success;
     color: $white;
+    fill: $success;
   }
 
   .hi-check-circle-clock {
@@ -207,13 +211,13 @@
   }
 
   .hi-minus-circle {
-    fill: $hippo-menu-disabled-color;
     color: $white;
+    fill: $hippo-menu-disabled-color;
   }
 
   .hi-check-circle {
-    fill: $hippo-menu-disabled-color;
     color: $white;
+    fill: $hippo-menu-disabled-color;
   }
 
   .hi-files {
