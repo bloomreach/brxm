@@ -128,7 +128,7 @@
 
 [hipposys:temporaryfolder] > nt:unstructured
 
-[hipposys:applicationfolder] > nt:unstructured orderable
+[hipposys:applicationfolder] > nt:unstructured
 
 // The hipposys type should be used for internal repository purposes
 // only, where a transative state is needed allowing any kind of child
