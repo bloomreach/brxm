@@ -280,7 +280,9 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
                 }
             };
             add(top);
-            top.add(HippoIcon.fromSprite("icon", Icon.CARET_DOWN));
+            final HippoIcon topIcon = HippoIcon.fromSprite("icon", Icon.STEP_BACKWARD);
+            topIcon.addCssClass("hi-rotate-90");
+            top.add(topIcon);
 
             up = new AjaxLink<Void>("up") {
                 @Override
@@ -331,7 +333,9 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
                 }
             };
             add(bottom);
-            bottom.add(HippoIcon.fromSprite("icon", Icon.CARET_DOWN));
+            final HippoIcon bottomIcon = HippoIcon.fromSprite("icon", Icon.STEP_FORWARD);
+            bottomIcon.addCssClass("hi-rotate-90");
+            bottom.add(bottomIcon);
 
            if (dataProvider.size() > 0) {
                 ListItem selection = dataProvider.iterator(0, 1).next();
