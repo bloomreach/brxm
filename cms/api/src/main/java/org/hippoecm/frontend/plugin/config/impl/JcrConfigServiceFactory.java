@@ -37,7 +37,7 @@ import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_SAVEONEXIT;
 
 /**
  * Configuration service for plugin clusters.  Cluster folders are located beneath
- * the application, with a fallback to the first defined application.
+ * the application.
  */
 public class JcrConfigServiceFactory implements IPluginConfigService {
 
@@ -97,21 +97,6 @@ public class JcrConfigServiceFactory implements IPluginConfigService {
                     Node child = iter.nextNode();
                     if (child.isNodeType(FrontendNodeType.NT_PLUGINCLUSTER)) {
                         results.add(child.getName());
-                    }
-                }
-            }
-            Node appFolder = model.getNode().getParent();
-            Node first = appFolder.getNodes().nextNode();
-            if (!model.getNode().isSame(first)) {
-                if (first.hasNode(folder)) {
-                    NodeIterator iter = first.getNode(folder).getNodes();
-                    while (iter.hasNext()) {
-                        Node child = iter.nextNode();
-                        if (child.isNodeType(FrontendNodeType.NT_PLUGINCLUSTER)) {
-                            if (!results.contains(child.getName())) {
-                                results.add(child.getName());
-                            }
-                        }
                     }
                 }
             }
