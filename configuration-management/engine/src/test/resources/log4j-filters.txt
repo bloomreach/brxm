@@ -1,0 +1,25 @@
+#
+#  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+#
+#  Licensed under the Apache License, Version 2.0 (the  "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS"
+#  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
+Property '/a/b/property1' defined in 'test-configuration/test-project/test-module [string]' specifies value equivalent to existing property.
+Trying to modify already deleted node '/a/b/c', skipping.
+Property '/a/b/c/property1' defined in 'test-configuration/test-project/test-module [string]' has already been deleted. This property is not re-created.
+Property '/a/b/jcr:primaryType' defined in 'test-configuration/test-project/test-module [string]' specifies value equivalent to existing property.
+Property '/a/b/property1' defined in 'test-configuration/test-project/test-module [string]' specifies values equivalent to existing property.
+Property '/a/b/property2' defined in 'test-configuration/test-project/test-module [string]' claims to ADD values, but property doesn't exist yet. Applying default behaviour.
+Content definition rooted at '/a/b/c' conflicts with deleted node at '/a/b/c', skipping.
+Trying to modify already deleted node '/a/b/c/d', skipping.
+Content definition rooted at '/a/b/c/d' conflicts with deleted node at '/a/b/c', skipping.

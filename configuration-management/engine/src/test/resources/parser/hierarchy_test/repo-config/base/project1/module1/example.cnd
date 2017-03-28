@@ -1,0 +1,3 @@
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'myhippoproject'='http://www.onehippo.org/myhippoproject/nt/1.0'>
+[myhippoproject:basedocument] > hippo:document orderable

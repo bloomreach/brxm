@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+  <!-- ====================================================================== -->
+  <!-- A P P E N D E R S                                                      -->
+  <!-- ====================================================================== -->
+
+  <!-- console -->
+  <appender name="console" class="org.apache.log4j.ConsoleAppender">
+    <param name="threshold" value="DEBUG"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
+    </layout>
+    <filter class="org.onehippo.repository.testutils.log4j.StringMatchFilter"/>
+  </appender>
+
+  <!-- log4j.log -->
+  <appender name="root" class="org.apache.log4j.FileAppender">
+    <param name="File" value="target/log4j.log"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
+    </layout>
+  </appender>
+
+  <!-- ====================================================================== -->
+  <!-- L O G G E R S                                                          -->
+  <!-- ====================================================================== -->
+
+  <category name="org.onehippo.cm.engine.AbstractBaseParser">
+    <level value="debug"/>
+  </category>
+
+  <category name="org.onehippo.cm.migration">
+    <level value="debug"/>
+  </category>
+
+  <!--TODO: remove when default level is set to warn -->
+  <category name="org.hippoecm.repository">
+    <level value="warn"/>
+  </category>
+
+  <category name="org.onehippo.repository">
+    <level value="warn"/>
+  </category>
+
+  <category name="org.apache.jackrabbit">
+    <level value="warn"/>
+  </category>
+
+  <category name="org.quartz">
+    <level value="warn"/>
+  </category>
+  <!--TODO: end -->
+
+  <root>
+    <level value="info"/>
+    <appender-ref ref="console"/>
+    <appender-ref ref="root"/>
+  </root>
+
+</log4j:configuration>

@@ -1,0 +1,12 @@
+definitions:
+  config:
+    /resources:
+      single-value-string-resource:
+        type: string
+        resource: string.txt
+      single-value-binary-resource:
+        type: binary
+        resource: image.png
+      multi-value-resource:
+        type: string
+        resource: [/root.txt, folder/relative.txt]

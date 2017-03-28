@@ -1,0 +1,13 @@
+definitions:
+    namespace:
+      - prefix: prefix
+        uri: uri
+    config:
+      - /root1:
+          - property: value
+          - /subnode:
+              - map:
+                    type: boolean
+                    value: []
+      - /root2:
+          - property: value
