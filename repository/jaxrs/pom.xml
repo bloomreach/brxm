@@ -68,12 +68,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomcat.embed</groupId>
-      <artifactId>tomcat-embed-logging-log4j</artifactId>
-      <version>${cargo.tomcat.full.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-testutils</artifactId>
       <version>${project.version}</version>

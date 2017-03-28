@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
 import static org.hippoecm.repository.api.HippoNodeType.WORKFLOWS_PATH;
+import static org.hippoecm.repository.api.HippoSession.NO_SYSTEM_IMPERSONATION;
 
 public class WorkflowManagerImpl implements WorkflowManager {
 
@@ -77,16 +78,18 @@ public class WorkflowManagerImpl implements WorkflowManager {
      * </p>
      */
     private final Session userSession;
-    private Session rootSession;
+    private Session workflowSession;
     private final String configurationId;
     private final WorkflowLogger workflowLogger;
 
     public WorkflowManagerImpl(Session session) throws RepositoryException {
         this.userSession = session;
-        this.rootSession = session.impersonate(new SimpleCredentials("workflowuser", new char[] {}));
-        ((HippoSession) rootSession).disableVirtualLayers();
+        SimpleCredentials workflowuser = new SimpleCredentials("workflowuser", new char[]{});
+        workflowuser.setAttribute(NO_SYSTEM_IMPERSONATION, Boolean.TRUE);
+        this.workflowSession = session.impersonate(workflowuser);
+        ((HippoSession)workflowSession).disableVirtualLayers();
         configurationId = session.getRootNode().getNode(CONFIGURATION_PATH + "/" + WORKFLOWS_PATH).getIdentifier();
-        workflowLogger = new WorkflowLogger(rootSession);
+        workflowLogger = new WorkflowLogger(workflowSession);
     }
 
     public Session getSession() throws RepositoryException {
@@ -105,7 +108,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         try {
             log.debug("Looking for workflow in category {} for node {}", category, item.getPath());
 
-            Node configuration = JcrUtils.getNodeIfExists(rootSession.getNodeByIdentifier(configurationId), category);
+            Node configuration = JcrUtils.getNodeIfExists(workflowSession.getNodeByIdentifier(configurationId), category);
             if (configuration != null) {
                 for (Node workflowNode : new NodeIterable(configuration.getNodes())) {
                     if (!workflowNode.isNodeType(HippoNodeType.NT_WORKFLOW)) {
@@ -263,12 +266,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             && Session.class.isAssignableFrom(params[2])
                             && Node.class.isAssignableFrom(params[3])) {
                         workflow = (Workflow) constructor.newInstance(
-                                new WorkflowContextImpl(workflowDefinition, item.getSession(), item), userSession, rootSession, item);
+                                new WorkflowContextImpl(workflowDefinition, item.getSession(), item), userSession, workflowSession, item);
                         break;
                     } else if (params.length == 3 && Session.class.isAssignableFrom(params[0])
                             && Session.class.isAssignableFrom(params[1])
                             && Node.class.isAssignableFrom(params[2])) {
-                        workflow = (Workflow) constructor.newInstance(getSession(), rootSession, item);
+                        workflow = (Workflow) constructor.newInstance(getSession(), workflowSession, item);
                         break;
                     }
                 }
@@ -290,7 +293,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             throw new RepositoryException("Class is not of type Workflow [" + clazz.getName() + "]");
         }
         if (WorkflowImpl.class.isAssignableFrom(clazz)) {
-            Node rootSessionNode = rootSession.getNodeByIdentifier(uuid);
+            Node rootSessionNode = workflowSession.getNodeByIdentifier(uuid);
             ((WorkflowImpl) workflow).setWorkflowContext(new WorkflowContextImpl(workflowDefinition, item.getSession(), item));
             ((WorkflowImpl) workflow).setNode(rootSessionNode);
         }
@@ -323,9 +326,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
     }
 
     public void close() {
-        if (rootSession != null && rootSession.isLive()) {
-            rootSession.logout();
-            rootSession = null;
+        if (workflowSession != null && workflowSession.isLive()) {
+            workflowSession.logout();
+            workflowSession = null;
         }
     }
 
@@ -369,7 +372,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
                 returnObject = targetMethod.invoke(upstream, args);
                 if (objectPersist && !targetMethod.getName().equals("hints")) {
-                    rootSession.save();
+                    workflowSession.save();
                 }
                 if (returnObject instanceof Document) {
                     // only return a simple Document instance
@@ -381,11 +384,11 @@ public class WorkflowManagerImpl implements WorkflowManager {
             } catch (InvocationTargetException e) {
                 exception = e.getCause();
                 if (exception instanceof RepositoryException) {
-                    rootSession.refresh(false);
+                    workflowSession.refresh(false);
                 }
                 throw exception;
             } catch (RepositoryException e) {
-                rootSession.refresh(false);
+                workflowSession.refresh(false);
                 throw e;
             } finally {
                 if (resetInteraction) {
@@ -423,7 +426,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
         @Override
         public Workflow getWorkflow(String category, final Document document) throws WorkflowException, RepositoryException {
-            return WorkflowManagerImpl.this.getWorkflow(category, getDocumentNode(rootSession, document));
+            return WorkflowManagerImpl.this.getWorkflow(category, getDocumentNode(workflowSession, document));
         }
 
         @Override
@@ -453,7 +456,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
         @Override
         public Session getInternalWorkflowSession() {
-            return rootSession;
+            return workflowSession;
         }
 
         @Override

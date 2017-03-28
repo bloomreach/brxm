@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.onehippo.repository.scheduling.RepositoryScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoSession.NO_SYSTEM_IMPERSONATION;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_METHOD_NAME;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_SUBJECT_ID;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB;
@@ -115,7 +116,9 @@ public class ScheduleWorkflowTask extends AbstractDocumentTask {
             String methodName = null;
             String subjectPath = null;
             try {
-                session = context.createSession(new SimpleCredentials("workflowuser", new char[] {}));
+                SimpleCredentials workflowuser = new SimpleCredentials("workflowuser", new char[]{});
+                workflowuser.setAttribute(NO_SYSTEM_IMPERSONATION, Boolean.TRUE);
+                session = context.createSession(workflowuser);
                 final String subjectId = context.getAttribute(HIPPOSCHED_SUBJECT_ID);
                 methodName = context.getAttribute(HIPPOSCHED_METHOD_NAME);
                 final Node subject = session.getNodeByIdentifier(subjectId);
