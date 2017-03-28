@@ -1465,4 +1465,125 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         final ConfigurationNode c = b.getNodes().get("c");
         assertEquals("[jcr:primaryType]", sortedCollectionToString(c.getProperties()));
     }
+
+    @Test
+    public void redundant_ignore_reordered_children1() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        .meta:ignore-reordered-children: false\n"
+                + "    /a/b:\n"
+                + "      .meta:ignore-reordered-children: false";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        try (Log4jListener listener = Log4jListener.onWarn()) {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.startsWith("Redundant '.meta:ignore-reordered-children: false' for node '/a/b'")));
+        }
+    }
+
+    @Test
+    public void redundant_ignore_reordered_children2() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        .meta:ignore-reordered-children: true\n"
+                + "    /a/b:\n"
+                + "      .meta:ignore-reordered-children: true";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        try (Log4jListener listener = Log4jListener.onWarn()) {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.startsWith("Redundant '.meta:ignore-reordered-children: true' for node '/a/b'")));
+        }
+    }
+
+    @Test
+    public void overriding_ignore_reordered_children1() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        .meta:ignore-reordered-children: true\n"
+                + "    /a/b:\n"
+                + "      .meta:ignore-reordered-children: false";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        try (Log4jListener listener = Log4jListener.onWarn()) {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.startsWith("Overriding '.meta:ignore-reordered-children' for node '/a/b'")));
+        }
+    }
+
+    @Test
+    public void overriding_ignore_reordered_children2() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        .meta:ignore-reordered-children: false\n"
+                + "    /a/b:\n"
+                + "      .meta:ignore-reordered-children: true";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        try (Log4jListener listener = Log4jListener.onWarn()) {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.startsWith("Overriding '.meta:ignore-reordered-children' for node '/a/b'")));
+        }
+    }
+
+    @Test
+    public void reorder_node_with_ignore_reordered_children_unnecessary() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      .meta:ignore-reordered-children: true\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /c:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /d:\n"
+                + "        jcr:primaryType: foo\n"
+                + "    /a/b:\n"
+                + "      .meta:order-before: 'c'";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        try (Log4jListener listener = Log4jListener.onWarn()) {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.equals("Potential unnecessary orderBefore: 'c' for node '/a/b' defined in " +
+                            "'test-configuration/test-project/test-module [string]': " +
+                            "parent '/a' already configured with '.meta:ignore-reordered-children: true'")));
+        }
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        assertEquals("[b, c, d]", sortedCollectionToString(a.getNodes()));
+    }
+
 }

@@ -43,6 +43,7 @@ import org.yaml.snakeyaml.reader.StreamReader;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
 
 public class SourceSerializer extends AbstractBaseSerializer {
 
@@ -122,6 +123,9 @@ public class SourceSerializer extends AbstractBaseSerializer {
         if (node.getOrderBefore().isPresent()) {
             children.add(representNodeOrderBefore(node.getOrderBefore().get()));
         }
+        if (node.getIgnoreReorderedChildren() != null) {
+            children.add(representNodeIgnoreReorderedChildren(node.getIgnoreReorderedChildren()));
+        }
         for (DefinitionProperty childProperty : node.getProperties().values()) {
             children.add(representProperty(childProperty, resourceConsumer));
         }
@@ -139,6 +143,10 @@ public class SourceSerializer extends AbstractBaseSerializer {
 
     private NodeTuple representNodeOrderBefore(final String name) {
         return createStrStrTuple(".meta:order-before", name);
+    }
+
+    private NodeTuple representNodeIgnoreReorderedChildren(final Boolean ignoreReorderedChildren) {
+        return new NodeTuple(createStrScalar(META_IGNORE_REORDERED_CHILDREN), new ScalarNode(Tag.BOOL, ignoreReorderedChildren.toString(), null, null, null));
     }
 
     private NodeTuple representProperty(final DefinitionProperty property, final Consumer<String> resourceConsumer) {

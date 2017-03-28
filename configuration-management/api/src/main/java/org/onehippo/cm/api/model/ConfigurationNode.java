@@ -30,4 +30,10 @@ public interface ConfigurationNode extends ConfigurationItem {
      * model processing order.
      */
     Map<String, ConfigurationProperty> getProperties();
+
+    /**
+     * @return Boolean.TRUE if for this node the order of its children can be ignored on detecting changes,
+     * even if its primary node type indicates otherwise. Returns null if unspecified.
+     */
+    Boolean getIgnoreReorderedChildren();
 }

@@ -30,6 +30,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     private final Map<String, ConfigurationNode> nodes = Collections.unmodifiableMap(modifiableNodes);
     private final Map<String, ConfigurationPropertyImpl> modifiableProperties = new LinkedHashMap<>();
     private final Map<String, ConfigurationProperty> properties = Collections.unmodifiableMap(modifiableProperties);
+    private Boolean ignoreReorderedChildren;
 
     @Override
     public Map<String, ConfigurationNode> getNodes() {
@@ -97,5 +98,14 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
 
         modifiableNodes.put(srcChildName, modifiableNodes.remove(srcChildName));
         toBeReinsertedChildren.forEach(child -> modifiableNodes.put(child, modifiableNodes.remove(child)));
+    }
+
+    @Override
+    public Boolean getIgnoreReorderedChildren() {
+        return ignoreReorderedChildren;
+    }
+
+    public void setIgnoreReorderedChildren(final boolean ignoreReorderedChildren) {
+        this.ignoreReorderedChildren = ignoreReorderedChildren;
     }
 }

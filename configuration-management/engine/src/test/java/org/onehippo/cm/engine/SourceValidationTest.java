@@ -887,6 +887,34 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
+    public void configWithDefinitionWithIgnoreReorderedChildrenNonBoolean() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:ignore-reordered-children: 42";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node metaIgnoreReorderedChildrenValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, metaIgnoreReorderedChildrenValue, "Property value is not of the correct type, expected 'boolean', found 'long'");
+    }
+
+    @Test
+    public void configWithDefinitionWithIgnorReorderedChildrenNonScalar() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:ignore-reordered-children: [true]";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node metaIgnoreReorderedChildrenValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, metaIgnoreReorderedChildrenValue, "Node must be scalar");
+    }
+
+    @Test
     public void configWithDefinitionWithNonScalarPropertyOperation() {
         final String yaml = "definitions:\n"
                 + "  config:\n"

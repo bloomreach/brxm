@@ -26,6 +26,8 @@ definitions:
         .meta:order-before: node
         property: value
         /empty-node: {}
+      /node-ignore-reordered-children:
+        .meta:ignore-reordered-children: true
     /path/to/node-delete:
       .meta:delete: true
     /path/to/node-order-before:

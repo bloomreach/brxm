@@ -50,6 +50,7 @@ import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.engine.Constants.DEFINITIONS;
+import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
 
 public class SourceParser extends AbstractBaseParser {
 
@@ -196,6 +197,9 @@ public class SourceParser extends AbstractBaseParser {
                     throw new ParserException("Invalid .meta:order-before targeting this node itself", node);
                 }
                 definitionNode.setOrderBefore(name);
+            } else if (key.equals(META_IGNORE_REORDERED_CHILDREN)) {
+                final Boolean ignoreReorderedChildren = (Boolean)constructValueFromScalar(tupleValue, ValueType.BOOLEAN).getObject();
+                definitionNode.setIgnoreReorderedChildren(ignoreReorderedChildren);
             } else if (key.startsWith("/")) {
                 final String name = key.substring(1);
                 constructDefinitionNode(name, tupleValue, definitionNode);

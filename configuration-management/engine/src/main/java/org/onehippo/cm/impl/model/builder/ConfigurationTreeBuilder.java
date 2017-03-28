@@ -42,6 +42,7 @@ import static org.onehippo.cm.api.model.PropertyOperation.ADD;
 import static org.onehippo.cm.api.model.PropertyOperation.DELETE;
 import static org.onehippo.cm.api.model.PropertyOperation.OVERRIDE;
 import static org.onehippo.cm.api.model.PropertyOperation.REPLACE;
+import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
 
 class ConfigurationTreeBuilder {
 
@@ -107,9 +108,28 @@ class ConfigurationTreeBuilder {
             throw new IllegalArgumentException(msg);
         }
 
+        if (definitionNode.getIgnoreReorderedChildren() != null) {
+            if (node.getIgnoreReorderedChildren() != null || definitionNode.getIgnoreReorderedChildren() == node.getIgnoreReorderedChildren()) {
+                final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+                if (definitionNode.getIgnoreReorderedChildren() == node.getIgnoreReorderedChildren()) {
+                    logger.warn("Redundant '{}: {}' for node '{}' defined in '{}'", META_IGNORE_REORDERED_CHILDREN,
+                            node.getIgnoreReorderedChildren(), node.getPath(), culprit);
+                } else {
+                    logger.warn("Overriding '{}' for node '{}' defined in '{}' which was {} before.",
+                            META_IGNORE_REORDERED_CHILDREN, node.getPath(), culprit, node.getIgnoreReorderedChildren());
+                }
+            }
+            node.setIgnoreReorderedChildren(definitionNode.getIgnoreReorderedChildren());
+        }
+
         final ConfigurationNodeImpl parent = node.getModifiableParent();
         if (parent != null && definitionNode.getOrderBefore().isPresent()) {
             final String destChildName = definitionNode.getOrderBefore().get();
+            if (parent.getIgnoreReorderedChildren() != null && parent.getIgnoreReorderedChildren()) {
+                final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+                logger.warn("Potential unnecessary orderBefore: '{}' for node '{}' defined in '{}': parent '{}' already configured with '{}: true'",
+                        destChildName, node.getPath(), culprit, parent.getPath(), META_IGNORE_REORDERED_CHILDREN);
+            }
             final boolean orderFirst = "".equals(destChildName);
             if (!orderFirst) {
                 if (node.getName().equals(destChildName)) {

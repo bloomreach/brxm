@@ -32,6 +32,8 @@ import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.ValueType;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class HierarchyTest extends AbstractBaseTest {
 
@@ -63,7 +65,7 @@ public class HierarchyTest extends AbstractBaseTest {
         assertEquals(true, nodeTypeFromResource.isResource());
 
         final ConfigDefinition source1definition1 = assertDefinition(source1, 3, ConfigDefinition.class);
-        final DefinitionNode rootDefinition1 = assertNode(source1definition1, "/", "", source1definition1, 5, 1);
+        final DefinitionNode rootDefinition1 = assertNode(source1definition1, "/", "", source1definition1, 6, 1);
         assertProperty(rootDefinition1, "/root-level-property", "root-level-property",
                 source1definition1, ValueType.STRING, "root-level-property-value");
         final DefinitionNode nodeWithSingleProperty = assertNode(rootDefinition1, "/node-with-single-property",
@@ -85,6 +87,8 @@ public class HierarchyTest extends AbstractBaseTest {
         assertProperty(subNode, "/node-with-sub-node/sub-node/property", "property", source1definition1, ValueType.STRING, "sub-node-value");
         assertNode(rootDefinition1, "/node-delete", "node-delete", source1definition1, true, null, 0, 0);
         assertNode(rootDefinition1, "/node-order-before", "node-order-before", source1definition1, false, "node", 1, 1);
+        assertNull(rootDefinition1.getNodes().get("node-order-before").getIgnoreReorderedChildren());
+        assertTrue(rootDefinition1.getNodes().get("node-ignore-reordered-children").getIgnoreReorderedChildren());
 
         final ConfigDefinition source1definition2 = assertDefinition(source1, 4, ConfigDefinition.class);
         assertNode(source1definition2, "/path/to/node-delete", "node-delete", source1definition2, true, null, 0, 0);
