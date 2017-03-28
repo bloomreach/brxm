@@ -63,6 +63,7 @@ public class SCXMLWorkflowContext {
     private final WorkflowContext workflowContext;
     private final Map<String, Boolean> actions = new HashMap<>();
     private final Map<String, Serializable> feedback = new HashMap<>();
+    private final Map<String, Boolean> identifierPrivilegesMap = new HashMap<>();
     private Object result;
     private boolean initialized;
 
@@ -117,14 +118,22 @@ public class SCXMLWorkflowContext {
             return false;
         }
 
+        final String key = identifier + '\uFFFF' + privileges;
+        Boolean granted = identifierPrivilegesMap.get(key);
+        if (granted != null) {
+            return granted;
+        }
+
         try {
             final Session subjectSession = workflowContext.getSubjectSession();
             Node userDocumentNode = subjectSession.getNodeByIdentifier(identifier);
-            return subjectSession.hasPermission(userDocumentNode.getPath(), privileges);
+            granted = subjectSession.hasPermission(userDocumentNode.getPath(), privileges);
+            identifierPrivilegesMap.put(key, granted);
+            return granted;
         } catch (RepositoryException e) {
+            identifierPrivilegesMap.put(key, false);
             return false;
         }
-
     }
 
     /**
@@ -219,6 +228,7 @@ public class SCXMLWorkflowContext {
         if (initialized) {
             actions.clear();
             feedback.clear();
+            identifierPrivilegesMap.clear();
             result = null;
             initialized = false;
         }
