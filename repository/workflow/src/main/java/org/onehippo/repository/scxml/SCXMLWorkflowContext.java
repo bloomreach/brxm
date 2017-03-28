@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,37 +118,11 @@ public class SCXMLWorkflowContext {
             return false;
         }
 
-        final Collection<String> privs = Arrays.asList(privileges.split(","));
-        if (privs.isEmpty()) {
-            return false;
-        }
-
         try {
             final Session subjectSession = workflowContext.getSubjectSession();
             Node userDocumentNode = subjectSession.getNodeByIdentifier(identifier);
-            String userDocumentPath = userDocumentNode.getPath();
-            for (String priv : privs) {
-                Map<String, Boolean> privilegesMap = identifierPrivilegesMap.get(identifier);
-                if (privilegesMap == null) {
-                    privilegesMap = new HashMap<>();
-                    identifierPrivilegesMap.put(identifier, privilegesMap);
-                }
-                Boolean hasPrivilege = privilegesMap.get(priv);
-                if (hasPrivilege == null) {
-                    hasPrivilege = Boolean.FALSE;
-                    try {
-                        hasPrivilege = subjectSession.hasPermission(userDocumentPath, priv);
-                    } catch (AccessControlException | IllegalArgumentException | RepositoryException ignore) {
-                    }
-                    privilegesMap.put(priv, hasPrivilege);
-                }
-                if (!hasPrivilege) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        catch (RepositoryException e) {
+            return subjectSession.hasPermission(userDocumentNode.getPath(), privileges);
+        } catch (RepositoryException e) {
             return false;
         }
 
