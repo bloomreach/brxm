@@ -63,7 +63,6 @@ public class SCXMLWorkflowContext {
     private final WorkflowContext workflowContext;
     private final Map<String, Boolean> actions = new HashMap<>();
     private final Map<String, Serializable> feedback = new HashMap<>();
-    private final Map<String, Map<String, Boolean>> identifierPrivilegesMap = new HashMap<>();
     private Object result;
     private boolean initialized;
 
@@ -220,7 +219,6 @@ public class SCXMLWorkflowContext {
         if (initialized) {
             actions.clear();
             feedback.clear();
-            identifierPrivilegesMap.clear();
             result = null;
             initialized = false;
         }
