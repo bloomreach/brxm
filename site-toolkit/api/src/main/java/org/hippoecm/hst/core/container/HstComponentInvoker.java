@@ -40,6 +40,16 @@ public interface HstComponentInvoker {
     void invokeAction(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
 
     /**
+     * Invokes the {@link HstComponent#prepareBeforeRender(org.hippoecm.hst.core.component.HstRequest, HstResponse)} method.
+     * 
+     * @param requestContainerConfig the HstComponent container configuration
+     * @param servletRequest the request
+     * @param servletResponse the response
+     * @throws ContainerException
+     */
+    void invokePrepareBeforeRender(HstContainerConfig requestContainerConfig, ServletRequest servletRequest, ServletResponse servletResponse) throws ContainerException;
+
+    /**
      * Invokes the {@link HstComponent#doBeforeRender(org.hippoecm.hst.core.component.HstRequest, HstResponse)} method.
      * 
      * @param requestContainerConfig the HstComponent container configuration

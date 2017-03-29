@@ -133,6 +133,8 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         }
 
         HstContainerConfig requestContainerConfig = context.getRequestContainerConfig();
+        // process prepareBeforeRender() of each component
+        processWindowsPrepareBeforeRender(requestContainerConfig, rootWindow, rootRenderingWindow, sortedComponentWindows, requestMap, responseMap);
         // process doBeforeRender() of each component as sorted order, parent first.
         processWindowsBeforeRender(requestContainerConfig, rootWindow, rootRenderingWindow, sortedComponentWindows, requestMap, responseMap);
 
@@ -348,6 +350,33 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         if (childWindowMap != null) {
             for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
                 sortComponentWindowsByHierarchy(entry.getValue(), sortedWindowList);
+            }
+        }
+    }
+
+    protected void processWindowsPrepareBeforeRender(
+            final HstContainerConfig requestContainerConfig,
+            final HstComponentWindow rootWindow,
+            final HstComponentWindow rootRenderingWindow,
+            final HstComponentWindow[] sortedComponentWindows,
+            final Map<HstComponentWindow, HstRequest> requestMap,
+            final Map<HstComponentWindow, HstResponse> responseMap)
+            throws ContainerException {
+
+        for (HstComponentWindow window : sortedComponentWindows) {
+            HstRequest request = requestMap.get(window);
+            HstResponse response = responseMap.get(window);
+
+            if (window.isVisible()) {
+                getComponentInvoker().invokePrepareBeforeRender(requestContainerConfig, request, response);
+            }
+
+            if (window.getResponseState().getRedirectLocation() != null) {
+                break;
+            }
+
+            if (rootWindow.getResponseState().getForwardPathInfo() != null) {
+                break;
             }
         }
     }
