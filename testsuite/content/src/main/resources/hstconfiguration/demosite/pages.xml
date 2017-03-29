@@ -59,14 +59,6 @@
           <sv:value>mashup/ol-content</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="table-content">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containercomponentreference</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-          <sv:value>mashup/table-content</sv:value>
-        </sv:property>
-      </sv:node>
       <sv:node sv:name="ul-content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:containercomponentreference</sv:value>
