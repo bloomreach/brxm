@@ -32,6 +32,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.LocaleUtils;
@@ -65,55 +66,55 @@ public final class StandardHippoAnalyzer extends Analyzer {
     private static Logger log = LoggerFactory.getLogger(StandardHippoAnalyzer.class);
 
     /**
-     * @deprecated
+     * @deprecated since 5.0 (cms 12.0). Locale specific stop words will not be provided in public API in the future.
      */
     @Deprecated
     public static final String[] CJK_STOP_WORDS;
 
     /**
-     * @deprecated
+     * @deprecated since 5.0 (cms 12.0). Locale specific stop words will not be provided in public API in the future.
      */
     @Deprecated
     public static final String[] SPANISH_STOP_WORDS;
 
     /**
-     * @deprecated
+     * @deprecated since 5.0 (cms 12.0). Locale specific stop words will not be provided in public API in the future.
      */
     @Deprecated
     public static final String[] DUTCH_STOP_SET;
 
     /**
-     * @deprecated
+     * @deprecated since 5.0 (cms 12.0). Locale specific stop words will not be provided in public API in the future.
      */
     @Deprecated
     public static final String[] GERMAN_STOP_WORDS;
 
     /**
-     * @deprecated
+     * @deprecated since 5.0 (cms 12.0). Locale specific stop words will not be provided in public API in the future.
      */
     @Deprecated
     public static final String[] FRENCH_STOP_WORDS;
 
     /**
-     * @deprecated
+     * @deprecated since 5.0 (cms 12.0). Locale specific stop words will not be provided in public API in the future.
      */
     @Deprecated
     public static final String[] BRAZILIAN_STOP_WORDS;
 
     /**
-     * @deprecated
+     * @deprecated since 5.0 (cms 12.0). Locale specific stop words will not be provided in public API in the future.
      */
     @Deprecated
     public static final String[] CZECH_STOP_WORDS;
 
     /**
-     * @deprecated
+     * @deprecated since 5.0 (cms 12.0). Locale specific stop words will not be provided in public API in the future.
      */
     @Deprecated
     public static final String[] ALL_STOP_WORDS;
 
     /**
-     * @deprecated
+     * @deprecated since 5.0 (cms 12.0). Locale specific stop words will not be provided in public API in the future.
      */
     @Deprecated
     public static final Set<String> DEFAULT_STOP_SET;
@@ -172,7 +173,7 @@ public final class StandardHippoAnalyzer extends Analyzer {
         return result;
     }
 
-    private static String [] getAvailableLocaleStringsFromStopWordsProperties() {
+    static String [] getAvailableLocaleStringsFromStopWordsProperties() {
         String [] localeStrings = null;
 
         InputStream is = null;
@@ -187,6 +188,9 @@ public final class StandardHippoAnalyzer extends Analyzer {
             localeStrings = StringUtils.split(props.getProperty(STOPWORDS_LOCALES), ", ");
         } catch (IOException e) {
             log.error("Failed to load stopwords properties.", e);
+        } finally {
+            IOUtils.closeQuietly(bis);
+            IOUtils.closeQuietly(is);
         }
 
         if (localeStrings == null) {

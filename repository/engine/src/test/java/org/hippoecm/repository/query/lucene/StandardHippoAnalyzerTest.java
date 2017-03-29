@@ -17,12 +17,16 @@ package org.hippoecm.repository.query.lucene;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 public class StandardHippoAnalyzerTest {
@@ -145,4 +149,37 @@ public class StandardHippoAnalyzerTest {
         assertEquals(EXP_DEFAULT_STOP_SET, StandardHippoAnalyzer.DEFAULT_STOP_SET);
     }
 
+    @Test
+    public void testAsciiCodesOnlyInStopWordsProperties() throws Exception {
+        String [] localeStrings = StandardHippoAnalyzer.getAvailableLocaleStringsFromStopWordsProperties();
+
+        String resourceName;
+        URL resource;
+        InputStream input;
+        char [] chars;
+        char ch;
+
+        for (String localeString : localeStrings) {
+            resourceName = StandardHippoAnalyzer.class.getSimpleName() + "_" + localeString + ".properties";
+            resource = StandardHippoAnalyzer.class.getResource(resourceName);
+
+            if (resource == null) {
+                fail("Cannot find stop words resource: " + resourceName);
+            }
+
+            input = resource.openStream();
+            chars = IOUtils.toCharArray(input, "UTF-8");
+
+            for (int i = 0; i < chars.length; i++) {
+                ch = chars[i];
+
+                if ((int) ch > 127) {
+                    fail("Non-Java-escaped character found. " + resource.toString()
+                            + ". Please correct it to use Java unicode encoding ('\\uXXXX') only.");
+                }
+            }
+
+            input.close();
+        }
+    }
 }
