@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -407,7 +407,6 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
         if (servletRequest.getAttribute(PAGE_INFO_CACHEABLE) != null) {
             return ((Boolean)servletRequest.getAttribute(PAGE_INFO_CACHEABLE)).booleanValue();
         }
-
         boolean requestCacheable = isRequestCacheable(context.getRequestContext(), context);
         servletRequest.setAttribute(PAGE_INFO_CACHEABLE, requestCacheable);
         return  requestCacheable;
@@ -418,6 +417,7 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
         String method = request.getMethod();
 
         if (!"GET".equals(method)) {
+            context.getPageCacheContext().markUncacheable("Only GET requests are cacheable. Skipping it because the request method is not a GET.");
             log.debug("Only GET requests are cacheable. Skipping it because the request method is '{}'.", method);
             return false;
         }
@@ -426,6 +426,7 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
         String actionWindowReferenceNamespace = baseURL.getActionWindowReferenceNamespace();
 
         if (actionWindowReferenceNamespace != null) {
+            context.getPageCacheContext().markUncacheable("Action URLs are not cacheable");
             log.debug("'{}' is not cacheable because the url is action url.", request);
             return false;
         }
@@ -433,17 +434,19 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
         String resourceWindowRef = baseURL.getResourceWindowReferenceNamespace();
 
         if (resourceWindowRef != null) {
+            context.getPageCacheContext().markUncacheable("Resource URLs are not cacheable");
             log.debug("'{}' is not cacheable because the url is resource url.", request);
             return false;
         }
 
         if (!context.getPageCacheContext().isCacheable()) {
-            log.debug("'{}' is not cacheable because PageCacheContext is marked to not cache this request: {} ",
+            log.debug("'{}' is not cacheable because PageCacheContext was already marked to not cache this request: {} ",
                     request, context.getPageCacheContext().getReasonsUncacheable());
             return false;
         }
 
         if (requestContext.isCmsRequest()) {
+            context.getPageCacheContext().markUncacheable("CMS requests are not cacheable");
             log.debug("'{}' is not cacheable because request is cms request", request);
             return false;
         }
@@ -451,6 +454,7 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
         Mount mount = requestContext.getResolvedMount().getMount();
 
         if (mount.isPreview()) {
+            context.getPageCacheContext().markUncacheable("Preview requests are not cacheable");
             log.debug("'{}' is not cacheable because request is preview request", request);
             return false;
         }
@@ -459,12 +463,16 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
 
         if (resolvedSitemapItem != null) {
             if (!isSiteMapItemAndComponentConfigCacheable(resolvedSitemapItem, context)) {
+                context.getPageCacheContext().markUncacheable("Sitemap or component configuration indicated request " +
+                        "is not cacheable");
                 return false;
             }
         } else if (!mount.isCacheable()) {
+            context.getPageCacheContext().markUncacheable("Mount indicates that request is not cacheable");
             log.debug("Request '{}' is not cacheable because mount '{}' is not cacheable.", request, mount.getName());
             return false;
         }
+
         return true;
     }
 
