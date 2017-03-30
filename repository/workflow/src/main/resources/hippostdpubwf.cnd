@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Hippo
+ * Copyright 2010-2017 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@
 - hippostdpubwf:publicationDate (Date)
 
 [hippostdpubwf:request] > hippo:request
-- hippostdpubwf:type (String) < 'rejected', 'publish', 'depublish', 'scheduledpublish', 'scheduleddepublish', 'delete', 'collection'
+- hippostdpubwf:type (String) < 'rejected', 'publish', 'depublish', 'scheduledpublish', 'scheduleddepublish', 'delete', 'collection', 'scheduledpublishdepublish'
 - hippostdpubwf:reason (String)
 - hippostdpubwf:reqdate (Date)
 - hippostdpubwf:username (String)
