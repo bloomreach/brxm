@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -90,21 +90,9 @@ public abstract class WorkflowImpl implements Remote, Workflow
      * {@inheritDoc}
      */
     public Map<String,Serializable> hints() throws WorkflowException {
-        return hints(this);
-    }
-
-    static Map<String,Serializable> hints(Workflow workflow) {
-        Map<String,Serializable> map = new TreeMap<String,Serializable>();
-        for(Class cls : workflow.getClass().getInterfaces()) {
-            if(Workflow.class.isAssignableFrom(cls)) {
-                for(Method method : cls.getDeclaredMethods()) {
-                    String methodName = method.getName();
-                    if(methodName.equals("hints")) {
-                        map.put(methodName, new Boolean(true));
-                    }
-                }
-            }
-        }
+        Map<String,Serializable> map = new TreeMap<>();
+        map.put("hints", new Boolean(true));
         return map;
     }
+
 }
