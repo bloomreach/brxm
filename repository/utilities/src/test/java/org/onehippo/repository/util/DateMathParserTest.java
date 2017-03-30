@@ -15,66 +15,98 @@
  */
 package org.onehippo.repository.util;
 
+import org.apache.commons.lang.time.DurationFormatUtils;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 
-public class DateMathParserTest  {
+public class DateMathParserTest {
+
+    private static final Logger log = LoggerFactory.getLogger(DateMathParserTest.class);
 
 
     private static Calendar getNow() {
-        Calendar startCal = Calendar.getInstance();
-        startCal.setTime(new Date());
-        return startCal;
+        return Calendar.getInstance();
     }
 
     @Test
     public void testParseMathAddDays() throws ParseException {
-        try {
-            assertExpectedDuration(7, "+7D");
-        }
-        catch (IllegalStateException ex) {
-            fail();
-        }
+        assertExpectedDuration(Calendar.getInstance(), 7, "+7D");
+    }
+
+    /**
+     * Test the DateMathParser around daylight saving time in CET timezone
+     *
+     * @throws ParseException
+     */
+    @Test
+    public void testParseMathDLS() throws ParseException {
+        // March 25th 2017 Day Light saving time has started
+        // October 29th  2017 Day Light saving time has started
+        final GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("CET"));
+        cal.set(2017, Calendar.MARCH, 30);
+        assertExpectedDuration(cal, -7, "-7D");
+        cal.set(2017, Calendar.MARCH, 30);
+        assertExpectedDuration(cal, +7, "+7D");
+        cal.set(2017, Calendar.MARCH, 30);
+        assertExpectedDuration(cal, +7, "+7D");
+        cal.set(2017, Calendar.MARCH, 30);
+        assertExpectedDuration(cal, -7, "-7D");
+        cal.set(2017, Calendar.MARCH, 30);
     }
 
     @Test
     public void testParseMathSubtractDays() throws ParseException {
-        try {
-            assertExpectedDuration(-7, "-7D");
-        }
-        catch (IllegalStateException ex) {
-            fail();
-        }
+        assertExpectedDuration(Calendar.getInstance(), -7, "-7D");
     }
 
-    private void assertExpectedDuration(int expectedDuration, String math) throws ParseException {
-        final Calendar startCalendar = getNow();
+    private void assertExpectedDuration(final Calendar startCalendar, int expectedDuration, String math) throws ParseException {
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy hh:mm");
         final Date startDate = startCalendar.getTime();
+        log.debug("startDate:{}", startDate);
+        final Calendar endCalendar = (Calendar) startCalendar.clone();
+        endCalendar.add(Calendar.DAY_OF_MONTH, expectedDuration);
+        final int startTimeOffset = getOffset(startCalendar);
+        log.debug("startTimeOffset[h]:{}", startTimeOffset / (60 * 60 * 1000));
+        final int endTimeOffset = getOffset(endCalendar);
+        log.debug("endTimeOffset[h]:{}", startTimeOffset / (60 * 60 * 1000));
+        log.debug("expected endDate:{}", sdf.format(endCalendar.getTime()));
         final Date endDate = DateMathParser.parseMath(startCalendar, math).getTime();
+        log.debug("actual endDate:{}", sdf.format(endDate));
         assertNotNull(endDate);
         final long startTimeInMillis = startDate.getTime();
         final long endTimeInMillis = endDate.getTime();
         final long durationInMillis = endTimeInMillis - startTimeInMillis;
-
-
-        final Calendar endCalendar = (Calendar) startCalendar.clone();
-        endCalendar.add(Calendar.DATE, expectedDuration);
-        final int endTimeOffset = getOffset(endCalendar);
-        final int startTimeOffset = getOffset(startCalendar);
-        final long utcEndTimeInMillis = endTimeInMillis - endTimeOffset;
         final long utcStartTimeInMillis = startTimeInMillis - startTimeOffset;
+        log.debug("utc startDate:{}", new Date(utcStartTimeInMillis));
+        final long utcEndTimeInMillis = startTimeInMillis + (expectedDuration * 24 * 60 * 60 * 1000) - endTimeOffset;
+        log.debug("utc endDate:{}", new Date(utcEndTimeInMillis));
         final long utcDurationInMillis = utcEndTimeInMillis - utcStartTimeInMillis;
 
-        assertEquals(utcDurationInMillis, durationInMillis);
+
+        if (startTimeOffset != endTimeOffset) {
+            log.debug("{} and {} have a diffent timezones offset", sdf.format(startDate), sdf.format(endDate));
+        }
+
+        final String expected = DurationFormatUtils.formatDurationISO(utcDurationInMillis);
+        final String actual = DurationFormatUtils.formatDurationISO(durationInMillis);
+        assertEquals(expected, actual);
+
+        log.debug("Expected duration:{}, actual duration:{}", expected, actual);
     }
 
-    private int getOffset(Calendar nextWeek) {
-        return nextWeek.getTimeZone().getOffset(nextWeek.getTimeInMillis());
+
+    private int getOffset(Calendar cal) {
+        return cal.getTimeZone().getOffset(cal.getTimeInMillis());
     }
 
     @Test
@@ -88,12 +120,11 @@ public class DateMathParserTest  {
             String endPeriod = new java.text.SimpleDateFormat("yyyy").format(endDate);
             long diff = Integer.valueOf(endPeriod) - Integer.valueOf(startPeriod);
             assertTrue(diff == 7);
-        }
-        catch (IllegalStateException ex) {
+        } catch (IllegalStateException ex) {
             fail();
         }
     }
-    
+
     @Test
     public void testParseMathRoundToStartOfDay() throws ParseException {
         try {
@@ -105,13 +136,12 @@ public class DateMathParserTest  {
             String modifiedPeriod = startPeriod + "T00:00:00.000";
             String endPeriod = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(endDate);
             assertTrue(endPeriod.equals(modifiedPeriod));
-            
-        }
-        catch (IllegalStateException ex) {
+
+        } catch (IllegalStateException ex) {
             fail();
         }
     }
-    
+
     @Test
     public void testParseMathMultipleFunctions() throws ParseException {
         try {
@@ -119,15 +149,14 @@ public class DateMathParserTest  {
             Date startDate = now.getTime();
             Date endDate = DateMathParser.parseMath(now, "+5Y-60M").getTime();
             assertNotNull(endDate);
-            long startTime = startDate.getTime(); 
+            long startTime = startDate.getTime();
             long endTime = endDate.getTime();
             assertTrue((startTime == endTime));
-        }
-        catch (IllegalStateException ex) {
+        } catch (IllegalStateException ex) {
             fail();
         }
     }
-    
+
     @Test
     public void testParseMathMultipleFunctionsWithRounding() throws ParseException {
         try {
@@ -140,8 +169,7 @@ public class DateMathParserTest  {
             String modifiedPeriod = Integer.toString(newYear) + "-01-01T00:00:00.000";
             String endPeriod = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(endDate);
             assertTrue(endPeriod.equals(modifiedPeriod));
-        }
-        catch (IllegalStateException ex) {
+        } catch (IllegalStateException ex) {
             fail();
         }
     }
