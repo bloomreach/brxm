@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,17 +42,29 @@ public class DocumentHandle implements SCXMLWorkflowData {
     private final Node handle;
     private Map<String, DocumentVariant> documents = new HashMap<>();
     private Map<String, Request> requests = new HashMap<>();
-    private Boolean requestPending = false;
+    private boolean requestPending = false;
     private boolean initialized;
 
     public DocumentHandle(Node handle) throws WorkflowException {
         this.handle = handle;
     }
 
+    /**
+     * Provide hook for extension
+     * @param node
+     * @return
+     * @throws RepositoryException
+     */
     protected DocumentVariant createDocumentVariant(Node node) throws RepositoryException {
         return new DocumentVariant(node);
     }
 
+    /**
+     * Provide hook for extension
+     * @param node
+     * @return
+     * @throws RepositoryException
+     */
     protected Request createRequest(Node node) throws RepositoryException {
         return Request.createRequest(node);
     }
@@ -66,37 +78,64 @@ public class DocumentHandle implements SCXMLWorkflowData {
         if (initialized) {
             reset();
         }
-        initialized = true;
-
         try {
-            for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
-                DocumentVariant doc = createDocumentVariant(variant);
-                if (documents.containsKey(doc.getState())) {
-                    log.warn("Document at path {} has multiple variants with state {}. Variant with identifier {} ignored.",
-                            handle.getPath(), doc.getState(), variant.getIdentifier());
-                }
-                documents.put(doc.getState(), doc);
-            }
+            initializeDocumentVariants();
+            initializeRequestStatus();
+            initialized = true;
+        }
+        catch (RepositoryException e) {
+            reset();
+            throw new WorkflowException("DocumentHandle initialization failed", e);
+        }
+    }
 
-            for (Node requestNode : new NodeIterable(handle.getNodes(HippoStdPubWfNodeType.HIPPO_REQUEST))) {
-                Request request = createRequest(requestNode);
-                if (request != null) {
-                    if (request.isWorkflowRequest()) {
-                        requests.put(request.getIdentity(), request);
-                        if (!HippoStdPubWfNodeType.REJECTED.equals(((WorkflowRequest)request).getType())) {
-                            requestPending = true;
-                        }
-                    }
-                    else if (request.isScheduledRequest()) {
-                        requests.put(request.getIdentity(), request);
+    /**
+     * Provide hook for extension
+     *
+     * This implementation calls {@link #createDocumentVariant(Node)}
+     * @throws RepositoryException
+     */
+    protected void initializeDocumentVariants() throws RepositoryException {
+        for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
+            DocumentVariant doc = createDocumentVariant(variant);
+            if (documents.containsKey(doc.getState())) {
+                log.warn("Document at path {} has multiple variants with state {}. Variant with identifier {} ignored.",
+                        handle.getPath(), doc.getState(), variant.getIdentifier());
+            }
+            documents.put(doc.getState(), doc);
+        }
+    }
+
+
+    /**
+     * Provide hook for extension
+     *
+     * This implementation calls {@link #createRequest(Node)}
+     * @throws RepositoryException
+     */
+    protected void initializeRequestStatus() throws RepositoryException {
+        for (Node requestNode : new NodeIterable(handle.getNodes(HippoStdPubWfNodeType.HIPPO_REQUEST))) {
+            Request request = createRequest(requestNode);
+            if (request != null) {
+                if (request.isWorkflowRequest()) {
+                    requests.put(request.getIdentity(), request);
+                    if (!HippoStdPubWfNodeType.REJECTED.equals(((WorkflowRequest)request).getType())) {
                         requestPending = true;
                     }
                 }
+                else if (request.isScheduledRequest()) {
+                    requests.put(request.getIdentity(), request);
+                    requestPending = true;
+                }
             }
         }
-        catch (RepositoryException e) {
-            throw new WorkflowException("DocumentHandle initialization failed", e);
-        }
+    }
+
+    /**
+     * Provide hook for extension
+     */
+    public final void setRequestPending(boolean requestPending) {
+        this.requestPending = requestPending;
     }
 
     @Override
