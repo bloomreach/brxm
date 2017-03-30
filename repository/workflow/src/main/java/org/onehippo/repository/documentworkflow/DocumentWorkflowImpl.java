@@ -88,17 +88,17 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         return new DocumentHandle(node);
     }
 
-    SCXMLWorkflowExecutor getWorkflowExecutor() {
+    protected SCXMLWorkflowExecutor getWorkflowExecutor() {
         return workflowExecutor;
     }
 
-    protected Map<String, Object> createPayload(String var, Object val) {
+    protected final Map<String, Object> createPayload(String var, Object val) {
         HashMap<String, Object> map = new HashMap<>();
         map.put(var, val);
         return map;
     }
 
-    protected Map<String, Object> createPayload(String var1, Object val1, String var2, Object val2) {
+    protected final Map<String, Object> createPayload(String var1, Object val1, String var2, Object val2) {
         HashMap<String, Object> map = new HashMap<>();
         map.put(var1, val1);
         map.put(var2, val2);
@@ -226,7 +226,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     @Override
-    public void requestPublicationDepublication(final Date publicationDate, final Date unpublicationDate) throws WorkflowException {
+    public void requestPublicationDepublication(final Date publicationDate, final Date unpublicationDate) throws WorkflowException, RepositoryException, RemoteException {
         throw new WorkflowException("unsupported");
     }
 
@@ -347,5 +347,19 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public Document retrieveVersion(final Calendar historic) throws WorkflowException, RepositoryException {
         workflowExecutor.start();
         return (Document)workflowExecutor.triggerAction("retrieveVersion", createPayload("date", historic));
+    }
+
+    /**
+     * Triggers the action with supplied payload. {@link SCXMLWorkflowExecutor#triggerAction(String)}
+     *
+     * @param action
+     * @param payload
+     * @return
+     * @throws WorkflowException
+     * @throws RepositoryException
+     */
+    protected Object transition(String action, Map<String, Object> payload) throws WorkflowException, RepositoryException {
+        workflowExecutor.start();
+        return workflowExecutor.triggerAction(action, payload);
     }
 }
