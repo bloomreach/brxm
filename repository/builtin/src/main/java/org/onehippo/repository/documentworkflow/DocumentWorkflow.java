@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -160,8 +160,28 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *                             repository
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
+     * @deprecated Deprecated since 5.0.0, use {@link DocumentWorkflow#requestPublicationDepublication(Date, Date)}
      */
+    @Deprecated
     public void requestPublication(Date publicationDate, Date depublicationDate)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+
+    /**
+     * Request this document to be published at the given
+     * publication date and to be depublished again at given depublication date.
+     * <p>
+     * Note: this is currently <em>NOT</em> implemented nor supported in the default implementation.
+     * </p>
+     *
+     * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
+     * @throws MappingException    indicates that the work-flow call failed because of configuration problems
+     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
+     *                             repository
+     * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
+     *                             repository
+     */
+    public void requestPublicationDepublication(Date publicationDate, Date depublicationDate)
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
 
