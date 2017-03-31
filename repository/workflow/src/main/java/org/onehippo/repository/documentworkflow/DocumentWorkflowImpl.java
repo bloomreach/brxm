@@ -295,10 +295,20 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     @Override
+    public void cancelRequest(String requestIdentifier, String reason) throws WorkflowException {
+        cancelRequest(requestIdentifier);
+    }
+
+    @Override
     public void acceptRequest(String requestIdentifier) throws WorkflowException {
         workflowExecutor.start();
         workflowExecutor.triggerAction("acceptRequest", getRequestActionActions(requestIdentifier, "acceptRequest"),
                 createPayload("request", workflowExecutor.getData().getRequests().get(requestIdentifier)));
+    }
+
+    @Override
+    public void acceptRequest(String requestIdentifier, String reason) throws WorkflowException{
+        acceptRequest(requestIdentifier);
     }
 
     @Override
@@ -358,7 +368,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
      * @throws WorkflowException
      * @throws RepositoryException
      */
-    protected Object transition(String action, Map<String, Object> payload) throws WorkflowException, RepositoryException {
+    protected Object transition(String action, Map<String, Object> payload) throws WorkflowException{
         workflowExecutor.start();
         return workflowExecutor.triggerAction(action, payload);
     }

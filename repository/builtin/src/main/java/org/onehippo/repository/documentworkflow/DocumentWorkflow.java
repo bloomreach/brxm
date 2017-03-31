@@ -338,6 +338,20 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
             throws WorkflowException, RepositoryException, RemoteException;
 
     /**
+     * Delete a specific outstanding, rejected or scheduled request.
+     *
+     * @param requestIdentifier the request node identifier
+     *
+     * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
+     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
+     *                             repository
+     * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
+     *                             repository
+     */
+    void cancelRequest(String requestIdentifier, String reason)
+            throws WorkflowException, RepositoryException, RemoteException;
+
+    /**
      * Approve and execute or schedule a specific request
      *
      * @param requestIdentifier the request node identifier
@@ -349,6 +363,20 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      *                             repository
      */
     void acceptRequest(String requestIdentifier)
+            throws WorkflowException, RepositoryException, RemoteException;
+
+    /**
+     * Approve and execute or schedule a specific request
+     *
+     * @param requestIdentifier the request node identifier
+     *
+     * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
+     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
+     *                             repository
+     * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
+     *                             repository
+     */
+    void acceptRequest(String requestIdentifier, String reason)
             throws WorkflowException, RepositoryException, RemoteException;
 
     /**
