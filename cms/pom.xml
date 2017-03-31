@@ -266,7 +266,7 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-api</artifactId>
-        <version>${patched.jackrabbit.version}</version>
+        <version>${jackrabbit.version}</version>
       </dependency>
 
       <dependency>
