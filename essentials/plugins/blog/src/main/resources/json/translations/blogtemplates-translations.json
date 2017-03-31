@@ -7,9 +7,9 @@
       "new-blogauthor-document": "new blog author"
     },
     "nl": {
-      "new-blog-folder": "nieuwe banner map",
-      "new-blogauthor-folder": "nieuwe blog auteur map",
-      "new-blog-document": "nieuwe blog post map",
+      "new-blog-folder": "nieuwe blog posts map",
+      "new-blogauthor-folder": "nieuwe blog auteurs map",
+      "new-blog-document": "nieuwe blog post",
       "new-blogauthor-document": "nieuwe blog auteur"
     },
     "de": {
