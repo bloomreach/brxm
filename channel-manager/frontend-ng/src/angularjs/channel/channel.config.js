@@ -25,6 +25,7 @@ function config($stateProvider) {
     template,
     params: {
       initialRenderPath: '',
+      channelId: '',
     },
   });
 }

@@ -22,6 +22,7 @@
     "angular-messages": "1.5.11",
     "angular-translate": "2.15.1",
     "angular-translate-loader-static-files": "2.15.1",
+    "angular-ui-router": "1.0.0-rc.1",
     "angular-ui-tree": "2.16.0",
     "dragula": "3.7.1",
     "es6-shim": "0.35.1",
