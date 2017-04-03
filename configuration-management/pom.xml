@@ -39,6 +39,7 @@
     <hippo.testutils.version>1.0.0-SNAPSHOT</hippo.testutils.version>
     <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.jackrabbit.version>2.14.0-h1-SNAPSHOT</hippo.jackrabbit.version>
     <snakeyaml.version>1.18</snakeyaml.version>
     <commons-lang3.version>3.5</commons-lang3.version>
     <commons-io.version>2.5</commons-io.version>
@@ -144,22 +145,22 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-        <version>${patched.jackrabbit.version}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi-commons</artifactId>
-        <version>${patched.jackrabbit.version}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
     </dependencies>
 
