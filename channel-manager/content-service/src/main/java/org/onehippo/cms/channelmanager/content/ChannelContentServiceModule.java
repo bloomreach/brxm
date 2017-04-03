@@ -29,13 +29,13 @@ import org.onehippo.repository.jaxrs.RepositoryJaxrsService;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 
 /**
- * ContentServiceModule registers and manages a JAX-RS endpoint of the repository module.
+ * ChannelContentServiceModule registers and manages a JAX-RS endpoint of the repository module.
  *
  * That endpoint represents the REST resource {@link ContentResource} and the resource's
  * root address (configurable, but defaulting to "content"), and it registers the
  * {@link ManagedUserSessionInvoker} to take care of authentication and authorization.
  */
-public class ContentServiceModule extends AbstractReconfigurableDaemonModule {
+public class ChannelContentServiceModule extends AbstractReconfigurableDaemonModule {
 
     private static final String ENDPOINT_ADDRESS = "jaxrs.endpoint.address";
 
@@ -59,7 +59,7 @@ public class ContentServiceModule extends AbstractReconfigurableDaemonModule {
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
         if (endpointAddress == null) {
-            throw new IllegalStateException("ContentServiceModule requires a hippo:moduleconfig");
+            throw new IllegalStateException("ChannelContentServiceModule requires a hippo:moduleconfig");
         }
         final ManagedUserSessionInvoker managedUserSessionInvoker = new ManagedUserSessionInvoker(session);
         jaxrsEndpoint = new CXFRepositoryJaxrsEndpoint(endpointAddress)
