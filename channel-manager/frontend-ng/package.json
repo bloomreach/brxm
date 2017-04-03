@@ -23,7 +23,7 @@
     "angular-translate": "2.15.1",
     "angular-translate-loader-static-files": "2.15.1",
     "angular-ui-router": "1.0.0-rc.1",
-    "angular-ui-tree": "2.16.0",
+    "angular-ui-tree": "2.22.5",
     "dragula": "3.7.2",
     "es6-shim": "0.35.3",
     "jquery": "3.2.1",
