@@ -17,7 +17,7 @@
 <md-menu>
   <md-button aria-label="{{ 'TOOLBAR_BUTTON_PAGE' | translate }}"
              class="qa-button-page"
-             ng-click="pageActions.onOpenMenu(); $mdOpenMenu($event)">
+             ng-click="pageActions.onOpenMenu(); $mdMenu.open($event)">
     {{ 'TOOLBAR_BUTTON_PAGE' | translate }}
   </md-button>
   <md-menu-content width="4" class="qa-page-menu">
