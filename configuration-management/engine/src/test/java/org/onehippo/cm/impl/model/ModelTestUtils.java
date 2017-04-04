@@ -19,6 +19,7 @@ package org.onehippo.cm.impl.model;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
@@ -52,6 +53,10 @@ public class ModelTestUtils {
             final String content = configuration.getName() + "/" + project.getName() + "/" + module.getName() + "/"
                     + source.getPath() + "/" + resourcePath;
             return IOUtils.toInputStream(content, StandardCharsets.UTF_8);
+        }
+        @Override
+        public URL getModuleRoot() {
+            throw new UnsupportedOperationException();
         }
     };
 

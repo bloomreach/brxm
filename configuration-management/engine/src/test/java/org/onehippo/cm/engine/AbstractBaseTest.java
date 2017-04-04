@@ -53,9 +53,12 @@ public abstract class AbstractBaseTest {
         public boolean hasResource(final Source source, final String resourcePath) {
             return resourcePath.equals("resource.txt");
         }
-
         @Override
         public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public URL getModuleRoot() {
             throw new UnsupportedOperationException();
         }
     };

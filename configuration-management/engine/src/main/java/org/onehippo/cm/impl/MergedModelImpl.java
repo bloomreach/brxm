@@ -24,16 +24,20 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
+import org.onehippo.cm.api.model.WebFileBundleDefinition;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.ModelUtils;
 import org.onehippo.cm.impl.model.NamespaceDefinitionImpl;
 import org.onehippo.cm.impl.model.NodeTypeDefinitionImpl;
+import org.onehippo.cm.impl.model.WebFileBundleDefinitionImpl;
 
 public class MergedModelImpl implements MergedModel {
 
+    private List<Configuration> sortedConfigurations;
     private final List<NamespaceDefinition> namespaceDefinitions = new ArrayList<>();
     private final List<NodeTypeDefinition> nodeTypeDefinitions = new ArrayList<>();
     private ConfigurationNode configurationRootNode;
-    private List<Configuration> sortedConfigurations;
+    private final List<WebFileBundleDefinition> webFileBundleDefinitions = new ArrayList<>();
 
     @Override
     public List<Configuration> getSortedConfigurations() {
@@ -55,6 +59,11 @@ public class MergedModelImpl implements MergedModel {
         return configurationRootNode;
     }
 
+    @Override
+    public List<WebFileBundleDefinition> getWebFileBundleDefinitions() {
+        return webFileBundleDefinitions;
+    }
+
     public void setSortedConfigurations(final List<ConfigurationImpl> sortedConfigurations) {
         this.sortedConfigurations = new ArrayList<>(sortedConfigurations);
     }
@@ -69,6 +78,26 @@ public class MergedModelImpl implements MergedModel {
 
     public void setConfigurationRootNode(final ConfigurationNode configurationRootNode) {
         this.configurationRootNode = configurationRootNode;
+    }
+
+    public void addWebFileBundleDefinitions(final List<WebFileBundleDefinitionImpl> definitions) {
+        for (WebFileBundleDefinitionImpl definition : definitions) {
+            ensureUniqueBundleName(definition);
+        }
+        webFileBundleDefinitions.addAll(definitions);
+    }
+
+    private void ensureUniqueBundleName(final WebFileBundleDefinitionImpl newDefinition) {
+        for (WebFileBundleDefinition existingDefinition : webFileBundleDefinitions) {
+            if (existingDefinition.getName().equals(newDefinition.getName())) {
+                final String msg = String.format(
+                        "Duplicate web file bundle with name '%s' found in source files '%s' and '%s'.",
+                        newDefinition.getName(),
+                        ModelUtils.formatDefinition(existingDefinition),
+                        ModelUtils.formatDefinition(newDefinition));
+                throw new IllegalStateException(msg);
+            }
+        }
     }
 
 }

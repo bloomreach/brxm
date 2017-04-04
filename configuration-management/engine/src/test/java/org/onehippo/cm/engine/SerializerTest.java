@@ -17,6 +17,7 @@ package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -118,9 +119,13 @@ public class SerializerTest extends AbstractBaseTest {
                             fail();
                             return false;
                         }
-
                         @Override
                         public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
+                            fail();
+                            return null;
+                        }
+                        @Override
+                        public URL getModuleRoot() {
                             fail();
                             return null;
                         }

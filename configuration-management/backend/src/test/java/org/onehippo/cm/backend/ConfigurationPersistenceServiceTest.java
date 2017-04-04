@@ -17,6 +17,7 @@ package org.onehippo.cm.backend;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.junit.Test;
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Definition;
+import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.testutils.jcr.event.EventCollector;
 import org.onehippo.testutils.jcr.event.EventPojo;
@@ -133,7 +135,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
             applyDefinitions(additionalPropertyConfiguration);
         } catch (Exception e) {
             assertEquals(
-                    "Failed to process property '/test/node/test:property' defined through"
+                    "Failed to process property '/test/node/test:property' defined in"
                     + " [test-configuration/test-project/test-module-0 [string]]: no matching property definition"
                     + " found for {http://www.onehippo.org/test/nt/1.0}property",
                     e.getMessage());
@@ -785,7 +787,9 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         final MergedModel mergedModel = mergedModelBuilder.build();
 
         final ConfigurationPersistenceService helper = new ConfigurationPersistenceService(session, resourceInputProviders);
-        helper.apply(mergedModel);
+        final EnumSet allExceptWebFileBundles = EnumSet.allOf(DefinitionType.class);
+        allExceptWebFileBundles.remove(DefinitionType.WEBFILEBUNDLE);
+        helper.apply(mergedModel, allExceptWebFileBundles);
 
         session.save();
 

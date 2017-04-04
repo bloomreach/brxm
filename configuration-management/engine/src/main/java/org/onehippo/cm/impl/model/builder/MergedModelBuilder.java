@@ -55,6 +55,7 @@ public class MergedModelBuilder {
                             mergedModel.addNamespaceDefinitions(module.getNamespaceDefinitions());
                             mergedModel.addNodeTypeDefinitions(module.getNodeTypeDefinitions());
                             module.getContentDefinitions().forEach(configurationTreeBuilder::push);
+                            mergedModel.addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
                         })
                 )
         );

@@ -31,6 +31,7 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.WebFileBundleDefinition;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
@@ -405,7 +406,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
             builder.push(c1);
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
-            assertEquals("Duplicate content root paths '/a/b' in module 'm1'.", e.getMessage());
+            assertEquals("Duplicate content root paths '/a/b' in module 'm1' in source files 'c1/p1/m1 [string]' and 'c1/p1/m1 [builder/definition-sorter.yaml]'.", e.getMessage());
         }
     }
 
@@ -427,7 +428,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
             builder.push(c1);
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
-            assertEquals("CNDs are specified in multiple sources of a module: c1/p1/m1 [string] and c1/p1/m1 [builder/definition-sorter.yaml]. For proper ordering, they must be specified in a single source.", e.getMessage());
+            assertEquals("CNDs are specified in multiple sources of a module: 'c1/p1/m1 [string]' and 'c1/p1/m1 [builder/definition-sorter.yaml]'. For proper ordering, they must be specified in a single source.", e.getMessage());
         }
     }
 
@@ -448,4 +449,77 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         String nodeTypes = model.getNodeTypeDefinitions().stream().map(NodeTypeDefinition::getValue).collect(Collectors.toList()).toString();
         assertEquals("[dummy CND content, alphabetically earlier dummy CND]", nodeTypes);
     }
+
+    @Test
+    public void assert_insertion_order_for_webfile_bundles() throws Exception {
+        final ConfigurationImpl c1 = new ConfigurationImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        final String yaml = "definitions:\n"
+                + "  webfilebundle:\n"
+                + "  - dummy\n"
+                + "  - another";
+
+        loadYAMLString(yaml, m1);
+
+        final MergedModel model = new MergedModelBuilder().push(c1).build();
+
+        final String webFileBundles = model.getWebFileBundleDefinitions().stream()
+                .map(WebFileBundleDefinition::getName).collect(Collectors.toList()).toString();
+        assertEquals("[dummy, another]", webFileBundles);
+    }
+
+    @Test
+    public void assert_insertion_order_for_webfile_bundles_over_modules() throws Exception {
+        final ConfigurationImpl c1 = new ConfigurationImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        final String yaml1 = "definitions:\n"
+                + "  webfilebundle:\n"
+                + "  - dummy\n";
+
+        loadYAMLString(yaml1, m1);
+
+        final ConfigurationImpl c2 = new ConfigurationImpl("c2");
+        final ModuleImpl m2 = c2.addProject("p2").addModule("m2");
+
+        final String yaml2 = "definitions:\n"
+                + "  webfilebundle:\n"
+                + "  - another";
+
+        loadYAMLString(yaml2, m2);
+
+        final MergedModel model = new MergedModelBuilder().push(c1).push(c2).build();
+
+        final String webFileBundles = model.getWebFileBundleDefinitions().stream()
+                .map(WebFileBundleDefinition::getName).collect(Collectors.toList()).toString();
+        assertEquals("[dummy, another]", webFileBundles);
+    }
+
+    @Test
+    public void reject_identical_names_for_webfile_bundles_over_modules() throws Exception {
+        final ConfigurationImpl c1 = new ConfigurationImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        final String yaml = "definitions:\n"
+                + "  webfilebundle:\n"
+                + "  - name";
+
+        loadYAMLString(yaml, m1);
+
+        final ConfigurationImpl c2 = new ConfigurationImpl("c2");
+        final ModuleImpl m2 = c2.addProject("p2").addModule("m2");
+
+        loadYAMLString(yaml, m2);
+
+        final MergedModelBuilder builder = new MergedModelBuilder().push(c1).push(c2);
+        try {
+            builder.build();
+            fail("Expect IllegalStateException");
+        } catch (IllegalStateException e) {
+            assertEquals("Duplicate web file bundle with name 'name' found in source files 'c1/p1/m1 [string]' and 'c2/p2/m2 [string]'.",
+                    e.getMessage());
+        }
+    }
+
 }

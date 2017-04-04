@@ -17,10 +17,12 @@ package org.onehippo.cm.api;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import org.onehippo.cm.api.model.Source;
 
 public interface ResourceInputProvider {
     boolean hasResource(final Source source, final String resourcePath);
     InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException;
+    URL getModuleRoot();
 }

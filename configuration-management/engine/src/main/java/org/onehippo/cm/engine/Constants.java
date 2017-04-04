@@ -25,6 +25,7 @@ public final class Constants {
     public static final String PROJECTS_KEY = "projects";
     public static final String CONFIGURATIONS_KEY = "configurations";
     public static final String DEFINITIONS = "definitions";
+    public static final String WEBFILEBUNDLE = "webfilebundle";
     public static final String META_KEY_PREFIX = ".meta:";
     public static final String META_IGNORE_REORDERED_CHILDREN = META_KEY_PREFIX + "ignore-reordered-children";
 

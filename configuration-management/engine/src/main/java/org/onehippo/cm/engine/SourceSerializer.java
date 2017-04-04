@@ -33,6 +33,7 @@ import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.api.model.WebFileBundleDefinition;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -43,7 +44,9 @@ import org.yaml.snakeyaml.reader.StreamReader;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.engine.Constants.DEFINITIONS;
 import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
+import static org.onehippo.cm.engine.Constants.WEBFILEBUNDLE;
 
 public class SourceSerializer extends AbstractBaseSerializer {
 
@@ -67,6 +70,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         final List<NodeTuple> contentDefinitionTuples = new ArrayList<>();
         final List<Node> namespaceDefinitionNodes = new ArrayList<>();
         final List<Node> nodeTypeDefinitionNodes = new ArrayList<>();
+        final List<Node> webFilesDefinitionNodes = new ArrayList<>();
 
         for (Definition definition : source.getDefinitions()) {
             switch (definition.getType()) {
@@ -81,6 +85,9 @@ public class SourceSerializer extends AbstractBaseSerializer {
                     break;
                 case NODETYPE:
                     nodeTypeDefinitionNodes.add(representNodetypeDefinition((NodeTypeDefinition) definition, resourceConsumer));
+                    break;
+                case WEBFILEBUNDLE:
+                    webFilesDefinitionNodes.add(representWebFilesDefinition((WebFileBundleDefinition) definition));
                     break;
                 default:
                     throw new IllegalArgumentException("Cannot serialize definition, unknown type: " + definition.getType());
@@ -100,9 +107,12 @@ public class SourceSerializer extends AbstractBaseSerializer {
         if (contentDefinitionTuples.size() > 0) {
             definitionNodes.add(createStrOptionalSequenceTuple("content", contentDefinitionTuples));
         }
+        if (webFilesDefinitionNodes.size() > 0) {
+            definitionNodes.add(createStrSeqTuple(WEBFILEBUNDLE, webFilesDefinitionNodes));
+        }
 
         final List<NodeTuple> sourceTuples = new ArrayList<>();
-        sourceTuples.add(createStrMapTuple("definitions", definitionNodes));
+        sourceTuples.add(createStrMapTuple(DEFINITIONS, definitionNodes));
         return new MappingNode(Tag.MAP, sourceTuples, false);
     }
 
@@ -305,6 +315,10 @@ public class SourceSerializer extends AbstractBaseSerializer {
         } else {
             return createStrScalar(definition.getValue(), '|');
         }
+    }
+
+    private Node representWebFilesDefinition(final WebFileBundleDefinition definition) {
+        return createStrScalar(definition.getName());
     }
 
 }

@@ -27,6 +27,7 @@ import java.util.UUID;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;
@@ -38,6 +39,7 @@ import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
 import org.onehippo.cm.impl.model.ValueImpl;
+import org.onehippo.cm.impl.model.WebFileBundleDefinitionImpl;
 import org.yaml.snakeyaml.constructor.Construct;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -51,6 +53,7 @@ import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.engine.Constants.DEFINITIONS;
 import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
+import static org.onehippo.cm.engine.Constants.WEBFILEBUNDLE;
 
 public class SourceParser extends AbstractBaseParser {
 
@@ -108,7 +111,9 @@ public class SourceParser extends AbstractBaseParser {
         final Map<String, Node> sourceMap = asMapping(src, new String[]{DEFINITIONS}, null);
         final SourceImpl source = parent.addSource(path);
 
-        final Map<String, Node> definitionsMap = asMapping(sourceMap.get(DEFINITIONS), null, new String[]{"namespace","cnd","config","content"});
+        final Map<String, Node> definitionsMap = asMapping(sourceMap.get(DEFINITIONS), null,
+                new String[]{"namespace", "cnd", "config", "content", WEBFILEBUNDLE});
+
         for (String definitionName : definitionsMap.keySet()) {
             final Node definitionNode = definitionsMap.get(definitionName);
             switch (definitionName) {
@@ -123,6 +128,9 @@ public class SourceParser extends AbstractBaseParser {
                     break;
                 case "content":
                     constructContentDefinitions(definitionNode, source);
+                    break;
+                case WEBFILEBUNDLE:
+                    constructWebFileBundleDefinition(definitionNode, source);
                     break;
             }
         }
@@ -643,6 +651,22 @@ public class SourceParser extends AbstractBaseParser {
             return ValueType.valueOf(type.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new ParserException("Unrecognized value type: '" + type + "'", node);
+        }
+    }
+
+    private void constructWebFileBundleDefinition(final Node definitionNode, final SourceImpl source) throws ParserException {
+        final List<Node> nodes = asSequence(definitionNode);
+        for (Node node : nodes) {
+            final String name = asStringScalar(node);
+            for (Definition definition : source.getModifiableDefinitions()) {
+                if (definition instanceof WebFileBundleDefinitionImpl) {
+                    final WebFileBundleDefinitionImpl existingDefinition = (WebFileBundleDefinitionImpl) definition;
+                    if (existingDefinition.getName().equals(name)) {
+                        throw new ParserException("Duplicate web file bundle name '" + name + "'", node);
+                    }
+                }
+            }
+            source.addWebFileBundleDefinition(name);
         }
     }
 

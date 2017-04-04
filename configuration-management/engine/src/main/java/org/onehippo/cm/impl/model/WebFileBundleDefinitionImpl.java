@@ -13,22 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cm.api;
 
-import java.util.List;
+package org.onehippo.cm.impl.model;
 
-import org.onehippo.cm.api.model.Configuration;
-import org.onehippo.cm.api.model.ConfigurationNode;
-import org.onehippo.cm.api.model.NamespaceDefinition;
-import org.onehippo.cm.api.model.NodeTypeDefinition;
+import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.api.model.WebFileBundleDefinition;
 
-public interface MergedModel {
+public class WebFileBundleDefinitionImpl extends AbstractDefinitionImpl implements WebFileBundleDefinition {
 
-    List<Configuration> getSortedConfigurations();
-    List<NamespaceDefinition> getNamespaceDefinitions();
-    List<NodeTypeDefinition> getNodeTypeDefinitions();
-    ConfigurationNode getConfigurationRootNode();
-    List<WebFileBundleDefinition> getWebFileBundleDefinitions();
+    private final String name;
+
+    public WebFileBundleDefinitionImpl(final SourceImpl source, final String name) {
+        super(source);
+
+        this.name = name;
+    }
+
+    @Override
+    public DefinitionType getType() {
+        return DefinitionType.WEBFILEBUNDLE;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
 
 }

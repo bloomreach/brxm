@@ -43,6 +43,7 @@ public class ModuleImpl implements Module {
     private final List<NamespaceDefinitionImpl> namespaceDefinitions = new ArrayList<>();
     private final List<NodeTypeDefinitionImpl> nodeTypeDefinitions = new ArrayList<>();
     private final List<ContentDefinitionImpl> contentDefinitions = new ArrayList<>();
+    private final List<WebFileBundleDefinitionImpl> webFileBundleDefinitions = new ArrayList<>();
 
     public ModuleImpl(final String name, final ProjectImpl project) {
         if (name == null) {
@@ -99,7 +100,7 @@ public class ModuleImpl implements Module {
     }
 
     /**
-     * @return a sorted list of namespace definitions.
+     * @return a sorted list of namespace definitions in insertion order.
      * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
      */
     public List<NamespaceDefinitionImpl> getNamespaceDefinitions() {
@@ -107,7 +108,7 @@ public class ModuleImpl implements Module {
     }
 
     /**
-     * @return a lost of node type definitions in insertion order.
+     * @return a sorted list of node type definitions in insertion order.
      * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
      */
     public List<NodeTypeDefinitionImpl> getNodeTypeDefinitions() {
@@ -122,8 +123,16 @@ public class ModuleImpl implements Module {
         return contentDefinitions;
     }
 
+    /**
+     * @return a sorted list of web file bundle definitions in insertion order.
+     * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
+     */
+    public List<WebFileBundleDefinitionImpl> getWebFileBundleDefinitions() {
+        return webFileBundleDefinitions;
+    }
+
     void pushDefinitions(final ModuleImpl module) {
-        // sort definitions into namespaceDefinitions, node types and content
+        // sort definitions into the different types
         module.getSources().forEach(source ->
                 source.getDefinitions().forEach(definition -> {
                     if (definition instanceof NamespaceDefinitionImpl) {
@@ -133,6 +142,8 @@ public class ModuleImpl implements Module {
                         nodeTypeDefinitions.add((NodeTypeDefinitionImpl) definition);
                     } else if (definition instanceof ContentDefinitionImpl) {
                         contentDefinitions.add((ContentDefinitionImpl) definition);
+                    } else if (definition instanceof WebFileBundleDefinitionImpl) {
+                        webFileBundleDefinitions.add((WebFileBundleDefinitionImpl) definition);
                     } else {
                         throw new IllegalStateException("Failed to sort unsupported definition class '"
                                 + definition.getClass().getName() + "'.");
@@ -140,15 +151,14 @@ public class ModuleImpl implements Module {
                 })
         );
 
-        // the order of namespaceDefinitions doesn't matter, don't sort them
-        // node types stay sorted in insertion order
+        // sort the content/config definitions, all other remain in insertion order
         contentDefinitions.sort(new ContentDefinitionComparator());
     }
 
     private void ensureSingleSourceForNodeTypes(final Definition nodeTypeDefinition) {
         if (!nodeTypeDefinitions.isEmpty()
                 && !nodeTypeDefinition.getSource().getPath().equals(nodeTypeDefinitions.get(0).getSource().getPath())) {
-            final String msg = String.format("CNDs are specified in multiple sources of a module: %s and %s. "
+            final String msg = String.format("CNDs are specified in multiple sources of a module: '%s' and '%s'. "
                     + "For proper ordering, they must be specified in a single source.",
                     ModelUtils.formatDefinition(nodeTypeDefinition),
                     ModelUtils.formatDefinition(nodeTypeDefinitions.get(0)));
@@ -162,10 +172,16 @@ public class ModuleImpl implements Module {
             final String rootPath2 = def2.getNode().getPath();
 
             if (def1 != def2 && rootPath1.equals(rootPath2)) {
-                throw new IllegalStateException("Duplicate content root paths '" + rootPath1 + "' in module '"
-                        + getName() + "'.");
+                final String msg = String.format(
+                        "Duplicate content root paths '%s' in module '%s' in source files '%s' and '%s'.",
+                        rootPath1,
+                        getName(),
+                        ModelUtils.formatDefinition(def1),
+                        ModelUtils.formatDefinition(def2));
+                throw new IllegalStateException(msg);
             }
             return rootPath1.compareTo(rootPath2);
         }
     }
+
 }

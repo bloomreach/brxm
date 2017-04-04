@@ -97,4 +97,11 @@ public class SourceImpl implements Source {
         }
         modifiableDefinitions.add(definition);
     }
+
+    public WebFileBundleDefinitionImpl addWebFileBundleDefinition(final String name) {
+        final WebFileBundleDefinitionImpl definition = new WebFileBundleDefinitionImpl(this, name);
+        modifiableDefinitions.add(definition);
+        return definition;
+    }
+
 }

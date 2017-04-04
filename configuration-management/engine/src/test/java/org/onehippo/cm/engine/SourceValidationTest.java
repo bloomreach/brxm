@@ -1088,6 +1088,43 @@ public class SourceValidationTest extends AbstractBaseTest {
                 "Property 'jcr:mixinTypes' supports only the following operations: add, replace, override");
     }
 
+    @Test
+    public void webFileBundleWithScalarValue() {
+        final String yaml = "definitions:\n"
+                + "  webfilebundle:\n"
+                + "    scalar";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node webFilesValue = firstDefinitionTuple(root).getValueNode();
+
+        assertParserException(root, webFilesValue, "Node must be a sequence");
+    }
+
+    @Test
+    public void webFileBundleWithNonStringValue() {
+        final String yaml = "definitions:\n"
+                + "  webfilebundle:\n"
+                + "  - 42";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node name = firstDefinitionFirstValue(root);
+
+        assertParserException(root, name, "Scalar must be a string");
+    }
+
+    @Test
+    public void webFileBundleDuplicateNames() {
+        final String yaml = "definitions:\n"
+                + "  webfilebundle:\n"
+                + "  - name\n"
+                + "  - name";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node name = secondValue(firstDefinitionTuple(root).getValueNode());
+
+        assertParserException(root, name, "Duplicate web file bundle name 'name'");
+    }
+
     // start set for "explicit sequencing"
 
     @Test
@@ -1210,4 +1247,9 @@ public class SourceValidationTest extends AbstractBaseTest {
     private Node firstValue(final Node sequence) {
         return ((SequenceNode)sequence).getValue().get(0);
     }
+
+    private Node secondValue(final Node sequence) {
+        return ((SequenceNode)sequence).getValue().get(1);
+    }
+
 }

@@ -16,13 +16,16 @@
 package org.onehippo.cm.backend;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -42,15 +45,16 @@ import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
+import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
@@ -58,8 +62,12 @@ import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
+import org.onehippo.cm.api.model.WebFileBundleDefinition;
 import org.onehippo.cm.impl.model.ModelUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
+import org.onehippo.repository.bootstrap.util.PartialZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +77,7 @@ import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
+import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getBaseZipFileFromURL;
 
 public class ConfigurationPersistenceService {
 
@@ -83,13 +92,22 @@ public class ConfigurationPersistenceService {
         this.resourceInputProviders = resourceInputProviders;
     }
 
-    public void apply(final MergedModel model) throws Exception {
+    public void apply(final MergedModel model, EnumSet<DefinitionType> includeDefinitionTypes) throws Exception {
         unprocessedReferences.clear();
 
-        applyNamespaces(model.getNamespaceDefinitions());
-        applyNodeTypes(model.getNodeTypeDefinitions());
-        applyNodes(model.getConfigurationRootNode());
-        applyUnprocessedReferences();
+        if (includeDefinitionTypes.contains(DefinitionType.NAMESPACE)) {
+            applyNamespaces(model.getNamespaceDefinitions());
+        }
+        if (includeDefinitionTypes.contains(DefinitionType.NODETYPE)) {
+            applyNodeTypes(model.getNodeTypeDefinitions());
+        }
+        if (includeDefinitionTypes.contains(DefinitionType.CONFIG)) {
+            applyNodes(model.getConfigurationRootNode());
+            applyUnprocessedReferences();
+        }
+        if (includeDefinitionTypes.contains(DefinitionType.WEBFILEBUNDLE)) {
+            applyWebFileBundles(model.getWebFileBundleDefinitions());
+        }
     }
 
     private void applyNamespaces(final List<? extends NamespaceDefinition> namespaceDefinitions) throws RepositoryException {
@@ -98,11 +116,13 @@ public class ConfigurationPersistenceService {
         for (NamespaceDefinition namespaceDefinition : namespaceDefinitions) {
             final String prefix = namespaceDefinition.getPrefix();
             final String uriString = namespaceDefinition.getURI().toString();
+            logger.debug(String.format("processing namespace prefix='%s' uri='%s' defined in %s.",
+                    prefix, uriString, ModelUtils.formatDefinition(namespaceDefinition)));
             if (prefixes.contains(prefix)) {
                 final String repositoryURI = session.getNamespaceURI(prefix);
                 if (!uriString.equals(repositoryURI)) {
                     final String msg = String.format(
-                            "Failed to process namespace definition defined through %s: namespace with prefix '%s' already exists in repository with different URI. Existing: '%s', from model: '%s'; aborting",
+                            "Failed to process namespace definition defined in %s: namespace with prefix '%s' already exists in repository with different URI. Existing: '%s', from model: '%s'; aborting",
                             ModelUtils.formatDefinition(namespaceDefinition), prefix, repositoryURI, uriString);
                     throw new RuntimeException(msg);
                 }
@@ -113,18 +133,23 @@ public class ConfigurationPersistenceService {
         }
     }
 
-    private void applyNodeTypes(final List<? extends NodeTypeDefinition> nodeTypeDefinitions) throws RepositoryException, ParseException, IOException {
+    private void applyNodeTypes(final List<? extends NodeTypeDefinition> nodeTypeDefinitions) throws RepositoryException, IOException {
         for (NodeTypeDefinition nodeTypeDefinition : nodeTypeDefinitions) {
             applyNodeType(nodeTypeDefinition);
         }
     }
 
     private void applyNodeType(final NodeTypeDefinition nodeTypeDefinition) throws RepositoryException, IOException {
-        logger.debug(String.format("processing cnd '%s' from %s.", nodeTypeDefinition.getValue(), ModelUtils.formatDefinition(nodeTypeDefinition)));
         final String definitionValue = nodeTypeDefinition.getValue();
-        final InputStream cndStream = nodeTypeDefinition.isResource()
-                ? getResourceInputStream(nodeTypeDefinition.getSource(), definitionValue)
-                : new ByteArrayInputStream(definitionValue.getBytes(StandardCharsets.UTF_8));
+
+        final InputStream cndStream;
+        if (nodeTypeDefinition.isResource()) {
+            logger.debug(String.format("processing cnd '%s' defined in %s.", definitionValue, ModelUtils.formatDefinition(nodeTypeDefinition)));
+            cndStream = getResourceInputStream(nodeTypeDefinition.getSource(), definitionValue);
+        } else {
+            logger.debug(String.format("processing inline cnd defined in %s.", ModelUtils.formatDefinition(nodeTypeDefinition)));
+            cndStream = new ByteArrayInputStream(definitionValue.getBytes(StandardCharsets.UTF_8));
+        }
 
         BootstrapUtils.initializeNodetypes(session, cndStream, ModelUtils.formatDefinition(nodeTypeDefinition));
     }
@@ -136,7 +161,7 @@ public class ConfigurationPersistenceService {
     }
 
     private void applyNodes(final ConfigurationNode modelNode, final Node jcrNode) throws Exception {
-        logger.debug(String.format("processing node '%s' defined through %s.", modelNode.getPath(), ModelUtils.formatDefinitions(modelNode)));
+        logger.debug(String.format("processing node '%s' defined in %s.", modelNode.getPath(), ModelUtils.formatDefinitions(modelNode)));
         final Map<String, Node> retainedChildren = removeNonModelNodes(modelNode, jcrNode);
         final NextChildNameProvider nextChildNameProvider = new NextChildNameProvider(retainedChildren);
         String nextChildName = nextChildNameProvider.next();
@@ -171,7 +196,7 @@ public class ConfigurationPersistenceService {
     private String getPrimaryType(final ConfigurationNode modelNode) {
         if (!modelNode.getProperties().containsKey(JCR_PRIMARYTYPE)) {
             final String msg = String.format(
-                    "Failed to process node '%s' defined through %s: cannot add child node '%s': %s property missing.",
+                    "Failed to process node '%s' defined in %s: cannot add child node '%s': %s property missing.",
                     modelNode.getPath(), ModelUtils.formatDefinitions(modelNode), modelNode.getPath(), JCR_PRIMARYTYPE);
             throw new RuntimeException(msg);
         }
@@ -313,7 +338,7 @@ public class ConfigurationPersistenceService {
             }
         } catch (RepositoryException e) {
             String msg = String.format(
-                    "Failed to process property '%s' defined through %s: %s",
+                    "Failed to process property '%s' defined in %s: %s",
                     modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty), e.getMessage());
             throw new RuntimeException(msg, e);
         }
@@ -410,7 +435,7 @@ public class ConfigurationPersistenceService {
                 return modelValue.getObject().equals(jcrValue.getDecimal());
             default:
                 final String msg = String.format(
-                        "Failed to process property '%s' defined through %s: unsupported value type '%s'.",
+                        "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
                         modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty), modelValue.getType());
                 throw new RuntimeException(msg);
         }
@@ -503,7 +528,7 @@ public class ConfigurationPersistenceService {
                 return factory.createValue((BigDecimal)modelValue.getObject());
             default:
                 final String msg = String.format(
-                        "Failed to process property '%s' defined through %s: unsupported value type '%s'.",
+                        "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
                         modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty), type);
                 throw new RuntimeException(msg);
         }
@@ -518,6 +543,33 @@ public class ConfigurationPersistenceService {
             final ConfigurationProperty configurationProperty = unprocessedReference.getLeft();
             final Node jcrNode = unprocessedReference.getRight();
             applyProperty(configurationProperty, jcrNode);
+        }
+    }
+
+    private void applyWebFileBundles(final List<WebFileBundleDefinition> webFileBundleDefinitions) throws Exception {
+        final WebFilesService service = HippoServiceRegistry.getService(WebFilesService.class);
+        if (service == null) {
+            final String msg = String.format("Failed to import web file bundles: missing service for '%s'",
+                    WebFilesService.class.getName());
+            throw new RuntimeException(msg);
+        }
+
+        for (WebFileBundleDefinition webFileBundleDefinition : webFileBundleDefinitions) {
+            final String bundleName = webFileBundleDefinition.getName();
+            logger.debug(String.format("processing web file bundle '%s' defined in %s.", bundleName,
+                    ModelUtils.formatDefinition(webFileBundleDefinition)));
+
+            final ResourceInputProvider resourceInputProvider =
+                    resourceInputProviders.get(webFileBundleDefinition.getSource().getModule());
+            final URL moduleRoot = resourceInputProvider.getModuleRoot();
+            if (moduleRoot.toString().contains("jar!")) {
+                final PartialZipFile bundleZipFile =
+                        new PartialZipFile(getBaseZipFileFromURL(moduleRoot), bundleName);
+                service.importJcrWebFileBundle(session, bundleZipFile, true);
+            } else if (moduleRoot.toString().startsWith("file:")) {
+                final File bundleDir = new File(FileUtils.toFile(moduleRoot), bundleName);
+                service.importJcrWebFileBundle(session, bundleDir, true);
+            }
         }
     }
 
