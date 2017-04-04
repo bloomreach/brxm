@@ -268,6 +268,7 @@ public class Esv2Yaml {
                     ((SourceInitializeInstruction) instruction).processSource(module, nodeDefinitions, deltaNodes);
                     break;
                 case WEBFILEBUNDLE:
+                    ((WebFileBundleInstruction) instruction).processWebFileBundle(mainSource, target);
                     break;
                 case RESOURCEBUNDLES:
                     ((ResourcebundlesInitializeInstruction) instruction).processResourceBundles(module, resourceBundleParents, resourceBundles);

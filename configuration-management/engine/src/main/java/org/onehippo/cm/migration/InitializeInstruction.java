@@ -215,6 +215,9 @@ public class InitializeInstruction {
                     case CONTENTPROPADD:
                         instruction = new ContentInitializeInstruction(node, type, first);
                         break;
+                    case WEBFILEBUNDLE:
+                        instruction = new WebFileBundleInstruction(node, type, first);
+                        break;
                     default:
                         instruction = new InitializeInstruction(node, type, first);
                 }
@@ -323,8 +326,9 @@ public class InitializeInstruction {
         final String path = getTypePropertyValue();
         this.resourcePath = normalizePath(path);
         this.resource = new File(basedir, resourcePath);
-        if (!resource.exists() || !(file && resource.isFile())) {
-            throw new EsvParseException("Resource " + path + " not found or not a " + (file ? "file" : "directory"));
+        if (!resource.exists() || (file ? !resource.isFile() : !resource.isDirectory())) {
+            throw new EsvParseException("Resource '" + path + "' not found or not a "
+                    + (file ? "file" : "directory") + " in directory '" + basedir.getAbsolutePath() + "'");
         }
     }
 
