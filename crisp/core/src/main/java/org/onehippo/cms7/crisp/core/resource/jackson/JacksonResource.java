@@ -1,15 +1,15 @@
-package org.onehippo.cms7.crisp.core.jackson;
+package org.onehippo.cms7.crisp.core.resource.jackson;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.collections.Transformer;
-import org.onehippo.cms7.crisp.api.Resource;
-import org.onehippo.cms7.crisp.api.ValueMap;
-import org.onehippo.cms7.crisp.core.AbstractResource;
-import org.onehippo.cms7.crisp.core.EmptyValueMap;
-import org.onehippo.cms7.crisp.core.LazyValueMap;
+import org.onehippo.cms7.crisp.api.resource.Resource;
+import org.onehippo.cms7.crisp.api.resource.ValueMap;
+import org.onehippo.cms7.crisp.core.resource.AbstractResource;
+import org.onehippo.cms7.crisp.core.resource.EmptyValueMap;
+import org.onehippo.cms7.crisp.core.resource.LazyValueMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

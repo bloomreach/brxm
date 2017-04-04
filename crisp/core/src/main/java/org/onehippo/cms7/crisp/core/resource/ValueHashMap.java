@@ -1,8 +1,8 @@
-package org.onehippo.cms7.crisp.core;
+package org.onehippo.cms7.crisp.core.resource;
 
 import java.util.HashMap;
 
-import org.onehippo.cms7.crisp.api.ValueMap;
+import org.onehippo.cms7.crisp.api.resource.ValueMap;
 
 public class ValueHashMap extends HashMap<String, Object> implements ValueMap {
 

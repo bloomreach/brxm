@@ -1,4 +1,4 @@
-package org.onehippo.cms7.crisp.core.jackson;
+package org.onehippo.cms7.crisp.core.resource.jackson;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

@@ -1,4 +1,4 @@
-package org.onehippo.cms7.crisp.api;
+package org.onehippo.cms7.crisp.api.resource;
 
 import java.util.Iterator;
 

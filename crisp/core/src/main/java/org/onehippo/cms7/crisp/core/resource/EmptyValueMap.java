@@ -1,11 +1,11 @@
-package org.onehippo.cms7.crisp.core;
+package org.onehippo.cms7.crisp.core.resource;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.onehippo.cms7.crisp.api.ValueMap;
+import org.onehippo.cms7.crisp.api.resource.ValueMap;
 
 public class EmptyValueMap implements ValueMap {
 

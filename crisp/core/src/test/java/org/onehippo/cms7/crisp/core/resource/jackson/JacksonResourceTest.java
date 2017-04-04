@@ -1,4 +1,4 @@
-package org.onehippo.cms7.crisp.core.jackson;
+package org.onehippo.cms7.crisp.core.resource.jackson;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,7 +15,8 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.crisp.api.Resource;
+import org.onehippo.cms7.crisp.api.resource.Resource;
+import org.onehippo.cms7.crisp.core.resource.jackson.JacksonResource;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

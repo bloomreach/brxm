@@ -1,6 +1,6 @@
-package org.onehippo.cms7.crisp.core;
+package org.onehippo.cms7.crisp.core.resource;
 
-import org.onehippo.cms7.crisp.api.Resource;
+import org.onehippo.cms7.crisp.api.resource.Resource;
 
 public abstract class AbstractResource implements Resource {
 

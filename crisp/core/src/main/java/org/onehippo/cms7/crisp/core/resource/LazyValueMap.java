@@ -1,4 +1,4 @@
-package org.onehippo.cms7.crisp.core;
+package org.onehippo.cms7.crisp.core.resource;
 
 import java.util.Collection;
 import java.util.Map;
@@ -7,7 +7,7 @@ import java.util.Set;
 import org.apache.commons.collections.Factory;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.LazyMap;
-import org.onehippo.cms7.crisp.api.ValueMap;
+import org.onehippo.cms7.crisp.api.resource.ValueMap;
 
 public class LazyValueMap implements ValueMap {
 
