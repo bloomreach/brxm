@@ -1,0 +1,3056 @@
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="content">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippostd:folder</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+    <sv:value>hippotranslation:translated</sv:value>
+    <sv:value>mix:referenceable</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>0255cb55-28e0-4c5e-8b5c-3876e0bfda9e</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+    <sv:value>new-content-document</sv:value>
+    <sv:value>new-content-folder</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippotranslation:id" sv:type="String">
+    <sv:value>ac28b30e-e30e-4706-a4b6-c59ea7ef26db</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippotranslation:locale" sv:type="String">
+    <sv:value>en</sv:value>
+  </sv:property>
+  <sv:node sv:name="sample-document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>hippo:named</sv:value>
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>64ab4648-0c20-40d2-9f18-d7a394f0334b</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Sample document</sv:value>
+    </sv:property>
+    <sv:node sv:name="sample-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:contentdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>2dcef400-50e2-456e-9722-fd496defa56b</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:introduction" sv:type="String">
+        <sv:value>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:publicationdate" sv:type="Date">
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:title" sv:type="String">
+        <sv:value>Lorem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/sample-document/sample-document[2]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:holder" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-29T13:33:51.687+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+        <sv:value>2016-11-29T13:35:44.914+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>28407f56-603f-4c0b-aff0-3f4159a8c849</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:content">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippostd:html</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value>&lt;html&gt;
+            &lt;body&gt;
+
+            &lt;p&gt;Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+            roots in a piece of classical Latin literature from 45 BC, making it over 2000
+            years old. Richard McClintock, a Latin professor at Hampden-Sydney College in
+            Virginia, looked up one of the more obscure Latin words, consectetur, from a
+            Lorem Ipsum passage, and going through the cites of the word in classical
+            literature, discovered the undoubtable source. Lorem Ipsum comes from sections
+            1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and
+            Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of
+            ethics, very popular during the Renaissance. The first line of Lorem Ipsum,
+            "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.&lt;/p&gt;
+
+            &lt;/body&gt;
+            &lt;/html&gt;</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="sample-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:contentdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:versionable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>e7260f15-a2db-4861-a46c-ec29b3564798</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:introduction" sv:type="String">
+        <sv:value>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:publicationdate" sv:type="Date">
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:title" sv:type="String">
+        <sv:value>Lorem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>preview</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/sample-document/sample-document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-29T13:33:51.687+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>28407f56-603f-4c0b-aff0-3f4159a8c849</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:content">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippostd:html</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value>&lt;html&gt;
+            &lt;body&gt;
+
+            &lt;p&gt;Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+            roots in a piece of classical Latin literature from 45 BC, making it over 2000
+            years old. Richard McClintock, a Latin professor at Hampden-Sydney College in
+            Virginia, looked up one of the more obscure Latin words, consectetur, from a
+            Lorem Ipsum passage, and going through the cites of the word in classical
+            literature, discovered the undoubtable source. Lorem Ipsum comes from sections
+            1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and
+            Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of
+            ethics, very popular during the Renaissance. The first line of Lorem Ipsum,
+            "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.&lt;/p&gt;
+
+            &lt;/body&gt;
+            &lt;/html&gt;</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="sample-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:contentdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>603ef5e4-3848-4cd4-9559-fc0f1282ec5c</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:introduction" sv:type="String">
+        <sv:value>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:publicationdate" sv:type="Date">
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:title" sv:type="String">
+        <sv:value>Lorem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true"/>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/sample-document/sample-document</sv:value>
+        <sv:value>content/sample-document/sample-document[2]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>draft</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-29T13:33:40.528+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>28407f56-603f-4c0b-aff0-3f4159a8c849</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:content">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippostd:html</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value>&lt;html&gt;
+            &lt;body&gt;
+
+            &lt;p&gt;Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+            roots in a piece of classical Latin literature from 45 BC, making it over 2000
+            years old. Richard McClintock, a Latin professor at Hampden-Sydney College in
+            Virginia, looked up one of the more obscure Latin words, consectetur, from a
+            Lorem Ipsum passage, and going through the cites of the word in classical
+            literature, discovered the undoubtable source. Lorem Ipsum comes from sections
+            1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and
+            Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of
+            ethics, very popular during the Renaissance. The first line of Lorem Ipsum,
+            "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.&lt;/p&gt;
+
+            &lt;/body&gt;
+            &lt;/html&gt;</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="another-sample-document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>hippo:named</sv:value>
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Another sample document</sv:value>
+    </sv:property>
+    <sv:node sv:name="another-sample-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:contentdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>a711c34b-8821-40b0-99e0-947828696320</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:introduction" sv:type="String">
+        <sv:value>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:publicationdate" sv:type="Date">
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:title" sv:type="String">
+        <sv:value>Another Lorem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/another-sample-document/another-sample-document[2]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:holder" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2014-03-25T16:57:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+        <sv:value>2014-03-25T16:57:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>d9edb717-78c0-4204-adbe-296816b779ad</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:content">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippostd:html</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value>&lt;html&gt;
+            &lt;body&gt;
+
+            &lt;p&gt;Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+            roots in a piece of classical Latin literature from 45 BC, making it over 2000
+            years old. Richard McClintock, a Latin professor at Hampden-Sydney College in
+            Virginia, looked up one of the more obscure Latin words, consectetur, from a
+            Lorem Ipsum passage, and going through the cites of the word in classical
+            literature, discovered the undoubtable source. Lorem Ipsum comes from sections
+            1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and
+            Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of
+            ethics, very popular during the Renaissance. The first line of Lorem Ipsum,
+            "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.&lt;/p&gt;
+
+            &lt;/body&gt;
+            &lt;/html&gt;</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="another-sample-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:contentdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:versionable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>820ea8da-b97c-41cf-ad39-f7745d9c41a2</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:introduction" sv:type="String">
+        <sv:value>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:publicationdate" sv:type="Date">
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:title" sv:type="String">
+        <sv:value>Another Lorem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>preview</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/another-sample-document/another-sample-document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2014-03-25T16:57:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>d9edb717-78c0-4204-adbe-296816b779ad</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:content">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippostd:html</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value>&lt;html&gt;
+            &lt;body&gt;
+
+            &lt;p&gt;Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+            roots in a piece of classical Latin literature from 45 BC, making it over 2000
+            years old. Richard McClintock, a Latin professor at Hampden-Sydney College in
+            Virginia, looked up one of the more obscure Latin words, consectetur, from a
+            Lorem Ipsum passage, and going through the cites of the word in classical
+            literature, discovered the undoubtable source. Lorem Ipsum comes from sections
+            1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and
+            Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of
+            ethics, very popular during the Renaissance. The first line of Lorem Ipsum,
+            "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.&lt;/p&gt;
+
+            &lt;/body&gt;
+            &lt;/html&gt;</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="another-sample-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:contentdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>4d8af21f-6369-4c00-a8e0-4242682a09f9</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:introduction" sv:type="String">
+        <sv:value>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:publicationdate" sv:type="Date">
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:title" sv:type="String">
+        <sv:value>Another Lorem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true"/>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/another-sample-document/another-sample-document[2]</sv:value>
+        <sv:value>content/another-sample-document/another-sample-document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>draft</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-29T13:22:08.258+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>d9edb717-78c0-4204-adbe-296816b779ad</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:content">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippostd:html</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value>&lt;html&gt;
+            &lt;body&gt;
+
+            &lt;p&gt;Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+            roots in a piece of classical Latin literature from 45 BC, making it over 2000
+            years old. Richard McClintock, a Latin professor at Hampden-Sydney College in
+            Virginia, looked up one of the more obscure Latin words, consectetur, from a
+            Lorem Ipsum passage, and going through the cites of the word in classical
+            literature, discovered the undoubtable source. Lorem Ipsum comes from sections
+            1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and
+            Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of
+            ethics, very popular during the Renaissance. The first line of Lorem Ipsum,
+            "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.&lt;/p&gt;
+
+            &lt;/body&gt;
+            &lt;/html&gt;</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="yet-another-sample-document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>hippo:named</sv:value>
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>358fbf60-2314-4cb1-b333-c2ab9b69cc85</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Yet another sample document</sv:value>
+    </sv:property>
+    <sv:node sv:name="yet-another-sample-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:subcontentdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>48ef5aca-7a11-4267-a075-ef1bf93c074a</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:actuallystilladocbase" sv:type="String">
+        <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true"/>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/yet-another-sample-document/yet-another-sample-document[3]</sv:value>
+        <sv:value>content/yet-another-sample-document/yet-another-sample-document[2]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>draft</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T14:28:06.016+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-29T14:35:50.885+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>1319d4b2-0cbf-43ab-83e2-6834492dfd5d</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="yet-another-sample-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:subcontentdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:versionable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>c27f1d7a-aa3d-4fb8-8d17-1f24119885a2</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:actuallystilladocbase" sv:type="String">
+        <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>preview</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/yet-another-sample-document/yet-another-sample-document[3]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T14:28:06.016+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-29T14:36:17.041+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>1319d4b2-0cbf-43ab-83e2-6834492dfd5d</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="yet-another-sample-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:subcontentdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>b51fa934-a2fe-4daa-8e27-be2a7200aefb</sv:value>
+      </sv:property>
+      <sv:property sv:name="contentbeanstest:actuallystilladocbase" sv:type="String">
+        <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/yet-another-sample-document/yet-another-sample-document[2]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T14:28:06.016+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-29T14:36:17.041+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+        <sv:value>2016-11-29T14:43:05.880+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>1319d4b2-0cbf-43ab-83e2-6834492dfd5d</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="shalow-link-document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>hippo:named</sv:value>
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>b050598c-56fe-4e83-9e52-68911d4a36d4</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Shalow Link Document</sv:value>
+    </sv:property>
+    <sv:node sv:name="shalow-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:versionable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>74aaf5a1-9800-487d-9e89-59d53decd3a7</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>preview</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/shalow-link-document/shalow-link-document[3]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:07:45.562+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:46:10.607+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>b7b04081-2cd5-4129-aa80-ed4efcb6779f</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="shalow-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>a27ad1a7-bc16-4202-b54a-83538ff28fa6</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true"/>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/shalow-link-document/shalow-link-document[3]</sv:value>
+        <sv:value>content/shalow-link-document/shalow-link-document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>draft</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:07:45.562+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:46:08.435+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>b7b04081-2cd5-4129-aa80-ed4efcb6779f</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="shalow-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>56451e00-9000-423a-af1b-c628dbd9ad2c</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/shalow-link-document/shalow-link-document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:07:45.562+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:46:10.607+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:46:12.083+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>b7b04081-2cd5-4129-aa80-ed4efcb6779f</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="link-document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>hippo:named</sv:value>
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>6918dad3-8b2a-48d7-8c66-18a2727b35ed</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Link Document</sv:value>
+    </sv:property>
+    <sv:node sv:name="link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>b2734cce-6e67-4692-8f5d-b039415df93a</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true"/>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/link-document/link-document[2]</sv:value>
+        <sv:value>content/link-document/link-document[3]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>draft</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:07:45.562+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:45:39.457+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>8212575c-c487-4050-8142-6abe70273ffd</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:versionable</sv:value>
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>621f321f-b223-433d-a211-931cf522384b</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>preview</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/link-document/link-document[3]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:07:45.562+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:45:49.843+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>8212575c-c487-4050-8142-6abe70273ffd</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>7846d557-597b-4389-92fa-65c138386819</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/link-document/link-document[2]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:07:45.562+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:45:49.843+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:45:55.798+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>8212575c-c487-4050-8142-6abe70273ffd</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="deep-link-document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>hippo:named</sv:value>
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>f84ca9fd-31c8-4b94-be6a-9f3287f4de20</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Deep Link Document</sv:value>
+    </sv:property>
+    <sv:node sv:name="deep-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:versionable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>ac3c47a6-0aa6-419a-8ab9-ffc2020bba3c</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>preview</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/deep-link-document/deep-link-document[2]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:07:45.562+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:44:25.578+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>3bb0fa2c-84e6-4166-96e4-4cb2d0d21a26</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="deep-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>b213af8b-f2c8-468f-bf61-aa4ab503f27b</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/deep-link-document/deep-link-document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:07:45.562+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:44:25.578+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:45:55.891+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>3bb0fa2c-84e6-4166-96e4-4cb2d0d21a26</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="deeper-link-document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>hippo:named</sv:value>
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>e49c8206-27c2-4cfb-b210-8269d09c2747</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Deeper Link Document</sv:value>
+    </sv:property>
+    <sv:node sv:name="deeper-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>b99e8f74-776b-4b7e-98de-341232d8895f</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true"/>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/deeper-link-document/deeper-link-document[3]</sv:value>
+        <sv:value>content/deeper-link-document/deeper-link-document[2]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>draft</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:25:13.042+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:43:53.785+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>ac7a648c-77ae-4ce9-8be7-6997533fb30f</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="deeper-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:versionable</sv:value>
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>a9abf058-4a21-42d9-b42d-45ecbe7fe434</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>preview</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/deeper-link-document/deeper-link-document[3]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:25:13.042+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:44:05.464+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>ac7a648c-77ae-4ce9-8be7-6997533fb30f</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="deeper-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>3e9186d1-38f2-4fdd-96b8-090007ef2d89</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/deeper-link-document/deeper-link-document[2]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:25:13.042+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:44:05.464+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:45:55.606+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>ac7a648c-77ae-4ce9-8be7-6997533fb30f</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="deepest-link-document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>hippo:named</sv:value>
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>79ca4adb-80bd-4b9c-aca3-09e40fa177a1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Deepest Link Document</sv:value>
+    </sv:property>
+    <sv:node sv:name="deepest-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:versionable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>03d6d691-eb37-4000-b00a-cf5eda4c497e</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>preview</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/deepest-link-document/deepest-link-document[3]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:25:13.042+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:44:07.928+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>bb7a3b19-7a1f-4207-8152-7c64f4c77f58</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="deepest-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>fcadf687-0379-487f-8904-65df05480281</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true"/>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/deepest-link-document/deepest-link-document</sv:value>
+        <sv:value>content/deepest-link-document/deepest-link-document[3]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>draft</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:25:13.042+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:43:55.895+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>bb7a3b19-7a1f-4207-8152-7c64f4c77f58</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="deepest-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>decb2e1e-0e33-4f84-984d-f0a7dfdbb3a5</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/deepest-link-document/deepest-link-document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:25:13.042+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:44:07.928+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:45:55.938+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>bb7a3b19-7a1f-4207-8152-7c64f4c77f58</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="too-deep-link-document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>hippo:named</sv:value>
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>2dbdb381-94c4-4f4c-ae15-4b3ebe58745f</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Too Deep Link Document</sv:value>
+    </sv:property>
+    <sv:node sv:name="too-deep-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:versionable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>bd480434-d3e3-4761-ad57-f0f80e94ba42</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>preview</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/too-deep-link-document/too-deep-link-document[3]</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:25:13.042+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:44:02.138+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>f2d4a7cd-3bbf-4949-a958-b06dda6fac6b</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="too-deep-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>dcecad25-2814-4c10-afa3-3df7dfed1162</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true"/>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/too-deep-link-document/too-deep-link-document[3]</sv:value>
+        <sv:value>content/too-deep-link-document/too-deep-link-document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>draft</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:25:13.042+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:43:59.559+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>f2d4a7cd-3bbf-4949-a958-b06dda6fac6b</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="too-deep-link-document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>contentbeanstest:linkdepthtestdocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>105e77fb-1b9f-40e6-b304-96957712b65e</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+        <sv:value>content/too-deep-link-document/too-deep-link-document</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:state" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+        <sv:value>2016-11-29T17:25:13.042+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:44:02.138+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+        <sv:value>admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+        <sv:value>2016-11-30T11:45:55.728+01:00</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>f2d4a7cd-3bbf-4949-a958-b06dda6fac6b</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:hippo_mirror">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deeperlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeplink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:hippo_mirror">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:mirror</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:deepestlink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deeperlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeplink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:hippo_mirror">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:mirror</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippo:docbase" sv:type="String">
+                <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:contentbeanstest_toodeeplink">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>contentbeanstest:toodeeplink</sv:value>
+        </sv:property>
+        <sv:node sv:name="contentbeanstest:contentbeanstest_deepestlink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>contentbeanstest:deepestlink</sv:value>
+          </sv:property>
+          <sv:node sv:name="contentbeanstest:contentbeanstest_deeperlink">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>contentbeanstest:deeperlink</sv:value>
+            </sv:property>
+            <sv:node sv:name="contentbeanstest:contentbeanstest_deeplink">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>contentbeanstest:deeplink</sv:value>
+              </sv:property>
+              <sv:node sv:name="contentbeanstest:hippo_mirror">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hippo:mirror</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:docbase" sv:type="String">
+                  <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentbeanstest:hippo_mirror_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:mirror</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:docbase" sv:type="String">
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+</sv:node>
