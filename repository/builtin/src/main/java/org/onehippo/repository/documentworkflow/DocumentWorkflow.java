@@ -338,9 +338,10 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
             throws WorkflowException, RepositoryException, RemoteException;
 
     /**
-     * Delete a specific outstanding, rejected or scheduled request.
+     * Delete a specific outstanding, rejected or scheduled request with an optional reason.
      *
      * @param requestIdentifier the request node identifier
+     * @param reason the optional reason to be recorded
      *
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
@@ -366,9 +367,10 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
             throws WorkflowException, RepositoryException, RemoteException;
 
     /**
-     * Approve and execute or schedule a specific request
+     * Approve and execute or schedule a specific request with an optional reason.
      *
      * @param requestIdentifier the request node identifier
+     * @param reason the optional reason to be recorded
      *
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
