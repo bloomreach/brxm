@@ -32,6 +32,9 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-io.version>2.5</commons-io.version>
 
+    <httpcomponents-httpcore.version>4.4.6</httpcomponents-httpcore.version>
+    <httpcomponents-httpclient.version>4.5.3</httpcomponents-httpclient.version>
+
     <lib.junit.version>4.8.2</lib.junit.version>
     <lib.easymock.version>3.0</lib.easymock.version>
     <lib.slf4j.version>1.7.6</lib.slf4j.version>
@@ -135,6 +138,24 @@
         <artifactId>hst-spring-dependencies</artifactId>
         <type>pom</type>
         <version>${hippo.hst.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>${httpcomponents-httpcore.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${httpcomponents-httpclient.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <!-- TEST DEPENDENCIES -->

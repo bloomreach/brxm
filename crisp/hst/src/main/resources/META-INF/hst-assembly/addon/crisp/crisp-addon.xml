@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+
+  <bean id="defaultResourceResolverMap"
+        class="org.springframework.beans.factory.config.MapFactoryBean">
+    <property name="sourceMap">
+      <map>
+      </map>
+    </property>
+  </bean>
+
+  <bean id="abstractHttpRequestResourceResolver" abstract="true">
+    <property name="clientHttpRequestFactory" ref="org.springframework.http.client.ClientHttpRequestFactory" />
+  </bean>
+
+  <bean id="abstractSimpleJacksonRestTemplateResourceResolver" abstract="true" parent="abstractHttpRequestResourceResolver">
+    <property name="cacheEnabled" value="true" />
+  </bean>
+
+  <bean id="org.springframework.http.client.ClientHttpRequestFactory"
+        class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+    <property name="connectTimeout" value="30000" />
+    <property name="connectionRequestTimeout" value="30000" />
+    <property name="readTimeout" value="30000" />
+  </bean>
+
+  <bean id="defaultResourceCache"
+        class="org.springframework.cache.ehcache.EhCacheCache">
+    <constructor-arg>
+      <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <property name="cacheManager" ref="ehCacheManager" />
+        <property name="cacheName" value="crispResourceCache" />
+        <property name="blocking" value="true" />
+        <property name="maxEntriesLocalHeap" value="256" />
+        <property name="maxEntriesLocalDisk" value="0" />
+        <property name="eternal" value="false" />
+        <property name="timeToLiveSeconds" value="60" />
+        <property name="timeToIdleSeconds" value="60" />
+        <property name="diskExpiryThreadIntervalSeconds" value="120" />
+        <property name="statisticsEnabled" value="true" />
+      </bean>
+    </constructor-arg>
+  </bean>
+
+  <bean id="org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker"
+        class="org.onehippo.cms7.crisp.core.broker.CacheableResourceServiceBroker">
+    <property name="resourceResolverMap" ref="defaultResourceResolverMap" />
+    <property name="resourceCache" ref="defaultResourceCache" />
+    <property name="cacheEnabled" value="true" />
+  </bean>
+
+</beans>
+

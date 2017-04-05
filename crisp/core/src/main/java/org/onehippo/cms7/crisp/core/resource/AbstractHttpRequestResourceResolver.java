@@ -5,15 +5,25 @@ import java.net.URLEncoder;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.crisp.api.resource.AbstractResourceResolver;
+import org.springframework.http.client.ClientHttpRequestFactory;
 
 public abstract class AbstractHttpRequestResourceResolver extends AbstractResourceResolver {
 
+    private ClientHttpRequestFactory clientHttpRequestFactory;
     private String baseUri;
     private String searchBaseUri;
     private String searchQueryParameterName = "q";
 
     public AbstractHttpRequestResourceResolver() {
         super();
+    }
+
+    public ClientHttpRequestFactory getClientHttpRequestFactory() {
+        return clientHttpRequestFactory;
+    }
+
+    public void setClientHttpRequestFactory(ClientHttpRequestFactory clientHttpRequestFactory) {
+        this.clientHttpRequestFactory = clientHttpRequestFactory;
     }
 
     public String getBaseUri() {
