@@ -1,6 +1,7 @@
 package org.onehippo.cms7.crisp.core.resource.jackson;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +40,8 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
     @Override
     public Resource resolve(String absPath, Map<String, Object> variables) throws ResourceException {
         RestTemplate restTemplate = createRestTemplate();
-        ResponseEntity<String> result = restTemplate.getForEntity(buildResourceURI(absPath), String.class, variables);
+        ResponseEntity<String> result = restTemplate.getForEntity(buildResourceURI(absPath), String.class,
+                (variables != null) ? variables : Collections.emptyMap());
 
         if (isSuccessful(result)) {
             try {
@@ -67,7 +69,7 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
             String language) throws ResourceException {
         RestTemplate restTemplate = createRestTemplate();
         ResponseEntity<String> result = restTemplate.getForEntity(buildSearchURI(baseAbsPath, query), String.class,
-                variables);
+                (variables != null) ? variables : Collections.emptyMap());
 
         if (isSuccessful(result)) {
             try {
