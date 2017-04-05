@@ -3,6 +3,7 @@ package org.onehippo.cms7.crisp.core.broker;
 import java.util.Map;
 
 import org.onehippo.cms7.crisp.api.broker.AbstractResourceServiceBroker;
+import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 
 public abstract class AbstractMultiResolverResourceServiceBroker extends AbstractResourceServiceBroker {
@@ -22,10 +23,16 @@ public abstract class AbstractMultiResolverResourceServiceBroker extends Abstrac
     }
 
     protected ResourceResolver getResourceResolverByResourceSpace(String resourceSpace) {
-        if (resourceResolverMap == null) {
-            return null;
+        ResourceResolver resourceResolver = null;
+
+        if (resourceResolverMap != null) {
+            resourceResolver = resourceResolverMap.get(resourceSpace);
         }
 
-        return resourceResolverMap.get(resourceSpace);
+        if (resourceResolver == null) {
+            throw new ResourceException("Not resource resolver found for resource space, '" + resourceSpace + "'.");
+        }
+
+        return resourceResolver;
     }
 }

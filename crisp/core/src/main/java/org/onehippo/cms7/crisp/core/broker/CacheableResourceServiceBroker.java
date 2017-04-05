@@ -63,8 +63,12 @@ public class CacheableResourceServiceBroker extends AbstractMultiResolverResourc
         if (resource == null) {
             resource = resourceResolver.resolve(absResourcePath, variables);
 
-            if (cacheKey != null && resourceResolver.isCacheable(resource)) {
-                resourceCache.put(cacheKey, resourceResolver.toCacheData(resource));
+            if (resource != null && cacheKey != null && resourceResolver.isCacheable(resource)) {
+                final Object cacheData = resourceResolver.toCacheData(resource);
+
+                if (cacheData != null) {
+                    resourceCache.put(cacheKey, cacheData);
+                }
             }
         }
 
@@ -90,8 +94,12 @@ public class CacheableResourceServiceBroker extends AbstractMultiResolverResourc
         if (resource == null) {
             resource = resourceResolver.findResources(baseAbsPath, variables, query, language);
 
-            if (cacheKey != null && resourceResolver.isCacheable(resource)) {
-                resourceCache.put(cacheKey, resourceResolver.toCacheData(resource));
+            if (resource != null && cacheKey != null && resourceResolver.isCacheable(resource)) {
+                final Object cacheData = resourceResolver.toCacheData(resource);
+
+                if (cacheData != null) {
+                    resourceCache.put(cacheKey, cacheData);
+                }
             }
         }
 
