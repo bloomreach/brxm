@@ -8,13 +8,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>28.4</version>
+    <version>28.5</version>
   </parent>
 
   <name>Hippo Addon CRISP</name>
   <description>Hippo Addon CRISP</description>
   <artifactId>hippo-addon-crisp</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://www.onehippo.com/</url>
   <inceptionYear>2017</inceptionYear>
@@ -25,8 +25,8 @@
 
     <jackson2.version>2.4.5</jackson2.version>
 
-    <hippo.commons.version>3.1.0</hippo.commons.version>
-    <hippo.hst.version>4.1.0</hippo.hst.version>
+    <hippo.commons.version>3.2.0</hippo.commons.version>
+    <hippo.hst.version>4.2.0</hippo.hst.version>
 
     <commons-lang.version>2.6</commons-lang.version>
     <commons-collections.version>3.2.2</commons-collections.version>
@@ -36,14 +36,6 @@
     <lib.easymock.version>3.0</lib.easymock.version>
     <lib.slf4j.version>1.7.6</lib.slf4j.version>
     <lib.log4j.version>1.2.17</lib.log4j.version>
-
-    <plugin.javadoc.version>2.9.1</plugin.javadoc.version>
-    <plugin.jxr.version>2.3</plugin.jxr.version>
-    <plugin.pmd.version>3.1</plugin.pmd.version>
-    <plugin.project-info-reports.version>2.7</plugin.project-info-reports.version>
-    <plugin.site.version>3.4</plugin.site.version>
-    <plugin.surefire.version>2.17</plugin.surefire.version>
-    <plugin.surefire-report.version>2.17</plugin.surefire-report.version>
 
   </properties>
 
@@ -138,6 +130,13 @@
         <version>${commons-collections.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+        <artifactId>hst-spring-dependencies</artifactId>
+        <type>pom</type>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+
       <!-- TEST DEPENDENCIES -->
 
       <dependency>
@@ -179,96 +178,10 @@
 
   </dependencyManagement>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>${plugin.project-info-reports.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>${plugin.jxr.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>${plugin.pmd.version}</version>
-        <configuration>
-          <linkXref>true</linkXref>
-          <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
-          <targetJdk>${project.build.javaVersion}</targetJdk>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${plugin.javadoc.version}</version>
-        <configuration>
-          <encoding>${project.build.sourceEncoding}</encoding>
-          <skip>false</skip>
-          <aggregate>true</aggregate>
-          <!--
-          <destDir>userapidocs</destDir>
-          -->
-          <sourcepath>${basedir}/frontend/src/main/java</sourcepath>
-        </configuration>
-        <reportSets>
-          <reportSet>
-            <id>default</id>
-            <reports>
-              <report>javadoc</report>
-              <report>test-javadoc</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>${plugin.surefire-report.version}</version>
-        <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-
   <modules>
     <module>api</module>
     <module>core</module>
     <module>hst</module>
   </modules>
-
-  <profiles>
-
-    <profile>
-      <id>dist.src</id>
-      <build>
-        <defaultGoal>validate</defaultGoal>
-        <plugins>
-          <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>distro-assembly</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                  <configuration>
-                    <descriptors>
-                      <descriptor>src-assembly.xml</descriptor>
-                    </descriptors>
-                  </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-  </profiles>
 
 </project>

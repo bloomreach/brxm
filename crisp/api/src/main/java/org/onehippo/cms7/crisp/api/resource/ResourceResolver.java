@@ -1,25 +1,18 @@
 package org.onehippo.cms7.crisp.api.resource;
 
 import java.util.Iterator;
+import java.util.Map;
 
 public interface ResourceResolver {
 
-    Resource resolve(String absPath);
+    Resource resolve(String absPath, Map<String, Object> variables) throws ResourceException;
  
-    Resource getResource(Resource base, String path);
+    Iterator<Resource> findResources(String baseAbsPath, Map<String, Object> variables, String query, String language) throws ResourceException;
 
-    boolean isLive();
+    boolean isLive() throws ResourceException;
 
-    boolean isResourceType(Resource resource, String resourceType);
+    void refresh() throws ResourceException;
 
-    Iterable<Resource> getChildren(Resource parent);
-
-    Iterator<Resource> listChildren(Resource parent);
-
-    Iterator<Resource> findResources(String query, String language);
-
-    void refresh();
-
-    void close();
+    void close() throws ResourceException;
 
 }
