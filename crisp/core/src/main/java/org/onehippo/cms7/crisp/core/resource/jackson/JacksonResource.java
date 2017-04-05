@@ -5,13 +5,16 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.collections.Transformer;
+import org.onehippo.cms7.crisp.api.resource.AbstractResource;
 import org.onehippo.cms7.crisp.api.resource.Resource;
+import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ValueMap;
-import org.onehippo.cms7.crisp.core.resource.AbstractResource;
 import org.onehippo.cms7.crisp.core.resource.EmptyValueMap;
 import org.onehippo.cms7.crisp.core.resource.LazyValueMap;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JacksonResource extends AbstractResource {
 
@@ -88,6 +91,14 @@ public class JacksonResource extends AbstractResource {
         }
 
         return valueMap;
+    }
+
+    protected String toJsonString(ObjectMapper mapper) {
+        try {
+            return mapper.writeValueAsString(jsonNode);
+        } catch (JsonProcessingException e) {
+            throw new ResourceException("JSON processing error.", e);
+        }
     }
 
     protected JacksonResource toChildFieldJacksonResource(JsonNode jsonNode, String fieldName) {

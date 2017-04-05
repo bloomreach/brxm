@@ -1,8 +1,6 @@
 package org.onehippo.cms7.crisp.api.resource;
 
-import java.util.Iterator;
-
-public interface Resource {
+public interface Resource extends ResourceContainable {
 
     String gerResourceType();
 
@@ -17,11 +15,5 @@ public interface Resource {
     ValueMap getValueMap();
 
     Resource getParent();
-
-    boolean hasChildren();
-
-    Iterator<Resource> listChildren();
-
-    Iterable<Resource> getChildren();
 
 }
