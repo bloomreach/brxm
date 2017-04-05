@@ -1,0 +1,15 @@
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'hippoaddoncrispdemo'='http://www.onehippo.org/hippoaddoncrispdemo/nt/1.0'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+<'hippotranslation'='http://www.onehippo.org/jcr/hippotranslation/nt/1.0'>
+
+[hippoaddoncrispdemo:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document
+  orderable
+
+[hippoaddoncrispdemo:eventsdocument] > hippoaddoncrispdemo:basedocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[hippoaddoncrispdemo:newsdocument] > hippoaddoncrispdemo:basedocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+

@@ -1,0 +1,126 @@
+{
+  "hippo:templates":   {
+    "en":     {
+      "new-news-document": "new news item",
+      "new-resource-bundle": "new resource bundle",
+      "new-news-folder": "new news item folder",
+      "new-untranslated-folder": "new untranslated folder",
+      "new-events-folder": "new events folder",
+      "new-events-document": "new event"
+    },
+    "nl":     {
+      "new-news-document": "nieuw nieuwsbericht",
+      "new-resource-bundle": "nieuwe resource bundle",
+      "new-news-folder": "nieuwe nieuwsmap",
+      "new-untranslated-folder": "nieuwe onvertaalde map",
+      "new-events-folder": "nieuwe evenementenmap",
+      "new-events-document": "nieuw evenement"
+    },
+    "de":     {
+      "new-news-document": "Neue News",
+      "new-resource-bundle": "Neues Resource-Bundle",
+      "new-news-folder": "Neuer News-Ordner",
+      "new-untranslated-folder": "Neuer nicht übersetzter Ordner",
+      "new-events-folder": "Neuer Events-Ordner",
+      "new-events-document": "Neues Event"
+    },
+    "fr":     {
+      "new-news-document": "nouveau message d'info",
+      "new-resource-bundle": "nouveau resource bundle",
+      "new-news-folder": "nouveau dossier messages d'info",
+      "new-untranslated-folder": "nouveau dossier non traduit",
+      "new-events-folder": "nouveau dossier événements",
+      "new-events-document": "nouvel événement"
+    }
+  },
+  "hippo:types":   {
+    "hippoaddoncrispdemo:eventsdocument":     {
+      "en":       {
+        "hippoaddoncrispdemo:introduction": "Introduction",
+        "hippoaddoncrispdemo:location": "Location",
+        "jcr:name": "Event",
+        "hippoaddoncrispdemo:enddate": "End date",
+        "hippoaddoncrispdemo:content": "Content",
+        "hippoaddoncrispdemo:date": "Start date",
+        "hippoaddoncrispdemo:image": "Image",
+        "hippoaddoncrispdemo:title": "Title"
+      },
+      "nl":       {
+        "hippoaddoncrispdemo:introduction": "Introductie",
+        "hippoaddoncrispdemo:location": "Locatie",
+        "jcr:name": "Evenement",
+        "hippoaddoncrispdemo:enddate": "Einddatum",
+        "hippoaddoncrispdemo:content": "Inhoud",
+        "hippoaddoncrispdemo:date": "Startdatum",
+        "hippoaddoncrispdemo:image": "Afbeelding",
+        "hippoaddoncrispdemo:title": "Titel"
+      },
+      "fr":       {
+        "hippoaddoncrispdemo:introduction": "Introduction",
+        "hippoaddoncrispdemo:location": "Lieu",
+        "jcr:name": "Événement",
+        "hippoaddoncrispdemo:enddate": "Date de fin",
+        "hippoaddoncrispdemo:content": "Contenu",
+        "hippoaddoncrispdemo:date": "Date de début",
+        "hippoaddoncrispdemo:image": "Image",
+        "hippoaddoncrispdemo:title": "Titre"
+      },
+      "de":       {
+        "hippoaddoncrispdemo:introduction": "Einführung",
+        "hippoaddoncrispdemo:location": "Standort",
+        "jcr:name": "Event",
+        "hippoaddoncrispdemo:enddate": "Enddatum",
+        "hippoaddoncrispdemo:content": "Inhalt",
+        "hippoaddoncrispdemo:date": "Startdatum",
+        "hippoaddoncrispdemo:image": "Abbildung",
+        "hippoaddoncrispdemo:title": "Titel"
+      }
+    },
+    "hippoaddoncrispdemo:newsdocument":     {
+      "en":       {
+        "hippoaddoncrispdemo:introduction": "Introduction",
+        "hippoaddoncrispdemo:location": "Location",
+        "jcr:name": "News Item",
+        "hippoaddoncrispdemo:content": "Content",
+        "hippoaddoncrispdemo:date": "Date",
+        "hippoaddoncrispdemo:image": "Image",
+        "hippoaddoncrispdemo:title": "Title",
+        "hippoaddoncrispdemo:author": "Author",
+        "hippoaddoncrispdemo:source": "Source"
+      },
+      "nl":       {
+        "hippoaddoncrispdemo:introduction": "Introductie",
+        "hippoaddoncrispdemo:location": "Locatie",
+        "jcr:name": "Nieuwsbericht",
+        "hippoaddoncrispdemo:content": "Inhoud",
+        "hippoaddoncrispdemo:date": "Datum",
+        "hippoaddoncrispdemo:image": "Afbeelding",
+        "hippoaddoncrispdemo:title": "Titel",
+        "hippoaddoncrispdemo:author": "Auteur",
+        "hippoaddoncrispdemo:source": "Bron"
+      },
+      "de":       {
+        "hippoaddoncrispdemo:introduction": "Einführung",
+        "hippoaddoncrispdemo:location": "Standort",
+        "jcr:name": "News",
+        "hippoaddoncrispdemo:content": "Inhalt",
+        "hippoaddoncrispdemo:date": "Datum",
+        "hippoaddoncrispdemo:image": "Abbildung",
+        "hippoaddoncrispdemo:title": "Titel",
+        "hippoaddoncrispdemo:author": "Verfasser",
+        "hippoaddoncrispdemo:source": "Quelle"
+      },
+      "fr":       {
+        "hippoaddoncrispdemo:introduction": "Introduction",
+        "hippoaddoncrispdemo:location": "Lieu",
+        "jcr:name": "Message d'info",
+        "hippoaddoncrispdemo:content": "Contenu",
+        "hippoaddoncrispdemo:date": "Date",
+        "hippoaddoncrispdemo:image": "Image",
+        "hippoaddoncrispdemo:title": "Titre",
+        "hippoaddoncrispdemo:author": "Auteur",
+        "hippoaddoncrispdemo:source": "Source"
+      }
+    }
+  }
+}
