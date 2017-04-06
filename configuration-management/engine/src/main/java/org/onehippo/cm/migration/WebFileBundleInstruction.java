@@ -35,16 +35,6 @@ public class WebFileBundleInstruction extends InitializeInstruction {
         source.addWebFileBundleDefinition(getResourcePath());
 
         final File bundleDirectory = new File(moduleRoot, bundleName);
-        if (bundleDirectory.exists()) {
-            log.info("Deleting existing " + (bundleDirectory.isDirectory() ? "directory" : "file") + " '" + bundleDirectory.getAbsolutePath() + "'");
-            try {
-                FileUtils.forceDelete(bundleDirectory);
-            } catch (IOException e) {
-                log.error("Error deleting '{}'", bundleDirectory.getAbsolutePath(), e);
-                throw e;
-            }
-        }
-
         try {
             FileUtils.copyDirectory(getResource(), bundleDirectory);
         } catch (IOException e) {
