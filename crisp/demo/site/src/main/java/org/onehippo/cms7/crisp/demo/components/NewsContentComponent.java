@@ -10,7 +10,7 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
 import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.crisp.demo.beans.NewsDocument;
-import org.onehippo.cms7.crisp.hst.module.CrispServices;
+import org.onehippo.cms7.crisp.hst.module.CrispHstServices;
 import org.onehippo.cms7.essentials.components.EssentialsContentComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
         NewsDocument document = (NewsDocument) request.getRequestContext().getContentBean();
 
         try {
-            ResourceServiceBroker resourceServiceBroker = CrispServices.getDefaultResourceServiceBroker();
+            ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
             final Map<String, Object> pathVars = new HashMap<>();
             pathVars.put("fullTextSearchTerm", document.getTitle());
             ResourceContainer productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_PRODUCT_CATALOG,
