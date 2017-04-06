@@ -8,13 +8,14 @@ import org.onehippo.cms7.crisp.api.resource.ResourceException;
 
 public interface ResourceServiceBroker {
 
-    Resource resolve(String resourceSpace, String absResourcePath, Map<String, Object> variables)
+    Resource resolve(String resourceSpace, String absResourcePath) throws ResourceException;
+
+    Resource resolve(String resourceSpace, String absResourcePath, Map<String, Object> pathVariables)
             throws ResourceException;
 
-    ResourceContainable findResources(String resourceSpace, String baseAbsPath, Map<String, Object> variables,
-            String query) throws ResourceException;
+    ResourceContainable findResources(String resourceSpace, String baseAbsPath) throws ResourceException;
 
-    ResourceContainable findResources(String resourceSpace, String baseAbsPath, Map<String, Object> variables,
-            String query, String language) throws ResourceException;
+    ResourceContainable findResources(String resourceSpace, String baseAbsPath, Map<String, Object> pathVariables)
+            throws ResourceException;
 
 }

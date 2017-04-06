@@ -45,14 +45,14 @@ public class CacheableResourceServiceBroker extends AbstractMultiResolverResourc
     }
 
     @Override
-    public Resource resolve(String resourceSpace, String absResourcePath, Map<String, Object> variables)
+    public Resource resolve(String resourceSpace, String absResourcePath, Map<String, Object> pathVariables)
             throws ResourceException {
         Resource resource = null;
         ResourceResolver resourceResolver = getResourceResolverByResourceSpace(resourceSpace);
         ValueMap cacheKey = null;
 
         if (isCacheEnabled() && resourceCache != null) {
-            cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, variables);
+            cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, pathVariables);
             Object cachedData = resourceCache.get(cacheKey);
 
             if (cachedData != null) {
@@ -61,7 +61,7 @@ public class CacheableResourceServiceBroker extends AbstractMultiResolverResourc
         }
 
         if (resource == null) {
-            resource = resourceResolver.resolve(absResourcePath, variables);
+            resource = resourceResolver.resolve(absResourcePath, pathVariables);
 
             if (resource != null && cacheKey != null && resourceResolver.isCacheable(resource)) {
                 final Object cacheData = resourceResolver.toCacheData(resource);
@@ -76,14 +76,14 @@ public class CacheableResourceServiceBroker extends AbstractMultiResolverResourc
     }
 
     @Override
-    public ResourceContainable findResources(String resourceSpace, String baseAbsPath, Map<String, Object> variables,
-            String query, String language) throws ResourceException {
+    public ResourceContainable findResources(String resourceSpace, String baseAbsPath,
+            Map<String, Object> pathVariables) throws ResourceException {
         ResourceContainable resource = null;
         ResourceResolver resourceResolver = getResourceResolverByResourceSpace(resourceSpace);
         ValueMap cacheKey = null;
 
         if (isCacheEnabled() && resourceCache != null) {
-            cacheKey = createCacheKey(OPERATION_KEY_FIND_RESOURCES, resourceSpace, baseAbsPath, variables);
+            cacheKey = createCacheKey(OPERATION_KEY_FIND_RESOURCES, resourceSpace, baseAbsPath, pathVariables);
             Object cachedData = resourceCache.get(cacheKey);
 
             if (cachedData != null) {
@@ -92,7 +92,7 @@ public class CacheableResourceServiceBroker extends AbstractMultiResolverResourc
         }
 
         if (resource == null) {
-            resource = resourceResolver.findResources(baseAbsPath, variables, query, language);
+            resource = resourceResolver.findResources(baseAbsPath, pathVariables);
 
             if (resource != null && cacheKey != null && resourceResolver.isCacheable(resource)) {
                 final Object cacheData = resourceResolver.toCacheData(resource);

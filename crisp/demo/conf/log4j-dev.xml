@@ -198,6 +198,13 @@
     <appender-ref ref="messages"/>
   </logger>
 
+  <logger name="org.apache.http">
+    <level value="debug" />
+  </logger>
+  <logger name="org.apache.http.wire">
+    <level value="error" />
+  </logger>
+
   <root>
     <level value="warn"/>
     <appender-ref ref="site"/>

@@ -4,13 +4,13 @@ import java.util.Map;
 
 public interface ResourceResolver extends ResourceCacheResolvable {
 
-    Resource resolve(String absPath, Map<String, Object> variables) throws ResourceException;
+    Resource resolve(String absPath) throws ResourceException;
 
-    ResourceContainable findResources(String baseAbsPath, Map<String, Object> variables, String query)
-            throws ResourceException;
+    Resource resolve(String absPath, Map<String, Object> pathVariables) throws ResourceException;
 
-    ResourceContainable findResources(String baseAbsPath, Map<String, Object> variables, String query, String language)
-            throws ResourceException;
+    ResourceContainable findResources(String baseAbsPath) throws ResourceException;
+
+    ResourceContainable findResources(String baseAbsPath, Map<String, Object> pathVariables) throws ResourceException;
 
     boolean isLive() throws ResourceException;
 

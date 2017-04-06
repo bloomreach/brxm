@@ -34,7 +34,6 @@
       <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
         <property name="cacheManager" ref="ehCacheManager" />
         <property name="cacheName" value="crispResourceCache" />
-        <property name="blocking" value="true" />
         <property name="maxEntriesLocalHeap" value="256" />
         <property name="maxEntriesLocalDisk" value="0" />
         <property name="eternal" value="false" />

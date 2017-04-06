@@ -1,13 +1,17 @@
 package org.onehippo.cms7.crisp.api.resource;
 
-import java.util.Map;
+import java.util.Collections;
 
 public abstract class AbstractResourceResolver extends AbstractResourceCacheResolvable implements ResourceResolver {
 
     @Override
-    public ResourceContainable findResources(String baseAbsPath, Map<String, Object> variables, String query)
-            throws ResourceException {
-        return findResources(baseAbsPath, variables, query, null);
+    public Resource resolve(String absPath) throws ResourceException {
+        return resolve(absPath, Collections.emptyMap());
+    }
+
+    @Override
+    public ResourceContainable findResources(String baseAbsPath) throws ResourceException {
+        return findResources(baseAbsPath, Collections.emptyMap());
     }
 
     @Override

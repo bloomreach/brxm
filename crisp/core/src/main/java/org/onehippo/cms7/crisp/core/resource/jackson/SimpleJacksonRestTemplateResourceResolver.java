@@ -1,7 +1,6 @@
 package org.onehippo.cms7.crisp.core.resource.jackson;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +8,7 @@ import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceContainable;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,13 +38,13 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
     }
 
     @Override
-    public Resource resolve(String absPath, Map<String, Object> variables) throws ResourceException {
-        RestTemplate restTemplate = createRestTemplate();
-        ResponseEntity<String> result = restTemplate.getForEntity(buildResourceURI(absPath), String.class,
-                (variables != null) ? variables : Collections.emptyMap());
+    public Resource resolve(String absPath, Map<String, Object> pathVariables) throws ResourceException {
+        try {
+            RestTemplate restTemplate = createRestTemplate();
+            ResponseEntity<String> result = restTemplate.getForEntity(getBaseResourceURI(absPath), String.class,
+                    pathVariables);
 
-        if (isSuccessful(result)) {
-            try {
+            if (isSuccessfulResponse(result)) {
                 final String bodyText = result.getBody();
                 JsonNode jsonNode = getObjectMapper().readTree(bodyText);
                 Resource resource = new JacksonResource(jsonNode);
@@ -54,25 +54,29 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
                 }
 
                 return resource;
-            } catch (JsonProcessingException e) {
-                throw new ResourceException("JSON processing error.", e);
-            } catch (IOException e) {
-                throw new ResourceException("IO error.", e);
+            } else {
+                throw new ResourceException("Unexpected response status: " + result.getStatusCode());
             }
-        } else {
-            throw new ResourceException("Unexpected response status: " + result.getStatusCode());
+        } catch (JsonProcessingException e) {
+            throw new ResourceException("JSON processing error.", e);
+        } catch (RestClientException e) {
+            throw new ResourceException("REST client invocation error.", e);
+        } catch (IOException e) {
+            throw new ResourceException("IO error.", e);
+        } catch (Exception e) {
+            throw new ResourceException("Unknown error.", e);
         }
     }
 
     @Override
-    public ResourceContainable findResources(String baseAbsPath, Map<String, Object> variables, String query,
-            String language) throws ResourceException {
-        RestTemplate restTemplate = createRestTemplate();
-        ResponseEntity<String> result = restTemplate.getForEntity(buildSearchURI(baseAbsPath, query), String.class,
-                (variables != null) ? variables : Collections.emptyMap());
+    public ResourceContainable findResources(String baseAbsPath, Map<String, Object> pathVariables)
+            throws ResourceException {
+        try {
+            RestTemplate restTemplate = createRestTemplate();
+            ResponseEntity<String> result = restTemplate.getForEntity(getBaseResourceURI(baseAbsPath), String.class,
+                    pathVariables);
 
-        if (isSuccessful(result)) {
-            try {
+            if (isSuccessfulResponse(result)) {
                 final String bodyText = result.getBody();
                 JsonNode jsonNode = getObjectMapper().readTree(bodyText);
                 ResourceContainable rootResource = new JacksonResource(jsonNode);
@@ -82,13 +86,17 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
                 }
 
                 return rootResource;
-            } catch (JsonProcessingException e) {
-                throw new ResourceException("JSON processing error.", e);
-            } catch (IOException e) {
-                throw new ResourceException("IO error.", e);
+            } else {
+                throw new ResourceException("Unexpected response status: " + result.getStatusCode());
             }
-        } else {
-            throw new ResourceException("Unexpected response status: " + result.getStatusCode());
+        } catch (JsonProcessingException e) {
+            throw new ResourceException("JSON processing error.", e);
+        } catch (RestClientException e) {
+            throw new ResourceException("REST client invocation error.", e);
+        } catch (IOException e) {
+            throw new ResourceException("IO error.", e);
+        } catch (Exception e) {
+            throw new ResourceException("Unknown error.", e);
         }
     }
 
