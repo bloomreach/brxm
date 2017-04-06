@@ -21,12 +21,7 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-crisp-api</artifactId>
       <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-crisp-core</artifactId>
-      <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>

@@ -11,57 +11,77 @@
   <packaging>war</packaging>
   <name>Hippo Addon CRISP Demo CMS</name>
   <description>Hippo Addon CRISP Demo CMS</description>
+
   <dependencies>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-crisp-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-repository-dependencies</artifactId>
       <type>pom</type>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-cms-dependencies</artifactId>
       <type>pom</type>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-package-cms-dependencies</artifactId>
       <type>pom</type>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-channel-manager-frontend</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-channel-manager-repository</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7.demo</groupId>
       <artifactId>hippo-addon-crisp-demo-bootstrap-configuration</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7.demo</groupId>
       <artifactId>hippo-addon-crisp-demo-bootstrap-webfiles</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-gallerypicker</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-selections-addon-cms</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-selections-addon-repository</artifactId>
     </dependency>
+
   </dependencies>
+
   <build>
     <finalName>cms</finalName>
     <plugins>

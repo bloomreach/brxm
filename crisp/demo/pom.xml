@@ -260,6 +260,13 @@
 
     <profile>
       <id>cargo.run</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.onehippo.cms7</groupId>
+          <artifactId>hippo-addon-crisp-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -317,6 +324,13 @@
                   <project.basedir>${project.basedir}</project.basedir>
                   <send.usage.statistics.to.hippo>true</send.usage.statistics.to.hippo>
                 </systemProperties>
+                <dependencies>
+                  <dependency>
+                    <groupId>org.onehippo.cms7</groupId>
+                    <artifactId>hippo-addon-crisp-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                </dependencies>
               </container>
             </configuration>
           </plugin>
