@@ -1,6 +1,6 @@
 package org.onehippo.cms7.crisp.api.resource;
 
-public interface Resource extends ResourceContainable {
+public interface Resource extends ResourceContainer {
 
     String gerResourceType();
 

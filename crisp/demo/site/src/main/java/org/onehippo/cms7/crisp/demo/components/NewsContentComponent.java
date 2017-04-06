@@ -8,7 +8,7 @@ import java.util.Map;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
-import org.onehippo.cms7.crisp.api.resource.ResourceContainable;
+import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.crisp.demo.beans.NewsDocument;
 import org.onehippo.cms7.crisp.hst.module.CrispServices;
 import org.onehippo.cms7.essentials.components.EssentialsContentComponent;
@@ -29,7 +29,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
             ResourceServiceBroker resourceServiceBroker = CrispServices.getDefaultResourceServiceBroker();
             final Map<String, Object> variables = new HashMap<>();
             variables.put("fullTextSearchTerm", document.getTitle());
-            ResourceContainable productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_PRODUCT_CATALOG,
+            ResourceContainer productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_PRODUCT_CATALOG,
                     "/products?q={fullTextSearchTerm}", variables);
             request.setAttribute("productCatalogs", productCatalogs);
         } catch (Exception e) {

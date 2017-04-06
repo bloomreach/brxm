@@ -2,10 +2,10 @@ package org.onehippo.cms7.crisp.api.resource;
 
 public interface ResourceCacheResolvable {
 
-    boolean isCacheable(ResourceContainable resourceContainer);
+    boolean isCacheable(ResourceContainer resourceContainer);
 
-    Object toCacheData(ResourceContainable resourceContainer);
+    Object toCacheData(ResourceContainer resourceContainer);
 
-    ResourceContainable fromCacheData(Object cacheData);
+    ResourceContainer fromCacheData(Object cacheData);
 
 }

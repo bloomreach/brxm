@@ -2,7 +2,7 @@ package org.onehippo.cms7.crisp.api.resource;
 
 import java.util.Iterator;
 
-public interface ResourceContainable {
+public interface ResourceContainer {
 
     boolean isAnyChildContained();
 

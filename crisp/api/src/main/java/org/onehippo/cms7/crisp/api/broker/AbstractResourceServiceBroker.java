@@ -3,7 +3,7 @@ package org.onehippo.cms7.crisp.api.broker;
 import java.util.Collections;
 
 import org.onehippo.cms7.crisp.api.resource.Resource;
-import org.onehippo.cms7.crisp.api.resource.ResourceContainable;
+import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 
 public abstract class AbstractResourceServiceBroker implements ResourceServiceBroker {
@@ -17,7 +17,7 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
     }
 
     @Override
-    public ResourceContainable findResources(String resourceSpace, String baseAbsPath) throws ResourceException {
+    public ResourceContainer findResources(String resourceSpace, String baseAbsPath) throws ResourceException {
         return findResources(resourceSpace, baseAbsPath, Collections.emptyMap());
     }
 

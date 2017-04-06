@@ -3,7 +3,7 @@ package org.onehippo.cms7.crisp.core.broker;
 import java.util.Map;
 
 import org.onehippo.cms7.crisp.api.resource.Resource;
-import org.onehippo.cms7.crisp.api.resource.ResourceContainable;
+import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.onehippo.cms7.crisp.api.resource.ValueMap;
@@ -78,9 +78,9 @@ public class CacheableResourceServiceBroker extends AbstractMultiResolverResourc
     }
 
     @Override
-    public ResourceContainable findResources(String resourceSpace, String baseAbsPath,
+    public ResourceContainer findResources(String resourceSpace, String baseAbsPath,
             Map<String, Object> pathVariables) throws ResourceException {
-        ResourceContainable resource = null;
+        ResourceContainer resource = null;
         ResourceResolver resourceResolver = getResourceResolverByResourceSpace(resourceSpace);
         ValueMap cacheKey = null;
 
