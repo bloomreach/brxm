@@ -43,7 +43,11 @@
         <#list productCatalogs.childIterator as product>
           <#assign extendedData=product.valueMap['extendedData'] />
           <li>
-            <a href="<@crisp.link resourceSpace='productCatalogs' resource=product />">
+            <@crisp.link var="productLink" resourceSpace='productCatalogs' resource=product>
+              <@crisp.variable name="preview" value="${hstRequestContext.preview?then('true', 'false')}" />
+              <@crisp.variable name="name" value="${product.valueMap['name']}" />
+            </@crisp.link>
+            <a href="${productLink}">
               ${extendedData.valueMap['title']!} (${product.valueMap['SKU']!})
             </a>
           </li>

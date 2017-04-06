@@ -21,4 +21,7 @@ public interface ResourceServiceBroker {
 
     ResourceLink resolveLink(String resourceSpace, ResourceContainer resource) throws ResourceException;
 
+    ResourceLink resolveLink(String resourceSpace, ResourceContainer resource, Map<String, Object> linkVariables)
+            throws ResourceException;
+
 }

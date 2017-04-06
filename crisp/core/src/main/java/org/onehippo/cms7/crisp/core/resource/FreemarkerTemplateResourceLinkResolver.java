@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.onehippo.cms7.crisp.api.resource.AbstractResourceLinkResolver;
 import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceLink;
-import org.onehippo.cms7.crisp.api.resource.ResourceLinkResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-public class FreemarkerTemplateResourceLinkResolver implements ResourceLinkResolver {
+public class FreemarkerTemplateResourceLinkResolver extends AbstractResourceLinkResolver {
 
     private static Logger log = LoggerFactory.getLogger(FreemarkerTemplateResourceLinkResolver.class);
 
@@ -49,8 +49,13 @@ public class FreemarkerTemplateResourceLinkResolver implements ResourceLinkResol
     }
 
     @Override
-    public ResourceLink resolve(ResourceContainer resource) throws ResourceException {
+    public ResourceLink resolve(ResourceContainer resource, Map<String, Object> variables) throws ResourceException {
         Map<String, Object> context = new HashMap<String, Object>();
+
+        if (variables != null) {
+            context.putAll(variables);
+        }
+
         context.put("resource", resource);
         StringWriter out = new StringWriter();
 

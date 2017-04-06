@@ -14,7 +14,7 @@
             <property name="resourceLinkResolver">
               <bean class="org.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver">
                 <property name="templateSource">
-                  <value>http://www.example.com/products/sku/${resource.valueMap['SKU']}/overview.html</value>
+                  <value>http://www.example.com/products/${(preview == "true")?then("staging", "current")}/sku/${resource.valueMap['SKU']!"unknown"}/overview.html</value>
                 </property>
               </bean>
             </property>

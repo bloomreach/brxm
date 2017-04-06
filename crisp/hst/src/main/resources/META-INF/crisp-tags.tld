@@ -67,4 +67,27 @@
     </attribute>
   </tag>
 
+  <tag>
+    <description>
+      This variable tag can be nested into 'link' tag to provide additional link variables.
+    </description>
+    <name>variable</name>
+    <tag-class>org.onehippo.cms7.crisp.hst.tag.VariableTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>The name of the variable</description>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>The value of the parameter</description>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+  </tag>
+
 </taglib>

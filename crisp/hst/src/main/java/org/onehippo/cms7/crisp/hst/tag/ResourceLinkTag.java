@@ -22,7 +22,6 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.tag.ParamContainerTag;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.utils.TagUtils;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
@@ -37,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * Abstract supporting class for Hst Link tags
  */
 
-public class ResourceLinkTag extends ParamContainerTag {
+public class ResourceLinkTag extends VariableContainerTag {
 
     private static final long serialVersionUID = 1L;
 
@@ -74,7 +73,7 @@ public class ResourceLinkTag extends ParamContainerTag {
             String urlString = null;
 
             ResourceServiceBroker broker = CrispHstServices.getDefaultResourceServiceBroker();
-            ResourceLink link = broker.resolveLink(resourceSpace, resource);
+            ResourceLink link = broker.resolveLink(resourceSpace, resource, getVariablesMap());
 
             if (link != null) {
                 urlString = link.getUri();
