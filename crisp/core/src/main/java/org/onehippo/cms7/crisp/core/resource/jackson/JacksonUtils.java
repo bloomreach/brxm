@@ -3,6 +3,8 @@ package org.onehippo.cms7.crisp.core.resource.jackson;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -56,5 +58,15 @@ public class JacksonUtils {
         }
 
         return false;
+    }
+
+    public static List<String> getFieldNames(final JsonNode jsonNode) {
+        List<String> fieldNames = new LinkedList<>();
+
+        for (Iterator<Map.Entry<String, JsonNode>> it = jsonNode.fields(); it.hasNext(); ) {
+            fieldNames.add(it.next().getKey());
+        }
+
+        return fieldNames;
     }
 }

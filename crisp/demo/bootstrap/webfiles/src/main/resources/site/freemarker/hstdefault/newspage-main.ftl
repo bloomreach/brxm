@@ -35,4 +35,21 @@
     </#if>
     <@hst.html hippohtml=document.content/>
   </article>
+
+  <#if productCatalogs?? && productCatalogs.anyChildContained>
+    <article class="has-edit-button">
+      <h3>Related Products</h3>
+      <ul>
+        <#list productCatalogs.childIterator as product>
+          <#assign extendedData=product.valueMap['extendedData'] />
+          <li>
+            <a href="${extendedData.valueMap['uri']!}">
+              ${extendedData.valueMap['title']!} (${product.valueMap['SKU']!})
+            </a>
+          </li>
+        </#list>
+      </ul>
+    </article>
+  </#if>
+
 </#if>

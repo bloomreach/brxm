@@ -1,16 +1,14 @@
 package org.onehippo.cms7.crisp.core.resource.jackson;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.collections.Transformer;
 import org.onehippo.cms7.crisp.api.resource.AbstractResource;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ValueMap;
 import org.onehippo.cms7.crisp.core.resource.EmptyValueMap;
-import org.onehippo.cms7.crisp.core.resource.LazyValueMap;
+import org.onehippo.cms7.crisp.core.resource.ValueHashMap;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -37,7 +35,7 @@ public class JacksonResource extends AbstractResource {
     }
 
     @Override
-    public boolean hasChildren() {
+    public boolean isAnyChildContained() {
         final int size = jsonNode.size();
 
         if (jsonNode.isContainerNode() && size == 0) {
@@ -52,7 +50,7 @@ public class JacksonResource extends AbstractResource {
     }
 
     @Override
-    public Iterator<Resource> listChildren() {
+    public Iterator<Resource> getChildIterator() {
         if (jsonNode.isObject()) {
             return new JsonFieldChildResourceIterator(this, jsonNode);
         } else {
@@ -73,21 +71,28 @@ public class JacksonResource extends AbstractResource {
     @Override
     public ValueMap getValueMap() {
         if (valueMap == null) {
-            valueMap = LazyValueMap.decorate(new HashMap<String, Object>(), new Transformer() {
-                @Override
-                public Object transform(Object input) {
-                    if (jsonNode.has((String) input)) {
-                        final JsonNode field = jsonNode.get((String) input);
-                        if (field.isContainerNode()) {
-                            return toChildFieldJacksonResource(field, (String) input);
-                        } else {
-                            Object scalaValue = JacksonUtils.getJsonScalaValue(field);
-                            return scalaValue;
-                        }
-                    }
-                    return null;
+            ValueMap tempValueMap = new ValueHashMap();
+
+            Map.Entry<String, JsonNode> entry;
+            String fieldName;
+            JsonNode fieldJsonNode;
+            Object fieldValue;
+
+            for (Iterator<Map.Entry<String, JsonNode>> it = jsonNode.fields(); it.hasNext(); ) {
+                entry = it.next();
+                fieldName = entry.getKey();
+                fieldJsonNode = entry.getValue();
+
+                if (fieldJsonNode.isContainerNode()) {
+                    fieldValue = toChildFieldJacksonResource(fieldJsonNode, fieldName);
+                } else {
+                    fieldValue = JacksonUtils.getJsonScalaValue(fieldJsonNode);
                 }
-            });
+
+                tempValueMap.put(fieldName, fieldValue);
+            }
+
+            valueMap = tempValueMap;
         }
 
         return valueMap;
@@ -119,7 +124,7 @@ public class JacksonResource extends AbstractResource {
 
         @Override
         public Iterator<Resource> iterator() {
-            return base.listChildren();
+            return base.getChildIterator();
         }
 
     }

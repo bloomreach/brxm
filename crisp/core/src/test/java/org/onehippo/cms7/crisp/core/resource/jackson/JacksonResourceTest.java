@@ -55,7 +55,7 @@ public class JacksonResourceTest {
         assertTrue(widget.isResourceType("OBJECT"));
         assertEquals("widget", widget.getName());
         assertEquals("/widget", widget.getPath());
-        assertTrue(widget.hasChildren());
+        assertTrue(widget.isAnyChildContained());
         assertEquals("on", widget.getValueMap().get("debug"));
         assertTrue(widget.getMetadata().isEmpty());
         assertSame(rootResource, widget.getParent());
@@ -70,7 +70,7 @@ public class JacksonResourceTest {
         assertEquals("main_window", window.getValueMap().get("name"));
         assertEquals(500, window.getValueMap().get("width"));
         assertEquals(500, window.getValueMap().get("height"));
-        assertFalse(window.hasChildren());
+        assertFalse(window.isAnyChildContained());
         assertTrue(window.getMetadata().isEmpty());
         assertSame(widget, window.getParent());
 
@@ -80,13 +80,13 @@ public class JacksonResourceTest {
         assertTrue(images.isResourceType("ARRAY"));
         assertEquals("images", images.getName());
         assertEquals("/widget/images", images.getPath());
-        assertTrue(images.hasChildren());
+        assertTrue(images.isAnyChildContained());
         assertTrue(images.getValueMap().isEmpty());
         assertTrue(images.getMetadata().isEmpty());
         assertSame(widget, images.getParent());
 
         List<Resource> imageResources = new ArrayList<>();
-        for (Iterator<Resource> it = images.listChildren(); it.hasNext(); ) {
+        for (Iterator<Resource> it = images.getChildIterator(); it.hasNext(); ) {
             imageResources.add(it.next());
         }
         assertEquals(2, imageResources.size());
@@ -102,7 +102,7 @@ public class JacksonResourceTest {
         assertEquals(250, image.getValueMap().get("hOffset"));
         assertEquals(250, image.getValueMap().get("vOffset"));
         assertEquals("center", image.getValueMap().get("alignment"));
-        assertFalse(image.hasChildren());
+        assertFalse(image.isAnyChildContained());
         assertTrue(image.getMetadata().isEmpty());
         assertSame(images, image.getParent());
 
@@ -117,7 +117,7 @@ public class JacksonResourceTest {
         assertEquals(100, image.getValueMap().get("hOffset"));
         assertEquals(100, image.getValueMap().get("vOffset"));
         assertEquals("left", image.getValueMap().get("alignment"));
-        assertFalse(image.hasChildren());
+        assertFalse(image.isAnyChildContained());
         assertTrue(image.getMetadata().isEmpty());
         assertSame(images, image.getParent());
 
@@ -138,7 +138,7 @@ public class JacksonResourceTest {
         assertEquals(250, image.getValueMap().get("hOffset"));
         assertEquals(250, image.getValueMap().get("vOffset"));
         assertEquals("center", image.getValueMap().get("alignment"));
-        assertFalse(image.hasChildren());
+        assertFalse(image.isAnyChildContained());
         assertTrue(image.getMetadata().isEmpty());
         assertSame(images, image.getParent());
 
@@ -153,7 +153,7 @@ public class JacksonResourceTest {
         assertEquals(100, image.getValueMap().get("hOffset"));
         assertEquals(100, image.getValueMap().get("vOffset"));
         assertEquals("left", image.getValueMap().get("alignment"));
-        assertFalse(image.hasChildren());
+        assertFalse(image.isAnyChildContained());
         assertTrue(image.getMetadata().isEmpty());
         assertSame(images, image.getParent());
     }

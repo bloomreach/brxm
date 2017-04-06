@@ -4,9 +4,9 @@ import java.util.Iterator;
 
 public interface ResourceContainable {
 
-    boolean hasChildren();
+    boolean isAnyChildContained();
 
-    Iterator<Resource> listChildren();
+    Iterator<Resource> getChildIterator();
 
     Iterable<Resource> getChildren();
 
