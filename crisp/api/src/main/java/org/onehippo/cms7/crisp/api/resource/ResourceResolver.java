@@ -18,4 +18,6 @@ public interface ResourceResolver extends ResourceCacheResolvable {
 
     void close() throws ResourceException;
 
+    ResourceLinkResolver getResourceLinkResolver();
+
 }

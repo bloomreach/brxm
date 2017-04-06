@@ -11,6 +11,13 @@
           <bean parent="abstractSimpleJacksonRestTemplateResourceResolver"
                 class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver">
             <property name="baseUri" value="${crisp.resource.resolver.productCatalogs.baseUri}" />
+            <property name="resourceLinkResolver">
+              <bean class="org.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver">
+                <property name="templateSource">
+                  <value>http://www.example.com/products/sku/${resource.valueMap['SKU']}/overview.html</value>
+                </property>
+              </bean>
+            </property>
           </bean>
         </entry>
       </map>
@@ -18,4 +25,3 @@
   </bean>
 
 </beans>
-

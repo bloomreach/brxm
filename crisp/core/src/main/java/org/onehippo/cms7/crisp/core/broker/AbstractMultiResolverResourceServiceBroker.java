@@ -22,6 +22,7 @@ public abstract class AbstractMultiResolverResourceServiceBroker extends Abstrac
         this.resourceResolverMap = resourceResolverMap;
     }
 
+    @Override
     protected ResourceResolver getResourceResolverByResourceSpace(String resourceSpace) {
         ResourceResolver resourceResolver = null;
 

@@ -4,6 +4,8 @@ import java.util.Collections;
 
 public abstract class AbstractResourceResolver extends AbstractResourceCacheResolvable implements ResourceResolver {
 
+    private ResourceLinkResolver resourceLinkResolver;
+
     @Override
     public Resource resolve(String absPath) throws ResourceException {
         return resolve(absPath, Collections.emptyMap());
@@ -27,4 +29,12 @@ public abstract class AbstractResourceResolver extends AbstractResourceCacheReso
     public void close() throws ResourceException {
     }
 
+    @Override
+    public ResourceLinkResolver getResourceLinkResolver() {
+        return resourceLinkResolver;
+    }
+
+    public void setResourceLinkResolver(ResourceLinkResolver resourceLinkResolver) {
+        this.resourceLinkResolver = resourceLinkResolver;
+    }
 }

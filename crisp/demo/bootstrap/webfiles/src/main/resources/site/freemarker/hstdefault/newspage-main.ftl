@@ -43,7 +43,7 @@
         <#list productCatalogs.childIterator as product>
           <#assign extendedData=product.valueMap['extendedData'] />
           <li>
-            <a href="${extendedData.valueMap['uri']!}">
+            <a href="<@crisp.link resourceSpace='productCatalogs' resource=product />">
               ${extendedData.valueMap['title']!} (${product.valueMap['SKU']!})
             </a>
           </li>

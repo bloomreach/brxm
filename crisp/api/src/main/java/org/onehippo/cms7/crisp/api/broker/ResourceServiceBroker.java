@@ -5,6 +5,7 @@ import java.util.Map;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
+import org.onehippo.cms7.crisp.api.resource.ResourceLink;
 
 public interface ResourceServiceBroker {
 
@@ -17,5 +18,7 @@ public interface ResourceServiceBroker {
 
     ResourceContainer findResources(String resourceSpace, String baseAbsPath, Map<String, Object> pathVariables)
             throws ResourceException;
+
+    ResourceLink resolveLink(String resourceSpace, ResourceContainer resource) throws ResourceException;
 
 }
