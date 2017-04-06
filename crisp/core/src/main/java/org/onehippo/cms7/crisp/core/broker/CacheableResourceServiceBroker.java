@@ -9,6 +9,7 @@ import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.onehippo.cms7.crisp.api.resource.ValueMap;
 import org.onehippo.cms7.crisp.core.resource.ValueHashMap;
 import org.springframework.cache.Cache;
+import org.springframework.cache.Cache.ValueWrapper;
 
 public class CacheableResourceServiceBroker extends AbstractMultiResolverResourceServiceBroker {
 
@@ -53,9 +54,10 @@ public class CacheableResourceServiceBroker extends AbstractMultiResolverResourc
 
         if (isCacheEnabled() && resourceCache != null) {
             cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, pathVariables);
-            Object cachedData = resourceCache.get(cacheKey);
+            ValueWrapper cacheDataWrapper = resourceCache.get(cacheKey);
 
-            if (cachedData != null) {
+            if (cacheDataWrapper != null) {
+                Object cachedData = cacheDataWrapper.get();
                 resource = (Resource) resourceResolver.fromCacheData(cachedData);
             }
         }
@@ -84,9 +86,10 @@ public class CacheableResourceServiceBroker extends AbstractMultiResolverResourc
 
         if (isCacheEnabled() && resourceCache != null) {
             cacheKey = createCacheKey(OPERATION_KEY_FIND_RESOURCES, resourceSpace, baseAbsPath, pathVariables);
-            Object cachedData = resourceCache.get(cacheKey);
+            ValueWrapper cacheDataWrapper = resourceCache.get(cacheKey);
 
-            if (cachedData != null) {
+            if (cacheDataWrapper != null) {
+                Object cachedData = cacheDataWrapper.get();
                 resource = (Resource) resourceResolver.fromCacheData(cachedData);
             }
         }

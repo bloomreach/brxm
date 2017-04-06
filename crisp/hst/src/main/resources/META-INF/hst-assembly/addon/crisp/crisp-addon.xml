@@ -28,21 +28,23 @@
     <property name="readTimeout" value="30000" />
   </bean>
 
-  <bean id="defaultResourceCache"
-        class="org.springframework.cache.ehcache.EhCacheCache">
-    <constructor-arg>
-      <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-        <property name="cacheManager" ref="ehCacheManager" />
-        <property name="cacheName" value="crispResourceCache" />
-        <property name="maxEntriesLocalHeap" value="256" />
-        <property name="maxEntriesLocalDisk" value="0" />
-        <property name="eternal" value="false" />
-        <property name="timeToLiveSeconds" value="60" />
-        <property name="timeToIdleSeconds" value="60" />
-        <property name="diskExpiryThreadIntervalSeconds" value="120" />
-        <property name="statisticsEnabled" value="true" />
-      </bean>
-    </constructor-arg>
+  <bean id="abstractResourceEhCache" abstract="true" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+    <property name="cacheManager" ref="ehCacheManager" />
+    <property name="cacheName" value="crispResourceCache" />
+    <property name="eternal" value="false" />
+    <property name="diskExpiryThreadIntervalSeconds" value="120" />
+    <property name="statisticsEnabled" value="true" />
+  </bean>
+
+  <bean id="defaultResourceEhCache"  parent="abstractResourceEhCache">
+    <property name="maxEntriesLocalHeap" value="1000" />
+    <property name="maxEntriesLocalDisk" value="0" />
+    <property name="timeToLiveSeconds" value="60" />
+    <property name="timeToIdleSeconds" value="60" />
+  </bean>
+
+  <bean id="defaultResourceCache" class="org.springframework.cache.ehcache.EhCacheCache">
+    <constructor-arg ref="defaultResourceEhCache" />
   </bean>
 
   <bean id="org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker"
