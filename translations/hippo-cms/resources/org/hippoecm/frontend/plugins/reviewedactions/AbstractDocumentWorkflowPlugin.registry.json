@@ -5,10 +5,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "request-depublication" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "move-label" : {
       "status" : "CLEAN",
       "locales" : null
@@ -18,10 +14,6 @@
       "locales" : null
     },
     "copy-title" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "schedule-request-publish" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -117,10 +109,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "request-publication" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "schedule-publish-title" : {
       "status" : "CLEAN",
       "locales" : null
@@ -137,15 +125,27 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "schedule-request-depublish" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "edit-label" : {
       "status" : "CLEAN",
       "locales" : null
     },
     "depublish-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "schedule-request-publish-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "schedule-request-depublish-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "request-publication-label" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "request-depublication-label" : {
       "status" : "CLEAN",
       "locales" : null
     }
