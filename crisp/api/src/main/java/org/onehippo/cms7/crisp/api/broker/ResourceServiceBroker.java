@@ -6,7 +6,9 @@ import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceLink;
+import org.onehippo.cms7.services.SingletonService;
 
+@SingletonService
 public interface ResourceServiceBroker {
 
     Resource resolve(String resourceSpace, String absResourcePath) throws ResourceException;

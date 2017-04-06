@@ -26,6 +26,7 @@
     <jackson2.version>2.4.5</jackson2.version>
 
     <hippo.commons.version>3.2.0</hippo.commons.version>
+    <hippo.services.version>3.2.0</hippo.services.version>
     <hippo.hst.version>4.2.0</hippo.hst.version>
 
     <jsp-api.version>2.2</jsp-api.version>
@@ -101,6 +102,13 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms7-commons</artifactId>
         <version>${hippo.commons.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services</artifactId>
+        <version>${hippo.services.version}</version>
         <scope>provided</scope>
       </dependency>
 

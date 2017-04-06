@@ -54,5 +54,11 @@
     <property name="cacheEnabled" value="true" />
   </bean>
 
+  <bean id="org.onehippo.cms7.crisp.core.broker.ResourceBrokerServiceRegistrationBean"
+        class="org.onehippo.cms7.crisp.core.broker.ResourceBrokerServiceRegistrationBean">
+    <property name="enabled" value="true" />
+    <property name="resourceServiceBroker" ref="org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker" />
+  </bean>
+
 </beans>
 
