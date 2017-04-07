@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.crisp.api.resource.AbstractResourceLinkResolver;
 import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
@@ -57,14 +59,17 @@ public class FreemarkerTemplateResourceLinkResolver extends AbstractResourceLink
         }
 
         context.put("resource", resource);
-        StringWriter out = new StringWriter();
+        StringWriter out = null;
 
         try {
+            out = new StringWriter();
             getTemplate().process(context, out);
             out.flush();
-            return new SimpleResourceLink(out.toString());
+            return new SimpleResourceLink(StringUtils.trim(out.toString()));
         } catch (Exception e) {
             throw new ResourceException("Resource link resolving failure.", e);
+        } finally {
+            IOUtils.closeQuietly(out);
         }
     }
 
