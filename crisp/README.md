@@ -9,7 +9,7 @@ Hippo Addon CRISP (Common Resource Interface and Service Provider).
 - Resource Space Routing Configuration (based on Spring Framework Bean configuration XML file(s))
 - Provides single resource retrieval and finding multiple resource results through APIs.
 - Caching service in ```ResourceServiceBroker``` level. By default, for the same service invocation, it caches
-  the response output for 1 minute in EhCache. It can be easily configurable and customizable.
+  the response output for 1 minute in EhCache. It is easily configurable and customizable.
 - ```ResourceServiceBroker``` can be used in both SITE and CMS applications.
 - HTTP invocations are done by using ```RestTemplate``` of Spring Framework.
 - TODO: Provide OAuth2-based RestTemplate as a default option with easy configurability.
@@ -138,8 +138,8 @@ then you can use it like the following example (excerpt from [NewsContentCompone
     ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
     final Map<String, Object> pathVars = new HashMap<>();
     pathVars.put("fullTextSearchTerm", document.getTitle());
-    ResourceContainer productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_PRODUCT_CATALOG,
-            "/products?q={fullTextSearchTerm}", pathVars);
+    ResourceContainer productCatalogs =
+        resourceServiceBroker.findResources("productCatalogs", "/products?q={fullTextSearchTerm}", pathVars);
     request.setAttribute("productCatalogs", productCatalogs);
 ```
 
