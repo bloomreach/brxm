@@ -2,6 +2,7 @@ package org.onehippo.cms7.crisp.core.broker;
 
 import java.util.Map;
 
+import org.onehippo.cms7.crisp.api.broker.AbstractResourceServiceBroker;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
@@ -11,7 +12,7 @@ import org.onehippo.cms7.crisp.core.resource.DefaultValueMap;
 import org.springframework.cache.Cache;
 import org.springframework.cache.Cache.ValueWrapper;
 
-public class CacheableResourceServiceBroker extends AbstractMultiResolverResourceServiceBroker {
+public class CacheableResourceServiceBroker extends AbstractResourceServiceBroker {
 
     private static final String OPERATION_KEY = "operationKey";
     private static final String RESOURCE_SPACE = "resourceSpace";
@@ -49,7 +50,7 @@ public class CacheableResourceServiceBroker extends AbstractMultiResolverResourc
     public Resource resolve(String resourceSpace, String absResourcePath, Map<String, Object> pathVariables)
             throws ResourceException {
         Resource resource = null;
-        ResourceResolver resourceResolver = getResourceResolverByResourceSpace(resourceSpace);
+        ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
         ValueMap cacheKey = null;
 
         if (isCacheEnabled() && resourceCache != null) {
@@ -81,7 +82,7 @@ public class CacheableResourceServiceBroker extends AbstractMultiResolverResourc
     public ResourceContainer findResources(String resourceSpace, String baseAbsPath,
             Map<String, Object> pathVariables) throws ResourceException {
         ResourceContainer resource = null;
-        ResourceResolver resourceResolver = getResourceResolverByResourceSpace(resourceSpace);
+        ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
         ValueMap cacheKey = null;
 
         if (isCacheEnabled() && resourceCache != null) {

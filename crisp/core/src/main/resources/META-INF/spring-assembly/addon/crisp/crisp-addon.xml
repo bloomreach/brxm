@@ -13,6 +13,11 @@
     </property>
   </bean>
 
+  <bean id="org.onehippo.cms7.crisp.api.resource.ResourceResolverProvider"
+        class="org.onehippo.cms7.crisp.core.resource.MapResourceResolverProvider">
+    <property name="resourceResolverMap" ref="defaultResourceResolverMap" />
+  </bean>
+
   <bean id="abstractHttpRequestResourceResolver" abstract="true">
     <property name="clientHttpRequestFactory" ref="org.springframework.http.client.ClientHttpRequestFactory" />
   </bean>
@@ -49,7 +54,7 @@
 
   <bean id="org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker"
         class="org.onehippo.cms7.crisp.core.broker.CacheableResourceServiceBroker">
-    <property name="resourceResolverMap" ref="defaultResourceResolverMap" />
+    <property name="resourceResolverProvider" ref="org.onehippo.cms7.crisp.api.resource.ResourceResolverProvider" />
     <property name="resourceCache" ref="defaultResourceCache" />
     <property name="cacheEnabled" value="true" />
   </bean>

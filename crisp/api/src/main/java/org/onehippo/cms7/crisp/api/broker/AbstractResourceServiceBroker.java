@@ -8,10 +8,21 @@ import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceLink;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
+import org.onehippo.cms7.crisp.api.resource.ResourceResolverProvider;
 
 public abstract class AbstractResourceServiceBroker implements ResourceServiceBroker {
 
+    private ResourceResolverProvider resourceResolverProvider;
+
     public AbstractResourceServiceBroker() {
+    }
+
+    public ResourceResolverProvider getResourceResolverProvider() {
+        return resourceResolverProvider;
+    }
+
+    public void setResourceResolverProvider(ResourceResolverProvider resourceResolverProvider) {
+        this.resourceResolverProvider = resourceResolverProvider;
     }
 
     @Override
@@ -32,7 +43,7 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
     @Override
     public ResourceLink resolveLink(String resourceSpace, ResourceContainer resource, Map<String, Object> linkVariables)
             throws ResourceException {
-        ResourceResolver resolver = getResourceResolverByResourceSpace(resourceSpace);
+        ResourceResolver resolver = getResourceResolver(resourceSpace);
 
         if (resolver != null) {
             return resolver.getResourceLinkResolver().resolve(resource, linkVariables);
@@ -41,6 +52,11 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
         return null;
     }
 
-    protected abstract ResourceResolver getResourceResolverByResourceSpace(String resourceSpace);
+    protected ResourceResolver getResourceResolver(String resourceSpace) {
+        if (getResourceResolverProvider() == null) {
+            throw new ResourceException("No ResourceResolverProvider available.");
+        }
 
+        return getResourceResolverProvider().getResourceResolver(resourceSpace);
+    }
 }

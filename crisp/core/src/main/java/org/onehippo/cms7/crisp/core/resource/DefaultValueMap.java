@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.onehippo.cms7.crisp.api.resource.ValueMap;
@@ -98,6 +99,20 @@ public class DefaultValueMap implements ValueMap {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || !(o instanceof DefaultValueMap)) {
+            return false;
+        }
+
+        return Objects.equals(delegatedMap, ((DefaultValueMap) o).delegatedMap);
+    }
+
+    @Override
+    public int hashCode() {
+        return delegatedMap.hashCode();
     }
 
     public ValueMap toUnmodifiable() {
