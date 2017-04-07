@@ -24,6 +24,7 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -33,6 +34,12 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
+import org.onehippo.cms7.services.processor.html.model.HtmlProcessorModel;
+import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.processor.html.model.SimpleModel;
+import org.onehippo.cms7.services.processor.richtext.jcr.JcrNodeFactory;
+import org.onehippo.cms7.services.processor.richtext.model.RichTextProcessorModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,16 +60,16 @@ public class RichTextFieldType extends FormattedTextFieldType implements Compoun
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }
 
-    private List<FieldValue> readValues(final Node node) {
+    protected List<FieldValue> readValues(final Node node) {
         try {
             final NodeIterator children = node.getNodes(getId());
             final List<FieldValue> values = new ArrayList<>((int)children.getSize());
-            for (Node child : new NodeIterable(children)) {
-                final String html = JcrUtils.getStringProperty(child, HippoStdNodeType.HIPPOSTD_CONTENT, null);
-                values.add(new FieldValue(html));
+            final RichTextReader processorReader = new RichTextReader();
+            for (final Node child : new NodeIterable(children)) {
+                values.add(new FieldValue(processorReader.read(child)));
             }
             return values;
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to read rich text field '{}'", getId(), e);
         }
         return Collections.emptyList();
@@ -77,7 +84,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements Compoun
         try {
             final NodeIterator children = node.getNodes(valueName);
             FieldTypeUtils.writeCompoundValues(children, values, getMaxValues(), this);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to write rich text field '{}'", valueName, e);
             throw new InternalServerErrorException();
         }
@@ -85,9 +92,45 @@ public class RichTextFieldType extends FormattedTextFieldType implements Compoun
 
     @Override
     public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException {
-        final String html = fieldValue.getValue();
-        node.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, html);
-        // TODO: clean HTML
-        // TODO: process child nodes for links and images
+        final RichTextWriter processorWriter = new RichTextWriter();
+        processorWriter.write(node, fieldValue.getValue());
+    }
+
+    private static class RichTextReader {
+
+        String read(final Node node) throws RepositoryException {
+            final String html = JcrUtils.getStringProperty(node, HippoStdNodeType.HIPPOSTD_CONTENT, null);
+            final Model<String> htmlModel = new SimpleModel<>(html);
+            final Model<Node> nodeModel = new SimpleModel<>(node);
+            final JcrNodeFactory nodeFactory = new JcrNodeFactory() {
+                @Override
+                protected Session getSession() throws RepositoryException {
+                    return node.getSession();
+                }
+            };
+            final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of("richtext");
+            final HtmlProcessorModel processorModel = new RichTextProcessorModel(htmlModel, nodeModel, processorFactory,
+                                                                                 nodeFactory);
+            return processorModel.get();
+        }
+    }
+
+    private static class RichTextWriter {
+
+        void write(final Node node, final String html) throws RepositoryException {
+            final Model<Node> nodeModel = new SimpleModel<>(node);
+            final JcrNodeFactory nodeFactory = new JcrNodeFactory() {
+                @Override
+                protected Session getSession() throws RepositoryException {
+                    return node.getSession();
+                }
+            };
+            final Model<String> htmlModel = new SimpleModel<>("");
+            final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of("richtext");
+            final HtmlProcessorModel processorModel = new RichTextProcessorModel(htmlModel, nodeModel, processorFactory,
+                                                                                 nodeFactory);
+            processorModel.set(html);
+            node.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, htmlModel.get());
+        }
     }
 }

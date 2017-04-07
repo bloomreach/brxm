@@ -60,6 +60,11 @@
       <artifactId>commons-lang</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services-htmlprocessor</artifactId>
+    </dependency>
+
     <!--test dependencies-->
     <dependency>
       <groupId>junit</groupId>
