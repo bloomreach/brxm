@@ -20,13 +20,14 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.richtext.LineEndingsModel;
-import org.hippoecm.frontend.plugins.richtext.RichTextModel;
+import org.hippoecm.frontend.plugins.richtext.HtmlModel;
+import org.hippoecm.frontend.plugins.richtext.processor.WicketModel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffPanel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewPanel;
 import org.hippoecm.frontend.plugins.standards.diff.DefaultHtmlDiffService;
 import org.hippoecm.frontend.plugins.standards.diff.DiffService;
 import org.onehippo.ckeditor.CKEditorConfig;
+import org.onehippo.cms7.services.processor.html.model.Model;
 
 /**
  * Property field plugin for editing HTML in a String property using CKEditor. Internal links and images are
@@ -45,7 +46,8 @@ public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin<String> {
 
     @Override
     protected IModel<String> createEditModel() {
-        return new LineEndingsModel(new RichTextModel(getHtmlModel(), getHtmlCleaner()));
+        final Model<String> valueModel = WicketModel.of(getHtmlModel());
+        return new HtmlModel(getHtmlProcessorId(), valueModel);
     }
 
     @Override

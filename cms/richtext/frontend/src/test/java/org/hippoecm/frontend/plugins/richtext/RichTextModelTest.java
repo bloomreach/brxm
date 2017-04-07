@@ -1,5 +1,5 @@
 /*
-* Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+* Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -16,32 +16,36 @@
 package org.hippoecm.frontend.plugins.richtext;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.easymock.EasyMock;
 import org.hamcrest.CoreMatchers;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.richtext.htmlcleaner.HtmlCleanerPlugin;
-import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
+import org.hippoecm.frontend.plugins.richtext.processor.WicketModel;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.matchers.JUnitMatchers;
+import org.onehippo.cms7.services.processor.html.HtmlProcessor;
+import org.onehippo.cms7.services.processor.html.HtmlProcessorConfig;
+import org.onehippo.cms7.services.processor.html.HtmlProcessorImpl;
+import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.processor.html.serialize.HtmlSerializer;
+import org.onehippo.cms7.services.processor.richtext.UrlProvider;
+import org.onehippo.cms7.services.processor.richtext.image.RichTextImageFactory;
+import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactory;
+import org.onehippo.cms7.services.processor.richtext.RichTextException;
+import org.onehippo.cms7.services.processor.richtext.jcr.JcrNodeFactory;
+import org.onehippo.cms7.services.processor.richtext.model.RichTextProcessorModel;
 import org.onehippo.repository.mock.MockNode;
 
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -52,11 +56,9 @@ public class RichTextModelTest {
     private MockNode rootNode;
     private MockNode documentNode;
 
-    private IModel documentNodeModel;
+    private IModel<Node> documentNodeModel;
     private IModel<String> textModel;
     private RichTextModel richTextModel;
-    private HtmlCleanerPlugin cleaner;
-    private UuidConverterBuilder converterBuilder;
 
     @Before
     public void setUp() throws RepositoryException, RichTextException {
@@ -69,21 +71,42 @@ public class RichTextModelTest {
         expect(documentNodeModel.getObject()).andStubReturn(documentNode);
         replay(documentNodeModel);
 
-        textModel = new Model<>("");
+        textModel = org.apache.wicket.model.Model.of("");
 
-        IPluginConfig cleanerConfig = EasyMock.createMock(IPluginConfig.class);
-        expect(cleanerConfig.getString(eq("charset"), eq("UTF-8"))).andReturn("UTF-8");
-        expect(cleanerConfig.getString(eq("serializer"), eq("simple"))).andReturn("simple");
-        expect(cleanerConfig.getBoolean(eq("omitComments"))).andReturn(false);
-        expect(cleanerConfig.get(eq("filter"))).andReturn(false);
-        replay(cleanerConfig);
+        Model<String> valueModel = WicketModel.of(textModel);
+        Model<Node> nodeModel = WicketModel.of(documentNodeModel);
 
-        JcrRichTextLinkFactory linkFactory = new JcrRichTextLinkFactory(documentNodeModel);
-        PrefixingImageUrlProvider imageUrlProvider = new PrefixingImageUrlProvider("/binaries");
-        converterBuilder = new UuidConverterBuilder(documentNodeModel, linkFactory, imageUrlProvider);
+        JcrNodeFactory nodeFactory = new JcrNodeFactory() {
+            @Override
+            public Model<Node> getNodeModelByIdentifier(final String uuid) throws RepositoryException {
+                return null;
+            }
 
-        cleaner = new HtmlCleanerPlugin(null, cleanerConfig);
-        richTextModel = new RichTextModel(textModel, cleaner, converterBuilder);
+            @Override
+            protected Session getSession() throws RepositoryException {
+                return rootNode.getSession();
+            }
+        };
+
+        RichTextProcessorModel processorModel = new RichTextProcessorModel(valueModel, nodeModel,
+                                                                           this::createHtmlProcessor,
+                                                                           nodeFactory) {
+            @Override
+            protected UrlProvider createRichTextImageURLProvider(final Model<Node> nodeModel, final RichTextLinkFactory linkFactory, final RichTextImageFactory richTextImageFactory) {
+                return new PrefixingImageUrlProvider("/binaries");
+            }
+        };
+
+        richTextModel = new RichTextModel(processorModel);
+    }
+
+    private HtmlProcessor createHtmlProcessor() {
+        final HtmlProcessorConfig htmlProcessorConfig = new HtmlProcessorConfig();
+        htmlProcessorConfig.setCharset("UTF-8");
+        htmlProcessorConfig.setSerializer(HtmlSerializer.SIMPLE);
+        htmlProcessorConfig.setOmitComments(false);
+        htmlProcessorConfig.setConvertLineEndings(false);
+        return new HtmlProcessorImpl(htmlProcessorConfig);
     }
 
     private void addChildFacetNode(String name, String uuid) throws RepositoryException {
@@ -123,6 +146,7 @@ public class RichTextModelTest {
         assertNoChanges("");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void getLinkChildNodeNameIsRewrittenToUuid() throws RepositoryException {
         addChildFacetNode("linked-node", "d1b804c0-cf19-451f-8c0f-184da74289e4");
@@ -130,6 +154,7 @@ public class RichTextModelTest {
         assertEquals("<a href=\"http://\" data-uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\">link</a>", richTextModel.getObject());
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void getLinkWithEscapedNameIsRewrittenToUuid() throws RepositoryException {
         String name = "A name that needs 'encoding'";
@@ -143,6 +168,7 @@ public class RichTextModelTest {
         assertEquals("<a href=\"http://\" data-uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\">link</a>", richTextModel.getObject());
     }
 
+    // TODO: moved to imageVisitorTest
     @Test
     public void getImageChildNodeNameIsRewrittenToUuid() throws RepositoryException {
         addChildFacetNode("image.jpg", "d1b804c0-cf19-451f-8c0f-184da74289e4");
@@ -150,6 +176,7 @@ public class RichTextModelTest {
         assertEquals("<img src=\"/binaries/image.jpg/{_document}/hippogallery:thumbnail\" data-uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\" data-type=\"hippogallery:thumbnail\" />", richTextModel.getObject());
     }
 
+    // TODO: can be removed, not moved to LinkVisitorTest
     @Test
     public void getMultipleLinkChildNodeNamesAreRewrittenToUuids() throws RepositoryException {
         addChildFacetNode("linked-node-1", "d1b804c0-cf19-451f-8c0f-184da74289e4");
@@ -160,6 +187,7 @@ public class RichTextModelTest {
         assertEquals("Two links: <a href=\"http://\" data-uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\">one</a> and <a href=\"http://\" data-uuid=\"eb40e696-67db-4d5b-a09a-987e6c49543d\">two</a>", richTextModel.getObject());
     }
 
+    // TODO: can be removed, not moved to imageVisitorTest
     @Test
     public void getMultipleImageChildNodeNamesAreRewrittenToUuids() throws RepositoryException {
         addChildFacetNode("foo.jpg", "d1b804c0-cf19-451f-8c0f-184da74289e4");
@@ -168,101 +196,121 @@ public class RichTextModelTest {
         assertEquals("Two images: <img src=\"/binaries/foo.jpg/{_document}/hippogallery:original\" data-uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\" data-type=\"hippogallery:original\" /> and <img src=\"/binaries/bar.jpg/{_document}/hippogallery:original\" data-uuid=\"eb40e696-67db-4d5b-a09a-987e6c49543d\" data-type=\"hippogallery:original\" />", richTextModel.getObject());
     }
 
+    // TODO: can be removed, not moved to imageVisitorTest
     @Test
     public void getMissingImageChildNodeDoesNotChange() throws RepositoryException {
         assertNoChanges("<img src=\"no-such-image.jpg/{_document}/hippogallery:original\" />");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void anchorDoesNotChange() throws RepositoryException {
         assertNoChanges("<a name=\"foo\">anchor</a>");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void relativeLinkDoesNotChange() throws RepositoryException {
         assertNoChanges("<a href=\"somepage.html\">relative link</a>");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void relativeLinkWithPathDoesNotChange() throws RepositoryException {
         assertNoChanges("<a href=\"../somepage.html\">relative link with path</a>");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void relativeLinkWithIllegalJcrCharsDoesNotChange() throws RepositoryException {
         assertNoChanges("<a href=\"2*3=6.html\">Link to file with illegal JCR characters in its name</a>");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void externalHttpLinkDoesNotChange() throws RepositoryException {
         assertNoChanges("<a href=\"http://www.example.com\">external link</a>");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void externalLinkWithPortDoesNotChange() throws RepositoryException {
         assertNoChanges("<a href=\"http://www.example.com:8080\">external link with port</a>");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void externalHttpOnlyLinkDoesNotChange() throws RepositoryException {
         assertNoChanges("<a href=\"http://\">strange external link</a>");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void linkWithEmptyHrefDoesNotChange() throws RepositoryException {
         assertNoChanges("<a href=\"\">link with empty href</a>");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void linkWithEmptyHrefAndUuidDoesNotChange() throws RepositoryException {
         assertNoChanges("<a href=\"\" data-uuid=\"\">link with empty href and uuid</a>");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void externalFtpLinkDoesNotChange() throws RepositoryException {
         assertNoChanges("<a href=\"ftp://www.example.com\">external FTP link</a>");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void externalFtpOnlyLinkDoesNotChange() throws RepositoryException {
         assertNoChanges("<a href=\"ftp://\">strange external FTP link</a>");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void emptyLinkDoesNotChange() throws RepositoryException {
         assertNoChanges("<a>strange empty link</a>");
     }
 
+    // TODO: moved to imageVisitorTest
     @Test
     public void externalImageDoesNotChange() throws RepositoryException {
         assertNoChanges("<img src=\"http://www.example.com/foo.jpg\" />");
     }
 
+    // TODO: moved to imageVisitorTest
     @Test
     public void externalHttpOnlyImageDoesNotChange() throws RepositoryException {
         assertNoChanges("<img src=\"http://\" />");
     }
 
+    // TODO: moved to imageVisitorTest
     @Test
     public void externalRelativeImageDoesNotChange() throws RepositoryException {
         assertNoChanges("<img src=\"images/foo.jpg\" />");
     }
 
+    // TODO: moved to imageVisitorTest
     @Test
     public void externalRelativeWithPathImageDoesNotChange() throws RepositoryException {
         assertNoChanges("<img src=\"../images/foo.jpg\" />");
     }
 
+    // TODO: moved to imageVisitorTest
     @Test
     public void externalImageWithIllegalJcrCharsDoesNotChange() throws RepositoryException {
         assertNoChanges("<a><img src=\"2*3=6.png\" />Link to image illegal JCR characters in its name</a>");
     }
 
+    // TODO: moved to imageVisitorTest
     @Test
     public void externalRelativeImageWithIllegalJcrCharsDoesNotChange() throws RepositoryException {
         assertNoChanges("100% correct image: \n<img src=\"100%25+correct.png\" />");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void setNewLinkUuidCreatesChildNodeAndReplacesUuid() throws RepositoryException {
         Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
@@ -280,6 +328,7 @@ public class RichTextModelTest {
         assertEquals("<a href=\"linked-node\">link</a>", textModel.getObject());
     }
 
+    // TODO: moved to imageVisitorTest
     @Test
     public void setNewImageUuidCreatesChildNodeAndRemovesUuid() throws RepositoryException {
         Node linkedImage = rootNode.addNode("linked-image.jpg", "nt:unstructured");
@@ -297,6 +346,7 @@ public class RichTextModelTest {
         assertEquals("<img src=\"linked-image.jpg/{_document}/hippogallery:thumbnail\" />", textModel.getObject());
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void setExistingLinkUuidDoesNotCreateChildNode() throws RepositoryException {
         Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
@@ -313,6 +363,7 @@ public class RichTextModelTest {
         assertEquals("<a href=\"linked-node\">link</a>", textModel.getObject());
     }
 
+    // TODO: moved to imageVisitorTest
     @Test
     public void setExistingImageUuidDoesNotCreateChildNode() throws RepositoryException {
         Node linkedImage = rootNode.addNode("linked-image.jpg", "nt:unstructured");
@@ -328,6 +379,7 @@ public class RichTextModelTest {
         assertEquals("<img src=\"linked-image.jpg/{_document}/hippogallery:thumbnail\" />", textModel.getObject());
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void setExternalLinkWithUuidIgnoresUuid() throws RepositoryException {
         Node document1 = rootNode.addNode("document1", "nt:unstructured");
@@ -337,6 +389,7 @@ public class RichTextModelTest {
         assertEquals("<a href=\"http://www.example.com\">external link</a>", textModel.getObject());
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void setTextWithoutAnyLinksRemovesAllChildNodes() throws RepositoryException {
         Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
@@ -345,6 +398,7 @@ public class RichTextModelTest {
         assertSetTextUnchangedAndAllChildFacetsRemoved("Text without link");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void setEmptyTextRemovesAllChildNodes() throws RepositoryException {
         Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
@@ -353,6 +407,7 @@ public class RichTextModelTest {
         assertSetTextUnchangedAndAllChildFacetsRemoved("");
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void setNullTextRemovesAllChildNodes() throws RepositoryException {
         Node linkTarget = rootNode.addNode("linked-node", HippoNodeType.NT_FACETSELECT);
@@ -361,6 +416,7 @@ public class RichTextModelTest {
         assertSetTextUnchangedAndAllChildFacetsRemoved(null);
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void setTextWithLinksRemovesUnusedChildNodes() throws RepositoryException {
         Node document1 = rootNode.addNode("document1", "nt:unstructured");
@@ -381,6 +437,7 @@ public class RichTextModelTest {
         assertEquals("Text with only one link to <a href=\"" + child.getName() + "\">document one</a>", textModel.getObject());
     }
 
+    // TODO: moved to ImageVisitorTest
     @Test
     public void setTextWithImagesRemovesUnusedChildNodes() throws RepositoryException {
         Node image1 = rootNode.addNode("image1.jpg", "nt:unstructured");
@@ -400,6 +457,7 @@ public class RichTextModelTest {
         assertEquals("Text with only one image: <img src=\"image1.jpg/{_document}/hippogallery:thumbnail\" />", textModel.getObject());
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void setTextWithLinksRemovesUnusedChildNodesWithAdditionalSuffix() throws RepositoryException {
         Node document = rootNode.addNode("document1", "nt:unstructured");
@@ -468,31 +526,47 @@ public class RichTextModelTest {
         assertEquals("Child facet node should have been removed", 0, documentNode.getNodes().getSize());
     }
 
-    @Test
-    public void allStateIsDetached() {
-        IModel<String> delegate = EasyMock.createMock(IModel.class);
-        IModel<Node> nodeModel = EasyMock.createMock(IModel.class);
-        IRichTextLinkFactory linkFactory = EasyMock.createMock(IRichTextLinkFactory.class);
+//    @Test
+//    public void allStateIsDetached() {
+//        IModel<String> delegate = EasyMock.createMock(IModel.class);
+//        IModel<Node> nodeModel = EasyMock.createMock(IModel.class);
+//
+//        NodeProvider nodeModelProvider = NodeProvider.of(nodeModel);
+//        List<TagVisitor> visitors = Lists.newArrayList(new LinkVisitor(nodeModelProvider));
+//
+//        HtmlProcessorProvider provider = new HtmlProcessorProvider() {
+//            @Override
+//            public HtmlProcessor getProcessor() {
+//                return createHtmlProcessor();
+//            }
+//
+//            @Override
+//            public List<TagVisitor> getVisitors() {
+//                return visitors;
+//            }
+//
+//            @Override
+//            public void detach() {
+//                visitors.forEach(TagVisitor::detach);
+//            }
+//        };
+//        RichTextModel model = new RichTextModel(delegate, provider);
+//
+//        delegate.detach();
+//        expectLastCall();
+//
+//        nodeModel.detach();
+//        expectLastCall();
+//
+//        replay(delegate, nodeModel);
+//
+//        model.detach();
+//
+//        verify(delegate, nodeModel);
+//    }
 
-        UuidConverterBuilder converter = new UuidConverterBuilder(nodeModel, linkFactory, null);
-        RichTextModel model = new RichTextModel(delegate, cleaner, converter);
 
-        delegate.detach();
-        expectLastCall();
-
-        nodeModel.detach();
-        expectLastCall();
-
-        linkFactory.detach();
-        expectLastCall();
-
-        replay(delegate, nodeModel, linkFactory);
-
-        model.detach();
-
-        verify(delegate, nodeModel, linkFactory);
-    }
-
+    // TODO: moved to imageVisitorTest
     @Test
     public void getTextChangesSrcAndAddsFacetSelectAndType() throws RepositoryException {
         addChildFacetNode("image.jpg", "0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21");
@@ -500,6 +574,7 @@ public class RichTextModelTest {
         assertEquals("<img src=\"/binaries/image.jpg/{_document}/hippogallery:original\" data-uuid=\"0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21\" data-type=\"hippogallery:original\" />", richTextModel.getObject());
     }
 
+    // TODO: moved to imageVisitorTest
     @Test
     public void getSrcWithoutVariantOmitsType() throws RepositoryException {
         addChildFacetNode("image.jpg", "0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21");
@@ -507,6 +582,7 @@ public class RichTextModelTest {
         assertEquals("<img src=\"/binaries/image.jpg\" data-uuid=\"0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21\" />", richTextModel.getObject());
     }
 
+    // TODO: moved to imageVisitorTest
     @Test
     public void additionalImgAttributesAreNotChanged() throws RepositoryException {
         Node image = rootNode.addNode("image.jpg", "nt:unstructured");
@@ -521,31 +597,51 @@ public class RichTextModelTest {
         assertEquals("<img src=\"http://www.example.com/image.jpg\" />", richTextModel.getObject());
     }
 
-    @Test
-    public void getRichTextImageHasCorrectUrl() throws RepositoryException, RichTextException {
-        Node path = rootNode.addNode("path", "nt:folder");
-        Node image = path.addNode("image.jpg", "nt:unstructured");
-        addChildFacetNode("image.jpg", image.getIdentifier());
-
-        final RichTextImage richTextImage = new RichTextImage("/path/image.jpg/image.jpg", "image.jpg");
-        richTextImage.setSelectedResourceDefinition("hippogallery:original");
-
-        final IRichTextImageFactory mockImageFactory = EasyMock.createMock(IRichTextImageFactory.class);
-        expect(mockImageFactory.loadImageItem(eq(image.getIdentifier()), eq("hippogallery:original"))).andReturn(richTextImage);
-
-        final IRichTextLinkFactory mockLinkFactory = EasyMock.createMock(IRichTextLinkFactory.class);
-        expect(mockLinkFactory.getLinkUuids()).andReturn(Collections.singleton(image.getIdentifier()));
-
-        replay(mockImageFactory, mockLinkFactory);
-        final RichTextImageURLProvider urlProvider = new RichTextImageURLProvider(mockImageFactory, mockLinkFactory, documentNodeModel);
-
-        converterBuilder = new UuidConverterBuilder(documentNodeModel, mockLinkFactory, urlProvider);
-
-        textModel.setObject("<img src=\"image.jpg/{_document}/hippogallery:original\" />");
-        richTextModel = new RichTextModel(textModel, cleaner, converterBuilder);
-
-        assertEquals("<img src=\"binaries/path/image.jpg/image.jpg/hippogallery:original\" data-uuid=\"" + image.getIdentifier() + "\" data-type=\"hippogallery:original\" />", richTextModel.getObject());
-    }
+//    @Test
+//    public void getRichTextImageHasCorrectUrl() throws RepositoryException, RichTextException {
+//        Node path = rootNode.addNode("path", "nt:folder");
+//        Node image = path.addNode("image.jpg", "nt:unstructured");
+//        addChildFacetNode("image.jpg", image.getIdentifier());
+//
+//        final RichTextImage richTextImage = new RichTextImage("/path/image.jpg/image.jpg", "image.jpg");
+//        richTextImage.setSelectedResourceDefinition("hippogallery:original");
+//
+//        final IRichTextImageFactory mockImageFactory = EasyMock.createMock(IRichTextImageFactory.class);
+//        expect(mockImageFactory.loadImageItem(eq(image.getIdentifier()), eq("hippogallery:original"))).andReturn(richTextImage);
+//
+//        final IRichTextLinkFactory mockLinkFactory = EasyMock.createMock(IRichTextLinkFactory.class);
+//        expect(mockLinkFactory.getLinkUuids()).andReturn(Collections.singleton(image.getIdentifier()));
+//
+//        replay(mockImageFactory, mockLinkFactory);
+//        final RichTextImageURLProvider urlProvider = new RichTextImageURLProvider(mockImageFactory, mockLinkFactory, documentNodeModel);
+//
+//        NodeProvider nodeModelProvider = NodeProvider.of(documentNodeModel);
+//        final ImageVisitor imageVisitor = new ImageVisitor(nodeModelProvider, new RichTextImageLinkProvider(urlProvider));
+//        // converterBuilder = new UuidConverterBuilder(documentNodeModel, mockLinkFactory, urlProvider);
+//
+//        textModel.setObject("<img src=\"image.jpg/{_document}/hippogallery:original\" />");
+//
+//        HtmlProcessorProvider provider = new HtmlProcessorProvider() {
+//            @Override
+//            public HtmlProcessor getProcessor() {
+//                return createHtmlProcessor();
+//            }
+//
+//            @Override
+//            public List<TagVisitor> getVisitors() {
+//                return Lists.newArrayList(imageVisitor);
+//            }
+//
+//            @Override
+//            public void detach() {
+//
+//            }
+//        };
+//
+//        richTextModel = new RichTextModel(textModel, provider);
+//
+//        assertEquals("<img src=\"binaries/path/image.jpg/image.jpg/hippogallery:original\" data-uuid=\"" + image.getIdentifier() + "\" data-type=\"hippogallery:original\" />", richTextModel.getObject());
+//    }
 
     @Test
     public void setDocumentsWithTheSameName() throws RepositoryException {
@@ -558,6 +654,7 @@ public class RichTextModelTest {
         assertEquals("<a href=\"doc\"></a><a href=\"doc_1\"></a>", textModel.getObject());
     }
 
+    // TODO: moved to imageVisitorTest
     @Test
     public void setImagesWithTheSameName() throws RepositoryException {
         Node image1 = rootNode.addNode("image.jpg", "nt:unstructured");
@@ -596,7 +693,7 @@ public class RichTextModelTest {
         assertEquals(html, richTextModel.getObject());
     }
 
-    private class PrefixingImageUrlProvider implements IImageURLProvider {
+    private class PrefixingImageUrlProvider implements UrlProvider {
 
         private String prefix;
 
@@ -605,7 +702,7 @@ public class RichTextModelTest {
         }
 
         @Override
-        public String getURL(String link) throws RichTextException {
+        public String getURL(String link) {
             return prefix + "/" + link;
         }
     }

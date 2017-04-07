@@ -1,12 +1,12 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,17 +25,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
-import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
-import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
-import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
-import org.hippoecm.frontend.plugins.richtext.UuidConverterBuilder;
-import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
-import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
+import org.hippoecm.frontend.plugins.richtext.processor.WicketModel;
 import org.hippoecm.frontend.plugins.richtext.model.BrowsableModel;
+import org.hippoecm.frontend.plugins.richtext.model.RichTextModelFactory;
 import org.hippoecm.frontend.plugins.standards.diff.DiffService;
 import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;
 import org.hippoecm.frontend.service.IBrowseService;
@@ -60,13 +53,14 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
                                                final IModel<Node> currentNodeModel,
                                                final IBrowseService browser,
                                                final DiffService diffService,
-                                               final IHtmlCleanerService cleaner) {
+                                               final RichTextModelFactory modelFactory) {
         super(id);
 
         final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(currentNodeModel, browser, false);
         add(previewLinksBehavior);
 
-        final IModel<String> viewModel = createDiffModel(baseNodeModel, currentNodeModel, previewLinksBehavior, diffService, cleaner);
+        final IModel<String> viewModel = createDiffModel(baseNodeModel, currentNodeModel,
+                                                         previewLinksBehavior, diffService, modelFactory);
         addView(viewModel);
     }
 
@@ -80,30 +74,21 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
                                                   final IModel<Node> currentNodeModel,
                                                   final PreviewLinksBehavior previewLinksBehavior,
                                                   final DiffService diffService,
-                                                  final IHtmlCleanerService cleaner) {
+                                                  final RichTextModelFactory modelFactory) {
 
         final JcrPropertyValueModel<String> baseModel = getContentModelOrNull(baseNodeModel);
-        final IRichTextLinkFactory baseLinkFactory = new JcrRichTextLinkFactory(baseNodeModel);
-        final IRichTextImageFactory baseImageFactory = new JcrRichTextImageFactory(baseNodeModel);
-
         final JcrPropertyValueModel<String> currentModel = getContentModelOrNull(currentNodeModel);
-        final IRichTextLinkFactory currentLinkFactory = new JcrRichTextLinkFactory(currentNodeModel);
-        final IRichTextImageFactory currentImageFactory = new JcrRichTextImageFactory(currentNodeModel);
 
-        final IImageURLProvider baseDecorator = new RichTextImageURLProvider(baseImageFactory, baseLinkFactory, baseNodeModel);
-        final IImageURLProvider currentDecorator = new RichTextImageURLProvider(currentImageFactory, currentLinkFactory, currentNodeModel);
-
-        final BrowsableModel baseBrowsableModel = new BrowsableModel(baseModel, previewLinksBehavior);
+        final IModel<String> baseBrowsableModel = new BrowsableModel(baseModel, previewLinksBehavior);
         final BrowsableModel currentBrowsableModel = new BrowsableModel(currentModel, previewLinksBehavior);
 
-        final UuidConverterBuilder baseConverterBuilder = new UuidConverterBuilder(baseNodeModel, baseLinkFactory, baseDecorator);
-        final UuidConverterBuilder currentConverterBuilder = new UuidConverterBuilder(currentNodeModel, currentLinkFactory, currentDecorator);
+        final IModel<String> baseRichTextModel = modelFactory.create(WicketModel.of(baseBrowsableModel),
+                                                                     WicketModel.of(baseNodeModel));
+        final IModel<String> currentRichTextModel = modelFactory.create(WicketModel.of(currentBrowsableModel),
+                                                                        WicketModel.of(currentNodeModel));
 
-        final IModel<String> decoratedBase = new RichTextModel(baseBrowsableModel, cleaner, baseConverterBuilder);
-        final IModel<String> decoratedCurrent = new RichTextModel(currentBrowsableModel, cleaner, currentConverterBuilder);
-
-        final StripScriptModel scriptlessBase = new StripScriptModel(decoratedBase);
-        final StripScriptModel scriptlessCurrent = new StripScriptModel(decoratedCurrent);
+        final StripScriptModel scriptlessBase = new StripScriptModel(baseRichTextModel);
+        final StripScriptModel scriptlessCurrent = new StripScriptModel(currentRichTextModel);
 
         return new HtmlDiffModel(scriptlessBase, scriptlessCurrent, diffService);
     }
