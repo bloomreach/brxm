@@ -97,6 +97,24 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-test-resources</phase>
+            <configuration>
+              <target>
+                <jar
+                  destfile="${project.build.directory}/test-classes.jar"
+                  basedir="${project.build.directory}/test-classes"/>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 

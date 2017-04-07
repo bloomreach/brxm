@@ -17,15 +17,12 @@
 package org.onehippo.cm.backend;
 
 import java.util.EnumSet;
-import java.util.Map;
 
 import javax.jcr.Session;
 
 import org.onehippo.cm.api.ConfigurationService;
 import org.onehippo.cm.api.MergedModel;
-import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.DefinitionType;
-import org.onehippo.cm.api.model.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +37,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public void apply(final MergedModel mergedModel,
-                      final Map<Module, ResourceInputProvider> resourceInputProviders,
-                      final EnumSet<DefinitionType> includeDefinitionTypes)
+    public void apply(final MergedModel mergedModel, final EnumSet<DefinitionType> includeDefinitionTypes)
             throws Exception {
         try {
             final ConfigurationPersistenceService service =
-                    new ConfigurationPersistenceService(session, resourceInputProviders);
+                    new ConfigurationPersistenceService(session, mergedModel.getResourceInputProviders());
             service.apply(mergedModel, includeDefinitionTypes);
             session.save();
         } catch (Exception e) {
@@ -54,5 +49,4 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             throw e;
         }
     }
-
 }

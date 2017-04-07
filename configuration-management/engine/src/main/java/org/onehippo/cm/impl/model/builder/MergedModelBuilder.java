@@ -22,15 +22,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.impl.MergedModelImpl;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ConfigurationBuilder accumulates {@link ConfigurationImpl}s into a map of configurations and, when building
+ * MergedModelBuilder accumulates {@link ConfigurationImpl}s into a map of configurations and, when building
  * the model, sorts the involved objects into processing order (based on "after" dependencies) to construct
  * the tree of {@link ConfigurationNodeImpl}s.
  */
@@ -40,6 +43,7 @@ public class MergedModelBuilder {
 
     private final List<ConfigurationImpl> configurations = new ArrayList<>();
     private final Map<String, ConfigurationImpl> configurationMap = new HashMap<>();
+    private final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
 
     public MergedModel build() {
         sort();
@@ -60,8 +64,18 @@ public class MergedModelBuilder {
                 )
         );
         mergedModel.setConfigurationRootNode(configurationTreeBuilder.build());
+        mergedModel.addResourceInputProviders(resourceInputProviders);
 
         return mergedModel;
+    }
+
+    public MergedModelBuilder push(final Map<String, Configuration> configurations, final Map<Module, ResourceInputProvider> resourceInputProviders) {
+        for (Configuration config : configurations.values()) {
+            // TODO: awful needed casting
+            push((ConfigurationImpl)config);
+        }
+        pushResourceInputProviders(resourceInputProviders);
+        return this;
     }
 
     public MergedModelBuilder push(final ConfigurationImpl configuration) {
@@ -72,6 +86,19 @@ public class MergedModelBuilder {
         consolidated.addAfter(configuration.getAfter());
         configuration.getModifiableProjects().forEach(consolidated::pushProject);
         return this;
+    }
+
+    public void pushResourceInputProviders(Map<Module, ResourceInputProvider> resourceInputProviders) {
+        for (Module module : resourceInputProviders.keySet()) {
+            if (this.resourceInputProviders.containsKey(module)) {
+                final String msg = String.format(
+                        "ResourceInputProviders for module '%s' already pushed before.",
+                        ModelUtils.formatModule(module)
+                );
+                throw new IllegalArgumentException(msg);
+            }
+            this.resourceInputProviders.put(module, resourceInputProviders.get(module));
+        }
     }
 
     private ConfigurationImpl createConfiguration(final String name) {

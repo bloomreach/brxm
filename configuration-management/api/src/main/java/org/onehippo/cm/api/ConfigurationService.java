@@ -17,18 +17,13 @@
 package org.onehippo.cm.api;
 
 import java.util.EnumSet;
-import java.util.Map;
 
 import org.onehippo.cm.api.model.DefinitionType;
-import org.onehippo.cm.api.model.Module;
 import org.onehippo.cms7.services.SingletonService;
 
 @SingletonService
 public interface ConfigurationService {
 
-    void apply(final MergedModel mergedModel,
-               final Map<Module, ResourceInputProvider> resourceInputProviders,
-               final EnumSet<DefinitionType> includeDefinitionTypes)
-            throws Exception;
+    void apply(final MergedModel mergedModel, final EnumSet<DefinitionType> includeDefinitionTypes) throws Exception;
 
 }

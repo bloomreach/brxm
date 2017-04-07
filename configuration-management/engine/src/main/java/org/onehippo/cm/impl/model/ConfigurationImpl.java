@@ -90,4 +90,14 @@ public class ConfigurationImpl implements Configuration {
         consolidated.addAfter(project.getAfter());
         project.getModifiableModules().forEach(consolidated::pushModule);
     }
+
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other instanceof Configuration) {
+            return this.getName().equals(((Configuration)other).getName());
+        }
+        return false;
+    }
 }

@@ -15,9 +15,12 @@
  */
 package org.onehippo.cm.engine;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -70,6 +73,14 @@ public abstract class AbstractBaseTest {
     protected FileConfigurationReader.ReadResult readFromResource(final String resourceName, final boolean explicitSequencing) throws IOException, ParserException {
         final Path repoConfig = find(resourceName);
         return new FileConfigurationReader(explicitSequencing).read(repoConfig);
+    }
+
+    protected FileConfigurationReader.ReadResult readFromTestJar(final String resourceName) throws IOException, ParserException {
+        final Path jarPath = new File("target/test-classes.jar").toPath();
+        try (FileSystem fs = FileSystems.newFileSystem(jarPath, null)) {
+            final Path repoConfig = fs.getPath(resourceName);
+            return new FileConfigurationReader(DEFAULT_EXPLICIT_SEQUENCING).read(repoConfig);
+        }
     }
 
     Path find(final String repoConfigResourceName) throws IOException {

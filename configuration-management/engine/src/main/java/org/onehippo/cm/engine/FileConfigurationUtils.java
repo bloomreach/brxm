@@ -30,9 +30,9 @@ public class FileConfigurationUtils {
         final Project project = module.getProject();
         final Configuration configuration = project.getConfiguration();
         if (configHasMultipleModules) {
-            return repoConfigPath.getParent().resolve("repo-config").resolve(configuration.getName()).resolve(project.getName()).resolve(module.getName());
+            return repoConfigPath.resolveSibling("repo-config").resolve(configuration.getName()).resolve(project.getName()).resolve(module.getName());
         } else {
-            return repoConfigPath.getParent().resolve("repo-config");
+            return repoConfigPath.resolveSibling("repo-config");
         }
     }
 
@@ -56,5 +56,4 @@ public class FileConfigurationUtils {
         }
         return false;
     }
-
 }

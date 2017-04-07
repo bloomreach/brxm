@@ -15,7 +15,6 @@
  */
 package org.onehippo.cm.engine;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -49,8 +48,7 @@ public class FileResourceInputProvider implements ResourceInputProvider {
 
     @Override
     public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
-        return new FileInputStream(
-                FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath).toFile());
+        return FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath).toUri().toURL().openStream();
     }
 
     @Override

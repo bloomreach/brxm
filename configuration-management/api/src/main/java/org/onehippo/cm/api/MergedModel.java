@@ -16,9 +16,11 @@
 package org.onehippo.cm.api;
 
 import java.util.List;
+import java.util.Map;
 
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ConfigurationNode;
+import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.WebFileBundleDefinition;
@@ -30,5 +32,5 @@ public interface MergedModel {
     List<NodeTypeDefinition> getNodeTypeDefinitions();
     ConfigurationNode getConfigurationRootNode();
     List<WebFileBundleDefinition> getWebFileBundleDefinitions();
-
+    Map<Module, ResourceInputProvider> getResourceInputProviders();
 }

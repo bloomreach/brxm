@@ -17,11 +17,15 @@
 package org.onehippo.cm.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ConfigurationNode;
+import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.WebFileBundleDefinition;
@@ -38,6 +42,7 @@ public class MergedModelImpl implements MergedModel {
     private final List<NodeTypeDefinition> nodeTypeDefinitions = new ArrayList<>();
     private ConfigurationNode configurationRootNode;
     private final List<WebFileBundleDefinition> webFileBundleDefinitions = new ArrayList<>();
+    private final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
 
     @Override
     public List<Configuration> getSortedConfigurations() {
@@ -64,6 +69,11 @@ public class MergedModelImpl implements MergedModel {
         return webFileBundleDefinitions;
     }
 
+    @Override
+    public Map<Module, ResourceInputProvider> getResourceInputProviders() {
+        return resourceInputProviders;
+    }
+
     public void setSortedConfigurations(final List<ConfigurationImpl> sortedConfigurations) {
         this.sortedConfigurations = new ArrayList<>(sortedConfigurations);
     }
@@ -87,6 +97,19 @@ public class MergedModelImpl implements MergedModel {
         webFileBundleDefinitions.addAll(definitions);
     }
 
+    public void addResourceInputProviders(Map<Module, ResourceInputProvider> resourceInputProviders) {
+        for (Module module : resourceInputProviders.keySet()) {
+            if (this.resourceInputProviders.containsKey(module)) {
+                final String msg = String.format(
+                        "ResourceInputProviders for module '%s' already added before.",
+                        ModelUtils.formatModule(module)
+                );
+                throw new IllegalArgumentException(msg);
+            }
+            this.resourceInputProviders.put(module, resourceInputProviders.get(module));
+        }
+    }
+
     private void ensureUniqueBundleName(final WebFileBundleDefinitionImpl newDefinition) {
         for (WebFileBundleDefinition existingDefinition : webFileBundleDefinitions) {
             if (existingDefinition.getName().equals(newDefinition.getName())) {
@@ -99,5 +122,4 @@ public class MergedModelImpl implements MergedModel {
             }
         }
     }
-
 }

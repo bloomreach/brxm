@@ -184,4 +184,15 @@ public class ModuleImpl implements Module {
         }
     }
 
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other instanceof Module) {
+            Module otherModule = (Module)other;
+            return this.getName().equals(otherModule.getName()) &&
+                    this.getProject().equals(otherModule.getProject());
+        }
+        return false;
+    }
 }

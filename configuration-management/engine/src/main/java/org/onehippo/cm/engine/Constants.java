@@ -28,5 +28,7 @@ public final class Constants {
     public static final String WEBFILEBUNDLE = "webfilebundle";
     public static final String META_KEY_PREFIX = ".meta:";
     public static final String META_IGNORE_REORDERED_CHILDREN = META_KEY_PREFIX + "ignore-reordered-children";
+    public static final String REPO_CONFIG_FOLDER = "repo-config";
+    public static final String REPO_CONFIG_YAML = "repo-config.yaml";
 
 }

@@ -15,9 +15,7 @@
  */
 package org.onehippo.cm.engine;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -70,7 +68,7 @@ public class FileConfigurationReader {
     public ReadResult read(final Path repoConfigPath, final boolean verifyOnly) throws IOException, ParserException {
         final RepoConfigParser parser = new RepoConfigParser(explicitSequencing);
         final Map<String, Configuration> configurations =
-                parser.parse(new FileInputStream(repoConfigPath.toFile()), repoConfigPath.toAbsolutePath().toString());
+                parser.parse(repoConfigPath.toUri().toURL().openStream(), repoConfigPath.toAbsolutePath().toString());
         final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(configurations);
         final Map<Module, ResourceInputProvider> resourceDataProviders = new HashMap<>();
 
@@ -83,8 +81,8 @@ public class FileConfigurationReader {
                     resourceDataProviders.put(module, provider);
                     final SourceParser sourceParser = new SourceParser(provider, verifyOnly, explicitSequencing);
 
-                    for (Pair<InputStream, String> pair : getSourceData(moduleRootPath)) {
-                        sourceParser.parse(pair.getLeft(), pair.getRight(), moduleRootPath.resolve(pair.getRight()).toString(), (ModuleImpl) module);
+                    for (Pair<Path, String> pair : getSourceData(moduleRootPath)) {
+                        sourceParser.parse(pair.getLeft().toUri().toURL().openStream(), pair.getRight(), moduleRootPath.resolve(pair.getRight()).toString(), (ModuleImpl) module);
                     }
                 }
             }
@@ -93,15 +91,17 @@ public class FileConfigurationReader {
         return new ReadResult(configurations, resourceDataProviders);
     }
 
-    private List<Pair<InputStream, String>> getSourceData(final Path modulePath) throws IOException {
+    private List<Pair<Path, String>> getSourceData(final Path modulePath) throws IOException {
         final List<Path> paths = new ArrayList<>();
         final BiPredicate<Path, BasicFileAttributes> matcher =
                 (filePath, fileAttr) -> filePath.toString().toLowerCase().endsWith("yaml") && fileAttr.isRegularFile();
         Files.find(modulePath, Integer.MAX_VALUE, matcher).forEachOrdered(paths::add);
+        final int modulePathSize = modulePath.getNameCount();
 
-        final List<Pair<InputStream, String>> result = new ArrayList<>();
+        final List<Pair<Path, String>> result = new ArrayList<>();
         for (Path path : paths) {
-            result.add(Pair.of(new FileInputStream(path.toFile()), modulePath.relativize(path).toString()));
+            final Path sourcePath = path.subpath(modulePathSize, path.getNameCount());
+            result.add(Pair.of(path, sourcePath.toString()));
         }
         return result;
     }

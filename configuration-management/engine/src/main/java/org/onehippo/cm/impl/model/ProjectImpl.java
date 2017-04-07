@@ -105,4 +105,16 @@ public class ProjectImpl implements Project {
 
         addModule(name).addAfter(module.getAfter()).pushDefinitions(module);
     }
+
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other instanceof Project) {
+            Project otherProject = (Project)other;
+            return getName().equals(otherProject.getName()) &&
+                    getConfiguration().equals(((Project)other).getConfiguration());
+        }
+        return false;
+    }
 }
