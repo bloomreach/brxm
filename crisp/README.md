@@ -21,13 +21,6 @@ Hippo Addon CRISP (Common Resource Interface and Service Provider).
     $ mvn clean install
 ```
 
-## Build a source distribution of the demo
-
-```bash
-    $ cd demo
-    $ mvn -Pdist.src
-```
-
 ## Running the demo locally
 
 The demo project is located udner demo/ folder. So, move to the demo/ folder to run it locally.
