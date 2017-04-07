@@ -7,7 +7,7 @@ import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.onehippo.cms7.crisp.api.resource.ValueMap;
-import org.onehippo.cms7.crisp.core.resource.ValueHashMap;
+import org.onehippo.cms7.crisp.core.resource.DefaultValueMap;
 import org.springframework.cache.Cache;
 import org.springframework.cache.Cache.ValueWrapper;
 
@@ -111,7 +111,7 @@ public class CacheableResourceServiceBroker extends AbstractMultiResolverResourc
 
     protected ValueMap createCacheKey(final String operationKey, final String resourceSpace, final String resourcePath,
             final Map<String, Object> variables) {
-        final ValueMap cacheKey = new ValueHashMap();
+        final ValueMap cacheKey = new DefaultValueMap();
         cacheKey.put(OPERATION_KEY, operationKey);
         cacheKey.put(RESOURCE_SPACE, resourceSpace);
         cacheKey.put(RESOURCE_PATH, resourcePath);
