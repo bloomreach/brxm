@@ -55,7 +55,7 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-htmlprocessor</artifactId>
+      <artifactId>hippo-services-htmlprocessor</artifactId>
     </dependency>
 
     <dependency>

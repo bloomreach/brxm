@@ -88,7 +88,7 @@
     <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.utilities.version>4.0.0-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
-    <hippo.htmlprocessor.version>4.0.0-SNAPSHOT</hippo.htmlprocessor.version>
+    <hippo.services.htmlprocessor.version>4.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.repository.version>5.0.0-visual-editing-psp2-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
@@ -205,8 +205,8 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-htmlprocessor</artifactId>
-        <version>${hippo.htmlprocessor.version}</version>
+        <artifactId>hippo-services-htmlprocessor</artifactId>
+        <version>${hippo.services.htmlprocessor.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
