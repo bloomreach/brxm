@@ -57,8 +57,7 @@ public class ParserValueTest extends AbstractBaseTest {
         final Source source = assertSource(module, "base.yaml", 4);
 
         final ConfigDefinition autoDetectedDefinition = assertDefinition(source, 0, ConfigDefinition.class);
-        final DefinitionNode autoDetectedNode = assertNode(autoDetectedDefinition, "/autodetected", "autodetected", autoDetectedDefinition, 2, 7);
-        assertProperty(autoDetectedNode, "/autodetected/binary", "binary", autoDetectedDefinition, ValueType.BINARY, "hello world".getBytes());
+        final DefinitionNode autoDetectedNode = assertNode(autoDetectedDefinition, "/autodetected", "autodetected", autoDetectedDefinition, 2, 6);
         assertProperty(autoDetectedNode, "/autodetected/boolean", "boolean", autoDetectedDefinition, ValueType.BOOLEAN, true);
         final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
         calendar.setTimeInMillis(0);
@@ -83,7 +82,8 @@ public class ParserValueTest extends AbstractBaseTest {
                 ValueType.NAME, new String[0]);
 
         final ConfigDefinition explicitDefinition = assertDefinition(source, 1, ConfigDefinition.class);
-        final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "explicit", explicitDefinition, 0, 10);
+        final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "explicit", explicitDefinition, 0, 12);
+        assertProperty(explicitNode, "/explicit/binaryval", "binaryval", explicitDefinition, PropertyOperation.REPLACE, ValueType.BINARY, "binary.txt", true, false);
         assertProperty(explicitNode, "/explicit/decimal", "decimal", explicitDefinition, ValueType.DECIMAL,
                 new BigDecimal("31415926535897932384626433832795028841971"));
         assertProperty(explicitNode, "/explicit/decimal-multi-value", "decimal-multi-value", explicitDefinition,
