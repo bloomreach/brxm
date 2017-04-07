@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,9 @@ import java.util.NoSuchElementException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
+import org.apache.jackrabbit.value.StringValue;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -39,6 +41,7 @@ import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class WorkflowUtilsTest {
     @Test
@@ -159,4 +162,30 @@ public class WorkflowUtilsTest {
 
         WorkflowUtils.getWorkflow(node, "category", EditableWorkflow.class).get();
     }
+
+    @Test
+    public void hasAvailability() throws RepositoryException {
+        final Node root = MockNode.root();
+        final Node variant = root.addNode("test", HippoNodeType.NT_FIELD);
+        Value[] values = { new StringValue("") };
+        variant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, values);
+
+        assertFalse(WorkflowUtils.hasAvailability(variant, "live"));
+
+        Value[] values2 = { new StringValue("live")};
+        variant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, values2);
+
+        assertTrue(WorkflowUtils.hasAvailability(variant, "live"));
+
+        Value[] values3 = { new StringValue("live"), new StringValue("preview") };
+        variant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, values3);
+
+        assertTrue(WorkflowUtils.hasAvailability(variant, "live"));
+
+        Value[] values4 = { new StringValue("foo"), new StringValue("bar") };
+        variant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, values4);
+
+        assertFalse(WorkflowUtils.hasAvailability(variant, "live"));
+    }
+
 }
