@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,16 +15,27 @@
  */
 package org.hippoecm.repository.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -33,6 +44,9 @@ import org.slf4j.LoggerFactory;
 
 public final class WorkflowUtils {
     private static final Logger log = LoggerFactory.getLogger(WorkflowUtils.class);
+
+    private static final int MAX_REFERENCE_COUNT = 100;
+    private static final int QUERY_LIMIT = 1000;
 
     private WorkflowUtils() {}
 
@@ -130,6 +144,129 @@ public final class WorkflowUtils {
             }
         }
         return Optional.empty();
+    }
+
+    /**
+     * For a document, get a list of nodeId's of documents that reference it.
+     *
+     * @param handle handle node of the document
+     * @param retrieveUnpublished if true unpublished variants are retrieved
+     * @return list of identifiers of document handle nodes that refer to the document
+     * @throws RepositoryException a generic error while accessing the repository
+     */
+    public static List<String> getReferringDocuments(final Node handle, final boolean retrieveUnpublished)
+            throws RepositoryException {
+
+        final List<String> referrers = new ArrayList<>();
+        final String requiredAvailability;
+        if (retrieveUnpublished) {
+            requiredAvailability = "preview";
+        } else {
+            requiredAvailability = "live";
+        }
+        final String handleId = handle.getIdentifier();
+
+        StringBuilder query = new StringBuilder("//element(*,hippo:facetselect)[@hippo:docbase='")
+                .append(handleId).append("']");
+        addReferrers(handle, requiredAvailability, MAX_REFERENCE_COUNT, query.toString(), referrers);
+
+        query = new StringBuilder("//element(*,hippo:mirror)[@hippo:docbase='").append(handleId).append("']");
+        addReferrers(handle, requiredAvailability, MAX_REFERENCE_COUNT, query.toString(), referrers);
+
+        return referrers;
+    }
+
+    private static void addReferrers(final Node handle, final String requiredAvailability, final int resultMaxCount,
+                             final String queryStatement, final List<String> referrers) throws RepositoryException {
+        final QueryManager queryManager = handle.getSession().getWorkspace().getQueryManager();
+        @SuppressWarnings("deprecation")
+        final HippoQuery query = (HippoQuery) queryManager.createQuery(queryStatement, Query.XPATH);
+        query.setLimit(QUERY_LIMIT);
+        final QueryResult result = query.execute();
+        final Node root = handle.getSession().getRootNode();
+
+        for (Node hit : new NodeIterable(result.getNodes())) {
+            if (referrers.size() >= resultMaxCount) {
+                break;
+            }
+            Node current = hit;
+            while (!current.isSame(root)) {
+                Node parent = current.getParent();
+                if (parent.isNodeType(HippoNodeType.NT_HANDLE) && current.isNodeType(HippoNodeType.NT_DOCUMENT) &&
+                        hasAvailability(current, requiredAvailability)) {
+                    referrers.add(parent.getIdentifier());
+                    break;
+                }
+                current = current.getParent();
+            }
+        }
+    }
+
+    /**
+     * Check if a variant node has a given availability (typically: live, preview or draft)
+     *
+     * @param variant document node containing workflow properties
+     * @param availability availability value
+     * @return true if the availablitly property exists and contains the availability value
+     * @throws RepositoryException a generic error while accessing the repository
+     */
+    public static boolean hasAvailability(final Node variant, final String availability) throws RepositoryException {
+        final String[] availabilityValues = JcrUtils.getMultipleStringProperty(variant, HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
+        return Arrays.stream(availabilityValues).anyMatch(a -> a.equals(availability));
+    }
+
+    /**
+     * For a document, get a list of nodeId's of unpublished documents that it references.
+     *
+     * @param handle the handle node of the document
+     * @param session a JCR session
+     * @return list of identifiers of unpublished document nodes that the document refers to
+     * @throws RepositoryException a generic error while accessing the repository
+     */
+    public static List<String> getReferencesToUnpublishedDocuments(final Node handle, final Session session) throws RepositoryException {
+        final List<String> entries = new ArrayList<>();
+        final Optional<Node> unpublishedVariant = getDocumentVariantNode(handle, Variant.UNPUBLISHED);
+        if (unpublishedVariant.isPresent()) {
+            unpublishedVariant.get().accept(new ItemVisitor() {
+
+                public void visit(final Node node) throws RepositoryException {
+                    if (!JcrUtils.isVirtual(node)) {
+                        if (node.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
+                            visit(node.getProperty(HippoNodeType.HIPPO_DOCBASE));
+                        }
+                        for (NodeIterator children = node.getNodes(); children.hasNext();) {
+                            visit(children.nextNode());
+                        }
+                    }
+                }
+
+                public void visit(final Property docBaseProperty) throws RepositoryException {
+                    if (docBaseProperty.getType() == PropertyType.STRING) {
+                        final String uuid = docBaseProperty.getString();
+                        try {
+                            final Node referencedNode = session.getNodeByIdentifier(uuid);
+                            if (referencedNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                boolean isLiveDocument = false;
+                                for (Node document : new NodeIterable(referencedNode.getNodes(referencedNode.getName()))) {
+                                    if (hasAvailability(document, "live")) {
+                                        isLiveDocument = true;
+                                        break;
+                                    }
+                                }
+                                if (!isLiveDocument) {
+                                    entries.add(uuid);
+                                }
+                            }
+                        } catch (ItemNotFoundException e) {
+                            log.debug("Reference to UUID " + uuid + " could not be dereferenced.");
+                        }
+                    }
+                }
+
+            });
+        }
+
+        return entries;
     }
 
     public enum Variant {
