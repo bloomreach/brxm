@@ -7,7 +7,7 @@
     "build": "grunt build"
   },
   "dependencies": {
-    "font-awesome": "4.6.3"
+    "font-awesome": "4.7.0"
   },
   "devDependencies": {
     "grunt": "0.4.5",
