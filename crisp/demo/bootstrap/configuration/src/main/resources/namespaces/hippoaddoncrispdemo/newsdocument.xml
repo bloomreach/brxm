@@ -245,7 +245,6 @@
         <sv:value>f0a8d664-338d-4842-9530-328e8d9bc31e</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String" sv:multiple="true"/>
       <sv:property sv:name="hippoaddoncrispdemo:date" sv:type="Date">
         <sv:value>0001-01-01T13:00:00.000+01:00</sv:value>
       </sv:property>
@@ -521,6 +520,43 @@
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>${cluster.id}.right.item</sv:value>
+        </sv:property>
+        <sv:node sv:name="cluster.options">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="relatedproductselector">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="caption" sv:type="String">
+          <sv:value>Related Products</sv:value>
+        </sv:property>
+        <sv:property sv:name="engine" sv:type="String">
+          <sv:value>${engine}</sv:value>
+        </sv:property>
+        <sv:property sv:name="external.document.service.facade" sv:type="String">
+          <sv:value>org.onehippo.cms7.crisp.demo.cms.plugin.CommerceProductDataServiceFacade</sv:value>
+        </sv:property>
+        <sv:property sv:name="mode" sv:type="String">
+          <sv:value>${mode}</sv:value>
+        </sv:property>
+        <sv:property sv:name="plugin.class" sv:type="String">
+          <sv:value>org.onehippo.forge.exdocpicker.impl.field.ExternalDocumentFieldSelectorPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="related.products.field.name" sv:type="String">
+          <sv:value>hippoaddoncrispdemo:relatedproducts</sv:value>
+        </sv:property>
+        <sv:property sv:name="selection.mode" sv:type="String">
+          <sv:value>multiple</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.id" sv:type="String">
+          <sv:value>${cluster.id}.right.item</sv:value>
+        </sv:property>
+        <sv:property sv:name="wicket.model" sv:type="String">
+          <sv:value>${wicket.model}</sv:value>
         </sv:property>
         <sv:node sv:name="cluster.options">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">

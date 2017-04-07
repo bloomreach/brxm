@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JacksonResource extends AbstractResource {
 
+    private static final long serialVersionUID = 1L;
+
     private final JsonNode jsonNode;
     private ValueMap valueMap;
 

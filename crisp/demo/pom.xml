@@ -63,13 +63,15 @@
     <!--***START temporary override of versions*** -->
     <!-- ***END temporary override of versions*** -->
 
+    <forge.exdocpickerbase.version>3.1.1</forge.exdocpickerbase.version>
+
     <essentials.version>3.2.0</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
     <xalan.version>2.7.1</xalan.version>
     <junit.version>4.10</junit.version>
     <easymock.version>3.1</easymock.version>
-     
+
     <repo.bootstrap>true</repo.bootstrap>
     <content-module-deploy-dir>shared/lib</content-module-deploy-dir>
 
@@ -105,6 +107,12 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-hst</artifactId>
         <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.forge.exdocpickerbase</groupId>
+        <artifactId>exdocpickerbase-field</artifactId>
+        <version>${forge.exdocpickerbase.version}</version>
       </dependency>
 
       <dependency>
