@@ -30,7 +30,6 @@ import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.api.model.WebFileBundleDefinition;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -123,10 +122,7 @@ public class HierarchyTest extends AbstractBaseTest {
         final ContentDefinition contentDefinition = assertDefinition(source1, 7, ContentDefinition.class);
         assertNode(contentDefinition, "/content/documents/myhippoproject", "myhippoproject", contentDefinition, 0, 1);
 
-        final WebFileBundleDefinition webFilesDefinition = assertDefinition(source1, 8, WebFileBundleDefinition.class);
-        assertEquals("site", webFilesDefinition.getName());
-
-        final Source source2 = assertSource(module1, "folder/resources.yaml", 1);
+        final Source source2 = assertSource(module1, "folder/resources.yaml", 2);
         final ConfigDefinition source2definition = assertDefinition(source2, 0, ConfigDefinition.class);
         final DefinitionNode resourceNode = assertNode(source2definition, "/resources", "resources", source2definition, 0, 3);
         assertProperty(resourceNode, "/resources/single-value-string-resource", "single-value-string-resource",
@@ -135,6 +131,9 @@ public class HierarchyTest extends AbstractBaseTest {
                 source2definition, PropertyOperation.REPLACE, ValueType.BINARY, "image.png", true, false);
         assertProperty(resourceNode, "/resources/multi-value-resource", "multi-value-resource", source2definition,
                 PropertyOperation.REPLACE, ValueType.STRING, new String[]{"/root.txt","folder/relative.txt"}, true, false);
+
+//        final ConfigDefinition source2definition2 = assertDefinition(source2, 1, ConfigDefinition.class);
+//        assertNode(source2definition2, "/hippo:configuration/hippo:queries/hippo:templates/new-image", "new-image", source2definition2, 1, 2);
 
         final Configuration myhippoproject = assertConfiguration(configurations, "myhippoproject", new String[]{"base"}, 1);
         final Project project2 = assertProject(myhippoproject, "project2", new String[]{"project1", "foo/bar"}, 1);

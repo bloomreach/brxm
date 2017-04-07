@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
@@ -33,7 +34,9 @@ import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.api.model.WebFileBundleDefinition;
+import org.onehippo.cm.engine.snakeyaml.MutableScalarNode;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -60,12 +63,12 @@ public class SourceSerializer extends AbstractBaseSerializer {
         super(explicitSequencing);
     }
 
-    public void serialize(final OutputStream outputStream, final Source source, final Consumer<String> resourceConsumer) throws IOException {
+    public void serialize(final OutputStream outputStream, final Source source, final Consumer<PostProcessItem> resourceConsumer) throws IOException {
         final Node node = representSource(source, resourceConsumer);
         serializeNode(outputStream, node);
     }
 
-    private Node representSource(final Source source, final Consumer<String> resourceConsumer) {
+    Node representSource(final Source source, final Consumer<PostProcessItem> resourceConsumer) {
         final List<NodeTuple> configDefinitionTuples = new ArrayList<>();
         final List<NodeTuple> contentDefinitionTuples = new ArrayList<>();
         final List<Node> namespaceDefinitionNodes = new ArrayList<>();
@@ -116,15 +119,15 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return new MappingNode(Tag.MAP, sourceTuples, false);
     }
 
-    private NodeTuple representConfigDefinition(final ConfigDefinition definition, final Consumer<String> resourceConsumer) {
+    private NodeTuple representConfigDefinition(final ConfigDefinition definition, final Consumer<PostProcessItem> resourceConsumer) {
         return representDefinitionNode(definition.getNode(), resourceConsumer);
     }
 
-    private NodeTuple representContentDefinition(final ContentDefinition definition, final Consumer<String> resourceConsumer) {
+    private NodeTuple representContentDefinition(final ContentDefinition definition, final Consumer<PostProcessItem> resourceConsumer) {
         return representDefinitionNode(definition.getNode(), resourceConsumer);
     }
 
-    private NodeTuple representDefinitionNode(final DefinitionNode node, final Consumer<String> resourceConsumer) {
+    private NodeTuple representDefinitionNode(final DefinitionNode node, final Consumer<PostProcessItem> resourceConsumer) {
         final List<NodeTuple> children = new ArrayList<>(node.getProperties().size() + node.getNodes().size());
 
         if (node.isDelete()) {
@@ -159,7 +162,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return new NodeTuple(createStrScalar(META_IGNORE_REORDERED_CHILDREN), new ScalarNode(Tag.BOOL, ignoreReorderedChildren.toString(), null, null, null));
     }
 
-    private NodeTuple representProperty(final DefinitionProperty property, final Consumer<String> resourceConsumer) {
+    private NodeTuple representProperty(final DefinitionProperty property, final Consumer<PostProcessItem> resourceConsumer) {
         if (requiresValueMap(property)) {
             return representPropertyUsingMap(property, resourceConsumer);
         } else {
@@ -167,7 +170,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         }
     }
 
-    private NodeTuple representPropertyUsingMap(final DefinitionProperty property, final Consumer<String> resourceConsumer) {
+    private NodeTuple representPropertyUsingMap(final DefinitionProperty property, final Consumer<PostProcessItem> resourceConsumer) {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
 
         if (property.getOperation() == PropertyOperation.DELETE) {
@@ -178,9 +181,9 @@ public class SourceSerializer extends AbstractBaseSerializer {
             }
             valueMapTuples.add(createStrStrTuple("type", property.getValueType().name().toLowerCase()));
 
-            final boolean hasResourceValues = hasResourceValues(property);
+            final boolean exposeAsResource = hasResourceValues(property) || isBinaryProperty(property);
             final String key;
-            if (hasResourceValues) {
+            if (exposeAsResource) {
                 key = "resource";
             } else if (hasPathValues(property)) {
                 key = "path";
@@ -189,24 +192,57 @@ public class SourceSerializer extends AbstractBaseSerializer {
             }
 
             if (property.getType() == PropertyType.SINGLE) {
+
                 final Value value = property.getValue();
-                valueMapTuples.add(new NodeTuple(createStrScalar(key), representValue(value)));
-                if (hasResourceValues) {
-                    resourceConsumer.accept(value.getString());
+                final Node valueNode = representValue(value);
+                final ScalarNode keyNode = createStrScalar(key);
+                valueMapTuples.add(new NodeTuple(keyNode, valueNode));
+
+                if (exposeAsResource) {
+                    processSingleResource(resourceConsumer, value, valueNode);
                 }
             } else {
+
                 final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
+                final List<BinaryItem> binaryItems = new ArrayList<>();
+
                 for (Value value : property.getValues()) {
-                    valueNodes.add(representValue(value));
-                    if (hasResourceValues) {
-                        resourceConsumer.accept(value.getString());
+                    final Node valueNode = representValue(value);
+                    valueNodes.add(valueNode);
+
+                    if (isBinaryEmbedded(value)) {
+                        binaryItems.add(new BinaryItem(value, valueNode));
+                    }
+                    else if (exposeAsResource) {
+                        resourceConsumer.accept(new CopyItem(value.getString()));
                     }
                 }
+
+                if (binaryItems.size() > 0) {
+                    resourceConsumer.accept(new BinaryArrayItem(binaryItems));
+                }
+
                 valueMapTuples.add(createStrSeqTuple(key, valueNodes, true));
             }
         }
 
         return new NodeTuple(createStrScalar(property.getName()), new MappingNode(Tag.MAP, valueMapTuples, false));
+    }
+
+    private void processSingleResource(Consumer<PostProcessItem> resourceConsumer, Value value, Node valueNode) {
+        final PostProcessItem postProcessItem = isBinaryEmbedded(value) ? new BinaryItem(value, valueNode) : new CopyItem(value.getString());
+        resourceConsumer.accept(postProcessItem);
+    }
+
+    private boolean isBinaryEmbedded(Value value) {
+        return value.getType() == ValueType.BINARY && !value.isResource();
+    }
+
+    private boolean isBinaryProperty(final DefinitionProperty property) {
+        if (property.getType() == PropertyType.SINGLE) {
+            return property.getValueType() == ValueType.BINARY;
+        }
+        return Arrays.stream(property.getValues()).anyMatch(value -> value.getType() == ValueType.BINARY);
     }
 
     private NodeTuple representPropertyUsingScalarOrSequence(final DefinitionProperty property) {
@@ -222,11 +258,8 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     private boolean requiresValueMap(final DefinitionProperty property) {
-        if (property.getOperation() != PropertyOperation.REPLACE) {
-            return true;
-        }
 
-        if (hasResourceValues(property)) {
+        if (property.getOperation() != PropertyOperation.REPLACE || hasResourceValues(property)) {
             return true;
         }
 
@@ -235,7 +268,6 @@ public class SourceSerializer extends AbstractBaseSerializer {
         }
 
         switch (property.getValueType()) {
-            case BINARY:
             case BOOLEAN:
             case DOUBLE:
             case DATE:
@@ -244,14 +276,15 @@ public class SourceSerializer extends AbstractBaseSerializer {
                 return property.getType() != PropertyType.SINGLE && property.getValues().length == 0;
             case STRING:
                 return shouldHaveExplicitType(property);
+            case BINARY:
             default:
                 return true;
         }
     }
 
-    private boolean shouldHaveExplicitType(DefinitionProperty property) {
+    private boolean shouldHaveExplicitType(final DefinitionProperty property) {
         if (property.getType() == PropertyType.SINGLE) {
-            String propertyValue = property.getValue().getString();
+            final String propertyValue = property.getValue().getString();
             return !StreamReader.isPrintable(propertyValue);
         } else {
             return !allElementsArePrintable(property);
@@ -294,6 +327,9 @@ public class SourceSerializer extends AbstractBaseSerializer {
             case WEAKREFERENCE:
             case URI:
                 return representer.represent(value.getString());
+            case BINARY:
+                String nodeValue = value.isResource() ? value.getString() : StringUtils.EMPTY;
+                return MutableScalarNode.create(Tag.STR, nodeValue);
             default:
                 return representer.represent(value.getObject());
         }
@@ -306,9 +342,9 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return new MappingNode(Tag.MAP, tuples, false);
     }
 
-    private Node representNodetypeDefinition(final NodeTypeDefinition definition, final Consumer<String> resourceConsumer) {
+    private Node representNodetypeDefinition(final NodeTypeDefinition definition, final Consumer<PostProcessItem> resourceConsumer) {
         if (definition.isResource()) {
-            resourceConsumer.accept(definition.getValue());
+            resourceConsumer.accept(new CopyItem(definition.getValue()));
             final List<NodeTuple> tuples = new ArrayList<>(1);
             tuples.add(createStrStrTuple("resource", definition.getValue()));
             return new MappingNode(Tag.MAP, tuples, false);

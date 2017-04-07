@@ -1,8 +1,6 @@
 definitions:
   config:
     /autodetected:
-      binary: !!binary |-
-        aGVsbG8gd29ybGQ=
       boolean: true
       date: 2015-10-21T07:28:00+08:00
       double: 3.1415
@@ -16,6 +14,12 @@ definitions:
         jcr:primaryType: some:type
         jcr:mixinTypes: []
     /explicit:
+      binaryval:
+        type: binary
+        resource: binary.txt
+      binaryArr:
+        type: binary
+        resource: [resources/file1.txt, resources/file2.txt]
       decimal:
         type: decimal
         value: '31415926535897932384626433832795028841971'

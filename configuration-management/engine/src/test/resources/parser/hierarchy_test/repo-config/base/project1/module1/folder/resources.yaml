@@ -10,3 +10,14 @@ definitions:
       multi-value-resource:
         type: string
         resource: [/root.txt, folder/relative.txt]
+    /hippo:configuration/hippo:queries/hippo:templates/new-image:
+      /hippostd:templates:
+        /image:
+          /image:
+            /hippogallery:thumbnail:
+              jcr:data:
+                type: binary
+                resource: /folder/data.binary
+              hippo:text:
+                type: binary
+                resource: folder/text.binary
