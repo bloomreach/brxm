@@ -28,13 +28,14 @@ public class NewsContentComponent extends EssentialsContentComponent {
         try {
             ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
             final Map<String, Object> pathVars = new HashMap<>();
-            pathVars.put("fullTextSearchTerm", document.getTitle());
+            // Note: Just as an example, let's try to find all the data by passing empty query string.
+            pathVars.put("fullTextSearchTerm", "");
             ResourceContainer productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_PRODUCT_CATALOG,
-                    "/products?q={fullTextSearchTerm}", pathVars);
+                    "/products/?q={fullTextSearchTerm}", pathVars);
             request.setAttribute("productCatalogs", productCatalogs);
         } catch (Exception e) {
             log.warn("Failed to find resources from '{}{}' resource space for full text search term, '{}'.",
-                    RESOURCE_SPACE_PRODUCT_CATALOG, "/products", document.getTitle(), e);
+                    RESOURCE_SPACE_PRODUCT_CATALOG, "/products/", document.getTitle(), e);
         }
     }
 }

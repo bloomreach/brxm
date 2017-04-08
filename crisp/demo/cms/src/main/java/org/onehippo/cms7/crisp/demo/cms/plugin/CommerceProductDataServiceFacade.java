@@ -111,7 +111,7 @@ public class CommerceProductDataServiceFacade implements ExternalDocumentService
         ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
         Map<String, Object> variables = new HashMap<>();
         variables.put("queryString", StringUtils.isNotBlank(queryString) ? queryString : "");
-        return broker.findResources("productCatalogs", "/products?q={queryString}", variables);
+        return broker.findResources("productCatalogs", "/products/?q={queryString}", variables);
     }
 
     /*
