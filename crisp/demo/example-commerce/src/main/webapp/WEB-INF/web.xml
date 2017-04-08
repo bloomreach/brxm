@@ -8,13 +8,13 @@
   <description>Hippo Addon CRISP Demo Example Commerce</description>
 
   <servlet>
-    <servlet-name>springapp</servlet-name>
+    <servlet-name>spring</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>springapp</servlet-name>
+    <servlet-name>spring</servlet-name>
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
 
