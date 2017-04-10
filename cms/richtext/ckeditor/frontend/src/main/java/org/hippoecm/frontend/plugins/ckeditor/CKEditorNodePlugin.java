@@ -30,7 +30,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.processor.WicketModel;
-import org.hippoecm.frontend.plugins.richtext.processor.WicketUrlEncoder;
+import org.hippoecm.frontend.plugins.richtext.processor.WicketURLEncoder;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageService;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
@@ -136,7 +136,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
         final Model<Node> nodeModel = WicketModel.of(getNodeModel());
         final RichTextImageFactory imageFactory = new RichTextImageFactoryImpl(nodeModel,
                                                                                WicketNodeFactory.INSTANCE,
-                                                                               WicketUrlEncoder.INSTANCE);
+                                                                               WicketURLEncoder.INSTANCE);
         final RichTextEditorImageService imageService = new RichTextEditorImageService(imageFactory);
 
         final ImagePickerBehavior behavior = new ImagePickerBehavior(getPluginContext(), imagePickerConfig, imageService);

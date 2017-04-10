@@ -19,7 +19,7 @@ import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.richtext.processor.WicketNodeFactory;
-import org.hippoecm.frontend.plugins.richtext.processor.WicketUrlEncoder;
+import org.hippoecm.frontend.plugins.richtext.processor.WicketURLEncoder;
 import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
 import org.onehippo.cms7.services.processor.html.model.Model;
 import org.onehippo.cms7.services.processor.richtext.model.RichTextProcessorModel;
@@ -36,7 +36,7 @@ public class RichTextModel implements IModel<String> {
         this.processorModel = new RichTextProcessorModel(valueModel, nodeModel,
                                                          HtmlProcessorFactory.of(processorId),
                                                          WicketNodeFactory.INSTANCE,
-                                                         WicketUrlEncoder.INSTANCE);
+                                                         WicketURLEncoder.INSTANCE);
     }
 
     @Override

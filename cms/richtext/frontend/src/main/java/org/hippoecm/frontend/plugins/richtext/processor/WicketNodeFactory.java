@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.richtext.processor;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
@@ -28,11 +27,8 @@ public class WicketNodeFactory extends JcrNodeFactory {
 
     public static final JcrNodeFactory INSTANCE = new WicketNodeFactory();
 
-    private WicketNodeFactory() {}
-
-    @Override
-    protected Session getSession() {
-        return UserSession.get().getJcrSession();
+    private WicketNodeFactory() {
+        super(() -> UserSession.get().getJcrSession());
     }
 
     @Override

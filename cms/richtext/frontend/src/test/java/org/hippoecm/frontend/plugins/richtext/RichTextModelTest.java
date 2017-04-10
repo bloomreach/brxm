@@ -20,7 +20,6 @@ import java.util.Arrays;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.wicket.model.IModel;
 import org.easymock.EasyMock;
@@ -36,11 +35,11 @@ import org.onehippo.cms7.services.processor.html.HtmlProcessorConfig;
 import org.onehippo.cms7.services.processor.html.HtmlProcessorImpl;
 import org.onehippo.cms7.services.processor.html.model.Model;
 import org.onehippo.cms7.services.processor.html.serialize.HtmlSerializer;
-import org.onehippo.cms7.services.processor.richtext.UrlProvider;
-import org.onehippo.cms7.services.processor.richtext.image.RichTextImageFactory;
-import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactory;
 import org.onehippo.cms7.services.processor.richtext.RichTextException;
+import org.onehippo.cms7.services.processor.richtext.URLProvider;
+import org.onehippo.cms7.services.processor.richtext.image.RichTextImageFactory;
 import org.onehippo.cms7.services.processor.richtext.jcr.JcrNodeFactory;
+import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactory;
 import org.onehippo.cms7.services.processor.richtext.model.RichTextProcessorModel;
 import org.onehippo.repository.mock.MockNode;
 
@@ -56,7 +55,6 @@ public class RichTextModelTest {
     private MockNode rootNode;
     private MockNode documentNode;
 
-    private IModel<Node> documentNodeModel;
     private IModel<String> textModel;
     private RichTextModel richTextModel;
 
@@ -67,32 +65,29 @@ public class RichTextModelTest {
         documentNode = new MockNode("document");
         rootNode.addNode(documentNode);
 
-        documentNodeModel = EasyMock.createMock(IModel.class);
+        final IModel<Node> documentNodeModel = EasyMock.createMock(IModel.class);
         expect(documentNodeModel.getObject()).andStubReturn(documentNode);
         replay(documentNodeModel);
 
         textModel = org.apache.wicket.model.Model.of("");
 
-        Model<String> valueModel = WicketModel.of(textModel);
-        Model<Node> nodeModel = WicketModel.of(documentNodeModel);
+        final Model<String> valueModel = WicketModel.of(textModel);
+        final Model<Node> nodeModel = WicketModel.of(documentNodeModel);
 
-        JcrNodeFactory nodeFactory = new JcrNodeFactory() {
+        final JcrNodeFactory nodeFactory = new JcrNodeFactory(() -> rootNode.getSession()) {
             @Override
             public Model<Node> getNodeModelByIdentifier(final String uuid) throws RepositoryException {
                 return null;
             }
-
-            @Override
-            protected Session getSession() throws RepositoryException {
-                return rootNode.getSession();
-            }
         };
 
-        RichTextProcessorModel processorModel = new RichTextProcessorModel(valueModel, nodeModel,
-                                                                           this::createHtmlProcessor,
-                                                                           nodeFactory) {
+        final RichTextProcessorModel processorModel = new RichTextProcessorModel(valueModel, nodeModel,
+                                                                                 RichTextModelTest::createHtmlProcessor,
+                                                                                 nodeFactory) {
             @Override
-            protected UrlProvider createRichTextImageURLProvider(final Model<Node> nodeModel, final RichTextLinkFactory linkFactory, final RichTextImageFactory richTextImageFactory) {
+            protected URLProvider createImageURLProvider(final Model<Node> nodeModel,
+                                                         final RichTextLinkFactory linkFactory,
+                                                         final RichTextImageFactory richTextImageFactory) {
                 return new PrefixingImageUrlProvider("/binaries");
             }
         };
@@ -100,7 +95,7 @@ public class RichTextModelTest {
         richTextModel = new RichTextModel(processorModel);
     }
 
-    private HtmlProcessor createHtmlProcessor() {
+    private static HtmlProcessor createHtmlProcessor() {
         final HtmlProcessorConfig htmlProcessorConfig = new HtmlProcessorConfig();
         htmlProcessorConfig.setCharset("UTF-8");
         htmlProcessorConfig.setSerializer(HtmlSerializer.SIMPLE);
@@ -109,18 +104,18 @@ public class RichTextModelTest {
         return new HtmlProcessorImpl(htmlProcessorConfig);
     }
 
-    private void addChildFacetNode(String name, String uuid) throws RepositoryException {
-        Node child = documentNode.addNode(name, HippoNodeType.NT_FACETSELECT);
+    private void addChildFacetNode(final String name, final String uuid) throws RepositoryException {
+        final Node child = documentNode.addNode(name, HippoNodeType.NT_FACETSELECT);
         child.setProperty(HippoNodeType.HIPPO_DOCBASE, uuid);
     }
 
-    private void assertSetTextUnchangedAndAllChildFacetsRemoved(String text) throws RepositoryException {
+    private void assertSetTextUnchangedAndAllChildFacetsRemoved(final String text) throws RepositoryException {
         richTextModel.setObject(text);
         assertEquals("all child facet nodes should have been removed", 0, documentNode.getNodes().getSize());
         assertEquals(emptyIfNull(text), textModel.getObject());
     }
 
-    private void assertNoChanges(String text) throws RepositoryException {
+    private void assertNoChanges(final String text) throws RepositoryException {
         textModel.setObject(text);
         assertEquals("Stored text should be returned without changes", emptyIfNull(text), richTextModel.getObject());
 
@@ -129,7 +124,7 @@ public class RichTextModelTest {
         assertEquals("Number of child facet nodes should not have changed", documentNode.getNodes().getSize(), documentNode.getNodes().getSize());
     }
 
-    private String emptyIfNull(String text) {
+    private String emptyIfNull(final String text) {
         if (text == null) {
             return "";
         }
@@ -157,8 +152,8 @@ public class RichTextModelTest {
     // TODO: moved to LinkVisitorTest
     @Test
     public void getLinkWithEscapedNameIsRewrittenToUuid() throws RepositoryException {
-        String name = "A name that needs 'encoding'";
-        String linkTargetName = NodeNameCodec.encode(name, true);
+        final String name = "A name that needs 'encoding'";
+        final String linkTargetName = NodeNameCodec.encode(name, true);
         assertFalse(name.equals(linkTargetName));
 
         addChildFacetNode(linkTargetName, "d1b804c0-cf19-451f-8c0f-184da74289e4");
@@ -313,7 +308,7 @@ public class RichTextModelTest {
     // TODO: moved to LinkVisitorTest
     @Test
     public void setNewLinkUuidCreatesChildNodeAndReplacesUuid() throws RepositoryException {
-        Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
+        final Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
 
         richTextModel.setObject("");
         assertEquals(0, documentNode.getNodes().getSize());
@@ -322,7 +317,7 @@ public class RichTextModelTest {
         assertTrue("Text with new link UUID should create a child facet node", documentNode.hasNode("linked-node"));
         assertEquals("Text with new link UUID should create exactly one child facet node", 1, documentNode.getNodes().getSize());
 
-        Node child = documentNode.getNode("linked-node");
+        final Node child = documentNode.getNode("linked-node");
         assertEquals(linkTarget.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
 
         assertEquals("<a href=\"linked-node\">link</a>", textModel.getObject());
@@ -331,7 +326,7 @@ public class RichTextModelTest {
     // TODO: moved to imageVisitorTest
     @Test
     public void setNewImageUuidCreatesChildNodeAndRemovesUuid() throws RepositoryException {
-        Node linkedImage = rootNode.addNode("linked-image.jpg", "nt:unstructured");
+        final Node linkedImage = rootNode.addNode("linked-image.jpg", "nt:unstructured");
 
         richTextModel.setObject("");
         assertEquals(0, documentNode.getNodes().getSize());
@@ -340,7 +335,7 @@ public class RichTextModelTest {
         assertTrue("Text with new image UUID should create a child facet node", documentNode.hasNode("linked-image.jpg"));
         assertEquals("Text with new image UUID should create exactly one child facet node", 1, documentNode.getNodes().getSize());
 
-        Node child = documentNode.getNode("linked-image.jpg");
+        final Node child = documentNode.getNode("linked-image.jpg");
         assertEquals(linkedImage.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
 
         assertEquals("<img src=\"linked-image.jpg/{_document}/hippogallery:thumbnail\" />", textModel.getObject());
@@ -349,7 +344,7 @@ public class RichTextModelTest {
     // TODO: moved to LinkVisitorTest
     @Test
     public void setExistingLinkUuidDoesNotCreateChildNode() throws RepositoryException {
-        Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
+        final Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
         richTextModel.setObject("");
@@ -357,7 +352,7 @@ public class RichTextModelTest {
 
         assertEquals("Text with existing link UUID should reuse existing child facet node", 1, documentNode.getNodes().getSize());
 
-        Node child = documentNode.getNode("linked-node");
+        final Node child = documentNode.getNode("linked-node");
         assertEquals(linkTarget.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
 
         assertEquals("<a href=\"linked-node\">link</a>", textModel.getObject());
@@ -366,14 +361,14 @@ public class RichTextModelTest {
     // TODO: moved to imageVisitorTest
     @Test
     public void setExistingImageUuidDoesNotCreateChildNode() throws RepositoryException {
-        Node linkedImage = rootNode.addNode("linked-image.jpg", "nt:unstructured");
+        final Node linkedImage = rootNode.addNode("linked-image.jpg", "nt:unstructured");
         addChildFacetNode("linked-image.jpg", linkedImage.getIdentifier());
 
         richTextModel.setObject("<img src=\"/binaries/linked-image.jpg/linked-image.jpg/hippogallery:thumbnail\" data-uuid=\"" + linkedImage.getIdentifier() + "\" data-type=\"hippogallery:thumbnail\" />");
 
         assertEquals("Text with existing image UUID should reuse existing child facet node", 1, documentNode.getNodes().getSize());
 
-        Node child = documentNode.getNode("linked-image.jpg");
+        final Node child = documentNode.getNode("linked-image.jpg");
         assertEquals(linkedImage.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
 
         assertEquals("<img src=\"linked-image.jpg/{_document}/hippogallery:thumbnail\" />", textModel.getObject());
@@ -382,7 +377,7 @@ public class RichTextModelTest {
     // TODO: moved to LinkVisitorTest
     @Test
     public void setExternalLinkWithUuidIgnoresUuid() throws RepositoryException {
-        Node document1 = rootNode.addNode("document1", "nt:unstructured");
+        final Node document1 = rootNode.addNode("document1", "nt:unstructured");
         richTextModel.setObject("");
         richTextModel.setObject("<a href=\"http://www.example.com\" data-uuid=\"" + document1.getIdentifier() + "\">external link</a>");
         assertEquals("No child facet nodes should have been created", 0, documentNode.getNodes().getSize());
@@ -392,7 +387,7 @@ public class RichTextModelTest {
     // TODO: moved to LinkVisitorTest
     @Test
     public void setTextWithoutAnyLinksRemovesAllChildNodes() throws RepositoryException {
-        Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
+        final Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
         assertSetTextUnchangedAndAllChildFacetsRemoved("Text without link");
@@ -401,7 +396,7 @@ public class RichTextModelTest {
     // TODO: moved to LinkVisitorTest
     @Test
     public void setEmptyTextRemovesAllChildNodes() throws RepositoryException {
-        Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
+        final Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
         assertSetTextUnchangedAndAllChildFacetsRemoved("");
@@ -410,7 +405,7 @@ public class RichTextModelTest {
     // TODO: moved to LinkVisitorTest
     @Test
     public void setNullTextRemovesAllChildNodes() throws RepositoryException {
-        Node linkTarget = rootNode.addNode("linked-node", HippoNodeType.NT_FACETSELECT);
+        final Node linkTarget = rootNode.addNode("linked-node", HippoNodeType.NT_FACETSELECT);
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
         assertSetTextUnchangedAndAllChildFacetsRemoved(null);
@@ -419,8 +414,8 @@ public class RichTextModelTest {
     // TODO: moved to LinkVisitorTest
     @Test
     public void setTextWithLinksRemovesUnusedChildNodes() throws RepositoryException {
-        Node document1 = rootNode.addNode("document1", "nt:unstructured");
-        Node document2 = rootNode.addNode("document2", "nt:unstructured");
+        final Node document1 = rootNode.addNode("document1", "nt:unstructured");
+        final Node document2 = rootNode.addNode("document2", "nt:unstructured");
 
         addChildFacetNode("document1", document1.getIdentifier());
         addChildFacetNode("document2", document2.getIdentifier());
@@ -428,10 +423,10 @@ public class RichTextModelTest {
         richTextModel.setObject("");
         richTextModel.setObject("Text with only one link to <a href=\"http://\" data-uuid=\"" + document1.getIdentifier() + "\">document one</a>");
 
-        NodeIterator children = documentNode.getNodes();
+        final NodeIterator children = documentNode.getNodes();
         assertEquals("Document node should have only one facet child node", 1, documentNode.getNodes().getSize());
 
-        Node child = children.nextNode();
+        final Node child = children.nextNode();
         assertEquals(document1.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
 
         assertEquals("Text with only one link to <a href=\"" + child.getName() + "\">document one</a>", textModel.getObject());
@@ -440,18 +435,18 @@ public class RichTextModelTest {
     // TODO: moved to ImageVisitorTest
     @Test
     public void setTextWithImagesRemovesUnusedChildNodes() throws RepositoryException {
-        Node image1 = rootNode.addNode("image1.jpg", "nt:unstructured");
-        Node image2 = rootNode.addNode("image2.jpg", "nt:unstructured");
+        final Node image1 = rootNode.addNode("image1.jpg", "nt:unstructured");
+        final Node image2 = rootNode.addNode("image2.jpg", "nt:unstructured");
 
         addChildFacetNode("image1.jpg", image1.getIdentifier());
         addChildFacetNode("image2.jpg", image2.getIdentifier());
 
         richTextModel.setObject("Text with only one image: <img src=\"/binaries/image1.jpg/{_document}/hippogallery:thumbnail\" data-uuid=\"" + image1.getIdentifier() + "\" data-type=\"hippogallery:thumbnail\" />");
 
-        NodeIterator children = documentNode.getNodes();
+        final NodeIterator children = documentNode.getNodes();
         assertEquals("Document node should have only one facet child node", 1, documentNode.getNodes().getSize());
 
-        Node child = children.nextNode();
+        final Node child = children.nextNode();
         assertEquals(image1.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
 
         assertEquals("Text with only one image: <img src=\"image1.jpg/{_document}/hippogallery:thumbnail\" />", textModel.getObject());
@@ -460,7 +455,7 @@ public class RichTextModelTest {
     // TODO: moved to LinkVisitorTest
     @Test
     public void setTextWithLinksRemovesUnusedChildNodesWithAdditionalSuffix() throws RepositoryException {
-        Node document = rootNode.addNode("document1", "nt:unstructured");
+        final Node document = rootNode.addNode("document1", "nt:unstructured");
 
         addChildFacetNode("document", document.getIdentifier());
         addChildFacetNode("document_1", document.getIdentifier());
@@ -468,10 +463,10 @@ public class RichTextModelTest {
         richTextModel.setObject("");
         richTextModel.setObject("<a href=\"http://\" data-uuid=\"" + document.getIdentifier() + "\">document</a>");
 
-        NodeIterator children = documentNode.getNodes();
+        final NodeIterator children = documentNode.getNodes();
         assertEquals("Document node should have only one facet child node", 1, documentNode.getNodes().getSize());
 
-        Node child = children.nextNode();
+        final Node child = children.nextNode();
         assertEquals(document.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
 
         assertEquals("<a href=\"" + child.getName() + "\">document</a>", textModel.getObject());
@@ -479,8 +474,8 @@ public class RichTextModelTest {
 
     @Test
     public void setNewLinkUuidForTargetWithSameNameCreatesChildNodeWithDifferentName() throws RepositoryException {
-        Node document1 = rootNode.addNode("folder-one", "nt:unstructured").addNode("document", "nt:unstructured");
-        Node document2 = rootNode.addNode("folder-two", "nt:unstructured").addNode("document", "nt:unstructured");
+        final Node document1 = rootNode.addNode("folder-one", "nt:unstructured").addNode("document", "nt:unstructured");
+        final Node document2 = rootNode.addNode("folder-two", "nt:unstructured").addNode("document", "nt:unstructured");
 
         addChildFacetNode("document", document1.getIdentifier());
 
@@ -488,12 +483,12 @@ public class RichTextModelTest {
         richTextModel.setObject("<a href=\"http://\" data-uuid=\"" + document1.getIdentifier() + "\">document one</a>" +
                 " and <a href=\"http://\" data-uuid=\"" + document2.getIdentifier() + "\">document two</a>");
 
-        NodeIterator children = documentNode.getNodes();
+        final NodeIterator children = documentNode.getNodes();
         assertEquals("Document node should have two facet child nodes", 2, documentNode.getNodes().getSize());
 
 
-        Node child1 = children.nextNode();
-        Node child2 = children.nextNode();
+        final Node child1 = children.nextNode();
+        final Node child2 = children.nextNode();
         assertThat(
                 Arrays.asList(
                         child1.getProperty(HippoNodeType.HIPPO_DOCBASE).getString(),
@@ -516,7 +511,7 @@ public class RichTextModelTest {
     // TODO: moved to LinkVisitorTest
     @Test
     public void setEmptyTextRemovesPreviouslyCreatedChildNodes() throws RepositoryException {
-        Node linked = rootNode.addNode("linked", "nt:unstructured");
+        final Node linked = rootNode.addNode("linked", "nt:unstructured");
 
         richTextModel.setObject("");
 
@@ -586,7 +581,7 @@ public class RichTextModelTest {
     // TODO: moved to imageVisitorTest
     @Test
     public void additionalImgAttributesAreNotChanged() throws RepositoryException {
-        Node image = rootNode.addNode("image.jpg", "nt:unstructured");
+        final Node image = rootNode.addNode("image.jpg", "nt:unstructured");
         addChildFacetNode("image.jpg", image.getIdentifier());
         richTextModel.setObject("<img src=\"/binaries/image.jpg/{_document}/hippogallery:original\" data-uuid=\"" + image.getIdentifier() + " \" data-type=\"hippogallery:original\" align=\"right\" />");
         assertEquals("<img src=\"/binaries/image.jpg/{_document}/hippogallery:original\" align=\"right\" data-uuid=\"" + image.getIdentifier() + "\" data-type=\"hippogallery:original\" />", richTextModel.getObject());
@@ -648,8 +643,8 @@ public class RichTextModelTest {
     // TODO: moved to LinkVisitorTest
     @Test
     public void setDocumentsWithTheSameName() throws RepositoryException {
-        Node doc1 = rootNode.addNode("doc", "nt:unstructured");
-        Node doc2 = rootNode.addNode("doc", "nt:unstructured");
+        final Node doc1 = rootNode.addNode("doc", "nt:unstructured");
+        final Node doc2 = rootNode.addNode("doc", "nt:unstructured");
         richTextModel.setObject("<a href=\"http://\" data-uuid=\"" + doc1.getIdentifier() + "\"></a>" +
                 "<a href=\"http://\" data-uuid=\"" + doc2.getIdentifier() + "\"></a>");
         assertTrue("facetselect node doc exists", documentNode.hasNode("doc"));
@@ -660,8 +655,8 @@ public class RichTextModelTest {
     // TODO: moved to imageVisitorTest
     @Test
     public void setImagesWithTheSameName() throws RepositoryException {
-        Node image1 = rootNode.addNode("image.jpg", "nt:unstructured");
-        Node image2 = rootNode.addNode("image.jpg", "nt:unstructured");
+        final Node image1 = rootNode.addNode("image.jpg", "nt:unstructured");
+        final Node image2 = rootNode.addNode("image.jpg", "nt:unstructured");
         richTextModel.setObject("<img src=\"/binaries/image.jpg\" data-uuid=\"" + image1.getIdentifier() + "\" data-type=\"hippogallery:original\" />" +
                 "<img src=\"/binaries/image.jpg\" data-uuid=\"" + image2.getIdentifier() + "\" data-type=\"hippogallery:original\" />");
         assertTrue("facetselect node image.jpg exists", documentNode.hasNode("image.jpg"));
@@ -691,21 +686,21 @@ public class RichTextModelTest {
                 "</pre>");
     }
 
-    private void testPreserved(String html) {
+    private void testPreserved(final String html) {
         richTextModel.setObject(html);
         assertEquals(html, richTextModel.getObject());
     }
 
-    private class PrefixingImageUrlProvider implements UrlProvider {
+    private class PrefixingImageUrlProvider implements URLProvider {
 
-        private String prefix;
+        private final String prefix;
 
-        PrefixingImageUrlProvider(String prefix) {
+        PrefixingImageUrlProvider(final String prefix) {
             this.prefix = prefix;
         }
 
         @Override
-        public String getURL(String link) {
+        public String getURL(final String link) {
             return prefix + "/" + link;
         }
     }

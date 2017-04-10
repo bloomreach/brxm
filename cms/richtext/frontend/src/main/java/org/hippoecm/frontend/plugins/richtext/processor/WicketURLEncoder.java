@@ -17,13 +17,13 @@ package org.hippoecm.frontend.plugins.richtext.processor;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.onehippo.cms7.services.processor.richtext.UrlEncoder;
+import org.onehippo.cms7.services.processor.richtext.URLEncoder;
 
-public class WicketUrlEncoder implements UrlEncoder {
+public class WicketURLEncoder implements URLEncoder {
 
-    public static final UrlEncoder INSTANCE = new WicketUrlEncoder();
+    public static final URLEncoder INSTANCE = new WicketURLEncoder();
 
-    private WicketUrlEncoder() {}
+    private WicketURLEncoder() {}
 
     @Override
     public String encode(final String url) {
