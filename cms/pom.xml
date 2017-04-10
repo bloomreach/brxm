@@ -88,7 +88,7 @@
     <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.utilities.version>4.0.0-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
-    <hippo.services.htmlprocessor.version>4.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
+    <hippo.services.htmlprocessor.version>1.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.repository.version>5.0.0-visual-editing-psp2-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
