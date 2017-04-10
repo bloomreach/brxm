@@ -29,7 +29,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.util.CKEditorUtils;
 import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
 import org.onehippo.cms7.services.processor.html.model.HtmlProcessorModel;
 import org.onehippo.cms7.services.processor.html.model.Model;
-import org.onehippo.cms7.services.processor.html.model.SimpleModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +90,7 @@ public class FormattedTextFieldType extends StringFieldType {
 
     private static class HtmlReader {
         String read(final String html) {
-            final Model<String> htmlModel = new SimpleModel<>(html);
+            final Model<String> htmlModel = Model.of(html);
             final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of("formatted");
             final HtmlProcessorModel processorModel = new HtmlProcessorModel(htmlModel, processorFactory);
             return processorModel.get();
@@ -100,7 +99,7 @@ public class FormattedTextFieldType extends StringFieldType {
 
     private static class HtmlWriter {
         String write(final String html) {
-            final Model<String> htmlModel = new SimpleModel<>("");
+            final Model<String> htmlModel = Model.of("");
             final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of("formatted");
             final HtmlProcessorModel processorModel = new HtmlProcessorModel(htmlModel, processorFactory);
             processorModel.set(html);

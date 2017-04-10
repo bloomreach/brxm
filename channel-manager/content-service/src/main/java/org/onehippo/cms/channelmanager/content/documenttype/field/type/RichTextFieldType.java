@@ -24,7 +24,6 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -34,12 +33,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
-import org.onehippo.cms7.services.processor.html.model.HtmlProcessorModel;
-import org.onehippo.cms7.services.processor.html.model.Model;
-import org.onehippo.cms7.services.processor.html.model.SimpleModel;
-import org.onehippo.cms7.services.processor.richtext.jcr.JcrNodeFactory;
-import org.onehippo.cms7.services.processor.richtext.model.RichTextProcessorModel;
+import org.onehippo.cms7.services.processor.richtext.RichTextNodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,9 +58,10 @@ public class RichTextFieldType extends FormattedTextFieldType implements Compoun
         try {
             final NodeIterator children = node.getNodes(getId());
             final List<FieldValue> values = new ArrayList<>((int)children.getSize());
-            final RichTextReader processorReader = new RichTextReader();
+            final RichTextNodeProcessor processor = new RichTextNodeProcessor();
             for (final Node child : new NodeIterable(children)) {
-                values.add(new FieldValue(processorReader.read(child)));
+                final String html = JcrUtils.getStringProperty(node, HippoStdNodeType.HIPPOSTD_CONTENT, null);
+                values.add(new FieldValue(processor.read(html, child, "richtext")));
             }
             return values;
         } catch (final RepositoryException e) {
@@ -92,45 +87,8 @@ public class RichTextFieldType extends FormattedTextFieldType implements Compoun
 
     @Override
     public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException {
-        final RichTextWriter processorWriter = new RichTextWriter();
-        processorWriter.write(node, fieldValue.getValue());
-    }
-
-    private static class RichTextReader {
-
-        String read(final Node node) throws RepositoryException {
-            final String html = JcrUtils.getStringProperty(node, HippoStdNodeType.HIPPOSTD_CONTENT, null);
-            final Model<String> htmlModel = new SimpleModel<>(html);
-            final Model<Node> nodeModel = new SimpleModel<>(node);
-            final JcrNodeFactory nodeFactory = new JcrNodeFactory() {
-                @Override
-                protected Session getSession() throws RepositoryException {
-                    return node.getSession();
-                }
-            };
-            final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of("richtext");
-            final HtmlProcessorModel processorModel = new RichTextProcessorModel(htmlModel, nodeModel, processorFactory,
-                                                                                 nodeFactory);
-            return processorModel.get();
-        }
-    }
-
-    private static class RichTextWriter {
-
-        void write(final Node node, final String html) throws RepositoryException {
-            final Model<Node> nodeModel = new SimpleModel<>(node);
-            final JcrNodeFactory nodeFactory = new JcrNodeFactory() {
-                @Override
-                protected Session getSession() throws RepositoryException {
-                    return node.getSession();
-                }
-            };
-            final Model<String> htmlModel = new SimpleModel<>("");
-            final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of("richtext");
-            final HtmlProcessorModel processorModel = new RichTextProcessorModel(htmlModel, nodeModel, processorFactory,
-                                                                                 nodeFactory);
-            processorModel.set(html);
-            node.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, htmlModel.get());
-        }
+        final RichTextNodeProcessor processor = new RichTextNodeProcessor();
+        final String html = processor.write(fieldValue.getValue(), node, "richtext");
+        node.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, html);
     }
 }
