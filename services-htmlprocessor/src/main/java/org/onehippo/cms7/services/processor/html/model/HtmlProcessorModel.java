@@ -42,9 +42,9 @@ public class HtmlProcessorModel implements Model<String> {
             return processor.read(valueModel.get(), getVisitors());
         } catch (final Exception e) {
             if (log.isInfoEnabled()) {
-                log.warn("Value not retrieved because html cleaning failed", e);
+                log.warn("Value not retrieved because html processing failed", e);
             } else {
-                log.warn("Value not retrieved because html cleaning failed : {}", e.toString());
+                log.warn("Value not retrieved because html processing failed : {}", e.toString());
             }
             return "";
         }
@@ -57,12 +57,13 @@ public class HtmlProcessorModel implements Model<String> {
         }
         try {
             final HtmlProcessor processor = factory.getProcessor();
-            valueModel.set(processor.write(value, getVisitors()));
+            final String processedValue = processor.write(value, getVisitors());
+            valueModel.set(processedValue);
         } catch (final Exception e) {
             if (log.isInfoEnabled()) {
-                log.warn("Value not set because html cleaning failed", e);
+                log.warn("Value not set because html processing failed", e);
             } else {
-                log.warn("Value not set because html cleaning failed : {}", e.toString());
+                log.warn("Value not set because html processing failed : {}", e.toString());
             }
         }
     }
