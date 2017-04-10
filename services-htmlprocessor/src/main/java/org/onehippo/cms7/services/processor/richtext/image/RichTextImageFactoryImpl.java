@@ -32,7 +32,7 @@ import org.onehippo.cms7.services.processor.html.util.FacetUtil;
 import org.onehippo.cms7.services.processor.html.util.JcrUtil;
 import org.onehippo.cms7.services.processor.html.util.StringUtil;
 import org.onehippo.cms7.services.processor.richtext.RichTextException;
-import org.onehippo.cms7.services.processor.richtext.UrlEncoder;
+import org.onehippo.cms7.services.processor.richtext.URLEncoder;
 import org.onehippo.cms7.services.processor.richtext.jcr.NodeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,13 +46,13 @@ public class RichTextImageFactoryImpl implements RichTextImageFactory {
 
     private Model<Node> nodeModel;
     private NodeFactory nodeFactory;
-    private UrlEncoder encoder;
+    private URLEncoder encoder;
 
     public RichTextImageFactoryImpl(Model<Node> nodeModel, final NodeFactory nodeFactory) {
-        this(nodeModel, nodeFactory, UrlEncoder.OPAQUE);
+        this(nodeModel, nodeFactory, URLEncoder.OPAQUE);
     }
 
-    public RichTextImageFactoryImpl(Model<Node> nodeModel, final NodeFactory nodeFactory, final UrlEncoder encoder) {
+    public RichTextImageFactoryImpl(Model<Node> nodeModel, final NodeFactory nodeFactory, final URLEncoder encoder) {
         this.nodeModel = nodeModel;
         this.nodeFactory = nodeFactory;
         this.encoder = encoder;

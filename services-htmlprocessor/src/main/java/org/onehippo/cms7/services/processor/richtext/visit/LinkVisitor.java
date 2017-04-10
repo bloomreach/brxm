@@ -37,15 +37,15 @@ public class LinkVisitor extends FacetVisitor {
     }
 
     @Override
-    public void visitBeforeRead(final Tag parent, final Tag tag) throws RepositoryException {
+    public void onRead(final Tag parent, final Tag tag) throws RepositoryException {
         if (tag != null && StringUtils.equalsIgnoreCase(TAG_A, tag.getName())) {
             convertLinkForRetrieval(tag);
         }
     }
 
     @Override
-    public void visitBeforeWrite(final Tag parent, final Tag tag) throws RepositoryException {
-        super.visitBeforeWrite(parent, tag);
+    public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {
+        super.onWrite(parent, tag);
         if (tag != null && StringUtils.equalsIgnoreCase(TAG_A, tag.getName())) {
             convertLinkForStorage(tag);
         }

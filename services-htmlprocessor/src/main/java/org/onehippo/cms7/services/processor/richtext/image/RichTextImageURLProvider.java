@@ -20,16 +20,17 @@ import javax.jcr.Node;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.services.processor.html.model.Model;
 import org.onehippo.cms7.services.processor.html.util.FacetUtil;
-import org.onehippo.cms7.services.processor.richtext.UrlProvider;
+import org.onehippo.cms7.services.processor.richtext.URLProvider;
 import org.onehippo.cms7.services.processor.richtext.RichTextException;
 import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RichTextImageURLProvider implements UrlProvider {
+public class RichTextImageURLProvider implements URLProvider {
+
     public static final Logger log = LoggerFactory.getLogger(RichTextImageURLProvider.class);
 
-    private static final String IMAGE_NOT_FOUND = "data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7";
+    private static final String IMAGE_NOT_FOUND = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA/BJREFUeNrsV99Pk1cYfkpbfhQKCqxxoMZEg8WhFsUL55jX6mSwdGoMf8CWaExcvPBv8Md0M9EsXpgs8UfWZM7NceONSGHRXShkxDIwGBLSsZYA2h9Qin7PO9/6tbQfd+sNJzk553w933me932f9z1fbaFQ6CcAfvz/LdDU1PQlDAJvitHe4aIERW6rBIpOwGFe9PT0YH5+HktLS3A6naiqqoLD8X6LzWaTbp7rWqwpKVn2W+5+n89XmEA8Hkd5ebkcVFZWBpfLhfr6ehlJyurgfF1/13F8fNw6BHNzc2I5ARcXF4XQ5uYtcAT7YLfbhZgVkHZHfx/WeNYu85zZW3kJzM7OorS0VMDT6bRY/ez8JXxw/AhK+nozJJRI7qjg7q4OxO7+ZgmclwAPSqVSAs6RLdqyHU/PfQvP8aMoHejPAs3tzv6ggMd/uY/0J+0FvVWQAOMuVhjCq6iokFAwJLO+Voxdu44afyfK/hjI6wWCV3UdzgLPJbsiAVrOxhDQ3dQAyyX7P95mTN28A/cXHeIJMwDXlZ2fIX7vPpbaP13mIbVes6QgAQKzEVAJ6bNkMolwk1diS0uVhHMgCNfnh5C49zvetO/PC2wma1kHGPdEIiFul4tC3Wus6+rqUFtbi/SmTeJmgtJiV8d/4Gp5buqtlAVZBOh2kiAw57LB0APnlZWVmXrAGCt48tcew3ID3AJY5yuGgFay+rEtLCygpqZGCpFWQw2NPfhIwEmi/PAB2HofZv3OkYBC1ggj5wzl8PCwtQf4AoVHQPbq6mo0NjZmRMmDWZTo/pnAz0j6diFxJ4C6joOyTu3dJ2DcNzU1Jbqh5/juxMQExsbGrAmEw2Gxmi+QeTQaRSwWk5R0u91w/fkY1Uf9CP94C/GWHUi/egX7zlakjPU6fxeitwNY2PsxpqenMTo6mpXabAyhJQF1Hy8kMmdpnpyclPvhw5EQ2s6ewcvrN/Dv5i1IGs9JkgLFho2Y+f4qvMf8eG6M0eZtQth8OdG7qquCGmhoaBAPUAcEJXuPx4P1L0YF/K9LVxDe6hVghoh71LrIRy0YvHAZ3pNfY82zpxlwGkQ9UdwkYUlAD6VV7JyvCz1H65nTCF25hte72zKFySw6Vftc6y4MXfwOO745hdqhwcwec02wJKD3ABlz5MtbT3yFv6/+gFjbHjmAz7WryilSvsNxZqcPgxcvCwlzOutFZqkBHsDOG5HCI8CT4ONlZVnTTDMn14jIthb0PniY2UPPcp5PA1kECEzRUQeRSETSiNWPIzOCpBSU1nDUDxUNh5mUAmsYzF9XeQl0d3evfhWvEijK/4LAyMhIUf4dSxEzp08x2lsBBgDZEGbyoGN6VAAAAABJRU5ErkJggg==";
 
     private final RichTextImageFactory imageFactory;
     private final RichTextLinkFactory linkFactory;
@@ -45,9 +46,9 @@ public class RichTextImageURLProvider implements UrlProvider {
     @Override
     public String getURL(final String link) {
         try {
+            final Node node = this.nodeModel.get();
             final String facetName = StringUtils.substringBefore(link, "/");
             final String type = StringUtils.substringAfterLast(link, "/");
-            final Node node = this.nodeModel.get();
             final String uuid = FacetUtil.getChildDocBaseOrNull(node, facetName);
             if (uuid != null && linkFactory.getLinkUuids().contains(uuid)) {
                 final RichTextImage rti = imageFactory.loadImageItem(uuid, type);

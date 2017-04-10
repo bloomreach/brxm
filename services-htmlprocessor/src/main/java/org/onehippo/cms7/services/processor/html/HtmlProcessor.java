@@ -23,8 +23,8 @@ import org.onehippo.cms7.services.processor.html.visit.TagVisitor;
 
 public interface HtmlProcessor extends Serializable {
 
-    String read(final String html, final List<TagVisitor> readVisitors) throws IOException;
+    String read(final String html, final List<TagVisitor> visitors) throws IOException;
 
-    String write(final String html, final List<TagVisitor> writeVisitors) throws IOException;
+    String write(final String html, final List<TagVisitor> visitors) throws IOException;
 
 }

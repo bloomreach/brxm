@@ -38,34 +38,12 @@ import static org.junit.Assert.assertThat;
 public class HtmlProcessorTest {
 
     private HtmlProcessor processor;
-    private MockNode rootNode;
-    private MockNode documentNode;
-
-    // private IModel documentNodeModel;
-
+    private MockNode document;
 
     @Before
     public void setUp() throws RepositoryException {
-        rootNode = MockNode.root();
-
-        documentNode = new MockNode("document");
-        rootNode.addNode(documentNode);
-
-//        documentNodeModel = EasyMock.createMock(IModel.class);
-//        expect(documentNodeModel.getObject()).andStubReturn(documentNode);
-//        replay(documentNodeModel);
-    }
-
-    private void assertNoChanges(final String text) throws RepositoryException, IOException {
-        assertEquals("Stored text should be returned without changes", emptyIfNull(text), processor.read(text,
-                                                                                                         null));
-
-        assertEquals("Text should be stored without changes", emptyIfNull(text), processor.write(text, null));
-        assertEquals("Number of child facet nodes should not have changed", documentNode.getNodes().getSize(), documentNode.getNodes().getSize());
-    }
-
-    private String emptyIfNull(final String text) {
-        return text != null ? text : StringUtils.EMPTY;
+        document = new MockNode("document");
+        MockNode.root().addNode(document);
     }
 
     @Test
@@ -85,22 +63,87 @@ public class HtmlProcessorTest {
     }
 
     @Test
+    public void htmlEntitiesArePreserved() throws IOException {
+        testPreserved("&gt;&lt;&amp;&nbsp;");
+    }
+
+    @Test
+    public void htmlCommentsArePreserved() throws IOException {
+        testPreserved("<!-- comment -->");
+    }
+
+    @Test
+    public void utfCharactersArePreserved() throws IOException {
+        testPreserved("łФ௵سლ");
+    }
+
+    @Test
+    public void codeBlockIsPreserved() throws IOException {
+        testPreserved("<pre class=\"sh_xml\">&lt;hst:defineObjects/&gt;\n" +
+                              "&lt;c:set var=\"isPreview\" value=\"${hstRequest.requestContext.preview}\"/&gt;\n" +
+                              "</pre>");
+    }
+
+    @Test
+    public void htmlAndBodyElementAreNotPreserved() throws Exception {
+        final HtmlProcessorConfig config = new HtmlProcessorConfig();
+        config.setFilter(false);
+        config.setConvertLineEndings(false);
+        processor = new HtmlProcessorImpl(config);
+
+        final String read = processor.read("<html><body><p>text</p></body></html>", null);
+        assertEquals("<p>text</p>", read);
+
+        final String write = processor.write("<html><body><p>text</p></body></html>", null);
+        assertEquals("<p>text</p>", write);
+    }
+
+    @Test
+    public void XmlDeclarationIsNotPreserved() throws Exception {
+        final HtmlProcessorConfig config = new HtmlProcessorConfig();
+        config.setFilter(false);
+        config.setConvertLineEndings(false);
+        processor = new HtmlProcessorImpl(config);
+
+        final String read = processor.read("<?xml version=\"1.0\"?> <p>text</p>", null);
+        assertEquals("<p>text</p>", read);
+
+        final String write = processor.write("<?xml version=\"1.0\"?> <p>text</p>", null);
+        assertEquals("<p>text</p>", write);
+    }
+
+    @Test
+    public void htmlCommentsCanBeStripped() throws Exception {
+        final HtmlProcessorConfig config = new HtmlProcessorConfig();
+        config.setFilter(false);
+        config.setConvertLineEndings(false);
+        config.setOmitComments(true);
+        processor = new HtmlProcessorImpl(config);
+
+        final String read = processor.read("<!-- comment --><p>text</p>", null);
+        assertEquals("<p>text</p>", read);
+
+        final String write = processor.write("<!-- comment --><p>text</p>", null);
+        assertEquals("<p>text</p>", write);
+    }
+
+    @Test
     public void testReadVisitor() throws Exception {
         final HtmlProcessorConfig htmlProcessorConfig = new HtmlProcessorConfig();
         processor = new HtmlProcessorImpl(htmlProcessorConfig);
 
-        TagNameCollector one = new TagNameCollector();
-        TagNameCollector two= new TagNameCollector();
+        final TagNameCollector one = new TagNameCollector();
+        final TagNameCollector two= new TagNameCollector();
 
-        List<TagVisitor> readVisitors = Arrays.asList(one, two);
-        String html = processor.read("<h1>Heading 1</h1><h2>Heading 2</h2>", readVisitors);
+        final List<TagVisitor> readVisitors = Arrays.asList(one, two);
+        final String html = processor.read("<h1>Heading 1</h1><h2>Heading 2</h2>", readVisitors);
         assertEquals("<h1>Heading 1</h1><h2>Heading 2</h2>", html);
 
-        List<String> tagsOne = one.getTags();
+        final List<String> tagsOne = one.getTags();
         assertEquals(2, tagsOne.size());
         assertThat(tagsOne, CoreMatchers.hasItems("h1", "h2"));
 
-        List<String> tagsTwo = two.getTags();
+        final List<String> tagsTwo = two.getTags();
         assertEquals(2, tagsTwo.size());
         assertThat(tagsTwo, CoreMatchers.hasItems("h1", "h2"));
     }
@@ -112,29 +155,54 @@ public class HtmlProcessorTest {
         htmlProcessorConfig.setWhitelistElements(Arrays.asList(Element.create("h1"), Element.create("h2")));
         processor = new HtmlProcessorImpl(htmlProcessorConfig);
 
-        TagNameCollector one = new TagNameCollector();
+        final TagNameCollector one = new TagNameCollector();
 
-        List<TagVisitor> writeVisitors = Collections.singletonList(one);
-        String html = processor.write("<h1>Heading 1</h1><h2>Heading 2</h2><script>alert(\"xss\")</script>", writeVisitors);
+        final List<TagVisitor> writeVisitors = Collections.singletonList(one);
+        final String html = processor.write("<h1>Heading 1</h1><h2>Heading 2</h2><script>alert(\"xss\")</script>", writeVisitors);
         assertEquals("<h1>Heading 1</h1><h2>Heading 2</h2>", html);
 
-        List<String> tagsOne = one.getTags();
+        final List<String> tagsOne = one.getTags();
         assertEquals(2, tagsOne.size());
         assertThat(tagsOne, CoreMatchers.hasItems("h1", "h2"));
     }
 
+    private void testPreserved(final String html) throws IOException {
+        final HtmlProcessorConfig config = new HtmlProcessorConfig();
+        config.setConvertLineEndings(false);
+        processor = new HtmlProcessorImpl(config);
+        final String processedHtml = processor.write(html, null);
+        assertEquals(html, processor.read(processedHtml, null));
+    }
+
+    private void assertNoChanges(final String text) throws RepositoryException, IOException {
+        final long sizeBefore = document.getNodes().getSize();
+
+        assertEquals("Stored text should be returned without changes",
+                     emptyIfNull(text), processor.read(text, null));
+
+        assertEquals("Text should be stored without changes",
+                     emptyIfNull(text), processor.write(text, null));
+
+        assertEquals("Number of child facet nodes should not have changed",
+                     sizeBefore, document.getNodes().getSize());
+    }
+
+    private static String emptyIfNull(final String text) {
+        return text != null ? text : StringUtils.EMPTY;
+    }
+
     private static class TagNameCollector implements TagVisitor {
 
-        private List<String> tags = new ArrayList<>();
+        private final List<String> tags = new ArrayList<>();
 
-        public List<String> getTags() {
+        List<String> getTags() {
             return tags;
         }
 
         @Override
-        public void visitBeforeRead(final Tag parent, final Tag tag) throws RepositoryException {
+        public void onRead(final Tag parent, final Tag tag) throws RepositoryException {
             if (tag != null) {
-                String name = tag.getName();
+                final String name = tag.getName();
                 if (name != null) {
                     tags.add(name);
                 }
@@ -142,9 +210,9 @@ public class HtmlProcessorTest {
         }
 
         @Override
-        public void visitBeforeWrite(final Tag parent, final Tag tag) throws RepositoryException {
+        public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {
             if (tag != null) {
-                String name = tag.getName();
+                final String name = tag.getName();
                 if (name != null) {
                     tags.add(name);
                 }

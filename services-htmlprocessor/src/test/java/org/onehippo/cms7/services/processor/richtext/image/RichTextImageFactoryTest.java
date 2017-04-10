@@ -17,7 +17,6 @@ package org.onehippo.cms7.services.processor.richtext.image;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.easymock.EasyMock;
 import org.hamcrest.CoreMatchers;
@@ -25,13 +24,13 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.processor.html.model.Model;
-import org.onehippo.cms7.services.processor.html.model.SimpleModel;
 import org.onehippo.cms7.services.processor.richtext.RichTextException;
 import org.onehippo.cms7.services.processor.richtext.jcr.JcrNodeFactory;
 import org.onehippo.cms7.services.processor.richtext.jcr.NodeFactory;
 import org.onehippo.repository.mock.MockNode;
 
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -55,12 +54,7 @@ public class RichTextImageFactoryTest {
 
         imagesFolder = root.addNode("images", "nt:folder");
 
-        nodeFactory = new JcrNodeFactory() {
-            @Override
-            protected Session getSession() throws RepositoryException {
-                return root.getSession();
-            }
-        };
+        nodeFactory = JcrNodeFactory.of(root);
     }
 
     @Test
@@ -81,8 +75,8 @@ public class RichTextImageFactoryTest {
         final RichTextImageFactoryImpl factory = getJcrRichTextImageFactory();
         final Model<Node> imageModel = createImageModel("image.jpg");
 
-        RichTextImage image1 = factory.createImageItem(imageModel);
-        RichTextImage image2 = factory.createImageItem(imageModel);
+        final RichTextImage image1 = factory.createImageItem(imageModel);
+        final RichTextImage image2 = factory.createImageItem(imageModel);
 
         assertEquals(1, htmlNode.getNodes("image.jpg").getSize());
         assertRichTextImage(image1, "image.jpg");
@@ -101,7 +95,7 @@ public class RichTextImageFactoryTest {
         try {
             factory.createImageItem(nodeFactory.getNodeModelByNode(imageHandle));
             fail("Should throw an exception");
-        } catch (RichTextException e) {
+        } catch (final RichTextException e) {
             assertEquals("Invalid image document", e.getMessage());
         }
     }
@@ -111,37 +105,36 @@ public class RichTextImageFactoryTest {
         final RichTextImageFactoryImpl factory = getJcrRichTextImageFactory();
 
         assertFalse(factory.isValid(null));
-        assertFalse(factory.isValid(new SimpleModel<>(null)));
+        assertFalse(factory.isValid(Model.of(null)));
 
-        Node noHandle = root.addNode("not-a-handle", "nt:unstructured");
+        final Node noHandle = root.addNode("not-a-handle", "nt:unstructured");
         assertFalse(factory.isValid(nodeFactory.getNodeModelByNode(noHandle)));
 
-        Node handleWithoutChild = root.addNode("handle", HippoNodeType.NT_HANDLE);
+        final Node handleWithoutChild = root.addNode("handle", HippoNodeType.NT_HANDLE);
         assertFalse(factory.isValid(nodeFactory.getNodeModelByNode(handleWithoutChild)));
 
-        MockNode handleWithoutSameNameChild = root.addNode("handle", HippoNodeType.NT_HANDLE);
+        final MockNode handleWithoutSameNameChild = root.addNode("handle", HippoNodeType.NT_HANDLE);
         handleWithoutSameNameChild.addNode("not-a-handle", HippoNodeType.NT_RESOURCE);
         assertFalse(factory.isValid(nodeFactory.getNodeModelByNode(handleWithoutSameNameChild)));
 
-        MockNode handleWithWrongChild = root.addNode("handle", HippoNodeType.NT_HANDLE);
+        final MockNode handleWithWrongChild = root.addNode("handle", HippoNodeType.NT_HANDLE);
         handleWithoutSameNameChild.addNode("handle", "nt:unstructured");
         assertFalse(factory.isValid(nodeFactory.getNodeModelByNode(handleWithWrongChild)));
 
-        Node mockNode = EasyMock.createMock(Node.class);
+        final Node mockNode = EasyMock.createMock(Node.class);
         expect(mockNode.getIdentifier()).andReturn("broken-handle-node-uuid");
         expect(mockNode.isNodeType(HippoNodeType.NT_HANDLE)).andThrow(new RepositoryException("Expected exception"));
-        EasyMock.replay(mockNode);
+        replay(mockNode);
         assertFalse(factory.isValid(nodeFactory.getNodeModelByNode(mockNode)));
 
-        MockNode handleWithResource = root.addNode("handle", HippoNodeType.NT_HANDLE);
-        MockNode document = handleWithResource.addNode("handle", HippoNodeType.NT_DOCUMENT);
+        final MockNode handleWithResource = root.addNode("handle", HippoNodeType.NT_HANDLE);
+        final MockNode document = handleWithResource.addNode("handle", HippoNodeType.NT_DOCUMENT);
         document.addNode("image-resource-node", HippoNodeType.NT_RESOURCE);
         document.setPrimaryItemName("image-resource-node");
         assertTrue(factory.isValid(nodeFactory.getNodeModelByNode(handleWithResource)));
 
         EasyMock.verify(mockNode);
     }
-
 
     @Test
     public void testLoadImage() throws Exception {
@@ -151,7 +144,7 @@ public class RichTextImageFactoryTest {
         factory.createImageItem(imageModel);
         final Node imageNode = imageModel.get();
 
-        RichTextImage imageLoaded = factory.loadImageItem(imageNode.getIdentifier(), null);
+        final RichTextImage imageLoaded = factory.loadImageItem(imageNode.getIdentifier(), null);
         assertEquals("/images/image1.jpg/image1.jpg", imageLoaded.getPath());
         assertEquals(imageNode.getIdentifier(), imageLoaded.getUuid());
     }

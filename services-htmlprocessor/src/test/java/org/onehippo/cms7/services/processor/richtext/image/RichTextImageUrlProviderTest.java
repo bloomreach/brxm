@@ -15,12 +15,162 @@
  */
 package org.onehippo.cms7.services.processor.richtext.image;
 
+import java.util.Collections;
+
+import javax.jcr.Node;
+
+import org.apache.commons.lang.StringUtils;
+import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.processor.richtext.RichTextException;
+import org.onehippo.cms7.services.processor.richtext.TestUtil;
+import org.onehippo.cms7.services.processor.richtext.URLEncoder;
+import org.onehippo.cms7.services.processor.richtext.jcr.JcrNodeFactory;
+import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactory;
+import org.onehippo.repository.mock.MockNode;
+
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class RichTextImageUrlProviderTest {
 
-    @Test
-    public void test() throws Exception {
+    private MockNode document;
+    private MockNode image;
+    private Model<Node> documentModel;
 
+    @Before
+    public void setUp() throws Exception {
+        final MockNode root = MockNode.root();
+        document = root.addNode("document", "hippo:document");
+
+        final MockNode path = root.addNode("path", "nt:folder");
+        image = path.addNode("image.jpg", "nt:unstructured");
+
+        final JcrNodeFactory nodeFactory = JcrNodeFactory.of(root);
+        documentModel = nodeFactory.getNodeModelByNode(document);
+    }
+
+    @Test
+    public void testEmptyUrl() throws Exception {
+        final RichTextImageFactory mockImageFactory = EasyMock.createMock(RichTextImageFactory.class);
+        final RichTextLinkFactory mockLinkFactory = EasyMock.createMock(RichTextLinkFactory.class);
+
+        replay(mockImageFactory, mockLinkFactory);
+
+        final RichTextImageURLProvider provider = new RichTextImageURLProvider(mockImageFactory, mockLinkFactory,
+                                                                               documentModel);
+        assertNull(provider.getURL(null));
+        assertEquals("", provider.getURL(""));
+
+        verify(mockImageFactory, mockLinkFactory);
+    }
+
+    @Test
+    public void testNormalImages() throws Exception {
+        final RichTextImageFactory mockImageFactory = EasyMock.createMock(RichTextImageFactory.class);
+        final RichTextLinkFactory mockLinkFactory = EasyMock.createMock(RichTextLinkFactory.class);
+
+        replay(mockImageFactory, mockLinkFactory);
+
+        final RichTextImageURLProvider provider = new RichTextImageURLProvider(mockImageFactory, mockLinkFactory,
+                                                                               documentModel);
+
+        assertEquals("http://www.test.com/image.jpg", provider.getURL("http://www.test.com/image.jpg"));
+        assertEquals("/image.jpg", provider.getURL("/image.jpg"));
+        assertEquals("image.jpg", provider.getURL("image.jpg"));
+
+        verify(mockImageFactory, mockLinkFactory);
+    }
+
+    @Test
+    public void testLinkedImage() throws Exception {
+        TestUtil.addChildFacetNode(document, "image.jpg", image.getIdentifier());
+
+        final RichTextImage richTextImage = new RichTextImage("/path/image.jpg/image.jpg", "image.jpg", URLEncoder.OPAQUE);
+        richTextImage.setSelectedResourceDefinition("hippogallery:original");
+
+        final RichTextImageFactory mockImageFactory = EasyMock.createMock(RichTextImageFactory.class);
+        expect(mockImageFactory.loadImageItem(eq(image.getIdentifier()), eq("hippogallery:original")))
+                .andReturn(richTextImage);
+
+        final RichTextLinkFactory mockLinkFactory = EasyMock.createMock(RichTextLinkFactory.class);
+        expect(mockLinkFactory.getLinkUuids()).andReturn(Collections.singleton(image.getIdentifier()));
+
+        replay(mockImageFactory, mockLinkFactory);
+
+        final RichTextImageURLProvider provider = new RichTextImageURLProvider(mockImageFactory, mockLinkFactory,
+                                                                               documentModel);
+
+        assertEquals("binaries/path/image.jpg/image.jpg/hippogallery:original",
+                     provider.getURL("image.jpg/{_document}/hippogallery:original"));
+
+        verify(mockImageFactory, mockLinkFactory);
+    }
+
+    @Test
+    public void testFacetNotFound() throws Exception {
+        TestUtil.addChildFacetNode(document, "image.jpg", image.getIdentifier());
+
+        final RichTextImageFactory mockImageFactory = EasyMock.createMock(RichTextImageFactory.class);
+        final RichTextLinkFactory mockLinkFactory = EasyMock.createMock(RichTextLinkFactory.class);
+
+        replay(mockImageFactory, mockLinkFactory);
+
+        final RichTextImageURLProvider provider = new RichTextImageURLProvider(mockImageFactory, mockLinkFactory,
+                                                                               documentModel);
+
+        assertEquals("non-existing-image.jpg/{_document}/hippogallery:original",
+                     provider.getURL("non-existing-image.jpg/{_document}/hippogallery:original"));
+
+        verify(mockImageFactory, mockLinkFactory);
+    }
+
+    @Test
+    public void testUuidNotFound() throws Exception {
+        TestUtil.addChildFacetNode(document, "image.jpg", image.getIdentifier());
+
+        final RichTextImageFactory mockImageFactory = EasyMock.createMock(RichTextImageFactory.class);
+        final RichTextLinkFactory mockLinkFactory = EasyMock.createMock(RichTextLinkFactory.class);
+        expect(mockLinkFactory.getLinkUuids()).andReturn(Collections.emptySet());
+
+        replay(mockImageFactory, mockLinkFactory);
+
+        final RichTextImageURLProvider provider = new RichTextImageURLProvider(mockImageFactory, mockLinkFactory,
+                                                                               documentModel);
+
+        assertEquals("image.jpg/{_document}/hippogallery:original",
+                     provider.getURL("image.jpg/{_document}/hippogallery:original"));
+
+        verify(mockImageFactory, mockLinkFactory);
+    }
+
+    @Test
+    public void testErrorLoadingImageReturnsInlineBase64Image() throws Exception {
+        TestUtil.addChildFacetNode(document, "image.jpg", image.getIdentifier());
+
+        final RichTextImageFactory mockImageFactory = EasyMock.createMock(RichTextImageFactory.class);
+        expect(mockImageFactory.loadImageItem(eq(image.getIdentifier()), eq("hippogallery:original")))
+                .andThrow(new RichTextException("Expected exception"));
+
+        final RichTextLinkFactory mockLinkFactory = EasyMock.createMock(RichTextLinkFactory.class);
+        expect(mockLinkFactory.getLinkUuids()).andReturn(Collections.singleton(image.getIdentifier()));
+
+        replay(mockImageFactory, mockLinkFactory);
+
+        final RichTextImageURLProvider provider = new RichTextImageURLProvider(mockImageFactory, mockLinkFactory,
+                                                                               documentModel);
+
+        final String url = provider.getURL("image.jpg/{_document}/hippogallery:original");
+        assertTrue(StringUtils.startsWith(url, "data:image/"));
+        assertTrue(StringUtils.contains(url, ";base64"));
+
+        verify(mockImageFactory, mockLinkFactory);
     }
 }

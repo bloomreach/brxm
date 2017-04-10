@@ -18,7 +18,6 @@ package org.onehippo.cms7.services.processor.richtext.visit;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.easymock.EasyMock;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -27,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.processor.html.model.Model;
 import org.onehippo.cms7.services.processor.html.visit.Tag;
+import org.onehippo.cms7.services.processor.richtext.TestUtil;
 import org.onehippo.cms7.services.processor.richtext.jcr.JcrNodeFactory;
 import org.onehippo.repository.mock.MockNode;
 
@@ -44,14 +44,9 @@ public class LinkVisitorTest {
     @Before
     public void setUp() throws Exception {
         root = MockNode.root();
-        final JcrNodeFactory factory = new JcrNodeFactory() {
-            @Override
-            protected Session getSession() throws RepositoryException {
-                return root.getSession();
-            }
-        };
-
         document = root.addNode("document", "hippo:document");
+
+        final JcrNodeFactory factory = JcrNodeFactory.of(root);
         documentModel = factory.getNodeModelByNode(document);
     }
 
@@ -63,8 +58,8 @@ public class LinkVisitorTest {
         expect(anchor.getName()).andReturn("div").times(2);
         EasyMock.replay(anchor);
 
-        visitor.visitBeforeRead(null, anchor);
-        visitor.visitBeforeWrite(null, anchor);
+        visitor.onRead(null, anchor);
+        visitor.onWrite(null, anchor);
 
         EasyMock.verify(anchor);
     }
@@ -194,25 +189,25 @@ public class LinkVisitorTest {
         final Node linkTarget = root.addNode("linked-node", "nt:unstructured");
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
-        write(new TestTag("div"));
+        write(TestUtil.createTag("div"));
         assertEquals("all child facet nodes should have been removed", 0, document.getNodes().getSize());
     }
 
     @Test
     public void setEmptyTextRemovesAllChildNodes() throws RepositoryException {
-        Node linkTarget = root.addNode("linked-node", "nt:unstructured");
+        final Node linkTarget = root.addNode("linked-node", "nt:unstructured");
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
-        write(new TestTag(""));
+        write(TestUtil.createTag(""));
         assertEquals("all child facet nodes should have been removed", 0, document.getNodes().getSize());
     }
 
     @Test
     public void setNullTextRemovesAllChildNodes() throws RepositoryException {
-        Node linkTarget = root.addNode("linked-node", HippoNodeType.NT_FACETSELECT);
+        final Node linkTarget = root.addNode("linked-node", HippoNodeType.NT_FACETSELECT);
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
-        write(new TestTag(null));
+        write(TestUtil.createTag(null));
         assertEquals("all child facet nodes should have been removed", 0, document.getNodes().getSize());
     }
 
@@ -227,10 +222,10 @@ public class LinkVisitorTest {
         final Tag link = createLink("http://", document1.getIdentifier());
         write(link);
 
-        NodeIterator children = document.getNodes();
+        final NodeIterator children = document.getNodes();
         assertEquals("Document node should have only one facet child node", 1, document.getNodes().getSize());
 
-        Node child = children.nextNode();
+        final Node child = children.nextNode();
         assertEquals(document1.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
 
         assertEquals(child.getName(), link.getAttribute("href"));
@@ -254,8 +249,43 @@ public class LinkVisitorTest {
         assertEquals(document1.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
     }
 
+    @Test
+    public void setEmptyTextRemovesPreviouslyCreatedChildNodes() throws RepositoryException {
+        final Node linked = root.addNode("linked", "nt:unstructured");
+        final Tag link = createLink("http://", linked.getIdentifier());
+        write(link);
+
+        assertEquals("Child facet node should have been added", 1, document.getNodes().getSize());
+
+        final Tag empty = TestUtil.createTag("");
+        write(empty);
+        assertEquals("Child facet node should have been removed", 0, document.getNodes().getSize());
+    }
+
+    @Test
+    public void setDocumentsWithTheSameName() throws RepositoryException {
+        final Node doc1 = root.addNode("doc", "nt:unstructured");
+        final Node doc2 = root.addNode("doc", "nt:unstructured");
+
+        final Tag div = TestUtil.createTag("div");
+        final Tag link1 = createLink("http://", doc1.getIdentifier());
+        final Tag link2 = createLink("http://", doc2.getIdentifier());
+
+        final LinkVisitor visitor = new LinkVisitor(documentModel);
+        visitor.onWrite(div, link1);
+        visitor.onWrite(div, link2);
+
+        assertTrue("facetselect node doc exists", document.hasNode("doc"));
+        assertTrue("facetselect node doc_1 exists", document.hasNode("doc_1"));
+
+        assertLink(link1, "doc");
+        assertLink(link2, "doc_1");
+    }
+
+
+    // Helper methods
     private Tag createLink(final String href, final String uuid) {
-        final Tag link = new TestTag("a");
+        final Tag link = TestUtil.createTag("a");
         link.addAttribute("href", href);
         link.addAttribute("data-uuid", uuid);
         return link;
@@ -274,12 +304,12 @@ public class LinkVisitorTest {
 
     private void read(final Tag link) throws RepositoryException {
         final LinkVisitor visitor = new LinkVisitor(documentModel);
-        visitor.visitBeforeRead(null, link);
+        visitor.onRead(null, link);
     }
 
     private void write(final Tag link) throws RepositoryException {
         final LinkVisitor visitor = new LinkVisitor(documentModel);
-        visitor.visitBeforeWrite(null, link);
+        visitor.onWrite(null, link);
     }
 
     private void assertNoChanges(final String href) throws RepositoryException {
@@ -292,7 +322,7 @@ public class LinkVisitorTest {
         final Tag image = createLink(href);
 
         final long childNodesBeforeRead = document.getNodes().getSize();
-        visitor.visitBeforeRead(null, image);
+        visitor.onRead(null, image);
         assertEquals("Value of src attribute should not have changed during read", href, image.getAttribute("href"));
         assertEquals("Number of child facet nodes should not have changed during read",
                      childNodesBeforeRead, document.getNodes().getSize());
@@ -302,20 +332,19 @@ public class LinkVisitorTest {
         final Tag link = createLink(href);
 
         final long childNodesBeforeWrite = document.getNodes().getSize();
-        visitor.visitBeforeWrite(null, link);
+        visitor.onWrite(null, link);
         assertEquals("Value of href attribute should not have changed during write", href, link.getAttribute("href"));
         assertEquals("Number of child facet nodes should not have changed during write",
                      childNodesBeforeWrite, document.getNodes().getSize());
     }
 
     private Tag createLink(final String href) {
-        final Tag link = new TestTag("a");
+        final Tag link = TestUtil.createTag("a");
         link.addAttribute("href", href);
         return link;
     }
 
     private void addChildFacetNode(final String name, final String uuid) throws RepositoryException {
-        final Node child = document.addNode(name, HippoNodeType.NT_FACETSELECT);
-        child.setProperty(HippoNodeType.HIPPO_DOCBASE, uuid);
+        TestUtil.addChildFacetNode(document, name, uuid);
     }
 }

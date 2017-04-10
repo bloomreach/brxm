@@ -15,10 +15,11 @@
  */
 package org.onehippo.cms7.services.processor.richtext.visit;
 
+import java.util.Collections;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.easymock.EasyMock;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -26,11 +27,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.processor.html.model.Model;
 import org.onehippo.cms7.services.processor.html.visit.Tag;
-import org.onehippo.cms7.services.processor.richtext.UrlProvider;
+import org.onehippo.cms7.services.processor.richtext.RichTextException;
+import org.onehippo.cms7.services.processor.richtext.TestUtil;
+import org.onehippo.cms7.services.processor.richtext.URLEncoder;
+import org.onehippo.cms7.services.processor.richtext.URLProvider;
+import org.onehippo.cms7.services.processor.richtext.image.RichTextImage;
+import org.onehippo.cms7.services.processor.richtext.image.RichTextImageFactory;
+import org.onehippo.cms7.services.processor.richtext.image.RichTextImageURLProvider;
 import org.onehippo.cms7.services.processor.richtext.jcr.JcrNodeFactory;
+import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactory;
 import org.onehippo.repository.mock.MockNode;
 
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -40,21 +51,17 @@ public class ImageVisitorTest {
     private MockNode root;
     private MockNode document;
     private Model<Node> documentModel;
-    private PrefixingImageUrlProvider prefixingImageUrlProvider;
+    private PrefixingImageURLProvider prefixingImageUrlProvider;
 
     @Before
     public void setUp() throws Exception {
         root = MockNode.root();
-        final JcrNodeFactory factory = new JcrNodeFactory() {
-            @Override
-            protected Session getSession() throws RepositoryException {
-                return root.getSession();
-            }
-        };
-
         document = root.addNode("document", "hippo:document");
+
+        final JcrNodeFactory factory = JcrNodeFactory.of(root);
         documentModel = factory.getNodeModelByNode(document);
-        prefixingImageUrlProvider = new PrefixingImageUrlProvider("/binaries");
+
+        prefixingImageUrlProvider = new PrefixingImageURLProvider("/binaries");
     }
 
     @Test
@@ -65,10 +72,10 @@ public class ImageVisitorTest {
         expect(image.getName()).andReturn("div").times(2);
         EasyMock.replay(image);
 
-        visitor.visitBeforeRead(null, image);
-        visitor.visitBeforeWrite(null, image);
+        visitor.onRead(null, image);
+        visitor.onWrite(null, image);
 
-        EasyMock.verify(image);
+        verify(image);
     }
 
     @Test
@@ -213,7 +220,7 @@ public class ImageVisitorTest {
     public void setImagesWithTheSameName() throws RepositoryException {
         final Node imageNode1 = root.addNode("image.jpg", "nt:unstructured");
         final Node imageNode2 = root.addNode("image.jpg", "nt:unstructured");
-        final Tag div = new TestTag("div");
+        final Tag div = TestUtil.createTag("div");
 
         final Tag image1 = createImage("/binaries/image.jpg");
         image1.addAttribute("data-uuid", imageNode1.getIdentifier());
@@ -224,8 +231,8 @@ public class ImageVisitorTest {
         image2.addAttribute("data-type", "hippogallery:original");
 
         final ImageVisitor visitor = new ImageVisitor(documentModel, prefixingImageUrlProvider);
-        visitor.visitBeforeWrite(div, image1);
-        visitor.visitBeforeWrite(div, image2);
+        visitor.onWrite(div, image1);
+        visitor.onWrite(div, image2);
 
         assertTrue("facetselect node image.jpg exists", document.hasNode("image.jpg"));
         assertTrue("facetselect node image.jpg_1 exists", document.hasNode("image.jpg_1"));
@@ -256,45 +263,72 @@ public class ImageVisitorTest {
         assertEquals(imageNode1.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
     }
 
+    @Test
+    public void getRichTextImageHasCorrectUrl() throws RepositoryException, RichTextException {
+        final Node path = root.addNode("path", "nt:folder");
+        final Node image = path.addNode("image.jpg", "nt:unstructured");
+        addChildFacetNode("image.jpg", image.getIdentifier());
+
+        final RichTextImage richTextImage = new RichTextImage("/path/image.jpg/image.jpg", "image.jpg", URLEncoder.OPAQUE);
+        richTextImage.setSelectedResourceDefinition("hippogallery:original");
+
+        final RichTextImageFactory mockImageFactory = EasyMock.createMock(RichTextImageFactory.class);
+        expect(mockImageFactory.loadImageItem(eq(image.getIdentifier()), eq("hippogallery:original"))).andReturn(richTextImage);
+
+        final RichTextLinkFactory mockLinkFactory = EasyMock.createMock(RichTextLinkFactory.class);
+        expect(mockLinkFactory.getLinkUuids()).andReturn(Collections.singleton(image.getIdentifier()));
+
+        replay(mockImageFactory, mockLinkFactory);
+
+        final RichTextImageURLProvider urlProvider = new RichTextImageURLProvider(mockImageFactory, mockLinkFactory, documentModel);
+        final Tag imageTag = createImage("image.jpg/{_document}/hippogallery:original");
+        final ImageVisitor visitor = new ImageVisitor(documentModel, urlProvider);
+        visitor.onRead(null, imageTag);
+
+        assertImage(imageTag, "binaries/path/image.jpg/image.jpg/hippogallery:original", image.getIdentifier(), "hippogallery:original");
+        verify(mockImageFactory, mockLinkFactory);
+    }
+
+    // Helper methods
     private void read(final Tag imageTag) throws RepositoryException {
         read(imageTag, prefixingImageUrlProvider);
     }
 
-    private void read(final Tag image, final UrlProvider urlProvider) throws RepositoryException {
+    private void read(final Tag image, final URLProvider urlProvider) throws RepositoryException {
         final ImageVisitor visitor = new ImageVisitor(documentModel, urlProvider);
-        visitor.visitBeforeRead(null, image);
+        visitor.onRead(null, image);
     }
 
     private void write(final Tag imageTag) throws RepositoryException {
         write(imageTag, prefixingImageUrlProvider);
     }
 
-    private void write(final Tag imageTag, final UrlProvider urlProvider) throws RepositoryException {
+    private void write(final Tag imageTag, final URLProvider urlProvider) throws RepositoryException {
         final ImageVisitor visitor = new ImageVisitor(documentModel, urlProvider);
-        visitor.visitBeforeWrite(null, imageTag);
+        visitor.onWrite(null, imageTag);
     }
 
-    private Tag createImage(final String imageSrc) {
-        final Tag image = new TestTag("img");
+    private static Tag createImage(final String imageSrc) {
+        final Tag image = TestUtil.createTag("img");
         image.addAttribute("src", imageSrc);
         return image;
     }
 
-    private void assertImage(final Tag image, final String src) {
+    private static void assertImage(final Tag image, final String src) {
         assertEquals("img", image.getName());
         assertEquals(src, image.getAttribute("src"));
         assertNull(image.getAttribute("data-uuid"));
         assertNull(image.getAttribute("data-type"));
     }
 
-    private void assertImage(final Tag image, final String src, final String uuid) {
+    private static void assertImage(final Tag image, final String src, final String uuid) {
         assertEquals("img", image.getName());
         assertEquals(src, image.getAttribute("src"));
         assertEquals(uuid, image.getAttribute("data-uuid"));
         assertNull(image.getAttribute("data-type"));
     }
 
-    private void assertImage(final Tag image, final String src, final String uuid, final String type) {
+    private static void assertImage(final Tag image, final String src, final String uuid, final String type) {
         assertEquals("img", image.getName());
         assertEquals(src, image.getAttribute("src"));
         assertEquals(uuid, image.getAttribute("data-uuid"));
@@ -306,7 +340,7 @@ public class ImageVisitorTest {
         assertNoChangesWriting(imageSrc, src -> src);
     }
 
-    private void assertNoChangesReading(final String src, final UrlProvider urlProvider) throws RepositoryException {
+    private void assertNoChangesReading(final String src, final URLProvider urlProvider) throws RepositoryException {
         final Tag image = createImage(src);
 
         final long childNodesBeforeRead = document.getNodes().getSize();
@@ -316,7 +350,7 @@ public class ImageVisitorTest {
                      childNodesBeforeRead, document.getNodes().getSize());
     }
 
-    private void assertNoChangesWriting(final String src, final UrlProvider urlProvider) throws RepositoryException {
+    private void assertNoChangesWriting(final String src, final URLProvider urlProvider) throws RepositoryException {
         final Tag image = createImage(src);
 
         final long childNodesBeforeWrite = document.getNodes().getSize();
@@ -327,15 +361,14 @@ public class ImageVisitorTest {
     }
 
     private void addChildFacetNode(final String name, final String uuid) throws RepositoryException {
-        final Node child = document.addNode(name, HippoNodeType.NT_FACETSELECT);
-        child.setProperty(HippoNodeType.HIPPO_DOCBASE, uuid);
+        TestUtil.addChildFacetNode(document, name, uuid);
     }
 
-    private class PrefixingImageUrlProvider implements UrlProvider {
+    private class PrefixingImageURLProvider implements URLProvider {
 
-        private String prefix;
+        private final String prefix;
 
-        PrefixingImageUrlProvider(final String prefix) {
+        PrefixingImageURLProvider(final String prefix) {
             this.prefix = prefix;
         }
 

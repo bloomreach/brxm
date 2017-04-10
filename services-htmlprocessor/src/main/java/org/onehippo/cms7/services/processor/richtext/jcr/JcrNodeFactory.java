@@ -24,9 +24,15 @@ import org.onehippo.cms7.services.processor.html.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class JcrNodeFactory implements NodeFactory {
+public class JcrNodeFactory implements NodeFactory {
 
     public static final Logger log = LoggerFactory.getLogger(JcrNodeFactory.class);
+
+    private final JcrSessionProvider sessionProvider;
+
+    public JcrNodeFactory(final JcrSessionProvider sessionProvider) {
+        this.sessionProvider = sessionProvider;
+    }
 
     @Override
     public Node getNodeByIdentifier(final String uuid) throws RepositoryException {
@@ -60,7 +66,13 @@ public abstract class JcrNodeFactory implements NodeFactory {
         return null;
     }
 
-    protected abstract Session getSession() throws RepositoryException;
+    protected final Session getSession() throws RepositoryException {
+        return sessionProvider.getSession();
+    }
+
+    public static JcrNodeFactory of(final Node node) {
+        return new JcrNodeFactory(node::getSession);
+    }
 
     private class NodeModel implements Model<Node> {
 

@@ -38,17 +38,14 @@ public class HtmlProcessorImpl implements HtmlProcessor {
 
     public static final Logger log = LoggerFactory.getLogger(HtmlProcessorImpl.class);
 
-    private HtmlProcessorConfig config;
-    private HtmlCleaner parser;
-    private HtmlFilter filter;
-    private Serializer serializer;
+    private final HtmlProcessorConfig config;
+    private final HtmlCleaner parser;
+    private final HtmlFilter filter;
+    private final Serializer serializer;
 
     public HtmlProcessorImpl(final HtmlProcessorConfig config) {
         this.config = config;
-        init();
-    }
 
-    private void init() {
         final CleanerProperties properties = new CleanerProperties();
         properties.setOmitHtmlEnvelope(true);
         properties.setOmitXmlDeclaration(true);
@@ -62,7 +59,7 @@ public class HtmlProcessorImpl implements HtmlProcessor {
     @Override
     public String read(final String html, final List<TagVisitor> visitors) throws IOException {
         final TagNode node = parse(html);
-        visit(node, visitors, TagVisitor::visitBeforeRead);
+        visit(node, visitors, TagVisitor::onRead);
 
         String serialized = serialize(node);
         if (config.isConvertLineEndings()) {
@@ -80,7 +77,7 @@ public class HtmlProcessorImpl implements HtmlProcessor {
             node = filter.apply(node);
         }
 
-        visit(node, visitors, TagVisitor::visitBeforeWrite);
+        visit(node, visitors, TagVisitor::onWrite);
 
         String serialized = serialize(node);
         if (config.isConvertLineEndings()) {

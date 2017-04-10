@@ -17,15 +17,19 @@ package org.onehippo.cms7.services.processor.html.visit;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
-import org.hippoecm.repository.api.HippoNodeType;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.processor.richtext.TestUtil;
 import org.onehippo.cms7.services.processor.richtext.jcr.JcrNodeFactory;
 import org.onehippo.repository.mock.MockNode;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
 public class FacetVisitorTest {
@@ -37,14 +41,9 @@ public class FacetVisitorTest {
     @Before
     public void setUp() throws Exception {
         root = MockNode.root();
-        final JcrNodeFactory factory = new JcrNodeFactory() {
-            @Override
-            protected Session getSession() throws RepositoryException {
-                return root.getSession();
-            }
-        };
-
         document = root.addNode("document", "hippo:document");
+
+        final JcrNodeFactory factory = JcrNodeFactory.of(root);
         documentModel = factory.getNodeModelByNode(document);
     }
 
@@ -58,15 +57,32 @@ public class FacetVisitorTest {
 
         final FacetVisitor visitor = new FacetVisitor(documentModel) {
             @Override
-            public void visitBeforeRead(final Tag parent, final Tag tag) throws RepositoryException {}
+            public void onRead(final Tag parent, final Tag tag) throws RepositoryException {}
         };
-        visitor.visitBeforeWrite(null, null);
+        visitor.onWrite(null, null);
 
         assertEquals(0, document.getNodes().getSize());
     }
 
+    @Test
+    public void testNodeModelIsReleased() throws Exception {
+        final Node node = root.addNode("node1", "nt:unstructured");
+        final Model<Node> mockNodeModel = EasyMock.createMock(Model.class);
+        mockNodeModel.release();
+        expectLastCall();
+        expect(mockNodeModel.get()).andReturn(node);
+        replay(mockNodeModel);
+
+        final FacetVisitor visitor = new FacetVisitor(mockNodeModel) {
+            @Override
+            public void onRead(final Tag parent, final Tag tag) throws RepositoryException {}
+        };
+        visitor.onWrite(null, null);
+        visitor.release();
+        verify(mockNodeModel);
+    }
+
     private void addChildFacetNode(final String name, final String uuid) throws RepositoryException {
-        final Node child = document.addNode(name, HippoNodeType.NT_FACETSELECT);
-        child.setProperty(HippoNodeType.HIPPO_DOCBASE, uuid);
+        TestUtil.addChildFacetNode(document, name, uuid);
     }
 }

@@ -24,7 +24,7 @@ import org.onehippo.cms7.services.processor.html.util.FacetUtil;
 import org.onehippo.cms7.services.processor.html.util.LinkUtil;
 import org.onehippo.cms7.services.processor.html.visit.FacetVisitor;
 import org.onehippo.cms7.services.processor.html.visit.Tag;
-import org.onehippo.cms7.services.processor.richtext.UrlProvider;
+import org.onehippo.cms7.services.processor.richtext.URLProvider;
 
 public class ImageVisitor extends FacetVisitor {
 
@@ -35,23 +35,23 @@ public class ImageVisitor extends FacetVisitor {
     private static final String IMAGE_DOCUMENT = "{_document}";
     private static final String IMAGE_SEPARATOR = "/";
 
-    private final UrlProvider imageURLProvider;
+    private final URLProvider imageURLProvider;
 
-    public ImageVisitor(final Model<Node> nodeModel, final UrlProvider imageURLProvider) {
+    public ImageVisitor(final Model<Node> nodeModel, final URLProvider imageURLProvider) {
         super(nodeModel);
         this.imageURLProvider = imageURLProvider;
     }
 
     @Override
-    public void visitBeforeRead(final Tag parent, final Tag tag) throws RepositoryException {
+    public void onRead(final Tag parent, final Tag tag) throws RepositoryException {
         if (tag != null && StringUtils.equalsIgnoreCase(TAG_IMG, tag.getName())) {
             convertImageForRetrieval(tag);
         }
     }
 
     @Override
-    public void visitBeforeWrite(final Tag parent, final Tag tag) throws RepositoryException {
-        super.visitBeforeWrite(parent, tag);
+    public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {
+        super.onWrite(parent, tag);
         if (tag != null && StringUtils.equalsIgnoreCase(TAG_IMG, tag.getName())) {
             convertImageForStorage(tag);
         }

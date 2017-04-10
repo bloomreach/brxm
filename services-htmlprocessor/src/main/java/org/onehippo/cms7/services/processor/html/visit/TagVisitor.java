@@ -21,9 +21,9 @@ import javax.jcr.RepositoryException;
 
 public interface TagVisitor extends Serializable {
 
-    void visitBeforeRead(Tag parent, Tag tag) throws RepositoryException;
+    void onRead(Tag parent, Tag tag) throws RepositoryException;
 
-    void visitBeforeWrite(Tag parent, Tag tag) throws RepositoryException;
+    void onWrite(Tag parent, Tag tag) throws RepositoryException;
 
     void release();
 }

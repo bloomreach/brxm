@@ -24,4 +24,34 @@ public interface Model<T> extends Serializable {
     void set(final T value);
 
     void release();
+
+    static <T> Model<T> of(final T o) {
+        return new SimpleModel<>(o);
+    }
+
+    class SimpleModel<T> implements Model<T> {
+
+        T value;
+
+        SimpleModel(final T o) {
+            this. value = o;
+        }
+
+        @Override
+        public T get() {
+            return value;
+        }
+
+        @Override
+        public void set(final T value) {
+            this.value = value;
+        }
+
+        @Override
+        public void release() {
+        }
+    }
 }
+
+
+

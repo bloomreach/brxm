@@ -32,7 +32,7 @@ public abstract class FacetVisitor extends NodeVisitor {
     }
 
     @Override
-    public void visitBeforeWrite(final Tag parent, final Tag tag) throws RepositoryException {
+    public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {
         if (parent == null) {
             // Remove all facetselects as they are no longer in use
             try {

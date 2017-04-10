@@ -19,7 +19,6 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.easymock.EasyMock;
 import org.hamcrest.CoreMatchers;
@@ -27,7 +26,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.processor.html.model.Model;
-import org.onehippo.cms7.services.processor.html.model.SimpleModel;
 import org.onehippo.cms7.services.processor.richtext.RichTextException;
 import org.onehippo.cms7.services.processor.richtext.jcr.JcrNodeFactory;
 import org.onehippo.cms7.services.processor.richtext.jcr.NodeFactory;
@@ -61,12 +59,7 @@ public class RichTextLinkFactoryTest {
         htmlNode = sourceHandle.addNode("source", "richtexttest:testdocument").addNode("richtexttest:html", "hippostd:html");
         htmlNode.setProperty("hippostd:content", "testing 1 2 3");
 
-        nodeFactory = new JcrNodeFactory() {
-            @Override
-            protected Session getSession() throws RepositoryException {
-                return root.getSession();
-            }
-        };
+        nodeFactory = JcrNodeFactory.of(root);
     }
 
     @Test
@@ -135,7 +128,7 @@ public class RichTextLinkFactoryTest {
         final RichTextLinkFactoryImpl factory = getJcrRichTextLinkFactory();
 
         assertFalse(factory.isValid(null));
-        assertFalse(factory.isValid(new SimpleModel<>(null)));
+        assertFalse(factory.isValid(Model.of(null)));
 
         final Node noReference = root.addNode("no-reference", "nt:unstructured");
         assertFalse(factory.isValid(nodeFactory.getNodeModelByNode(noReference)));

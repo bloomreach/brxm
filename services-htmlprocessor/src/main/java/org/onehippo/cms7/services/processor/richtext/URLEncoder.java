@@ -13,27 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.processor.html.model;
+package org.onehippo.cms7.services.processor.richtext;
 
-public class SimpleModel<T> implements Model<T> {
+import java.io.Serializable;
 
-    private T value;
+public interface URLEncoder extends Serializable {
 
-    public SimpleModel(final T value) {
-        this.value = value;
-    }
+    URLEncoder OPAQUE = url -> url;
 
-    @Override
-    public T get() {
-        return value;
-    }
-
-    @Override
-    public void set(final T value) {
-        this.value = value;
-    }
-
-    @Override
-    public void release() {
-    }
+    String encode(final String url);
 }

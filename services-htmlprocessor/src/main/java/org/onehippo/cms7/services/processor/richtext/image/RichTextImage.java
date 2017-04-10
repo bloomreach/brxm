@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.onehippo.cms7.services.processor.richtext.UrlEncoder;
+import org.onehippo.cms7.services.processor.richtext.URLEncoder;
 
 /**
  * This class represents an image resource that a rich text field has a reference to.
@@ -32,12 +32,12 @@ public class RichTextImage implements Serializable {
     private String uuid;
     private List<String> resourceDefinitions;
     private String selectedResourceDefinition;
-    private UrlEncoder urlEncoder;
+    private URLEncoder urlEncoder;
 
-    public RichTextImage(final String targetPath, final String name, final UrlEncoder urlEncoder) {
+    public RichTextImage(final String targetPath, final String name, final URLEncoder urlEncoder) {
         this.path = targetPath;
         this.name = name;
-        this.urlEncoder = urlEncoder != null ? urlEncoder : UrlEncoder.OPAQUE;
+        this.urlEncoder = urlEncoder != null ? urlEncoder : URLEncoder.OPAQUE;
         this.resourceDefinitions = new ArrayList<>();
     }
 

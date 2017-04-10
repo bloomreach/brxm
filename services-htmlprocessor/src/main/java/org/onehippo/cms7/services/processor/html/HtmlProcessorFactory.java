@@ -68,7 +68,7 @@ public interface HtmlProcessorFactory extends Serializable {
         };
     }
 
-    static String parseProcessorId(String id) {
+    static String parseProcessorId(final String id) {
         if (StringUtils.isBlank(id)) {
             log.info("CKEditor plugin does not have a server-side HTML processor configured, using default");
             return DEFAULT_HTML_PROCESSOR_SERVICE;

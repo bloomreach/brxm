@@ -24,12 +24,12 @@ import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
 import org.onehippo.cms7.services.processor.html.model.HtmlProcessorModel;
 import org.onehippo.cms7.services.processor.html.model.Model;
 import org.onehippo.cms7.services.processor.html.visit.TagVisitor;
-import org.onehippo.cms7.services.processor.richtext.UrlProvider;
+import org.onehippo.cms7.services.processor.richtext.URLProvider;
 import org.onehippo.cms7.services.processor.richtext.jcr.NodeFactory;
 import org.onehippo.cms7.services.processor.richtext.image.RichTextImageFactory;
 import org.onehippo.cms7.services.processor.richtext.image.RichTextImageURLProvider;
 import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactory;
-import org.onehippo.cms7.services.processor.richtext.UrlEncoder;
+import org.onehippo.cms7.services.processor.richtext.URLEncoder;
 import org.onehippo.cms7.services.processor.richtext.image.RichTextImageFactoryImpl;
 import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactoryImpl;
 import org.onehippo.cms7.services.processor.richtext.visit.ImageVisitor;
@@ -37,29 +37,30 @@ import org.onehippo.cms7.services.processor.richtext.visit.LinkVisitor;
 
 public class RichTextProcessorModel extends HtmlProcessorModel {
 
-    private Model<Node> nodeModel;
+    private final Model<Node> nodeModel;
     private final List<TagVisitor> visitors = new ArrayList<>();
 
     public RichTextProcessorModel(final Model<String> valueModel, final Model<Node> nodeModel,
                                   final HtmlProcessorFactory processorFactory, final NodeFactory nodeFactory) {
-        this(valueModel, nodeModel, processorFactory, nodeFactory, UrlEncoder.OPAQUE);
+        this(valueModel, nodeModel, processorFactory, nodeFactory, URLEncoder.OPAQUE);
     }
 
     public RichTextProcessorModel(final Model<String> valueModel, final Model<Node> nodeModel,
                                   final HtmlProcessorFactory processorFactory, final NodeFactory nodeFactory,
-                                  final UrlEncoder encoder) {
+                                  final URLEncoder encoder) {
         super(valueModel, processorFactory);
+
         this.nodeModel = nodeModel;
 
         final RichTextLinkFactory linkFactory = new RichTextLinkFactoryImpl(nodeModel, nodeFactory);
         final RichTextImageFactory richTextImageFactory = new RichTextImageFactoryImpl(nodeModel, nodeFactory, encoder);
-        final UrlProvider imageProvider = createRichTextImageURLProvider(nodeModel, linkFactory,
+        final URLProvider imageProvider = createRichTextImageURLProvider(nodeModel, linkFactory,
                                                                          richTextImageFactory);
         visitors.add(new LinkVisitor(nodeModel));
         visitors.add(new ImageVisitor(nodeModel, imageProvider));
     }
 
-    protected UrlProvider createRichTextImageURLProvider(final Model<Node> nodeModel, final RichTextLinkFactory linkFactory, final RichTextImageFactory richTextImageFactory) {
+    protected URLProvider createRichTextImageURLProvider(final Model<Node> nodeModel, final RichTextLinkFactory linkFactory, final RichTextImageFactory richTextImageFactory) {
         return new RichTextImageURLProvider(richTextImageFactory, linkFactory, nodeModel);
     }
 

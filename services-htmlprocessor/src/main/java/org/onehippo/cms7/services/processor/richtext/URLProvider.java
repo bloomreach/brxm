@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,9 +17,7 @@ package org.onehippo.cms7.services.processor.richtext;
 
 import java.io.Serializable;
 
-public interface UrlEncoder extends Serializable {
+public interface URLProvider extends Serializable {
 
-    UrlEncoder OPAQUE = url -> url;
-
-    String encode(final String url);
+    String getURL(String link);
 }
