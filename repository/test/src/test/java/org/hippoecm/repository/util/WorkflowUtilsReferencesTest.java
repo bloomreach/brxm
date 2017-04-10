@@ -16,6 +16,7 @@
 package org.hippoecm.repository.util;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
 
@@ -113,12 +114,12 @@ public class WorkflowUtilsReferencesTest extends RepositoryTestCase {
 
         session.save();
 
-        final List<String> referringUnpublishedDocuments = WorkflowUtils.getReferringDocuments(doc1Handle, true);
+        final Set<String> referringUnpublishedDocuments = WorkflowUtils.getReferringDocuments(doc1Handle, true).keySet();
         assertEquals("Number of referring documents is not correct", referringUnpublishedDocuments.size(), 2);
         assertTrue("Doc2 is not returned as a referring unpublished document", referringUnpublishedDocuments.contains(doc2Handle.getIdentifier()));
         assertTrue("Doc3 is not returned as a referring unpublished document", referringUnpublishedDocuments.contains(doc3Handle.getIdentifier()));
 
-        final List<String> referringPublishedDocuments = WorkflowUtils.getReferringDocuments(doc1Handle, false);
+        final Set<String> referringPublishedDocuments = WorkflowUtils.getReferringDocuments(doc1Handle, false).keySet();
         assertEquals("Number of referring documents is not correct", referringPublishedDocuments.size(), 2);
         assertTrue("Doc4 is not returned as a referring published document", referringPublishedDocuments.contains(doc4Handle.getIdentifier()));
         assertTrue("Doc5 is not returned as a referring published document", referringPublishedDocuments.contains(doc5Handle.getIdentifier()));

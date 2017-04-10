@@ -17,7 +17,9 @@ package org.hippoecm.repository.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.ItemNotFoundException;
@@ -45,7 +47,7 @@ import org.slf4j.LoggerFactory;
 public final class WorkflowUtils {
     private static final Logger log = LoggerFactory.getLogger(WorkflowUtils.class);
 
-    private static final int MAX_REFERENCE_COUNT = 100;
+    public static final int MAX_REFERENCE_COUNT = 100;
     private static final int QUERY_LIMIT = 1000;
 
     private WorkflowUtils() {}
@@ -153,13 +155,13 @@ public final class WorkflowUtils {
      *
      * @param handle handle node of the document
      * @param retrieveUnpublished if true unpublished variants are retrieved
-     * @return list of identifiers of document handle nodes that refer to the document
+     * @return a map of nodes that refer to the document. The entry key contains the id of the node.
      * @throws RepositoryException a generic error while accessing the repository
      */
-    public static List<String> getReferringDocuments(final Node handle, final boolean retrieveUnpublished)
+    public static Map<String, Node> getReferringDocuments(final Node handle, final boolean retrieveUnpublished)
             throws RepositoryException {
 
-        final List<String> referrers = new ArrayList<>();
+        final Map<String, Node> referrers = new HashMap<>();
         final String requiredAvailability;
         if (retrieveUnpublished) {
             requiredAvailability = "preview";
@@ -179,7 +181,7 @@ public final class WorkflowUtils {
     }
 
     private static void addReferrers(final Node handle, final String requiredAvailability, final int resultMaxCount,
-                             final String queryStatement, final List<String> referrers) throws RepositoryException {
+                             final String queryStatement, final Map<String, Node> referrers) throws RepositoryException {
         final QueryManager queryManager = handle.getSession().getWorkspace().getQueryManager();
         @SuppressWarnings("deprecation")
         final HippoQuery query = (HippoQuery) queryManager.createQuery(queryStatement, Query.XPATH);
@@ -196,7 +198,7 @@ public final class WorkflowUtils {
                 Node parent = current.getParent();
                 if (parent.isNodeType(HippoNodeType.NT_HANDLE) && current.isNodeType(HippoNodeType.NT_DOCUMENT) &&
                         hasAvailability(current, requiredAvailability)) {
-                    referrers.add(parent.getIdentifier());
+                    referrers.put(parent.getIdentifier(), parent);
                     break;
                 }
                 current = current.getParent();
