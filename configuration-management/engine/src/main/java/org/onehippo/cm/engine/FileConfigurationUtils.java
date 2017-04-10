@@ -24,7 +24,7 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 
-import static org.onehippo.cm.engine.Constants.*;
+import static org.onehippo.cm.engine.Constants.REPO_CONFIG_FOLDER;
 
 public class FileConfigurationUtils {
 
