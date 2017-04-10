@@ -41,7 +41,7 @@
     <hippo.ckeditor.version>4.5.11-h2-visual-editing-psp2-SNAPSHOT</hippo.ckeditor.version>
     <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
-    <hippo.services.htmlprocessor.version>4.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
+    <hippo.services.htmlprocessor.version>1.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.addon-hst-configuration-editor.version>4.0.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
 
     <commons-lang.version>2.6</commons-lang.version>
