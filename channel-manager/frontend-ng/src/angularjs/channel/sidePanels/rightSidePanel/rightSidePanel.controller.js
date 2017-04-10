@@ -130,8 +130,7 @@ class RightSidePanelCtrl {
     this.documentId = id;
     this.loading = true;
     this.CmsService.closeDocumentWhenValid(id)
-      .then(() => {
-        this.ContentService.createDraft(id)
+      .then(() => this.ContentService.createDraft(id)
           .then((doc) => {
             if (this._hasFields(doc)) {
               return this.ContentService.getDocumentType(doc.info.type.id)
@@ -139,8 +138,7 @@ class RightSidePanelCtrl {
             }
             return this.$q.reject(this._noContentResponse(doc));
           })
-          .catch(response => this._onLoadFailure(response));
-      })
+          .catch(response => this._onLoadFailure(response)))
       .catch(() => this._showFeedbackDraftInvalid())
       .finally(() => delete this.loading);
   }
