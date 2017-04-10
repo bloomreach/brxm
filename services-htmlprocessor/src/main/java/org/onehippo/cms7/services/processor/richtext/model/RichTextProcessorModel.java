@@ -53,14 +53,13 @@ public class RichTextProcessorModel extends HtmlProcessorModel {
         this.nodeModel = nodeModel;
 
         final RichTextLinkFactory linkFactory = new RichTextLinkFactoryImpl(nodeModel, nodeFactory);
-        final RichTextImageFactory richTextImageFactory = new RichTextImageFactoryImpl(nodeModel, nodeFactory, encoder);
-        final URLProvider imageProvider = createRichTextImageURLProvider(nodeModel, linkFactory,
-                                                                         richTextImageFactory);
+        final RichTextImageFactory imageFactory = new RichTextImageFactoryImpl(nodeModel, nodeFactory, encoder);
+        final URLProvider imageProvider = createImageURLProvider(nodeModel, linkFactory, imageFactory);
         visitors.add(new LinkVisitor(nodeModel));
         visitors.add(new ImageVisitor(nodeModel, imageProvider));
     }
 
-    protected URLProvider createRichTextImageURLProvider(final Model<Node> nodeModel, final RichTextLinkFactory linkFactory, final RichTextImageFactory richTextImageFactory) {
+    protected URLProvider createImageURLProvider(final Model<Node> nodeModel, final RichTextLinkFactory linkFactory, final RichTextImageFactory richTextImageFactory) {
         return new RichTextImageURLProvider(richTextImageFactory, linkFactory, nodeModel);
     }
 

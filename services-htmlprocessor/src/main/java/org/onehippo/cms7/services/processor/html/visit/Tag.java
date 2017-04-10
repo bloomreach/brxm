@@ -28,17 +28,17 @@ public interface Tag {
 
     void removeAttribute(String name);
 
-    static Tag from(TagNode tagNode) {
+    static Tag from(final TagNode tagNode) {
         return tagNode != null ? new TagNodeDelegate(tagNode) : null;
     }
 
-    static Tag from(HtmlNode htmlNode) {
+    static Tag from(final HtmlNode htmlNode) {
         return htmlNode instanceof TagNode ? from((TagNode) htmlNode) : null;
     }
 
     class TagNodeDelegate implements Tag {
 
-        private TagNode tagNode;
+        private final TagNode tagNode;
 
         TagNodeDelegate(final TagNode tagNode) {
             this.tagNode = tagNode;

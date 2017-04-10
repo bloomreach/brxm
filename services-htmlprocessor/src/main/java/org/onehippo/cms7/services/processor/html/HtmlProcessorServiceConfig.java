@@ -30,22 +30,22 @@ public class HtmlProcessorServiceConfig implements Serializable {
 
     public static final Logger log = LoggerFactory.getLogger(HtmlProcessorServiceConfig.class);
 
-    private Map<String, HtmlProcessorConfig> configs;
-    private Map<String, HtmlProcessor> processors;
+    private final Map<String, HtmlProcessorConfig> configs = new HashMap<>();
+    private final Map<String, HtmlProcessor> processors = new HashMap<>();
 
     void reconfigure(final Node config) {
-        configs = new HashMap<>();
-        processors = new HashMap<>();
+        configs.clear();
+        processors.clear();
 
         try {
             final NodeIterator iterator = config.getNodes();
             while (iterator.hasNext()) {
                 final Node child = iterator.nextNode();
-                HtmlProcessorConfig processorConfig = new HtmlProcessorConfig();
+                final HtmlProcessorConfig processorConfig = new HtmlProcessorConfig();
                 processorConfig.reconfigure(child);
                 configs.put(child.getName(), processorConfig);
             }
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.error("Failed to create Html processor config");
         }
     }
