@@ -31,7 +31,7 @@ public class NodeTypeDefinitionImpl extends AbstractDefinitionImpl implements No
 
     @Override
     public DefinitionType getType() {
-        return DefinitionType.NODETYPE;
+        return DefinitionType.CND;
     }
 
     @Override

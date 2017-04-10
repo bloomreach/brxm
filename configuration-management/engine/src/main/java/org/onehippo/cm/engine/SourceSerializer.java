@@ -15,6 +15,21 @@
  */
 package org.onehippo.cm.engine;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.engine.Constants.DEFINITIONS;
+import static org.onehippo.cm.engine.Constants.META_DELETE_KEY;
+import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
+import static org.onehippo.cm.engine.Constants.META_ORDER_BEFORE_KEY;
+import static org.onehippo.cm.engine.Constants.OPERATION_KEY;
+import static org.onehippo.cm.engine.Constants.PATH_KEY;
+import static org.onehippo.cm.engine.Constants.PREFIX_KEY;
+import static org.onehippo.cm.engine.Constants.RESOURCE_KEY;
+import static org.onehippo.cm.engine.Constants.TYPE_KEY;
+import static org.onehippo.cm.engine.Constants.URI_KEY;
+import static org.onehippo.cm.engine.Constants.VALUE_KEY;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -28,6 +43,7 @@ import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
+import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.PropertyOperation;
@@ -43,13 +59,6 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.reader.StreamReader;
-
-import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
-import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
-import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
-import static org.onehippo.cm.engine.Constants.DEFINITIONS;
-import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
-import static org.onehippo.cm.engine.Constants.WEBFILEBUNDLE;
 
 public class SourceSerializer extends AbstractBaseSerializer {
 
@@ -86,7 +95,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
                 case NAMESPACE:
                     namespaceDefinitionNodes.add(representNamespaceDefinition((NamespaceDefinition) definition));
                     break;
-                case NODETYPE:
+                case CND:
                     nodeTypeDefinitionNodes.add(representNodetypeDefinition((NodeTypeDefinition) definition, resourceConsumer));
                     break;
                 case WEBFILEBUNDLE:
@@ -99,19 +108,19 @@ public class SourceSerializer extends AbstractBaseSerializer {
 
         final List<NodeTuple> definitionNodes = new ArrayList<>();
         if (namespaceDefinitionNodes.size() > 0) {
-            definitionNodes.add(createStrSeqTuple("namespace", namespaceDefinitionNodes));
+            definitionNodes.add(createStrSeqTuple(DefinitionType.NAMESPACE.toString(), namespaceDefinitionNodes));
         }
         if (nodeTypeDefinitionNodes.size() > 0) {
-            definitionNodes.add(createStrSeqTuple("cnd", nodeTypeDefinitionNodes));
+            definitionNodes.add(createStrSeqTuple(DefinitionType.CND.toString(), nodeTypeDefinitionNodes));
         }
         if (configDefinitionTuples.size() > 0) {
-            definitionNodes.add(createStrOptionalSequenceTuple("config", configDefinitionTuples));
+            definitionNodes.add(createStrOptionalSequenceTuple(DefinitionType.CONFIG.toString(), configDefinitionTuples));
         }
         if (contentDefinitionTuples.size() > 0) {
-            definitionNodes.add(createStrOptionalSequenceTuple("content", contentDefinitionTuples));
+            definitionNodes.add(createStrOptionalSequenceTuple(DefinitionType.CONTENT.toString(), contentDefinitionTuples));
         }
         if (webFilesDefinitionNodes.size() > 0) {
-            definitionNodes.add(createStrSeqTuple(WEBFILEBUNDLE, webFilesDefinitionNodes));
+            definitionNodes.add(createStrSeqTuple(DefinitionType.WEBFILEBUNDLE.toString(), webFilesDefinitionNodes));
         }
 
         final List<NodeTuple> sourceTuples = new ArrayList<>();
@@ -151,11 +160,11 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     private NodeTuple representNodeDelete() {
-        return new NodeTuple(createStrScalar(".meta:delete"), new ScalarNode(Tag.BOOL, "true", null, null, null));
+        return new NodeTuple(createStrScalar(META_DELETE_KEY), new ScalarNode(Tag.BOOL, "true", null, null, null));
     }
 
     private NodeTuple representNodeOrderBefore(final String name) {
-        return createStrStrTuple(".meta:order-before", name);
+        return createStrStrTuple(META_ORDER_BEFORE_KEY, name);
     }
 
     private NodeTuple representNodeIgnoreReorderedChildren(final Boolean ignoreReorderedChildren) {
@@ -174,21 +183,21 @@ public class SourceSerializer extends AbstractBaseSerializer {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
 
         if (property.getOperation() == PropertyOperation.DELETE) {
-            valueMapTuples.add(createStrStrTuple("operation", "delete"));
+            valueMapTuples.add(createStrStrTuple(OPERATION_KEY, property.getOperation().toString()));
         } else {
             if (property.getOperation() != PropertyOperation.REPLACE) {
-                valueMapTuples.add(createStrStrTuple("operation", property.getOperation().toString().toLowerCase()));
+                valueMapTuples.add(createStrStrTuple(OPERATION_KEY, property.getOperation().toString()));
             }
-            valueMapTuples.add(createStrStrTuple("type", property.getValueType().name().toLowerCase()));
+            valueMapTuples.add(createStrStrTuple(TYPE_KEY, property.getValueType().name().toLowerCase()));
 
             final boolean exposeAsResource = hasResourceValues(property) || isBinaryProperty(property);
             final String key;
             if (exposeAsResource) {
-                key = "resource";
+                key = RESOURCE_KEY;
             } else if (hasPathValues(property)) {
-                key = "path";
+                key = PATH_KEY;
             } else {
-                key = "value";
+                key = VALUE_KEY;
             }
 
             if (property.getType() == PropertyType.SINGLE) {
@@ -337,8 +346,8 @@ public class SourceSerializer extends AbstractBaseSerializer {
 
     private Node representNamespaceDefinition(final NamespaceDefinition definition) {
         final List<NodeTuple> tuples = new ArrayList<>(1);
-        tuples.add(createStrStrTuple("prefix", definition.getPrefix()));
-        tuples.add(createStrStrTuple("uri", definition.getURI().toString()));
+        tuples.add(createStrStrTuple(PREFIX_KEY, definition.getPrefix()));
+        tuples.add(createStrStrTuple(URI_KEY, definition.getURI().toString()));
         return new MappingNode(Tag.MAP, tuples, false);
     }
 
@@ -346,7 +355,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         if (definition.isResource()) {
             resourceConsumer.accept(new CopyItem(definition.getValue()));
             final List<NodeTuple> tuples = new ArrayList<>(1);
-            tuples.add(createStrStrTuple("resource", definition.getValue()));
+            tuples.add(createStrStrTuple(RESOURCE_KEY, definition.getValue()));
             return new MappingNode(Tag.MAP, tuples, false);
         } else {
             return createStrScalar(definition.getValue(), '|');

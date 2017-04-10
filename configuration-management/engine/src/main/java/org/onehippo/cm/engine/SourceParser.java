@@ -15,6 +15,21 @@
  */
 package org.onehippo.cm.engine;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.engine.Constants.DEFINITIONS;
+import static org.onehippo.cm.engine.Constants.META_DELETE_KEY;
+import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
+import static org.onehippo.cm.engine.Constants.META_ORDER_BEFORE_KEY;
+import static org.onehippo.cm.engine.Constants.OPERATION_KEY;
+import static org.onehippo.cm.engine.Constants.PATH_KEY;
+import static org.onehippo.cm.engine.Constants.PREFIX_KEY;
+import static org.onehippo.cm.engine.Constants.RESOURCE_KEY;
+import static org.onehippo.cm.engine.Constants.TYPE_KEY;
+import static org.onehippo.cm.engine.Constants.URI_KEY;
+import static org.onehippo.cm.engine.Constants.VALUE_KEY;
+
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -28,6 +43,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Definition;
+import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;
@@ -47,13 +63,6 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
-
-import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
-import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
-import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
-import static org.onehippo.cm.engine.Constants.DEFINITIONS;
-import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
-import static org.onehippo.cm.engine.Constants.WEBFILEBUNDLE;
 
 public class SourceParser extends AbstractBaseParser {
 
@@ -112,21 +121,21 @@ public class SourceParser extends AbstractBaseParser {
         final SourceImpl source = parent.addSource(path);
 
         final Map<String, Node> definitionsMap = asMapping(sourceMap.get(DEFINITIONS), null,
-                new String[]{"namespace", "cnd", "config", "content", WEBFILEBUNDLE});
+                DefinitionType.NAMES);
 
         for (String definitionName : definitionsMap.keySet()) {
             final Node definitionNode = definitionsMap.get(definitionName);
-            switch (definitionName) {
-                case "namespace":
+            switch (DefinitionType.valueOf(definitionName)) {
+                case NAMESPACE:
                     constructNamespaceDefinitions(definitionNode, source);
                     break;
-                case "cnd":
+                case CND:
                     constructNodeTypeDefinitions(definitionNode, source);
                     break;
-                case "config":
+                case CONFIG:
                     constructConfigDefinitions(definitionNode, source);
                     break;
-                case "content":
+                case CONTENT:
                     constructContentDefinitions(definitionNode, source);
                     break;
                 case WEBFILEBUNDLE:
@@ -138,9 +147,9 @@ public class SourceParser extends AbstractBaseParser {
 
     private void constructNamespaceDefinitions(final Node src, final SourceImpl parent) throws ParserException {
         for (Node node : asSequence(src)) {
-            final Map<String, Node> namespaceMap = asMapping(node, new String[]{"prefix", "uri"}, null);
-            final String prefix = asStringScalar(namespaceMap.get("prefix"));
-            final URI uri = asURIScalar(namespaceMap.get("uri"));
+            final Map<String, Node> namespaceMap = asMapping(node, new String[]{PREFIX_KEY, URI_KEY}, null);
+            final String prefix = asStringScalar(namespaceMap.get(PREFIX_KEY));
+            final URI uri = asURIScalar(namespaceMap.get(URI_KEY));
             parent.addNamespaceDefinition(prefix, uri);
         }
     }
@@ -153,12 +162,12 @@ public class SourceParser extends AbstractBaseParser {
                     parent.addNodeTypeDefinition(cndString, false);
                     break;
                 case mapping:
-                    final Map<String, Node> map = asMapping(node, new String[]{"resource"}, new String[0]);
-                    final String resource = asResourcePathScalar(map.get("resource"), parent, resourceInputProvider);
+                    final Map<String, Node> map = asMapping(node, new String[]{RESOURCE_KEY}, new String[0]);
+                    final String resource = asResourcePathScalar(map.get(RESOURCE_KEY), parent, resourceInputProvider);
                     parent.addNodeTypeDefinition(resource, true);
                     break;
                 default:
-                    throw new ParserException("CND definition item must be a string or a map with key 'resource'", node);
+                    throw new ParserException("CND definition item must be a string or a map with key '"+RESOURCE_KEY+"'", node);
             }
         }
     }
@@ -191,18 +200,18 @@ public class SourceParser extends AbstractBaseParser {
         for (NodeTuple tuple : tuples) {
             final String key = asStringScalar(tuple.getKeyNode());
             final Node tupleValue = tuple.getValueNode();
-            if (key.equals(".meta:delete")) {
+            if (key.equals(META_DELETE_KEY)) {
                 if (!verifyOnly) {
                     if (tuples.size() > 1) {
-                        throw new ParserException("Node cannot contain '.meta:delete' and other keys", node);
+                        throw new ParserException("Node cannot contain '"+META_DELETE_KEY+"' and other keys", node);
                     }
                 }
                 final boolean delete = asNodeDeleteValue(tupleValue);
                 definitionNode.setDelete(delete);
-            } else if (key.equals(".meta:order-before")) {
+            } else if (key.equals(META_ORDER_BEFORE_KEY)) {
                 final String name = asNodeOrderBeforeValue(tupleValue);
                 if (definitionNode.getName().equals(name)) {
-                    throw new ParserException("Invalid .meta:order-before targeting this node itself", node);
+                    throw new ParserException("Invalid "+META_ORDER_BEFORE_KEY+" targeting this node itself", node);
                 }
                 definitionNode.setOrderBefore(name);
             } else if (key.equals(META_IGNORE_REORDERED_CHILDREN)) {
@@ -221,7 +230,7 @@ public class SourceParser extends AbstractBaseParser {
         final ScalarNode scalar = asScalar(node);
         final Object object = scalarConstructor.constructScalarNode(scalar);
         if (!object.equals(true)) {
-            throw new ParserException("Value for .meta:delete must be boolean value 'true'", node);
+            throw new ParserException("Value for "+META_DELETE_KEY+" must be boolean value 'true'", node);
         }
         return true;
     }
@@ -328,15 +337,16 @@ public class SourceParser extends AbstractBaseParser {
 
     private DefinitionPropertyImpl constructDefinitionPropertyFromMap(final String name, final Node value, final ValueType defaultValueType, final DefinitionNodeImpl parent) throws ParserException {
         final DefinitionPropertyImpl property;
-        final Map<String, Node> map = asMapping(value, new String[0], new String[]{"operation","type","value","resource","path"});
+        final Map<String, Node> map = asMapping(value, new String[0], 
+        		new String[]{OPERATION_KEY,TYPE_KEY,VALUE_KEY,RESOURCE_KEY,PATH_KEY});
 
         int expectedMapSize = 1; // the 'value', 'resource', or 'path' key
         final PropertyOperation operation;
-        if (map.keySet().contains("operation")) {
-            operation = constructPropertyOperation(map.get("operation"));
+        if (map.keySet().contains(OPERATION_KEY)) {
+            operation = constructPropertyOperation(map.get(OPERATION_KEY));
             if (operation == PropertyOperation.DELETE) {
                 if (map.size() > 1) {
-                    throw new ParserException("Property map cannot contain 'operation: delete' and other keys", value);
+                    throw new ParserException("Property map cannot contain '"+OPERATION_KEY+": "+PropertyOperation.DELETE.toString()+"' and other keys", value);
                 }
                 property = parent.addProperty(name, ValueType.STRING, new ValueImpl[0]);
                 property.setOperation(operation);
@@ -348,8 +358,8 @@ public class SourceParser extends AbstractBaseParser {
         }
 
         final ValueType valueType;
-        if (map.keySet().contains("type")) {
-            valueType = constructValueType(map.get("type"));
+        if (map.keySet().contains(TYPE_KEY)) {
+            valueType = constructValueType(map.get(TYPE_KEY));
             expectedMapSize++;
         } else {
             valueType = defaultValueType;
@@ -357,24 +367,26 @@ public class SourceParser extends AbstractBaseParser {
 
         if (map.size() != expectedMapSize) {
             throw new ParserException(
-                    "Property map must have either a 'value', 'resource' or 'path' key",
+                    "Property map must have either a '"+VALUE_KEY+"', '"+RESOURCE_KEY+"' or '"+PATH_KEY+"' key",
                     value);
         }
 
-        if (map.keySet().contains("value")) {
-            property = constructDefinitionPropertyFromValueMap(name, map.get("value"), parent, valueType);
-        } else if (map.keySet().contains("resource")) {
-            property = constructDefinitionPropertyFromResourceMap(name, map.get("resource"), parent, valueType);
-        } else if (map.keySet().contains("path")) {
-            property = constructDefinitionPropertyFromPathMap(name, map.get("path"), parent, valueType);
+        if (map.keySet().contains(VALUE_KEY)) {
+            property = constructDefinitionPropertyFromValueMap(name, map.get(VALUE_KEY), parent, valueType);
+        } else if (map.keySet().contains(RESOURCE_KEY)) {
+            property = constructDefinitionPropertyFromResourceMap(name, map.get(RESOURCE_KEY), parent, valueType);
+        } else if (map.keySet().contains(PATH_KEY)) {
+            property = constructDefinitionPropertyFromPathMap(name, map.get(PATH_KEY), parent, valueType);
         } else {
             throw new ParserException(
-                    "Property map must have a 'value', 'resource' or 'path' key", value);
+                    "Property map must have either a '"+VALUE_KEY+"', '"+RESOURCE_KEY+"' or '"+PATH_KEY+"' key",
+                    value);
         }
 
         if (operation == PropertyOperation.ADD && property.getType() == PropertyType.SINGLE) {
             throw new ParserException(
-                    "Property map with operation 'add' must have a sequence for 'value', 'resource' or 'path'", value);
+                    "Property map with operation 'add' must have a sequence for '"+VALUE_KEY+"', '"+RESOURCE_KEY+"' or '"+PATH_KEY+"'",
+                    value);
         }
 
         property.setOperation(operation);
@@ -570,7 +582,8 @@ public class SourceParser extends AbstractBaseParser {
 
     private DefinitionPropertyImpl constructDefinitionPropertyFromPathMap(final String name, final Node node, final DefinitionNodeImpl parent, final ValueType valueType) throws ParserException {
         if (!(valueType == ValueType.REFERENCE || valueType == ValueType.WEAKREFERENCE)) {
-            throw new ParserException("Path values can only be used for value type 'reference' or 'weakreference'", node);
+            throw new ParserException("Path values can only be used for value type '"+ValueType.REFERENCE.toString()+"' or '"
+            		+ValueType.WEAKREFERENCE.toString()+"'", node);
         }
         switch (node.getNodeId()) {
             case scalar:
@@ -604,7 +617,8 @@ public class SourceParser extends AbstractBaseParser {
 
     private DefinitionPropertyImpl constructDefinitionPropertyFromResourceMap(final String name, final Node node, final DefinitionNodeImpl parent, final ValueType valueType) throws ParserException {
         if (!(valueType == ValueType.STRING || valueType == ValueType.BINARY)) {
-            throw new ParserException("Resource values can only be used for value type 'binary' or 'string'", node);
+            throw new ParserException("Resource values can only be used for value type '"+ValueType.BINARY.toString()
+            		+"' or '"+ValueType.STRING.toString()+"'", node);
         }
         switch (node.getNodeId()) {
             case scalar:

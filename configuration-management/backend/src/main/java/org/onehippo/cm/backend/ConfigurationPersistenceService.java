@@ -98,7 +98,7 @@ public class ConfigurationPersistenceService {
         if (includeDefinitionTypes.contains(DefinitionType.NAMESPACE)) {
             applyNamespaces(model.getNamespaceDefinitions());
         }
-        if (includeDefinitionTypes.contains(DefinitionType.NODETYPE)) {
+        if (includeDefinitionTypes.contains(DefinitionType.CND)) {
             applyNodeTypes(model.getNodeTypeDefinitions());
         }
         if (includeDefinitionTypes.contains(DefinitionType.CONFIG)) {

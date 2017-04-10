@@ -20,8 +20,16 @@ public enum DefinitionType {
     CONFIG,
     CONTENT,
     NAMESPACE,
-    NODETYPE,
+    CND,
     WEBFILEBUNDLE;
+	
+	public static final String[] NAMES = {
+			CONFIG.toString(),
+			CONTENT.toString(),
+			NAMESPACE.toString(),
+			CND.toString(),
+			WEBFILEBUNDLE.toString()
+	};
 
     public final String toString() {
         return name().toLowerCase();

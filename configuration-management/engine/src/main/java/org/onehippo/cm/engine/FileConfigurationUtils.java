@@ -24,15 +24,17 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 
+import static org.onehippo.cm.engine.Constants.*;
+
 public class FileConfigurationUtils {
 
     public static Path getModuleBasePath(final Path repoConfigPath, final Module module, final boolean configHasMultipleModules) {
         final Project project = module.getProject();
         final Configuration configuration = project.getConfiguration();
         if (configHasMultipleModules) {
-            return repoConfigPath.resolveSibling("repo-config").resolve(configuration.getName()).resolve(project.getName()).resolve(module.getName());
+            return repoConfigPath.resolveSibling(REPO_CONFIG_FOLDER).resolve(configuration.getName()).resolve(project.getName()).resolve(module.getName());
         } else {
-            return repoConfigPath.resolveSibling("repo-config");
+            return repoConfigPath.resolveSibling(REPO_CONFIG_FOLDER);
         }
     }
 
