@@ -53,7 +53,7 @@ public class HtmlProcessorModel implements Model<String> {
     @Override
     public void set(final String value) {
         if (log.isDebugEnabled()) {
-            log.debug("Cleaning value {}", value);
+            log.debug("Processing value {}", value);
         }
         try {
             final HtmlProcessor processor = factory.getProcessor();
