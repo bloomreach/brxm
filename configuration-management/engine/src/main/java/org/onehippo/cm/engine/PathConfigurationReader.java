@@ -34,7 +34,7 @@ import org.onehippo.cm.impl.model.ModuleImpl;
 
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
-public class FileConfigurationReader {
+public class PathConfigurationReader {
 
     private final boolean explicitSequencing;
 
@@ -53,11 +53,11 @@ public class FileConfigurationReader {
         }
     }
 
-    public FileConfigurationReader() {
+    public PathConfigurationReader() {
         this(DEFAULT_EXPLICIT_SEQUENCING);
     }
 
-    public FileConfigurationReader(final boolean explicitSequencing) {
+    public PathConfigurationReader(final boolean explicitSequencing) {
         this.explicitSequencing = explicitSequencing;
     }
 

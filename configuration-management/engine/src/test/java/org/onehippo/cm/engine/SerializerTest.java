@@ -141,7 +141,7 @@ public class SerializerTest extends AbstractBaseTest {
     }
 
     private void readAndWrite(final String repoConfig, final boolean explicitSequencing) throws IOException, ParserException {
-        final FileConfigurationReader.ReadResult result = readFromResource(repoConfig, explicitSequencing);
+        final PathConfigurationReader.ReadResult result = readFromResource(repoConfig, explicitSequencing);
 
         final FileConfigurationWriter writer = new FileConfigurationWriter(explicitSequencing);
         writer.write(folder.getRoot().toPath(), result.getConfigurations(), result.getResourceInputProviders());

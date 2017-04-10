@@ -66,20 +66,20 @@ public abstract class AbstractBaseTest {
         }
     };
 
-    protected FileConfigurationReader.ReadResult readFromResource(final String resourceName) throws IOException, ParserException {
+    protected PathConfigurationReader.ReadResult readFromResource(final String resourceName) throws IOException, ParserException {
         return readFromResource(resourceName, DEFAULT_EXPLICIT_SEQUENCING);
     }
 
-    protected FileConfigurationReader.ReadResult readFromResource(final String resourceName, final boolean explicitSequencing) throws IOException, ParserException {
+    protected PathConfigurationReader.ReadResult readFromResource(final String resourceName, final boolean explicitSequencing) throws IOException, ParserException {
         final Path repoConfig = find(resourceName);
-        return new FileConfigurationReader(explicitSequencing).read(repoConfig);
+        return new PathConfigurationReader(explicitSequencing).read(repoConfig);
     }
 
-    protected FileConfigurationReader.ReadResult readFromTestJar(final String resourceName) throws IOException, ParserException {
+    protected PathConfigurationReader.ReadResult readFromTestJar(final String resourceName) throws IOException, ParserException {
         final Path jarPath = new File("target/test-classes.jar").toPath();
         try (FileSystem fs = FileSystems.newFileSystem(jarPath, null)) {
             final Path repoConfig = fs.getPath(resourceName);
-            return new FileConfigurationReader(DEFAULT_EXPLICIT_SEQUENCING).read(repoConfig);
+            return new PathConfigurationReader(DEFAULT_EXPLICIT_SEQUENCING).read(repoConfig);
         }
     }
 
