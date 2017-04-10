@@ -125,7 +125,7 @@ public class SourceParser extends AbstractBaseParser {
 
         for (String definitionName : definitionsMap.keySet()) {
             final Node definitionNode = definitionsMap.get(definitionName);
-            switch (DefinitionType.valueOf(definitionName)) {
+            switch (DefinitionType.valueOf(definitionName.toUpperCase())) {
                 case NAMESPACE:
                     constructNamespaceDefinitions(definitionNode, source);
                     break;
