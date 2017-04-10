@@ -22,7 +22,8 @@ import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.onehippo.cms7.services.processor.html.model.Model;
 
 public class RichTextModelFactory {
-    private String processorId;
+
+    private final String processorId;
 
     public RichTextModelFactory(final String processorId) {
         this.processorId = processorId;

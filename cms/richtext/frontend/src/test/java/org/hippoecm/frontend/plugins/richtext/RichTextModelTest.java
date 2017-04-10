@@ -513,6 +513,7 @@ public class RichTextModelTest {
         ));
     }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void setEmptyTextRemovesPreviouslyCreatedChildNodes() throws RepositoryException {
         Node linked = rootNode.addNode("linked", "nt:unstructured");
@@ -597,6 +598,7 @@ public class RichTextModelTest {
         assertEquals("<img src=\"http://www.example.com/image.jpg\" />", richTextModel.getObject());
     }
 
+// TODO: moved to imageVisitorTest
 //    @Test
 //    public void getRichTextImageHasCorrectUrl() throws RepositoryException, RichTextException {
 //        Node path = rootNode.addNode("path", "nt:folder");
@@ -643,6 +645,7 @@ public class RichTextModelTest {
 //        assertEquals("<img src=\"binaries/path/image.jpg/image.jpg/hippogallery:original\" data-uuid=\"" + image.getIdentifier() + "\" data-type=\"hippogallery:original\" />", richTextModel.getObject());
 //    }
 
+    // TODO: moved to LinkVisitorTest
     @Test
     public void setDocumentsWithTheSameName() throws RepositoryException {
         Node doc1 = rootNode.addNode("doc", "nt:unstructured");
