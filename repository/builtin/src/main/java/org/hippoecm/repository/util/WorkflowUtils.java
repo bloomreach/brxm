@@ -149,6 +149,8 @@ public final class WorkflowUtils {
     /**
      * For a document, get a list of nodeId's of documents that reference it.
      *
+     * The unit test for this method is located in the 'test' module.
+     *
      * @param handle handle node of the document
      * @param retrieveUnpublished if true unpublished variants are retrieved
      * @return list of identifiers of document handle nodes that refer to the document
@@ -216,7 +218,9 @@ public final class WorkflowUtils {
     }
 
     /**
-     * For a document, get a list of nodeId's of unpublished documents that it references.
+     * For an unpublished document, get a list of nodeId's of unpublished documents that it references.
+     *
+     * The unit test for this method is located in the 'test' module.
      *
      * @param handle the handle node of the document
      * @param session a JCR session

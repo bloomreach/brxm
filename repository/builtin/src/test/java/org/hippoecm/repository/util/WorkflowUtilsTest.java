@@ -167,24 +167,21 @@ public class WorkflowUtilsTest {
     public void hasAvailability() throws RepositoryException {
         final Node root = MockNode.root();
         final Node variant = root.addNode("test", HippoNodeType.NT_FIELD);
-        Value[] values = { new StringValue("") };
-        variant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, values);
 
+        Value[] values = new Value[]{new StringValue("")};
+        variant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, values);
         assertFalse(WorkflowUtils.hasAvailability(variant, "live"));
 
-        Value[] values2 = { new StringValue("live")};
-        variant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, values2);
-
+        values = new Value[]{new StringValue("live")};
+        variant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, values);
         assertTrue(WorkflowUtils.hasAvailability(variant, "live"));
 
-        Value[] values3 = { new StringValue("live"), new StringValue("preview") };
-        variant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, values3);
-
+        values = new Value[]{new StringValue("live"), new StringValue("preview")};
+        variant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, values);
         assertTrue(WorkflowUtils.hasAvailability(variant, "live"));
 
-        Value[] values4 = { new StringValue("foo"), new StringValue("bar") };
-        variant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, values4);
-
+        values = new Value[]{new StringValue("foo"), new StringValue("bar")};
+        variant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, values);
         assertFalse(WorkflowUtils.hasAvailability(variant, "live"));
     }
 
