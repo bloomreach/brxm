@@ -29,9 +29,11 @@ import org.onehippo.repository.events.PersistedHippoEventsService;
 public class ResourceBundleWorkflowEventListener implements PersistedHippoEventListener {
 
     private MutableResourceBundleRegistry resourceBundleRegistry;
+    private final String contextPath;
 
-    public ResourceBundleWorkflowEventListener(MutableResourceBundleRegistry resourceBundleRegistry) {
+    public ResourceBundleWorkflowEventListener(MutableResourceBundleRegistry resourceBundleRegistry, final String contextPath) {
         this.resourceBundleRegistry = resourceBundleRegistry;
+        this.contextPath = contextPath;
     }
 
     public void init() {
@@ -49,7 +51,7 @@ public class ResourceBundleWorkflowEventListener implements PersistedHippoEventL
 
     @Override
     public String getChannelName() {
-        return getClass().getName();
+        return contextPath + "_" + getClass().getName();
     }
 
     @Override
@@ -82,4 +84,5 @@ public class ResourceBundleWorkflowEventListener implements PersistedHippoEventL
 
         resourceBundleRegistry.unregisterBundleFamily(wfEvent.subjectId(), preview);
     }
+
 }

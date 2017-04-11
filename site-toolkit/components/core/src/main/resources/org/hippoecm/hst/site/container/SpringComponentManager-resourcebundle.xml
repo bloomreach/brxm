@@ -33,6 +33,7 @@
   <bean class="org.hippoecm.hst.resourcebundle.internal.ResourceBundleWorkflowEventListener"
         init-method="init" destroy-method="destroy">
     <constructor-arg ref="org.hippoecm.hst.resourcebundle.ResourceBundleRegistry"/>
+    <constructor-arg  value="#{servletContext.contextPath}"/>
   </bean>
 
 </beans>
