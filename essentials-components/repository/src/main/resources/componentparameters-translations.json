@@ -47,7 +47,7 @@
                   },
                   "EssentialsFacetsComponentInfo": {
                     "en": {
-                      "facetPath": "Facet path"
+                      "facetPath": "Facet path (optional: content path can be used also)"
                     }
                   },
                   "EssentialsGoogleMapsComponentInfo": {
