@@ -15,12 +15,15 @@
  */
 package org.hippoecm.frontend;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
@@ -49,6 +52,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
 public class PluginPage extends Home implements IServiceTracker<IRenderService> {
 
@@ -153,6 +157,9 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
             super.renderHead(response);
             CoreLibrariesContributor.contribute(Application.get(), response);
 
+            publishAntiCacheHash(response);
+            publishSessionParameters(response);
+
             if (WebApplicationHelper.isDevelopmentMode()) {
                 addDevelopmentModeCssClassToHtml(response);
             }
@@ -160,6 +167,23 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
             if (pageRenderHeadTask != null) {
                 pageRenderHeadTask.stop();
             }
+        }
+    }
+
+    private void publishAntiCacheHash(final IHeaderResponse response) {
+        final String script = "Hippo.Session = {}; Hippo.antiCache = '"
+                + WebApplicationHelper.APPLICATION_HASH
+                + "';";
+        response.render(JavaScriptHeaderItem.forScript(script, "hippo-anti-cache-hash"));
+    }
+
+    private void publishSessionParameters(final IHeaderResponse response) {
+        final HttpSession httpSession = ((ServletWebRequest)getRequest()).getContainerRequest().getSession();
+        final CmsSessionContext sessionContext = CmsSessionContext.getContext(httpSession);
+        if (sessionContext != null) {
+            final String locale = sessionContext.getLocale().getLanguage();
+            final String script = "Hippo.Session = {}; Hippo.Session.locale = '" + locale + "';";
+            response.render(JavaScriptHeaderItem.forScript(script, "hippo-session-parameters"));
         }
     }
 
