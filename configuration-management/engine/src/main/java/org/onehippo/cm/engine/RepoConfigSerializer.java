@@ -35,10 +35,10 @@ import org.yaml.snakeyaml.nodes.Tag;
 
 import static org.onehippo.cm.engine.Constants.AFTER_KEY;
 import static org.onehippo.cm.engine.Constants.CONFIGURATIONS_KEY;
-import static org.onehippo.cm.engine.Constants.MODULES_KEY;
-import static org.onehippo.cm.engine.Constants.PROJECTS_KEY;
 import static org.onehippo.cm.engine.Constants.CONFIGURATION_KEY;
+import static org.onehippo.cm.engine.Constants.MODULES_KEY;
 import static org.onehippo.cm.engine.Constants.MODULE_KEY;
+import static org.onehippo.cm.engine.Constants.PROJECTS_KEY;
 import static org.onehippo.cm.engine.Constants.PROJECT_KEY;
 
 
