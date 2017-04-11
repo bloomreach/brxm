@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
@@ -47,6 +48,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(FieldTypeUtils.class)
+@Ignore
 public class RichTextFieldTypeTest {
 
     private static final String FIELD_NAME = "test:richtextfield";
