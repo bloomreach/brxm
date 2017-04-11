@@ -316,7 +316,7 @@ describe('RightSidePanel', () => {
     $rootScope.$digest();
     expect($ctrl.loading).toBeTruthy();
 
-    deferredDocType.resolve(testDocumentType)
+    deferredDocType.resolve(testDocumentType);
     $rootScope.$digest();
     expect($ctrl.loading).toBeFalsy();
   });
