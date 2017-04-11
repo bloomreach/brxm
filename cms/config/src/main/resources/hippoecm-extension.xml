@@ -66,6 +66,20 @@
       <sv:value>914.0</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="domain-type-frontend-cluster-check-on-nodetype-patch">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:domains/frontendconfig/frontend-cluster/type-frontend-cluster/hipposys:facet</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value>nodetype</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>914.1</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="domain-hippogallery">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -579,6 +593,20 @@
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
       <sv:value>4.0.0</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="cms-folder-views-primarytype-patch">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>cms-folder-views-primarytype-patch.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>2002.1</sv:value>
     </sv:property>
   </sv:node>
   <!-- CMS search views -->

@@ -35,7 +35,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>5.0.0</sv:value>
+      <sv:value>5.0.0.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>5.0</sv:value>
