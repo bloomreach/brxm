@@ -115,52 +115,52 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-api</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-aws-ext</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-data</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-rmi</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-servlets</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi-commons</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-vfs-ext</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
       <!-- End JR dependencies -->
 
