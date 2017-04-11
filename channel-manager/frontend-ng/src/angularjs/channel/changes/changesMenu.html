@@ -17,7 +17,7 @@
 <md-menu ng-if="changes.isShowChangesMenu()">
   <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANGES' | translate }}"
              class="qa-button-changes changes-button"
-             ng-click="$mdOpenMenu($event)">
+             ng-click="$mdMenu.open($event)">
       <md-icon md-svg-src="images/attention.svg">
       </md-icon>
     {{ 'TOOLBAR_BUTTON_CHANGES' | translate }}

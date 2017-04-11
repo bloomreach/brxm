@@ -17,7 +17,7 @@
 <md-menu ng-if="channelActions.hasMenuOptions()">
   <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}"
              class="qa-button-channel"
-             ng-click="$mdOpenMenu($event)">
+             ng-click="$mdMenu.open($event)">
     {{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}
   </md-button>
   <md-menu-content width="4" class="qa-channel-menu">

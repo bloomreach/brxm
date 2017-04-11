@@ -88,7 +88,6 @@ describe('ChannelService', () => {
   });
 
   function loadChannel(id = 'testChannelId') {
-    ChannelService.initialize(); // make sure the load-channel event handler is registered
     window.CMS_TO_APP.publish('load-channel', { id });
     $rootScope.$digest();
   }
