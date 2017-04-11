@@ -63,10 +63,10 @@ public class RichTextFieldTypeTest {
 
     private Node addValue(final String html) {
         try {
-            Node value = document.addNode(FIELD_NAME, "hippostd:html");
+            final Node value = document.addNode(FIELD_NAME, "hippostd:html");
             value.setProperty("hippostd:content", html);
             return value;
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             throw new RuntimeException(e);
         }
     }
@@ -75,13 +75,13 @@ public class RichTextFieldTypeTest {
         void run() throws Exception;
     }
 
-    private void assertWarningsLogged(final long count, Code code, Code... verifications) throws Exception {
+    private void assertWarningsLogged(final long count, final Code code, final Code... verifications) throws Exception {
         try (Log4jListener listener = Log4jListener.onWarn()) {
             try {
                 code.run();
             } finally {
                 assertThat(count + " warnings logged", listener.messages().count(), equalTo(count));
-                for (Code verification : verifications) {
+                for (final Code verification : verifications) {
                     verification.run();
                 }
             }
@@ -96,7 +96,7 @@ public class RichTextFieldTypeTest {
     public void readSingleValue() throws Exception {
         addValue("<p>value</p>");
         assertNoWarningsLogged(() -> {
-            List<FieldValue> fieldValues = type.readFrom(document).get();
+            final List<FieldValue> fieldValues = type.readFrom(document).get();
             assertThat(fieldValues.size(), equalTo(1));
             assertThat(fieldValues.get(0).getValue(), equalTo("<p>value</p>"));
         });
@@ -108,7 +108,7 @@ public class RichTextFieldTypeTest {
         addValue("<p>two</p>");
         type.setMaxValues(2);
         assertNoWarningsLogged(() -> {
-            List<FieldValue> fieldValues = type.readFrom(document).get();
+            final List<FieldValue> fieldValues = type.readFrom(document).get();
             assertThat(fieldValues.size(), equalTo(2));
             assertThat(fieldValues.get(0).getValue(), equalTo("<p>one</p>"));
             assertThat(fieldValues.get(1).getValue(), equalTo("<p>two</p>"));
@@ -123,7 +123,7 @@ public class RichTextFieldTypeTest {
     @Test
     public void exceptionWhileReading() throws Exception {
         // make hippostd:content property multi-valued so reading it will throw an exception
-        Node value = addValue("");
+        final Node value = addValue("");
         value.getProperty("hippostd:content").setValue(new String[]{"one", "two"});
 
         assertWarningsLogged(1, () -> assertFalse(type.readFrom(document).isPresent()));
@@ -133,11 +133,11 @@ public class RichTextFieldTypeTest {
     public void writeSingleValue() throws Exception {
         addValue("<p>value</p>");
         assertNoWarningsLogged(() -> {
-            FieldValue newValue = new FieldValue("<p>changed</p>");
+            final FieldValue newValue = new FieldValue("<p>changed</p>");
 
             type.writeTo(document, Optional.of(Collections.singletonList(newValue)));
 
-            List<FieldValue> fieldValues = type.readFrom(document).get();
+            final List<FieldValue> fieldValues = type.readFrom(document).get();
             assertThat(fieldValues.size(), equalTo(1));
             assertThat(fieldValues.get(0).getValue(), equalTo("<p>changed</p>"));
         });
@@ -149,12 +149,12 @@ public class RichTextFieldTypeTest {
         addValue("<p>two</p>");
         type.setMaxValues(2);
         assertNoWarningsLogged(() -> {
-            FieldValue newValue1 = new FieldValue("<p>one changed</p>");
-            FieldValue newValue2 = new FieldValue("<p>two changed</p>");
+            final FieldValue newValue1 = new FieldValue("<p>one changed</p>");
+            final FieldValue newValue2 = new FieldValue("<p>two changed</p>");
 
             type.writeTo(document, Optional.of(Arrays.asList(newValue1, newValue2)));
 
-            List<FieldValue> fieldValues = type.readFrom(document).get();
+            final List<FieldValue> fieldValues = type.readFrom(document).get();
             assertThat(fieldValues.size(), equalTo(2));
             assertThat(fieldValues.get(0).getValue(), equalTo("<p>one changed</p>"));
             assertThat(fieldValues.get(1).getValue(), equalTo("<p>two changed</p>"));
@@ -179,8 +179,8 @@ public class RichTextFieldTypeTest {
     @Test(expected = BadRequestException.class)
     public void writeMoreValuesThanMaximum() throws Exception {
         // default maximum is 1
-        FieldValue newValue1 = new FieldValue("<p>one</p>");
-        FieldValue newValue2 = new FieldValue("<p>two</p>");
+        final FieldValue newValue1 = new FieldValue("<p>one</p>");
+        final FieldValue newValue2 = new FieldValue("<p>two</p>");
         type.writeTo(document, Optional.of(Arrays.asList(newValue1, newValue2)));
     }
 
@@ -193,10 +193,10 @@ public class RichTextFieldTypeTest {
 
         assertNoWarningsLogged(
                 () -> {
-                    FieldValue newValue = new FieldValue("<p>changed</p>");
+                    final FieldValue newValue = new FieldValue("<p>changed</p>");
                     type.writeTo(document, Optional.of(Collections.singletonList(newValue)));
                 }, () -> {
-                    List<FieldValue> fieldValues = type.readFrom(document).get();
+                    final List<FieldValue> fieldValues = type.readFrom(document).get();
                     assertThat(fieldValues.size(), equalTo(1));
                     assertThat(fieldValues.get(0).getValue(), equalTo("<p>changed</p>"));
                     assertThat(document.getNodes().getSize(), equalTo(1L));
@@ -216,7 +216,7 @@ public class RichTextFieldTypeTest {
         assertWarningsLogged(1,
                 () -> type.writeTo(document, Optional.of(Collections.singletonList(newValue))),
                 () -> {
-                    List<FieldValue> fieldValues = type.readFrom(document).get();
+                    final List<FieldValue> fieldValues = type.readFrom(document).get();
                     assertThat(fieldValues.size(), equalTo(1));
                     assertThat(fieldValues.get(0).getValue(), equalTo("<p>value</p>"));
                 });
