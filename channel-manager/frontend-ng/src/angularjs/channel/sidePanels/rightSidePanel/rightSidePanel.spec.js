@@ -299,13 +299,24 @@ describe('RightSidePanel', () => {
 
   it('knows that a document is loading', () => {
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.resolve(testDocument));
-    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
+
+    const deferredDraft = $q.defer();
+    ContentService.createDraft.and.returnValue(deferredDraft.promise);
+
+    const deferredDocType = $q.defer();
+    ContentService.getDocumentType.and.returnValue(deferredDocType.promise);
 
     $ctrl._loadDocument('test');
-
     expect($ctrl.loading).toBeTruthy();
 
+    $rootScope.$digest();
+    expect($ctrl.loading).toBeTruthy();
+
+    deferredDraft.resolve(testDocument);
+    $rootScope.$digest();
+    expect($ctrl.loading).toBeTruthy();
+
+    deferredDocType.resolve(testDocumentType)
     $rootScope.$digest();
     expect($ctrl.loading).toBeFalsy();
   });
