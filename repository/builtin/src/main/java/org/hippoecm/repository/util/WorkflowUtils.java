@@ -149,17 +149,17 @@ public final class WorkflowUtils {
     }
 
     /**
-     * For a document, get a list of nodeId's of documents that reference it.
-     *
-     * The unit test for this method is located in the 'test' module.
+     * For a document, get a list of nodes and id's of documents that reference it.
      *
      * @param handle handle node of the document
-     * @param retrieveUnpublished if true unpublished variants are retrieved
+     * @param retrieveUnpublished if true unpublished variants are retrieved otherwise live variants
      * @return a map of nodes that refer to the document. The entry key contains the id of the node.
      * @throws RepositoryException a generic error while accessing the repository
      */
     public static Map<String, Node> getReferringDocuments(final Node handle, final boolean retrieveUnpublished)
             throws RepositoryException {
+
+        // Please note: The unit test for this method is located in the 'test' module.
 
         final Map<String, Node> referrers = new HashMap<>();
         final String requiredAvailability;
@@ -222,15 +222,16 @@ public final class WorkflowUtils {
     /**
      * For an unpublished document, get a list of nodeId's of unpublished documents that it references.
      *
-     * The unit test for this method is located in the 'test' module.
-     *
      * @param handle the handle node of the document
      * @param session a JCR session
-     * @return list of identifiers of unpublished document nodes that the document refers to
+     * @return a map of nodes of unpublished document nodes that the document refers to. The entry key contains the id of the node.
      * @throws RepositoryException a generic error while accessing the repository
      */
-    public static List<String> getReferencesToUnpublishedDocuments(final Node handle, final Session session) throws RepositoryException {
-        final List<String> entries = new ArrayList<>();
+    public static Map<String, Node> getReferencesToUnpublishedDocuments(final Node handle, final Session session) throws RepositoryException {
+
+        // Please note: The unit test for this method is located in the 'test' module.
+
+        final Map<String, Node> entries = new HashMap<>();
         final Optional<Node> unpublishedVariant = getDocumentVariantNode(handle, Variant.UNPUBLISHED);
         if (unpublishedVariant.isPresent()) {
             unpublishedVariant.get().accept(new ItemVisitor() {
@@ -260,7 +261,7 @@ public final class WorkflowUtils {
                                     }
                                 }
                                 if (!isLiveDocument) {
-                                    entries.add(uuid);
+                                    entries.put(uuid, referencedNode);
                                 }
                             }
                         } catch (ItemNotFoundException e) {
