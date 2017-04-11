@@ -39,6 +39,7 @@ import HstConstants from './constants/hst.constants';
 import DomService from './services/dom.service';
 import FeedbackService from './services/feedback.service';
 import PathService from './services/path.service';
+import ProjectService from './services/project.service';
 import illegalCharactersDirective from './directives/illegalCharacters.directive';
 import stopPropagationDirective from './directives/stopPropagation.directive';
 import scrollToIfDirective from './directives/scrollToIf.directive';
@@ -76,6 +77,7 @@ const hippoCmng = angular
   .service('DomService', DomService)
   .service('FeedbackService', FeedbackService)
   .service('PathService', PathService)
+  .service('ProjectService', ProjectService)
   .directive('illegalCharacters', illegalCharactersDirective)
   .directive('stopPropagation', stopPropagationDirective)
   .directive('scrollToIf', scrollToIfDirective)

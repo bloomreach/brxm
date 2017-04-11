@@ -24,6 +24,7 @@ import channelHippoIframeModule from './hippoIframe/hippoIframe';
 import channelMenuModule from './menu/editor';
 import maskModule from './mask/mask.module';
 import channelRelevanceModule from './relevance/relevance';
+import projectToggleModule from './projectToggle/projectToggle.module';
 import viewportsModule from './viewportToggle/viewportToggle.module';
 import config from './channel.config';
 import ChannelCtrl from './channel.controller';
@@ -41,6 +42,7 @@ const channelModule = angular
     channelHippoIframeModule.name,
     channelMenuModule.name,
     channelRelevanceModule.name,
+    projectToggleModule.name,
     viewportsModule.name,
     maskModule.name,
   ])
