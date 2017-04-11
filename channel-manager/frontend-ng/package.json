@@ -27,7 +27,7 @@
     "dragula": "3.7.2",
     "es6-shim": "0.35.3",
     "jquery": "3.2.1",
-    "mutation-summary": "0.0.0",
+    "mutation-summary": "0.1.1",
     "ng-device-detector": "4.0.3",
     "ng-focus-if": "1.0.7",
     "open-sans-fontface": "git+https://github.com/FontFaceKit/open-sans.git#1.4.2"
