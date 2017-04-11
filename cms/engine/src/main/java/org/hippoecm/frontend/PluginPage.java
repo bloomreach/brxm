@@ -171,9 +171,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     }
 
     private void publishAntiCacheHash(final IHeaderResponse response) {
-        final String script = "Hippo.Session = {}; Hippo.antiCache = '"
-                + WebApplicationHelper.APPLICATION_HASH
-                + "';";
+        final String script = "Hippo.antiCache = '" + WebApplicationHelper.APPLICATION_HASH + "';";
         response.render(JavaScriptHeaderItem.forScript(script, "hippo-anti-cache-hash"));
     }
 
