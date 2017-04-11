@@ -40,7 +40,7 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
     @Override
     public Resource resolve(String absPath, Map<String, Object> pathVariables) throws ResourceException {
         try {
-            RestTemplate restTemplate = createRestTemplate();
+            RestTemplate restTemplate = getRestTemplate();
             ResponseEntity<String> result = restTemplate.getForEntity(getBaseResourceURI(absPath), String.class,
                     pathVariables);
 
@@ -72,7 +72,7 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
     public ResourceContainer findResources(String baseAbsPath, Map<String, Object> pathVariables)
             throws ResourceException {
         try {
-            RestTemplate restTemplate = createRestTemplate();
+            RestTemplate restTemplate = getRestTemplate();
             ResponseEntity<String> result = restTemplate.getForEntity(getBaseResourceURI(baseAbsPath), String.class,
                     pathVariables);
 
