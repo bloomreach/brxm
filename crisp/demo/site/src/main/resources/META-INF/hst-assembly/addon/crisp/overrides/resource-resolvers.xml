@@ -7,6 +7,7 @@
         class="org.springframework.beans.factory.config.MapFactoryBean">
     <property name="sourceMap">
       <map>
+
         <entry key="productCatalogs">
           <bean parent="abstractSimpleJacksonRestTemplateResourceResolver"
                 class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver">
@@ -20,6 +21,42 @@
             </property>
           </bean>
         </entry>
+
+        <entry key="salesforce">
+          <bean parent="abstractSimpleJacksonRestTemplateResourceResolver"
+                class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver">
+            <property name="baseUri" value="${crisp.resource.resolver.salesforce.baseUri}" />
+            <property name="restTemplate">
+              <bean class="org.springframework.security.oauth2.client.OAuth2RestTemplate">
+                <constructor-arg>
+                  <bean class="org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails">
+                    <property name="accessTokenUri" value="**accessTokenUri**" />
+                    <property name="clientId" value="**clientId**" />
+                    <property name="clientSecret" value="**clientSecret**" />
+                    <property name="grantType" value="password" />
+                    <property name="scope">
+                      <list>
+                        <value>write</value>
+                        <value>read</value>
+                      </list>
+                    </property>
+                    <property name="username" value="**username**" />
+                    <property name="password" value="**password**" />
+                  </bean>
+                </constructor-arg>
+                <constructor-arg>
+                  <bean class="org.springframework.security.oauth2.client.DefaultOAuth2ClientContext">
+                    <constructor-arg>
+                      <bean class="org.springframework.security.oauth2.client.token.DefaultAccessTokenRequest">
+                      </bean>
+                    </constructor-arg>
+                  </bean>
+                </constructor-arg>
+              </bean>
+            </property>
+          </bean>
+        </entry>
+
       </map>
     </property>
   </bean>

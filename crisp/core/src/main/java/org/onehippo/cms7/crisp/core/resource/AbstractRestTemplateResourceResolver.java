@@ -24,7 +24,7 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
         this.clientHttpRequestInterceptor = clientHttpRequestInterceptor;
     }
 
-    protected RestTemplate getRestTemplate() {
+    public RestTemplate getRestTemplate() {
         if (restTemplate == null) {
             restTemplate = createRestTemplate();
         }
@@ -32,7 +32,7 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
         return restTemplate;
     }
 
-    protected void setRestTemplate(RestTemplate defaultRestTemplate) {
+    public void setRestTemplate(RestTemplate defaultRestTemplate) {
         this.restTemplate = defaultRestTemplate;
     }
 

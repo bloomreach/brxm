@@ -7,6 +7,7 @@ import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceLink;
+import org.onehippo.cms7.crisp.api.resource.ResourceLinkResolver;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolverProvider;
 
@@ -46,7 +47,11 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
         ResourceResolver resolver = getResourceResolver(resourceSpace);
 
         if (resolver != null) {
-            return resolver.getResourceLinkResolver().resolve(resource, linkVariables);
+            ResourceLinkResolver linkResolver = resolver.getResourceLinkResolver();
+
+            if (linkResolver != null) {
+                return linkResolver.resolve(resource, linkVariables);
+            }
         }
 
         return null;
