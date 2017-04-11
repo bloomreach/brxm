@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,23 +22,24 @@ import javax.jcr.Node;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.richtext.RichTextLink;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.richtext.processor.WicketModel;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorInternalLink;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorLink;
-import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.RichTextException;
+import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.processor.richtext.RichTextException;
+import org.onehippo.cms7.services.processor.richtext.link.RichTextLink;
+import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RichTextEditorLinkService implements IDetachable {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(RichTextEditorLinkService.class);
 
-    private IRichTextLinkFactory factory;
+    private RichTextLinkFactory factory;
 
-    public RichTextEditorLinkService(IRichTextLinkFactory factory) {
+    public RichTextEditorLinkService(RichTextLinkFactory factory) {
         this.factory = factory;
     }
 
@@ -48,7 +49,8 @@ public class RichTextEditorLinkService implements IDetachable {
             if (factory.getLinkUuids().contains(uuid)) {
                 try {
                     final RichTextLink link = factory.loadLink(uuid);
-                    return new InternalLink(p, link.getTargetModel());
+                    final IModel<Node> targetModel = new JcrNodeModel(link.getTargetModel().get());
+                    return new InternalLink(p, targetModel);
                 } catch (RichTextException e) {
                     log.error("Could not load link '" + uuid + "'", e);
                 }
@@ -57,12 +59,12 @@ public class RichTextEditorLinkService implements IDetachable {
         return new InternalLink(p, null);
     }
 
+    @Override
     public void detach() {
-        factory.detach();
+        factory.release();
     }
 
     private class InternalLink extends RichTextEditorInternalLink {
-        private static final long serialVersionUID = 1L;
 
         public InternalLink(Map<String, String> values, IModel<Node> targetModel) {
             super(values, targetModel);
@@ -70,13 +72,16 @@ public class RichTextEditorLinkService implements IDetachable {
 
         @Override
         public boolean isValid() {
-            return super.isValid() && factory.isValid(getLinkTarget());
+            final Model<Node> linkTarget = WicketModel.of(getLinkTarget());
+            return super.isValid() && factory.isValid(linkTarget);
         }
 
+        @Override
         public void save() {
             if (isAttacheable()) {
                 try {
-                    final RichTextLink link = factory.createLink(getLinkTarget());
+                    final Model<Node> linkTarget = WicketModel.of(getLinkTarget());
+                    final RichTextLink link = factory.createLink(linkTarget);
                     final String uuid = link.getUuid();
                     setUuid(uuid);
                 } catch (RichTextException e) {
@@ -85,6 +90,7 @@ public class RichTextEditorLinkService implements IDetachable {
             }
         }
 
+        @Override
         public void delete() {
             setUuid(null);
         }

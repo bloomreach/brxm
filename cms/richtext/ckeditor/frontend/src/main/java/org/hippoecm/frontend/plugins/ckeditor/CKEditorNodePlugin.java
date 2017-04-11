@@ -28,19 +28,15 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
-import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
-import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.LineEndingsModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
-import org.hippoecm.frontend.plugins.richtext.UuidConverterBuilder;
+import org.hippoecm.frontend.plugins.richtext.processor.WicketModel;
+import org.hippoecm.frontend.plugins.richtext.processor.WicketURLEncoder;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageService;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextEditorLinkService;
-import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
-import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
+import org.hippoecm.frontend.plugins.richtext.processor.WicketNodeFactory;
+import org.hippoecm.frontend.plugins.richtext.model.RichTextModelFactory;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffWithLinksAndImagesPanel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewWithLinksAndImagesPanel;
 import org.hippoecm.frontend.plugins.standards.diff.DefaultHtmlDiffService;
@@ -50,6 +46,11 @@ import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.ckeditor.CKEditorConfig;
+import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.processor.richtext.image.RichTextImageFactory;
+import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactory;
+import org.onehippo.cms7.services.processor.richtext.image.RichTextImageFactoryImpl;
+import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +90,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
      */
     @Override
     protected Panel createViewPanel(final String id) {
-        return new RichTextPreviewWithLinksAndImagesPanel(id, getNodeModel(), getHtmlModel(), getBrowser(), getHtmlCleaner());
+        return new RichTextPreviewWithLinksAndImagesPanel(id, getNodeModel(), getHtmlModel(), getBrowser(), getHtmlProcessorId());
     }
 
     /**
@@ -117,11 +118,11 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
     }
 
     private LinkPickerBehavior createLinkPickerBehavior(final String editorId) {
-        IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(
+        final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(
                 getChildPluginConfig(CONFIG_CHILD_LINK_PICKER, DEFAULT_LINK_PICKER_CONFIG), (JcrPropertyValueModel) getHtmlModel());
 
-        final IRichTextLinkFactory linkFactory = createLinkFactory();
-        RichTextEditorLinkService linkService = new RichTextEditorLinkService(linkFactory);
+        final RichTextLinkFactory linkFactory = createLinkFactory();
+        final RichTextEditorLinkService linkService = new RichTextEditorLinkService(linkFactory);
 
         final LinkPickerBehavior behavior = new LinkPickerBehavior(getPluginContext(), dialogConfig, linkService);
         behavior.setCloseAction(new CKEditorInsertInternalLinkAction(editorId));
@@ -131,7 +132,11 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     private ImagePickerBehavior createImagePickerBehavior(final String editorId) {
         final IPluginConfig imagePickerConfig = getChildPluginConfig(CONFIG_CHILD_IMAGE_PICKER, DEFAULT_IMAGE_PICKER_CONFIG);
-        final IRichTextImageFactory imageFactory = new JcrRichTextImageFactory(getNodeModel());
+
+        final Model<Node> nodeModel = WicketModel.of(getNodeModel());
+        final RichTextImageFactory imageFactory = new RichTextImageFactoryImpl(nodeModel,
+                                                                               WicketNodeFactory.INSTANCE,
+                                                                               WicketURLEncoder.INSTANCE);
         final RichTextEditorImageService imageService = new RichTextEditorImageService(imageFactory);
 
         final ImagePickerBehavior behavior = new ImagePickerBehavior(getPluginContext(), imagePickerConfig, imageService);
@@ -142,46 +147,35 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     @Override
     protected IModel<String> createEditModel() {
-        final IModel<String> htmlModel = getHtmlModel();
+        final Model<String> valueModel = WicketModel.of(getHtmlModel());
+        final Model<Node> nodeModel = WicketModel.of(getNodeModel());
 
-        final IRichTextLinkFactory linkFactory = createLinkFactory();
-        final IRichTextImageFactory imageFactory = createImageFactory();
-        final IImageURLProvider urlProvider = createImageUrlProvider(imageFactory, linkFactory);
-        final UuidConverterBuilder converterBuilder = new UuidConverterBuilder(getNodeModel(), linkFactory, urlProvider);
-
-        final RichTextModel richTextModel = new RichTextModel(htmlModel, getHtmlCleaner(), converterBuilder);
-
-        return new LineEndingsModel(richTextModel);
+        return new RichTextModel(getHtmlProcessorId(), valueModel, nodeModel);
     }
 
-    protected IRichTextLinkFactory createLinkFactory() {
-        return new JcrRichTextLinkFactory(getNodeModel());
-    }
-
-    protected IRichTextImageFactory createImageFactory() {
-        return new JcrRichTextImageFactory(getNodeModel());
-    }
-
-    protected IImageURLProvider createImageUrlProvider(final IRichTextImageFactory imageFactory, final IRichTextLinkFactory linkFactory) {
-        return new RichTextImageURLProvider(imageFactory, linkFactory, getNodeModel());
+    protected RichTextLinkFactory createLinkFactory() {
+        final Model<Node> nodeModel = WicketModel.of(getNodeModel());
+        return new RichTextLinkFactoryImpl(nodeModel, WicketNodeFactory.INSTANCE);
     }
 
     @Override
     protected Panel createComparePanel(final String id, final IModel<Node> baseModel, final IModel<Node> currentModel) {
         final JcrNodeModel baseNodeModel = (JcrNodeModel) baseModel;
         final JcrNodeModel currentNodeModel = (JcrNodeModel) currentModel;
+        final RichTextModelFactory modelFactory = new RichTextModelFactory(getHtmlProcessorId());
+
         return new RichTextDiffWithLinksAndImagesPanel(id, baseNodeModel, currentNodeModel,
-                getBrowser(), getDiffService(), getHtmlCleaner());
+                                                       getBrowser(), getDiffService(), modelFactory);
     }
 
     private DiffService getDiffService() {
-        String serviceId = getPluginConfig().getString(DiffService.SERVICE_ID);
+        final String serviceId = getPluginConfig().getString(DiffService.SERVICE_ID);
         return getPluginContext().getService(serviceId, DefaultHtmlDiffService.class);
     }
 
 
-    private IPluginConfig getChildPluginConfig(final String key, IPluginConfig defaultConfig) {
-        IPluginConfig childConfig = getPluginConfig().getPluginConfig(key);
+    private IPluginConfig getChildPluginConfig(final String key, final IPluginConfig defaultConfig) {
+        final IPluginConfig childConfig = getPluginConfig().getPluginConfig(key);
         return childConfig != null ? childConfig : defaultConfig;
     }
 
@@ -193,9 +187,9 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
         final JcrNodeModel nodeModel = (JcrNodeModel) getDefaultModel();
         final Node contentNode = nodeModel.getNode();
         try {
-            Property contentProperty = contentNode.getProperty(HippoStdNodeType.HIPPOSTD_CONTENT);
+            final Property contentProperty = contentNode.getProperty(HippoStdNodeType.HIPPOSTD_CONTENT);
             return new JcrPropertyValueModel<>(new JcrPropertyModel(contentProperty));
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             final String nodePath = JcrUtils.getNodePathQuietly(contentNode);
             final String propertyPath = nodePath + "/@" + HippoStdNodeType.HIPPOSTD_CONTENT;
             log.warn("Cannot get value of HTML field property '{}' in plugin {}, using null instead",
@@ -214,7 +208,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
     }
 
     private static IPluginConfig createNodePickerSettings(final String clusterName, final String lastVisitedKey, final String... lastVisitedNodeTypes) {
-        JavaPluginConfig config = new JavaPluginConfig();
+        final JavaPluginConfig config = new JavaPluginConfig();
         config.put("cluster.name", clusterName);
         config.put(NodePickerControllerSettings.LAST_VISITED_KEY, lastVisitedKey);
         config.put(NodePickerControllerSettings.LAST_VISITED_NODETYPES, lastVisitedNodeTypes);

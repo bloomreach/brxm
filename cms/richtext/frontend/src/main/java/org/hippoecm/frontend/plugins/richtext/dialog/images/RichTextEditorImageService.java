@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,33 +22,35 @@ import javax.jcr.Node;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
-import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
-import org.hippoecm.frontend.plugins.richtext.RichTextException;
-import org.hippoecm.frontend.plugins.richtext.RichTextImage;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.richtext.processor.WicketModel;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
+import org.onehippo.cms7.services.processor.richtext.RichTextException;
+import org.onehippo.cms7.services.processor.richtext.image.RichTextImage;
+import org.onehippo.cms7.services.processor.richtext.image.RichTextImageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RichTextEditorImageService implements IDetachable {
 
-    private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(RichTextEditorImageService.class);
 
-    private IRichTextImageFactory factory;
+    private RichTextImageFactory factory;
 
-    public RichTextEditorImageService(IRichTextImageFactory factory) {
+    public RichTextEditorImageService(RichTextImageFactory factory) {
         this.factory = factory;
     }
 
     public RichTextEditorImageLink createRichTextEditorImage(Map<String, String> p) {
-        RichTextImage rti = loadImageItem(p);
-        return new RichTextEditorImageLink(p, rti != null ? rti.getTarget() : null) {
-            private static final long serialVersionUID = 1L;
+        final RichTextImage rti = loadImageItem(p);
+        final String path = rti != null ? rti.getPath() : null;
+        final IModel<Node> parentModel = path != null ? new JcrNodeModel(path).getParentModel() : null;
+
+        return new RichTextEditorImageLink(p, parentModel) {
 
             @Override
             public boolean isValid() {
-                return super.isValid() && factory.isValid(getLinkTarget());
+                return super.isValid() && factory.isValid(WicketModel.of(getLinkTarget()));
             }
 
             @Override
@@ -57,6 +59,7 @@ public class RichTextEditorImageService implements IDetachable {
                 setInitType(getType());
             }
 
+            @Override
             public void save() {
                  if (isAttacheable() || !isSameType(getType())) {
                     try {
@@ -74,6 +77,7 @@ public class RichTextEditorImageService implements IDetachable {
                 }
             }
 
+            @Override
             public void delete() {
                 RichTextImage item = loadImageItem(this);
                 if (item != null) {
@@ -82,12 +86,12 @@ public class RichTextEditorImageService implements IDetachable {
                     setUuid("");
                 }
             }
-
         };
     }
 
+    @Override
     public void detach() {
-        factory.detach();
+        factory.release();
     }
 
     private RichTextImage loadImageItem(Map<String, String> values) {
@@ -103,7 +107,7 @@ public class RichTextEditorImageService implements IDetachable {
         return null;
     }
 
-    private RichTextImage createImageItem(IDetachable nodeModel) throws RichTextException {
-        return factory.createImageItem(nodeModel);
+    private RichTextImage createImageItem(IModel<Node> nodeModel) throws RichTextException {
+        return factory.createImageItem(WicketModel.of(nodeModel));
     }
 }

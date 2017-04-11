@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,22 +20,25 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.mock.MockHomePage;
 import org.apache.wicket.model.IModel;
-import org.easymock.EasyMock;
 import org.hippoecm.frontend.HippoTester;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
-import org.hippoecm.frontend.plugins.richtext.htmlcleaner.HtmlCleanerPlugin;
+import org.hippoecm.frontend.plugins.richtext.RichTextModel;
+import org.hippoecm.frontend.plugins.richtext.processor.WicketNodeFactory;
+import org.hippoecm.frontend.plugins.richtext.model.RichTextModelFactory;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.onehippo.cms7.services.processor.html.HtmlProcessorConfig;
+import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
+import org.onehippo.cms7.services.processor.html.HtmlProcessorImpl;
+import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.processor.html.serialize.HtmlSerializer;
+import org.onehippo.cms7.services.processor.richtext.model.RichTextProcessorModel;
 import org.onehippo.repository.mock.MockNode;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 
@@ -44,29 +47,33 @@ import static org.junit.Assert.assertEquals;
  */
 public class RichTextDiffWithLinksAndImagesPanelTest {
 
-    private static IHtmlCleanerService CLEANER;
-
     private MockNode root;
-    private javax.jcr.Session session;
-
-    @BeforeClass
-    public static void staticSetUp() {
-        IPluginConfig cleanerConfig = EasyMock.createMock(IPluginConfig.class);
-        expect(cleanerConfig.getString(eq("charset"), eq("UTF-8"))).andReturn("UTF-8");
-        expect(cleanerConfig.getString(eq("serializer"), eq("simple"))).andReturn("simple");
-        expect(cleanerConfig.getBoolean(eq("omitComments"))).andReturn(false);
-        expect(cleanerConfig.get(eq("filter"))).andReturn(false);
-        EasyMock.replay(cleanerConfig);
-        CLEANER = new HtmlCleanerPlugin(null, cleanerConfig);
-    }
+    private RichTextModelFactory modelFactory;
 
     @Before
     public void setUp() throws RepositoryException, NoSuchMethodException {
         final HippoTester tester = new HippoTester();
         tester.startPage(MockHomePage.class);
 
-        session = UserSession.get().getJcrSession();
+        final javax.jcr.Session session = UserSession.get().getJcrSession();
         root = (MockNode) session.getRootNode();
+
+        final HtmlProcessorConfig processorConfig = new HtmlProcessorConfig();
+        processorConfig.setCharset("UTF-8");
+        processorConfig.setSerializer(HtmlSerializer.SIMPLE);
+        processorConfig.setOmitComments(false);
+        processorConfig.setFilter(false);
+
+        final HtmlProcessorFactory processorFactory = () -> new HtmlProcessorImpl(processorConfig);
+        modelFactory = new RichTextModelFactory("default") {
+            @Override
+            public IModel<String> create(final Model<String> valueModel, final Model<Node> nodeModel) {
+                return new RichTextModel(new RichTextProcessorModel(valueModel,
+                                                                    nodeModel,
+                                                                    processorFactory,
+                                                                    WicketNodeFactory.INSTANCE));
+            }
+        };
     }
 
     @Test
@@ -106,7 +113,6 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
         addFacet(current, imageHandle);
 
         String diff = createDiff(base, current);
-
         assertEquals(htmlEncode("<html>text "
                 + "<span class=\"diff-html-added\" id=\"added-null-0\" previous=\"first-null\" changeId=\"added-null-0\" next=\"last-null\">"
                 + "<img src=\"binaries/image.jpg/image.jpg/hippogallery:thumbnail\" data-uuid=\""+ imageHandle.getIdentifier() +"\" data-type=\"hippogallery:thumbnail\" changeType=\"diff-added-image\">"
@@ -134,8 +140,8 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
     }
 
     private MockNode addImage(final MockNode node, final String name) throws RepositoryException {
-        MockNode imageHandle = node.addMockNode(name, "hippo:handle");
-        MockNode imageSet = imageHandle.addMockNode(name, "hippogallery:imageset");
+        MockNode imageHandle = node.addNode(name, "hippo:handle");
+        MockNode imageSet = imageHandle.addNode(name, "hippogallery:imageset");
         imageSet.setPrimaryItemName("hippogallery:thumbnail");
         imageSet.addNode("hippogallery:thumbnail", "hippo:resource");
         return imageHandle;
@@ -146,16 +152,23 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
         facet.setProperty(HippoNodeType.HIPPO_DOCBASE, imageHandle.getIdentifier());
     }
 
+    private String createDiff(Node base, Node current) {
+        final IModel<Node> baseModel = createNodeModel(base);
+        final IModel<Node> currentModel = createNodeModel(current);
+        final RichTextDiffWithLinksAndImagesPanel panel = new RichTextDiffWithLinksAndImagesPanel("id",
+                                                                                                  baseModel,
+                                                                                                  currentModel,
+                                                                                                  null,
+                                                                                                  null,
+                                                                                                  modelFactory);
+
+        return panel.get(RichTextDiffWithLinksAndImagesPanel.WICKET_ID_VIEW).getDefaultModelObjectAsString();
+    }
+
     private static Node addHtmlNode(Node node, String name, String content) throws RepositoryException {
         Node htmlNode = node.addNode(name, HippoStdNodeType.NT_HTML);
         htmlNode.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, content);
         return htmlNode;
-    }
-
-    private static String createDiff(Node base, Node current) {
-        RichTextDiffWithLinksAndImagesPanel panel = new RichTextDiffWithLinksAndImagesPanel("id",
-                createNodeModel(base), createNodeModel(current), null, null, CLEANER);
-        return panel.get(RichTextDiffWithLinksAndImagesPanel.WICKET_ID_VIEW).getDefaultModelObjectAsString();
     }
 
     private static IModel<Node> createNodeModel(Node node) {

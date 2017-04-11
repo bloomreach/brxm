@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -62,14 +62,14 @@
       <sv:property sv:name="ckeditor.config.overlayed.json" sv:type="String">
         <sv:value/>
       </sv:property>
-      <sv:property sv:name="htmlcleaner.id" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService</sv:value>
+      <sv:property sv:name="htmlprocessor.id" sv:type="String">
+        <sv:value>formatted</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:properties" sv:type="String">
         <sv:value>mode</sv:value>
         <sv:value>ckeditor.config.appended.json</sv:value>
         <sv:value>ckeditor.config.overlayed.json</sv:value>
-        <sv:value>htmlcleaner.id</sv:value>
+        <sv:value>htmlprocessor.id</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:references" sv:type="String">
         <sv:value>wicket.model</sv:value>
@@ -89,8 +89,8 @@
         <sv:property sv:name="ckeditor.config.overlayed.json" sv:type="String">
           <sv:value>${ckeditor.config.overlayed.json}</sv:value>
         </sv:property>
-        <sv:property sv:name="htmlcleaner.id" sv:type="String">
-          <sv:value>${htmlcleaner.id}</sv:value>
+        <sv:property sv:name="htmlprocessor.id" sv:type="String">
+          <sv:value>${htmlprocessor.id}</sv:value>
         </sv:property>
         <sv:property sv:name="diffservice.id" sv:type="String">
           <sv:value>html.diffservice.id</sv:value>

@@ -1,12 +1,12 @@
 /*
- *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.json.JSONException;
@@ -45,18 +44,17 @@ import org.slf4j.LoggerFactory;
  *         {@link JsonUtils#append(org.json.JSONObject, org.json.JSONObject)}.
  *         Use this property to append strings or values to existing comma-separated string properties or JSON arrays.
  *         Will be ignored when empty or missing.</dd>
- *     <li>htmlcleaner.id: String property with the ID of the HTML cleaner service to use. Use an empty string
- *     to not use an HTML cleaner and effectively disable server-side HTML cleaning. Default value: "" (empty string),
- *     so by default no HTML cleaner will be used.</li>
+ *     <li>htmlprocessor.id: String property with the ID of the HTML processor service to use. Use an empty string
+ *     to use the default HTML cleaner and effectively disable server-side HTML filtering.
+ *     Default value: "" (empty string)</li>
  * </ul>
  */
 public abstract class AbstractCKEditorPlugin<ModelType> extends RenderPlugin {
 
-    public static final String DEFAULT_HTML_CLEANER_SERVICE = "org.hippoecm.frontend.plugins.richtext.DefaultHtmlCleanerService";
-
     public static final String CONFIG_CKEDITOR_CONFIG_OVERLAYED_JSON = "ckeditor.config.overlayed.json";
     public static final String CONFIG_CKEDITOR_CONFIG_APPENDED_JSON = "ckeditor.config.appended.json";
     public static final String CONFIG_HTML_CLEANER_SERVICE_ID = "htmlcleaner.id";
+    public static final String CONFIG_HTML_PROCESSOR_SERVICE_ID = "htmlprocessor.id";
     public static final String CONFIG_MODEL_COMPARE_TO = "model.compareTo";
 
     private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
@@ -213,30 +211,17 @@ public abstract class AbstractCKEditorPlugin<ModelType> extends RenderPlugin {
      */
     protected abstract IModel<String> getHtmlModel();
 
-    /**
-     * @return the HTML cleaner for the edited model.
-     */
-    protected IHtmlCleanerService getHtmlCleaner() {
+    String getHtmlProcessorId() {
         final IPluginConfig config = getPluginConfig();
-        String serviceId = config.getString(CONFIG_HTML_CLEANER_SERVICE_ID, StringUtils.EMPTY);
+        String configKey = CONFIG_HTML_PROCESSOR_SERVICE_ID;
 
-        if (StringUtils.isBlank(serviceId)) {
-            log.info("CKEditor plugin '{}' does not have a server-side HTML cleaner configured, using default", config.getName());
-            serviceId = DEFAULT_HTML_CLEANER_SERVICE;
+        if (config.containsKey(CONFIG_HTML_CLEANER_SERVICE_ID)) {
+            log.warn("Configuration option '{}' has been replaced by '{}', please update the configuration.",
+                     CONFIG_HTML_CLEANER_SERVICE_ID, CONFIG_HTML_PROCESSOR_SERVICE_ID);
+            configKey = CONFIG_HTML_CLEANER_SERVICE_ID;
         }
 
-        final IHtmlCleanerService service = getPluginContext().getService(serviceId, IHtmlCleanerService.class);
-
-        if (service != null) {
-            log.info("CKEditor plugin '{}' uses server-side HTML cleaner '{}'", config.getName(), serviceId);
-        } else {
-            log.warn("CKEditor plugin '" + config.getName() + "'"
-                    + " cannot load server-side HTML cleaner '" + serviceId + "'"
-                    + " as specified in configuration property '" + CONFIG_HTML_CLEANER_SERVICE_ID + "'."
-                    + " No server-side HTML cleaner will be used.");
-        }
-
-        return service;
+        return config.getString(configKey, StringUtils.EMPTY);
     }
 
 }
