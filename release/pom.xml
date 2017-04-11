@@ -134,11 +134,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-jca</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
         <version>${hippo.jackrabbit.version}}</version>
       </dependency>
@@ -149,17 +144,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-jcr-server</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-servlets</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-jcr-tests</artifactId>
         <version>${hippo.jackrabbit.version}}</version>
       </dependency>
       <dependency>
@@ -175,16 +160,6 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-vfs-ext</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-webapp</artifactId>
-        <version>${hippo.jackrabbit.version}}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-webdav</artifactId>
         <version>${hippo.jackrabbit.version}}</version>
       </dependency>
       <!-- End JR dependencies -->
