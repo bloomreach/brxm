@@ -33,6 +33,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms7.services.processor.richtext.RichTextNodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,16 +54,17 @@ public class RichTextFieldType extends FormattedTextFieldType implements Compoun
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }
 
-    private List<FieldValue> readValues(final Node node) {
+    protected List<FieldValue> readValues(final Node node) {
         try {
             final NodeIterator children = node.getNodes(getId());
             final List<FieldValue> values = new ArrayList<>((int)children.getSize());
-            for (Node child : new NodeIterable(children)) {
-                final String html = JcrUtils.getStringProperty(child, HippoStdNodeType.HIPPOSTD_CONTENT, null);
-                values.add(new FieldValue(html));
+            final RichTextNodeProcessor processor = new RichTextNodeProcessor();
+            for (final Node child : new NodeIterable(children)) {
+                final String html = JcrUtils.getStringProperty(node, HippoStdNodeType.HIPPOSTD_CONTENT, null);
+                values.add(new FieldValue(processor.read(html, child, "richtext")));
             }
             return values;
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to read rich text field '{}'", getId(), e);
         }
         return Collections.emptyList();
@@ -77,7 +79,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements Compoun
         try {
             final NodeIterator children = node.getNodes(valueName);
             FieldTypeUtils.writeCompoundValues(children, values, getMaxValues(), this);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to write rich text field '{}'", valueName, e);
             throw new InternalServerErrorException();
         }
@@ -85,9 +87,8 @@ public class RichTextFieldType extends FormattedTextFieldType implements Compoun
 
     @Override
     public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException {
-        final String html = fieldValue.getValue();
+        final RichTextNodeProcessor processor = new RichTextNodeProcessor();
+        final String html = processor.write(fieldValue.getValue(), node, "richtext");
         node.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, html);
-        // TODO: clean HTML
-        // TODO: process child nodes for links and images
     }
 }

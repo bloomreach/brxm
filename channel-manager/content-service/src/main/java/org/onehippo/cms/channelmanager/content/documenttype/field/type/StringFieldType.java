@@ -102,7 +102,7 @@ public class StringFieldType extends FieldType {
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }
 
-    private List<FieldValue> readValues(final Node node) {
+    protected List<FieldValue> readValues(final Node node) {
         final String propertyName = getId();
         final List<FieldValue> values = new ArrayList<>();
 
@@ -132,7 +132,7 @@ public class StringFieldType extends FieldType {
     public void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues)
             throws ErrorWithPayloadException {
         final String propertyName = getId();
-        final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
+        final List<FieldValue> values = writeValues(optionalValues);
         checkCardinality(values);
 
         try {
@@ -160,6 +160,10 @@ public class StringFieldType extends FieldType {
             log.warn("Failed to write singular String value to property {}", propertyName, e);
             throw new InternalServerErrorException();
         }
+    }
+
+    protected List<FieldValue> writeValues(final Optional<List<FieldValue>> optionalValues) {
+        return optionalValues.orElse(Collections.emptyList());
     }
 
     private boolean hasProperty(final Node node, final String propertyName) throws RepositoryException {

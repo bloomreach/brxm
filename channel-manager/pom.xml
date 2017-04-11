@@ -35,12 +35,13 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
-    <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>5.0.0-visual-editing-psp2-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>5.0.0-visual-editing-psp2-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>5.0.0-SNAPSHOT</hippo.hst.version>
     <hippo.ckeditor.version>4.5.11-h2-visual-editing-psp2-SNAPSHOT</hippo.ckeditor.version>
     <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.htmlprocessor.version>1.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.addon-hst-configuration-editor.version>4.0.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
 
     <commons-lang.version>2.6</commons-lang.version>
@@ -154,6 +155,11 @@
         <artifactId>commons-lang</artifactId>
         <version>${commons-lang.version}</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-htmlprocessor</artifactId>
+        <version>${hippo.services.htmlprocessor.version}</version>
       </dependency>
 
       <!-- Test dependencies -->
