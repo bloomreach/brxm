@@ -1,6 +1,6 @@
 configurations:
-  - name: base
+  - configuration: base
     projects:
-      - name: project1
+      - project: project1
         modules:
-          - name: module1
+          - module: module1

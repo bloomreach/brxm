@@ -1,13 +1,13 @@
 configurations:
-- name: base
+- configuration: base
   projects:
-  - name: project1
+  - project: project1
     modules:
-    - name: module1
-- name: myhippoproject
+    - module: module1
+- configuration: myhippoproject
   after: base
   projects:
-  - name: project2
+  - project: project2
     after: [project1, foo/bar]
     modules:
-    - name: module2
+    - module: module2

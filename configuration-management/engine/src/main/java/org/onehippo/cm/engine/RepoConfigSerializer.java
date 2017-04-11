@@ -36,8 +36,10 @@ import org.yaml.snakeyaml.nodes.Tag;
 import static org.onehippo.cm.engine.Constants.AFTER_KEY;
 import static org.onehippo.cm.engine.Constants.CONFIGURATIONS_KEY;
 import static org.onehippo.cm.engine.Constants.MODULES_KEY;
-import static org.onehippo.cm.engine.Constants.NAME_KEY;
 import static org.onehippo.cm.engine.Constants.PROJECTS_KEY;
+import static org.onehippo.cm.engine.Constants.CONFIGURATION_KEY;
+import static org.onehippo.cm.engine.Constants.MODULE_KEY;
+import static org.onehippo.cm.engine.Constants.PROJECT_KEY;
 
 
 public class RepoConfigSerializer extends AbstractBaseSerializer {
@@ -63,7 +65,7 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
 
     private Node representConfiguration(final Configuration configuration) {
         final List<NodeTuple> tuples = new ArrayList<>();
-        tuples.addAll(representOrderable(configuration));
+        tuples.addAll(representOrderable(configuration, CONFIGURATION_KEY));
 
         final List<Node> projectNodes = configuration.getProjects().stream().map(this::representProject)
                 .collect(Collectors.toList());
@@ -74,7 +76,7 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
 
     private Node representProject(final Project project) {
         final List<NodeTuple> tuples = new ArrayList<>();
-        tuples.addAll(representOrderable(project));
+        tuples.addAll(representOrderable(project, PROJECT_KEY));
 
         final List<Node> moduleNodes = project.getModules().stream().map(this::representModule).collect(Collectors.toList());
         tuples.add(createStrSeqTuple(MODULES_KEY, moduleNodes));
@@ -84,13 +86,13 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
 
     private Node representModule(final Module module) {
         final List<NodeTuple> tuples = new ArrayList<>();
-        tuples.addAll(representOrderable(module));
+        tuples.addAll(representOrderable(module, MODULE_KEY));
         return new MappingNode(Tag.MAP, tuples, false);
     }
 
-    private List<NodeTuple> representOrderable(final Orderable orderable) {
+    private List<NodeTuple> representOrderable(final Orderable orderable, String nameProperty) {
         final List<NodeTuple> tuples = new ArrayList<>();
-        tuples.add(createStrStrTuple(NAME_KEY, orderable.getName()));
+        tuples.add(createStrStrTuple(nameProperty, orderable.getName()));
 
         final Set<String> afters = orderable.getAfter();
         switch (afters.size()) {

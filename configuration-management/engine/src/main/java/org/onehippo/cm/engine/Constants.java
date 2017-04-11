@@ -24,14 +24,14 @@ public final class Constants {
     public static final String REPO_CONFIG_FOLDER = "repo-config";
     public static final String REPO_CONFIG_YAML = "repo-config.yaml";
     
-    // Following keys used by both repo-config.yaml and module yaml
-    public static final String NAME_KEY = "name";
-    public static final String AFTER_KEY = "after";
-
     // Following keys used in repo-config.yaml
     public static final String CONFIGURATIONS_KEY = "configurations";
     public static final String PROJECTS_KEY = "projects";
     public static final String MODULES_KEY = "modules";
+    public static final String CONFIGURATION_KEY = "configuration";
+    public static final String PROJECT_KEY = "project";
+    public static final String MODULE_KEY = "module";
+    public static final String AFTER_KEY = "after";
 
     // Following keys used in module yaml
     public static final String DEFINITIONS = "definitions";

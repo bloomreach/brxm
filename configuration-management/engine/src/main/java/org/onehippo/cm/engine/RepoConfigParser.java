@@ -26,10 +26,12 @@ import org.onehippo.cm.impl.model.ProjectImpl;
 import org.yaml.snakeyaml.nodes.Node;
 
 import static org.onehippo.cm.engine.Constants.CONFIGURATIONS_KEY;
-import static org.onehippo.cm.engine.Constants.NAME_KEY;
+import static org.onehippo.cm.engine.Constants.CONFIGURATION_KEY;
 import static org.onehippo.cm.engine.Constants.PROJECTS_KEY;
+import static org.onehippo.cm.engine.Constants.PROJECT_KEY;
 import static org.onehippo.cm.engine.Constants.AFTER_KEY;
 import static org.onehippo.cm.engine.Constants.MODULES_KEY;
+import static org.onehippo.cm.engine.Constants.MODULE_KEY;
 
 public class RepoConfigParser extends AbstractBaseParser {
 
@@ -51,8 +53,8 @@ public class RepoConfigParser extends AbstractBaseParser {
     }
 
     private void constructConfiguration(final Node src, final Map<String, Configuration> parent) throws ParserException {
-        final Map<String, Node> configurationMap = asMapping(src, new String[]{NAME_KEY, PROJECTS_KEY}, new String[]{AFTER_KEY});
-        final String name = asStringScalar(configurationMap.get(NAME_KEY));
+        final Map<String, Node> configurationMap = asMapping(src, new String[]{CONFIGURATION_KEY, PROJECTS_KEY}, new String[]{AFTER_KEY});
+        final String name = asStringScalar(configurationMap.get(CONFIGURATION_KEY));
         final ConfigurationImpl configuration = new ConfigurationImpl(name);
         configuration.addAfter(asSingleOrSetOfStrScalars(configurationMap.get(AFTER_KEY)));
         parent.put(name, configuration);
@@ -63,8 +65,8 @@ public class RepoConfigParser extends AbstractBaseParser {
     }
 
     private void constructProject(final Node src, final ConfigurationImpl parent) throws ParserException {
-        final Map<String, Node> sourceMap = asMapping(src, new String[]{NAME_KEY, MODULES_KEY}, new String[]{AFTER_KEY});
-        final String name = asStringScalar(sourceMap.get(NAME_KEY));
+        final Map<String, Node> sourceMap = asMapping(src, new String[]{PROJECT_KEY, MODULES_KEY}, new String[]{AFTER_KEY});
+        final String name = asStringScalar(sourceMap.get(PROJECT_KEY));
         final ProjectImpl project = parent.addProject(name);
         project.addAfter(asSingleOrSetOfStrScalars(sourceMap.get(AFTER_KEY)));
 
@@ -74,8 +76,8 @@ public class RepoConfigParser extends AbstractBaseParser {
     }
 
     private void constructModule(final Node src, final ProjectImpl parent) throws ParserException {
-        final Map<String, Node> map = asMapping(src, new String[]{NAME_KEY}, new String[]{AFTER_KEY});
-        final String name = asStringScalar(map.get(NAME_KEY));
+        final Map<String, Node> map = asMapping(src, new String[]{MODULE_KEY}, new String[]{AFTER_KEY});
+        final String name = asStringScalar(map.get(MODULE_KEY));
         final ModuleImpl module = parent.addModule(name);
         module.addAfter(asSingleOrSetOfStrScalars(map.get(AFTER_KEY)));
     }
