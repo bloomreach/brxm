@@ -29,11 +29,16 @@ import org.onehippo.repository.events.PersistedHippoEventsService;
 public class ResourceBundleWorkflowEventListener implements PersistedHippoEventListener {
 
     private MutableResourceBundleRegistry resourceBundleRegistry;
-    private final String contextPath;
+    private final String listenerId;
 
     public ResourceBundleWorkflowEventListener(MutableResourceBundleRegistry resourceBundleRegistry, final String contextPath) {
         this.resourceBundleRegistry = resourceBundleRegistry;
-        this.contextPath = contextPath;
+
+        // We make the listener ID unique per contextPath in order to prevent the broadcast module from
+        // complaining that the same listener is registered multiple times in case of a multi-site-war setup.
+        // (Each site war instantiates this listener inside the same container.)
+        final String contextualPrefix = contextPath.startsWith("/") ? contextPath.substring(1) : contextPath;
+        this.listenerId = (contextualPrefix.length() > 0 ? contextualPrefix + "_" : "") + getClass().getName();
     }
 
     public void init() {
@@ -51,7 +56,7 @@ public class ResourceBundleWorkflowEventListener implements PersistedHippoEventL
 
     @Override
     public String getChannelName() {
-        return contextPath + "_" + getClass().getName();
+        return listenerId;
     }
 
     @Override
