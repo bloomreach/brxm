@@ -204,6 +204,9 @@
   <logger name="org.apache.http.wire">
     <level value="error" />
   </logger>
+  <logger name="org.onehippo.cms7.crisp">
+    <level value="debug" />
+  </logger>
 
   <root>
     <level value="warn"/>

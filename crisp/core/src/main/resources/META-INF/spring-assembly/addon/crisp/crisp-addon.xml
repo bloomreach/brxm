@@ -13,9 +13,18 @@
     </property>
   </bean>
 
+  <!--
   <bean id="org.onehippo.cms7.crisp.api.resource.ResourceResolverProvider"
         class="org.onehippo.cms7.crisp.core.resource.MapResourceResolverProvider">
     <property name="resourceResolverMap" ref="defaultResourceResolverMap" />
+  </bean>
+  -->
+
+  <bean id="org.onehippo.cms7.crisp.api.resource.ResourceResolverProvider"
+        class="org.onehippo.cms7.crisp.core.resource.RepositoryMapResourceResolverProvider">
+    <property name="resourceResolverMap" ref="defaultResourceResolverMap" />
+    <property name="repository" ref="javax.jcr.Repository" />
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
   </bean>
 
   <bean id="abstractHttpRequestResourceResolver" abstract="true">

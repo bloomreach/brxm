@@ -103,6 +103,12 @@
 
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-repository</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-core</artifactId>
         <version>${project.version}</version>
       </dependency>

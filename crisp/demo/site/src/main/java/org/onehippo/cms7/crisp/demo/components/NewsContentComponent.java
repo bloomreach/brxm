@@ -1,6 +1,6 @@
 package org.onehippo.cms7.crisp.demo.components;
 
-import static org.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_PRODUCT_CATALOG;
+import static org.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_DEMO_PRODUCT_CATALOG;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,12 +30,12 @@ public class NewsContentComponent extends EssentialsContentComponent {
             final Map<String, Object> pathVars = new HashMap<>();
             // Note: Just as an example, let's try to find all the data by passing empty query string.
             pathVars.put("fullTextSearchTerm", "");
-            ResourceContainer productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_PRODUCT_CATALOG,
+            ResourceContainer productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG,
                     "/products/?q={fullTextSearchTerm}", pathVars);
             request.setAttribute("productCatalogs", productCatalogs);
         } catch (Exception e) {
             log.warn("Failed to find resources from '{}{}' resource space for full text search term, '{}'.",
-                    RESOURCE_SPACE_PRODUCT_CATALOG, "/products/", document.getTitle(), e);
+                    RESOURCE_SPACE_DEMO_PRODUCT_CATALOG, "/products/", document.getTitle(), e);
         }
     }
 }

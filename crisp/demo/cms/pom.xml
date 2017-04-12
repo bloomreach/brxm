@@ -21,6 +21,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-crisp-repository</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.forge.exdocpickerbase</groupId>
       <artifactId>exdocpickerbase-field</artifactId>
     </dependency>

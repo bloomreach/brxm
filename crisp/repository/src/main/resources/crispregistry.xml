@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="crispregistry" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:module</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:className" sv:type="String">
+    <sv:value>org.onehippo.cms7.crisp.repository.CrispRegistryModule</sv:value>
+  </sv:property>
+  <sv:node sv:name="hippo:moduleconfig">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>crisp:moduleconfig</sv:value>
+    </sv:property>
+    <sv:node sv:name="crisp:resourceresolvercontainer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>crisp:resourceresolvercontainer</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>

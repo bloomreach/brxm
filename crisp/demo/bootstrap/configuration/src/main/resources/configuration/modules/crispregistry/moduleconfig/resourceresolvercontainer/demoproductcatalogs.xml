@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="demoProductCatalogs" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>crisp:resourceresolver</sv:value>
+  </sv:property>
+  <sv:property sv:name="crisp:beandefinition" sv:type="String">
+    <sv:value>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#xd;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"&#xd;
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&#xd;
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd"&gt;&#xd;
+&#xd;
+  &lt;bean parent="abstractSimpleJacksonRestTemplateResourceResolver"&#xd;
+        class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver"&gt;&#xd;
+    &lt;property name="baseUri" value="${example.commerce.api.base.uri}" /&gt;&#xd;
+    &lt;property name="resourceLinkResolver"&gt;&#xd;
+      &lt;bean class="org.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver"&gt;&#xd;
+        &lt;property name="templateSource"&gt;&#xd;
+          &lt;value&gt;http://www.example.com/products/${(preview == "true")?then("staging", "current")}/sku/${resource.valueMap['SKU']!"unknown"}/overview.html&lt;/value&gt;&#xd;
+        &lt;/property&gt;&#xd;
+      &lt;/bean&gt;&#xd;
+    &lt;/property&gt;&#xd;
+  &lt;/bean&gt;&#xd;
+&#xd;
+&lt;/beans&gt;</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="crisp:propnames" sv:type="String">
+    <sv:value>example.commerce.api.base.uri</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="crisp:propvalues" sv:type="String">
+    <sv:value>http://localhost:8080/example-commerce/api/v1</sv:value>
+  </sv:property>
+</sv:node>
