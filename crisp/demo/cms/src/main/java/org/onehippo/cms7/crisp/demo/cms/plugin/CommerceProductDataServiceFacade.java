@@ -10,6 +10,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
+import org.onehippo.cms7.crisp.api.query.QuerySpec;
+import org.onehippo.cms7.crisp.api.query.QuerySpecBuilder;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -111,7 +113,8 @@ public class CommerceProductDataServiceFacade implements ExternalDocumentService
         ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
         Map<String, Object> variables = new HashMap<>();
         variables.put("queryString", StringUtils.isNotBlank(queryString) ? queryString : "");
-        return broker.findResources("demoProductCatalogs", "/products/?q={queryString}", variables);
+        final QuerySpec querySpec = QuerySpecBuilder.create().offset(0).limit(100L).build();
+        return broker.findResources("demoProductCatalogs", "/products/?q={queryString}", variables, querySpec);
     }
 
     /*
