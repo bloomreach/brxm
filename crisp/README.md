@@ -139,6 +139,9 @@ You can access the resource objects and generate links in freemarker templates l
   </#if>
 ```
 
+**Note**: <@crisp.link /> tag requires ```resourceSpace``` and ```resoruce``` attribute, and it may embed
+<@crisp.variable /> tag(s) to pass variables to the underlying ```ResourceLinkResolver```.
+
 ### In CMS application
 
 If you want to use ```ResourceServiceBroker``` API in CMS application (e.g, plugin, external document picker
