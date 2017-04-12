@@ -20,11 +20,13 @@
             &lt;property name="clientId" value="${salesforce.clientId}" /&gt;&#xd;
             &lt;property name="clientSecret" value="${salesforce.clientSecret}" /&gt;&#xd;
             &lt;property name="grantType" value="password" /&gt;&#xd;
+            &lt;!-- NOTE: SalesForce doesn't support scope parameter!&#xd;
             &lt;property name="scope"&gt;&#xd;
               &lt;list&gt;&#xd;
                 &lt;value&gt;read&lt;/value&gt;&#xd;
               &lt;/list&gt;&#xd;
             &lt;/property&gt;&#xd;
+            --&gt;&#xd;
             &lt;property name="username" value="${salesforce.username}" /&gt;&#xd;
             &lt;property name="password" value="${salesforce.password}" /&gt;&#xd;
           &lt;/bean&gt;&#xd;

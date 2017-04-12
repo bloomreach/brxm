@@ -135,7 +135,7 @@
           <sv:value>hst:containeritemcomponent</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
-          <sv:value>org.onehippo.cms7.essentials.components.EssentialsContentComponent</sv:value>
+          <sv:value>org.onehippo.cms7.crisp.demo.components.EventsContentComponent</sv:value>
         </sv:property>
         <sv:property sv:name="hst:template" sv:type="String">
           <sv:value>eventspage-main</sv:value>
