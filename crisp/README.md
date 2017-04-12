@@ -95,17 +95,6 @@ In CMS project, add the following in the pom.xml:
 And, configure your ```ResourceResolver```s in ```/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer```.
 See the example configurations in the demo project.
 
-If you want to use ```ResourceServiceBroker``` in your CMS project as well, add the following in the pom.xml:
-
-```xml
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-crisp-api</artifactId>
-      <version>${hippo-addon-crisp.version}</version>
-      <scope>provided</scope>
-    </dependency>
-```
-
 **Note**: If you want to use the same ```ResourceServiceBroker``` service component in both SITE and CMS application,
 please make sure that the ```hippo-addon-crisp-api``` JAR module should be deployed onto the shared library path, not in each web application's library path.
 
@@ -124,6 +113,30 @@ then you can use it like the following example (excerpt from [NewsContentCompone
     ResourceContainer productCatalogs =
         resourceServiceBroker.findResources("demoProductCatalogs", "/products?q={fullTextSearchTerm}", pathVars, querySpec);
     request.setAttribute("demoProductCatalogs", productCatalogs);
+```
+
+You can access the resource objects and generate links in freemarker templates like the following examples:
+
+```
+  <#if productCatalogs?? && productCatalogs.anyChildContained>
+    <article class="has-edit-button">
+      <h3>Related Products</h3>
+      <ul>
+        <#list productCatalogs.childIterator as product>
+          <#assign extendedData=product.valueMap['extendedData'] />
+          <li>
+            <@crisp.link var="productLink" resourceSpace='demoProductCatalogs' resource=product>
+              <@crisp.variable name="preview" value="${hstRequestContext.preview?then('true', 'false')}" />
+              <@crisp.variable name="name" value="${product.valueMap['name']}" />
+            </@crisp.link>
+            <a href="${productLink}">
+              ${extendedData.valueMap['title']!} (${product.valueMap['SKU']!})
+            </a>
+          </li>
+        </#list>
+      </ul>
+    </article>
+  </#if>
 ```
 
 ### In CMS application
