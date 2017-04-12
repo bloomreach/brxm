@@ -12,9 +12,10 @@ Hippo Addon CRISP (Common Resource Interface and Service Provider).
   the response output for 1 minute in EhCache. It is easily configurable and customizable.
 - ```ResourceServiceBroker``` can be used in both SITE and CMS applications.
 - HTTP invocations are done by using ```RestTemplate``` of Spring Framework.
-- TODO: Provide OAuth2-based RestTemplate as a default option with easy configurability.
-- TODO: ResourceServiceBroker-side pagination
-- TODO: Dynamic Configuration change instead of properties and xmls.
+- OAuth2-based RestTemplate configuration.
+- Dynamic Configuration change instead of properties and xmls.
+- TODO: ResourceServiceBroker-side pagination.
+- TODO: Caching per route.
 
 ## Build and install the module itself into local maven repository
 
