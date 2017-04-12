@@ -49,7 +49,7 @@ Both product list results are from ```ResourceServiceBroker``` service component
 
 ## Installation
 
-In a SITE project, add the following in the pom.xml:
+In SITE project, add the following in the pom.xml:
 
 ```xml
     <dependency>
@@ -72,46 +72,27 @@ In a SITE project, add the following in the pom.xml:
     </dependency>
 ```
 
-And, configure your Resource Resolver Map in spring bean assembly XML file
-under ```site/src/main/resources/META-INF/hst-assembly/addon/crisp/overrides/``` folder.
-See the [resource-resolvers.xml](demo/site/src/main/resources/META-INF/hst-assembly/addon/crisp/overrides/resource-resolvers.xml).
+In CMS project, add the following in the pom.xml:
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-crisp-api</artifactId>
+      <version>${hippo-addon-crisp.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-  <bean id="defaultResourceResolverMap"
-        class="org.springframework.beans.factory.config.MapFactoryBean">
-    <property name="sourceMap">
-      <map>
-        <entry key="productCatalogs">
-          <bean parent="abstractSimpleJacksonRestTemplateResourceResolver"
-                class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver">
-            <property name="baseUri" value="${crisp.resource.resolver.productCatalogs.baseUri}" />
-            <property name="resourceLinkResolver">
-              <bean class="org.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver">
-                <property name="templateSource">
-                  <value>http://www.example.com/products/${(preview == "true")?then("staging", "current")}/sku/${resource.valueMap['SKU']!"unknown"}/overview.html</value>
-                </property>
-              </bean>
-            </property>
-          </bean>
-        </entry>
-      </map>
-    </property>
-  </bean>
-
-</beans>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-crisp-repository</artifactId>
+      <version>${hippo-addon-crisp.version}</version>
+      <scope>provided</scope>
+    </dependency>
 ```
 
-In the example above, you're defining only one Resource Resolver in the map: ```productCatalogs```.
-```productCatalogs``` is a **resource space** that should be used in API calls later through ```ResourceServiceBroker```.
 
-Also, the Resource Resolver class for the ```productCatalogs``` resource space is set to
-```org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver``` which provides a
-very generic resource handlings for JSON response outputs from external REST APIs.
+And, configure your ```ResourceResolver```s in ```/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer```.
+See the example configurations in the demo project.
 
 If you want to use ```ResourceServiceBroker``` in your CMS project as well, add the following in the pom.xml:
 
@@ -138,9 +119,10 @@ then you can use it like the following example (excerpt from [NewsContentCompone
     ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
     final Map<String, Object> pathVars = new HashMap<>();
     pathVars.put("fullTextSearchTerm", document.getTitle());
+    QuerySpec querySpec = QuerySpecBuilder.create().offset(0).limit(100L).build();
     ResourceContainer productCatalogs =
-        resourceServiceBroker.findResources("productCatalogs", "/products?q={fullTextSearchTerm}", pathVars);
-    request.setAttribute("productCatalogs", productCatalogs);
+        resourceServiceBroker.findResources("demoProductCatalogs", "/products?q={fullTextSearchTerm}", pathVars, querySpec);
+    request.setAttribute("demoProductCatalogs", productCatalogs);
 ```
 
 ### In CMS application
@@ -154,6 +136,7 @@ service facade implementation, etc.), then you can use it like the following exa
         ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
         Map<String, Object> variables = new HashMap<>();
         variables.put("queryString", StringUtils.isNotBlank(queryString) ? queryString : "");
-        return broker.findResources("productCatalogs", "/products?q={queryString}", variables);
+        QuerySpec querySpec = QuerySpecBuilder.create().offset(0).limit(100L).build();
+        return broker.findResources("productCatalogs", "/products?q={queryString}", variables, querySpec);
     }
 ```
