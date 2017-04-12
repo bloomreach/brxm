@@ -36,7 +36,6 @@ import javax.jcr.query.Query;
 import org.apache.commons.configuration.MapConfiguration;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.LocaleUtils;
-import org.hippoecm.hst.resourcebundle.ResourceBundleFamily;
 import org.hippoecm.hst.resourcebundle.SimpleListResourceBundle;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -49,38 +48,36 @@ import org.slf4j.LoggerFactory;
  * and adds all the bundles for each locale.
  * </P>
  *
- * The "put" logic inside this class corresponds to the "get" logic of the {@link DefaultMutableResourceBundleRegistry}
+ * The "put" logic inside this class corresponds to the "get" logic of the {@link ResourceBundleRegistryImpl}
  * in the sense that both do no longer use the #*ForPreview methods of a ResourceBundleFamily. Instead, a separate
  * instance of a ResourceBundleFamily is kept in a separate data structure in order to retrieve, cache and evict
  * resource bundles.
  */
-public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundleFamilyFactory {
+public class ResourceBundleFamilyFactory {
 
-    private static Logger log = LoggerFactory.getLogger(HippoRepositoryResourceBundleFamilyFactory.class);
+    private static Logger log = LoggerFactory.getLogger(ResourceBundleFamilyFactory.class);
 
     private final Repository repository;
     private final Credentials liveCredentials;
     private final Credentials previewCredentials;
 
-    public HippoRepositoryResourceBundleFamilyFactory(Repository repository, Credentials liveCredentials, Credentials previewCredentials) {
+    public ResourceBundleFamilyFactory(Repository repository, Credentials liveCredentials, Credentials previewCredentials) {
         this.repository = repository;
         this.liveCredentials = liveCredentials;
         this.previewCredentials = previewCredentials;
     }
 
-    @Override
     public ResourceBundleFamily createBundleFamily(String basename) {
         return createBundleFamily(basename, false);
     }
 
     public ResourceBundleFamily createBundleFamily(final String basename, final boolean preview) {
-        DefaultMutableResourceBundleFamily bundleFamily = new DefaultMutableResourceBundleFamily(basename);
+        ResourceBundleFamily bundleFamily = new ResourceBundleFamily(basename);
 
         String availabilityConstraint = HippoNodeType.HIPPO_AVAILABILITY + (preview ? "='preview'" : "='live'");
         // "order by @resourcebundle:id" avoids that QueryResult#getSize() or QueryResult#getNodes#getSize can return -1
         String statement = "//element(*, resourcebundle:resourcebundle)[@resourcebundle:id='" + basename + "' and "
                 + availabilityConstraint + "] order by @resourcebundle:id";
-        // TODO HSTTWO-3891 should the availabilityconstraint be prefixed with '@'?
         Credentials creds = preview ? previewCredentials : liveCredentials;
         Session session = null;
         try {
@@ -101,12 +98,12 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                         paths.add(nodes.nextNode().getPath());
                     }
                     log.warn("Multiple resource bundles found for resourcebundle:id '{}'. "
-                                    + "We only use resource bundle '{}'. Other resource bundles with same id are: '{}'.",
+                            + "We only use resource bundle '{}'. Other (ignored) resource bundles with same id are: '{}'.",
                             new String[]{ basename, node.getPath(), paths.toString() });
                 }
             }
         } catch (RepositoryException e) {
-            log.warn("Fail to query resource bundle node", e);
+            log.warn("Failed to populate resource bundle family", e);
         } finally {
             if (session != null) {
                 session.logout();
@@ -121,12 +118,12 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
         return bundleFamily;
     }
 
-    private void populateResourceBundleFamily(final MutableResourceBundleFamily bundleFamily, Node bundleNode)
+    private void populateResourceBundleFamily(final ResourceBundleFamily bundleFamily, Node bundleNode)
             throws RepositoryException {
 
         bundleFamily.setVariantUUID(bundleNode.getIdentifier());
 
-        String[] keys = getPropertyAsStringArray(bundleNode, "resourcebundle:keys");
+        String[] keys = getPropertyAsStringArray(bundleNode.getProperty("resourcebundle:keys"));
         if (keys == null) {
             return;
         }
@@ -146,7 +143,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
         }
     }
 
-    private void addBundle(final MutableResourceBundleFamily bundleFamily, final String[] keys, final Property prop,
+    private void addBundle(final ResourceBundleFamily bundleFamily, final String[] keys, final Property prop,
                            final String localeString) throws RepositoryException {
         try {
             Locale locale = LocaleUtils.toLocale(localeString);
@@ -175,11 +172,6 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
         }
     }
 
-
-    private String[] getPropertyAsStringArray(final Node node, final String propName) throws RepositoryException {
-        return getPropertyAsStringArray(node.getProperty(propName));
-    }
-
     private String[] getPropertyAsStringArray(final Property prop) throws RepositoryException {
         String[] stringValues = null;
         Value[] values = prop.getValues();
@@ -197,7 +189,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
 
     protected Map<String, String> createListResourceBundleContents(String[] keys, String[] messages) {
         Map<String, String> contents = new HashMap<>(keys.length);
-        Map<String, String> contentsMap = new HashMap<String, String>();
+        Map<String, String> contentsMap = new HashMap<>();
 
         for (int i = 0; i < keys.length; i++) {
             String message = (i < messages.length ? messages[i] : "");
@@ -208,8 +200,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
         MapConfiguration config = new MapConfiguration(contentsMap);
         config.setDelimiterParsingDisabled(true);
         config.setTrimmingDisabled(true);
-        for (int i = 0; i < keys.length; i++) {
-            String key = keys[i];
+        for (String key : keys) {
             String message = config.getString(key);
             contents.put(key, message);
         }

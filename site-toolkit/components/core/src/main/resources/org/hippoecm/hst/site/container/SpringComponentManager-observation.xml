@@ -367,7 +367,7 @@
           </property>
           <property name="noLocal" value="false"/>
           <property name="eventListener">
-            <bean parent="baseEventListener" class="org.hippoecm.hst.resourcebundle.internal.HippoRepositoryResourceBundleEventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.resourcebundle.internal.ResourceBundleEventListener">
               <constructor-arg ref="org.hippoecm.hst.resourcebundle.ResourceBundleRegistry" />
             </bean>
           </property>

@@ -21,7 +21,6 @@ import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.core.jcr.EventListenersContainerListener;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
-import org.hippoecm.hst.resourcebundle.ResourceBundleRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,33 +31,29 @@ import org.slf4j.LoggerFactory;
  * and unregisters changed resource bundle families from the resource bundle registry.
  * </P>
  */
-public class HippoRepositoryResourceBundleEventListener extends GenericEventListener implements EventListenersContainerListener {
+public class ResourceBundleEventListener extends GenericEventListener implements EventListenersContainerListener {
 
-    private static Logger log = LoggerFactory.getLogger(HippoRepositoryResourceBundleEventListener.class);
+    private static Logger log = LoggerFactory.getLogger(ResourceBundleEventListener.class);
 
-    private final ResourceBundleRegistry resourceBundleRegistry;
+    private final ResourceBundleRegistryImpl resourceBundleRegistry;
 
-    public HippoRepositoryResourceBundleEventListener(final ResourceBundleRegistry resourceBundleRegistry) {
+    public ResourceBundleEventListener(final ResourceBundleRegistryImpl resourceBundleRegistry) {
         this.resourceBundleRegistry = resourceBundleRegistry;
     }
 
     @Override
     public void onEvent(EventIterator events) {
-        if (resourceBundleRegistry instanceof MutableResourceBundleRegistry) {
-            final MutableResourceBundleRegistry registry = (MutableResourceBundleRegistry) resourceBundleRegistry;
+        while (events.hasNext()) {
+            final Event event = events.nextEvent();
+            try {
+                final String identifier = event.getIdentifier();
 
-            while (events.hasNext()) {
-                final Event event = events.nextEvent();
-                try {
-                    final String identifier = event.getIdentifier();
-
-                    // figuring out to which variant (live, preview, draft) the event pertains to is too complex/costly.
-                    // instead, we (try to) evict the identifier from both the live and the preview cache.
-                    registry.unregisterBundleFamily(identifier, true);
-                    registry.unregisterBundleFamily(identifier, false);
-                } catch (RepositoryException e) {
-                    log.warn("Failed to retrieve path for JCR event '{}'.", event, e);
-                }
+                // figuring out to which variant (live, preview, draft) the event pertains to is too complex/costly.
+                // instead, we (try to) evict the identifier from both the live and the preview cache.
+                resourceBundleRegistry.unregisterBundleFamily(identifier, true);
+                resourceBundleRegistry.unregisterBundleFamily(identifier, false);
+            } catch (RepositoryException e) {
+                log.warn("Failed to retrieve path for JCR event '{}'.", event, e);
             }
         }
     }
@@ -72,9 +67,7 @@ public class HippoRepositoryResourceBundleEventListener extends GenericEventList
     public void onEventListenersContainerRefreshed() {
         // event listener is reconnected: Because we might have missed changes, we need
         // to unregister everything from the resourceBundleRegistry
-        if (resourceBundleRegistry instanceof MutableResourceBundleRegistry) {
-            ((MutableResourceBundleRegistry) resourceBundleRegistry).unregisterAllBundleFamilies();
-        }
+        resourceBundleRegistry.unregisterAllBundleFamilies();
     }
 
     @Override

@@ -30,77 +30,41 @@ import org.hippoecm.hst.resourcebundle.SimpleListResourceBundle;
  * DefaultMutableResourceBundleFamily is an in-memory representation of a variant (live or preview)
  * of a resource bundle document. It is cached by the resource bundle registry.
  */
-public class DefaultMutableResourceBundleFamily implements MutableResourceBundleFamily {
+public class ResourceBundleFamily {
 
     private final String basename;
     private String variantUUID;
     private ResourceBundle defaultBundle;
     private final Map<Locale, ResourceBundle> localizedBundlesMap = new ConcurrentHashMap(new HashMap<Locale, ResourceBundle>());
 
-    public DefaultMutableResourceBundleFamily(final String basename) {
+    public ResourceBundleFamily(final String basename) {
         this.basename = basename;
     }
 
-    @Override
     public String getBasename() {
         return basename;
     }
 
-    @Override
     public ResourceBundle getDefaultBundle() {
         return defaultBundle;
     }
 
-    @Override
-    public ResourceBundle getDefaultBundleForPreview() {
-        throw new UnsupportedOperationException("ResourceBundleFamily no longer contains separate livae and preview data sets");
-    }
-
-    @Override
     public void setDefaultBundle(ResourceBundle defaultBundle) {
         this.defaultBundle = defaultBundle;
     }
 
-    @Override
-    public void setDefaultBundleForPreview(ResourceBundle defaultBundleForPreview) {
-        throw new UnsupportedOperationException("ResourceBundleFamily no longer contains separate livae and preview data sets");
-    }
-
-    @Override
     public ResourceBundle getLocalizedBundle(Locale locale) {
         return localizedBundlesMap.get(locale);
     }
 
-    @Override
-    public ResourceBundle getLocalizedBundleForPreview(Locale locale) {
-        throw new UnsupportedOperationException("ResourceBundleFamily no longer contains separate livae and preview data sets");
-    }
-
-    @Override
     public void setLocalizedBundle(Locale locale, ResourceBundle bundle) {
         localizedBundlesMap.put(locale, bundle);
-    }
-
-    @Override
-    public void setLocalizedBundleForPreview(Locale locale, ResourceBundle bundle) {
-        throw new UnsupportedOperationException("ResourceBundleFamily no longer contains separate livae and preview data sets");
-    }
-
-    @Override
-    public void removeLocalizedBundle(Locale locale) {
-        localizedBundlesMap.remove(locale);
-    }
-
-    @Override
-    public void removeLocalizedBundleForPreview(Locale locale) {
-        throw new UnsupportedOperationException("ResourceBundleFamily no longer contains separate livae and preview data sets");
     }
 
     public String getVariantUUID() {
         return variantUUID;
     }
 
-    @Override
     public void setVariantUUID(final String variantUUID) {
         this.variantUUID = variantUUID;
     }
@@ -111,21 +75,24 @@ public class DefaultMutableResourceBundleFamily implements MutableResourceBundle
             if (!(bundle instanceof SimpleListResourceBundle)) {
                 continue;
             }
+            final SimpleListResourceBundle mutableBundle = (SimpleListResourceBundle)bundle;
             Locale locale = entry.getKey();
             boolean parentIsSet = false;
+
+            @SuppressWarnings("unchecked")
             List<Locale> parentLocales = new ArrayList<>((List<Locale>) LocaleUtils.localeLookupList(locale));
             // locale at index 0 is current locale
             parentLocales.remove(0);
             for (Locale parentLocale : parentLocales) {
                 ResourceBundle parentBundle = localizedBundlesMap.get(parentLocale);
                 if (parentBundle != null) {
-                    ((SimpleListResourceBundle) bundle).setParent(parentBundle);
+                    mutableBundle.setParent(parentBundle);
                     parentIsSet = true;
                     break;
                 }
             }
             if (!parentIsSet) {
-                ((SimpleListResourceBundle) bundle).setParent(defaultBundle);
+                mutableBundle.setParent(defaultBundle);
             }
         }
     }

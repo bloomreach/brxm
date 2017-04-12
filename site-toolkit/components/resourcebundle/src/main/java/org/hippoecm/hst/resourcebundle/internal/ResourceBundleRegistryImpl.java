@@ -26,7 +26,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.apache.commons.lang.LocaleUtils;
-import org.hippoecm.hst.resourcebundle.ResourceBundleFamily;
+import org.hippoecm.hst.resourcebundle.ResourceBundleRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +37,9 @@ import org.slf4j.LoggerFactory;
  * by basename (look-up) as well as by identifier (variant UUID, cache eviction).
  * The cache keeps separate registries for the live and preview variant of documents.
  */
-public class DefaultMutableResourceBundleRegistry implements MutableResourceBundleRegistry {
+public class ResourceBundleRegistryImpl implements ResourceBundleRegistry {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultMutableResourceBundleRegistry.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResourceBundleRegistryImpl.class);
 
     private final Map<String, ResourceBundleFamily> liveBundleFamilyByBasename = new HashMap<>();
     private final Map<String, ResourceBundleFamily> previewBundleFamilyByBasename = new HashMap<>();
@@ -56,7 +56,7 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
     private final Set<String> liveUnfoundBasenames = new HashSet<>();
     private final Set<String> previewUnfoundBasenames = new HashSet<>();
 
-    private ResourceBundleFamilyFactory resourceBundleFamilyFactory;
+    private final ResourceBundleFamilyFactory resourceBundleFamilyFactory;
 
     /**
      * Flag whether or not to fallback to the default Java standard resource bundles
@@ -64,88 +64,12 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
      */
     private boolean fallbackToJavaResourceBundle = true;
 
-    public DefaultMutableResourceBundleRegistry() {
-    }
-
-    public ResourceBundleFamilyFactory getResourceBundleFamilyFactory() {
-        return resourceBundleFamilyFactory;
-    }
-
-    public void setResourceBundleFamilyFactory(ResourceBundleFamilyFactory resourceBundleFamilyFactory) {
+    public ResourceBundleRegistryImpl(final ResourceBundleFamilyFactory resourceBundleFamilyFactory) {
         this.resourceBundleFamilyFactory = resourceBundleFamilyFactory;
-    }
-
-    public boolean isFallbackToJavaResourceBundle() {
-        return fallbackToJavaResourceBundle;
     }
 
     public void setFallbackToJavaResourceBundle(boolean fallbackToJavaResourceBundle) {
         this.fallbackToJavaResourceBundle = fallbackToJavaResourceBundle;
-    }
-
-    @Override
-    @Deprecated
-    public void registerBundleFamily(String basename, ResourceBundleFamily bundleFamily) {
-        registerBundleFamily(basename, false, bundleFamily);
-    }
-
-    @Override
-    public synchronized void registerBundleFamily(String basename, boolean preview, ResourceBundleFamily bundleFamily) {
-        if (bundleFamily == null) {
-            unfoundBasenames(preview).add(basename);
-            logger.info("Failed to load resource bundle {} for {} scope", basename, preview ? "preview" : "live");
-        } else {
-            logger.info("Registering resource bundle {} for {} scope", basename, preview ? "preview" : "live");
-            byBasename(preview).put(basename, bundleFamily);
-            if (bundleFamily instanceof DefaultMutableResourceBundleFamily) {
-                final String variantUUID = ((DefaultMutableResourceBundleFamily)bundleFamily).getVariantUUID();
-                if (variantUUID != null) {
-                    byVariantUUID(preview).put(variantUUID, bundleFamily);
-                }
-            }
-        }
-    }
-
-    @Override
-    @Deprecated
-    public void unregisterBundleFamily(String basename) {
-        logger.info("Unregistering resource bundle {}", basename);
-        unregisterBundleFamilyByBasename(basename, true);
-        unregisterBundleFamilyByBasename(basename, false);
-    }
-
-    private synchronized void unregisterBundleFamilyByBasename(final String basename, final boolean preview) {
-        final ResourceBundleFamily bundleFamily = byBasename(preview).remove(basename);
-        if (bundleFamily instanceof DefaultMutableResourceBundleFamily) {
-            final String variantUUID = ((DefaultMutableResourceBundleFamily) bundleFamily).getVariantUUID();
-            if (variantUUID != null) {
-                byVariantUUID(preview).remove(variantUUID);
-            }
-        }
-        unfoundBasenames(preview).remove(basename);
-    }
-
-    @Override
-    public synchronized void unregisterBundleFamily(final String identifier, boolean preview) {
-        final ResourceBundleFamily bundleFamily = byVariantUUID(preview).remove(identifier);
-        if (bundleFamily != null) {
-            final String basename = bundleFamily.getBasename();
-            logger.info("Unregistering resource bundle {} for {} scope", basename, preview ? "preview" : "live");
-            byBasename(preview).remove(basename);
-        } else {
-            unfoundBasenames(preview).clear();
-        }
-    }
-
-    @Override
-    @Deprecated
-    public synchronized void unregisterAllBundleFamilies() {
-        byBasename(true).clear();
-        byBasename(false).clear();
-        byVariantUUID(true).clear();
-        byVariantUUID(false).clear();
-        unfoundBasenames(true).clear();
-        unfoundBasenames(false).clear();
     }
 
     @Override
@@ -238,5 +162,39 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
 
     private Set<String> unfoundBasenames(final boolean preview) {
         return preview ? previewUnfoundBasenames : liveUnfoundBasenames;
+    }
+
+    private synchronized void registerBundleFamily(String basename, boolean preview, ResourceBundleFamily bundleFamily) {
+        if (bundleFamily == null) {
+            unfoundBasenames(preview).add(basename);
+            logger.info("Failed to load resource bundle {} for {} scope", basename, preview ? "preview" : "live");
+        } else {
+            logger.info("Registering resource bundle {} for {} scope", basename, preview ? "preview" : "live");
+            byBasename(preview).put(basename, bundleFamily);
+            final String variantUUID = bundleFamily.getVariantUUID();
+            if (variantUUID != null) {
+                byVariantUUID(preview).put(variantUUID, bundleFamily);
+            }
+        }
+    }
+
+    synchronized void unregisterBundleFamily(final String identifier, boolean preview) {
+        final ResourceBundleFamily bundleFamily = byVariantUUID(preview).remove(identifier);
+        if (bundleFamily != null) {
+            final String basename = bundleFamily.getBasename();
+            logger.info("Unregistering resource bundle {} for {} scope", basename, preview ? "preview" : "live");
+            byBasename(preview).remove(basename);
+        } else {
+            unfoundBasenames(preview).clear();
+        }
+    }
+
+    synchronized void unregisterAllBundleFamilies() {
+        byBasename(true).clear();
+        byBasename(false).clear();
+        byVariantUUID(true).clear();
+        byVariantUUID(false).clear();
+        unfoundBasenames(true).clear();
+        unfoundBasenames(false).clear();
     }
 }

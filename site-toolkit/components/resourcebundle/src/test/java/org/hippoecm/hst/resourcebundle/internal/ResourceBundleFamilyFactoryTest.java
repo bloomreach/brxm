@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * TestHippoRepositoryResourceBundleFamilyFactory
  */
-public class TestHippoRepositoryResourceBundleFamilyFactory {
+public class ResourceBundleFamilyFactoryTest {
 
     @Test
     public void testPredefinedKeyValueReplacements() throws Exception {
@@ -41,7 +41,7 @@ public class TestHippoRepositoryResourceBundleFamilyFactory {
         EasyMock.replay(liveCredentials);
         EasyMock.replay(previewCredentials);
 
-        HippoRepositoryResourceBundleFamilyFactory factory = new HippoRepositoryResourceBundleFamilyFactory(repository, liveCredentials, previewCredentials);
+        ResourceBundleFamilyFactory factory = new ResourceBundleFamilyFactory(repository, liveCredentials, previewCredentials);
 
         String [] keys = { "key.first", "key.second", "key.third", "key.fourth", "key.fifth", "key.sixth" };
         String [] values = { "Hello", "${key.first}, World!", "Greeting - ${key.second}",
