@@ -32,12 +32,14 @@ public class HtmlProcessorConfig implements Serializable {
     private static final String DEFAULT_CHARSET = "UTF-8";
     private static final boolean DEFAULT_FILTER = false;
     private static final boolean DEFAULT_OMIT_COMMENTS = false;
+    private static final boolean DEFAULT_OMIT_JAVASCRIPT = true;
     private static final boolean DEFAULT_CONVERT_LINE_ENDINGS = true;
     private static final HtmlSerializer DEFAULT_SERIALIZER = HtmlSerializer.SIMPLE;
 
     // repository property names
     private static final String CHARSET = "charset";
     private static final String OMIT_COMMENTS = "omitComments";
+    private static final String OMIT_JAVASCRIPT = "omitJavascript";
     private static final String CONVERT_LINE_ENDINGS = "convertLineEndings";
     private static final String SERIALIZER = "serializer";
     private static final String FILTER = "filter";
@@ -46,6 +48,7 @@ public class HtmlProcessorConfig implements Serializable {
     private String charset;
     private HtmlSerializer serializer;
     private boolean omitComments;
+    private boolean omitJavascript;
     private boolean filter;
     private boolean convertLineEndings;
     private List<Element> whitelistElements;
@@ -56,6 +59,7 @@ public class HtmlProcessorConfig implements Serializable {
         convertLineEndings = DEFAULT_CONVERT_LINE_ENDINGS;
         serializer = DEFAULT_SERIALIZER;
         omitComments = DEFAULT_OMIT_COMMENTS;
+        omitJavascript = DEFAULT_OMIT_JAVASCRIPT;
     }
 
     public void reconfigure(final Node node) throws RepositoryException {
@@ -63,15 +67,16 @@ public class HtmlProcessorConfig implements Serializable {
         convertLineEndings = JcrUtils.getBooleanProperty(node, CONVERT_LINE_ENDINGS, DEFAULT_CONVERT_LINE_ENDINGS);
         filter = JcrUtils.getBooleanProperty(node, FILTER, DEFAULT_FILTER);
         omitComments = JcrUtils.getBooleanProperty(node, OMIT_COMMENTS, DEFAULT_OMIT_COMMENTS);
+        omitJavascript = JcrUtils.getBooleanProperty(node, OMIT_JAVASCRIPT, DEFAULT_OMIT_JAVASCRIPT);
 
         final String serializerName = JcrUtils.getStringProperty(node, SERIALIZER, DEFAULT_SERIALIZER.name());
         serializer = HtmlSerializer.valueOfOrDefault(serializerName);
 
         if (node.hasNodes()) {
-            final String[] emptyAttr = new String[] {};
+            final String[] emptyAttr = new String[]{};
             whitelistElements = new ArrayList<>();
             final NodeIterator filters = node.getNodes();
-            while(filters.hasNext()) {
+            while (filters.hasNext()) {
                 final Node filterNode = filters.nextNode();
                 final String[] attributes = JcrUtils.getMultipleStringProperty(filterNode, ATTRIBUTES, emptyAttr);
                 final String configName = filterNode.getName();
@@ -130,4 +135,13 @@ public class HtmlProcessorConfig implements Serializable {
     public void setConvertLineEndings(final boolean convertLineEndings) {
         this.convertLineEndings = convertLineEndings;
     }
+
+    public boolean isOmitJavascript() {
+        return omitJavascript;
+    }
+
+    public void setOmitJavascript(final boolean omitJavascript) {
+        this.omitJavascript = omitJavascript;
+    }
+
 }

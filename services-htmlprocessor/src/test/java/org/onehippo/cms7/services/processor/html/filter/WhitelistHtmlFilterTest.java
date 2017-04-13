@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.services.processor.html.filter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -178,6 +179,30 @@ public class WhitelistHtmlFilterTest {
         final TagNode img = result.findElementByName("a", true);
         assertNotNull(img);
         assertEquals("", img.getAttributeByName("href"));
+    }
+
+    @Test
+    public void testCleanJavascriptArgumentTrue() throws Exception {
+        filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
+        addToWhitelist(Element.create("a", "href", "onclick"));
+        final TagNode result = filterHtml("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>");
+
+        // src attribute contains javascript
+        final TagNode a = result.findElementByName("a", true);
+        assertNotNull(a);
+        assertEquals("", a.getAttributeByName("onclick"));
+    }
+
+    @Test
+    public void testCleanJavascriptArgumentFalse() throws Exception {
+        filter = new WhitelistHtmlFilter(new ArrayList<>(), false);
+        addToWhitelist(Element.create("a", "href", "onclick"));
+        final TagNode result = filterHtml("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>");
+
+        // src attribute contains javascript
+        final TagNode a = result.findElementByName("a", true);
+        assertNotNull(a);
+        assertEquals("javascript:lancerPu('XXXcodepuXXX')", a.getAttributeByName("onclick"));
     }
 
     private TagNode filterHtml(final String html) {

@@ -128,6 +128,35 @@ public class HtmlProcessorTest {
     }
 
     @Test
+    public void javascriptCanBeStripped() throws Exception {
+        final HtmlProcessorConfig config = new HtmlProcessorConfig();
+        config.setFilter(true);
+        final List<Element> whiteList = new ArrayList<>();
+        final Element element = Element.create("a", "href", "onclick");
+        whiteList.add(element);
+        config.setWhitelistElements(whiteList);
+        config.setConvertLineEndings(false);
+        config.setOmitComments(true);
+        config.setOmitJavascript(true);
+        processor = new HtmlProcessorImpl(config);
+
+        String read = processor.read("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>", null);
+        assertEquals("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>", read);
+
+        String write = processor.write("<a onclick=\"javascript:lancerPu('XXXcodepuXXX')\" href=\"#\">XXXTexteXXX</a>", null);
+        assertEquals("<a onclick=\"\" href=\"#\">XXXTexteXXX</a>", write);
+
+        config.setOmitJavascript(false);
+        processor = new HtmlProcessorImpl(config);
+        read = processor.read("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>", null);
+        assertEquals("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>", read);
+
+        write = processor.write("<a onclick=\"javascript:lancerPu('XXXcodepuXXX')\" href=\"#\">XXXTexteXXX</a>", null);
+        assertEquals("<a onclick=\"javascript:lancerPu('XXXcodepuXXX')\" href=\"#\">XXXTexteXXX</a>", write);
+
+    }
+
+    @Test
     public void testReadVisitor() throws Exception {
         final HtmlProcessorConfig htmlProcessorConfig = new HtmlProcessorConfig();
         processor = new HtmlProcessorImpl(htmlProcessorConfig);

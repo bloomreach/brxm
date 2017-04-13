@@ -33,13 +33,17 @@ public class WhitelistHtmlFilter implements HtmlFilter {
 
     private final Map<String, Element> elements = new HashMap<>();
 
+    private final boolean omitJavascript;
+
     public WhitelistHtmlFilter() {
+        omitJavascript = true;
     }
 
-    public WhitelistHtmlFilter(final List<Element> whitelist) {
+    public WhitelistHtmlFilter(final List<Element> whitelist, final boolean omitJavascript) {
         if (whitelist != null) {
             whitelist.forEach(this::add);
         }
+        this.omitJavascript = omitJavascript;
     }
 
     @Override
@@ -78,7 +82,7 @@ public class WhitelistHtmlFilter implements HtmlFilter {
                 .collect(Collectors.toMap(attribute -> attribute.getKey(), attribute -> {
                     final String value = attribute.getValue();
                     final String normalizedValue = CharacterReferenceNormalizer.normalize(value.toLowerCase().trim());
-                    if (normalizedValue.startsWith(JAVASCRIPT_PROTOCOL)) {
+                    if (normalizedValue.startsWith(JAVASCRIPT_PROTOCOL) && omitJavascript) {
                         return "";
                     }
 
