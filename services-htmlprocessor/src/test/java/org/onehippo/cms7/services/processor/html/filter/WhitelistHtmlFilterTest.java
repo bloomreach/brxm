@@ -182,7 +182,7 @@ public class WhitelistHtmlFilterTest {
     }
 
     @Test
-    public void testCleanJavascriptArgumentTrue() throws Exception {
+    public void testCleanJavascriptProtocolArgumentTrue() throws Exception {
         filter = new WhitelistHtmlFilter(new ArrayList<>(), true);
         addToWhitelist(Element.create("a", "href", "onclick"));
         final TagNode result = filterHtml("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>");
@@ -194,7 +194,7 @@ public class WhitelistHtmlFilterTest {
     }
 
     @Test
-    public void testCleanJavascriptArgumentFalse() throws Exception {
+    public void testCleanJavascriptProtocolArgumentFalse() throws Exception {
         filter = new WhitelistHtmlFilter(new ArrayList<>(), false);
         addToWhitelist(Element.create("a", "href", "onclick"));
         final TagNode result = filterHtml("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>");

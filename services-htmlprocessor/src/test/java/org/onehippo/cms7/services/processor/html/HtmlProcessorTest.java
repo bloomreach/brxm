@@ -128,7 +128,7 @@ public class HtmlProcessorTest {
     }
 
     @Test
-    public void javascriptCanBeStripped() throws Exception {
+    public void javascriptProtocolInAttributesCanBeStripped() throws Exception {
         final HtmlProcessorConfig config = new HtmlProcessorConfig();
         config.setFilter(true);
         final List<Element> whiteList = new ArrayList<>();
@@ -137,7 +137,7 @@ public class HtmlProcessorTest {
         config.setWhitelistElements(whiteList);
         config.setConvertLineEndings(false);
         config.setOmitComments(true);
-        config.setOmitJavascript(true);
+        config.setOmitJavascriptProtocol(true);
         processor = new HtmlProcessorImpl(config);
 
         String read = processor.read("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>", null);
@@ -146,7 +146,7 @@ public class HtmlProcessorTest {
         String write = processor.write("<a onclick=\"javascript:lancerPu('XXXcodepuXXX')\" href=\"#\">XXXTexteXXX</a>", null);
         assertEquals("<a onclick=\"\" href=\"#\">XXXTexteXXX</a>", write);
 
-        config.setOmitJavascript(false);
+        config.setOmitJavascriptProtocol(false);
         processor = new HtmlProcessorImpl(config);
         read = processor.read("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>", null);
         assertEquals("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>", read);

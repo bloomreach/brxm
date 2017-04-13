@@ -52,7 +52,7 @@ public class HtmlProcessorImpl implements HtmlProcessor {
         properties.setOmitComments(config.isOmitComments());
 
         parser = new HtmlCleaner(properties);
-        filter = new WhitelistHtmlFilter(config.getWhitelistElements(), config.isOmitJavascript());
+        filter = new WhitelistHtmlFilter(config.getWhitelistElements(), config.isOmitJavascriptProtocol());
         serializer = HtmlSerializerFactory.create(config.getSerializer(), properties);
     }
 
