@@ -27,6 +27,13 @@ module.exports = function gruntFunctions(grunt) {
   grunt.initConfig({
     build: require('./build.config.js'),
 
+    watch: {
+      all: {
+        files: ['src/main/webapp/**/*'],
+        tasks: ['build']
+      }
+    },
+
         // clean target (distribution) folder
     clean: {
       target: {
@@ -70,5 +77,10 @@ module.exports = function gruntFunctions(grunt) {
     'clean:target',
     'jshint',
     'copy:components',
+  ]);
+
+  grunt.registerTask('server', 'Build and watch for changes', [
+    'build',
+    'watch',
   ]);
 };

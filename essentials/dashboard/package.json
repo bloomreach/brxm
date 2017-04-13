@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "grunt": "grunt",
-    "build": "grunt build"
+    "build": "grunt build",
+    "start": "grunt server"
   },
   "dependencies": {
     "angular": "1.5.11",
@@ -25,6 +26,7 @@
     "grunt-contrib-clean": "1.1.0",
     "grunt-contrib-copy": "1.0.0",
     "grunt-contrib-jshint": "1.1.0",
+    "grunt-contrib-watch": "1.0.0",
     "jasmine-jquery": "2.1.1",
     "load-grunt-tasks": "3.5.2",
     "time-grunt": "1.4.0"
