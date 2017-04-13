@@ -73,11 +73,11 @@ public class HtmlProcessorImpl implements HtmlProcessor {
     public String write(final String html, final List<TagVisitor> visitors) throws IOException {
         TagNode node = parse(html);
 
+        visit(node, visitors, TagVisitor::onWrite);
+
         if (config.isFilter() && filter != null) {
             node = filter.apply(node);
         }
-
-        visit(node, visitors, TagVisitor::onWrite);
 
         String serialized = serialize(node);
         if (config.isConvertLineEndings()) {

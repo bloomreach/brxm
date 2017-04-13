@@ -149,7 +149,7 @@ public class HtmlProcessorTest {
     }
 
     @Test
-    public void testTraversingAfterFiltering() throws Exception {
+    public void testVisitorsRunBeforeFilter() throws Exception {
         final HtmlProcessorConfig htmlProcessorConfig = new HtmlProcessorConfig();
         htmlProcessorConfig.setFilter(true);
         htmlProcessorConfig.setWhitelistElements(Arrays.asList(Element.create("h1"), Element.create("h2")));
@@ -162,8 +162,8 @@ public class HtmlProcessorTest {
         assertEquals("<h1>Heading 1</h1><h2>Heading 2</h2>", html);
 
         final List<String> tagsOne = one.getTags();
-        assertEquals(2, tagsOne.size());
-        assertThat(tagsOne, CoreMatchers.hasItems("h1", "h2"));
+        assertEquals(3, tagsOne.size());
+        assertThat(tagsOne, CoreMatchers.hasItems("h1", "h2", "script"));
     }
 
     private void testPreserved(final String html) throws IOException {
