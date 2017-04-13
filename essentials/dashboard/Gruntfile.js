@@ -38,7 +38,7 @@ module.exports = function gruntFunctions(grunt) {
       files: 'src/main/webapp/js/*.js',
     },
 
-        // copy files to target folder
+    // copy files to target folder
     copy: {
       components: {
         files: [
@@ -48,16 +48,16 @@ module.exports = function gruntFunctions(grunt) {
             dest: '<%= build.dashboardtarget %>',
             src: [
               'jquery/dist/jquery.js',
+              'chosen-js/chosen.jquery.js',
               'angular/angular.js',
-              'chosen-npm/public/chosen.jquery.js',
-              'angular-chosen-localytics/dist/angular-chosen.js',
-              'angular-ui-bootstrap/ui-bootstrap-tpls.js',
-              'angular-ui-router/release/angular-ui-router.js',
-              'angular-ui-tree/dist/angular-ui-tree.min.css',
-              'angular-sanitize/angular-sanitize.js',
-              'angular-aria/angular-aria.js',
               'angular-animate/angular-animate.js',
-              'google-code-prettify/src/prettify.js',
+              'angular-aria/angular-aria.js',
+              'angular-chosen-localytics/dist/angular-chosen.js',
+              'angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
+              'angular-ui-router/release/angular-ui-router.js',
+              'angular-ui-tree/dist/angular-ui-tree.css',
+              'angular-ui-tree/dist/angular-ui-tree.js',
+              'angular-sanitize/angular-sanitize.js',
               'hippo-theme/dist/**',
             ],
           },
