@@ -15,10 +15,12 @@
  */
 package org.onehippo.cms7.services.processor.richtext.jcr;
 
+import java.io.Serializable;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-public interface JcrSessionProvider {
+public interface JcrSessionProvider extends Serializable {
 
     Session getSession() throws RepositoryException;
 }
