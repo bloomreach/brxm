@@ -23,7 +23,6 @@
     <version>5.0.0-visual-editing-psp2-SNAPSHOT</version>
   </parent>
 
-
   <artifactId>hippo-addon-channel-manager-frontend</artifactId>
   <packaging>jar</packaging>
 
