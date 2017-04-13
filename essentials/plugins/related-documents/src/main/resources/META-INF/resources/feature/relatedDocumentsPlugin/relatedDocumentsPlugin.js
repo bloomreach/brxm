@@ -17,7 +17,7 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('relatedDocumentsCtrl', function ($scope, $filter, $sce, $log, $modal, $rootScope, $http) {
+        .controller('relatedDocumentsCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
             var endpoint = $rootScope.REST.dynamic + 'related-documents';
             $scope.pluginId = "relatedDocumentsPlugin";
             $scope.fieldsAdded = false;
