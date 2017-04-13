@@ -1,8 +1,10 @@
 package org.onehippo.cms7.crisp.core.resource;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -120,6 +122,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
 
                         Node resourceResolverNode;
                         String resourceSpace;
+                        Set<String> resourceSpaceNames = new HashSet<>();
                         String beanDef;
                         String[] propNames;
                         String[] propValues;
@@ -142,6 +145,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
                                 if (StringUtils.isNotBlank(beanDef)) {
                                     try {
                                         newChildContext = createChildApplicationContext(beanDef, propNames, propValues);
+                                        resourceSpaceNames.add(resourceSpace);
                                         resourceResolver = newChildContext.getBean(ResourceResolver.class);
                                         tempResourceResolversMap.put(resourceSpace, resourceResolver);
                                         oldChildContext = childAppContexts.put(resourceSpace, newChildContext);
@@ -153,6 +157,15 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
                                         log.error("Failed to load child context for resource space, '{}'.",
                                                 resourceSpace, childContextEx);
                                     }
+                                }
+                            }
+                        }
+
+                        for (String resourceSpaceNameInChildContexts : childAppContexts.keySet()) {
+                            if (!resourceSpaceNames.contains(resourceSpaceNameInChildContexts)) {
+                                oldChildContext = childAppContexts.get(resourceSpaceNameInChildContexts);
+                                if (oldChildContext != null) {
+                                    oldChildContext.close();
                                 }
                             }
                         }
