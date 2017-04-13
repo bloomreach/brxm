@@ -202,7 +202,7 @@
     <level value="debug" />
   </logger>
   <logger name="org.apache.http.wire">
-    <level value="error" />
+    <level value="debug" />
   </logger>
   <logger name="org.onehippo.cms7.crisp">
     <level value="debug" />

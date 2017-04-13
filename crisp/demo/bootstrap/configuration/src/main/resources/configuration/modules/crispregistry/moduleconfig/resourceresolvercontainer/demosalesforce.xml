@@ -16,6 +16,7 @@
       &lt;bean class="org.springframework.security.oauth2.client.OAuth2RestTemplate"&gt;&#xd;
         &lt;constructor-arg&gt;&#xd;
           &lt;bean class="org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails"&gt;&#xd;
+            &lt;property name="clientAuthenticationScheme" value="form" /&gt;&#xd;
             &lt;property name="accessTokenUri" value="${salesforce.baseUrl}/services/oauth2/token" /&gt;&#xd;
             &lt;property name="clientId" value="${salesforce.clientId}" /&gt;&#xd;
             &lt;property name="clientSecret" value="${salesforce.clientSecret}" /&gt;&#xd;
@@ -28,7 +29,7 @@
             &lt;/property&gt;&#xd;
             --&gt;&#xd;
             &lt;property name="username" value="${salesforce.username}" /&gt;&#xd;
-            &lt;property name="password" value="${salesforce.password}" /&gt;&#xd;
+            &lt;property name="password" value="${salesforce.password}${salesforce.securityToken}" /&gt;&#xd;
           &lt;/bean&gt;&#xd;
         &lt;/constructor-arg&gt;&#xd;
         &lt;constructor-arg&gt;&#xd;
@@ -39,6 +40,7 @@
             &lt;/constructor-arg&gt;&#xd;
           &lt;/bean&gt;&#xd;
         &lt;/constructor-arg&gt;&#xd;
+        &lt;property name="requestFactory" ref="org.springframework.http.client.ClientHttpRequestFactory" /&gt;&#xd;
       &lt;/bean&gt;&#xd;
     &lt;/property&gt;&#xd;
   &lt;/bean&gt;&#xd;
@@ -56,7 +58,7 @@
   <sv:property sv:multiple="true" sv:name="crisp:propvalues" sv:type="String">
     <sv:value>someClientId</sv:value>
     <sv:value>someClientSecret</sv:value>
-    <sv:value>someUsername</sv:value>
+    <sv:value>john.doe@example.com</sv:value>
     <sv:value>somePassword</sv:value>
     <sv:value>someSecurityToken</sv:value>
     <sv:value>https://na1.salesforce.com</sv:value>

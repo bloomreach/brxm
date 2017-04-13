@@ -12,6 +12,11 @@
   &lt;bean parent="abstractSimpleJacksonRestTemplateResourceResolver"&#xd;
         class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver"&gt;&#xd;
     &lt;property name="baseUri" value="${example.commerce.api.base.uri}" /&gt;&#xd;
+    &lt;property name="restTemplate"&gt;&#xd;
+      &lt;bean class="org.springframework.web.client.RestTemplate"&gt;&#xd;
+        &lt;property name="requestFactory" ref="org.springframework.http.client.ClientHttpRequestFactory" /&gt;&#xd;
+      &lt;/bean&gt;&#xd;
+    &lt;/property&gt;&#xd;
     &lt;property name="resourceLinkResolver"&gt;&#xd;
       &lt;bean class="org.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver"&gt;&#xd;
         &lt;property name="templateSource"&gt;&#xd;
