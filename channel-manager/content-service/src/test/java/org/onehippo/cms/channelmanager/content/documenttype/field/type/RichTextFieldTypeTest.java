@@ -25,13 +25,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.testutils.log4j.Log4jListener;
 import org.powermock.api.easymock.PowerMock;
@@ -40,15 +40,18 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
+import static org.powermock.api.easymock.PowerMock.mockStatic;
+import static org.powermock.api.easymock.PowerMock.replay;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(FieldTypeUtils.class)
-@Ignore
+@PrepareForTest({FieldTypeUtils.class, HtmlProcessorFactory.class})
 public class RichTextFieldTypeTest {
 
     private static final String FIELD_NAME = "test:richtextfield";
@@ -61,6 +64,11 @@ public class RichTextFieldTypeTest {
         document = MockNode.root();
         type = new RichTextFieldType();
         type.setId(FIELD_NAME);
+
+        mockStatic(HtmlProcessorFactory.class);
+        expect(HtmlProcessorFactory.of(eq("richtext")))
+                .andReturn((HtmlProcessorFactory) () -> HtmlProcessorFactory.NOOP).anyTimes();
+        replay(HtmlProcessorFactory.class);
     }
 
     private Node addValue(final String html) {
@@ -77,7 +85,7 @@ public class RichTextFieldTypeTest {
         void run() throws Exception;
     }
 
-    private void assertWarningsLogged(final long count, final Code code, final Code... verifications) throws Exception {
+    private static void assertWarningsLogged(final long count, final Code code, final Code... verifications) throws Exception {
         try (Log4jListener listener = Log4jListener.onWarn()) {
             try {
                 code.run();
@@ -90,7 +98,7 @@ public class RichTextFieldTypeTest {
         }
     }
 
-    private void assertNoWarningsLogged(final Code code, final Code... verifications) throws Exception {
+    private static void assertNoWarningsLogged(final Code code, final Code... verifications) throws Exception {
         assertWarningsLogged(0, code, verifications);
     }
 
@@ -98,7 +106,8 @@ public class RichTextFieldTypeTest {
     public void readSingleValue() throws Exception {
         addValue("<p>value</p>");
         assertNoWarningsLogged(() -> {
-            final List<FieldValue> fieldValues = type.readFrom(document).get();
+            final List<FieldValue> fieldValues = type.readFrom(document)
+                    .orElseThrow(() -> new Exception("Failed to read from document"));
             assertThat(fieldValues.size(), equalTo(1));
             assertThat(fieldValues.get(0).getValue(), equalTo("<p>value</p>"));
         });
@@ -110,7 +119,8 @@ public class RichTextFieldTypeTest {
         addValue("<p>two</p>");
         type.setMaxValues(2);
         assertNoWarningsLogged(() -> {
-            final List<FieldValue> fieldValues = type.readFrom(document).get();
+            final List<FieldValue> fieldValues = type.readFrom(document)
+                    .orElseThrow(() -> new Exception("Failed to read from document"));
             assertThat(fieldValues.size(), equalTo(2));
             assertThat(fieldValues.get(0).getValue(), equalTo("<p>one</p>"));
             assertThat(fieldValues.get(1).getValue(), equalTo("<p>two</p>"));
@@ -139,7 +149,8 @@ public class RichTextFieldTypeTest {
 
             type.writeTo(document, Optional.of(Collections.singletonList(newValue)));
 
-            final List<FieldValue> fieldValues = type.readFrom(document).get();
+            final List<FieldValue> fieldValues = type.readFrom(document)
+                    .orElseThrow(() -> new Exception("Failed to read from document"));
             assertThat(fieldValues.size(), equalTo(1));
             assertThat(fieldValues.get(0).getValue(), equalTo("<p>changed</p>"));
         });
@@ -156,7 +167,8 @@ public class RichTextFieldTypeTest {
 
             type.writeTo(document, Optional.of(Arrays.asList(newValue1, newValue2)));
 
-            final List<FieldValue> fieldValues = type.readFrom(document).get();
+            final List<FieldValue> fieldValues = type.readFrom(document)
+                    .orElseThrow(() -> new Exception("Failed to read from document"));
             assertThat(fieldValues.size(), equalTo(2));
             assertThat(fieldValues.get(0).getValue(), equalTo("<p>one changed</p>"));
             assertThat(fieldValues.get(1).getValue(), equalTo("<p>two changed</p>"));
@@ -198,7 +210,8 @@ public class RichTextFieldTypeTest {
                     final FieldValue newValue = new FieldValue("<p>changed</p>");
                     type.writeTo(document, Optional.of(Collections.singletonList(newValue)));
                 }, () -> {
-                    final List<FieldValue> fieldValues = type.readFrom(document).get();
+                    final List<FieldValue> fieldValues = type.readFrom(document)
+                            .orElseThrow(() -> new Exception("Failed to read from document"));
                     assertThat(fieldValues.size(), equalTo(1));
                     assertThat(fieldValues.get(0).getValue(), equalTo("<p>changed</p>"));
                     assertThat(document.getNodes().getSize(), equalTo(1L));
@@ -218,9 +231,11 @@ public class RichTextFieldTypeTest {
         assertWarningsLogged(1,
                 () -> type.writeTo(document, Optional.of(Collections.singletonList(newValue))),
                 () -> {
-                    final List<FieldValue> fieldValues = type.readFrom(document).get();
+                    final List<FieldValue> fieldValues = type.readFrom(document)
+                            .orElseThrow(() -> new Exception("Failed to read from document"));
                     assertThat(fieldValues.size(), equalTo(1));
                     assertThat(fieldValues.get(0).getValue(), equalTo("<p>value</p>"));
                 });
     }
 }
+
