@@ -42,16 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * HippoRepositoryResourceBundleFamilyFactory
- * <P>
- * HippoRepositoryResourceBundleFamilyFactory queries JCR Nodes (the type of which should be 'resourcebundle:resourcebundle')
- * and adds all the bundles for each locale.
- * </P>
- *
- * The "put" logic inside this class corresponds to the "get" logic of the {@link ResourceBundleRegistryImpl}
- * in the sense that both do no longer use the #*ForPreview methods of a ResourceBundleFamily. Instead, a separate
- * instance of a ResourceBundleFamily is kept in a separate data structure in order to retrieve, cache and evict
- * resource bundles.
+ * ResourceBundleFamilyFactory is a Spring-created factory for reading a repository-based resource bundle document
+ * ('resourcebundle:resourcebundle') into an in-memory, cacheable {@link ResourceBundleFamily}.
  */
 public class ResourceBundleFamilyFactory {
 
@@ -99,7 +91,7 @@ public class ResourceBundleFamilyFactory {
                     }
                     log.warn("Multiple resource bundles found for resourcebundle:id '{}'. "
                             + "We only use resource bundle '{}'. Other (ignored) resource bundles with same id are: '{}'.",
-                            new String[]{ basename, node.getPath(), paths.toString() });
+                            basename, node.getPath(), paths.toString());
                 }
             }
         } catch (RepositoryException e) {
@@ -167,7 +159,7 @@ public class ResourceBundleFamilyFactory {
                 log.warn("Failed to load default resource bundle from '" + prop.getPath() + "' for locale: " + localeString, e);
             } else {
                 log.warn("Failed to load default resource bundle from '{}' for locale '{}' : {}.",
-                        new String[]{prop.getPath(), localeString, e.toString()});
+                        prop.getPath(), localeString, e.toString());
             }
         }
     }

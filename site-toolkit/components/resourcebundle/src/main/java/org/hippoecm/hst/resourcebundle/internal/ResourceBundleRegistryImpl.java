@@ -74,12 +74,12 @@ public class ResourceBundleRegistryImpl implements ResourceBundleRegistry {
 
     @Override
     public ResourceBundle getBundle(String basename) {
-        return getBundle(basename, null);
+        return getBundle(basename, null, false);
     }
 
     @Override
     public ResourceBundle getBundleForPreview(String basename) {
-        return getBundleForPreview(basename, null);
+        return getBundle(basename, null, true);
     }
 
     @Override
