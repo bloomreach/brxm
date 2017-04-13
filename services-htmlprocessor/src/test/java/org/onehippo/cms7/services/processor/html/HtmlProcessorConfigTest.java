@@ -48,6 +48,7 @@ public class HtmlProcessorConfigTest {
         MockNode configNode = root.addNode("config", "hipposys:moduleconfig");
         configNode.setProperty("charset", "UTF-16");
         configNode.setProperty("omitComments", true);
+        configNode.setProperty("omitJavascriptProtocol", false);
         configNode.setProperty("convertLineEndings", false);
         configNode.setProperty("filter", true);
         configNode.setProperty("serializer", HtmlSerializer.COMPACT.name());
@@ -62,6 +63,7 @@ public class HtmlProcessorConfigTest {
         assertEquals(HtmlSerializer.COMPACT, config.getSerializer());
         assertTrue(config.isFilter());
         assertTrue(config.isOmitComments());
+        assertFalse(config.isOmitJavascriptProtocol());
         assertFalse(config.isConvertLineEndings());
 
         assertThat(config.getWhitelistElements(), CoreMatchers.hasItems(

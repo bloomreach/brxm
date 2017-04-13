@@ -32,14 +32,17 @@ public class WhitelistHtmlFilter implements HtmlFilter {
     private static final String JAVASCRIPT_PROTOCOL = "javascript:";
 
     private final Map<String, Element> elements = new HashMap<>();
+    private final boolean omitJavascriptProtocol;
 
     public WhitelistHtmlFilter() {
+        omitJavascriptProtocol = true;
     }
 
-    public WhitelistHtmlFilter(final List<Element> whitelist) {
+    public WhitelistHtmlFilter(final List<Element> whitelist, final boolean omitJavascriptProtocol) {
         if (whitelist != null) {
             whitelist.forEach(this::add);
         }
+        this.omitJavascriptProtocol = omitJavascriptProtocol;
     }
 
     @Override
@@ -78,7 +81,7 @@ public class WhitelistHtmlFilter implements HtmlFilter {
                 .collect(Collectors.toMap(attribute -> attribute.getKey(), attribute -> {
                     final String value = attribute.getValue();
                     final String normalizedValue = CharacterReferenceNormalizer.normalize(value.toLowerCase().trim());
-                    if (normalizedValue.startsWith(JAVASCRIPT_PROTOCOL)) {
+                    if (omitJavascriptProtocol && normalizedValue.startsWith(JAVASCRIPT_PROTOCOL)) {
                         return "";
                     }
 
