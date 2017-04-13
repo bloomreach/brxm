@@ -60,7 +60,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements Compoun
             final List<FieldValue> values = new ArrayList<>((int)children.getSize());
             final RichTextNodeProcessor processor = new RichTextNodeProcessor();
             for (final Node child : new NodeIterable(children)) {
-                final String html = JcrUtils.getStringProperty(node, HippoStdNodeType.HIPPOSTD_CONTENT, null);
+                final String html = JcrUtils.getStringProperty(child, HippoStdNodeType.HIPPOSTD_CONTENT, null);
                 values.add(new FieldValue(processor.read(html, child, "richtext")));
             }
             return values;
