@@ -18,10 +18,10 @@ import MultiActionDialogCtrl from './multiActionDialog/multiActionDialog.control
 import multiActionDialogTemplate from './multiActionDialog/multiActionDialog.html';
 
 const ERROR_MAP = {
-  UNAVAILABLE: { // default catch-all
-    title: 'FEEDBACK_DEFAULT_TITLE',
+  NO_CONTENT: {
+    title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
+    messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
     linkToFullEditor: true,
-    messageKey: 'FEEDBACK_DEFAULT_MESSAGE',
   },
   NOT_A_DOCUMENT: {
     title: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
@@ -33,16 +33,6 @@ const ERROR_MAP = {
     messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
     disableContentButtons: true,
   },
-  NO_CONTENT: {
-    title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
-    messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
-    linkToFullEditor: true,
-  },
-  UNKNOWN_VALIDATOR: {
-    title: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_TITLE',
-    linkToFullEditor: true,
-    messageKey: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_MESSAGE',
-  },
   OTHER_HOLDER: {
     title: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
@@ -51,6 +41,16 @@ const ERROR_MAP = {
   REQUEST_PENDING: {
     title: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
+  },
+  UNAVAILABLE: { // default catch-all
+    title: 'FEEDBACK_DEFAULT_TITLE',
+    linkToFullEditor: true,
+    messageKey: 'FEEDBACK_DEFAULT_MESSAGE',
+  },
+  UNKNOWN_VALIDATOR: {
+    title: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_TITLE',
+    linkToFullEditor: true,
+    messageKey: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_MESSAGE',
   },
 };
 
