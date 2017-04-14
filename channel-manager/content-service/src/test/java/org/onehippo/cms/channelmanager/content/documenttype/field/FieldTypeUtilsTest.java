@@ -32,6 +32,7 @@ import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
@@ -74,7 +75,7 @@ public class FieldTypeUtilsTest {
 
     @Test
     public void validateIgnoredValidator() {
-        final FieldType fieldType = createMock(FieldType.class);
+        final FieldType fieldType = createMock(AbstractFieldType.class);
         final DocumentType docType = createMock(DocumentType.class);
         replay(fieldType);
 
@@ -83,7 +84,7 @@ public class FieldTypeUtilsTest {
 
     @Test
     public void validateMappedValidators() {
-        final FieldType fieldType = createMock(FieldType.class);
+        final FieldType fieldType = createMock(AbstractFieldType.class);
         final DocumentType docType = createMock(DocumentType.class);
 
         fieldType.addValidator(FieldType.Validator.REQUIRED);
@@ -97,7 +98,7 @@ public class FieldTypeUtilsTest {
 
     @Test
     public void validateFieldValidators() {
-        final FieldType fieldType = createMock(FieldType.class);
+        final FieldType fieldType = createMock(AbstractFieldType.class);
         final DocumentType docType = createMock(DocumentType.class);
 
         fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
@@ -111,7 +112,7 @@ public class FieldTypeUtilsTest {
 
     @Test
     public void validateUnknownValidators() {
-        final FieldType fieldType = createMock(FieldType.class);
+        final FieldType fieldType = createMock(AbstractFieldType.class);
         final DocumentType docType = createMock(DocumentType.class);
 
         docType.setReadOnlyDueToUnknownValidator(true);

@@ -22,10 +22,10 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -75,11 +75,11 @@ public class ChoiceFieldUtils {
      *
      * @param editorFieldNode JCR node representing the field's editor configuration
      * @param parentContext   context of the choice field's parent content type
-     * @param choices         map of compound fields to populate
+     * @param choices         map of fields to populate
      */
     public static void populateProviderBasedChoices(final Node editorFieldNode,
                                                     final ContentTypeContext parentContext,
-                                                    final Map<String, CompoundFieldType> choices) {
+                                                    final Map<String, NodeFieldType> choices) {
         getProviderId(editorFieldNode)
                 .ifPresent(providerId -> ContentTypeContext.getContentType(providerId)
                         .ifPresent(provider -> populateChoicesForProvider(provider, parentContext, choices)));
@@ -97,22 +97,30 @@ public class ChoiceFieldUtils {
         return Optional.empty();
     }
 
-    private static void populateChoicesForProvider(final ContentType provider, final ContentTypeContext parentContext,
-                                                   final Map<String, CompoundFieldType> choices) {
+    private static void populateChoicesForProvider(final ContentType provider,
+                                                   final ContentTypeContext parentContext,
+                                                   final Map<String, NodeFieldType> choices) {
         for (ContentTypeItem item : provider.getChildren().values()) {
             ContentTypeContext.getContentType(item.getItemType()).ifPresent(contentType -> {
-                if (contentType.isCompoundType()) {
+
+                if (contentType.isCompoundType() || contentType.isContentType(HippoStdNodeType.NT_HTML)) {
                     // Suggestion: the provider compound may have an editor configuration, helping to initialize
                     //             the choice compound. We could try to find a node and add it to the fieldContext.
                     final FieldTypeContext fieldContext = new FieldTypeContext(item, parentContext);
                     final CompoundFieldType choice = new CompoundFieldType();
-                    final String id = item.getItemType();
+                    final String choiceId = item.getItemType();
 
-                    choice.init(fieldContext);
-                    choice.setId(id);
+                    if (contentType.isCompoundType()) {
+                        choice.init(fieldContext, choiceId);
+                    } else if (contentType.isContentType(HippoStdNodeType.NT_HTML)) {
+                        final RichTextFieldType richTextField = new RichTextFieldType();
+                        richTextField.init(fieldContext);
+                        choice.init(richTextField, choiceId);
+                    }
+
                     patchDisplayNameForChoice(choice, fieldContext);
 
-                    choices.put(id, choice);
+                    choices.put(choiceId, choice);
                 }
             });
         }
@@ -124,33 +132,38 @@ public class ChoiceFieldUtils {
     }
 
     /**
-     * List-based choices specify the names of the available compound types on a property on the choice field's
-     * editor comfiguration node. We retrieve and normalize these names. Since this choice relationship bypasses
+     * List-based choices specify the names of the available types on a property on the choice field's
+     * editor configuration node. We retrieve and normalize these names. Since this choice relationship bypasses
      * the content type service's model, no FieldTypeContext is available for any choice. Instead, we create a
      * ContentTypeContext for each choice, and use that to populate our list of choices.
      *
      * @param editorFieldNode JCR node representing the field's editor configuration
      * @param parentContext   context of the choice field's parent content type
-     * @param choices         list of compound fields to populate
+     * @param choices         list of fields to populate
      */
     public static void populateListBasedChoices(final Node editorFieldNode,
                                                 final ContentTypeContext parentContext,
-                                                final Map<String, CompoundFieldType> choices) {
+                                                final Map<String, NodeFieldType> choices) {
         final String[] choiceNames = getListBasedChoiceNames(editorFieldNode);
 
         for (String choiceName : choiceNames) {
             final String choiceId = normalizeChoiceName(choiceName, parentContext);
 
             ContentTypeContext.createFromParent(choiceId, parentContext).ifPresent(choiceContext -> {
-                if (choiceContext.getContentType().isCompoundType()) {
+                final ContentType contentType = choiceContext.getContentType();
+
+                if (contentType.isCompoundType() || contentType.isContentType(HippoStdNodeType.NT_HTML)) {
                     final CompoundFieldType choice = new CompoundFieldType();
                     final String id = choiceContext.getContentType().getName();
 
-                    // Since no FieldTypeContext is available for a list-based choice,
-                    // we have to initialize our compound field manually.
-                    choice.setId(id);
+                    if (contentType.isCompoundType()) {
+                        choice.init(choiceContext, id);
+                    } else if (contentType.isContentType(HippoStdNodeType.NT_HTML)) {
+                        final RichTextFieldType richTextField = new RichTextFieldType();
+                        choice.init(richTextField, id);
+                    }
+
                     patchDisplayNameForChoice(choice, choiceContext);
-                    FieldTypeUtils.populateFields(choice.getFields(), choiceContext);
 
                     choices.put(id, choice);
                 }
@@ -174,7 +187,7 @@ public class ChoiceFieldUtils {
         return choiceName.contains(":") ? choiceName : context.getContentType().getPrefix() + ":" + choiceName;
     }
 
-    private static void patchDisplayNameForChoice(final CompoundFieldType choice, final ContentTypeContext context) {
+    private static void patchDisplayNameForChoice(final NodeFieldType choice, final ContentTypeContext context) {
         if (choice.getDisplayName() == null) {
             final Optional<ResourceBundle> resourceBundle = context.getResourceBundle();
             LocalizationUtils.determineDocumentDisplayName(choice.getId(), resourceBundle)

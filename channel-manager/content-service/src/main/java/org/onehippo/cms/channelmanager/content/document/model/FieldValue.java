@@ -61,6 +61,10 @@ public class FieldValue {
         return Optional.ofNullable(value);
     }
 
+    public boolean isPresent() {
+        return value != null;
+    }
+
     // use for serialization and testing only, to avoid NPE.
     public String getValue() {
         return value;

@@ -220,8 +220,8 @@ public class RichTextFieldTypeTest {
 
     @Test(expected = InternalServerErrorException.class)
     public void exceptionWhileWriting() throws Exception {
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeCompoundValues");
-        FieldTypeUtils.writeCompoundValues(anyObject(), anyObject(), anyInt(), anyObject());
+        PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeNodeValues");
+        FieldTypeUtils.writeNodeValues(anyObject(), anyObject(), anyInt(), anyObject());
         expectLastCall().andThrow(new RepositoryException());
         replayAll();
 

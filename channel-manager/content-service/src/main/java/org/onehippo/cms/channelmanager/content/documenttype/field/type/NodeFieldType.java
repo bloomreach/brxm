@@ -20,13 +20,31 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
 /**
- * Writes a field value to a compound node.
+ * A field that stores its value(s) in a node.
  */
-public interface CompoundWriter {
+public interface NodeFieldType extends FieldType {
+
+    /**
+     * Used by provider-based choice fields.
+     */
+    void init(final FieldTypeContext fieldContext, final String choiceId);
+
+    /**
+     * Used by list-based choice fields.
+     */
+    void init(final ContentTypeContext parentContext, final String choiceId);
+
+    FieldValue readValue(final Node node);
 
     void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException;
+
+    boolean validateValue(final FieldValue value);
+
+
 
 }

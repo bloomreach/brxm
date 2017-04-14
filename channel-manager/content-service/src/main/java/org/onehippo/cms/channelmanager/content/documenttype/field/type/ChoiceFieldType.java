@@ -41,17 +41,17 @@ import org.slf4j.LoggerFactory;
  * The ChoiceFieldType represents the Content Blocks functionality, which allows users to choose from a list of
  * compound types to create instances in a document.
  */
-public class ChoiceFieldType extends FieldType implements CompoundWriter {
+public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType {
     private static final Logger log = LoggerFactory.getLogger(ChoiceFieldType.class);
 
     // The order of the entries in the choice map matters, so we use a *linked* hash map.
-    private final Map<String, CompoundFieldType> choices = new LinkedHashMap<>();
+    private final Map<String, NodeFieldType> choices = new LinkedHashMap<>();
 
     public ChoiceFieldType() {
         setType(Type.CHOICE);
     }
 
-    public Map<String, CompoundFieldType> getChoices() {
+    public Map<String, NodeFieldType> getChoices() {
         return choices;
     }
 
@@ -66,6 +66,16 @@ public class ChoiceFieldType extends FieldType implements CompoundWriter {
                     ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices);
                     ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices);
                 });
+    }
+
+    @Override
+    public void init(final FieldTypeContext fieldContext, final String choiceId) {
+        throw new UnsupportedOperationException("Choice fields inside choice fields are not supported");
+    }
+
+    @Override
+    public void init(final ContentTypeContext parentContext, final String choiceId) {
+        throw new UnsupportedOperationException("Choice fields inside choice fields are not supported");
     }
 
     @Override
@@ -85,7 +95,7 @@ public class ChoiceFieldType extends FieldType implements CompoundWriter {
                 final String choiceId = child.getPrimaryNodeType().getName();
 
                 findChoice(choiceId).ifPresent(choice -> {
-                    final FieldValue choiceValue = choice.readSingleFrom(child);
+                    final FieldValue choiceValue = choice.readValue(child);
                     values.add(new FieldValue(choiceId, choiceValue));
                 });
 
@@ -98,6 +108,11 @@ public class ChoiceFieldType extends FieldType implements CompoundWriter {
     }
 
     @Override
+    public FieldValue readValue(final Node node) {
+        throw new UnsupportedOperationException("Nested choices are not supported");
+    }
+
+    @Override
     public void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues) throws ErrorWithPayloadException {
         final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
         checkCardinality(values);
@@ -105,7 +120,7 @@ public class ChoiceFieldType extends FieldType implements CompoundWriter {
         try {
             removeInvalidChoices(node); // This is symmetric to ignoring them in #readValues.
             final NodeIterator children = node.getNodes(getId());
-            FieldTypeUtils.writeCompoundValues(children, values, getMaxValues(), this);
+            FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
         } catch (RepositoryException e) {
             log.warn("Failed to write value for choice type '{}'", getId(), e);
             throw new InternalServerErrorException();
@@ -124,12 +139,12 @@ public class ChoiceFieldType extends FieldType implements CompoundWriter {
         }
 
         // each chosenId must be a valid choice
-        final CompoundFieldType compound = findChoice(chosenId).orElseThrow(INVALID_DATA);
+        final NodeFieldType choice = findChoice(chosenId).orElseThrow(INVALID_DATA);
 
         // each value must specify a choice value
         final FieldValue chosenValue = value.findChosenValue().orElseThrow(INVALID_DATA);
 
-        compound.writeValue(node, chosenValue);
+        choice.writeValue(node, chosenValue);
     }
 
 
@@ -144,20 +159,21 @@ public class ChoiceFieldType extends FieldType implements CompoundWriter {
 
     @Override
     public boolean validate(final List<FieldValue> valueList) {
-        return validateValues(valueList, this::validateSingle);
+        return validateValues(valueList, this::validateValue);
     }
 
-    private boolean validateSingle(final FieldValue value) {
+    @Override
+    public boolean validateValue(final FieldValue value) {
         // dispatch validation of the values to the corresponding compound fields
         // #readValues guarantees that the value has a valid chosenId, and a choiceValue
         final String chosenId = value.findChosenId().get();
-        final CompoundFieldType compound = findChoice(chosenId).get();
+        final NodeFieldType choice = findChoice(chosenId).get();
         final FieldValue choiceValue = value.findChosenValue().get();
 
-        return compound.validateSingle(choiceValue);
+        return choice.validateValue(choiceValue);
     }
 
-    private Optional<CompoundFieldType> findChoice(final String chosenId) {
+    private Optional<NodeFieldType> findChoice(final String chosenId) {
         return Optional.ofNullable(choices.get(chosenId));
     }
 }

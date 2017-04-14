@@ -56,13 +56,13 @@ import static org.junit.Assert.fail;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({LocalizationUtils.class, FieldTypeUtils.class})
-public class FieldTypeTest {
+public class AbstractFieldTypeTest {
 
-    private FieldType fieldType;
+    private AbstractFieldType fieldType;
 
     @Before
     public void setup() {
-        fieldType = new FieldType() {
+        fieldType = new AbstractFieldType() {
             @Override
             public Optional<List<FieldValue>> readFrom(final Node node) {
                 return null;
