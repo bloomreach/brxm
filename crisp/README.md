@@ -16,6 +16,7 @@ Hippo Addon CRISP (Common Resource Interface and Service Provider).
 - Dynamic Configuration change instead of properties and xmls.
 - TODO: ResourceServiceBroker-side pagination.
 - TODO: Caching per route.
+- TODO: Web-hook based event processing.
 
 ## Build and install the module itself into local maven repository
 
