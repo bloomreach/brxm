@@ -35,6 +35,7 @@ import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
 import org.hippoecm.frontend.translation.TranslationUtil;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 
@@ -52,23 +53,24 @@ public class TranslationRenderer extends AbstractNodeRenderer {
 
     @Override
     protected Component getViewer(String id, Node node) throws RepositoryException {
-        Node document = null;
+        Node documentOrFolder = null;
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             node = node.getNode(node.getName());
             if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-                document = node;
+                documentOrFolder = node;
             }
         } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-                document = node;
+                documentOrFolder = node;
             }
         }
 
-        if ((document != null) &&
-            (!TranslationUtil.isNtTranslated(document.getParent().getParent()) &&
-                (!TranslationUtil.isNtTranslated(document) ||
-                    !provider.isKnown(document.getProperty(HippoTranslationNodeType.LOCALE).getString())))) {
-            return new TranslationList(id, document);
+        if ((documentOrFolder != null) &&
+            ((documentOrFolder.isNodeType(HippoStdNodeType.NT_FOLDER) ||
+                TranslationUtil.isNtTranslated(documentOrFolder.getParent().getParent())) ||
+                (TranslationUtil.isNtTranslated(documentOrFolder) &&
+                    provider.isKnown(documentOrFolder.getProperty(HippoTranslationNodeType.LOCALE).getString())))) {
+            return new TranslationList(id, documentOrFolder);
         }
         return new EmptyPanel(id);
     }
