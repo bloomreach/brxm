@@ -17,6 +17,7 @@ Hippo Addon CRISP (Common Resource Interface and Service Provider).
 - TODO: ResourceServiceBroker-side pagination.
 - TODO: Caching per route.
 - TODO: Web-hook based event processing.
+- TODO: Optional Java bean binding option from Resource(s).
 
 ## Build and install the module itself into local maven repository
 
