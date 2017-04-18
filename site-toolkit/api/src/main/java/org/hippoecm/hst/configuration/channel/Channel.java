@@ -328,7 +328,7 @@ public class Channel implements Serializable {
         return workspaceExists;
     }
 
-    public void setWorkSpaceExists(final boolean workspaceExists) {
+    public void setWorkspaceExists(final boolean workspaceExists) {
         this.workspaceExists = workspaceExists;
     }
 
