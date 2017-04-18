@@ -125,7 +125,7 @@ public class ChoiceFieldUtils {
                                                          final String choiceId) {
         if (contentType.isCompoundType()) {
             final CompoundFieldType compound = new CompoundFieldType();
-            compound.init(fieldContext, choiceId);
+            compound.initProviderBasedChoice(fieldContext, choiceId);
             return compound;
         } else if (contentType.isContentType(HippoStdNodeType.NT_HTML)) {
             final RichTextFieldType richText = new RichTextFieldType();
@@ -196,11 +196,11 @@ public class ChoiceFieldUtils {
                                                        final String choiceId) {
         if (contentType.isCompoundType()) {
             final CompoundFieldType compound = new CompoundFieldType();
-            compound.init(choiceContext, choiceId);
+            compound.initListBasedChoice(choiceContext, choiceId);
             return compound;
         } else if (contentType.isContentType(HippoStdNodeType.NT_HTML)) {
             final RichTextFieldType richText = new RichTextFieldType();
-            richText.setId(choiceId);
+            richText.initListBasedChoice(choiceId);
             return richText;
         }
         return null;

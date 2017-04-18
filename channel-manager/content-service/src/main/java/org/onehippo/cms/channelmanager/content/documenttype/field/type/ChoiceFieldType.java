@@ -69,16 +69,6 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     }
 
     @Override
-    public void init(final FieldTypeContext fieldContext, final String choiceId) {
-        throw new UnsupportedOperationException("Choice fields inside choice fields are not supported");
-    }
-
-    @Override
-    public void init(final ContentTypeContext parentContext, final String choiceId) {
-        throw new UnsupportedOperationException("Choice fields inside choice fields are not supported");
-    }
-
-    @Override
     public Optional<List<FieldValue>> readFrom(Node node) {
         List<FieldValue> values = readValues(node);
 

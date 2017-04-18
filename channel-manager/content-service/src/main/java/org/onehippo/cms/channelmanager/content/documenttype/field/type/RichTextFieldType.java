@@ -30,8 +30,6 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -48,13 +46,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
         super(CKEditorConfig.DEFAULT_RICH_TEXT_CONFIG);
     }
 
-    @Override
-    public void init(final FieldTypeContext fieldContext, final String choiceId) {
-        throw new UnsupportedOperationException("The frontend expects that chosen rich text fields are always wrapped in a compound");
-    }
-
-    @Override
-    public void init(final ContentTypeContext parentContext, final String choiceId) {
+    void initListBasedChoice(final String choiceId) {
         setId(choiceId);
     }
 

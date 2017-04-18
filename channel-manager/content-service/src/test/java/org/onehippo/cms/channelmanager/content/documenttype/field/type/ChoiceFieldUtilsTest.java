@@ -238,7 +238,7 @@ public class ChoiceFieldUtilsTest {
     }
 
     @Test
-    public void initProviderIdWithValidChoice() throws Exception {
+    public void initProviderIdWithValidCompoundChoice() throws Exception {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         final Map<String, NodeFieldType> choices = new HashMap<>();
@@ -259,7 +259,7 @@ public class ChoiceFieldUtilsTest {
         expect(choice.getItemType()).andReturn("choiceType").anyTimes();
         expect(ContentTypeContext.getContentType("choiceType")).andReturn(Optional.of(compound));
         expect(compound.isCompoundType()).andReturn(true).times(2);
-        compoundField.init(compoundContext, "choiceType");
+        compoundField.initProviderBasedChoice(compoundContext, "choiceType");
         expectLastCall();
         expect(compoundContext.createContextForCompound()).andReturn(Optional.empty());
 
@@ -381,7 +381,7 @@ public class ChoiceFieldUtilsTest {
         expect(compound.isCompoundType()).andReturn(true).times(2);
         expect(compound.getName()).andReturn("compound:id");
 
-        compoundField.init(childContext, "compound:id");
+        compoundField.initListBasedChoice(childContext, "compound:id");
         expectLastCall();
         expect(compoundField.getDisplayName()).andReturn("bla");
 
@@ -415,7 +415,7 @@ public class ChoiceFieldUtilsTest {
         expect(childContext.getContentType()).andReturn(compound).anyTimes();
         expect(compound.isCompoundType()).andReturn(true).times(2);
         expect(compound.getName()).andReturn("compound:id");
-        compoundField.init(childContext, "compound:id");
+        compoundField.initListBasedChoice(childContext, "compound:id");
         expectLastCall();
         expect(compoundField.getId()).andReturn("compound:id");
         expect(compoundField.getDisplayName()).andReturn(null);

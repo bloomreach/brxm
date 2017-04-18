@@ -63,30 +63,14 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
                 .ifPresent(context -> FieldTypeUtils.populateFields(fields, context));
     }
 
-    @Override
-    public void init(final FieldTypeContext fieldContext, final String choiceId) {
+    void initProviderBasedChoice(final FieldTypeContext fieldContext, final String choiceId) {
         init(fieldContext);
         setId(choiceId);
     }
 
-    @Override
-    public void init(final ContentTypeContext parentContext, final String choiceId) {
+    void initListBasedChoice(final ContentTypeContext parentContext, final String choiceId) {
         FieldTypeUtils.populateFields(fields, parentContext);
         setId(choiceId);
-    }
-
-    void init(final NodeFieldType field, final String choiceId) {
-        fields.add(field);
-        setId(choiceId);
-    }
-
-    /**
-     * Oh boy...
-     *
-     * @param parentContext
-     */
-    public void init(ContentTypeContext parentContext) {
-
     }
 
     @Override
