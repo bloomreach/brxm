@@ -64,7 +64,7 @@ public class RichTextProcessorModel extends HtmlProcessorModel {
     }
 
     @Override
-    protected List<TagVisitor> getVisitors() {
+    public List<TagVisitor> getVisitors() {
         return visitors;
     }
 

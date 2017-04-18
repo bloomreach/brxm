@@ -73,7 +73,7 @@ public class HtmlProcessorModel implements Model<String> {
         valueModel.release();
     }
 
-    protected List<TagVisitor> getVisitors() {
+    public List<TagVisitor> getVisitors() {
         return null;
     }
 }

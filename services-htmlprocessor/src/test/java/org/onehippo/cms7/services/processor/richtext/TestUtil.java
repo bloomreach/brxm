@@ -117,6 +117,11 @@ public class TestUtil {
         }
 
         @Override
+        public boolean hasAttribute(final String name) {
+            return attributes.containsKey(name);
+        }
+
+        @Override
         public void removeAttribute(final String name) {
             attributes.remove(name);
         }

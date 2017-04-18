@@ -28,9 +28,8 @@ import org.onehippo.cms7.services.processor.html.visit.Tag;
 
 public class LinkVisitor extends FacetVisitor {
 
-    private static final String TAG_A = "a";
-    private static final String ATTRIBUTE_HREF = "href";
-    private static final String ATTRIBUTE_DATA_UUID = "data-uuid";
+    public static final String TAG_A = "a";
+    public static final String ATTRIBUTE_HREF = "href";
 
     public LinkVisitor(final Model<Node> nodeModel) {
         super(nodeModel);

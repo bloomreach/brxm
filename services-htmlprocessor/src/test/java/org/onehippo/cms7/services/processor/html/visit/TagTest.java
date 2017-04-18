@@ -35,6 +35,7 @@ public class TagTest {
         final Tag tag = Tag.from(tagNode);
         tag.getName();
         tag.addAttribute("attr", "attrValue");
+        tag.hasAttribute("attr");
         tag.getAttribute("attr");
         tag.removeAttribute("attr");
 
@@ -48,6 +49,7 @@ public class TagTest {
         final Tag tag = Tag.from(htmlNode);
         tag.getName();
         tag.addAttribute("attr", "attrValue");
+        tag.hasAttribute("attr");
         tag.getAttribute("attr");
         tag.removeAttribute("attr");
 
@@ -58,6 +60,7 @@ public class TagTest {
         final TagNode tagNode = createMock(TagNode.class);
         expect(tagNode.getName()).andReturn("a");
         expect(tagNode.getAttributeByName(eq("attr"))).andReturn("attrValue");
+        expect(tagNode.hasAttribute(eq("attr"))).andReturn(true);
         tagNode.removeAttribute("attr");
         expectLastCall();
         tagNode.addAttribute(eq("attr"), eq("attrValue"));

@@ -27,6 +27,8 @@ public abstract class FacetVisitor extends NodeVisitor {
 
     public static final Logger log = LoggerFactory.getLogger(FacetVisitor.class);
 
+    public static final String ATTRIBUTE_DATA_UUID = "data-uuid";
+
     protected FacetVisitor(final Model<Node> nodeModel) {
         super(nodeModel);
     }
