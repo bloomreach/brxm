@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * definition. As such, a "no-change" read-and-write operation may have the effect that the document is
  * adjusted towards better consistency with the field type definition.
  */
-public class StringFieldType extends FieldType {
+public class StringFieldType extends AbstractFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(StringFieldType.class);
     private static final String DEFAULT_VALUE = "";
@@ -192,7 +192,7 @@ public class StringFieldType extends FieldType {
         return isValid;
     }
 
-    private boolean validateSingleRequired(final FieldValue value) {
+    protected boolean validateSingleRequired(final FieldValue value) {
         if (value.findValue().orElse(DEFAULT_VALUE).isEmpty()) {
             value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
             return false;

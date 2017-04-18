@@ -27,7 +27,10 @@ choice-field {
   > .field {
     padding-left: $form-dense-distance;
   }
+}
 
+primitive-field,
+compound-field {
   primitive-field > .field {
     padding-left: 0;
   }

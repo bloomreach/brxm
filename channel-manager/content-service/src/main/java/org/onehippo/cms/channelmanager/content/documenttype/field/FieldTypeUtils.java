@@ -34,7 +34,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSort
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundWriter;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
@@ -227,11 +227,11 @@ public class FieldTypeUtils {
         }
     }
 
-    public static void writeCompoundValues(final NodeIterator compounds,
-                                           final List<FieldValue> values,
-                                           final int maxValues,
-                                           final CompoundWriter writer) throws RepositoryException, ErrorWithPayloadException {
-        long count = compounds.getSize();
+    public static void writeNodeValues(final NodeIterator nodes,
+                                       final List<FieldValue> values,
+                                       final int maxValues,
+                                       final NodeFieldType field) throws RepositoryException, ErrorWithPayloadException {
+        long count = nodes.getSize();
 
         // additional cardinality check to prevent creating new values or remove a subset of the old values
         if (!values.isEmpty() && values.size() != count && !(count > maxValues)) {
@@ -239,12 +239,12 @@ public class FieldTypeUtils {
         }
 
         for (FieldValue value : values) {
-            writer.writeValue(compounds.nextNode(), value);
+            field.writeValue(nodes.nextNode(), value);
         }
 
         // delete excess nodes to match field type
-        while (compounds.hasNext()) {
-            compounds.nextNode().remove();
+        while (nodes.hasNext()) {
+            nodes.nextNode().remove();
         }
     }
 

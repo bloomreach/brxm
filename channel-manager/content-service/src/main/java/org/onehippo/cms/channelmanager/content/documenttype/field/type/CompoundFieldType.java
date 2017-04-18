@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -36,7 +37,7 @@ import org.onehippo.cms.channelmanager.content.error.InternalServerErrorExceptio
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CompoundFieldType extends FieldType implements CompoundWriter {
+public class CompoundFieldType extends AbstractFieldType implements NodeFieldType {
     private static final Logger log = LoggerFactory.getLogger(CompoundFieldType.class);
 
     private final List<FieldType> fields = new ArrayList<>();
@@ -62,6 +63,16 @@ public class CompoundFieldType extends FieldType implements CompoundWriter {
                 .ifPresent(context -> FieldTypeUtils.populateFields(fields, context));
     }
 
+    void initProviderBasedChoice(final FieldTypeContext fieldContext, final String choiceId) {
+        init(fieldContext);
+        setId(choiceId);
+    }
+
+    void initListBasedChoice(final ContentTypeContext parentContext, final String choiceId) {
+        FieldTypeUtils.populateFields(fields, parentContext);
+        setId(choiceId);
+    }
+
     @Override
     public Optional<List<FieldValue>> readFrom(final Node node) {
         List<FieldValue> values = readValues(node);
@@ -78,7 +89,7 @@ public class CompoundFieldType extends FieldType implements CompoundWriter {
             for (Node child : new NodeIterable(node.getNodes(nodeName))) {
                 // Note: we add the valueMap to the values even if it is empty, because we need to
                 // maintain the 1-to-1 mapping between exposed values and internal nodes.
-                values.add(readSingleFrom(child));
+                values.add(readValue(child));
             }
         } catch (RepositoryException e) {
             log.warn("Failed to read nodes for compound type '{}'", getId(), e);
@@ -86,7 +97,8 @@ public class CompoundFieldType extends FieldType implements CompoundWriter {
         return values;
     }
 
-    public FieldValue readSingleFrom(final Node node) {
+    @Override
+    public FieldValue readValue(final Node node) {
         Map<String, List<FieldValue>> valueMap = new HashMap<>();
         FieldTypeUtils.readFieldValues(node, getFields(), valueMap);
         return new FieldValue(valueMap);
@@ -100,7 +112,7 @@ public class CompoundFieldType extends FieldType implements CompoundWriter {
 
         try {
             NodeIterator children = node.getNodes(nodeName);
-            FieldTypeUtils.writeCompoundValues(children, values, getMaxValues(), this);
+            FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
         } catch (RepositoryException e) {
             log.warn("Failed to write compound value to node {}", nodeName, e);
             throw new InternalServerErrorException();
@@ -116,14 +128,15 @@ public class CompoundFieldType extends FieldType implements CompoundWriter {
 
     @Override
     public boolean validate(final List<FieldValue> valueList) {
-        return validateValues(valueList, this::validateSingle);
+        return validateValues(valueList, this::validateValue);
     }
 
-    public boolean validateSingle(final FieldValue value) {
+    @Override
+    public boolean validateValue(final FieldValue value) {
         // The "required: validator only applies to the cardinality of a compound field, and has
         // therefore already been checked during the writeTo-validation (#checkCardinality).
 
-        // #readSingleFrom guarantees that value.getFields is not empty
+        // #readValue guarantees that value.getFields is not empty
         return FieldTypeUtils.validateFieldValues(value.findFields().get(), getFields());
     }
 }

@@ -23,10 +23,14 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
 /**
- * Writes a field value to a compound node.
+ * A field that stores its value(s) in a node.
  */
-public interface CompoundWriter {
+public interface NodeFieldType extends FieldType {
+
+    FieldValue readValue(final Node node);
 
     void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException;
+
+    boolean validateValue(final FieldValue value);
 
 }
