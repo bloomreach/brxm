@@ -104,6 +104,7 @@ describe('CKEditor Component', () => {
     expect($ctrl.config).toEqual(config);
     expect($ctrl.onFocus).toBeDefined();
     expect($ctrl.onBlur).toBeDefined();
+    expect($ctrl.textAreaElement).toBeDefined();
   });
 
   it('uses the current language', () => {
@@ -128,15 +129,19 @@ describe('CKEditor Component', () => {
   it('ckeditor is focused', () => {
     init();
     const onEditorFocus = getEventListener('focus');
+    spyOn($ctrl.textAreaElement, 'focus');
     onEditorFocus();
     expect($ctrl.onFocus).toHaveBeenCalled();
+    expect($ctrl.textAreaElement.focus).toHaveBeenCalled();
   });
 
   it('ckeditor is blurred', () => {
     init();
     const onEditorBlur = getEventListener('blur');
+    spyOn($ctrl.textAreaElement, 'blur');
     onEditorBlur();
     expect($ctrl.onBlur).toHaveBeenCalled();
+    expect($ctrl.textAreaElement.blur).toHaveBeenCalled();
   });
 
   it('destroys the editor once the scope is destroyed', () => {

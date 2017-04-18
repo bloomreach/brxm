@@ -22,6 +22,7 @@ class CKEditorController {
     this.$element = $element;
     this.CKEditorService = CKEditorService;
     this.ConfigService = ConfigService;
+    this.textAreaElement = $element.find('textarea');
   }
 
   $onInit() {
@@ -39,10 +40,12 @@ class CKEditorController {
       });
 
       this.editor.on('focus', () => {
+        this.textAreaElement.focus();
         this.$scope.$apply(() => this.onFocus());
       });
 
       this.editor.on('blur', () => {
+        this.textAreaElement.blur();
         this.$scope.$apply(() => this.onBlur());
       });
 
