@@ -65,7 +65,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
             final List<FieldValue> values = new ArrayList<>((int)children.getSize());
             for (final Node child : new NodeIterable(children)) {
                 final FieldValue value = readValue(child);
-                if (value.isPresent()) {
+                if (value.hasValue()) {
                     values.add(value);
                 }
             }
