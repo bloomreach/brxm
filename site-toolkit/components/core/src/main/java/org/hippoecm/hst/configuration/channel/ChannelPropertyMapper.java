@@ -24,6 +24,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -145,6 +148,11 @@ public class ChannelPropertyMapper {
                 }
             }
         }
+        // TODO (meggermont): get branches from somewhere
+        if (true) {
+            final Set<String> projectIds = Stream.of("foo", "bar").collect(Collectors.toSet());
+            channel.setBranches(projectIds);
+        }
         return channel;
     }
 
@@ -200,6 +208,7 @@ public class ChannelPropertyMapper {
                 channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO).remove();
             }
         }
+        // TODO (meggermont): save channel.branches somewhere
     }
 
     static Map<HstPropertyDefinition, Object> loadProperties(HstNode channelInfoNode, List<HstPropertyDefinition> propertyDefinitions) {
@@ -215,7 +224,8 @@ public class ChannelPropertyMapper {
             }
         } else {
             for (Map.Entry<String, Object> property : channelInfoNode.getValueProvider().getProperties().entrySet()) {
-                AbstractHstPropertyDefinition hpd = new AbstractHstPropertyDefinition(property.getKey()) {};
+                AbstractHstPropertyDefinition hpd = new AbstractHstPropertyDefinition(property.getKey()) {
+                };
                 properties.put(hpd, getHstValueFromObject(hpd, property));
             }
         }
@@ -240,8 +250,8 @@ public class ChannelPropertyMapper {
     private static Object getHstValueFromObject(final HstPropertyDefinition pd, final Object property) {
         Object value;
         if (property.getClass().isArray()) {
-            List<Object> valueList = (List<Object>)(value =  new LinkedList());
-            for (Object propVal : (Object[])property) {
+            List<Object> valueList = (List<Object>) (value = new LinkedList());
+            for (Object propVal : (Object[]) property) {
                 if (correctType(propVal, pd.getValueType())) {
                     valueList.add(propVal);
                 } else {
@@ -271,7 +281,7 @@ public class ChannelPropertyMapper {
                 return property instanceof Double;
             case INTEGER:
                 // fall through: JCR does not support int but long, so return a long
-                 return property instanceof Long;
+                return property instanceof Long;
             case LONG:
                 return property instanceof Long;
             default:
@@ -313,7 +323,7 @@ public class ChannelPropertyMapper {
                 log.warn("Cannot store a Integer (Long in jcr) '{}' for '{}'. Store default value instead", value, propDef.getName());
                 return defaultValueToJcr(vf, propDef);
             } else {
-                return vf.createValue(((Integer)value).longValue());
+                return vf.createValue(((Integer) value).longValue());
             }
         } else if (value instanceof Long) {
             if (propDef.getValueType() != HstValueType.LONG) {
@@ -372,19 +382,19 @@ public class ChannelPropertyMapper {
                     log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
                     return vf.createValue(0L);
                 }
-                return vf.createValue(((Integer)propDef.getDefaultValue()).longValue());
+                return vf.createValue(((Integer) propDef.getDefaultValue()).longValue());
             case LONG:
                 if (!(propDef.getDefaultValue() instanceof Long)) {
                     log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
                     return vf.createValue(0L);
                 }
-                return vf.createValue((Long)propDef.getDefaultValue());
+                return vf.createValue((Long) propDef.getDefaultValue());
             default:
                 throw new RuntimeException("Unexpected HstValueType " + propDef.getDefaultValue().getClass().getName());
         }
     }
 
-    public static  boolean isLockedBySomeoneElse(Node configurationNode) throws RepositoryException {
+    public static boolean isLockedBySomeoneElse(Node configurationNode) throws RepositoryException {
         final String holder = getLockedBy(configurationNode);
         if (StringUtils.isEmpty(holder)) {
             return false;
@@ -392,7 +402,7 @@ public class ChannelPropertyMapper {
         return !configurationNode.getSession().getUserID().equals(holder);
     }
 
-    public static  boolean isLockedBySession(Node configurationNode) throws RepositoryException {
+    public static boolean isLockedBySession(Node configurationNode) throws RepositoryException {
         final String holder = getLockedBy(configurationNode);
         if (StringUtils.isEmpty(holder)) {
             return false;
@@ -400,7 +410,7 @@ public class ChannelPropertyMapper {
         return configurationNode.getSession().getUserID().equals(holder);
     }
 
-    public static  String getLockedBy(Node configurationNode) throws RepositoryException {
+    public static String getLockedBy(Node configurationNode) throws RepositoryException {
         if (!configurationNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
             return null;
         }
@@ -411,13 +421,12 @@ public class ChannelPropertyMapper {
      * tries to set a lock. If there is not yet a lock, then also
      * a timestamp validation is done whether the configuration node that needs to be locked has not been modified
      * by someone else
-     *
      */
     public static void tryLockOnNodeIfNeeded(final Node nodeToLock, final long validateLastModifiedTimestamp) throws RepositoryException, ChannelException {
         Session session = nodeToLock.getSession();
         if (isLockedBySomeoneElse(nodeToLock)) {
             log.info("Node '{}' is already locked by someone else.", nodeToLock.getPath());
-            throw new ChannelException("Node '"+nodeToLock.getPath()+"' is already locked by someone else.", CHANNEL_LOCKED);
+            throw new ChannelException("Node '" + nodeToLock.getPath() + "' is already locked by someone else.", CHANNEL_LOCKED);
         }
         if (isLockedBySession(nodeToLock)) {
             log.debug("Container '{}' already has a lock for user '{}'.", nodeToLock.getPath(), session.getUserID());
@@ -434,8 +443,8 @@ public class ChannelPropertyMapper {
                 DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS zzz", Locale.US);
                 log.info("Node '{}' has been modified at '{}' but validation timestamp was '{}'. Cannot acquire lock now for user '{}'.",
                         new String[]{nodeToLock.getPath(), dateFormat.format(existing.getTime()),
-                                dateFormat.format(validate.getTime()) , session.getUserID()});
-                throw new ChannelException("Node '"+nodeToLock.getPath()+"' cannot be changed because timestamp validation did not pass.", CHANNEL_OUT_OF_SYNC);
+                                dateFormat.format(validate.getTime()), session.getUserID()});
+                throw new ChannelException("Node '" + nodeToLock.getPath() + "' cannot be changed because timestamp validation did not pass.", CHANNEL_OUT_OF_SYNC);
             }
         }
         log.info("Node '{}' gets a lock for user '{}'.", nodeToLock.getPath(), session.getUserID());

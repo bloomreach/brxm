@@ -75,10 +75,12 @@ public class Channel implements Serializable {
     private Calendar lockedOn;
     private Calendar lastModified;
 
+    private Set<String> branches;
+
     private int hashCode;
 
     /**
-     * {@link Channel} default constructor it is required for REST de/serialization 
+     * {@link Channel} default constructor it is required for REST de/serialization
      */
     public Channel() {
     }
@@ -124,7 +126,7 @@ public class Channel implements Serializable {
         // not a deep clone: Not a problem! Note even the same instance is used, this is because
         // channel.changedBySet can be a ChannelLazyLoadingChangedBySet
         changedBySet = channel.changedBySet;
-        defaultDevice =  channel.defaultDevice;
+        defaultDevice = channel.defaultDevice;
         devices = channel.devices;
         viewportMap = channel.viewportMap;
         isPreview = channel.isPreview();
@@ -132,6 +134,7 @@ public class Channel implements Serializable {
         lastModifiedBy = channel.lastModifiedBy;
         lockedOn = channel.lockedOn;
         lastModified = channel.lastModified;
+        branches = channel.branches;
     }
 
     /**
@@ -145,7 +148,7 @@ public class Channel implements Serializable {
      * Set the unique ID of this channel
      */
     public void setId(String id) throws IllegalStateException {
-        if ( (this.id != null)) {
+        if (this.id != null) {
             throw new IllegalStateException("Channel id has been already set. It can not be changed.");
         }
 
@@ -217,7 +220,7 @@ public class Channel implements Serializable {
     public void setType(String type) {
         this.type = type;
     }
-    
+
     public String getType() {
         return this.type;
     }
@@ -254,7 +257,7 @@ public class Channel implements Serializable {
         return channelPath;
     }
 
-    public void setProperties(Map<String, Object> properties){
+    public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
 
@@ -325,7 +328,7 @@ public class Channel implements Serializable {
         return workspaceExists;
     }
 
-    public void setWorkspaceExists(final boolean workspaceExists) {
+    public void setWorkSpaceExists(final boolean workspaceExists) {
         this.workspaceExists = workspaceExists;
     }
 
@@ -346,8 +349,8 @@ public class Channel implements Serializable {
     }
 
     /**
-     * @return all *non-system* users that have a lock on the channel or some part of the channel. If no users have a lock, and empty set
-     * is returned
+     * @return all *non-system* users that have a lock on the channel or some part of the channel. If no users have a
+     * lock, and empty set is returned
      */
     public Set<String> getChangedBySet() {
         if (changedBySet instanceof HashSet) {
@@ -442,47 +445,25 @@ public class Channel implements Serializable {
         this.lastModified = lastModified;
     }
 
+    public Set<String> getBranches() {
+        return branches;
+    }
+
+    public void setBranches(final Set<String> branches) {
+        this.branches = branches;
+    }
+
     @Override
     public int hashCode() {
         if (hashCode != 0) {
             return hashCode;
         }
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (channelSettingsEditable ? 1 : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (hostname != null ? hostname.hashCode() : 0);
-        result = 31 * result + (contextPath != null ? contextPath.hashCode() : 0);
-        result = 31 * result + (cmsPreviewPrefix != null ? cmsPreviewPrefix.hashCode() : 0);
-        result = 31 * result + (mountPath != null ? mountPath.hashCode() : 0);
-        result = 31 * result + (channelPath != null ? channelPath.hashCode() : 0);
-        result = 31 * result + (url != null ? url.hashCode() : 0);
-        result = 31 * result + (hstMountPoint != null ? hstMountPoint.hashCode() : 0);
-        result = 31 * result + (hstConfigPath != null ? hstConfigPath.hashCode() : 0);
-        result = 31 * result + (contentRoot != null ? contentRoot.hashCode() : 0);
-        result = 31 * result + (composerModeEnabled ? 1 : 0);
-        result = 31 * result + (properties != null ? properties.hashCode() : 0);
-        result = 31 * result + (channelInfoClassName != null ? channelInfoClassName.hashCode() : 0);
         result = 31 * result + (mountId != null ? mountId.hashCode() : 0);
-        result = 31 * result + (siteMapId != null ? siteMapId.hashCode() : 0);
-        result = 31 * result + (locale != null ? locale.hashCode() : 0);
-        result = 31 * result + (previewHstConfigExists ? 1 : 0);
-        result = 31 * result + (workspaceExists ? 1 : 0);
-        result = 31 * result + (hasCustomProperties ? 1 : 0);
-        result = 31 * result + (deletable ? 1 : 0);
-        result = 31 * result + (changedBySet != null ? changedBySet.hashCode() : 0);
-        result = 31 * result + (defaultDevice != null ? defaultDevice.hashCode() : 0);
-        result = 31 * result + (devices != null ? devices.hashCode() : 0);
-        result = 31 * result + (viewportMap != null ? viewportMap.hashCode() : 0);
-        result = 31 * result + (isPreview ? 1 : 0);
-        result = 31 * result + (channelNodeLockedBy != null ? channelNodeLockedBy.hashCode() : 0);
-        result = 31 * result + (lastModifiedBy != null ? lastModifiedBy.hashCode() : 0);
-        result = 31 * result + (lockedOn != null ? lockedOn.hashCode() : 0);
-        result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0);
-        result = 31 * result + hashCode;
         hashCode = result;
         return hashCode;
     }
+
 
     public boolean equals(Object other) {
         if (other == this) {
