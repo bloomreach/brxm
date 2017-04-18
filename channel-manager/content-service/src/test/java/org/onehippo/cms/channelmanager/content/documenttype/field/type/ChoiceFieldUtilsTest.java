@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -276,6 +276,47 @@ public class ChoiceFieldUtilsTest {
     }
 
     @Test
+    public void initProviderIdWithValidRichTextChoice() throws Exception {
+        final Node node = MockNode.root();
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        final Map<String, NodeFieldType> choices = new HashMap<>();
+        final ContentType provider = createMock(ContentType.class);
+        final Map<String, ContentTypeChild> choiceMap = new HashMap<>();
+        final ContentTypeChild choice = createMock(ContentTypeChild.class);
+        final ContentType compound = createMock(ContentType.class);
+        final FieldTypeContext compoundContext = PowerMock.createMockAndExpectNew(FieldTypeContext.class, choice, parentContext);
+        final RichTextFieldType richTextField = PowerMock.createMockAndExpectNew(RichTextFieldType.class);
+
+        PowerMock.mockStaticPartial(ContentTypeContext.class, "getContentType");
+
+        node.setProperty("cpItemsPath", "choice:provider");
+        expect(ContentTypeContext.getContentType("choice:provider")).andReturn(Optional.of(provider));
+        expect(provider.getChildren()).andReturn(choiceMap);
+
+        choiceMap.put("choice", choice);
+        expect(choice.getItemType()).andReturn("choiceType").anyTimes();
+        expect(ContentTypeContext.getContentType("choiceType")).andReturn(Optional.of(compound));
+        expect(compound.isCompoundType()).andReturn(false).times(2);
+        expect(compound.isContentType("hippostd:html")).andReturn(true).times(2);
+
+        richTextField.init(compoundContext);
+        expectLastCall();
+
+        expect(compoundContext.createContextForCompound()).andReturn(Optional.empty());
+
+        replay(provider, choice, compound);
+        PowerMock.replayAll();
+
+        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices);
+
+        verify(provider, choice, compound);
+        PowerMock.verifyAll();
+
+        assertThat(choices.size(), equalTo(1));
+        assertThat(choices.get("choiceType"), equalTo(richTextField));
+    }
+
+    @Test
     public void populateListBasedChoicesWithoutCompoundList() {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
@@ -435,5 +476,41 @@ public class ChoiceFieldUtilsTest {
 
         assertThat(choices.size(), equalTo(1));
         assertThat(choices.get("compound:id"), equalTo(compoundField));
+    }
+
+    @Test
+    public void populateListBasedChoicesWithValidRichText() throws Exception {
+        final Node node = MockNode.root();
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        final Map<String, NodeFieldType> choices = new HashMap<>();
+        final ContentTypeContext childContext = createMock(ContentTypeContext.class);
+        final ContentType compound = createMock(ContentType.class);
+        final RichTextFieldType richTextField = PowerMock.createMockAndExpectNew(RichTextFieldType.class);
+
+        PowerMock.mockStaticPartial(ContentTypeContext.class, "createFromParent");
+        PowerMock.mockStaticPartial(FieldTypeUtils.class, "populateFields");
+
+        node.setProperty("compoundList", "prefixed:choice");
+        expect(ContentTypeContext.createFromParent("prefixed:choice", parentContext)).andReturn(Optional.of(childContext));
+        expect(childContext.getContentType()).andReturn(compound).anyTimes();
+        expect(compound.isCompoundType()).andReturn(false).times(2);
+        expect(compound.isContentType("hippostd:html")).andReturn(true).times(2);
+        expect(compound.getName()).andReturn("hippostd:html");
+
+        richTextField.initListBasedChoice("hippostd:html");
+        expectLastCall();
+
+        expect(richTextField.getDisplayName()).andReturn("bla");
+
+        replay(parentContext, childContext, compound);
+        PowerMock.replayAll();
+
+        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices);
+
+        verify(parentContext, childContext, compound);
+        PowerMock.verifyAll();
+
+        assertThat(choices.size(), equalTo(1));
+        assertThat(choices.get("hippostd:html"), equalTo(richTextField));
     }
 }
