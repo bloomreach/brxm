@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,26 +107,35 @@ public class ChoiceFieldUtils {
                     // Suggestion: the provider compound may have an editor configuration, helping to initialize
                     //             the choice compound. We could try to find a node and add it to the fieldContext.
                     final FieldTypeContext fieldContext = new FieldTypeContext(item, parentContext);
-                    final CompoundFieldType choice = new CompoundFieldType();
                     final String choiceId = item.getItemType();
 
-                    if (contentType.isCompoundType()) {
-                        choice.init(fieldContext, choiceId);
-                    } else if (contentType.isContentType(HippoStdNodeType.NT_HTML)) {
-                        final RichTextFieldType richTextField = new RichTextFieldType();
-                        richTextField.init(fieldContext);
-                        choice.init(richTextField, choiceId);
+                    final NodeFieldType choice = createChoiceForProvider(contentType, fieldContext, choiceId);
+
+                    if (choice != null) {
+                        patchDisplayNameForChoice(choice, fieldContext);
+                        choices.put(choiceId, choice);
                     }
-
-                    patchDisplayNameForChoice(choice, fieldContext);
-
-                    choices.put(choiceId, choice);
                 }
             });
         }
     }
 
-    private static void patchDisplayNameForChoice(final CompoundFieldType choice, final FieldTypeContext fieldContext) {
+    private static NodeFieldType createChoiceForProvider(final ContentType contentType,
+                                                         final FieldTypeContext fieldContext,
+                                                         final String choiceId) {
+        if (contentType.isCompoundType()) {
+            final CompoundFieldType compound = new CompoundFieldType();
+            compound.init(fieldContext, choiceId);
+            return compound;
+        } else if (contentType.isContentType(HippoStdNodeType.NT_HTML)) {
+            final RichTextFieldType richText = new RichTextFieldType();
+            richText.init(fieldContext);
+            return richText;
+        }
+        return null;
+    }
+
+    private static void patchDisplayNameForChoice(final NodeFieldType choice, final FieldTypeContext fieldContext) {
         fieldContext.createContextForCompound()
                 .ifPresent(choiceContext -> patchDisplayNameForChoice(choice, choiceContext));
     }
@@ -153,19 +162,14 @@ public class ChoiceFieldUtils {
                 final ContentType contentType = choiceContext.getContentType();
 
                 if (contentType.isCompoundType() || contentType.isContentType(HippoStdNodeType.NT_HTML)) {
-                    final CompoundFieldType choice = new CompoundFieldType();
                     final String id = choiceContext.getContentType().getName();
 
-                    if (contentType.isCompoundType()) {
-                        choice.init(choiceContext, id);
-                    } else if (contentType.isContentType(HippoStdNodeType.NT_HTML)) {
-                        final RichTextFieldType richTextField = new RichTextFieldType();
-                        choice.init(richTextField, id);
+                    final NodeFieldType choice = createListBasedChoice(contentType, choiceContext, id);
+
+                    if (choice != null) {
+                        patchDisplayNameForChoice(choice, choiceContext);
+                        choices.put(id, choice);
                     }
-
-                    patchDisplayNameForChoice(choice, choiceContext);
-
-                    choices.put(id, choice);
                 }
             });
         }
@@ -185,6 +189,21 @@ public class ChoiceFieldUtils {
 
     private static String normalizeChoiceName(final String choiceName, final ContentTypeContext context) {
         return choiceName.contains(":") ? choiceName : context.getContentType().getPrefix() + ":" + choiceName;
+    }
+
+    private static NodeFieldType createListBasedChoice(final ContentType contentType,
+                                                       final ContentTypeContext choiceContext,
+                                                       final String choiceId) {
+        if (contentType.isCompoundType()) {
+            final CompoundFieldType compound = new CompoundFieldType();
+            compound.init(choiceContext, choiceId);
+            return compound;
+        } else if (contentType.isContentType(HippoStdNodeType.NT_HTML)) {
+            final RichTextFieldType richText = new RichTextFieldType();
+            richText.setId(choiceId);
+            return richText;
+        }
+        return null;
     }
 
     private static void patchDisplayNameForChoice(final NodeFieldType choice, final ContentTypeContext context) {
