@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,19 +28,21 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cms7.services.processor.html.util.JcrUtil.PATH_SEPARATOR;
+
 public class FacetUtil {
 
-    static final Logger log = LoggerFactory.getLogger(FacetUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(FacetUtil.class);
 
     private FacetUtil() {
     }
 
-    public static String createFacet(Node node, String uuid) throws RepositoryException {
+    public static String createFacet(final Node node, final String uuid) throws RepositoryException {
         final Session session = node.getSession();
         try {
             final Node target = session.getNodeByIdentifier(uuid);
             return createFacet(node, target.getName(), uuid);
-        } catch (ItemNotFoundException e) {
+        } catch (final ItemNotFoundException e) {
             log.warn("Cannot create facet node below '{}', target UUID does not exist: '{}'",
                      JcrUtils.getNodePathQuietly(node), uuid);
             return null;
@@ -53,9 +55,9 @@ public class FacetUtil {
 
     public static String createFacet(final Node node, final String link, final String targetUuid) throws RepositoryException {
 
-        String linkName = newLinkName(node, link);
+        final String linkName = newLinkName(node, link);
 
-        Node facetselect = node.addNode(linkName, HippoNodeType.NT_FACETSELECT);
+        final Node facetselect = node.addNode(linkName, HippoNodeType.NT_FACETSELECT);
         facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, targetUuid);
         facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {});
         facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] {});
@@ -70,16 +72,17 @@ public class FacetUtil {
                 final Node child = node.getNode(childNodeName);
                 return getDocBaseOrNull(child);
             }
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             final String parentNodePath = JcrUtils.getNodePathQuietly(node);
-            final String childNodePath = parentNodePath != null ? parentNodePath + "/" + childNodeName : childNodeName;
+            final String childNodePath = parentNodePath != null ?
+                    parentNodePath + PATH_SEPARATOR + childNodeName : childNodeName;
             log.warn("Cannot get child node '{}'", childNodePath, e);
         }
         return null;
     }
 
     private static boolean isRelativePath(final String childNodeName) {
-        return StringUtils.isNotEmpty(childNodeName) && !StringUtils.startsWith(childNodeName, "/");
+        return StringUtils.isNotEmpty(childNodeName) && !StringUtils.startsWith(childNodeName, PATH_SEPARATOR);
     }
 
     private static String getDocBaseOrNull(final Node node) throws RepositoryException {
@@ -99,14 +102,14 @@ public class FacetUtil {
                     return child.getName();
                 }
             }
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Node '{}' does not have a child facet node for UUID '{}'",
                     JcrUtils.getNodePathQuietly(node), uuid);
         }
         return null;
     }
 
-    private static String newLinkName(Node node, String link) throws RepositoryException {
+    private static String newLinkName(final Node node, final String link) throws RepositoryException {
         if (!node.hasNode(link)) {
             return link;
         }
@@ -123,7 +126,7 @@ public class FacetUtil {
     public static void removeFacets(final Node node) throws RepositoryException {
         final NodeIterator iter = node.getNodes();
         while (iter.hasNext()) {
-            Node child = iter.nextNode();
+            final Node child = iter.nextNode();
             if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                 child.remove();
             }

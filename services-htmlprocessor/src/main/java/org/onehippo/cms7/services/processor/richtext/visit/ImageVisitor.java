@@ -26,14 +26,15 @@ import org.onehippo.cms7.services.processor.html.visit.FacetVisitor;
 import org.onehippo.cms7.services.processor.html.visit.Tag;
 import org.onehippo.cms7.services.processor.richtext.URLProvider;
 
+import static org.onehippo.cms7.services.processor.html.util.JcrUtil.PATH_SEPARATOR;
+import static org.onehippo.cms7.services.processor.richtext.image.RichTextImage.DOCUMENT_PATH_PLACEHOLDER;
+
 public class ImageVisitor extends FacetVisitor {
 
     private static final String TAG_IMG = "img";
     private static final String ATTRIBUTE_SRC = "src";
     private static final String ATTRIBUTE_DATA_UUID = "data-uuid";
     private static final String ATTRIBUTE_DATA_TYPE = "data-type";
-    private static final String IMAGE_DOCUMENT = "{_document}";
-    private static final String IMAGE_SEPARATOR = "/";
 
     private final URLProvider imageURLProvider;
 
@@ -64,7 +65,7 @@ public class ImageVisitor extends FacetVisitor {
             return;
         }
 
-        final String[] parts = src.split(IMAGE_SEPARATOR);
+        final String[] parts = src.split(PATH_SEPARATOR);
         final Node node = getNode();
         final String name = parts.length >= 1 ? parts[0] : null;
         final String uuid = FacetUtil.getChildDocBaseOrNull(node, name);
@@ -102,7 +103,7 @@ public class ImageVisitor extends FacetVisitor {
         }
         src = name;
         if (type != null) {
-            src += IMAGE_SEPARATOR + IMAGE_DOCUMENT + IMAGE_SEPARATOR + type;
+            src += PATH_SEPARATOR + DOCUMENT_PATH_PLACEHOLDER + PATH_SEPARATOR + type;
         }
         tag.addAttribute(ATTRIBUTE_SRC, src);
     }

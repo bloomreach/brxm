@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cms7.services.processor.html.util.JcrUtil.PATH_SEPARATOR;
+
 public class RichTextImageURLProvider implements URLProvider {
 
     public static final Logger log = LoggerFactory.getLogger(RichTextImageURLProvider.class);
@@ -47,8 +49,8 @@ public class RichTextImageURLProvider implements URLProvider {
     public String getURL(final String link) {
         try {
             final Node node = this.nodeModel.get();
-            final String facetName = StringUtils.substringBefore(link, "/");
-            final String type = StringUtils.substringAfterLast(link, "/");
+            final String facetName = StringUtils.substringBefore(link, PATH_SEPARATOR);
+            final String type = StringUtils.substringAfterLast(link, PATH_SEPARATOR);
             final String uuid = FacetUtil.getChildDocBaseOrNull(node, facetName);
             if (uuid != null && linkFactory.getLinkUuids().contains(uuid)) {
                 final RichTextImage rti = imageFactory.loadImageItem(uuid, type);

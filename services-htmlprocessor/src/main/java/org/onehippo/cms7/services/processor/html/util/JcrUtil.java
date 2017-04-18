@@ -25,6 +25,8 @@ import org.onehippo.repository.util.JcrConstants;
 
 public class JcrUtil {
 
+    public static final String PATH_SEPARATOR = "/";
+
     /**
      * Retrieve the primary item of a node, according to the primary node type hierarchy. Plain JackRabbit only checks
      * the declared items of a type, not the inherited ones.
@@ -34,7 +36,7 @@ public class JcrUtil {
      * @throws ItemNotFoundException
      * @throws RepositoryException
      */
-    public static Item getPrimaryItem(Node node) throws ItemNotFoundException, RepositoryException {
+    public static Item getPrimaryItem(final Node node) throws ItemNotFoundException, RepositoryException {
         NodeType primaryType = node.getPrimaryNodeType();
         String primaryItemName = primaryType.getPrimaryItemName();
         while (primaryItemName == null && !JcrConstants.NT_BASE.equals(primaryType.getName())) {
@@ -51,6 +53,6 @@ public class JcrUtil {
         if (primaryItemName == null) {
             throw new ItemNotFoundException("No primary item definition found in type hierarchy");
         }
-        return node.getSession().getItem(node.getPath() + "/" + primaryItemName);
+        return node.getSession().getItem(node.getPath() + PATH_SEPARATOR + primaryItemName);
     }
 }

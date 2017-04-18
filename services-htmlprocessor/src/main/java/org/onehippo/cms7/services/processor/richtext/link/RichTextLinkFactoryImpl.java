@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class RichTextLinkFactoryImpl implements RichTextLinkFactory {
 
     private final static Logger log = LoggerFactory.getLogger(RichTextLinkFactoryImpl.class);
 
-    private Model<Node> nodeModel;
+    private final Model<Node> nodeModel;
     private final NodeFactory nodeFactory;
 
     private transient Set<String> links = null;
@@ -49,7 +49,7 @@ public class RichTextLinkFactoryImpl implements RichTextLinkFactory {
     }
 
     @Override
-    public RichTextLink loadLink(String uuid) throws RichTextException {
+    public RichTextLink loadLink(final String uuid) throws RichTextException {
         if (StringUtil.isEmpty(uuid)) {
             throw new IllegalArgumentException("Link path is empty");
         }
@@ -57,7 +57,7 @@ public class RichTextLinkFactoryImpl implements RichTextLinkFactory {
         try {
             final Model<Node> model = nodeFactory.getNodeModelByIdentifier(uuid);
             return new RichTextLink(model, uuid);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             throw new RichTextException("Rich text link factory for node '" + JcrUtils.getNodePathQuietly(node) + "'"
                     + " cannot find linked node with UUID '" + uuid + "'", e);
         }
@@ -78,23 +78,23 @@ public class RichTextLinkFactoryImpl implements RichTextLinkFactory {
             FacetUtil.createFacet(node, name, targetNode);
             final String targetUuid = targetNode.getIdentifier();
             return new RichTextLink(targetModel, targetUuid);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             throw new RichTextException("Could not create link", e);
         }
     }
 
     @Override
-    public boolean isValid(Model<Node> targetModel) {
+    public boolean isValid(final Model<Node> targetModel) {
         if (targetModel == null) {
             return false;
         }
-        Node node = targetModel.get();
+        final Node node = targetModel.get();
         if (node == null) {
             return false;
         }
         try {
             return node.isNodeType(JcrConstants.MIX_REFERENCEABLE);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.error(e.getMessage());
             return false;
         }
@@ -113,7 +113,7 @@ public class RichTextLinkFactoryImpl implements RichTextLinkFactory {
                         links.add(uuid);
                     }
                 }
-            } catch (RepositoryException ex) {
+            } catch (final RepositoryException ex) {
                 log.error("Error retrieving links", ex);
             }
         }
@@ -126,14 +126,14 @@ public class RichTextLinkFactoryImpl implements RichTextLinkFactory {
      * @param uuids the current list of link UUIDs
      */
     @Override
-    public void cleanup(Set<String> uuids) {
+    public void cleanup(final Set<String> uuids) {
         try {
             final Set<String> uuidsWithChildFacet = new TreeSet<>();
             final NodeIterator iter = nodeModel.get().getNodes();
             while (iter.hasNext()) {
-                Node child = iter.nextNode();
+                final Node child = iter.nextNode();
                 if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    String uuid = child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                    final String uuid = child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                     if (!uuids.contains(uuid) || uuidsWithChildFacet.contains(uuid)) {
                         child.remove();
                     } else {
@@ -141,7 +141,7 @@ public class RichTextLinkFactoryImpl implements RichTextLinkFactory {
                     }
                 }
             }
-        } catch (RepositoryException ex) {
+        } catch (final RepositoryException ex) {
             log.error("Error removing unused links", ex);
         }
     }
