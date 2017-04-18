@@ -28,6 +28,8 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cms7.services.processor.html.util.JcrUtil.PATH_SEPARATOR;
+
 public class FacetUtil {
 
     private static final Logger log = LoggerFactory.getLogger(FacetUtil.class);
@@ -72,14 +74,15 @@ public class FacetUtil {
             }
         } catch (final RepositoryException e) {
             final String parentNodePath = JcrUtils.getNodePathQuietly(node);
-            final String childNodePath = parentNodePath != null ? parentNodePath + "/" + childNodeName : childNodeName;
+            final String childNodePath = parentNodePath != null ?
+                    parentNodePath + PATH_SEPARATOR + childNodeName : childNodeName;
             log.warn("Cannot get child node '{}'", childNodePath, e);
         }
         return null;
     }
 
     private static boolean isRelativePath(final String childNodeName) {
-        return StringUtils.isNotEmpty(childNodeName) && !StringUtils.startsWith(childNodeName, "/");
+        return StringUtils.isNotEmpty(childNodeName) && !StringUtils.startsWith(childNodeName, PATH_SEPARATOR);
     }
 
     private static String getDocBaseOrNull(final Node node) throws RepositoryException {

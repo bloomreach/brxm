@@ -21,11 +21,15 @@ import java.util.List;
 
 import org.onehippo.cms7.services.processor.richtext.URLEncoder;
 
+import static org.onehippo.cms7.services.processor.html.util.JcrUtil.PATH_SEPARATOR;
+
 /**
  * This class represents an image resource that a rich text field has a reference to.
  * It handles url generation and maintains the facetname attribute.
  */
 public class RichTextImage implements Serializable {
+
+    public static final String DOCUMENT_PATH_PLACEHOLDER = "{_document}";
 
     private String path;
     private String name;
@@ -80,7 +84,7 @@ public class RichTextImage implements Serializable {
 
     public String getFacetSelectPath() {
         if (selectedResourceDefinition != null) {
-            return name + "/{_document}/" + selectedResourceDefinition;
+            return name + PATH_SEPARATOR + DOCUMENT_PATH_PLACEHOLDER + PATH_SEPARATOR + selectedResourceDefinition;
         } else {
             return name;
         }
@@ -88,7 +92,8 @@ public class RichTextImage implements Serializable {
 
     public String getUrl() {
         final String docUrl = "binaries" + path;
-        final String url = selectedResourceDefinition != null ? docUrl + "/" + selectedResourceDefinition : docUrl;
+        final String url = selectedResourceDefinition != null ?
+                docUrl + PATH_SEPARATOR + selectedResourceDefinition : docUrl;
         return encodeUrl(url);
     }
 
@@ -103,9 +108,5 @@ public class RichTextImage implements Serializable {
     public String getPath() {
         return path;
     }
-//    public Model<Node> getTarget() {
-//         return new JcrNodeModel(path).getParentModel();
-//        return null;
-//    }
 
 }
