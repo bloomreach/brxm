@@ -113,6 +113,6 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
 
     @Override
     public boolean validateValue(final FieldValue value) {
-        return validateSingleRequired(value);
+        return !isRequired() || validateSingleRequired(value);
     }
 }

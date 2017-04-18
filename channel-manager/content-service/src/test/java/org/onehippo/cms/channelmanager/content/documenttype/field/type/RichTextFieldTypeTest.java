@@ -46,6 +46,7 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replay;
 import static org.powermock.api.easymock.PowerMock.replayAll;
@@ -236,6 +237,40 @@ public class RichTextFieldTypeTest {
                     assertThat(fieldValues.size(), equalTo(1));
                     assertThat(fieldValues.get(0).getValue(), equalTo("<p>value</p>"));
                 });
+    }
+
+    @Test
+    public void validateRequired() {
+        type.addValidator(FieldType.Validator.REQUIRED);
+
+        assertTrue(type.isRequired());
+        assertTrue(type.validate(Collections.singletonList(new FieldValue("test"))));
+        assertFalse(type.validate(Collections.singletonList(new FieldValue(""))));
+        assertFalse(type.validate(Arrays.asList(new FieldValue("test"), new FieldValue(""))));
+    }
+
+    @Test
+    public void validateNotRequired() {
+        assertFalse(type.isRequired());
+        assertTrue(type.validate(Collections.singletonList(new FieldValue("test"))));
+        assertTrue(type.validate(Collections.singletonList(new FieldValue(""))));
+        assertTrue(type.validate(Arrays.asList(new FieldValue("test"), new FieldValue(""))));
+    }
+
+    @Test
+    public void validateRequiredValue() {
+        type.addValidator(FieldType.Validator.REQUIRED);
+
+        assertTrue(type.isRequired());
+        assertTrue(type.validateValue(new FieldValue("test")));
+        assertFalse(type.validateValue(new FieldValue("")));
+    }
+
+    @Test
+    public void validateNotRequiredValue() {
+        assertFalse(type.isRequired());
+        assertTrue(type.validateValue(new FieldValue("test")));
+        assertTrue(type.validateValue(new FieldValue("")));
     }
 }
 
