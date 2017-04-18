@@ -17,7 +17,6 @@ package org.onehippo.cms7.services.processor.richtext;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
 import org.onehippo.cms7.services.processor.html.model.HtmlProcessorModel;
@@ -33,7 +32,7 @@ public class RichTextNodeProcessor {
         final JcrNodeFactory nodeFactory = JcrNodeFactory.of(node);
         final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of(processorId);
         final HtmlProcessorModel processorModel = new RichTextProcessorModel(htmlModel, nodeModel, processorFactory,
-                                                                             nodeFactory);
+                nodeFactory);
         return processorModel.get();
     }
 
@@ -43,7 +42,7 @@ public class RichTextNodeProcessor {
         final Model<String> htmlModel = Model.of("");
         final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of(processorId);
         final HtmlProcessorModel processorModel = new RichTextProcessorModel(htmlModel, nodeModel, processorFactory,
-                                                                             nodeFactory);
+                nodeFactory);
         processorModel.set(html);
         return htmlModel.get();
     }
