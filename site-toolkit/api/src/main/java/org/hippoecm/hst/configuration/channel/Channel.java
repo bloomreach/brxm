@@ -485,7 +485,7 @@ public class Channel implements Serializable {
         return "Channel{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", editable=" + channelSettingsEditable +
+                ", channelSettingsEditable=" + channelSettingsEditable +
                 ", type='" + type + '\'' +
                 ", hostname='" + hostname + '\'' +
                 ", contextPath='" + contextPath + '\'' +
@@ -515,7 +515,7 @@ public class Channel implements Serializable {
                 ", lastModifiedBy='" + lastModifiedBy + '\'' +
                 ", lockedOn=" + lockedOn +
                 ", lastModified=" + lastModified +
+                ", branches=" + branches +
                 '}';
     }
-
 }

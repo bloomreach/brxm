@@ -148,6 +148,7 @@ public class ChannelPropertyMapper {
                 }
             }
         }
+
         // TODO (meggermont): get branches from somewhere
         if (true) {
             final Set<String> projectIds = Stream.of("foo", "bar").collect(Collectors.toSet());
