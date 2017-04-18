@@ -22,11 +22,13 @@ public interface Tag {
 
     String getName();
 
-    String getAttribute(String name);
+    String getAttribute(final String name);
 
-    void addAttribute(String name, String value);
+    void addAttribute(final String name, final String value);
 
-    void removeAttribute(String name);
+    boolean hasAttribute(final String name);
+
+    void removeAttribute(final String name);
 
     static Tag from(final TagNode tagNode) {
         return tagNode != null ? new TagNodeDelegate(tagNode) : null;
@@ -57,6 +59,11 @@ public interface Tag {
         @Override
         public void addAttribute(final String name, final String value) {
             tagNode.addAttribute(name, value);
+        }
+
+        @Override
+        public boolean hasAttribute(final String name) {
+            return tagNode.hasAttribute(name);
         }
 
         @Override

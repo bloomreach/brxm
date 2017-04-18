@@ -31,10 +31,9 @@ import static org.onehippo.cms7.services.processor.richtext.image.RichTextImage.
 
 public class ImageVisitor extends FacetVisitor {
 
-    private static final String TAG_IMG = "img";
-    private static final String ATTRIBUTE_SRC = "src";
-    private static final String ATTRIBUTE_DATA_UUID = "data-uuid";
-    private static final String ATTRIBUTE_DATA_TYPE = "data-type";
+    public static final String TAG_IMG = "img";
+    public static final String ATTRIBUTE_SRC = "src";
+    public static final String ATTRIBUTE_DATA_TYPE = "data-type";
 
     private final URLProvider imageURLProvider;
 
@@ -82,9 +81,7 @@ public class ImageVisitor extends FacetVisitor {
     }
 
     private void convertImageForStorage(final Tag tag) throws RepositoryException {
-        String src = tag.getAttribute(ATTRIBUTE_SRC);
-
-        if (StringUtils.isEmpty(src)) {
+        if (!tag.hasAttribute(ATTRIBUTE_SRC) || StringUtils.isEmpty(tag.getAttribute(ATTRIBUTE_SRC))) {
             return;
         }
 
@@ -101,7 +98,8 @@ public class ImageVisitor extends FacetVisitor {
         if (name == null) {
             return;
         }
-        src = name;
+
+        String src = name;
         if (type != null) {
             src += PATH_SEPARATOR + DOCUMENT_PATH_PLACEHOLDER + PATH_SEPARATOR + type;
         }
