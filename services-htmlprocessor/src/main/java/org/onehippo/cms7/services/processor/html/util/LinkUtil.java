@@ -26,7 +26,7 @@ public class LinkUtil {
      * @return true if the href value is an external link. The default internal link href value should not be handled
      * as external link.
      */
-    public static boolean isExternalLink(String href) {
+    public static boolean isExternalLink(final String href) {
         return !INTERNAL_LINK_DEFAULT_HREF.equals(href) && EXTERNAL_LINK_HREF_PATTERN.matcher(href).find();
     }
 }

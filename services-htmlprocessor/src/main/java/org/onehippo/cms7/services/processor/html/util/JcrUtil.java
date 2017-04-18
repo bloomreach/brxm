@@ -34,7 +34,7 @@ public class JcrUtil {
      * @throws ItemNotFoundException
      * @throws RepositoryException
      */
-    public static Item getPrimaryItem(Node node) throws ItemNotFoundException, RepositoryException {
+    public static Item getPrimaryItem(final Node node) throws ItemNotFoundException, RepositoryException {
         NodeType primaryType = node.getPrimaryNodeType();
         String primaryItemName = primaryType.getPrimaryItemName();
         while (primaryItemName == null && !JcrConstants.NT_BASE.equals(primaryType.getName())) {

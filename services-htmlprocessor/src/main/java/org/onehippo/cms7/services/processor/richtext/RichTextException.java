@@ -17,11 +17,11 @@ package org.onehippo.cms7.services.processor.richtext;
 
 public class RichTextException extends Exception {
 
-    public RichTextException(String message) {
+    public RichTextException(final String message) {
         super(message);
     }
 
-    public RichTextException(String message, Throwable cause) {
+    public RichTextException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

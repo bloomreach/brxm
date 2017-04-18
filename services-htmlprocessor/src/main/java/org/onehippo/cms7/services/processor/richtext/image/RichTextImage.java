@@ -45,7 +45,7 @@ public class RichTextImage implements Serializable {
         return resourceDefinitions;
     }
 
-    public void setResourceDefinitions(List<String> resourceDefinitions) {
+    public void setResourceDefinitions(final List<String> resourceDefinitions) {
         this.resourceDefinitions = resourceDefinitions;
         if (resourceDefinitions.size() == 0) {
             this.selectedResourceDefinition = null;
@@ -58,11 +58,11 @@ public class RichTextImage implements Serializable {
         return selectedResourceDefinition;
     }
 
-    public void setSelectedResourceDefinition(String selectedResourceDefinition) {
+    public void setSelectedResourceDefinition(final String selectedResourceDefinition) {
         this.selectedResourceDefinition = selectedResourceDefinition;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -87,8 +87,8 @@ public class RichTextImage implements Serializable {
     }
 
     public String getUrl() {
-        String docUrl = "binaries" + path;
-        String url = selectedResourceDefinition != null ? docUrl + "/" + selectedResourceDefinition : docUrl;
+        final String docUrl = "binaries" + path;
+        final String url = selectedResourceDefinition != null ? docUrl + "/" + selectedResourceDefinition : docUrl;
         return encodeUrl(url);
     }
 

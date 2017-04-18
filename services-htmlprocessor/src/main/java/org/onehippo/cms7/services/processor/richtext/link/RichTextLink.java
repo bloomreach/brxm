@@ -23,10 +23,10 @@ import org.onehippo.cms7.services.processor.html.model.Model;
 
 public class RichTextLink implements Serializable {
 
-    private Model<Node> model;
+    private final Model<Node> model;
     private String uuid;
 
-    public RichTextLink(Model<Node> model, String uuid) {
+    public RichTextLink(final Model<Node> model, final String uuid) {
         this.model = model;
         this.uuid = uuid;
     }
@@ -39,7 +39,7 @@ public class RichTextLink implements Serializable {
         return uuid;
     }
 
-    public void setUuid(String uuid) {
+    public void setUuid(final String uuid) {
         this.uuid = uuid;
     }
 
