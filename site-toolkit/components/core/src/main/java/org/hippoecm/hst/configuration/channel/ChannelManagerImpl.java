@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -565,7 +565,7 @@ public class ChannelManagerImpl implements ChannelManager {
         }
 
         ChannelPropertyMapper.saveChannel(
-                configRoot.getNode(HstNodeTypes.NODENAME_HST_CHANNELS + "/" + channel.getId()), channel);
+                configRoot.getSession().getNode(channel.getChannelPath()), channel);
     }
 
     /**

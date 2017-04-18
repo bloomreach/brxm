@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,7 +31,6 @@ import javax.jcr.nodetype.NodeType;
 import com.google.common.base.Optional;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -97,6 +95,11 @@ public class SiteMapHelper extends AbstractHelper {
     public HstSiteMapItem getConfigObject(final String itemId, final Mount mount) {
         final HstSite site = mount.getHstSite();
         return getSiteMapItem(site.getSiteMap(), itemId);
+    }
+
+    @Override
+    protected String getNodeType() {
+        return NODETYPE_HST_SITEMAPITEM;
     }
 
     public void update(final SiteMapItemRepresentation siteMapItem, final boolean reApplyPrototype) throws RepositoryException {
@@ -542,34 +545,6 @@ public class SiteMapHelper extends AbstractHelper {
             // valid!
             return;
         }
-    }
-
-    @Override
-    protected String buildXPathQueryLockedNodesForUsers(final String previewConfigurationPath,
-                                                        final List<String> userIds) {
-        if (userIds.isEmpty()) {
-            throw new IllegalArgumentException("List of user IDs cannot be empty");
-        }
-
-        StringBuilder xpath = new StringBuilder("/jcr:root");
-        xpath.append(ISO9075.encodePath(previewConfigurationPath));
-        xpath.append("//element(*,");
-        xpath.append(NODETYPE_HST_SITEMAPITEM);
-        xpath.append(")[");
-
-        String concat = "";
-        for (String userId : userIds) {
-            xpath.append(concat);
-            xpath.append('@');
-            xpath.append(GENERAL_PROPERTY_LOCKED_BY);
-            xpath.append(" = '");
-            xpath.append(userId);
-            xpath.append("'");
-            concat = " or ";
-        }
-        xpath.append("]");
-
-        return xpath.toString();
     }
 
     private String getSiteMapPathPrefixPart(final Node siteMapNode) throws RepositoryException {

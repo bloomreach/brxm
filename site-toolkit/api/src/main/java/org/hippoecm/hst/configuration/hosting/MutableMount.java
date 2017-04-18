@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
-import org.hippoecm.hst.configuration.channel.Channel;
-import org.hippoecm.hst.configuration.channel.ChannelInfo;
-
 /**
  * Mount extension that decouples channel info retrieval from the mount service construction.
  * It is only safe to use the methods that are exposed while the mount service is built;
@@ -25,23 +22,6 @@ import org.hippoecm.hst.configuration.channel.ChannelInfo;
  */
 public interface MutableMount extends Mount {
 
-    /**
-     * Set the channel info for the mount.  The info must be constant,
-     * i.e. it must always return the same values.
-     */
-    void setChannelInfo(ChannelInfo info, ChannelInfo previewInfo);
-
-    /**
-     * Sets the {@link Channel} info for this {@link Mount}. If the  {@link Mount} impl does not support
-     * {@link #setChannel(Channel, Channel)}, it can
-     * throw an {@link UnsupportedOperationException}
-     * @param channel the channel to set, not allowed to be <code>null</code>
-     * @param previewChannel the channel to set, not allowed to be <code>null</code>. if there is no preview, the
-     *                       <code>previewChannel</code> is the same as <code>channel</code>
-     * @throws  {@link UnsupportedOperationException} when the implementation does not support to set a {@link Channel} and {@link IllegalArgumentException} when <code>channel</code> is <code>null</code>
-     */
-    void setChannel(Channel channel, Channel previewChannel) throws UnsupportedOperationException;
-    
     /**
      * 
      * @param mount the {@link MutableMount} to add

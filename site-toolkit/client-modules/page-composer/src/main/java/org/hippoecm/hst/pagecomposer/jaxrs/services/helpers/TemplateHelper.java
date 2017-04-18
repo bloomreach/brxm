@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_TEMPLATES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_TEMPLATE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_TEMPLATES;
 
 public class TemplateHelper extends AbstractHelper {
@@ -44,6 +45,11 @@ public class TemplateHelper extends AbstractHelper {
     @Override
     public <T> T getConfigObject(final String itemId, final Mount mount) {
         throw new UnsupportedOperationException("not supported");
+    }
+
+    @Override
+    protected String getNodeType() {
+        return NODETYPE_HST_TEMPLATE;
     }
 
     /**

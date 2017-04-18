@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,11 @@ public class ContainerItemHelper extends AbstractHelper {
     public HstComponentConfiguration getConfigObject(final String itemId, final Mount mount) {
         final HstSite site = mount.getHstSite();
         return getHstComponentConfiguration(site.getComponentsConfiguration(), itemId);
+    }
+
+    @Override
+    protected String getNodeType() {
+        return NODETYPE_HST_CONTAINERITEMCOMPONENT;
     }
 
     /**
@@ -166,9 +171,9 @@ public class ContainerItemHelper extends AbstractHelper {
     }
 
     private static Node getContainerNode(final Node containerItem) throws RepositoryException, ClientException {
-        if (!containerItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+        if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
             throw new ClientException(String.format("Expected node of type '%s' but was of type '%s'",
-                HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT, containerItem.getPrimaryNodeType().getName()),
+                NODETYPE_HST_CONTAINERITEMCOMPONENT, containerItem.getPrimaryNodeType().getName()),
                 ClientError.INVALID_NODE_TYPE);
         }
         Node container = findContainerNode(containerItem);

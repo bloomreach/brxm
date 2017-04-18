@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ public class Channel implements Serializable {
 
     private String id;
     private String name;
+    private boolean channelSettingsEditable;
     private String type;
     private String hostname;
     private String contextPath;
@@ -96,6 +97,7 @@ public class Channel implements Serializable {
     public Channel(final Channel channel) {
         id = channel.id;
         name = channel.name;
+        channelSettingsEditable = channel.channelSettingsEditable;
         type = channel.type;
         hostname = channel.hostname;
         contextPath = channel.contextPath;
@@ -148,6 +150,14 @@ public class Channel implements Serializable {
         }
 
         this.id = id;
+    }
+
+    public boolean isChannelSettingsEditable() {
+        return channelSettingsEditable;
+    }
+
+    public void setChannelSettingsEditable(final boolean channelSettingsEditable) {
+        this.channelSettingsEditable = channelSettingsEditable;
     }
 
     public String getContentRoot() {
@@ -315,7 +325,7 @@ public class Channel implements Serializable {
         return workspaceExists;
     }
 
-    public void setWorkSpaceExists(final boolean workspaceExists) {
+    public void setWorkspaceExists(final boolean workspaceExists) {
         this.workspaceExists = workspaceExists;
     }
 
@@ -439,11 +449,13 @@ public class Channel implements Serializable {
         }
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (channelSettingsEditable ? 1 : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (hostname != null ? hostname.hashCode() : 0);
         result = 31 * result + (contextPath != null ? contextPath.hashCode() : 0);
         result = 31 * result + (cmsPreviewPrefix != null ? cmsPreviewPrefix.hashCode() : 0);
         result = 31 * result + (mountPath != null ? mountPath.hashCode() : 0);
+        result = 31 * result + (channelPath != null ? channelPath.hashCode() : 0);
         result = 31 * result + (url != null ? url.hashCode() : 0);
         result = 31 * result + (hstMountPoint != null ? hstMountPoint.hashCode() : 0);
         result = 31 * result + (hstConfigPath != null ? hstConfigPath.hashCode() : 0);
@@ -454,18 +466,23 @@ public class Channel implements Serializable {
         result = 31 * result + (mountId != null ? mountId.hashCode() : 0);
         result = 31 * result + (siteMapId != null ? siteMapId.hashCode() : 0);
         result = 31 * result + (locale != null ? locale.hashCode() : 0);
+        result = 31 * result + (previewHstConfigExists ? 1 : 0);
+        result = 31 * result + (workspaceExists ? 1 : 0);
+        result = 31 * result + (hasCustomProperties ? 1 : 0);
+        result = 31 * result + (deletable ? 1 : 0);
         result = 31 * result + (changedBySet != null ? changedBySet.hashCode() : 0);
         result = 31 * result + (defaultDevice != null ? defaultDevice.hashCode() : 0);
         result = 31 * result + (devices != null ? devices.hashCode() : 0);
+        result = 31 * result + (viewportMap != null ? viewportMap.hashCode() : 0);
         result = 31 * result + (isPreview ? 1 : 0);
         result = 31 * result + (channelNodeLockedBy != null ? channelNodeLockedBy.hashCode() : 0);
         result = 31 * result + (lastModifiedBy != null ? lastModifiedBy.hashCode() : 0);
         result = 31 * result + (lockedOn != null ? lockedOn.hashCode() : 0);
         result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0);
+        result = 31 * result + hashCode;
         hashCode = result;
         return hashCode;
     }
-
 
     public boolean equals(Object other) {
         if (other == this) {
@@ -484,28 +501,40 @@ public class Channel implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder b = new StringBuilder();
-
-        b.append("Channel{");
-        b.append("id=").append(id);
-        b.append(",name=").append(name);
-        b.append(",type=").append(type);
-        b.append(",url=").append(url);
-        b.append(",hstConfigPath=").append(hstConfigPath);
-        b.append(",contentRoot=").append(contentRoot);
-        b.append(",locale=").append(locale);
-        b.append(",contextPath=").append(contextPath);
-        b.append(",cmsPreviewPrefix=").append(cmsPreviewPrefix);
-        b.append(",mountPath=").append(mountPath);
-        b.append(",changedBySet=").append(changedBySet);
-        b.append(",devices=").append(devices);
-        b.append(",defaultDevice=").append(defaultDevice);
-        b.append(",isPreview=").append(isPreview);
-        if (channelNodeLockedBy != null) {
-            b.append(",lockedBy=").append(channelNodeLockedBy);
-        }
-        b.append('}');
-
-        return b.toString();
+        return "Channel{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", editable=" + channelSettingsEditable +
+                ", type='" + type + '\'' +
+                ", hostname='" + hostname + '\'' +
+                ", contextPath='" + contextPath + '\'' +
+                ", cmsPreviewPrefix='" + cmsPreviewPrefix + '\'' +
+                ", mountPath='" + mountPath + '\'' +
+                ", channelPath='" + channelPath + '\'' +
+                ", url='" + url + '\'' +
+                ", hstMountPoint='" + hstMountPoint + '\'' +
+                ", hstConfigPath='" + hstConfigPath + '\'' +
+                ", contentRoot='" + contentRoot + '\'' +
+                ", composerModeEnabled=" + composerModeEnabled +
+                ", properties=" + properties +
+                ", channelInfoClassName='" + channelInfoClassName + '\'' +
+                ", mountId='" + mountId + '\'' +
+                ", siteMapId='" + siteMapId + '\'' +
+                ", locale='" + locale + '\'' +
+                ", previewHstConfigExists=" + previewHstConfigExists +
+                ", workspaceExists=" + workspaceExists +
+                ", hasCustomProperties=" + hasCustomProperties +
+                ", deletable=" + deletable +
+                ", changedBySet=" + changedBySet +
+                ", defaultDevice='" + defaultDevice + '\'' +
+                ", devices=" + devices +
+                ", viewportMap=" + viewportMap +
+                ", isPreview=" + isPreview +
+                ", channelNodeLockedBy='" + channelNodeLockedBy + '\'' +
+                ", lastModifiedBy='" + lastModifiedBy + '\'' +
+                ", lockedOn=" + lockedOn +
+                ", lastModified=" + lastModified +
+                '}';
     }
+
 }

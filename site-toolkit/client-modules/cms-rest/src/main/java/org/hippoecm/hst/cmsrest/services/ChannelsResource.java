@@ -1,5 +1,5 @@
 /*
-*  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.Properties;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.rest.ChannelService;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
 import org.slf4j.Logger;
@@ -47,6 +48,12 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             if (!Mount.PREVIEW_NAME.equals(mount.getType())) {
                 log.debug("Skipping non preview mount '{}'. This can be for example the 'composer' auto augmented mount.",
                         mount.toString());
+                continue;
+            }
+            String requestContextPath = RequestContextProvider.get().getServletRequest().getContextPath();
+            if (mount.getContextPath() == null || !mount.getContextPath().equals(requestContextPath)) {
+                log.debug("Skipping mount '{}' because it can only be rendered for webapp '{}' and not for webapp '{}'",
+                        mount.toString(), mount.getContextPath(), requestContextPath);
                 continue;
             }
             final Channel channel = mount.getChannel();

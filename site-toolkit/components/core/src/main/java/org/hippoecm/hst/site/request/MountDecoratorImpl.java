@@ -89,6 +89,11 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        public boolean hasNoChannelInfo() {
+            return delegatee.hasNoChannelInfo();
+        }
+
+        @Override
         @Deprecated
         public String getCanonicalContentPath() {
             return delegatee.getContentPath();
@@ -180,6 +185,7 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        @Deprecated
         public String getChannelPath() {
             if(delegatee instanceof ContextualizableMount) {
                 return  ((ContextualizableMount)delegatee).getPreviewChannelPath();

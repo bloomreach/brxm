@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,7 +53,9 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_IS_SITE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_NOCHANNELINFO;
 
 public class MountService implements ContextualizableMount, MutableMount {
 
@@ -76,20 +78,6 @@ public class MountService implements ContextualizableMount, MutableMount {
      * The virtual host of where this {@link Mount} belongs to
      */
     private VirtualHost virtualHost;
-
-    private String channelPath;
-
-    private String previewChannelPath;
-
-    /**
-     * The {@link Channel} to which this {@link Mount} belongs
-     */
-    private Channel channel;
-
-    /**
-     * The preview {@link Channel} for this {@link Mount}
-     */
-    private Channel previewChannel;
 
     /**
      * The parent of this {@link Mount} or null when this {@link Mount} is the root
@@ -156,6 +144,12 @@ public class MountService implements ContextualizableMount, MutableMount {
      * The path where the {@link Mount} is pointing to
      */
     private String mountPoint;
+
+    /**
+     * If a {@link Mount} has 'noChannelInfo=true', it means that it is not visible in the channel manager as channel.
+     * (For example needed to skip rest endpoints that do point to an hst site because it uses a sitemap)
+     */
+    private boolean noChannelInfo;
 
     /**
      * <code>true</code> (default) when this {@link Mount} is used as a site. False when used only as content mount point and possibly a namedPipeline
@@ -225,8 +219,6 @@ public class MountService implements ContextualizableMount, MutableMount {
     private String [] defaultResourceBundleIds;
 
     private String formLoginPage;
-    private ChannelInfo channelInfo;
-    private ChannelInfo previewChannelInfo;
 
     private String[] defaultSiteMapItemHandlerIds;
 
@@ -459,6 +451,12 @@ public class MountService implements ContextualizableMount, MutableMount {
             }
         }
 
+        if (mount.getValueProvider().hasProperty(MOUNT_PROPERTY_NOCHANNELINFO)) {
+            noChannelInfo = mount.getValueProvider().getBoolean(MOUNT_PROPERTY_NOCHANNELINFO);
+        } else if(parent != null) {
+            noChannelInfo = ((MountService)parent).noChannelInfo;
+        }
+
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_AUTHENTICATED)) {
             this.authenticated = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_AUTHENTICATED);
         } else if (parent != null){
@@ -527,16 +525,10 @@ public class MountService implements ContextualizableMount, MutableMount {
             defaultSiteMapItemHandlerIds = parent.getDefaultSiteMapItemHandlerIds();
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH)) {
-            channelPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH);
-            previewChannelPath = channelPath;
-            if (hstNodeLoadingCache.getNode(channelPath + "-preview") != null) {
-                previewChannelPath = channelPath + "-preview";
-            }
-            if (Mount.PREVIEW_NAME.equals(type)) {
-                // explicit PREVIEW
-                channelPath = previewChannelPath;
-            }
+        if (mount.getValueProvider().hasProperty(MOUNT_PROPERTY_CHANNELPATH)) {
+            log.warn("Property '{}' has been deprecated and is not used any more but still present on '{}'. " +
+                    "Property will be ignored.",
+                    MOUNT_PROPERTY_CHANNELPATH, mount.getValueProvider().getPath());
         }
 
         try {
@@ -587,11 +579,11 @@ public class MountService implements ContextualizableMount, MutableMount {
                 long start = System.currentTimeMillis();
                 if (Mount.PREVIEW_NAME.equals(type)) {
                     // explicit preview
-                    previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
+                    previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
                     hstSite = previewHstSite;
                 } else {
-                    hstSite = HstSiteService.createLiveSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
-                    previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
+                    hstSite = HstSiteService.createLiveSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
+                    previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
                 }
 
                 assertContentPathNotEmpty(mount, contentPath);
@@ -716,6 +708,11 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     public String getMountPoint() {
         return mountPoint;
+    }
+
+    @Override
+    public boolean hasNoChannelInfo() {
+        return noChannelInfo;
     }
 
     public boolean isMapped() {
@@ -966,58 +963,59 @@ public class MountService implements ContextualizableMount, MutableMount {
     }
 
     @Override
+    @Deprecated
     public String getChannelPath() {
-        return channelPath;
+        Channel channel = getChannel();
+        if (channel == null) {
+            return null;
+        }
+        return channel.getChannelPath();
     }
 
     @Override
     public Channel getChannel() {
-        return channel;
+        HstSite hstSite = getHstSite();
+        if (hstSite == null) {
+            return null;
+        }
+        return hstSite.getChannel();
     }
 
     @Override
+    @Deprecated
     public String getPreviewChannelPath(){
-        return previewChannelPath;
+        Channel previewChannel = getPreviewChannel();
+        if (previewChannel == null) {
+            return null;
+        }
+        return previewChannel.getChannelPath();
     }
 
     @Override
     public Channel getPreviewChannel() {
-        return previewChannel;
+        HstSite hstSite = getPreviewHstSite();
+        if (hstSite == null) {
+            return null;
+        }
+        return hstSite.getChannel();
     }
 
     @SuppressWarnings("unchecked")
     public <T extends ChannelInfo> T getChannelInfo() {
-        return (T) channelInfo;
+        HstSite hstSite = getHstSite();
+        if (hstSite == null) {
+            return null;
+        }
+        return hstSite.getChannelInfo();
     }
 
     @Override
     public <T extends ChannelInfo> T getPreviewChannelInfo() {
-        return (T) previewChannelInfo;
-    }
-
-    public void setChannelInfo(final ChannelInfo channelInfo, final ChannelInfo previewChannelInfo) {
-        if (channelInfo == null || previewChannelInfo == null) {
-            throw new IllegalArgumentException("ChannelInfo to set is not allowed to be null");
+        HstSite hstSite = getPreviewHstSite();
+        if (hstSite == null) {
+            return null;
         }
-        log.info("Setting on mount [{}]  live channelInfo [{}]", toString(), channelInfo.toString());
-        log.info("Setting on mount [{}]  preview channelInfo [{}]", toString(), channelInfo.toString());
-        this.channelInfo = channelInfo;
-        this.previewChannelInfo = previewChannelInfo;
-    }
-
-    @Override
-    public void setChannel(final Channel channel, final Channel previewChannel) throws UnsupportedOperationException {
-        if (channel == null || previewChannel == null) {
-            throw new IllegalArgumentException("Channel to set is not allowed to be null");
-        }
-        if (log.isInfoEnabled()) {
-            // first check isInfoEnabled because channel.toString() and previewChannel.toString() populate the
-            // ChannelLazyLoadingChangedBySet
-            log.info("Setting on mount [{}]  live channel [{}]", toString(), channel.toString());
-            log.info("Setting on mount [{}]  preview channel [{}]", toString(), previewChannel.toString());
-        }
-        this.channel = channel;
-        this.previewChannel = previewChannel;
+        return hstSite.getChannelInfo();
     }
 
     @Override

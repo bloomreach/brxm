@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,8 @@ import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl.PREVIEW_SUFFIX;
 
 public class ChannelServiceImpl implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
@@ -198,6 +200,12 @@ public class ChannelServiceImpl implements ChannelService {
         if (!StringUtils.equals(channel.getId(), channelId)) {
             throw new ChannelException("Channel object does not contain the correct id, that should be " + channelId);
         }
+
+        if (!channel.isChannelSettingsEditable()) {
+            throw new ChannelException("Channel object is not editable because not part of preview configuration or " +
+                    "not part of the HST workspace");
+        }
+
         final String currentHostGroupName = getCurrentVirtualHost().getHostGroupName();
 
         this.channelManager.save(currentHostGroupName, channel);
@@ -315,7 +323,7 @@ public class ChannelServiceImpl implements ChannelService {
      */
     private void removeChannelNodes(final Session session, final String nodePath) throws RepositoryException {
         session.removeItem(nodePath);
-        final String previewNodePath = nodePath + HstConfigurationServiceImpl.PREVIEW_SUFFIX;
+        final String previewNodePath = nodePath + PREVIEW_SUFFIX;
         if (session.nodeExists(previewNodePath)) {
             session.removeItem(previewNodePath);
         }

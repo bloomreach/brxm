@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,6 +40,8 @@ import org.hippoecm.hst.core.parameters.HstValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.channel.ChannelException.Type.CHANNEL_LOCKED;
 import static org.hippoecm.hst.configuration.channel.ChannelException.Type.CHANNEL_OUT_OF_SYNC;
 
@@ -50,13 +52,32 @@ public class ChannelPropertyMapper {
     private ChannelPropertyMapper() {
     }
 
-    public static Channel readChannel(HstNode channelNode) {
-        return readChannel(channelNode, channelNode.getName());
+    public static Channel readChannel(final HstNode channelNode, final String configurationPath) {
+        // the hst:configuration node name is unique, hence take the parent (and possibly the parent of the workspace node)
+        final String channelId;
+        final boolean channelSettingsEditable;
+        if (NODENAME_HST_WORKSPACE.equals(channelNode.getParent().getNodeTypeName())) {
+            HstNode configurationNode = channelNode.getParent().getParent();
+            channelId = configurationNode.getName();
+            if (configurationNode.getValueProvider().getPath().equals(configurationPath)) {
+                log.debug("'{}' node is a child node of '{}' and is not inherited but directly below '{}' hence " +
+                        "the channel settings are channelSettingsEditable.", NODENAME_HST_CHANNEL, NODENAME_HST_WORKSPACE, configurationPath);
+                channelSettingsEditable = true;
+            } else {
+                channelSettingsEditable = false;
+            }
+        } else {
+            channelId = channelNode.getParent().getName();
+            // channel not in workspace, hence not channelSettingsEditable
+            channelSettingsEditable = false;
+        }
+        return readChannel(channelNode, channelId, channelSettingsEditable);
     }
 
-    static Channel readChannel(HstNode channelNode, String channelId) {
+    static Channel readChannel(final HstNode channelNode, final String channelId, final boolean channelSettingsEditable) {
         Channel channel = new Channel(channelId);
-        channel.setName(channelNode.getName());
+        channel.setName(channelId);
+        channel.setChannelSettingsEditable(channelSettingsEditable);
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME)) {
             channel.setName(channelNode.getValueProvider().getString(HstNodeTypes.CHANNEL_PROPERTY_NAME));
         }

@@ -33,6 +33,7 @@ import javax.jcr.query.QueryResult;
 import com.google.common.collect.Iterables;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
@@ -41,6 +42,7 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
@@ -69,6 +71,8 @@ public abstract class AbstractHelper {
     public abstract <T> T getConfigObject(String id);
 
     public abstract <T> T getConfigObject(final String itemId, final Mount mount);
+
+    protected abstract String getNodeType();
 
     protected void removeProperty(Node node, String name) throws RepositoryException {
         if (node.hasProperty(name)) {
@@ -320,12 +324,33 @@ public abstract class AbstractHelper {
         return lockedNodesForUsers;
     }
 
-    // to override for helpers that need to be able to publish/discard
     protected String buildXPathQueryLockedNodesForUsers(final String previewConfigurationPath,
                                                         final List<String> userIds) {
-        throw new UnsupportedOperationException("buildXPathQueryLockedNodesForUsers not supported for: " +
-                this.getClass().getName());
+        if (userIds.isEmpty()) {
+            throw new IllegalArgumentException("List of user IDs cannot be empty");
+        }
+
+        StringBuilder xpath = new StringBuilder("/jcr:root");
+        xpath.append(ISO9075.encodePath(previewConfigurationPath));
+        xpath.append("//element(*,");
+        xpath.append(getNodeType());
+        xpath.append(")[");
+
+        String concat = "";
+        for (String userId : userIds) {
+            xpath.append(concat);
+            xpath.append('@');
+            xpath.append(GENERAL_PROPERTY_LOCKED_BY);
+            xpath.append(" = '");
+            xpath.append(userId);
+            xpath.append("'");
+            concat = " or ";
+        }
+        xpath.append("]");
+
+        return xpath.toString();
     }
+
 
     protected void markDeleted(final Node deleted) throws RepositoryException {
         lockHelper.acquireLock(deleted, 0);

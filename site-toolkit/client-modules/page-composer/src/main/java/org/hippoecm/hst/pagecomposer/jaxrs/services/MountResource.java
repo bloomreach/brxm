@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.UserRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ChannelHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
@@ -76,6 +77,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
 
 @Path("/hst:mount/")
@@ -86,6 +88,7 @@ public class MountResource extends AbstractConfigResource {
 
     private static final String DISCARD_ACTION = "discardMount";
 
+    private ChannelHelper channelHelper;
     private SiteMapHelper siteMapHelper;
     private SiteMenuHelper siteMenuHelper;
     private PagesHelper pagesHelper;
@@ -103,6 +106,9 @@ public class MountResource extends AbstractConfigResource {
         this.pagesHelper = pagesHelper;
     }
 
+    public void setChannelHelper(ChannelHelper channelHelper) {
+        this.channelHelper = channelHelper;
+    }
 
     @GET
     @Path("/pagemodel/{pageId}/")
@@ -220,7 +226,7 @@ public class MountResource extends AbstractConfigResource {
             if (editingPreviewSite.hasPreviewConfiguration()) {
                 return ok("Site can be edited now");
             }
-            createPreviewChannelAndConfigurationNode();
+            createPreviewConfiguration();
             ChannelEvent event = new ChannelEvent(
                     ChannelEvent.ChannelEventType.PREVIEW_CREATION,
                     Collections.emptyList(),
@@ -244,15 +250,18 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-    private void createPreviewChannelAndConfigurationNode() throws RepositoryException {
+    private void createPreviewConfiguration() throws RepositoryException {
         String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
-        String previewConfigurationPath = liveConfigurationPath + "-preview";
         Session session = getPageComposerContextService().getRequestContext().getSession();
-        JcrUtils.copy(session, liveConfigurationPath, previewConfigurationPath);
-
-        String liveChannelPath = getPageComposerContextService().getEditingLiveChannelPath();
-        String previewChannelPath = liveChannelPath + "-preview";
-        JcrUtils.copy(session, liveChannelPath, previewChannelPath);
+        if (!session.nodeExists(liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE)) {
+            createMandatoryWorkspaceNodesIfMissing(liveConfigurationPath);
+        }
+        String liveConfigName = StringUtils.substringAfterLast(liveConfigurationPath, "/");
+        Node previewConfigNode = session.getNode(liveConfigurationPath).getParent().addNode(liveConfigName + "-preview", NODETYPE_HST_CONFIGURATION);
+        previewConfigNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, new String[] {"../" + liveConfigName});
+        // TODO if 'liveconfig node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
+        // TODO as well to the preview config, see HSTTWO-3965
+        JcrUtils.copy(session, liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE, previewConfigNode.getPath() + "/" + NODENAME_HST_WORKSPACE);
     }
 
     /**
@@ -333,8 +342,8 @@ public class MountResource extends AbstractConfigResource {
 
             List<String> mainConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
             copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainConfigNodeNamesToPublish);
-            publishChannelChanges(session, userIds);
 
+            channelHelper.publishChanges(userIds);
             siteMapHelper.publishChanges(userIds);
             pagesHelper.publishChanges(userIds);
             siteMenuHelper.publishChanges(userIds);
@@ -514,8 +523,8 @@ public class MountResource extends AbstractConfigResource {
             Session session = requestContext.getSession();
             List<String> mainConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
             copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainConfigNodeNamesToRevert);
-            discardChannelChanges(session, userIds);
 
+            channelHelper.discardChanges(userIds);
             siteMapHelper.discardChanges(userIds);
             pagesHelper.discardChanges(userIds);
             siteMenuHelper.discardChanges(userIds);
@@ -545,6 +554,11 @@ public class MountResource extends AbstractConfigResource {
     }
 
 
+    /**
+     * @deprecated since CMS 12.0 this should not be supported any more since main config nodes are only edited by the
+     * hst config editor for which we will drop support
+     */
+    @Deprecated
     private List<String> findChangedMainConfigNodeNamesForUsers(final Session session, String previewConfigurationPath, List<String> userIds) throws RepositoryException {
         if (userIds.isEmpty()) {
             return Collections.emptyList();
@@ -594,6 +608,11 @@ public class MountResource extends AbstractConfigResource {
         return xpath.toString();
     }
 
+    /**
+     * @deprecated since CMS 12.0 this should not be supported any more since main config nodes are only edited by the
+     * hst config editor for which we will drop support
+     */
+    @Deprecated
     static String buildXPathQueryToFindMainConfigNodesForUsers(String previewConfigurationPath, List<String> userIds) {
         if (userIds.isEmpty()) {
             throw new IllegalArgumentException("List of user IDs cannot be empty");
@@ -618,6 +637,11 @@ public class MountResource extends AbstractConfigResource {
         return xpath.toString();
     }
 
+    /**
+     * @deprecated since CMS 12.0 this should not be supported any more since main config nodes are only edited by the
+     * hst config editor for which we will drop support
+     */
+    @Deprecated
     private void copyChangedMainConfigNodes(final Session session,
                                             final String fromConfig,
                                             final String toConfig,
@@ -657,74 +681,6 @@ public class MountResource extends AbstractConfigResource {
                 fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
             }
         }
-    }
-
-    private void discardChannelChanges(final Session session,
-                                       final List<String> userIds) throws RepositoryException {
-        if (userIds.isEmpty()) {
-            return;
-        }
-        final Channel previewChannel = getPageComposerContextService().getEditingPreviewChannel();
-        if (previewChannel == null) {
-            log.warn("Preview channel null. Cannot discard its changes");
-            return;
-        }
-        if (previewChannel.getChannelNodeLockedBy() == null) {
-            log.debug("Preview channel '{}' is not locked and has thus no changes to discard.", previewChannel.getId());
-            return;
-        }
-        if (!userIds.contains(previewChannel.getChannelNodeLockedBy())) {
-            log.debug("Preview channel '{}' is locked by '{}' but won't be discarded since not present in user id list '{}'.",
-                    new String[]{previewChannel.getId(), previewChannel.getChannelNodeLockedBy(), userIds.toString()});
-            return;
-        }
-        log.info("Discarding changes in channel '{}' for user '{}'", previewChannel.getId(), previewChannel.getChannelNodeLockedBy());
-        final String previewChannelPath = getPageComposerContextService().getEditingPreviewChannelPath();
-        if (previewChannelPath != null && previewChannelPath.endsWith("-preview")) {
-            String liveChannelPath = previewChannelPath.substring(0, previewChannelPath.length() - "-preview".length());
-            copyChannelInfoNodes(session, liveChannelPath, previewChannelPath);
-        }
-    }
-
-    private void publishChannelChanges(final Session session,
-                                       final List<String> userIds) throws RepositoryException {
-        if (userIds.isEmpty()) {
-            return;
-        }
-        final Channel previewChannel = getPageComposerContextService().getEditingPreviewChannel();
-        if (previewChannel == null) {
-            log.warn("Preview channel null. Cannot publish its changes");
-            return;
-        }
-        if (previewChannel.getChannelNodeLockedBy() == null) {
-            log.debug("Preview channel '{}' is not locked and has thus no changes to publish.", previewChannel.getId());
-            return;
-        }
-        if (!userIds.contains(previewChannel.getChannelNodeLockedBy())) {
-            log.debug("Preview channel '{}' is locked by '{}' but won't be published since not present in user id list '{}'.",
-                    new String[]{previewChannel.getId(), previewChannel.getChannelNodeLockedBy(), userIds.toString()});
-            return;
-        }
-        log.info("Publishing changes in channel '{}' for user '{}'", previewChannel.getId(), previewChannel.getChannelNodeLockedBy());
-        final String previewChannelPath = getPageComposerContextService().getEditingPreviewChannelPath();
-        if (previewChannelPath != null && previewChannelPath.endsWith("-preview")) {
-            String liveChannelPath = previewChannelPath.substring(0, previewChannelPath.length() - "-preview".length());
-            copyChannelInfoNodes(session, previewChannelPath, liveChannelPath);
-        }
-    }
-
-    private void copyChannelInfoNodes(final Session session, final String fromConfig, final String toConfig) throws RepositoryException {
-        Node channelToNode = session.getNode(toConfig);
-        channelToNode.remove();
-        Node channelFromNode = session.getNode(fromConfig);
-        if (channelFromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-            channelFromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
-        }
-        if (channelFromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-            channelFromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
-        }
-        channelFromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
-        JcrUtils.copy(session, fromConfig, toConfig);
     }
 
     private void postChannelEvent(final String action, final String liveConfigurationPath, final String previewConfigurationPath, final List<String> contributors) {

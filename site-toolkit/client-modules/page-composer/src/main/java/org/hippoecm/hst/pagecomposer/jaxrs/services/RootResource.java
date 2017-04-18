@@ -1,5 +1,5 @@
 /*
-*  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl.PREVIEW_SUFFIX;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
@@ -175,9 +176,9 @@ public class RootResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(CHANNEL_MANAGER_ADMIN_ROLE)
     public Response deleteChannel(@PathParam("id") String channelId) {
-        if (StringUtils.endsWith(channelId, HstConfigurationServiceImpl.PREVIEW_SUFFIX)) {
+        if (StringUtils.endsWith(channelId, PREVIEW_SUFFIX)) {
             // strip the preview suffix
-            channelId = StringUtils.removeEnd(channelId, HstConfigurationServiceImpl.PREVIEW_SUFFIX);
+            channelId = StringUtils.removeEnd(channelId, PREVIEW_SUFFIX);
         }
 
         try {
