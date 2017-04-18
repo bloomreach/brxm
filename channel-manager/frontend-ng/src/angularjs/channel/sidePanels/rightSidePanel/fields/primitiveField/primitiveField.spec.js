@@ -54,7 +54,6 @@ describe('CompoundField', () => {
     expect($ctrl.name).toBe('test-name');
     expect($ctrl.onFieldFocus).toBe(onFieldFocus);
     expect($ctrl.onFieldBlur).toBe(onFieldBlur);
-    expect($ctrl.textAreaElement).toBeDefined();
   });
 
   it('helps composing unique form field names', () => {

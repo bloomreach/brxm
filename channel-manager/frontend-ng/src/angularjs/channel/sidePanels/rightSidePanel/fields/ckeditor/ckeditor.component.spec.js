@@ -96,7 +96,7 @@ describe('CKEditor Component', () => {
     return onCall.args[1];
   }
 
-  fit('initializes the component', () => {
+  it('initializes the component', () => {
     init();
     expect($ctrl.model.$viewValue).toEqual = '<p>initial value</p>';
     expect($ctrl.name).toEqual('TestField');
@@ -126,7 +126,7 @@ describe('CKEditor Component', () => {
     expect(model.$viewValue).toBe(newValue);
   });
 
-  fit('ckeditor is focused', () => {
+  it('ckeditor is focused', () => {
     init();
     const onEditorFocus = getEventListener('focus');
     spyOn($ctrl.textAreaElement, 'focus');
