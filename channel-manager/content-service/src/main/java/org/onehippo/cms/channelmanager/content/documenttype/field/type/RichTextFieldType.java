@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -33,7 +34,14 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms7.services.processor.richtext.RichTextNodeProcessor;
+import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
+import org.onehippo.cms7.services.processor.html.model.HtmlProcessorModel;
+import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.processor.html.visit.Tag;
+import org.onehippo.cms7.services.processor.html.visit.TagVisitor;
+import org.onehippo.cms7.services.processor.richtext.jcr.JcrNodeFactory;
+import org.onehippo.cms7.services.processor.richtext.model.RichTextProcessorModel;
+import org.onehippo.cms7.services.processor.richtext.visit.ImageVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +49,12 @@ public class RichTextFieldType extends FormattedTextFieldType implements Compoun
 
     private static final Logger log = LoggerFactory.getLogger(RichTextFieldType.class);
 
+    private final RichTextNodeProcessor processor;
+
     public RichTextFieldType() {
         super(CKEditorConfig.DEFAULT_RICH_TEXT_CONFIG);
+
+        processor = new RichTextNodeProcessor("richtext");
     }
 
     @Override
@@ -58,10 +70,9 @@ public class RichTextFieldType extends FormattedTextFieldType implements Compoun
         try {
             final NodeIterator children = node.getNodes(getId());
             final List<FieldValue> values = new ArrayList<>((int)children.getSize());
-            final RichTextNodeProcessor processor = new RichTextNodeProcessor();
             for (final Node child : new NodeIterable(children)) {
                 final String html = JcrUtils.getStringProperty(child, HippoStdNodeType.HIPPOSTD_CONTENT, null);
-                values.add(new FieldValue(processor.read(html, child, "richtext")));
+                values.add(new FieldValue(processor.read(html, child)));
             }
             return values;
         } catch (final RepositoryException e) {
@@ -87,8 +98,69 @@ public class RichTextFieldType extends FormattedTextFieldType implements Compoun
 
     @Override
     public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException {
-        final RichTextNodeProcessor processor = new RichTextNodeProcessor();
-        final String html = processor.write(fieldValue.getValue(), node, "richtext");
+        final String html = processor.write(fieldValue.getValue(), node);
         node.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, html);
+    }
+
+    private static class RichTextNodeProcessor {
+
+        private final String processorId;
+
+        RichTextNodeProcessor(final String processorId) {
+            this.processorId = processorId;
+        }
+
+        String read(final String html, final Node node) {
+            final Model<String> htmlModel = Model.of(html);
+            final Model<Node> nodeModel = Model.of(node);
+            final JcrNodeFactory nodeFactory = JcrNodeFactory.of(node);
+            final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of(processorId);
+            final HtmlProcessorModel processorModel = new RichTextProcessorModel(htmlModel, nodeModel, processorFactory,
+                                                                                 nodeFactory);
+
+            // Images are rendered with a relative path, pointing to the binaries servlet. The binaries servlet always
+            // runs at the same level; two directories up from the angular app. Because of this we need to prepend
+            // all internal images with a prefix as shown below.
+            processorModel.getVisitors().add(new RelativePathImageVisitor("../../"));
+
+            return processorModel.get();
+        }
+
+        String write(final String html, final Node node) throws RepositoryException {
+            final Model<Node> nodeModel = Model.of(node);
+            final JcrNodeFactory nodeFactory = JcrNodeFactory.of(node);
+            final Model<String> htmlModel = Model.of("");
+            final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of(processorId);
+            final HtmlProcessorModel processorModel = new RichTextProcessorModel(htmlModel, nodeModel, processorFactory,
+                                                                                 nodeFactory);
+            processorModel.set(html);
+            return htmlModel.get();
+        }
+    }
+
+    private static final class RelativePathImageVisitor implements TagVisitor {
+
+        private final String pathPrefix;
+
+        RelativePathImageVisitor(final String pathPrefix) {
+            this.pathPrefix = pathPrefix;
+        }
+
+        @Override
+        public void onRead(final Tag parent, final Tag tag) throws RepositoryException {
+            if (tag != null
+                    && StringUtils.equalsIgnoreCase(ImageVisitor.TAG_IMG, tag.getName())
+                    && tag.hasAttribute(ImageVisitor.ATTRIBUTE_SRC)
+                    && tag.hasAttribute(ImageVisitor.ATTRIBUTE_DATA_UUID)) {
+                final String src = tag.getAttribute(ImageVisitor.ATTRIBUTE_SRC);
+                tag.addAttribute(ImageVisitor.ATTRIBUTE_SRC, pathPrefix + src);
+            }
+        }
+
+        @Override
+        public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {}
+
+        @Override
+        public void release() {}
     }
 }
