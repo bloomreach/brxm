@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import './primitiveField.scss';
 import template from './primitiveField.html';
 import PrimitiveFieldCtrl from './primitiveField.controller';
 

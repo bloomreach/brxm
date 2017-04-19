@@ -22,36 +22,44 @@ class CKEditorController {
     this.$element = $element;
     this.CKEditorService = CKEditorService;
     this.ConfigService = ConfigService;
-    this.textAreaElement = $element.find('textarea');
   }
 
   $onInit() {
-    this.CKEditorService.loadCKEditor().then((CKEDITOR) => {
-      const textAreaElement = this.$element.find('textarea')[0];
+    this.textAreaElement = this.$element.find('textarea');
 
+    this.CKEditorService.loadCKEditor().then((CKEDITOR) => {
       this.config.language = this.ConfigService.locale;
 
-      this.editor = CKEDITOR.replace(textAreaElement, this.config);
-      this.editor.setData(this.model.$viewValue);
+      this.editor = CKEDITOR.replace(this.textAreaElement[0], this.config);
+      this.editor.setData(this.ngModel.$viewValue);
 
-      this.editor.on('change', () => {
-        const html = this.editor.getData();
-        this.model.$setViewValue(html);
-      });
+      this.editor.on('change', () => this.onEditorChange());
+      this.editor.on('focus', () => this.onEditorFocus());
+      this.editor.on('blur', () => this.onEditorBlur());
+    });
+  }
 
-      this.editor.on('focus', () => {
-        this.textAreaElement.focus();
-        this.$scope.$apply(() => this.onFocus());
-      });
+  $onDestroy() {
+    this.editor.destroy();
+  }
 
-      this.editor.on('blur', () => {
-        this.textAreaElement.blur();
-        this.$scope.$apply(() => this.onBlur());
-      });
+  onEditorChange() {
+    this.$scope.$apply(() => {
+      this.ngModel.$setViewValue(this.editor.getData());
+    });
+  }
 
-      this.$scope.$on('$destroy', () => {
-        this.editor.destroy();
-      });
+  onEditorFocus() {
+    this.$scope.$apply(() => {
+      this.textAreaElement.addClass('focussed');
+      this.onFocus();
+    });
+  }
+
+  onEditorBlur() {
+    this.$scope.$apply(() => {
+      this.textAreaElement.removeClass('focussed');
+      this.onBlur();
     });
   }
 }

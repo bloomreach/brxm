@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import './ckeditor.scss';
 import template from './ckeditor.html';
 import controller from './ckeditor.controller';
 
@@ -21,15 +22,15 @@ const ckeditorComponent = {
   template,
   controller,
   require: {
-    model: 'ngModel',
+    ngModel: 'ngModel',
   },
   bindings: {
-    name: '@',
-    ariaLabel: '@',
+    ariaLabel: '<',
     config: '<',
-    isRequired: '@',
-    onFocus: '&',
+    isRequired: '<',
+    name: '<',
     onBlur: '&',
+    onFocus: '&',
   },
 };
 

@@ -12,6 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-md-input-container .md-input.textarea-ckeditor {
-  visibility: hidden;
+@import 'variables';
+
+ckeditor {
+  textarea {
+    visibility: hidden !important;
+
+    + .cke {
+      border-bottom-width: 2px;
+    }
+
+    &.ng-invalid + .cke {
+      border-bottom-color: $red-500;
+    }
+
+    &.focussed + .cke {
+      border-bottom-color: $blue-500;
+    }
+  }
 }

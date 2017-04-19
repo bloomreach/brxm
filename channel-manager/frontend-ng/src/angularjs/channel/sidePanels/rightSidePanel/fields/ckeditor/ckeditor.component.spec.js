@@ -25,7 +25,7 @@ describe('CKEditor Component', () => {
   let config;
   let editor;
   let $q;
-  let model;
+  let ngModel;
 
   const $element = angular.element('<div><textarea></textarea></div>');
 
@@ -55,13 +55,13 @@ describe('CKEditor Component', () => {
     ]);
     CKEditor.replace.and.returnValue(editor);
 
-    model = jasmine.createSpyObj('model', [
+    ngModel = jasmine.createSpyObj('ngModel', [
       '$setViewValue',
       '$viewValue',
     ]);
 
-    model.$setViewValue.and.callFake((html) => {
-      model.$viewValue = html;
+    ngModel.$setViewValue.and.callFake((html) => {
+      ngModel.$viewValue = html;
     });
 
     spyOn(CKEditorService, 'loadCKEditor').and.returnValue($q.resolve(CKEditor));
@@ -74,7 +74,7 @@ describe('CKEditor Component', () => {
       $element,
       CKEditorService,
     }, {
-      model,
+      ngModel,
       name: 'TestField',
       ariaLabel: 'TestAriaLabel',
       config,
@@ -82,7 +82,7 @@ describe('CKEditor Component', () => {
       onBlur,
     });
 
-    model.$viewValue = '<p>initial value</p>';
+    ngModel.$viewValue = '<p>initial value</p>';
   });
 
   function init() {
@@ -98,7 +98,7 @@ describe('CKEditor Component', () => {
 
   it('initializes the component', () => {
     init();
-    expect($ctrl.model.$viewValue).toEqual = '<p>initial value</p>';
+    expect($ctrl.ngModel.$viewValue).toEqual = '<p>initial value</p>';
     expect($ctrl.name).toEqual('TestField');
     expect($ctrl.ariaLabel).toEqual('TestAriaLabel');
     expect($ctrl.config).toEqual(config);
@@ -123,30 +123,26 @@ describe('CKEditor Component', () => {
 
     onChange();
     $scope.$apply();
-    expect(model.$viewValue).toBe(newValue);
+    expect(ngModel.$viewValue).toBe(newValue);
   });
 
   it('ckeditor is focused', () => {
     init();
     const onEditorFocus = getEventListener('focus');
-    spyOn($ctrl.textAreaElement, 'focus');
     onEditorFocus();
     expect($ctrl.onFocus).toHaveBeenCalled();
-    expect($ctrl.textAreaElement.focus).toHaveBeenCalled();
   });
 
   it('ckeditor is blurred', () => {
     init();
     const onEditorBlur = getEventListener('blur');
-    spyOn($ctrl.textAreaElement, 'blur');
     onEditorBlur();
     expect($ctrl.onBlur).toHaveBeenCalled();
-    expect($ctrl.textAreaElement.blur).toHaveBeenCalled();
   });
 
   it('destroys the editor once the scope is destroyed', () => {
     init();
-    $scope.$destroy();
+    $ctrl.$onDestroy();
     expect(editor.destroy).toHaveBeenCalled();
   });
 });
