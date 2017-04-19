@@ -24,7 +24,6 @@ Hippo Addon CRISP (Common Resource Interface and Service Provider).
     resourceServiceBroker.getResourceDataCache("demoProductCatalogs").clear();
 ```
 
-- TODO: Optional Java bean binding option from Resource(s).
 - TODO: Javadocs and documentation (API, webhook, example, etc.)
 
 ## Build and install the module itself into local maven repository
