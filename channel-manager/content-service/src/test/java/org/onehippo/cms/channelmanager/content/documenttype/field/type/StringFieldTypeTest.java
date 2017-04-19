@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,38 +64,18 @@ public class StringFieldTypeTest {
     }
 
     @Test
-    public void initializeMaxLengthNoEditorConfig() throws Exception {
-        final StringFieldType fieldType = new StringFieldType();
-        final FieldTypeContext context = createMock(FieldTypeContext.class);
-
-        expect(context.getEditorConfigNode()).andReturn(Optional.empty());
-
-        replay(context);
-
-        fieldType.initializeMaxLength(context);
-        assertNull(fieldType.getMaxLength());
-
-        verify(context);
-    }
-
-    @Test
     public void initializeMaxLengthNoMaxLength() throws Exception {
         final StringFieldType fieldType = new StringFieldType();
         final FieldTypeContext context = createMock(FieldTypeContext.class);
-        final Node editorFieldConfigNode = createMock(Node.class);
 
-        expect(NamespaceUtils.getClusterOption(editorFieldConfigNode, "maxlength"))
+        expect(NamespaceUtils.getConfigProperty(context, "maxlength"))
                 .andReturn(Optional.empty());
 
-        expect(context.getEditorConfigNode()).andReturn(Optional.of(editorFieldConfigNode));
-
-        PowerMock.replayAll();
-        replay(context);
+        PowerMock.replayAll(context);
 
         fieldType.initializeMaxLength(context);
         assertNull(fieldType.getMaxLength());
 
-        verify(context);
         PowerMock.verifyAll();
     }
 
@@ -103,20 +83,15 @@ public class StringFieldTypeTest {
     public void initializeMaxLengthBadFormat() throws Exception {
         final StringFieldType fieldType = new StringFieldType();
         final FieldTypeContext context = createMock(FieldTypeContext.class);
-        final Node editorFieldConfigNode = createMock(Node.class);
 
-        expect(NamespaceUtils.getClusterOption(editorFieldConfigNode, "maxlength"))
+        expect(NamespaceUtils.getConfigProperty(context, "maxlength"))
                 .andReturn(Optional.of("bad format"));
 
-        expect(context.getEditorConfigNode()).andReturn(Optional.of(editorFieldConfigNode));
-
-        PowerMock.replayAll();
-        replay(context);
+        PowerMock.replayAll(context);
 
         fieldType.initializeMaxLength(context);
         assertNull(fieldType.getMaxLength());
 
-        verify(context);
         PowerMock.verifyAll();
     }
 
@@ -124,20 +99,15 @@ public class StringFieldTypeTest {
     public void initializeMaxLengthGoodFormat() throws Exception {
         final StringFieldType fieldType = new StringFieldType();
         final FieldTypeContext context = createMock(FieldTypeContext.class);
-        final Node editorFieldConfigNode = createMock(Node.class);
 
-        expect(NamespaceUtils.getClusterOption(editorFieldConfigNode, "maxlength"))
+        expect(NamespaceUtils.getConfigProperty(context, "maxlength"))
                 .andReturn(Optional.of("123"));
 
-        expect(context.getEditorConfigNode()).andReturn(Optional.of(editorFieldConfigNode));
-
-        PowerMock.replayAll();
-        replay(context);
+        PowerMock.replayAll(context);
 
         fieldType.initializeMaxLength(context);
         assertThat(fieldType.getMaxLength(), equalTo(123L));
 
-        verify(context);
         PowerMock.verifyAll();
     }
 
@@ -254,8 +224,7 @@ public class StringFieldTypeTest {
         fieldType.setId(PROPERTY);
         expect(node.hasProperty(PROPERTY)).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(node)).andReturn("bla");
-        replay(node);
-        PowerMock.replayAll();
+        PowerMock.replayAll(node);
 
         assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo(""));
     }

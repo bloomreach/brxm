@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.NodeOrderFieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.TwoColumnFieldSorter;
 import org.onehippo.repository.mock.MockNode;
@@ -254,11 +255,12 @@ public class NamespaceUtilsTest {
     }
 
     @Test
-    public void getStringPropertyFromClusterOptions() throws Exception {
+    public void getConfigPropertyFromClusterOptions() throws Exception {
         final String propertyName = "maxlength";
         final Node editorFieldConfigNode = createMock(Node.class);
         final Node clusterOptionsNode = createMock(Node.class);
         final Property property = createMock(Property.class);
+        final FieldTypeContext fieldContext = new FieldTypeContext(null, null, editorFieldConfigNode);
 
         expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(true);
         expect(editorFieldConfigNode.getNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(clusterOptionsNode);
@@ -268,7 +270,7 @@ public class NamespaceUtilsTest {
 
         replay(editorFieldConfigNode, clusterOptionsNode, property);
 
-        assertThat(NamespaceUtils.getClusterOption(editorFieldConfigNode, propertyName).get(),
+        assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName).get(),
                 equalTo("256"));
 
         verify(editorFieldConfigNode, clusterOptionsNode, property);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,9 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.field.sort.NodeOrderFieldSorter;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
+import org.onehippo.cms.channelmanager.content.documenttype.field.sort.NodeOrderFieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.TwoColumnFieldSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,14 +137,16 @@ public class NamespaceUtils {
     }
 
     /**
-     * Retrieve the maxlength cluster option property from an editor field configuration node.
+     * Retrieves a configuration property for this field. The property is read from the cluster options
+     * for this field. If not found the configuration options of the supertypes of this field are tried.
      *
-     * @param editorFieldConfigNode JCR node representing a field's editor configuration
-     * @return                      String value of the property or nothing, wrapped in an Optional
+     * @param propertyName name of the configuration property to
+     * @return             String value of the property or nothing, wrapped in an Optional
      */
-    public static Optional<String> getClusterOption(final Node editorFieldConfigNode,
-                                                    final String propertyName) {
-        return getStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName);
+    public static Optional<String> getConfigProperty(final FieldTypeContext fieldContext, final String propertyName) {
+        return fieldContext.getEditorConfigNode().flatMap((editorFieldConfigNode) ->
+                getStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName)
+        );
     }
 
     private static Optional<String> getStringPropertyFromChildNode(final Node node, final String childName,
@@ -184,7 +187,7 @@ public class NamespaceUtils {
      * Retrieve the "field" property for a specific field
      *
      * @param editorFieldConfigNode JCR node representing an editor field configuration node
-     * @return                      valuie of the "field" property or nothing, wrapped in an Optional
+     * @return                      value of the "field" property or nothing, wrapped in an Optional
      */
     public static Optional<String> getFieldProperty(final Node editorFieldConfigNode) {
         return getStringProperty(editorFieldConfigNode, "field");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,9 +59,8 @@ public class StringFieldType extends AbstractFieldType {
     }
 
     void initializeMaxLength(final FieldTypeContext fieldContext) {
-        fieldContext.getEditorConfigNode()
-                .ifPresent(editorFieldConfigNode -> NamespaceUtils.getClusterOption(editorFieldConfigNode, "maxlength")
-                        .ifPresent(this::setMaxLength));
+        NamespaceUtils.getConfigProperty(fieldContext, "maxlength")
+                .ifPresent(this::setMaxLength);
     }
 
     void setMaxLength(final String maxLengthString) {
