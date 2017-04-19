@@ -30,9 +30,11 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.NodeOrderFieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.TwoColumnFieldSorter;
+import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.repository.mock.MockNode;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -67,11 +69,22 @@ public class NamespaceUtilsTest {
         assertThat(NamespaceUtils.getContentTypeRootNode("ns:testdocument", session).get(), equalTo(rootNode));
     }
 
+    @Test
+    public void getSystemTypeRootNode() throws Exception {
+        final Session session = createMock(Session.class);
+        final Node rootNode = createMock(Node.class);
+
+        expect(session.getNode("/hippo:namespaces/system/String")).andReturn(rootNode);
+        replay(session);
+
+        assertThat(NamespaceUtils.getContentTypeRootNode("String", session).get(), equalTo(rootNode));
+    }
+
     @Test(expected = NoSuchElementException.class)
     public void getRootNodeWithInvalidId() throws Exception {
         final Session session = createMock(Session.class);
 
-        NamespaceUtils.getContentTypeRootNode("blabla", session).get();
+        NamespaceUtils.getContentTypeRootNode("bla:bla:bla", session).get();
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -274,6 +287,101 @@ public class NamespaceUtilsTest {
                 equalTo("256"));
 
         verify(editorFieldConfigNode, clusterOptionsNode, property);
+    }
+
+    @Test
+    public void getConfigPropertyNotInClusterOptionsFromType() throws Exception {
+        final String propertyName = "maxlength";
+        final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        final Node editorFieldConfigNode = createMock(Node.class);
+        final Node clusterOptionsNode = createMock(Node.class);
+        final Node contentTypeRootNode = createMock(Node.class);
+        final Node contentTypeEditorConfigNode = createMock(Node.class);
+        final Property property = createMock(Property.class);
+        final Session session = createMock(Session.class);
+        final FieldTypeContext fieldContext = new FieldTypeContext(contentTypeItem, parentContext, editorFieldConfigNode);
+
+        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(true);
+        expect(editorFieldConfigNode.getNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(clusterOptionsNode);
+        expect(clusterOptionsNode.hasProperty(propertyName)).andReturn(false);
+
+        expect(contentTypeItem.getItemType()).andReturn("hippo:fieldtype");
+        expect(parentContext.getSession()).andReturn(session);
+        expect(session.getNode("/hippo:namespaces/hippo/fieldtype")).andReturn(contentTypeRootNode);
+        expect(contentTypeRootNode.hasNode("editor:templates/_default_")).andReturn(true);
+        expect(contentTypeRootNode.getNode("editor:templates/_default_")).andReturn(contentTypeEditorConfigNode);
+        expect(contentTypeEditorConfigNode.hasProperty(propertyName)).andReturn(true);
+        expect(contentTypeEditorConfigNode.getProperty(propertyName)).andReturn(property);
+        expect(property.getString()).andReturn("256");
+
+        replay(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+
+        assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName).get(),
+                equalTo("256"));
+
+        verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+    }
+
+    @Test
+    public void getConfigPropertyNoClusterOptionsFromType() throws Exception {
+        final String propertyName = "maxlength";
+        final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        final Node editorFieldConfigNode = createMock(Node.class);
+        final Node clusterOptionsNode = createMock(Node.class);
+        final Node contentTypeRootNode = createMock(Node.class);
+        final Node contentTypeEditorConfigNode = createMock(Node.class);
+        final Property property = createMock(Property.class);
+        final Session session = createMock(Session.class);
+        final FieldTypeContext fieldContext = new FieldTypeContext(contentTypeItem, parentContext, editorFieldConfigNode);
+
+        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(false);
+
+        expect(contentTypeItem.getItemType()).andReturn("hippo:fieldtype");
+        expect(parentContext.getSession()).andReturn(session);
+        expect(session.getNode("/hippo:namespaces/hippo/fieldtype")).andReturn(contentTypeRootNode);
+        expect(contentTypeRootNode.hasNode("editor:templates/_default_")).andReturn(true);
+        expect(contentTypeRootNode.getNode("editor:templates/_default_")).andReturn(contentTypeEditorConfigNode);
+        expect(contentTypeEditorConfigNode.hasProperty(propertyName)).andReturn(true);
+        expect(contentTypeEditorConfigNode.getProperty(propertyName)).andReturn(property);
+        expect(property.getString()).andReturn("256");
+
+        replay(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+
+        assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName).get(),
+                equalTo("256"));
+
+        verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+    }
+
+    @Test
+    public void getConfigPropertyNoClusterOptionsNotInType() throws Exception {
+        final String propertyName = "maxlength";
+        final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        final Node editorFieldConfigNode = createMock(Node.class);
+        final Node clusterOptionsNode = createMock(Node.class);
+        final Node contentTypeRootNode = createMock(Node.class);
+        final Node contentTypeEditorConfigNode = createMock(Node.class);
+        final Property property = createMock(Property.class);
+        final Session session = createMock(Session.class);
+        final FieldTypeContext fieldContext = new FieldTypeContext(contentTypeItem, parentContext, editorFieldConfigNode);
+
+        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(false);
+
+        expect(contentTypeItem.getItemType()).andReturn("hippo:fieldtype");
+        expect(parentContext.getSession()).andReturn(session);
+        expect(session.getNode("/hippo:namespaces/hippo/fieldtype")).andReturn(contentTypeRootNode);
+        expect(contentTypeRootNode.hasNode("editor:templates/_default_")).andReturn(true);
+        expect(contentTypeRootNode.getNode("editor:templates/_default_")).andReturn(contentTypeEditorConfigNode);
+        expect(contentTypeEditorConfigNode.hasProperty(propertyName)).andReturn(false);
+
+        replay(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+
+        assertFalse(NamespaceUtils.getConfigProperty(fieldContext, propertyName).isPresent());
+
+        verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
     }
 
     @Test

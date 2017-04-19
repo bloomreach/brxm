@@ -68,9 +68,15 @@ public class NamespaceUtils {
     public static Optional<Node> getContentTypeRootNode(final String typeId, final Session session) {
         try {
             final String[] part = typeId.split(":");
-            if (part.length == 2) {
-                final String path = "/hippo:namespaces/" + part[0] + "/" + part[1];
-                return Optional.of(session.getNode(path));
+            switch (part.length) {
+                case 1: {
+                    final String path = "/hippo:namespaces/system/" + part[0];
+                    return Optional.of(session.getNode(path));
+                }
+                case 2: {
+                    final String path = "/hippo:namespaces/" + part[0] + "/" + part[1];
+                    return Optional.of(session.getNode(path));
+                }
             }
         } catch (RepositoryException e) {
             log.debug("Unable to find root node for document type '{}'", typeId, e);
@@ -144,9 +150,24 @@ public class NamespaceUtils {
      * @return             String value of the property or nothing, wrapped in an Optional
      */
     public static Optional<String> getConfigProperty(final FieldTypeContext fieldContext, final String propertyName) {
+        Optional<String> result = getConfigPropertyFromClusterOptions(fieldContext, propertyName);
+        if (!result.isPresent()) {
+            result = getConfigPropertyFromType(fieldContext, propertyName);
+        }
+        return result;
+    }
+
+    private static Optional<String> getConfigPropertyFromClusterOptions(final FieldTypeContext fieldContext, final String propertyName) {
         return fieldContext.getEditorConfigNode().flatMap((editorFieldConfigNode) ->
-                getStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName)
-        );
+                    getStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName)
+            );
+    }
+
+    private static Optional<String> getConfigPropertyFromType(final FieldTypeContext fieldContext, final String propertyName) {
+        final String fieldTypeId = fieldContext.getContentTypeItem().getItemType();
+        final Session session = fieldContext.getParentContext().getSession();
+        return getContentTypeRootNode(fieldTypeId, session).flatMap((contentTypeRootNode) ->
+                getStringPropertyFromChildNode(contentTypeRootNode, EDITOR_CONFIG_PATH, propertyName));
     }
 
     private static Optional<String> getStringPropertyFromChildNode(final Node node, final String childName,
