@@ -37,7 +37,7 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
     private static final Logger log = LoggerFactory.getLogger(WhitelistedClassesResourceGuard.class);
 
     private final List<String> classNamePrefixes;
-    private boolean initialized;
+    private volatile boolean initialized;
 
     public WhitelistedClassesResourceGuard() {
         classNamePrefixes = new ArrayList<>();
@@ -51,10 +51,13 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
 
     @Override
     public boolean accept(final Class<?> scope, final String absolutePath) {
-        synchronized (this) {
-            if (!initialized) {
-                onInit();
-                initialized = true;
+        // use double checked locking pattern to reduce overhead
+        if (!initialized) {
+            synchronized (this) {
+                if (!initialized) {
+                    onInit();
+                    initialized = true;
+                }
             }
         }
 

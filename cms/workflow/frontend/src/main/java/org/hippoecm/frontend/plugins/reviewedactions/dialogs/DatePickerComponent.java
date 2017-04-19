@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.addon.workflow.FutureDateValidator;
@@ -42,5 +43,9 @@ public class DatePickerComponent extends Panel {
         YuiDateTimeField ydtf = new YuiDateTimeField("value", dateModel);
         ydtf.add(new FutureDateValidator());
         add(ydtf);
+    }
+
+    public FormComponent<Date> getDateTimeField() {
+        return (FormComponent<Date>) get("value");
     }
 }
