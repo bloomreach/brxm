@@ -9,11 +9,7 @@
         class="org.onehippo.cms7.crisp.core.broker.CacheableResourceServiceBroker">
     <property name="resourceResolverProvider" ref="org.onehippo.cms7.crisp.api.resource.ResourceResolverProvider" />
     <property name="cacheEnabled" value="true" />
-    <property name="defaultResourceDataCache">
-      <bean class="org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache">
-        <constructor-arg ref="defaultCrispResourceCache" />
-      </bean>
-    </property>
+    <property name="defaultResourceDataCache" ref="defaultCrispResourceDataCache" />
   </bean>
 
   <bean id="org.onehippo.cms7.crisp.core.broker.ResourceBrokerServiceRegistrationBean"

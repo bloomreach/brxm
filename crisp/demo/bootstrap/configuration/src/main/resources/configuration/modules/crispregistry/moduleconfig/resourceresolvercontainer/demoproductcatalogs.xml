@@ -24,6 +24,23 @@
         &lt;/property&gt;&#xd;
       &lt;/bean&gt;&#xd;
     &lt;/property&gt;&#xd;
+    &lt;property name="resourceDataCache"&gt;&#xd;
+      &lt;bean class="org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache"&gt;&#xd;
+        &lt;constructor-arg&gt;&#xd;
+          &lt;bean class="org.springframework.cache.ehcache.EhCacheCache"&gt;&#xd;
+            &lt;constructor-arg&gt;&#xd;
+              &lt;bean parent="abstractCrispResourceEhCache"&gt;&#xd;
+                &lt;property name="cacheName" value="demoProductCatalogsCache" /&gt;&#xd;
+                &lt;property name="maxEntriesLocalHeap" value="1000" /&gt;&#xd;
+                &lt;property name="maxEntriesLocalDisk" value="0" /&gt;&#xd;
+                &lt;property name="timeToLiveSeconds" value="60" /&gt;&#xd;
+                &lt;property name="timeToIdleSeconds" value="60" /&gt;&#xd;
+              &lt;/bean&gt;&#xd;
+            &lt;/constructor-arg&gt;&#xd;
+          &lt;/bean&gt;&#xd;
+        &lt;/constructor-arg&gt;&#xd;
+      &lt;/bean&gt;&#xd;
+    &lt;/property&gt;&#xd;
   &lt;/bean&gt;&#xd;
 &#xd;
 &lt;/beans&gt;</sv:value>

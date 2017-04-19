@@ -7,7 +7,6 @@
 
   <bean id="abstractCrispResourceEhCache" abstract="true" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
     <property name="cacheManager" ref="ehCacheManager" />
-    <property name="cacheName" value="crispResourceCache" />
     <property name="eternal" value="false" />
     <property name="diskExpiryThreadIntervalSeconds" value="120" />
     <property name="statisticsEnabled" value="true" />
@@ -16,12 +15,17 @@
   <bean id="defaultCrispResourceCache" class="org.springframework.cache.ehcache.EhCacheCache">
     <constructor-arg>
       <bean parent="abstractCrispResourceEhCache">
+        <property name="cacheName" value="defaultCrispResourceCache" />
         <property name="maxEntriesLocalHeap" value="1000" />
         <property name="maxEntriesLocalDisk" value="0" />
         <property name="timeToLiveSeconds" value="60" />
         <property name="timeToIdleSeconds" value="60" />
       </bean>
     </constructor-arg>
+  </bean>
+
+  <bean id="defaultCrispResourceDataCache" class="org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache">
+    <constructor-arg ref="defaultCrispResourceCache" />
   </bean>
 
 </beans>
