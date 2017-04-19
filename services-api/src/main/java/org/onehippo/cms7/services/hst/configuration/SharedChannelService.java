@@ -17,6 +17,8 @@ package org.onehippo.cms7.services.hst.configuration;
 
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.channel.Channel;
+
 /**
  * <p>
  * This is not a {@link @SingletonService} nor a {@link @WhiteboardService} service since multiple HST webapp
