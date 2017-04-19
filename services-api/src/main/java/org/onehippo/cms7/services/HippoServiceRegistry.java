@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * The singleton Hippo service registry.  Serves as a service locator across applications running in the same JVM.
  */
 public final class HippoServiceRegistry {
-    
+
     private volatile static int version = 0;
 
     private static class NamedRegistration extends HippoServiceRegistration {
@@ -130,6 +131,7 @@ public final class HippoServiceRegistry {
     }
 
     private static final Map<String, NamedRegistration> namedServices = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, List<NamedRegistration>> namedServicesByClass = new ConcurrentHashMap<>();
     private static final Map<Class<?>, List<HippoServiceRegistration>> unnamedServices = new ConcurrentHashMap<>();
 
     private HippoServiceRegistry() {
@@ -198,16 +200,6 @@ public final class HippoServiceRegistry {
     }
 
     /**
-     * Retrieve a service by it's default (class) name.  This provides a mechanism for services that used to be
-     * singletons to be upgraded to non-singleton situations.
-     *
-     * @param ifaceClass
-     */
-    public synchronized static <T> T getService(Class<T> ifaceClass) {
-        return getNamedServiceInternal(ifaceClass, ifaceClass.getName());
-    }
-
-    /**
      * Retrieve a list of whiteboard services by it's default (class) name.
      *
      * @param ifaceClass
@@ -216,6 +208,21 @@ public final class HippoServiceRegistry {
         return getUnnamedServicesInternal(ifaceClass);
     }
 
+    /**
+     * Retrieves the list of named services that were registered through
+     * {@link #registerService(java.lang.Object, java.lang.Class, java.lang.String)} or
+     * {@link #registerService(Object, Class[], String)}.
+     *
+     * @param ifaceClass the interface for which the named registration was registered
+     * @return the List of named services
+     */
+    private synchronized static List<NamedRegistration> getNamedRegistrations(Class ifaceClass) {
+        List<NamedRegistration> siblings = namedServicesByClass.get(ifaceClass);
+        if (siblings != null) {
+            return new ArrayList<>(siblings);
+        }
+        return Collections.emptyList();
+    }
 
     // public non-singleton services
 
@@ -236,11 +243,31 @@ public final class HippoServiceRegistry {
         unregisterNamedServiceInternal(service, ifaceClass, name);
     }
 
+    /**
+     * Retrieve a service by it's default (class) name.  This provides a mechanism for services that used to be
+     * singletons to be upgraded to non-singleton situations.
+     *
+     * @param ifaceClass
+     */
+    public synchronized static <T> T getService(Class<T> ifaceClass) {
+        return getNamedServiceInternal(ifaceClass, ifaceClass.getName());
+    }
+
+    /**
+     * Retrieves the list of <strong>named </strong>services by the interface class through which they
+     * were registered. If no <strong>named</strong> services is available for {@code ifaceClass},
+     * an empty list is returned
+     */
+    public synchronized static <T> List<T> getServices(Class<T> ifaceClass) {
+        return getNamedServicesInternal(ifaceClass);
+    }
+
     public synchronized static <T> T getService(Class<T> ifaceClass, String name) {
         ServiceDescriptor descriptor = new ServiceDescriptor(ifaceClass);
         descriptor.checkNonSingleton();
         return getNamedServiceInternal(ifaceClass, name);
     }
+
 
     /**
      * @return the version of this {@link HippoServiceRegistry} : Every time the registry gets a service added or removed
@@ -258,6 +285,15 @@ public final class HippoServiceRegistry {
         NamedRegistration registration = newRegistration(service, ifaceClass);
         if (!namedServices.containsKey(name)) {
             namedServices.put(name, registration);
+            final Class<?> clazz = ifaceClass[0];
+            List<NamedRegistration> siblings;
+            if (!namedServicesByClass.containsKey(clazz)) {
+                siblings = new LinkedList<>();
+                namedServicesByClass.put(clazz, siblings);
+            } else {
+                siblings = namedServicesByClass.get(clazz);
+            }
+            siblings.add(registration);
         } else {
             throw new HippoServiceException("A service was already registered with name " + name);
         }
@@ -268,6 +304,20 @@ public final class HippoServiceRegistry {
         NamedRegistration registration = namedServices.get(name);
         if (registration != null && registration.getService() == service) {
             namedServices.remove(name);
+            List<NamedRegistration> namedRegistrations = namedServicesByClass.get(ifaceClass);
+            if (namedRegistrations != null) {
+                if (namedRegistrations.size() <= 1) {
+                    namedServicesByClass.remove(ifaceClass);
+                } else {
+                    Iterator<NamedRegistration> iterator = namedRegistrations.iterator();
+                    while (iterator.hasNext()) {
+                        HippoServiceRegistration next = iterator.next();
+                        if (next == registration) {
+                            iterator.remove();
+                        }
+                    }
+                }
+            }
         }
         version++;
     }
@@ -282,16 +332,27 @@ public final class HippoServiceRegistry {
         return null;
     }
 
+    private static <T> List<T> getNamedServicesInternal(final Class<T> ifaceClass) {
+        List<NamedRegistration> namedRegistrations = getNamedRegistrations(ifaceClass);
+        List<T> services = new ArrayList<>();
+        for (NamedRegistration namedRegistration : namedRegistrations) {
+            if (ifaceClass.isAssignableFrom(namedRegistration.getInterface())) {
+                services.add((T)namedRegistration.getProxy());
+            }
+        }
+        return services;
+    }
+
     private static void registerUnnamedServiceInternal(Object service, Class<?> ifaceClass) {
         if (ifaceClass.isInstance(service)) {
             throw new HippoServiceException("Service implements provided interface " + ifaceClass.getName() +
-                                                    ", a whiteboard listener should not do that");
+                    ", a whiteboard listener should not do that");
         }
 
         HippoServiceRegistration registration = newRegistration(service);
         List<HippoServiceRegistration> siblings;
         if (!unnamedServices.containsKey(ifaceClass)) {
-            siblings = new LinkedList<HippoServiceRegistration>();
+            siblings = new LinkedList<>();
             unnamedServices.put(ifaceClass, siblings);
         } else {
             siblings = unnamedServices.get(ifaceClass);
@@ -319,7 +380,7 @@ public final class HippoServiceRegistry {
     private static List<HippoServiceRegistration> getUnnamedServicesInternal(final Class<?> clazz) {
         List<HippoServiceRegistration> siblings = unnamedServices.get(clazz);
         if (siblings != null) {
-            return new ArrayList<HippoServiceRegistration>(siblings);
+            return new ArrayList<>(siblings);
         }
         return Collections.emptyList();
     }
