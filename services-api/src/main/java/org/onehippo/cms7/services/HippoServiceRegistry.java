@@ -21,11 +21,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * The singleton Hippo service registry.  Serves as a service locator across applications running in the same JVM.
@@ -55,8 +55,7 @@ public final class HippoServiceRegistry {
                     Thread.currentThread().setContextClassLoader(classLoader);
                     try {
                         return method.invoke(service, args);
-                    }
-                    catch (InvocationTargetException ite) {
+                    } catch (InvocationTargetException ite) {
                         throw (ite.getCause() != null) ? ite.getCause() : ite;
                     } finally {
                         Thread.currentThread().setContextClassLoader(currentContextClassLoader);
@@ -131,7 +130,6 @@ public final class HippoServiceRegistry {
     }
 
     private static final Map<String, NamedRegistration> namedServices = new ConcurrentHashMap<>();
-    private static final Map<Class<?>, List<NamedRegistration>> namedServicesByClass = new ConcurrentHashMap<>();
     private static final Map<Class<?>, List<HippoServiceRegistration>> unnamedServices = new ConcurrentHashMap<>();
 
     private HippoServiceRegistry() {
@@ -150,7 +148,8 @@ public final class HippoServiceRegistry {
      * The service will be proxied to enforce the Thread ContextClassLoader during invocation to
      * be set to the Thread ContextClassLoader during registration.
      * </p>
-     * @param service service object to register
+     *
+     * @param service    service object to register
      * @param ifaceClass interface to register the service upon for service lookup
      */
     public synchronized static void registerService(Object service, Class<?> ifaceClass) {
@@ -172,7 +171,8 @@ public final class HippoServiceRegistry {
      * This allows for example (web application) internal interfaces to be used to access additional methods, not to be
      * shared across web applications.
      * </p><p>
-     * @param service service object to register
+     *
+     * @param service      service object to register
      * @param ifaceClasses array of interfaces to proxy for the service, the first interface is used to register the
      *                     service upon for service lookup
      */
@@ -208,21 +208,6 @@ public final class HippoServiceRegistry {
         return getUnnamedServicesInternal(ifaceClass);
     }
 
-    /**
-     * Retrieves the list of named services that were registered through
-     * {@link #registerService(java.lang.Object, java.lang.Class, java.lang.String)} or
-     * {@link #registerService(Object, Class[], String)}.
-     *
-     * @param ifaceClass the interface for which the named registration was registered
-     * @return the List of named services
-     */
-    private synchronized static List<NamedRegistration> getNamedRegistrations(Class ifaceClass) {
-        List<NamedRegistration> siblings = namedServicesByClass.get(ifaceClass);
-        if (siblings != null) {
-            return new ArrayList<>(siblings);
-        }
-        return Collections.emptyList();
-    }
 
     // public non-singleton services
 
@@ -270,9 +255,9 @@ public final class HippoServiceRegistry {
 
 
     /**
-     * @return the version of this {@link HippoServiceRegistry} : Every time the registry gets a service added or removed
-     * the version is incremented. This is for classes using the HippoServiceRegistry that they can easily check whether
-     * they need to register or unregister new {@link HippoServiceRegistration}s
+     * @return the version of this {@link HippoServiceRegistry} : Every time the registry gets a service added or
+     * removed the version is incremented. This is for classes using the HippoServiceRegistry that they can easily check
+     * whether they need to register or unregister new {@link HippoServiceRegistration}s
      */
     public static int getVersion() {
         return version;
@@ -285,15 +270,6 @@ public final class HippoServiceRegistry {
         NamedRegistration registration = newRegistration(service, ifaceClass);
         if (!namedServices.containsKey(name)) {
             namedServices.put(name, registration);
-            final Class<?> clazz = ifaceClass[0];
-            List<NamedRegistration> siblings;
-            if (!namedServicesByClass.containsKey(clazz)) {
-                siblings = new LinkedList<>();
-                namedServicesByClass.put(clazz, siblings);
-            } else {
-                siblings = namedServicesByClass.get(clazz);
-            }
-            siblings.add(registration);
         } else {
             throw new HippoServiceException("A service was already registered with name " + name);
         }
@@ -304,20 +280,6 @@ public final class HippoServiceRegistry {
         NamedRegistration registration = namedServices.get(name);
         if (registration != null && registration.getService() == service) {
             namedServices.remove(name);
-            List<NamedRegistration> namedRegistrations = namedServicesByClass.get(ifaceClass);
-            if (namedRegistrations != null) {
-                if (namedRegistrations.size() <= 1) {
-                    namedServicesByClass.remove(ifaceClass);
-                } else {
-                    Iterator<NamedRegistration> iterator = namedRegistrations.iterator();
-                    while (iterator.hasNext()) {
-                        HippoServiceRegistration next = iterator.next();
-                        if (next == registration) {
-                            iterator.remove();
-                        }
-                    }
-                }
-            }
         }
         version++;
     }
@@ -333,14 +295,10 @@ public final class HippoServiceRegistry {
     }
 
     private static <T> List<T> getNamedServicesInternal(final Class<T> ifaceClass) {
-        List<NamedRegistration> namedRegistrations = getNamedRegistrations(ifaceClass);
-        List<T> services = new ArrayList<>();
-        for (NamedRegistration namedRegistration : namedRegistrations) {
-            if (ifaceClass.isAssignableFrom(namedRegistration.getInterface())) {
-                services.add((T)namedRegistration.getProxy());
-            }
-        }
-        return services;
+        return namedServices.values().stream()
+                .filter(r -> ifaceClass.isAssignableFrom(r.getInterface()))
+                .map(r -> (T) r.getProxy())
+                .collect(Collectors.toList());
     }
 
     private static void registerUnnamedServiceInternal(Object service, Class<?> ifaceClass) {
