@@ -14,7 +14,7 @@ Hippo Addon CRISP (Common Resource Interface and Service Provider).
 - HTTP invocations are done by using ```RestTemplate``` of Spring Framework.
 - OAuth2-based RestTemplate configuration.
 - Dynamic Configuration change instead of properties and xmls.
-- TODO: ResourceServiceBroker-side pagination.
+- ResourceContainer level pagination.
 - TODO: Caching per route.
 - TODO: Web-hook based event processing.
 - TODO: Optional Java bean binding option from Resource(s).
