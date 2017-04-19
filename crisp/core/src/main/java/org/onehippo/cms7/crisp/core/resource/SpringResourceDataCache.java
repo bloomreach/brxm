@@ -16,10 +16,10 @@ public class SpringResourceDataCache implements ResourceDataCache {
     public Object getData(Object key) {
         Object data = null;
 
-        ValueWrapper cacheDataWrapper = cache.get(key);
+        ValueWrapper dataWrapper = cache.get(key);
 
-        if (cacheDataWrapper != null) {
-            data = cacheDataWrapper.get();
+        if (dataWrapper != null) {
+            data = dataWrapper.get();
         }
 
         return data;
@@ -28,6 +28,29 @@ public class SpringResourceDataCache implements ResourceDataCache {
     @Override
     public void putData(Object key, Object data) {
         cache.put(key, data);
+    }
+
+    @Override
+    public Object putDataIfAbsent(Object key, Object data) {
+        Object existingData = null;
+
+        ValueWrapper dataWrapper = cache.putIfAbsent(key, data);
+
+        if (dataWrapper != null) {
+            existingData = dataWrapper.get();
+        }
+
+        return existingData;
+    }
+
+    @Override
+    public void evictData(Object key) {
+        cache.evict(key);
+    }
+
+    @Override
+    public void clear() {
+        cache.clear();
     }
 
 }

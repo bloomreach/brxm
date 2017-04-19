@@ -15,10 +15,17 @@ Hippo Addon CRISP (Common Resource Interface and Service Provider).
 - OAuth2-based RestTemplate configuration.
 - Dynamic Configuration change instead of properties and xmls.
 - ResourceContainer level pagination.
-- TODO: Caching per route.
-- TODO: Web-hook based event processing.
+- Caching per route.
+- API support to implement a web-hook based event processing easily:
+
+```java
+    ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
+    // clear all the cache for instance...
+    resourceServiceBroker.getResourceDataCache("demoProductCatalogs").clear();
+```
+
 - TODO: Optional Java bean binding option from Resource(s).
-- TODO: Javadocs and documentation
+- TODO: Javadocs and documentation (API, webhook, example, etc.)
 
 ## Build and install the module itself into local maven repository
 

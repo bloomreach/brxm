@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
+import org.onehippo.cms7.crisp.api.resource.ResourceDataCache;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceLink;
 import org.onehippo.cms7.services.SingletonService;
@@ -25,5 +26,7 @@ public interface ResourceServiceBroker {
 
     ResourceLink resolveLink(String resourceSpace, ResourceContainer resource, Map<String, Object> linkVariables)
             throws ResourceException;
+
+    ResourceDataCache getResourceDataCache(String resourceSpace);
 
 }

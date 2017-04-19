@@ -51,12 +51,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         Resource resource = null;
         ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
         ValueMap cacheKey = null;
-
-        ResourceDataCache resourceDataCache = resourceResolver.getResourceDataCache();
-
-        if (resourceDataCache == null) {
-            resourceDataCache = getDefaultResourceDataCache();
-        }
+        ResourceDataCache resourceDataCache = getResourceDataCache(resourceSpace);
 
         if (isCacheEnabled() && resourceDataCache != null) {
             cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, pathVariables);
@@ -88,12 +83,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         ResourceContainer resource = null;
         ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
         ValueMap cacheKey = null;
-
-        ResourceDataCache resourceDataCache = resourceResolver.getResourceDataCache();
-
-        if (resourceDataCache == null) {
-            resourceDataCache = getDefaultResourceDataCache();
-        }
+        ResourceDataCache resourceDataCache = getResourceDataCache(resourceSpace);
 
         if (isCacheEnabled() && resourceDataCache != null) {
             cacheKey = createCacheKey(OPERATION_KEY_FIND_RESOURCES, resourceSpace, baseAbsPath, pathVariables);
@@ -117,6 +107,20 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         }
 
         return resource;
+    }
+
+    @Override
+    public ResourceDataCache getResourceDataCache(String resourceSpace) {
+        ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
+        ValueMap cacheKey = null;
+
+        ResourceDataCache resourceDataCache = resourceResolver.getResourceDataCache();
+
+        if (resourceDataCache == null) {
+            resourceDataCache = getDefaultResourceDataCache();
+        }
+
+        return resourceDataCache;
     }
 
     protected ValueMap createCacheKey(final String operationKey, final String resourceSpace, final String resourcePath,

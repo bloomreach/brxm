@@ -6,4 +6,10 @@ public interface ResourceDataCache {
 
     public void putData(Object key, Object data);
 
+    public Object putDataIfAbsent(Object key, Object data);
+
+    public void evictData(Object key);
+
+    public void clear();
+
 }

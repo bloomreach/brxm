@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
+import org.onehippo.cms7.crisp.api.resource.ResourceDataCache;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceLink;
 import org.onehippo.cms7.crisp.api.resource.ResourceLinkResolver;
@@ -54,6 +55,11 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
             }
         }
 
+        return null;
+    }
+
+    @Override
+    public ResourceDataCache getResourceDataCache(String resourceSpace) {
         return null;
     }
 
