@@ -33,10 +33,9 @@ import org.slf4j.LoggerFactory;
 /**
  * DefaultMutableResourceBundleRegistry
  *
- * The "get" logic inside this class corresponds to the "put" logic of the {@link HippoRepositoryResourceBundleFamilyFactory}
- * in the sense that both do no longer use the #*ForPreview methods of a ResourceBundleFamily. Instead, a separate
- * instance of a ResourceBundleFamily is kept in a separate data structure in order to retrieve, cache and evict
- * resource bundles.
+ * The registry caches resource bundle families (representing variants of resource bundle documents in the CMS)
+ * by basename (look-up) as well as by identifier (variant UUID, cache eviction).
+ * The cache keeps separate registries for the live and preview variant of documents.
  */
 public class DefaultMutableResourceBundleRegistry implements MutableResourceBundleRegistry {
 
@@ -44,12 +43,12 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
 
     private final Map<String, ResourceBundleFamily> liveBundleFamilyByBasename = new HashMap<>();
     private final Map<String, ResourceBundleFamily> previewBundleFamilyByBasename = new HashMap<>();
-    private final Map<String, ResourceBundleFamily> liveBundleFamilyByIdentifier = new HashMap<>();
-    private final Map<String, ResourceBundleFamily> previewBundleFamilyByIdentifier = new HashMap<>();
+    private final Map<String, ResourceBundleFamily> liveBundleFamilyByVariantUUID = new HashMap<>();
+    private final Map<String, ResourceBundleFamily> previewBundleFamilyByVariantUUID = new HashMap<>();
 
     // As an optimization, whenever a look-up for a specific basename fails, we remember that negative result
     // by adding the basename to the appropriate "unfound" set in order to avoid doing the lookup again.
-    // Since these basenames can not be correlated with resource bundle identifiers, whenever an identifier
+    // Since these basenames can not be correlated with resource bundle variant UUIDs, whenever an identifier
     // is "unregistered" which wasn't cached, we wipe the unfound set.
     // A use case where this matters is a resource bundle that is being referenced by name, but which doesn't
     // exist yet. Once it gets created (or the basename of the bundle gets "fixed"), a next retrieval of that
@@ -99,9 +98,9 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
             logger.info("Registering resource bundle {} for {} scope", basename, preview ? "preview" : "live");
             byBasename(preview).put(basename, bundleFamily);
             if (bundleFamily instanceof DefaultMutableResourceBundleFamily) {
-                final String identifier = ((DefaultMutableResourceBundleFamily)bundleFamily).getIdentifier();
-                if (identifier != null) {
-                    byIdentifier(preview).put(identifier, bundleFamily);
+                final String variantUUID = ((DefaultMutableResourceBundleFamily)bundleFamily).getVariantUUID();
+                if (variantUUID != null) {
+                    byVariantUUID(preview).put(variantUUID, bundleFamily);
                 }
             }
         }
@@ -118,9 +117,9 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
     private synchronized void unregisterBundleFamilyByBasename(final String basename, final boolean preview) {
         final ResourceBundleFamily bundleFamily = byBasename(preview).remove(basename);
         if (bundleFamily instanceof DefaultMutableResourceBundleFamily) {
-            final String identifier = ((DefaultMutableResourceBundleFamily) bundleFamily).getIdentifier();
-            if (identifier != null) {
-                byIdentifier(preview).remove(identifier);
+            final String variantUUID = ((DefaultMutableResourceBundleFamily) bundleFamily).getVariantUUID();
+            if (variantUUID != null) {
+                byVariantUUID(preview).remove(variantUUID);
             }
         }
         unfoundBasenames(preview).remove(basename);
@@ -128,7 +127,7 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
 
     @Override
     public synchronized void unregisterBundleFamily(final String identifier, boolean preview) {
-        final ResourceBundleFamily bundleFamily = byIdentifier(preview).remove(identifier);
+        final ResourceBundleFamily bundleFamily = byVariantUUID(preview).remove(identifier);
         if (bundleFamily != null) {
             final String basename = bundleFamily.getBasename();
             logger.info("Unregistering resource bundle {} for {} scope", basename, preview ? "preview" : "live");
@@ -143,8 +142,8 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
     public synchronized void unregisterAllBundleFamilies() {
         byBasename(true).clear();
         byBasename(false).clear();
-        byIdentifier(true).clear();
-        byIdentifier(false).clear();
+        byVariantUUID(true).clear();
+        byVariantUUID(false).clear();
         unfoundBasenames(true).clear();
         unfoundBasenames(false).clear();
     }
@@ -233,8 +232,8 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
         return preview ? previewBundleFamilyByBasename : liveBundleFamilyByBasename;
     }
 
-    private Map<String, ResourceBundleFamily> byIdentifier(final boolean preview) {
-        return preview ? previewBundleFamilyByIdentifier : liveBundleFamilyByIdentifier;
+    private Map<String, ResourceBundleFamily> byVariantUUID(final boolean preview) {
+        return preview ? previewBundleFamilyByVariantUUID : liveBundleFamilyByVariantUUID;
     }
 
     private Set<String> unfoundBasenames(final boolean preview) {

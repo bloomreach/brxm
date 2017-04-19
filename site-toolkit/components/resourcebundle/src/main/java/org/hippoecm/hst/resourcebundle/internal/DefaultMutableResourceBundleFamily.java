@@ -16,7 +16,6 @@
 package org.hippoecm.hst.resourcebundle.internal;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -28,16 +27,15 @@ import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.resourcebundle.SimpleListResourceBundle;
 
 /**
- * DefaultMutableResourceBundleFamily
+ * DefaultMutableResourceBundleFamily is an in-memory representation of a variant (live or preview)
+ * of a resource bundle document. It is cached by the resource bundle registry.
  */
 public class DefaultMutableResourceBundleFamily implements MutableResourceBundleFamily {
 
     private final String basename;
+    private String variantUUID;
     private ResourceBundle defaultBundle;
-    private ResourceBundle defaultBundleForPreview;
     private final Map<Locale, ResourceBundle> localizedBundlesMap = new ConcurrentHashMap(new HashMap<Locale, ResourceBundle>());
-    private final Map<Locale, ResourceBundle> localizedBundlesMapForPreview = new ConcurrentHashMap(new HashMap<Locale, ResourceBundle>());
-    private String identifier;
 
     public DefaultMutableResourceBundleFamily(final String basename) {
         this.basename = basename;
@@ -55,7 +53,7 @@ public class DefaultMutableResourceBundleFamily implements MutableResourceBundle
 
     @Override
     public ResourceBundle getDefaultBundleForPreview() {
-        return defaultBundleForPreview;
+        throw new UnsupportedOperationException("ResourceBundleFamily no longer contains separate livae and preview data sets");
     }
 
     @Override
@@ -65,7 +63,7 @@ public class DefaultMutableResourceBundleFamily implements MutableResourceBundle
 
     @Override
     public void setDefaultBundleForPreview(ResourceBundle defaultBundleForPreview) {
-        this.defaultBundleForPreview = defaultBundleForPreview;
+        throw new UnsupportedOperationException("ResourceBundleFamily no longer contains separate livae and preview data sets");
     }
 
     @Override
@@ -75,7 +73,7 @@ public class DefaultMutableResourceBundleFamily implements MutableResourceBundle
 
     @Override
     public ResourceBundle getLocalizedBundleForPreview(Locale locale) {
-        return localizedBundlesMapForPreview.get(locale);
+        throw new UnsupportedOperationException("ResourceBundleFamily no longer contains separate livae and preview data sets");
     }
 
     @Override
@@ -85,7 +83,7 @@ public class DefaultMutableResourceBundleFamily implements MutableResourceBundle
 
     @Override
     public void setLocalizedBundleForPreview(Locale locale, ResourceBundle bundle) {
-        localizedBundlesMapForPreview.put(locale, bundle);
+        throw new UnsupportedOperationException("ResourceBundleFamily no longer contains separate livae and preview data sets");
     }
 
     @Override
@@ -95,28 +93,20 @@ public class DefaultMutableResourceBundleFamily implements MutableResourceBundle
 
     @Override
     public void removeLocalizedBundleForPreview(Locale locale) {
-        localizedBundlesMapForPreview.remove(locale);
+        throw new UnsupportedOperationException("ResourceBundleFamily no longer contains separate livae and preview data sets");
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getVariantUUID() {
+        return variantUUID;
     }
 
     @Override
-    public void setIdentifier(final String identifier) {
-        this.identifier = identifier;
+    public void setVariantUUID(final String variantUUID) {
+        this.variantUUID = variantUUID;
     }
 
     public void setParentBundles() {
-        setParentBundles(localizedBundlesMap, getDefaultBundle());
-        setParentBundles(localizedBundlesMapForPreview, getDefaultBundleForPreview());
-
-    }
-
-    private void setParentBundles(final Map<Locale, ResourceBundle> bundles,
-                                  final ResourceBundle root) {
-
-        for (Map.Entry<Locale, ResourceBundle> entry : bundles.entrySet()) {
+        for (Map.Entry<Locale, ResourceBundle> entry : localizedBundlesMap.entrySet()) {
             final ResourceBundle bundle = entry.getValue();
             if (!(bundle instanceof SimpleListResourceBundle)) {
                 continue;
@@ -127,7 +117,7 @@ public class DefaultMutableResourceBundleFamily implements MutableResourceBundle
             // locale at index 0 is current locale
             parentLocales.remove(0);
             for (Locale parentLocale : parentLocales) {
-                ResourceBundle parentBundle = bundles.get(parentLocale);
+                ResourceBundle parentBundle = localizedBundlesMap.get(parentLocale);
                 if (parentBundle != null) {
                     ((SimpleListResourceBundle) bundle).setParent(parentBundle);
                     parentIsSet = true;
@@ -135,7 +125,7 @@ public class DefaultMutableResourceBundleFamily implements MutableResourceBundle
                 }
             }
             if (!parentIsSet) {
-                ((SimpleListResourceBundle) bundle).setParent(root);
+                ((SimpleListResourceBundle) bundle).setParent(defaultBundle);
             }
         }
     }

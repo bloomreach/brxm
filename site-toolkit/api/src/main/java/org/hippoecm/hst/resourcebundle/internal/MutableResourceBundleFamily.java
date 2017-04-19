@@ -34,10 +34,10 @@ import org.hippoecm.hst.resourcebundle.ResourceBundleFamily;
 public interface MutableResourceBundleFamily extends ResourceBundleFamily {
 
     /**
-     * Sets the identifier of a resource bundle family
-     * @param identifier
+     * Sets the variantUUID of a resource bundle family
+     * @param variantUUID
      */
-    void setIdentifier(String identifier);
+    void setVariantUUID(String variantUUID);
 
     /**
      * Sets the default resource bundle for live mode.

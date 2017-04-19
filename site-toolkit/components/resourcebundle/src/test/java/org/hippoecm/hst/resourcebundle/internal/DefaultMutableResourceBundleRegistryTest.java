@@ -175,7 +175,7 @@ public class DefaultMutableResourceBundleRegistryTest {
 
         expect(family.getDefaultBundle()).andReturn(bundle).anyTimes();
         expect(family.getBasename()).andReturn("basename").anyTimes();
-        expect(family.getIdentifier()).andReturn("identifier").anyTimes();
+        expect(family.getVariantUUID()).andReturn("identifier").anyTimes();
 
         replay(family);
 
