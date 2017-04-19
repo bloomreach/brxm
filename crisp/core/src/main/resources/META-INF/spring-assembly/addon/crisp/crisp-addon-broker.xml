@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+
+  <bean id="org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker"
+        class="org.onehippo.cms7.crisp.core.broker.CacheableResourceServiceBroker">
+    <property name="resourceResolverProvider" ref="org.onehippo.cms7.crisp.api.resource.ResourceResolverProvider" />
+    <property name="cacheEnabled" value="true" />
+    <property name="defaultResourceDataCache">
+      <bean class="org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache">
+        <constructor-arg ref="defaultCrispResourceCache" />
+      </bean>
+    </property>
+  </bean>
+
+  <bean id="org.onehippo.cms7.crisp.core.broker.ResourceBrokerServiceRegistrationBean"
+        class="org.onehippo.cms7.crisp.core.broker.ResourceBrokerServiceRegistrationBean">
+    <property name="enabled" value="true" />
+    <property name="resourceServiceBroker" ref="org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker" />
+  </bean>
+
+</beans>
+

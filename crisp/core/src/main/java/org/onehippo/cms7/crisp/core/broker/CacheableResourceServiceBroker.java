@@ -5,12 +5,11 @@ import java.util.Map;
 import org.onehippo.cms7.crisp.api.broker.AbstractResourceServiceBroker;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
+import org.onehippo.cms7.crisp.api.resource.ResourceDataCache;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.onehippo.cms7.crisp.api.resource.ValueMap;
 import org.onehippo.cms7.crisp.core.resource.DefaultValueMap;
-import org.springframework.cache.Cache;
-import org.springframework.cache.Cache.ValueWrapper;
 
 public class CacheableResourceServiceBroker extends AbstractResourceServiceBroker {
 
@@ -23,19 +22,19 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
     private static final String OPERATION_KEY_FIND_RESOURCES = CacheableResourceServiceBroker.class.getName()
             + ".findResources";
 
-    private Cache resourceCache;
+    private ResourceDataCache defaultResourceDataCache;
     private boolean cacheEnabled = true;
 
     public CacheableResourceServiceBroker() {
         super();
     }
 
-    public Cache getResourceCache() {
-        return resourceCache;
+    public ResourceDataCache getDefaultResourceDataCache() {
+        return defaultResourceDataCache;
     }
 
-    public void setResourceCache(Cache resourceCache) {
-        this.resourceCache = resourceCache;
+    public void setDefaultResourceDataCache(ResourceDataCache defaultResourceDataCache) {
+        this.defaultResourceDataCache = defaultResourceDataCache;
     }
 
     public boolean isCacheEnabled() {
@@ -53,13 +52,18 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
         ValueMap cacheKey = null;
 
-        if (isCacheEnabled() && resourceCache != null) {
-            cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, pathVariables);
-            ValueWrapper cacheDataWrapper = resourceCache.get(cacheKey);
+        ResourceDataCache resourceDataCache = resourceResolver.getResourceDataCache();
 
-            if (cacheDataWrapper != null) {
-                Object cachedData = cacheDataWrapper.get();
-                resource = (Resource) resourceResolver.fromCacheData(cachedData);
+        if (resourceDataCache == null) {
+            resourceDataCache = getDefaultResourceDataCache();
+        }
+
+        if (isCacheEnabled() && resourceDataCache != null) {
+            cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, pathVariables);
+            Object cacheData = resourceDataCache.getData(cacheKey);
+
+            if (cacheData != null) {
+                resource = (Resource) resourceResolver.fromCacheData(cacheData);
             }
         }
 
@@ -70,7 +74,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
                 final Object cacheData = resourceResolver.toCacheData(resource);
 
                 if (cacheData != null) {
-                    resourceCache.put(cacheKey, cacheData);
+                    resourceDataCache.putData(cacheKey, cacheData);
                 }
             }
         }
@@ -85,13 +89,18 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
         ValueMap cacheKey = null;
 
-        if (isCacheEnabled() && resourceCache != null) {
-            cacheKey = createCacheKey(OPERATION_KEY_FIND_RESOURCES, resourceSpace, baseAbsPath, pathVariables);
-            ValueWrapper cacheDataWrapper = resourceCache.get(cacheKey);
+        ResourceDataCache resourceDataCache = resourceResolver.getResourceDataCache();
 
-            if (cacheDataWrapper != null) {
-                Object cachedData = cacheDataWrapper.get();
-                resource = (Resource) resourceResolver.fromCacheData(cachedData);
+        if (resourceDataCache == null) {
+            resourceDataCache = getDefaultResourceDataCache();
+        }
+
+        if (isCacheEnabled() && resourceDataCache != null) {
+            cacheKey = createCacheKey(OPERATION_KEY_FIND_RESOURCES, resourceSpace, baseAbsPath, pathVariables);
+            Object cacheData = resourceDataCache.getData(cacheKey);
+
+            if (cacheData != null) {
+                resource = (Resource) resourceResolver.fromCacheData(cacheData);
             }
         }
 
@@ -102,7 +111,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
                 final Object cacheData = resourceResolver.toCacheData(resource);
 
                 if (cacheData != null) {
-                    resourceCache.put(cacheKey, cacheData);
+                    resourceDataCache.putData(cacheKey, cacheData);
                 }
             }
         }
@@ -113,10 +122,23 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
     protected ValueMap createCacheKey(final String operationKey, final String resourceSpace, final String resourcePath,
             final Map<String, Object> variables) {
         final ValueMap cacheKey = new DefaultValueMap();
-        cacheKey.put(OPERATION_KEY, operationKey);
-        cacheKey.put(RESOURCE_SPACE, resourceSpace);
-        cacheKey.put(RESOURCE_PATH, resourcePath);
-        cacheKey.put(VARIABLES, variables);
+
+        if (operationKey != null) {
+            cacheKey.put(OPERATION_KEY, operationKey);
+        }
+
+        if (resourceSpace != null) {
+            cacheKey.put(RESOURCE_SPACE, resourceSpace);
+        }
+
+        if (resourcePath != null) {
+            cacheKey.put(RESOURCE_PATH, resourcePath);
+        }
+
+        if (variables != null && !variables.isEmpty()) {
+            cacheKey.put(VARIABLES, variables);
+        }
+
         return cacheKey;
     }
 }

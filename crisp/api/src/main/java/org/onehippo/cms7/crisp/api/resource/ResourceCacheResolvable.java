@@ -8,4 +8,6 @@ public interface ResourceCacheResolvable {
 
     ResourceContainer fromCacheData(Object cacheData);
 
+    ResourceDataCache getResourceDataCache();
+
 }

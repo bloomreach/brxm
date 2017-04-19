@@ -2,6 +2,8 @@ package org.onehippo.cms7.crisp.api.resource;
 
 public abstract class AbstractResourceCacheResolvable implements ResourceCacheResolvable {
 
+    private ResourceDataCache resourceDataCache;
+
     @Override
     public boolean isCacheable(ResourceContainer resourceContainer) {
         return false;
@@ -15,5 +17,14 @@ public abstract class AbstractResourceCacheResolvable implements ResourceCacheRe
     @Override
     public ResourceContainer fromCacheData(Object cacheData) {
         return null;
+    }
+
+    @Override
+    public ResourceDataCache getResourceDataCache() {
+        return resourceDataCache;
+    }
+
+    public void setResourceDataCache(ResourceDataCache resourceDataCache) {
+        this.resourceDataCache = resourceDataCache;
     }
 }

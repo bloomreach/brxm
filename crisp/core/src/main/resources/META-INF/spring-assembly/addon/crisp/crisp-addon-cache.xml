@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+
+  <bean id="abstractCrispResourceEhCache" abstract="true" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+    <property name="cacheManager" ref="ehCacheManager" />
+    <property name="cacheName" value="crispResourceCache" />
+    <property name="eternal" value="false" />
+    <property name="diskExpiryThreadIntervalSeconds" value="120" />
+    <property name="statisticsEnabled" value="true" />
+  </bean>
+
+  <bean id="defaultCrispResourceCache" class="org.springframework.cache.ehcache.EhCacheCache">
+    <constructor-arg>
+      <bean parent="abstractCrispResourceEhCache">
+        <property name="maxEntriesLocalHeap" value="1000" />
+        <property name="maxEntriesLocalDisk" value="0" />
+        <property name="timeToLiveSeconds" value="60" />
+        <property name="timeToIdleSeconds" value="60" />
+      </bean>
+    </constructor-arg>
+  </bean>
+
+</beans>
