@@ -1,6 +1,6 @@
 package org.onehippo.cms7.crisp.api.resource;
 
-public abstract class AbstractResource implements Resource {
+public abstract class AbstractResource extends AbstractResourceContainer implements Resource {
 
     private static final long serialVersionUID = 1L;
 

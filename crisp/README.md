@@ -18,6 +18,7 @@ Hippo Addon CRISP (Common Resource Interface and Service Provider).
 - TODO: Caching per route.
 - TODO: Web-hook based event processing.
 - TODO: Optional Java bean binding option from Resource(s).
+- TODO: Javadocs and documentation
 
 ## Build and install the module itself into local maven repository
 
@@ -111,9 +112,8 @@ then you can use it like the following example (excerpt from [NewsContentCompone
     ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
     final Map<String, Object> pathVars = new HashMap<>();
     pathVars.put("fullTextSearchTerm", document.getTitle());
-    QuerySpec querySpec = QuerySpecBuilder.create().offset(0).limit(100L).build();
     ResourceContainer productCatalogs =
-        resourceServiceBroker.findResources("demoProductCatalogs", "/products?q={fullTextSearchTerm}", pathVars, querySpec);
+        resourceServiceBroker.findResources("demoProductCatalogs", "/products?q={fullTextSearchTerm}", pathVars);
     request.setAttribute("demoProductCatalogs", productCatalogs);
 ```
 
@@ -155,7 +155,6 @@ service facade implementation, etc.), then you can use it like the following exa
         ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
         Map<String, Object> variables = new HashMap<>();
         variables.put("queryString", StringUtils.isNotBlank(queryString) ? queryString : "");
-        QuerySpec querySpec = QuerySpecBuilder.create().offset(0).limit(100L).build();
-        return broker.findResources("productCatalogs", "/products?q={queryString}", variables, querySpec);
+        return broker.findResources("productCatalogs", "/products?q={queryString}", variables);
     }
 ```

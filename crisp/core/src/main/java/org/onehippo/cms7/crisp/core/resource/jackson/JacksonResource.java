@@ -24,7 +24,7 @@ public class JacksonResource extends AbstractResource {
 
     private final JsonNode jsonNode;
     private ValueMap internalValueMap;
-    private List<Resource> internalChildren;
+    private List<Resource> internalAllChildren;
 
     public JacksonResource(JsonNode jsonNode) {
         super(jsonNode.getNodeType().toString());
@@ -57,13 +57,21 @@ public class JacksonResource extends AbstractResource {
     }
 
     @Override
-    public Iterator<Resource> getChildIterator() {
-        return Collections.unmodifiableList(getInternalChildren()).iterator();
+    public long getChildCount() {
+        final List<Resource> allChildren = getInternalAllChildren();
+        return allChildren.size();
     }
 
     @Override
-    public Iterable<Resource> getChildren() {
-        return Collections.unmodifiableList(getInternalChildren());
+    public Iterator<Resource> getChildIterator(long offset, long limit) {
+        final List<Resource> allChildren = getInternalAllChildren();
+        return createUnmodifiableSubList(allChildren, offset, limit).iterator();
+    }
+
+    @Override
+    public Iterable<Resource> getChildren(long offset, long limit) {
+        final List<Resource> allChildren = getInternalAllChildren();
+        return createUnmodifiableSubList(allChildren, offset, limit);
     }
 
     @Override
@@ -115,7 +123,7 @@ public class JacksonResource extends AbstractResource {
             JsonNode fieldJsonNode;
             Object fieldValue;
 
-            for (Iterator<Map.Entry<String, JsonNode>> it = jsonNode.fields(); it.hasNext(); ) {
+            for (Iterator<Map.Entry<String, JsonNode>> it = jsonNode.fields(); it.hasNext();) {
                 entry = it.next();
                 fieldName = entry.getKey();
                 fieldJsonNode = entry.getValue();
@@ -135,8 +143,8 @@ public class JacksonResource extends AbstractResource {
         return internalValueMap;
     }
 
-    private List<Resource> getInternalChildren() {
-        if (internalChildren == null) {
+    private List<Resource> getInternalAllChildren() {
+        if (internalAllChildren == null) {
             List<Resource> list = new LinkedList<>();
 
             if (jsonNode.isObject()) {
@@ -144,7 +152,7 @@ public class JacksonResource extends AbstractResource {
                 String name;
                 JsonNode value;
 
-                for (Iterator<Map.Entry<String, JsonNode>> it = jsonNode.fields(); it.hasNext(); ) {
+                for (Iterator<Map.Entry<String, JsonNode>> it = jsonNode.fields(); it.hasNext();) {
                     entry = it.next();
                     name = entry.getKey();
                     value = entry.getValue();
@@ -157,7 +165,7 @@ public class JacksonResource extends AbstractResource {
                 JsonNode value;
                 int index = 0;
 
-                for (Iterator<JsonNode> it = jsonNode.elements(); it.hasNext(); ) {
+                for (Iterator<JsonNode> it = jsonNode.elements(); it.hasNext();) {
                     value = it.next();
 
                     if (value.isContainerNode()) {
@@ -166,10 +174,10 @@ public class JacksonResource extends AbstractResource {
                 }
             }
 
-            internalChildren = list;
+            internalAllChildren = list;
         }
 
-        return internalChildren;
+        return internalAllChildren;
     }
 
     private JacksonResource toChildFieldJacksonResource(JsonNode jsonNode, String fieldName) {
@@ -180,4 +188,35 @@ public class JacksonResource extends AbstractResource {
         return new JacksonResource(this, jsonNode, "[" + index + "]");
     }
 
+    private static List<Resource> createUnmodifiableSubList(List<Resource> source, long offset, long limit) {
+        if (offset < 0 || offset >= source.size()) {
+            throw new IllegalArgumentException("Invalid offset: " + offset + " (size = " + source.size() + ")");
+        }
+
+        if (limit == 0) {
+            return Collections.emptyList();
+        }
+
+        if ((offset == 0 && limit < 0) || (offset == 0 && limit == source.size())) {
+            return Collections.unmodifiableList(source);
+        }
+
+        long endIndex;
+
+        if (limit > source.size()) {
+            endIndex = source.size();
+        } else {
+            endIndex = Math.min(source.size(), offset + limit);
+        }
+
+        if (offset == 0) {
+            return source.subList((int) offset, (int) endIndex);
+        } else {
+            if (limit < 0) {
+                return Collections.unmodifiableList(source.subList((int) offset, source.size()));
+            } else {
+                return Collections.unmodifiableList(source.subList((int) offset, (int) endIndex));
+            }
+        }
+    }
 }

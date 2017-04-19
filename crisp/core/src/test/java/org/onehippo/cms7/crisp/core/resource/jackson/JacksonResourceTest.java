@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.crisp.api.resource.Resource;
-import org.onehippo.cms7.crisp.core.resource.jackson.JacksonResource;
+import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -158,4 +159,56 @@ public class JacksonResourceTest {
         assertSame(images, image.getParent());
     }
 
+    @Test
+    public void testPagination() throws Exception {
+        Resource widget = rootResource.getValueMap().get("widget", Resource.class);
+        ResourceContainer images = widget.getValueMap().get("images", ResourceContainer.class);
+        assertEquals(2, images.getChildCount());
+
+        List<Resource> children = (List<Resource>) images.getChildren();
+        assertEquals(2, children.size());
+        assertEquals("Images/Sun.png", children.get(0).getValueMap().get("src"));
+        assertEquals("Images/Moon.png", children.get(1).getValueMap().get("src"));
+
+        try {
+            children = (List<Resource>) images.getChildren(-1, 0);
+            fail("Negative offset should not be allowed.");
+        } catch (IllegalArgumentException expectedException) {
+        }
+
+        children = (List<Resource>) images.getChildren(0, 0);
+        assertEquals(0, children.size());
+
+        children = (List<Resource>) images.getChildren(0, 1);
+        assertEquals(1, children.size());
+        assertEquals("Images/Sun.png", children.get(0).getValueMap().get("src"));
+
+        children = (List<Resource>) images.getChildren(0, 2);
+        assertEquals(2, children.size());
+        assertEquals("Images/Sun.png", children.get(0).getValueMap().get("src"));
+        assertEquals("Images/Moon.png", children.get(1).getValueMap().get("src"));
+
+        children = (List<Resource>) images.getChildren(0, -1);
+        assertEquals(2, children.size());
+        assertEquals("Images/Sun.png", children.get(0).getValueMap().get("src"));
+        assertEquals("Images/Moon.png", children.get(1).getValueMap().get("src"));
+
+        children = (List<Resource>) images.getChildren(1, 1);
+        assertEquals(1, children.size());
+        assertEquals("Images/Moon.png", children.get(0).getValueMap().get("src"));
+
+        children = (List<Resource>) images.getChildren(1, 2);
+        assertEquals(1, children.size());
+        assertEquals("Images/Moon.png", children.get(0).getValueMap().get("src"));
+
+        children = (List<Resource>) images.getChildren(1, Long.MAX_VALUE);
+        assertEquals(1, children.size());
+        assertEquals("Images/Moon.png", children.get(0).getValueMap().get("src"));
+
+        try {
+            children = (List<Resource>) images.getChildren(2, Long.MAX_VALUE);
+            fail("Out of index offset.");
+        } catch (IllegalArgumentException expectedException) {
+        }
+    }
 }

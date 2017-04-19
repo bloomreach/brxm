@@ -37,12 +37,6 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
     }
 
     @Override
-    public ResourceContainer findResources(String resourceSpace, String baseAbsPath, Map<String, Object> pathVariables)
-            throws ResourceException {
-        return findResources(resourceSpace, baseAbsPath, pathVariables, null);
-    }
-
-    @Override
     public ResourceLink resolveLink(String resourceSpace, ResourceContainer resource) throws ResourceException {
         return resolveLink(resourceSpace, resource, Collections.emptyMap());
     }

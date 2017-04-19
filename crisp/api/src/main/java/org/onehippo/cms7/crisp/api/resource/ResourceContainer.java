@@ -7,8 +7,14 @@ public interface ResourceContainer extends Serializable {
 
     boolean isAnyChildContained();
 
+    long getChildCount();
+
     Iterator<Resource> getChildIterator();
 
+    Iterator<Resource> getChildIterator(long offset, long limit);
+
     Iterable<Resource> getChildren();
+
+    Iterable<Resource> getChildren(long offset, long limit);
 
 }
