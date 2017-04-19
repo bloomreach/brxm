@@ -109,5 +109,12 @@
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
   </bean>
 
+
+  <bean id="org.hippoecm.hst.configuration.channel.SharedChannelService"
+        class="org.hippoecm.hst.services.SharedChannelServiceImpl" init-method="registerService" destroy-method="unregisterService">
+    <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
+    <property name="contextPath" value="#{servletContext.contextPath}"/>
+  </bean>
+
 </beans>
 

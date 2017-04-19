@@ -231,7 +231,7 @@ public interface VirtualHosts {
     /**
      * @param hostGroup the name of the host group to get the channels for
      * @return all managed channels for the <code></code>hostGroup</code>. Empty List in case the hostGroup does not
-     * exist or has no channel
+     * exist or has no channel. The keys in the map are the {@link Channel#getId()}'s
      */
     Map<String, Channel> getChannels(String hostGroup);
 
