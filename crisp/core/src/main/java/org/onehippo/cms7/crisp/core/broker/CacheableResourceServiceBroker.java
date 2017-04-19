@@ -111,10 +111,13 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
 
     @Override
     public ResourceDataCache getResourceDataCache(String resourceSpace) {
-        ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
-        ValueMap cacheKey = null;
+        ResourceDataCache resourceDataCache = null;
 
-        ResourceDataCache resourceDataCache = resourceResolver.getResourceDataCache();
+        ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
+
+        if (resourceResolver != null) {
+            resourceDataCache = resourceResolver.getResourceDataCache();
+        }
 
         if (resourceDataCache == null) {
             resourceDataCache = getDefaultResourceDataCache();
