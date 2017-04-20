@@ -1,0 +1,42 @@
+## Example of a partial config baseline, to show node structures
+/hippo:configuration:
+  /hippocfg:baseline:
+    jcr:primaryType: hippocfg:baseline
+    /platform:
+      jcr:primaryType: hippocfg:configlayer
+      /myproject:
+        jcr:primaryType: hippocfg:project
+        /mymodule:
+          jcr:primaryType: hippocfg:module
+          /hippo-config.yaml:
+            jcr:primaryType: hippocfg:dependencies
+            hippocfg:digest: MD5:xxx
+            hippocfg:yaml: xxx
+          /hippo-config:
+            jcr:primaryType: hippocfg:configfolder
+            /main.yaml:
+              jcr:primaryType: hippocfg:definitions
+              hippocfg:digest: MD5:xxx
+              hippocfg:yaml: xxx
+            /cndResource.cnd:
+              jcr:primaryType: hippocfg:cnd
+              hippocfg:digest: MD5:xxx
+              hippocfg:cnd: xxx
+            /others:
+              jcr:primaryType: hippocfg:configfolder
+              /other.yaml:
+                jcr:primaryType: hippocfg:definitions
+                hippocfg:digest: MD5:xxx
+                hippocfg:yaml: xxx
+              /binaryResource.jpg:
+                jcr:primaryType: hippocfg:binary
+                hippocfg:digest: MD5:xxx
+                jcr:data: xxx
+          /repo-content:
+            # NOTE: content is not digested and binary content is not stored
+            jcr:primaryType: hippocfg:contentfolder
+            /stuff:
+              jcr:primaryType: hippocfg:contentfolder
+              /stuff.yaml:
+                jcr:primaryType: hippocfg:content
+                hippocfg:contentPath: "/content/myseedcontent"

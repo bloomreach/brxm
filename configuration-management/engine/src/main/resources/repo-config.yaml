@@ -1,0 +1,6 @@
+configurations:
+  - configuration: hippo
+    projects:
+      - project: hippo-configuration-management
+        modules:
+          - module: hippo-configuration-management-engine
