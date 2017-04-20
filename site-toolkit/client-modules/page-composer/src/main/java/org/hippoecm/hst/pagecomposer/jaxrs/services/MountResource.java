@@ -484,7 +484,6 @@ public class MountResource extends AbstractConfigResource {
         }
         try {
             Session session = context.getRequestContext().getSession();
-            session.getNode("/hst:hst/hst:channels/" + channel.getId()).remove();
             session.getNode(channel.getHstConfigPath()).remove();
             HstConfigurationUtils.persistChanges(session);
         } catch (RepositoryException e) {
