@@ -2,6 +2,14 @@
 
 Hippo Addon CRISP (Common Resource Interface and Service Provider).
 
+## Release Version Compatibility
+
+| Plugin Version | CMS Version  |
+|:--------------:|:------------:|
+| 1.x            | 11.x         |
+
+See [CHANGES](CHANGES.md) for release notes.
+
 ## Features
 
 - Generic External (REST) API Service Invoking Broker Service (```ResourceServiceBroker```)
