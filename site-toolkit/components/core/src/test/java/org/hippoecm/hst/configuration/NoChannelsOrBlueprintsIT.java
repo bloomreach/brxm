@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,16 +16,19 @@
 package org.hippoecm.hst.configuration;
 
 
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,7 +59,7 @@ public class NoChannelsOrBlueprintsIT extends AbstractTestConfigurations {
 
     @Test
     public void testModelWithoutChannels() throws Exception {
-        session.getNode("/hst:hst/hst:channels").remove();
+        removeChannelNodes(session);
         session.save();
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
         assertTrue(vhosts.getChannels("dev-localhost").isEmpty());
@@ -72,7 +75,7 @@ public class NoChannelsOrBlueprintsIT extends AbstractTestConfigurations {
 
     @Test
     public void testModelWithoutChannelsOrBlueprints() throws Exception {
-        session.getNode("/hst:hst/hst:channels").remove();
+        removeChannelNodes(session);
         session.getNode("/hst:hst/hst:blueprints").remove();
         session.save();
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -85,21 +88,13 @@ public class NoChannelsOrBlueprintsIT extends AbstractTestConfigurations {
         return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
-    protected void createHstConfigBackup(Session session) throws RepositoryException {
-        if (!session.nodeExists("/hst-backup")) {
-            JcrUtils.copy(session, "/hst:hst", "/hst-backup");
-            session.save();
+    private void removeChannelNodes(final Session session) throws RepositoryException {
+        QueryResult result = session.getWorkspace().getQueryManager().createQuery("/jcr:root/hst:hst//element(*,hst:channel)", "xpath").execute();
+        for (Node node : new NodeIterable(result.getNodes())) {
+            node.remove();
         }
     }
 
-    protected void restoreHstConfigBackup(Session session) throws RepositoryException {
-        if (session.nodeExists("/hst-backup")) {
-            session.removeItem("/hst:hst");
-            JcrUtils.copy(session, "/hst-backup", "/hst:hst");
-            session.removeItem("/hst-backup");
-            session.save();
-        }
-    }
 
 
 }

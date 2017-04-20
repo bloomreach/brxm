@@ -145,7 +145,12 @@ public class HstSiteService implements HstSite {
             ch.setContextPath(mountSiteMapConfiguration.getMountContextPath());
 
             // do not fetch the sitemap id via #getSiteMap() because that part should be invoked lazily
-            ch.setSiteMapId(findSiteMapNode().getMainConfigNode().getValueProvider().getIdentifier());
+            CompositeConfigurationNode siteMapNode = findSiteMapNode();
+            if (siteMapNode == null) {
+                log.warn("Missing sitemap below '{}' and also no sitemap is inherited.", configurationPath);
+            } else {
+                ch.setSiteMapId(siteMapNode.getMainConfigNode().getValueProvider().getIdentifier());
+            }
 
             VirtualHost virtualHost = mount.getVirtualHost();
             ch.setCmsPreviewPrefix(virtualHost.getVirtualHosts().getCmsPreviewPrefix());
