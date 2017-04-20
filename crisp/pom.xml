@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-cms7-project</artifactId>
+    <groupId>com.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-enterprise-project</artifactId>
     <version>28.5</version>
   </parent>
 
@@ -50,8 +53,8 @@
 
   <licenses>
     <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <name>Hippo Enterprise Software License</name>
+      <url>https://www.onehippo.com/</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -61,6 +64,14 @@
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
       <url>http://maven.onehippo.com/maven2/</url>
+    </repository>
+    <repository>
+      <id>hippo-maven2-enterprise</id>
+      <name>Hippo Maven 2 Enterprise</name>
+      <url>https://maven.onehippo.com/maven2-enterprise/</url>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
     </repository>
   </repositories>
 
