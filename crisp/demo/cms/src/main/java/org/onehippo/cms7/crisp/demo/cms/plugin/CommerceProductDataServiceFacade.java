@@ -9,9 +9,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
-import org.onehippo.cms7.crisp.api.resource.Resource;
-import org.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.forge.exdocpicker.api.ExternalDocumentCollection;
 import org.onehippo.forge.exdocpicker.api.ExternalDocumentServiceContext;
@@ -19,6 +16,10 @@ import org.onehippo.forge.exdocpicker.api.ExternalDocumentServiceFacade;
 import org.onehippo.forge.exdocpicker.impl.SimpleExternalDocumentCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
+import com.onehippo.cms7.crisp.api.resource.Resource;
+import com.onehippo.cms7.crisp.api.resource.ResourceContainer;
 
 public class CommerceProductDataServiceFacade implements ExternalDocumentServiceFacade<Resource> {
 

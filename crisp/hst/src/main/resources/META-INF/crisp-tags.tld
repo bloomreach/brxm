@@ -1,18 +1,6 @@
 <?xml version="1.0" ?>
 <!--
   Copyright 2017 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
 -->
 <taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.1"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -21,15 +9,15 @@
   <description>Hippo Addon CRISP Tag Library</description>
   <tlib-version>1.0</tlib-version>
   <short-name>crisp-tags</short-name>
-  <uri>http://www.onehippo.org/jsp/hippo/crisp/tags</uri>
+  <uri>http://www.onehippo.com/jsp/hippo/crisp/tags</uri>
 
   <tag>
     <description>
       This tag creates a link for a CRISP resource.
     </description>
     <name>link</name>
-    <tag-class>org.onehippo.cms7.crisp.hst.tag.ResourceLinkTag</tag-class>
-    <tei-class>org.onehippo.cms7.crisp.hst.tag.ResourceLinkTag$TEI</tei-class>
+    <tag-class>com.onehippo.cms7.crisp.hst.tag.ResourceLinkTag</tag-class>
+    <tei-class>com.onehippo.cms7.crisp.hst.tag.ResourceLinkTag$TEI</tei-class>
     <body-content>JSP</body-content>
     <attribute>
       <description>The variable name of the link tag</description>
@@ -52,7 +40,7 @@
       <name>resource</name>
       <required>true</required>
       <rtexprvalue>true</rtexprvalue>
-      <type>org.onehippo.cms7.crisp.api.resource.ResourceContainer</type>
+      <type>com.onehippo.cms7.crisp.api.resource.ResourceContainer</type>
     </attribute>
     <attribute>
       <description>
@@ -72,7 +60,7 @@
       This variable tag can be nested into 'link' tag to provide additional link variables.
     </description>
     <name>variable</name>
-    <tag-class>org.onehippo.cms7.crisp.hst.tag.VariableTag</tag-class>
+    <tag-class>com.onehippo.cms7.crisp.hst.tag.VariableTag</tag-class>
     <body-content>empty</body-content>
     <attribute>
       <description>The name of the variable</description>

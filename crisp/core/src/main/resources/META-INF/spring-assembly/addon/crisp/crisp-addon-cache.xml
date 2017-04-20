@@ -24,7 +24,7 @@
     </constructor-arg>
   </bean>
 
-  <bean id="defaultCrispResourceDataCache" class="org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache">
+  <bean id="defaultCrispResourceDataCache" class="com.onehippo.cms7.crisp.core.resource.SpringResourceDataCache">
     <constructor-arg ref="defaultCrispResourceCache" />
   </bean>
 

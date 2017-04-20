@@ -10,7 +10,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd"&gt;&#xd;
 &#xd;
   &lt;bean parent="abstractCrispSimpleJacksonRestTemplateResourceResolver"&#xd;
-        class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver"&gt;&#xd;
+        class="com.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver"&gt;&#xd;
     &lt;property name="baseUri" value="${example.commerce.api.base.uri}" /&gt;&#xd;
     &lt;property name="restTemplate"&gt;&#xd;
       &lt;bean class="org.springframework.web.client.RestTemplate"&gt;&#xd;
@@ -18,14 +18,14 @@
       &lt;/bean&gt;&#xd;
     &lt;/property&gt;&#xd;
     &lt;property name="resourceLinkResolver"&gt;&#xd;
-      &lt;bean class="org.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver"&gt;&#xd;
+      &lt;bean class="com.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver"&gt;&#xd;
         &lt;property name="templateSource"&gt;&#xd;
           &lt;value&gt;http://www.example.com/products/${(preview == "true")?then("staging", "current")}/sku/${resource.valueMap['SKU']!"unknown"}/overview.html&lt;/value&gt;&#xd;
         &lt;/property&gt;&#xd;
       &lt;/bean&gt;&#xd;
     &lt;/property&gt;&#xd;
     &lt;property name="resourceDataCache"&gt;&#xd;
-      &lt;bean class="org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache"&gt;&#xd;
+      &lt;bean class="com.onehippo.cms7.crisp.core.resource.SpringResourceDataCache"&gt;&#xd;
         &lt;constructor-arg&gt;&#xd;
           &lt;bean class="org.springframework.cache.ehcache.EhCacheCache"&gt;&#xd;
             &lt;constructor-arg&gt;&#xd;
