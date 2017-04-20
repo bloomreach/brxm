@@ -139,6 +139,10 @@ public class ManagedUserSessionInvokerTest {
         userSession.logout();
         EasyMock.expectLastCall();
 
+        EasyMock.expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn("locahost");
+        servletRequest.setAttribute(ManagedUserSessionInvoker.ATTRIBUTE_FARTHEST_REQUEST_HOST, "locahost");
+        EasyMock.expectLastCall();
+
         EasyMock.replay(servletRequest, httpSession, context, systemSession, repository, userSession);
 
         final Object result = invoker.invoke(exchange, "test");
@@ -203,6 +207,9 @@ public class ManagedUserSessionInvokerTest {
         servletRequest.setAttribute(ATTRIBUTE_LOCALE, locale);
         EasyMock.expectLastCall();
         userSession.logout();
+        EasyMock.expectLastCall();
+        EasyMock.expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn("locahost");
+        servletRequest.setAttribute(ManagedUserSessionInvoker.ATTRIBUTE_FARTHEST_REQUEST_HOST, "locahost");
         EasyMock.expectLastCall();
 
         EasyMock.replay(servletRequest, httpSession, context, systemSession, repository, userSession);

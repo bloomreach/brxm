@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Provides and manages a JCR session authenticated for the current logged in user.
- * The name of the logged is user is read from the HTTP session attribute 'hippo:username'.
+ * The name of the logged in user is read from the HTTP session attribute 'hippo:username'.
  * Returns a 403 forbidden error when invoked while no user is logged in.
  */
 public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionDataProvider {
@@ -43,6 +43,7 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionDa
 
     private static final String ATTRIBUTE_SESSION = ManagedUserSessionInvoker.class.getName() + ".UserSession";
     private static final String ATTRIBUTE_LOCALE  = ManagedUserSessionInvoker.class.getName() + ".Locale";
+    static final String ATTRIBUTE_FARTHEST_REQUEST_HOST = ManagedUserSessionInvoker.class.getName() + ".FarthesRequestHost";;
     private static final MessageContentsList FORBIDDEN = new MessageContentsList(Response.status(Response.Status.FORBIDDEN).build());
 
     private final Session systemSession;
@@ -59,6 +60,10 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionDa
     @Override
     public Locale getLocale(final HttpServletRequest servletRequest) {
         return (Locale)servletRequest.getAttribute(ATTRIBUTE_LOCALE);
+    }
+
+    public String getFarthestRequestHost(final HttpServletRequest servletRequest) {
+        return (String)servletRequest.getAttribute(ATTRIBUTE_FARTHEST_REQUEST_HOST);
     }
 
     @Override
@@ -82,6 +87,7 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionDa
             try {
                 servletRequest.setAttribute(ATTRIBUTE_SESSION, userSession);
                 servletRequest.setAttribute(ATTRIBUTE_LOCALE, getLocale(cmsSessionContext));
+                servletRequest.setAttribute(ATTRIBUTE_FARTHEST_REQUEST_HOST, getFarthestRequestHostInternal(servletRequest));
                 return invokeSuper(exchange, requestParams);
             } finally {
                 userSession.logout();
@@ -103,5 +109,38 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionDa
             locale = new Locale("en");
         }
         return locale;
+    }
+
+    /**
+     * Returns the original host information requested by the client
+     * @param request
+     * @return the farthest request host
+     */
+    private static String getFarthestRequestHostInternal(HttpServletRequest request) {
+        String host = request.getHeader("X-Forwarded-Host");
+
+        if (host != null) {
+            String [] hosts = host.split(",");
+            return hosts[0].trim();
+        }
+
+        host = request.getHeader("Host");
+
+        if (host != null && !"".equals(host)) {
+            return host;
+        }
+
+        // fallback to request server name for HTTP/1.0 clients.
+        // e.g., HTTP/1.0 based browser clients or load balancer not   providing 'Host' header.
+
+        int serverPort = request.getServerPort();
+
+        if (serverPort == 80 || serverPort == 443 || serverPort <= 0) {
+            host = request.getServerName();
+        } else {
+            host = request.getServerName() + ":" + serverPort;
+        }
+
+        return host;
     }
 }
