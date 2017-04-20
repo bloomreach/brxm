@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+-->
 <sv:node sv:name="crispregistry" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:module</sv:value>

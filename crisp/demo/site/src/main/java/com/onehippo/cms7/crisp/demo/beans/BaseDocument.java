@@ -1,3 +1,6 @@
+/*
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ */
 package com.onehippo.cms7.crisp.demo.beans;
 
 import org.hippoecm.hst.content.beans.Node;

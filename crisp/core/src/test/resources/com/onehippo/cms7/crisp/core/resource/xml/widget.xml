@@ -1,3 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+-->
 <widget>
     <debug>on</debug>
     <window title="Sample Konfabulator Widget">

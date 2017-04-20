@@ -1,3 +1,6 @@
+/*
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ */
 package com.onehippo.cms7.crisp.demo.components;
 
 import static com.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_DEMO_SALES_FORCE;
