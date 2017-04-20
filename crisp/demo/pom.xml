@@ -10,7 +10,7 @@
 
   <name>Hippo Addon CRISP Demo</name>
   <description>Hippo Addon CRISP Demo</description>
-  <groupId>org.onehippo.cms7.demo</groupId>
+  <groupId>com.onehippo.cms7.demo</groupId>
   <artifactId>hippo-addon-crisp-demo</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -320,7 +320,7 @@
       <id>cargo.run</id>
       <dependencies>
         <dependency>
-          <groupId>org.onehippo.cms7</groupId>
+          <groupId>com.onehippo.cms7</groupId>
           <artifactId>hippo-addon-crisp-api</artifactId>
           <scope>provided</scope>
         </dependency>
@@ -391,7 +391,7 @@
                 </systemProperties>
                 <dependencies>
                   <dependency>
-                    <groupId>org.onehippo.cms7</groupId>
+                    <groupId>com.onehippo.cms7</groupId>
                     <artifactId>hippo-addon-crisp-api</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
