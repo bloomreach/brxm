@@ -75,9 +75,7 @@ public class Channel implements Serializable {
     private Calendar lockedOn;
     private Calendar lastModified;
 
-    private Set<String> branches;
-
-    private int hashCode;
+    private String branchId;
 
     /**
      * {@link Channel} default constructor it is required for REST de/serialization
@@ -134,7 +132,7 @@ public class Channel implements Serializable {
         lastModifiedBy = channel.lastModifiedBy;
         lockedOn = channel.lockedOn;
         lastModified = channel.lastModified;
-        branches = channel.branches;
+        branchId = channel.branchId;
     }
 
     /**
@@ -445,23 +443,18 @@ public class Channel implements Serializable {
         this.lastModified = lastModified;
     }
 
-    public Set<String> getBranches() {
-        return branches;
+    public String getBranchId() {
+        return branchId;
     }
 
-    public void setBranches(final Set<String> branches) {
-        this.branches = branches;
+    public void setBranchId(final String branchId) {
+        this.branchId = branchId;
     }
 
     @Override
     public int hashCode() {
-        if (hashCode != 0) {
-            return hashCode;
-        }
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (mountId != null ? mountId.hashCode() : 0);
-        hashCode = result;
-        return hashCode;
+        return 31 * result + (mountId != null ? mountId.hashCode() : 0);
     }
 
 
@@ -515,7 +508,7 @@ public class Channel implements Serializable {
                 ", lastModifiedBy='" + lastModifiedBy + '\'' +
                 ", lockedOn=" + lockedOn +
                 ", lastModified=" + lastModified +
-                ", branches=" + branches +
+                ", branchId=" + branchId +
                 '}';
     }
 }
