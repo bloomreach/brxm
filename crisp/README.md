@@ -59,24 +59,41 @@ Both product list results are from ```ResourceServiceBroker``` service component
 
 ## Installation
 
+You should add Hippo Enterprise Maven Repository in your root pom.xml to use this enterprise addon module.
+
+```xml
+  <repositories>
+    <!-- SNIP -->
+    <repository>
+      <id>hippo-maven2-enterprise</id>
+      <name>Hippo Maven 2 Enterprise</name>
+      <url>https://maven.onehippo.com/maven2-enterprise/</url>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+    <!-- SNIP -->
+  </repositories>
+```
+
 In SITE project, add the following in the pom.xml:
 
 ```xml
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
+      <groupId>com.onehippo.cms7</groupId>
       <artifactId>hippo-addon-crisp-api</artifactId>
       <version>${hippo-addon-crisp.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
+      <groupId>com.onehippo.cms7</groupId>
       <artifactId>hippo-addon-crisp-core</artifactId>
       <version>${hippo-addon-crisp.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
+      <groupId>com.onehippo.cms7</groupId>
       <artifactId>hippo-addon-crisp-hst</artifactId>
       <version>${hippo-addon-crisp.version}</version>
     </dependency>
@@ -86,14 +103,14 @@ In CMS project, add the following in the pom.xml:
 
 ```xml
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
+      <groupId>com.onehippo.cms7</groupId>
       <artifactId>hippo-addon-crisp-api</artifactId>
       <version>${hippo-addon-crisp.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
+      <groupId>com.onehippo.cms7</groupId>
       <artifactId>hippo-addon-crisp-repository</artifactId>
       <version>${hippo-addon-crisp.version}</version>
       <scope>provided</scope>

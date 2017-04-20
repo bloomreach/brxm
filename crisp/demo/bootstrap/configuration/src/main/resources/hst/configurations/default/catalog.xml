@@ -8,7 +8,7 @@
         <sv:value>hst:containeritemcomponent</sv:value>
       </sv:property>
       <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.cms7.essentials.components.EssentialsEventsComponent</sv:value>
+        <sv:value>com.onehippo.cms7.essentials.components.EssentialsEventsComponent</sv:value>
       </sv:property>
       <sv:property sv:name="hst:iconpath" sv:type="String">
         <sv:value>images/essentials/catalog-component-icons/events-list.png</sv:value>
@@ -28,7 +28,7 @@
         <sv:value>hst:containeritemcomponent</sv:value>
       </sv:property>
       <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.cms7.essentials.components.EssentialsNewsComponent</sv:value>
+        <sv:value>com.onehippo.cms7.essentials.components.EssentialsNewsComponent</sv:value>
       </sv:property>
       <sv:property sv:name="hst:iconpath" sv:type="String">
         <sv:value>images/essentials/catalog-component-icons/news-list.png</sv:value>
