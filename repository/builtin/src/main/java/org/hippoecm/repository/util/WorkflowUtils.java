@@ -253,16 +253,12 @@ public final class WorkflowUtils {
                         try {
                             final Node referencedNode = session.getNodeByIdentifier(uuid);
                             if (referencedNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                boolean isLiveDocument = false;
                                 for (Node document : new NodeIterable(referencedNode.getNodes(referencedNode.getName()))) {
                                     if (hasAvailability(document, "live")) {
-                                        isLiveDocument = true;
-                                        break;
+                                        return;
                                     }
                                 }
-                                if (!isLiveDocument) {
-                                    entries.put(uuid, referencedNode);
-                                }
+                                entries.put(uuid, referencedNode);
                             }
                         } catch (ItemNotFoundException e) {
                             log.debug("Reference to UUID " + uuid + " could not be dereferenced.");
