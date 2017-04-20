@@ -43,7 +43,7 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionDa
 
     private static final String ATTRIBUTE_SESSION = ManagedUserSessionInvoker.class.getName() + ".UserSession";
     private static final String ATTRIBUTE_LOCALE  = ManagedUserSessionInvoker.class.getName() + ".Locale";
-    private static final String ATTRIBUTE_FARTHEST_REQUEST_HOST = ManagedUserSessionInvoker.class.getName() + ".FarthesRequestHost";;
+    static final String ATTRIBUTE_FARTHEST_REQUEST_HOST = ManagedUserSessionInvoker.class.getName() + ".FarthesRequestHost";;
     private static final MessageContentsList FORBIDDEN = new MessageContentsList(Response.status(Response.Status.FORBIDDEN).build());
 
     private final Session systemSession;
