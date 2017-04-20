@@ -1,3 +1,6 @@
+/*
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ */
 package com.onehippo.cms7.crisp.core.resource;
 
 import java.util.Collection;
@@ -8,6 +11,8 @@ import java.util.Set;
 import com.onehippo.cms7.crisp.api.resource.ValueMap;
 
 public class EmptyValueMap implements ValueMap {
+
+    private static final long serialVersionUID = 1L;
 
     private static final ValueMap INSTANCE = new EmptyValueMap();
 

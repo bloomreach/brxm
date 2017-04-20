@@ -1,3 +1,6 @@
+/*
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ */
 package com.onehippo.cms7.crisp.core.broker;
 
 import org.onehippo.cms7.services.HippoServiceRegistry;
