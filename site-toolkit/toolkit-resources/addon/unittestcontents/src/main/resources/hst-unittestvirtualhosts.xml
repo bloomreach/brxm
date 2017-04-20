@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -48,9 +48,6 @@
         <sv:property sv:name="hst:mountpoint" sv:type="String">
           <sv:value>/hst:hst/hst:sites/unittestproject</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:channelpath" sv:type="String">
-          <sv:value>/hst:hst/hst:channels/testchannel</sv:value>
-        </sv:property>
         <sv:property sv:name="hst:locale" sv:type="String">
           <sv:value>en_EN</sv:value>
         </sv:property>
@@ -63,6 +60,9 @@
           </sv:property>
           <sv:property sv:name="hst:alias" sv:type="String">
             <sv:value>api</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:nochannelinfo" sv:type="Boolean">
+            <sv:value>true</sv:value>
           </sv:property>
           <sv:property sv:name="hst:ismapped" sv:type="Boolean">
             <sv:value>false</sv:value>
@@ -81,11 +81,11 @@
           <sv:property sv:name="hst:contextpath" sv:type="String">
             <sv:value>/site2</sv:value>
           </sv:property>
+          <sv:property sv:name="hst:mountpoint" sv:type="String">
+            <sv:value>/hst:hst/hst:sites/intranettestproject</sv:value>
+          </sv:property>
           <sv:property sv:name="hst:alias" sv:type="String">
             <sv:value>intranet</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:channelpath" sv:type="String">
-            <sv:value>/hst:hst/hst:channels/intranettestchannel</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="subsite">
@@ -97,9 +97,6 @@
           </sv:property>
           <sv:property sv:name="hst:mountpoint" sv:type="String">
             <sv:value>/hst:hst/hst:sites/unittestsubproject</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:channelpath" sv:type="String">
-            <sv:value>/hst:hst/hst:channels/testsubchannel</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="preview">
@@ -122,6 +119,9 @@
             </sv:property>
             <!-- mountpoint inherited here from parent  -->
 
+            <sv:property sv:name="hst:nochannelinfo" sv:type="Boolean">
+              <sv:value>true</sv:value>
+            </sv:property>
             <sv:property sv:name="hst:namedpipeline" sv:type="String">
               <sv:value>CustomPipeline</sv:value>
             </sv:property>
@@ -156,6 +156,9 @@
           </sv:property>
           <sv:property sv:name="hst:type" sv:type="String">
             <sv:value>preview</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:nochannelinfo" sv:type="Boolean">
+            <sv:value>true</sv:value>
           </sv:property>
           <sv:property sv:name="hst:mountpoint" sv:type="String">
             <sv:value>/hst:hst/hst:sites/unittestproject</sv:value>
@@ -208,6 +211,9 @@
               </sv:property>
               <!-- mountpoint inherited here from parent  -->
 
+              <sv:property sv:name="hst:nochannelinfo" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
               <sv:property sv:name="hst:namedpipeline" sv:type="String">
                 <sv:value>CustomPipeline</sv:value>
               </sv:property>
@@ -243,6 +249,9 @@
             <sv:property sv:name="hst:types" sv:type="String" sv:multiple="true">
               <sv:value>mobile</sv:value>
             </sv:property>
+            <sv:property sv:name="hst:nochannelinfo" sv:type="Boolean">
+              <sv:value>true</sv:value>
+            </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/hst:hst/hst:sites/unittestproject</sv:value>
             </sv:property>
@@ -264,9 +273,6 @@
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/hst:hst/hst:sites/unittestsubproject</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:channelpath" sv:type="String">
-              <sv:value>/hst:hst/hst:channels/testsubchannel</sv:value>
             </sv:property>
           </sv:node>
         </sv:node>
@@ -298,6 +304,10 @@
                 <sv:value>home</sv:value>
               </sv:property>
               <!-- mountpoint inherited here from parent  -->
+
+              <sv:property sv:name="hst:nochannelinfo" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
               <!-- ispreview inherited from parent  -->
               <sv:property sv:name="hst:versioninpreviewheader" sv:type="Boolean">
                 <sv:value>false</sv:value>

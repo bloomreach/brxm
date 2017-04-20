@@ -40,6 +40,18 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="intranettestproject">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:site</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:configurationpath" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/intranettestproject</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:content" sv:type="String">
+      <sv:value>/unittestcontent/documents/unittestproject</sv:value>
+    </sv:property>
+  </sv:node>
+
   <!-- meant for the partial sites unit tests -->
   <sv:node sv:name="global">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
