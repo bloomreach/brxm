@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +60,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
     private EventPathsInvalidator invalidator;
     private Session session;
 
-    public static interface TestChannelInfo extends ChannelInfo {
+    public interface TestChannelInfo extends ChannelInfo {
 
         @Parameter(name = "title", defaultValue = "default")
         String getTitle();
@@ -96,18 +97,16 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void createUniqueChannelId() throws RepositoryException, ChannelException {
+    public void createUniqueChannelName() throws RepositoryException, ChannelException {
         final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
-        assertEquals("test", manager.createUniqueChannelId("test", session));
-        assertEquals("name-with-spaces", manager.createUniqueChannelId("Name with Spaces", session));
-        assertEquals("special-characters--and---and", manager.createUniqueChannelId("Special Characters: % and / and []", session));
-        assertEquals("'testchannel' already exists in the default unit test content, so the new channel ID should get a suffix",
-                "testchannel-1", manager.createUniqueChannelId("testchannel", session));
+        assertEquals("test", manager.createUniqueHstConfigurationName("test", session));
+        assertEquals("name-with-spaces", manager.createUniqueHstConfigurationName("Name with Spaces", session));
+        assertEquals("special-characters--and---and", manager.createUniqueHstConfigurationName("Special Characters: % and / and []", session));
         assertEquals("'unittestproject' already exists as an hst:site node in the default unit test content, so the new channel ID should get a suffix",
-                "unittestproject-1", manager.createUniqueChannelId("unittestproject", session));
-        assertEquals("'unittestcommon' already exists as an hst:configuration node in the default unit test content, so the new channel ID should get a suffix",
-                "unittestcommon-1", manager.createUniqueChannelId("unittestcommon", session));
+                "unittestproject-1", manager.createUniqueHstConfigurationName("unittestproject", session));
+        assertEquals("'unittestcommon' already exists as an hst:configuration node in the default unit test content, so the new channel name should get a suffix",
+                "unittestcommon-1", manager.createUniqueHstConfigurationName("unittestcommon", session));
     }
 
     @Test
@@ -117,8 +116,26 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         Map<String, Channel> channels = manager.getVirtualHosts().getChannels("dev-localhost");
         assertEquals(2, channels.size());
 
-        Channel channel = channels.get("testchannel");
-        assertEquals("testchannel", channel.getId());
+        Channel channel = channels.get("unittestproject");
+        assertEquals("unittestproject", channel.getId());
+        assertEquals("Test Channel", channel.getName());
+        assertEquals("en_EN", channel.getLocale());
+    }
+
+    @Test
+    public void previews_add_channels_with_preview_id() throws Exception {
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject", "/hst:hst/hst:configurations/unittestproject-preview");
+
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+        session.save();
+        invalidator.eventPaths(pathsToBeChanged);
+
+        final HstManager manager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        Map<String, Channel> channels = manager.getVirtualHosts().getChannels("dev-localhost");
+        assertEquals(3, channels.size());
+
+        Channel channel = channels.get("unittestproject-preview");
+        assertEquals("unittestproject-preview", channel.getId());
         assertEquals("Test Channel", channel.getName());
         assertEquals("en_EN", channel.getLocale());
     }
@@ -128,17 +145,17 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
 
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertEquals(2, channels.size());
-        final Channel channel = channels.get("testchannel");
+        final Channel channel = channels.get("unittestproject");
         channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
         channel.getProperties().put("title", "test title");
         // channel manager save triggers event path invalidation hence no explicit invalidation needed now
-        channelMngr.save(channel);
+        channelMngr.save("dev-localhost", channel);
         resetDummyHostOnRequestContext();
 
         channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
 
         assertEquals(2, channels.size());
-        Channel savedChannel = channels.get("testchannel");
+        Channel savedChannel = channels.get("unittestproject");
 
         Map<String, Object> savedProperties = savedChannel.getProperties();
         assertTrue(savedProperties.containsKey("title"));
@@ -161,7 +178,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
         channel.getProperties().put("title", "test title");
         // channel manager save triggers event path invalidation hence no explicit invalidation needed now
-        channelMngr.save(channel);
+        channelMngr.save("dev-localhost", channel);
         resetDummyHostOnRequestContext();
         Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertTrue("After a change, getChannels should return different instance for the Map", channelsAgain != channels);
@@ -187,7 +204,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         final String encodedChannelName = "cmit-test-channel-with-special-and-or-specific-characters";
         assertEquals(encodedChannelName, channelId);
 
-        Node channelNode = session.getNode("/hst:hst/hst:channels/" + channelId);
+        Node channelNode = session.getNode("/hst:hst/hst:configurations/" + channelId + "/hst:workspace/hst:channel");
         assertEquals("CMIT Test Channel: with special and/or specific characters", channelNode.getProperty("hst:name").getString());
 
         Node hostNode = session.getNode("/hst:hst/hst:hosts/dev-localhost");
@@ -308,15 +325,21 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
     @Test
     public void channelsAreReloadedAfterAddingOne() throws Exception {
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
-        int numberOfChannels = channels.size();
+        int numberOfChannelsBefore = channels.size();
 
-        Node channelsNode = session.getNode("/hst:hst/hst:channels");
-        Node newChannel = channelsNode.addNode("cmit-test-channel", "hst:channel");
-        newChannel.setProperty("hst:name", "CMIT Test Channel");
 
-        // point the subsite to the new channel
-        Node mountForNewChannel = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite");
-        mountForNewChannel.setProperty("hst:channelpath", newChannel.getPath());
+        List<Blueprint> bluePrints = hstManager.getVirtualHosts().getBlueprints();
+        assertEquals(1, bluePrints.size());
+        final Blueprint blueprint = bluePrints.get(0);
+
+        final Channel channel = blueprint.getPrototypeChannel();
+        channel.setName("CMIT Test Channel");
+        channel.setUrl("http://cmit-myhost");
+        channel.setContentRoot("/unittestcontent/documents");
+        channel.setLocale("nl_NL");
+
+        String channelId = channelMngr.persist(blueprint.getId(), channel);
+        resetDummyHostOnRequestContext();
 
         // for direct jcr node changes, we need to trigger an invalidation event ourselves
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
@@ -326,20 +349,17 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
 
         // manager should reload
         channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
-        assertEquals(numberOfChannels, channels.size());
-        assertTrue(channels.containsKey("cmit-test-channel"));
+        assertEquals(numberOfChannelsBefore + 1, channels.size());
+        assertTrue(channels.containsKey(channelId));
 
-        Channel created = channels.get("cmit-test-channel");
+        Channel created = channels.get(channelId);
         assertNotNull(created);
-        assertEquals("cmit-test-channel", created.getId());
+        assertEquals(channelId, created.getId());
         assertEquals("CMIT Test Channel", created.getName());
-        assertEquals("http://localhost/site/subsite", created.getUrl());
-        assertEquals("/unittestcontent/documents/unittestsubproject", created.getContentRoot());
-        assertEquals("en_EN", created.getLocale());
+        assertEquals("http://cmit-myhost/site", created.getUrl());
+        assertEquals("/unittestcontent/documents", created.getContentRoot());
+        assertEquals("nl_NL", created.getLocale());
 
-        // clean up only the added channelpath for subsite
-        mountForNewChannel.getProperty("hst:channelpath").remove();
-        session.save();
     }
 
     @Test
@@ -370,10 +390,10 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         // with contextpath '/site2' and channelpath '/hst:hst/hst:channels/intranettestchannel' won't be part of
         // dev-localhost channels when contextpath is /site
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
-        assertTrue("testchannel should be part of channels since has wrong contextpath",
-                channels.containsKey("testchannel"));
-        assertFalse("intranettestchannel should not be part of channels since has wrong contextpath",
-                channels.containsKey("intranettestchannel"));
+        assertTrue("unittestproject should be part of channels since has wrong contextpath",
+                channels.containsKey("unittestproject"));
+        assertFalse("intranettestproject should not be part of channels since has wrong contextpath",
+                channels.containsKey("intranettestproject"));
     }
 
     @Test(expected = ChannelException.class)

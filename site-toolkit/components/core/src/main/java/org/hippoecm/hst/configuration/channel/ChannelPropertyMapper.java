@@ -55,6 +55,10 @@ public class ChannelPropertyMapper {
     private ChannelPropertyMapper() {
     }
 
+    public static Channel readBlueprintChannel(final HstNode channelNode) {
+        return readChannel(channelNode, null, false);
+    }
+
     public static Channel readChannel(final HstNode channelNode, final String configurationPath) {
         // the hst:configuration node name is unique, hence take the parent (and possibly the parent of the workspace node)
         final String channelId;
@@ -64,7 +68,7 @@ public class ChannelPropertyMapper {
             channelId = configurationNode.getName();
             if (configurationNode.getValueProvider().getPath().equals(configurationPath)) {
                 log.debug("'{}' node is a child node of '{}' and is not inherited but directly below '{}' hence " +
-                        "the channel settings are channelSettingsEditable.", NODENAME_HST_CHANNEL, NODENAME_HST_WORKSPACE, configurationPath);
+                        "the channel settings are editable.", NODENAME_HST_CHANNEL, NODENAME_HST_WORKSPACE, configurationPath);
                 channelSettingsEditable = true;
             } else {
                 channelSettingsEditable = false;
