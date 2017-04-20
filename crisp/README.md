@@ -24,7 +24,7 @@ Hippo Addon CRISP (Common Resource Interface and Service Provider).
     resourceServiceBroker.getResourceDataCache("demoProductCatalogs").clear();
 ```
 
-- TODO: Javadocs and documentation
+- TODO: Javadocs and documentation (how to configure json api rest service backend, caching, OAuth2 configuration, how to add custom ```ResourceResolver``` for non-JSON-API backends such as RDBMS, NoSQL Database, etc.)
 - TODO: Web-hook example
 
 ## Build and install the module itself into local maven repository
