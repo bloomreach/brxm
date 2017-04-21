@@ -30,7 +30,7 @@ public interface Resource extends Serializable {
      * Returns the name of this resource representation if there's any.
      * For example, a JSON data based implementation may return '@name' property based on its domain rules, or
      * a JCR based implementation may simply return <code>javax.jcr.Item#getName()</code>.
-     * @return
+     * @return the name of this resource representation if there's any
      */
     String getName();
 
@@ -38,7 +38,7 @@ public interface Resource extends Serializable {
      * Returns the path of this resource representation if there's any.
      * For example, a JSON data based implementation may construct an XPath-like path based on object hierarchy, or
      * a JCR based implementation may simply return <code>javax.jcr.Item#getPath()</code>.
-     * @return
+     * @return the path of this resource representation if there's any
      */
     String getPath();
 
@@ -81,6 +81,8 @@ public interface Resource extends Serializable {
 
     /**
      * Return an {@link Iterator} of child resource representations from {@code offset} index with {@code limit} count at max.
+     * @param offset offset index to start iteration
+     * @param limit limit count of iteration
      * @return an {@link Iterator} of child resource representations
      */
     Iterator<Resource> getChildIterator(long offset, long limit);
@@ -93,6 +95,8 @@ public interface Resource extends Serializable {
 
     /**
      * Return an {@link Iterable} of child resource representations from {@code offset} index with {@code limit} count at max.
+     * @param offset offset index to start iteration
+     * @param limit limit count of iteration
      * @return an {@link Iterable} of child resource representations
      */
     Iterable<Resource> getChildren(long offset, long limit);
