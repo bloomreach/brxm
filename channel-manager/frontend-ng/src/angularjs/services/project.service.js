@@ -53,9 +53,9 @@ class ProjectService {
   }
 
   projects(id) {
-    const url = `${this.ConfigService.getCmsContextPath()}/${REST_API_PATH}/${id}/channel`;
+    const url = `${this.ConfigService.getCmsContextPath()}${REST_API_PATH}/${id}/channel`;
     return this.$http({ method: 'GET', url, headers: {}, data: {} })
-      .then(result => this._flatten(result.data[0]).concat([MASTER_PROJECT]));
+      .then(result => this._flatten(result.data).concat([MASTER_PROJECT]));
   }
 
   _addBranch(branch) {
@@ -66,8 +66,8 @@ class ProjectService {
   }
 
   _flatten(data) {
-    return data.withBranches.map(this._addBranch(true))
-      .concat(data.withoutBranches.map(this._addBranch(false)));
+    return data.withBranch.map(this._addBranch(true))
+      .concat(data.withoutBranch.map(this._addBranch(false)));
   }
 
   doCreateBranch(project) {
