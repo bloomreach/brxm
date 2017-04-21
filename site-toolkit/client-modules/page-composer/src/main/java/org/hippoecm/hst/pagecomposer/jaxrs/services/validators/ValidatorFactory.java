@@ -59,6 +59,10 @@ public class ValidatorFactory {
         return new NodePathPrefixValidator(nodePathPrefix, id, requiredNodeType);
     }
 
+    public Validator getNodePathPrefixValidator(final String nodePathPrefix, final boolean liveAllowed, final String id, final String requiredNodeType) {
+        return new NodePathPrefixValidator(nodePathPrefix, liveAllowed, id, requiredNodeType);
+    }
+
     public Validator getSiteMenuItemRepresentationValidator(final Predicate<String> uriValidator, final SiteMenuItemRepresentation representation) {
         return new SiteMenuItemRepresentationValidator(uriValidator, representation);
     }
