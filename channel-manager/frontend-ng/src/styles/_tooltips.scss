@@ -13,7 +13,9 @@
 // limitations under the License.
 
 .md-tooltip {
-  height: initial;
+  height: auto;
+  max-width: 80vw;
   white-space: initial;
+  width: auto;
 }
 
