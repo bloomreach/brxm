@@ -19,7 +19,7 @@
   <md-select aria-label="{{ 'TOOLBAR_PROJECT_LABEL' | translate }}"
              ng-disabled="$ctrl.disabled"
              ng-model="$ctrl.selectedProject"
-             ng-model-options="{Project: '$value.id'}"
+             ng-model-options="{trackBy: '$value.id'}"
              ng-change="$ctrl.projectChanged()">
     <md-option ng-repeat="project in $ctrl.withBranch | orderBy: 'name'"
                ng-value="{{project}}">
