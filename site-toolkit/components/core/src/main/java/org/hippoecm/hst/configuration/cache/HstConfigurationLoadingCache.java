@@ -161,6 +161,13 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
         channel = ChannelPropertyMapper.readChannel(channelNode, configurationPath);
         channel.setChannelPath(channelNode.getValueProvider().getPath());
         List<String> events = ccn.getCompositeConfigurationDependencyPaths();
+        if (isPreviewSite && !configurationPath.endsWith("-preview")) {
+            // we need to add event paths for preview to make sure the preview channel gets reloaded in case
+            // a preview is created
+            events.add(configurationPath + "-preview");
+            events.add(configurationPath + "-preview/hst:channel");
+            events.add(configurationPath + "-preview/hst:workspace/hst:channel");
+        }
         channelsCache.put(cachekey, channel, events.toArray(new String[events.size()]));
         return channel;
     }
