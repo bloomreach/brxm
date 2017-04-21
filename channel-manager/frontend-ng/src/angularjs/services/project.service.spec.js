@@ -25,7 +25,7 @@ describe('ProjectService', () => {
     angular.mock.module('hippo-cm');
 
     const configServiceMock = jasmine.createSpyObj('ConfigService', ['getCmsContextPath']);
-    configServiceMock.getCmsContextPath.and.returnValue('/test');
+    configServiceMock.getCmsContextPath.and.returnValue('/test/');
 
     angular.mock.module(($provide) => {
       $provide.value('ConfigService', configServiceMock);
@@ -43,43 +43,25 @@ describe('ProjectService', () => {
   });
 
   it('can get projects', () => {
-    const returnFromRest = [{
-      withBranches: [
-        {
-          id: 'test1',
-          name: 'test1',
-        },
-        {
-          id: 'test2',
-          name: 'test2',
-        }],
-      withoutBranches: [
-        {
-          id: 'test3',
-          name: 'test3',
-        },
-      ] },
-    ];
-    let actual = null;
-    const expected = [
+    const withBranch = [
       {
         id: 'test1',
         name: 'test1',
-        isBranch: true,
       },
       {
         id: 'test2',
         name: 'test2',
-        isBranch: true,
-      },
+      }];
+    const withoutBranch = [
       {
         id: 'test3',
         name: 'test3',
-        isBranch: false,
       },
-      ProjectService.master,
     ];
+    const returnFromRest = { withBranch, withoutBranch };
+    let actual = null;
 
+    $httpBackend.expectGET('/test/ws/projects').respond(404);
     $httpBackend.expectGET('/test/ws/projects/12/channel').respond(200, returnFromRest);
 
     ProjectService.projects(12).then((returned) => {
@@ -87,13 +69,12 @@ describe('ProjectService', () => {
     });
     $httpBackend.flush();
 
-    expect(actual).toEqual(expected);
+    expect(actual).toEqual(returnFromRest);
   });
 
   it('can detect an absent REST url', () => {
     $httpBackend.expectGET('/test/ws/projects').respond(404);
-
-    ProjectService.doInitializeIsAvailable();
+    $httpBackend.flush();
 
     expect(ProjectService.available).toBe(false);
   });
