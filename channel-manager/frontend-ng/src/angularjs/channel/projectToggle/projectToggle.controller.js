@@ -31,17 +31,20 @@ class ProjectToggleController {
   }
 
   _setProjects() {
-    const channelId = 'alternate-hap';
-    this.projects = this.ProjectService.projects(channelId);
+    const channelId = this.ChannelService.getChannel().id;
+    this.ProjectService.projects(channelId)
+      .then((response) => {
+        this.projects = response;
+      });
   }
 
   _activate() {
-    this.selectedProject = this.ProjectService.master.id;
+    this.selectedProject = this.ProjectService.master;
     this._projectChanged();
   }
 
   _projectChanged() {
-    if (this.selectedProject.name.equals('master')) {
+    if (this.selectedProject.name === 'master') {
       return;
     }
     if (this.selectedProject.isBranch) {
@@ -52,12 +55,9 @@ class ProjectToggleController {
   }
 
   getDisplayName(project) {
-    let s = this.$translate.insert(`${project.name}`);
-    if (project.isBranch) {
-      s = `${s} +`;
-    }
-    return s;
+    return project.name;
   }
+
 }
 
 export default ProjectToggleController;
