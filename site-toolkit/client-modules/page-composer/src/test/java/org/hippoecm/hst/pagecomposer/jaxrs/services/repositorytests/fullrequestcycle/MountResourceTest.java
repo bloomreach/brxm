@@ -51,6 +51,14 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         super.setUp();
         final Session session = createSession("admin", "admin");
         AbstractPageComposerTest.createHstConfigBackup(session);
+        // move the hst:sitemap and hst:pages below the 'workspace' because since HSTTWO-3959 only the workspace
+        // gets copied to preview configuration
+        if (!session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace")) {
+            session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace", "hst:workspace");
+        }
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap");
+        session.save();
         session.logout();
     }
 
@@ -99,7 +107,6 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         }
     }
 
-
     @Test
     public void copy_a_page_as_admin() throws Exception {
         copyPageAssertions(ADMIN_CREDENTIALS, true);
@@ -120,8 +127,9 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         startEdit(ADMIN_CREDENTIALS);
 
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
-        final String siteMapId = getNodeId("/hst:hst/hst:configurations/unittestproject-preview/hst:sitemap");
-        final String siteMapItemToCopyId = getNodeId("/hst:hst/hst:configurations/unittestproject-preview/hst:sitemap/home");
+        final String siteMapId = getNodeId("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap");
+        final String siteMapItemToCopyId = getNodeId("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home");
+
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/"+ siteMapId + "./copy", null, "POST");
 

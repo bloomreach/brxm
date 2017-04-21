@@ -262,6 +262,15 @@ public class AbstractPageComposerTest {
     }
 
 
+    protected void moveChannelToWorkspace() throws RepositoryException {
+        final Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject");
+        if (!unitTestConfigNode.hasNode("hst:workspace")) {
+            unitTestConfigNode.addNode("hst:workspace", "hst:workspace");
+        }
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:channel",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:channel");
+    }
+
     protected void createWorkspaceWithTestContainer() throws RepositoryException {
         final Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject");
         final Node workspace = unitTestConfigNode.addNode("hst:workspace", "hst:workspace");

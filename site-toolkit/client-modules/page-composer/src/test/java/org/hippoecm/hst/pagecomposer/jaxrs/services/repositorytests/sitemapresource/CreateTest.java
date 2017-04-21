@@ -111,7 +111,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void test_create_with_prototype_meta() throws Exception {
-        final Node prototype = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:prototypepages/prototype-page");
+        final Node prototype = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page");
         prototype.addMixin(HstNodeTypes.MIXINTYPE_HST_PROTOTYPE_META);
         prototype.setProperty(HstNodeTypes.PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER, "path/to/contanier");
         session.save();
@@ -319,8 +319,9 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages")
                 .addNode("foo-"+prototypePageNodeName, HstNodeTypes.NODETYPE_HST_COMPONENT);
 
-        // and a non workspace page
-        session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:pages")
+        // and a non workspace page to the live : This one will be inherited by the 'preview' and
+        // as a result, the preview should create a unique page name (-2)
+        session.getNode("/hst:hst/hst:configurations/unittestproject/hst:pages")
                 .addNode("foo-"+prototypePageNodeName + "-1", HstNodeTypes.NODETYPE_HST_COMPONENT);
 
         session.save();
