@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -109,9 +109,9 @@ public class AbstractFullRequestCycleTest {
         return repository.login(new SimpleCredentials(userName, password.toCharArray()));
     }
 
-    public String getNodeId(final String jcrMountPath) throws RepositoryException {
+    public String getNodeId(final String jcrPath) throws RepositoryException {
         final Session admin = createSession("admin", "admin");
-        final String mountId = admin.getNode(jcrMountPath).getIdentifier();
+        final String mountId = admin.getNode(jcrPath).getIdentifier();
         admin.logout();
         return mountId;
     }
