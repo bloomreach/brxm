@@ -247,10 +247,13 @@ public class MountResource extends AbstractConfigResource {
         } catch (RepositoryException e) {
             log.warn("Could not create a preview configuration : ", e);
             return error("Could not create a preview configuration : " + e);
+        } catch (ClientException e){
+            log.warn("Could not create a preview configuration : ", e);
+            return clientError("Could not create a preview configuration : ", e.getErrorStatus());
         }
     }
 
-    private void createPreviewConfiguration() throws RepositoryException {
+    private void createPreviewConfiguration() throws RepositoryException, ClientException {
         String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
         Session session = getPageComposerContextService().getRequestContext().getSession();
         if (!session.nodeExists(liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE)) {
