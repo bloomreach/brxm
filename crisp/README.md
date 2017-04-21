@@ -32,6 +32,7 @@ See [CHANGES](CHANGES.md) for release notes.
     resourceServiceBroker.getResourceDataCache("demoProductCatalogs").clear();
 ```
 
+- TODO: Convenient hierarchical property access through ```ValueMap```.
 - TODO: Javadocs and documentation (how to configure json api rest service backend, caching, OAuth2 configuration, how to add custom ```ResourceResolver``` for non-JSON-API backends such as RDBMS, NoSQL Database, etc.)
 - TODO: Web-hook example
 
