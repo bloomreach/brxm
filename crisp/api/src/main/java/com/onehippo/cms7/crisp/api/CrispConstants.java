@@ -3,6 +3,9 @@
  */
 package com.onehippo.cms7.crisp.api;
 
+/**
+ * CRISP related global constants.
+ */
 public class CrispConstants {
 
     /**

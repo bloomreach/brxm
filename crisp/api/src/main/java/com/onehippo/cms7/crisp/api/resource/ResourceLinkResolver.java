@@ -5,10 +5,28 @@ package com.onehippo.cms7.crisp.api.resource;
 
 import java.util.Map;
 
+/**
+ * Responsible for resolving a link (type of {@link ResourceLink}) for a {@link Resource} representation.
+ */
 public interface ResourceLinkResolver {
 
+    /**
+     * Resolves a {@link ResourceLink} for the given {@code resource}.
+     * @param resource resource representation
+     * @return a {@link ResourceLink} for the given {@code resource}
+     * @throws ResourceException if resource resolution operation fails
+     */
     ResourceLink resolve(Resource resource) throws ResourceException;
 
+    /**
+     * Resolves a {@link ResourceLink} for the given {@code resource} with passing {@code variables} that can be
+     * used by implementation to expand its internal link generation template.
+     * <p>How the {@code variables} is used in link generation template expansion is totally up to an implementation. 
+     * @param resource resource representation
+     * @param variables the variables to expand the internal link generation template
+     * @return a {@link ResourceLink} for the given {@code resource}
+     * @throws ResourceException if resource resolution operation fails
+     */
     ResourceLink resolve(Resource resource, Map<String, Object> variables) throws ResourceException;
 
 }
