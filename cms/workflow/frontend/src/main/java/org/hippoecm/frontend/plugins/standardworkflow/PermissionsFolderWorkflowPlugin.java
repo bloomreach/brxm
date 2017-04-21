@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,9 +38,6 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -48,24 +45,23 @@ import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.CmsIcon;
@@ -78,12 +74,10 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(PermissionsFolderWorkflowPlugin.class);
 
-    private static final ResourceReference CSS = new CssResourceReference(PermissionsFolderWorkflowPlugin.class, "PermissionsFolderWorkflowPlugin.css");
     private static final String QUERY_LANGUAGE_QUERIES = Query.XPATH;
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
     private static final String HIPPO_TEMPLATES_BUNDLE_NAME = "hippo:templates";
-
-    private static final List<String> EMPTY = new ArrayList<>();
+    private static final IValueMap DIALOG_SIZE = new ValueMap("width=525,height=auto").makeImmutable();
 
     private String name;
     private String selected;
@@ -126,12 +120,13 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     log.error("Error retrieving all templatequeries: {}", ex);
                 }
 
-                return new PermissionsConfirmDialog(getModel(), this, new PropertyModel(PermissionsFolderWorkflowPlugin.this, "name"), query);
+                final PropertyModel nameModel = new PropertyModel(PermissionsFolderWorkflowPlugin.this, "name");
+                return new PermissionsConfirmDialog(getModel(), this, nameModel, query);
             }
 
             @Override
             protected void execute(WorkflowDescriptorModel model) throws Exception {
-                Session session = ((UserSession) getSession()).getJcrSession();
+                Session session = UserSession.get().getJcrSession();
                 Node folder = model.getNode();
                 String[] store = new String[folderTypesList.size()];
                 for (IModel propertyModel : folderTypesList) {
@@ -164,25 +159,23 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
         this.selected = selected;
     }
 
-    public class PermissionsConfirmDialog extends AbstractWorkflowDialog {
+    public class PermissionsConfirmDialog extends WorkflowDialog {
 
-        protected final IValueMap CUSTOM = new ValueMap("width=475,height=425").makeImmutable();
         protected static final String EXCLUDE = "exclude";
-
-        private IModel folderName;
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         public PermissionsConfirmDialog(WorkflowDescriptorModel model, IWorkflowInvoker invoker, IModel folderName, Query query) {
-            super(model, invoker);
+            super(invoker, model);
 
-            this.folderName = folderName;
+            setTitle(new StringResourceModel("title", this, null, folderName.getObject()));
+            setSize(DIALOG_SIZE);
 
             final IPluginConfig pluginConfig = getPluginConfig();
             List<String> excludes;
             if (pluginConfig.containsKey(EXCLUDE)) {
                 excludes = Arrays.asList(pluginConfig.getStringArray(EXCLUDE));
             } else {
-                excludes = EMPTY;
+                excludes = Collections.emptyList();
             }
 
             //list of available queries:::
@@ -211,7 +204,6 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
             Collections.sort(modelList);
 
             final RefreshingView<DisplayModel> view = new RefreshingView<DisplayModel>("list-item-repeater") {
-                private static final long serialVersionUID = 1L;
 
                 @Override
                 protected Iterator getItemModels() {
@@ -230,8 +222,6 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     fragment.add(controls);
 
                     MarkupContainer remove = new AjaxLink("remove") {
-                        private static final long serialVersionUID = 1L;
-
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             folderTypesList.remove(valueModel);
@@ -245,8 +235,6 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     remove.add(removeIcon);
 
                     MarkupContainer upLink = new AjaxLink("up") {
-                        private static final long serialVersionUID = 1L;
-
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             final int i = folderTypesList.indexOf(valueModel);
@@ -261,8 +249,6 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     upLink.add(upIcon);
 
                     MarkupContainer downLink = new AjaxLink("down") {
-                        private static final long serialVersionUID = 1L;
-
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             final int i = folderTypesList.indexOf(valueModel);
@@ -277,25 +263,22 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     downLink.add(downIcon);
 
                     item.add(fragment);
-
-                    item.add(new AttributeAppender("class", new AbstractReadOnlyModel() {
-                        private static final long serialVersionUID = 1L;
-
-                        public Object getObject() {
-                            return ((item.getIndex() & 1) == 1) ? "qfwli-even" : "qfwli-odd";
-                        }
-                    }, " "));
+                    item.add(CssClass.append(
+                        ReadOnlyModel.of(() -> (item.getIndex() & 1) == 1 ? "qfwli-even" : "qfwli-odd"))
+                    );
                 }
             };
 
             add(view);
 
-            Label addTitle = new Label("title-query-add", new StringResourceModel("title-query-add", PermissionsConfirmDialog.this, null, folderName.getObject()));
+            final StringResourceModel addTitleModel = new StringResourceModel("title-query-add",
+                                                                              PermissionsConfirmDialog.this,
+                                                                              null,
+                                                                              folderName.getObject());
+            Label addTitle = new Label("title-query-add", addTitleModel);
             add(addTitle);
 
             IChoiceRenderer<String> folderTypeRenderer = new IChoiceRenderer<String>() {
-                private static final long serialVersionUID = 1L;
-
                 public String getDisplayValue(final String object) {
                     String categoryLabel = new StringResourceModel("add-category", PermissionsFolderWorkflowPlugin.this, null,
                             new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, object)).getString();
@@ -311,7 +294,6 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
 
             add(querySelection = new DropDownChoice("query-selection", new PropertyModel(PermissionsFolderWorkflowPlugin.this, "selected"), modelList, folderTypeRenderer));
             querySelection.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-                private static final long serialVersionUID = 1L;
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
@@ -324,25 +306,9 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
             });
             querySelection.setNullValid(true);
         }
-
-        @Override
-        public void renderHead(IHeaderResponse response) {
-            super.renderHead(response);
-            response.render(CssHeaderItem.forReference(CSS));
-        }
-
-        @Override
-        public IModel<String> getTitle() {
-            return new StringResourceModel("title", this, null, folderName.getObject());
-        }
-        @Override
-        public IValueMap getProperties() {
-            return CUSTOM;
-        }
     }
 
     private class DisplayModel extends Model<String> {
-        private static final long serialVersionUID = 1L;
 
         public DisplayModel(String input) {
             super(input);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -41,6 +42,7 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +75,10 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         return folderModel;
     }
 
+    /**
+     * @deprecated use {@link #getVariant(javax.jcr.Node, org.hippoecm.repository.util.WorkflowUtils.Variant)} instead
+     */
+    @Deprecated
     protected Node getVariant(Node handle, String state) throws RepositoryException {
         String handlePath = handle.getPath();
         for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
@@ -81,6 +87,14 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
             }
         }
         throw new ItemNotFoundException("No " + state + " variant found under path: " + handlePath);
+    }
+
+    protected Node getVariant(final Node handle, final WorkflowUtils.Variant variant) throws RepositoryException {
+        final Optional<Node> optional = WorkflowUtils.getDocumentVariantNode(handle, variant);
+        if(optional.isPresent()) {
+            return optional.get();
+        }
+        throw new ItemNotFoundException("No " + variant + " variant found under path: " + handle.getPath());
     }
 
     protected IEditorManager getEditorManager() {
@@ -135,7 +149,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
                 .browse(nodeModel);
     }
 
-    IModel<String> getDocumentName() {
+    protected IModel<String> getDocumentName() {
         try {
             final IModel<String> result = DocumentUtils.getDocumentNameModel(((WorkflowDescriptorModel) getDefaultModel()).getNode());
             if (result != null) {

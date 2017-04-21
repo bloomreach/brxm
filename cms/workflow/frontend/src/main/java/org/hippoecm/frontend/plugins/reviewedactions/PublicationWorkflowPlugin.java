@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,13 +16,17 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -36,33 +40,53 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DepublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.ScheduleDepublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.SchedulePublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferencesDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
-import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
-import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
-import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toMap;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 
 public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
-    private StdWorkflow publishAction;
+    // Wicket component ID's
+    private static final String DEPUBLICATION_ID = "DEPUB";
+    private static final String SCHEDULE_DEPUBLICATION_ID = "SCHED_DEPUB";
+    private static final String REQUEST_DEPUBLICATION_ID = "REQ_DEPUB";
+    private static final String REQUEST_SCHEDULE_DEPUBLICATION_ID = "REQ_SCHED_DEPUB";
+
+    private static final String PUBLICATION_ID = "PUB";
+    private static final String SCHEDULE_PUBLICATION_ID = "SCHED_PUB";
+    private static final String REQUEST_PUBLICATION_ID = "REQ_PUB";
+    private static final String REQUEST_SCHEDULE_PUBLICATION_ID = "REQ_SCHED_PUB";
+
+    // Action keys
+    private static final String PUBLISH = "publish";
+    private static final String DEPUBLISH = "depublish";
+    private static final String REQUEST_PUBLICATION = "requestPublication";
+    private static final String REQUEST_DEPUBLICATION = "requestDepublication";
+
+    private StdDocumentWorkflow publishAction;
 
     public PublicationWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        final StdWorkflow depublishAction;
-        add(depublishAction = new StdWorkflow("depublish", new StringResourceModel("depublish-label", this, null), context, getModel()) {
+        final List<StdDocumentWorkflow> workflows = getStdWorkflows(context);
+        workflows.forEach(this::add);
 
-            @Override
-            public String getSubMenu() {
-                return "publication";
-            }
+        final Map<String, StdWorkflow> workflowMap = workflows.stream()
+                .collect(toMap(StdWorkflow::getId, Function.identity()));
+        setVisibility(workflowMap);
+    }
 
-            @Override
-            protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.MINUS_CIRCLE);
-            }
+    protected List<StdDocumentWorkflow> getStdWorkflows(final IPluginContext context) {
+
+        final List<StdDocumentWorkflow> workflows = new ArrayList<>();
+
+        workflows.add(new StdDocumentWorkflow(DEPUBLICATION_ID, new StringResourceModel("depublish-label", this, null),
+                context, getModel(), Icon.MINUS_CIRCLE) {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
@@ -73,25 +97,14 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 workflow.depublish();
                 return null;
             }
         });
 
-        final StdWorkflow requestDepublishAction;
-        add(requestDepublishAction = new StdWorkflow("requestDepublication", new StringResourceModel("request-depublication", this, null), context, getModel()) {
-
-            @Override
-            public String getSubMenu() {
-                return "publication";
-            }
-
-            @Override
-            protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.MINUS_CIRCLE);
-            }
+        workflows.add(new StdDocumentWorkflow(REQUEST_DEPUBLICATION_ID, new StringResourceModel("request-depublication-label", this, null),
+                context, getModel(), Icon.MINUS_CIRCLE) {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
@@ -102,27 +115,15 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 workflow.requestDepublication();
                 return null;
             }
         });
 
-        final StdWorkflow scheduleDepublishAction;
-        add(scheduleDepublishAction = new StdWorkflow("scheduleDepublish", new StringResourceModel(
-                "schedule-depublish-label", this, null), context, getModel()) {
+        workflows.add(new StdDocumentWorkflow(SCHEDULE_DEPUBLICATION_ID, new StringResourceModel("schedule-depublish-label", this, null),
+                context, getModel(), Icon.MINUS_CIRCLE_CLOCK) {
             public Date date = new Date();
-
-            @Override
-            public String getSubMenu() {
-                return "publication";
-            }
-
-            @Override
-            protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.MINUS_CIRCLE_CLOCK);
-            }
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
@@ -140,8 +141,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 if (date != null) {
                     workflow.depublish(date);
                 } else {
@@ -151,21 +151,10 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        final StdWorkflow requestScheduleDepublishAction;
-        add(requestScheduleDepublishAction = new StdWorkflow("requestScheduleDepublish",
-                new StringResourceModel("schedule-request-depublish", this, null), context, getModel()) {
+        workflows.add(new StdDocumentWorkflow(REQUEST_SCHEDULE_DEPUBLICATION_ID, new StringResourceModel("schedule-request-depublish-label", this, null),
+                context, getModel(), Icon.MINUS_CIRCLE_CLOCK) {
 
             public Date date = new Date();
-
-            @Override
-            public String getSubMenu() {
-                return "publication";
-            }
-
-            @Override
-            protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.MINUS_CIRCLE_CLOCK);
-            }
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
@@ -182,8 +171,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 if (date != null) {
                     workflow.requestDepublication(date);
                 } else {
@@ -193,29 +181,19 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-
-        add(publishAction = new StdWorkflow("publish", new StringResourceModel("publish-label", this, null), context, getModel()) {
-
-            @Override
-            public String getSubMenu() {
-                return "publication";
-            }
-
-            @Override
-            protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.CHECK_CIRCLE);
-            }
+        workflows.add(publishAction = new StdDocumentWorkflow(PUBLICATION_ID, new StringResourceModel("publish-label", this, null),
+                context, getModel(), Icon.CHECK_CIRCLE) {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
                 try {
                     Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                    Node unpublished = getVariant(handle, HippoStdNodeType.UNPUBLISHED);
-                    final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(
-                            new ReferenceProvider(new JcrNodeModel(unpublished)));
+                    Node unpublished = getVariant(handle, UNPUBLISHED);
+                    final Map<String, Node> referenced = WorkflowUtils.getReferencesToUnpublishedDocuments(unpublished, UserSession.get().getJcrSession());
                     if (referenced.size() > 0) {
-                        return new UnpublishedReferencesDialog(publishAction, new UnpublishedReferenceNodeProvider(
-                                referenced), getEditorManager());
+                        return new UnpublishedReferencesDialog(publishAction,
+                                new UnpublishedReferenceNodeProvider(referenced),
+                                getEditorManager());
                     }
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
@@ -224,35 +202,22 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 workflow.publish();
                 return null;
             }
         });
-
-        final StdWorkflow requestPublishAction;
-        add(requestPublishAction = new StdWorkflow("requestPublication", new StringResourceModel("request-publication", this, null), context, getModel()) {
-
-            @Override
-            public String getSubMenu() {
-                return "publication";
-            }
-
-            @Override
-            protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.CHECK_CIRCLE);
-            }
+        workflows.add(new StdDocumentWorkflow(REQUEST_PUBLICATION_ID, new StringResourceModel("request-publication-label", this, null),
+                context, getModel(), Icon.CHECK_CIRCLE) {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
                 try {
                     Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                    Node unpublished = getVariant(handle, HippoStdNodeType.UNPUBLISHED);
-                    final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(new ReferenceProvider(
-                            new JcrNodeModel(unpublished)));
-                    if (referenced.size() > 0) {
-                        return new UnpublishedReferencesDialog(this, new UnpublishedReferenceNodeProvider(referenced), getEditorManager());
+                    Node unpublished = getVariant(handle, UNPUBLISHED);
+                    final Map<String, Node> referringDocuments = WorkflowUtils.getReferringDocuments(unpublished, true);
+                    if (referringDocuments.size() > 0) {
+                        return new UnpublishedReferencesDialog(this, new UnpublishedReferenceNodeProvider(referringDocuments), getEditorManager());
                     }
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
@@ -261,33 +226,22 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 workflow.requestPublication();
                 return null;
             }
         });
 
-        final StdWorkflow schedulePublishAction;
-        add(schedulePublishAction = new StdWorkflow("schedulePublish", new StringResourceModel(
-                "schedule-publish-label", this, null), context, getModel()) {
+        workflows.add(new StdDocumentWorkflow(SCHEDULE_PUBLICATION_ID, new StringResourceModel("schedule-publish-label", this, null),
+                context, getModel(), Icon.CHECK_CIRCLE_CLOCK) {
+
             public Date date = new Date();
-
-            @Override
-            public String getSubMenu() {
-                return "publication";
-            }
-
-            @Override
-            protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.CHECK_CIRCLE_CLOCK);
-            }
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 try {
-                    final Node unpublished = getVariant(wdm.getNode(), HippoStdNodeType.UNPUBLISHED);
+                    final Node unpublished = getVariant(wdm.getNode(), UNPUBLISHED);
                     final IModel<String> titleModel = new StringResourceModel("schedule-publish-title",
                             PublicationWorkflowPlugin.this, null, getDocumentName());
 
@@ -300,8 +254,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 if (date != null) {
                     workflow.publish(date);
                 } else {
@@ -311,25 +264,16 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        final StdWorkflow requestSchedulePublishAction;
-        add(requestSchedulePublishAction = new StdWorkflow("requestSchedulePublish", new StringResourceModel("schedule-request-publish", this, null), context, getModel()) {
+        workflows.add(new StdDocumentWorkflow(REQUEST_SCHEDULE_PUBLICATION_ID, new StringResourceModel("schedule-request-publish-label", this, null),
+                context, getModel(), Icon.CHECK_CIRCLE_CLOCK) {
+
             public Date date = new Date();
-
-            @Override
-            public String getSubMenu() {
-                return "publication";
-            }
-
-            @Override
-            protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.CHECK_CIRCLE_CLOCK);
-            }
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = getModel();
                 try {
-                    Node unpublished = getVariant(wdm.getNode(), HippoStdNodeType.UNPUBLISHED);
+                    Node unpublished = getVariant(wdm.getNode(), UNPUBLISHED);
                     final IModel<String> titleModel = new StringResourceModel("schedule-publish-title",
                             PublicationWorkflowPlugin.this, null, getDocumentName());
 
@@ -342,8 +286,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
+            protected String execute(DocumentWorkflow workflow) throws Exception {
                 if (date != null) {
                     workflow.requestPublication(date);
                 } else {
@@ -352,41 +295,57 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 return null;
             }
         });
+        return workflows;
+    }
 
+    protected Stream<String> getActionKeys() {
+        return Stream.of(PUBLISH, DEPUBLISH, REQUEST_PUBLICATION, REQUEST_DEPUBLICATION);
+    }
 
-        Map<String, Serializable> info = getHints();
+    protected Map<String, String> getActionToRequestActionMap() {
+        final Map<String, String> requestKeyMap = new HashMap<>();
+        requestKeyMap.put(PUBLISH, REQUEST_PUBLICATION);
+        requestKeyMap.put(DEPUBLISH, REQUEST_DEPUBLICATION);
+        return requestKeyMap;
+    }
 
-        if (isActionAllowed(info, "publish") ||
-                isActionAllowed(info, "depublish") ||
-                isActionAllowed(info, "requestPublication") ||
-                isActionAllowed(info, "requestDepublication"))
-        {
-            hideOrDisable(info, "publish", publishAction, schedulePublishAction);
-            hideOrDisable(info, "depublish", depublishAction, scheduleDepublishAction);
+    protected Map<String, List<String>> getActionToComponentIdMap() {
+        final Map<String, List<String>> idMap = new HashMap<>();
+        idMap.put(PUBLISH, asList(REQUEST_PUBLICATION_ID, REQUEST_SCHEDULE_PUBLICATION_ID));
+        idMap.put(DEPUBLISH, asList(REQUEST_DEPUBLICATION_ID, REQUEST_SCHEDULE_DEPUBLICATION_ID));
+        return idMap;
+    }
 
-            if (!info.containsKey("publish")) {
-                hideOrDisable(info, "requestPublication", requestPublishAction, requestSchedulePublishAction);
-            } else {
-                requestPublishAction.setVisible(false);
-                requestSchedulePublishAction.setVisible(false);
+    protected Map<String, List<String>> getActionToHiddenComponentIdMap() {
+        final Map<String, List<String>> idHideMap = new HashMap<>();
+        idHideMap.put(PUBLISH, asList(PUBLICATION_ID, SCHEDULE_PUBLICATION_ID));
+        idHideMap.put(DEPUBLISH, asList(DEPUBLICATION_ID, SCHEDULE_DEPUBLICATION_ID));
+        return idHideMap;
+    }
+
+    private void setVisibility(Map<String, StdWorkflow> workflowMap) {
+
+        if (getActionKeys().anyMatch(key -> isActionAllowed(getHints(), key))) {
+
+            final Map<String, List<String>> hiddenComponentIdMap = getActionToHiddenComponentIdMap();
+            final Map<String, List<String>> componentIdMap = getActionToComponentIdMap();
+            final Map<String, String> requestKeyMap = getActionToRequestActionMap();
+
+            final Map<String, Serializable> info = getHints();
+            for (String action : requestKeyMap.keySet()) {
+                hiddenComponentIdMap.get(action)
+                        .forEach(id -> hideOrDisable(info, action, workflowMap.get(id)));
+                if (!info.containsKey(action)) {
+                    componentIdMap.get(action)
+                            .forEach(id -> hideOrDisable(info, requestKeyMap.get(action), workflowMap.get(id)));
+                } else {
+                    componentIdMap.get(action)
+                            .forEach(id -> workflowMap.get(id).setVisible(false));
+                }
             }
-
-            if (!info.containsKey("depublish")) {
-                hideOrDisable(info, "requestDepublication", requestDepublishAction, requestScheduleDepublishAction);
-            } else {
-                requestDepublishAction.setVisible(false);
-                requestScheduleDepublishAction.setVisible(false);
-            }
-        }
-        else {
-            publishAction.setVisible(false);
-            depublishAction.setVisible(false);
-            requestPublishAction.setVisible(false);
-            requestSchedulePublishAction.setVisible(false);
-            requestDepublishAction.setVisible(false);
-            requestScheduleDepublishAction.setVisible(false);
-            schedulePublishAction.setVisible(false);
-            scheduleDepublishAction.setVisible(false);
+        } else {
+            workflowMap.values().forEach(wf -> wf.setVisible(false));
         }
     }
+
 }

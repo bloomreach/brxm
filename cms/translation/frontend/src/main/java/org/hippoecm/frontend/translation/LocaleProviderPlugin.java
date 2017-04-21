@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 package org.hippoecm.frontend.translation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -29,6 +30,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +46,6 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
     public static final String CONFIG_LANGUAGE = "language";
     public static final String CONFIG_COUNTRY = "country";
     public static final String CONFIG_VARIANT = "variant";
-    public static final String CONFIG_CAPTION = "caption";
     public static final String DEFAULT_COUNTRY = "us";
     public static final String UNKNOWN_COUNTRY = "error";
 
@@ -89,19 +90,26 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
         if (locales == null) {
             locales = loadLocales();
         }
-        return new ArrayList<>(locales.values());
+        return new ArrayList<HippoLocale>(locales.values());
     }
 
     public HippoLocale getLocale(String name) {
-        if (locales == null) {
-            locales = loadLocales();
-        }
-        if (locales.containsKey(name)) {
+        if (isKnown(name)) {
             return locales.get(name);
         } else {
             log.warn("Unknown locale {}", name);
             return UNKNOWN_LOCALE;
         }
+    }
+
+    public boolean isKnown(String locale) {
+        if (locales == null) {
+            locales = loadLocales();
+        }
+        if (locales.containsKey(locale)) {
+            return true;
+        }
+        return false;
     }
 
     public void detach() {
@@ -119,8 +127,8 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
 
             final Locale locale = getLocale(config);
             final String name = getLocaleName(config);
-            final String caption = getCaption(config);
-            locales.put(name, new TranslationLocale(locale, name, caption));
+            final Map<String, String> translations = getTranslations(config);
+            locales.put(name, new TranslationLocale(locale, name, translations));
         }
         return locales;
     }
@@ -143,28 +151,35 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
         final String name = config.getName();
         return name.substring(name.lastIndexOf('.') + 1);
     }
-    
-    private static String getCaption(final IPluginConfig config) {
-        return config.getString(CONFIG_CAPTION);
+
+    private static Map<String, String> getTranslations(final IPluginConfig config) {
+        final Set<IPluginConfig> translationConfigs = config.getPluginConfigSet();
+        final Map<String, String> translations = new HashMap<String, String>();
+        for (IPluginConfig translationConfig : translationConfigs) {
+            final String language = translationConfig.getString(HippoNodeType.HIPPO_LANGUAGE);
+            final String message = translationConfig.getString(HippoNodeType.HIPPO_MESSAGE);
+            translations.put(language, message);
+        }
+        return translations;
     }
 
     private static class TranslationLocale extends HippoLocale {
 
         private static final long serialVersionUID = 1L;
+        private final Map<String, String> translations;
 
-        private final String caption;
-        
-        public TranslationLocale(final Locale locale, final String name, final String caption) {
+        public TranslationLocale(final Locale locale, final String name, final Map<String, String> translations) {
             super(locale, name);
-            this.caption = caption;
+            this.translations = translations;
         }
 
         @Override
         public String getDisplayName(Locale locale) {
-            if (!StringUtils.isEmpty(caption)) {
-                return caption;
+            String name = translations.get(locale.getLanguage());
+            if (name == null) {
+                return getLocale().getDisplayLanguage(locale);
             }
-            return getLocale().getDisplayLanguage(locale);
+            return name;
         }
 
         @Override

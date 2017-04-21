@@ -45,8 +45,10 @@
 - * (double)
 + * (frontend:plugin) = frontend:plugin
 
-[frontend:clusterfolder] > nt:base orderable
+[frontend:clusterfolder] > nt:base
 + * (frontend:plugincluster) = frontend:plugincluster
+
+[frontend:clusterlist] > frontend:clusterfolder orderable
 
 [frontend:application] > nt:base
 - frontend:saveonexit (boolean)
