@@ -44,7 +44,7 @@
       <sv:value>hst:configuration</sv:value>
     </sv:property>
     <sv:property sv:name="hst:inheritsfrom" sv:type="String">
-      <sv:value>../unittestcommon</sv:value>
+      <sv:value>../unittestproject</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="global">
