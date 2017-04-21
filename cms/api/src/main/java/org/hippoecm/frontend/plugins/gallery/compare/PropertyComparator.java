@@ -15,32 +15,33 @@
  */
 package org.hippoecm.frontend.plugins.gallery.compare;
 
-import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
+import java.util.Comparator;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import java.util.Comparator;
+
+import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public abstract class PropertyComparator implements Comparator<Node>, IClusterable {
 
-    private String prop;
-    private String relPath;
+    private final String prop;
+    private final String relPath;
 
-    public PropertyComparator(String prop) {
-        this.prop = prop;
+    public PropertyComparator(final String prop) {
+        this(prop, null);
     }
 
-    public PropertyComparator(String prop, String relPath) {
+    public PropertyComparator(final String prop, final String relPath) {
         this.prop = prop;
         this.relPath = relPath;
     }
 
-    public int compare(Node o1, Node o2) {
-        Property p1 = getProperty(o1);
-        Property p2 = getProperty(o2);
+    public int compare(final Node o1, final Node o2) {
+        final Property p1 = getProperty(o1);
+        final Property p2 = getProperty(o2);
         return compare(p1, p2);
     }
 
@@ -58,12 +59,12 @@ public abstract class PropertyComparator implements Comparator<Node>, IClusterab
                     return actual.getProperty(prop);
                 }
             }
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException ignored) {
         }
         return null;
     }
 
-    private Node getCanonicalNode(Node node) throws RepositoryException {
+    private Node getCanonicalNode(final Node node) throws RepositoryException {
         if (node instanceof HippoNode) {
             return ((HippoNode) node).getCanonicalNode();
         } else {

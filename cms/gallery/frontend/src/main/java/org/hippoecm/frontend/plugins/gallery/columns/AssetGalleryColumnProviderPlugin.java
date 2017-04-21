@@ -40,11 +40,10 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModif
 import org.hippoecm.frontend.skin.DocumentListColumn;
 
 public class AssetGalleryColumnProviderPlugin extends AbstractListColumnProviderPlugin {
-    private static final long serialVersionUID = 1L;
 
-    private String primaryItemName;
+    private final String primaryItemName;
 
-    public AssetGalleryColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
+    public AssetGalleryColumnProviderPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         primaryItemName = config.getString("primaryItemName", "hippogallery:asset");

@@ -15,31 +15,25 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.render;
 
-import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
+
 public class SizeRenderer extends PropertyRenderer<String> {
-    private static final long serialVersionUID = 1L;
 
+    private final ByteSizeFormatter formatter = new ByteSizeFormatter(1);
 
-    static final Logger log = LoggerFactory.getLogger(SizeRenderer.class);
-
-    ByteSizeFormatter formatter = new ByteSizeFormatter(1);
-
-    public SizeRenderer(String prop) {
+    public SizeRenderer(final String prop) {
         super(prop);
     }
 
-    public SizeRenderer(String prop, String relPath) {
+    public SizeRenderer(final String prop, final String relPath) {
         super(prop, relPath);
     }
 
     @Override
-    protected String getValue(Property p) throws RepositoryException {
+    protected String getValue(final Property p) throws RepositoryException {
         return formatter.format(p.getLength());
     }
 

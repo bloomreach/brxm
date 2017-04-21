@@ -45,7 +45,6 @@ import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 
 public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProviderPlugin {
-    private static final long serialVersionUID = 1L;
 
     private static final String GALLERY_THUMBNAIL_SIZE = "gallery.thumbnail.size";
     private static final String GALLERY_THUMBNAIL_BOX_SIZE = "gallery.thumbnail.box.size";
@@ -54,7 +53,7 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     private final String primaryItemName;
 
-    public ImageGalleryColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
+    public ImageGalleryColumnProviderPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         primaryItemName = config.getString("primaryItemName", HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
     }
@@ -145,12 +144,12 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     private static class ImageDimensionRenderer extends StringPropertyRenderer {
 
-        public ImageDimensionRenderer(final String propertyName, final String relPath) {
+        ImageDimensionRenderer(final String propertyName, final String relPath) {
             super(propertyName, relPath);
         }
 
         @Override
-        protected String getValue(Property p) throws RepositoryException {
+        protected String getValue(final Property p) throws RepositoryException {
             return super.getValue(p) + "px";
         }
     }

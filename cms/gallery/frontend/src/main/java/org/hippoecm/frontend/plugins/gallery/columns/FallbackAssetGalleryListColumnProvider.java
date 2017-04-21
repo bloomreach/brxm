@@ -105,12 +105,12 @@ public final class FallbackAssetGalleryListColumnProvider implements IListColumn
     private static class MimeTypeComparator extends NodeComparator {
 
         @Override
-        public int compare(JcrNodeModel nodeModel1, JcrNodeModel nodeModel2) {
+        public int compare(final JcrNodeModel nodeModel1, final JcrNodeModel nodeModel2) {
             try {
                 final String mimeType1 = getMimeType(nodeModel1);
                 final String mimeType2 = getMimeType(nodeModel2);
                 return String.CASE_INSENSITIVE_ORDER.compare(mimeType1, mimeType2);
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 log.debug("Error while comparing MIME type of assets '{}' and '{}'. Assuming they're equal.",
                         JcrUtils.getNodePathQuietly(nodeModel1.getNode()),
                         JcrUtils.getNodePathQuietly(nodeModel2.getNode()),
@@ -122,10 +122,10 @@ public final class FallbackAssetGalleryListColumnProvider implements IListColumn
         private String getMimeType(final JcrNodeModel nodeModel) throws RepositoryException {
             final Node node = getCanonicalNode(nodeModel);
             if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
-                Node imageSet = node.getNode(node.getName());
-                Item primaryItem = JcrHelper.getPrimaryItem(imageSet);
+                final Node imageSet = node.getNode(node.getName());
+                final Item primaryItem = JcrHelper.getPrimaryItem(imageSet);
                 if (primaryItem.isNode()) {
-                    Node primaryItemNode = (Node) primaryItem;
+                    final Node primaryItemNode = (Node) primaryItem;
                     if (primaryItemNode.isNodeType(HippoNodeType.NT_RESOURCE)) {
                         return primaryItemNode.getProperty(JcrConstants.JCR_MIMETYPE).getString();
                     }
@@ -140,20 +140,20 @@ public final class FallbackAssetGalleryListColumnProvider implements IListColumn
         ByteSizeFormatter formatter = new ByteSizeFormatter(1);
 
         @Override
-        protected Component getViewer(String id, Node node) throws RepositoryException {
+        protected Component getViewer(final String id, final Node node) throws RepositoryException {
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 final String nodeName = node.getName();
                 if (node.hasNode(nodeName)) {
-                    Node imageSet = node.getNode(nodeName);
+                    final Node imageSet = node.getNode(nodeName);
                     try {
                         final Item primItem = JcrHelper.getPrimaryItem(imageSet);
                         if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                            long length = ((Node) primItem).getProperty(JcrConstants.JCR_DATA).getLength();
+                            final long length = ((Node) primItem).getProperty(JcrConstants.JCR_DATA).getLength();
                             return new Label(id, formatter.format(length));
                         } else {
                             log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
                         }
-                    } catch (ItemNotFoundException e) {
+                    } catch (final ItemNotFoundException e) {
                         log.warn("ImageSet must have a primary item. " + node.getPath()
                                 + " probably not of correct image set type");
                     }
@@ -167,18 +167,18 @@ public final class FallbackAssetGalleryListColumnProvider implements IListColumn
     private static class SizeComparator extends NodeComparator {
 
         @Override
-        public int compare(JcrNodeModel nodeModel1, JcrNodeModel nodeModel2) {
+        public int compare(final JcrNodeModel nodeModel1, final JcrNodeModel nodeModel2) {
             try {
-                long size1 = getSize(nodeModel1);
-                long size2 = getSize(nodeModel2);
-                long diff = size1 - size2;
+                final long size1 = getSize(nodeModel1);
+                final long size2 = getSize(nodeModel2);
+                final long diff = size1 - size2;
                 if (diff < 0) {
                     return -1;
                 } else if (diff > 0) {
                     return 1;
                 }
                 return 0;
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 return 0;
             }
         }

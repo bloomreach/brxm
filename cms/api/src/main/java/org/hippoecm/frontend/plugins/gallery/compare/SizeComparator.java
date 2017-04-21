@@ -20,27 +20,25 @@ import javax.jcr.RepositoryException;
 
 public class SizeComparator extends PropertyComparator {
 
-    private static final long serialVersionUID = 1L;
-
-    public SizeComparator(String prop) {
+    public SizeComparator(final String prop) {
         super(prop);
     }
 
-    public SizeComparator(String prop, String relPath) {
+    public SizeComparator(final String prop, final String relPath) {
         super(prop, relPath);
     }
 
     @Override
-    protected int compare(Property p1, Property p2) {
+    protected int compare(final Property p1, final Property p2) {
         long size1 = 0;
         long size2 = 0;
         try {
             size1 = p1 == null ? 0 : p1.getLength();
             size2 = p2 == null ? 0 : p2.getLength();
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException ignored) {
         }
 
-        long diff = size1 - size2;
+        final long diff = size1 - size2;
         if (diff < 0) {
             return -1;
         } else if (diff > 0) {

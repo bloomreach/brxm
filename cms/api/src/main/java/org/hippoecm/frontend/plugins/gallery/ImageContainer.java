@@ -35,15 +35,12 @@ import org.slf4j.LoggerFactory;
 
 public class ImageContainer extends Panel {
 
-    private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(ImageContainer.class);
+    private static final Logger log = LoggerFactory.getLogger(ImageContainer.class);
 
-    private JcrResourceStream stream;
-    private int width;
-    private int height;
+    private final JcrResourceStream stream;
 
-    public ImageContainer(String wicketId, JcrNodeModel model, IPluginContext pluginContext,
-            final IPluginConfig pluginConfig) {
+    public ImageContainer(final String wicketId, final JcrNodeModel model, final IPluginContext pluginContext,
+                          final IPluginConfig pluginConfig) {
 
         this(wicketId, model, pluginContext, pluginConfig, -1);
     }
@@ -54,16 +51,16 @@ public class ImageContainer extends Panel {
         super(wicketId, model);
 
         stream = new JcrResourceStream(model);
-        width = getDimension(model, HippoGalleryNodeType.IMAGE_WIDTH, pluginConfig);
-        height = getDimension(model, HippoGalleryNodeType.IMAGE_HEIGHT, pluginConfig);
+        int width = getDimension(model, HippoGalleryNodeType.IMAGE_WIDTH, pluginConfig);
+        int height = getDimension(model, HippoGalleryNodeType.IMAGE_HEIGHT, pluginConfig);
 
         if (maxAxisLength > -1) {
             if (width > height && width > maxAxisLength) {
-                double ratio = maxAxisLength / width;
+                final double ratio = maxAxisLength / width;
                 height = (int) Math.round(height * ratio);
                 width = maxAxisLength;
             } else if (height > width && height > maxAxisLength) {
-                double ratio = maxAxisLength / height;
+                final double ratio = maxAxisLength / height;
                 width = (int) Math.round(width * ratio);
                 height = maxAxisLength;
             } else if(width > maxAxisLength) {
@@ -72,19 +69,19 @@ public class ImageContainer extends Panel {
             }
         }
 
-        Image img = new JcrImage("image", stream, width, height);
+        final Image img = new JcrImage("image", stream, width, height);
         img.add(new ImageNodeDragBehavior(new DragSettings(YuiPluginHelper.getConfig(pluginConfig)), model));
         add(img);
     }
 
-    private int getDimension(JcrNodeModel model, String propertyName, IPluginConfig config) {
+    private int getDimension(final JcrNodeModel model, final String propertyName, final IPluginConfig config) {
         try {
             return (int)model.getNode().getProperty(propertyName).getLong();
-        } catch (ValueFormatException ignored) {
+        } catch (final ValueFormatException ignored) {
             log.debug("Ignoring illegal long value of image property {}: {}", propertyName, ignored.getMessage());
-        } catch (PathNotFoundException ignored) {
+        } catch (final PathNotFoundException ignored) {
             log.debug("Ignoring missing image property {}: {}", propertyName, ignored.getMessage());
-        } catch (RepositoryException ignored) {
+        } catch (final RepositoryException ignored) {
             log.debug("Ignoring error while reading image property {}: {}", propertyName, ignored.getMessage());
         }
         return config.getAsInteger("gallery.thumbnail.size", 0);

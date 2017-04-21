@@ -37,26 +37,27 @@ public class ImageIconRenderer extends IconRenderer {
     }
 
     @Override
-    protected HippoIcon getIcon(String id, Node node) throws RepositoryException {
+    protected HippoIcon getIcon(final String id, final Node node) throws RepositoryException {
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             final String nodeName = node.getName();
             if (node.hasNode(nodeName)) {
-                Node imageSet = node.getNode(nodeName);
+                final Node imageSet = node.getNode(nodeName);
                 // Thumbnail is marked as primary by default
-                Item primaryItem = JcrHelper.getPrimaryItem(imageSet);
+                final Item primaryItem = JcrHelper.getPrimaryItem(imageSet);
                 if (primaryItem.isNode()) {
                     final Node imageNode = (Node) primaryItem;
                     if (imageNode.isNodeType(HippoNodeType.NT_RESOURCE)) {
-                        int iconWidth = -1, iconHeight = -1;
+                        int iconWidth = -1;
+                        int iconHeight = -1;
 
                         if (imageNode.hasProperty(HippoGalleryNodeType.IMAGE_WIDTH)) {
-                            double storedWidth = imageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getDouble();
+                            final double storedWidth = imageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getDouble();
                             iconWidth = (int) (storedWidth / ratio);
 
                         }
 
                         if (imageNode.hasProperty(HippoGalleryNodeType.IMAGE_HEIGHT)) {
-                            double storedHeight = imageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getDouble();
+                            final double storedHeight = imageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getDouble();
                             iconHeight = (int) (storedHeight / ratio);
                         }
 

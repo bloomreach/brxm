@@ -20,18 +20,17 @@ import javax.jcr.RepositoryException;
 
 public class StringPropertyRenderer extends PropertyRenderer<String> {
 
-    public StringPropertyRenderer(String prop, String relPath) {
+    public StringPropertyRenderer(final String prop, final String relPath) {
         super(prop, relPath);
     }
 
-    public StringPropertyRenderer(String prop) {
+    public StringPropertyRenderer(final String prop) {
         super(prop);
     }
 
     @Override
-    protected String getValue(Property p) throws RepositoryException {
+    protected String getValue(final Property p) throws RepositoryException {
         return p.getString();
-
     }
 
 }

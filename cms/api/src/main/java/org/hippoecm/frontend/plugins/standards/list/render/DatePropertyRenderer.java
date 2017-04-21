@@ -15,22 +15,23 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.render;
 
+import java.util.Date;
+
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import java.util.Date;
 
 public class DatePropertyRenderer extends PropertyRenderer<Date> {
 
-    public DatePropertyRenderer(String prop) {
+    public DatePropertyRenderer(final String prop) {
         super(prop);
     }
 
-    public DatePropertyRenderer(String prop, String relPath) {
+    public DatePropertyRenderer(final String prop, final String relPath) {
         super(prop, relPath);
     }
 
     @Override
-    protected Date getValue(Property p) throws RepositoryException {
+    protected Date getValue(final Property p) throws RepositoryException {
         return p.getDate().getTime();
     }
 }

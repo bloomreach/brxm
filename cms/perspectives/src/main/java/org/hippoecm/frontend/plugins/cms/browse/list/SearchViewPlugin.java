@@ -15,12 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
+import java.util.Arrays;
+import java.util.List;
+
+import javax.jcr.Node;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.columns.FallbackImageGalleryListColumnProvider;
@@ -36,11 +41,8 @@ import org.hippoecm.frontend.plugins.standards.search.TextSearchResultModel;
 import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.hippoecm.frontend.skin.Icon;
 
-import javax.jcr.Node;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.hippoecm.frontend.plugins.cms.browse.list.SearchViewPlugin.Mode.*;
+import static org.hippoecm.frontend.plugins.cms.browse.list.SearchViewPlugin.Mode.LIST;
+import static org.hippoecm.frontend.plugins.cms.browse.list.SearchViewPlugin.Mode.THUMBNAILS;
 
 /**
  * Optional values for <strong>gallery.thumbnail.size</strong> (default value is 60) and
@@ -50,7 +52,6 @@ import static org.hippoecm.frontend.plugins.cms.browse.list.SearchViewPlugin.Mod
  * </p>
  */
 public final class SearchViewPlugin extends DocumentListingPlugin<BrowserSearchResult> {
-
 
     private static final String CONFIG_GALLERY_THUMBNAIL_SIZE = "gallery.thumbnail.size";
     private static final String GALLERY_THUMBNAIL_BOX_SIZE = "gallery.thumbnail.box.size";
@@ -62,23 +63,18 @@ public final class SearchViewPlugin extends DocumentListingPlugin<BrowserSearchR
     }
 
     private Mode mode = THUMBNAILS;
-    private static final long serialVersionUID = 1L;
 
     boolean imageSearch;
 
-    public SearchViewPlugin(IPluginContext context, IPluginConfig config) {
+    public SearchViewPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+
         final IModel<BrowserSearchResult> model = getModel();
         setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
         imageSearch = isImageSearch(model);
         if (imageSearch) {
             add(CssClass.append("image-gallery"));
-            add(CssClass.append(new AbstractReadOnlyModel<String>() {
-                @Override
-                public String getObject() {
-                    return mode == LIST ? "image-gallery-list" : "image-gallery-thumbnails";
-                }
-            }));
+            add(CssClass.append(ReadOnlyModel.of(() -> mode == LIST ? "image-gallery-list" : "image-gallery-thumbnails")));
         }
         final GalleryModeButton listButton = new GalleryModeButton("listButton", LIST, Icon.LIST_UL);
         final GalleryModeButton thumbnailsButton = new GalleryModeButton("thumbnailsButton", THUMBNAILS, Icon.THUMBNAILS);
@@ -95,7 +91,7 @@ public final class SearchViewPlugin extends DocumentListingPlugin<BrowserSearchR
             final TextSearchResultModel textSearchResultModel = (TextSearchResultModel) model;
             final String[] scope = textSearchResultModel.getScope();
             if (scope != null) {
-                for (String s : scope) {
+                for (final String s : scope) {
                     if (s != null && s.startsWith(GALLERY_PATH)) {
                         return true;
                     }
@@ -146,7 +142,7 @@ public final class SearchViewPlugin extends DocumentListingPlugin<BrowserSearchR
     }
 
     public List<ListColumn<Node>> getThumbnailModeColumns() {
-        int thumbnailSize = getPluginConfig().getAsInteger(CONFIG_GALLERY_THUMBNAIL_SIZE, DefaultGalleryProcessor.DEFAULT_THUMBNAIL_SIZE);
+        final int thumbnailSize = getPluginConfig().getAsInteger(CONFIG_GALLERY_THUMBNAIL_SIZE, DefaultGalleryProcessor.DEFAULT_THUMBNAIL_SIZE);
         return Arrays.asList(
                 ImageGalleryColumnProviderPlugin.createIconColumn(thumbnailSize, thumbnailSize),
                 ImageGalleryColumnProviderPlugin.NAME_COLUMN
@@ -154,7 +150,7 @@ public final class SearchViewPlugin extends DocumentListingPlugin<BrowserSearchR
     }
 
     public List<ListColumn<Node>> getListThumbnailModeColumns() {
-        int thumbnailSize = getPluginConfig().getAsInteger(CONFIG_GALLERY_THUMBNAIL_SIZE, DefaultGalleryProcessor.DEFAULT_THUMBNAIL_SIZE);
+        final int thumbnailSize = getPluginConfig().getAsInteger(CONFIG_GALLERY_THUMBNAIL_SIZE, DefaultGalleryProcessor.DEFAULT_THUMBNAIL_SIZE);
         final int thumbnailBoxSize = getPluginConfig().getAsInteger(GALLERY_THUMBNAIL_BOX_SIZE, DEFAULT_BOX_SIZE);
         return Arrays.asList(
                 ImageGalleryColumnProviderPlugin.createIconColumn(thumbnailSize, thumbnailBoxSize),

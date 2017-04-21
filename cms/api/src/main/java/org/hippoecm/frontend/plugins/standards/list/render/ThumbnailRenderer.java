@@ -15,6 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.render;
 
+import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.model.JcrHelper;
@@ -27,31 +32,25 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 public class ThumbnailRenderer extends AbstractNodeRenderer {
-    private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ThumbnailRenderer.class);
+    private static final Logger log = LoggerFactory.getLogger(ThumbnailRenderer.class);
 
-    private IPluginContext pluginContext;
-    private IPluginConfig pluginConfig;
+    private final IPluginContext pluginContext;
+    private final IPluginConfig pluginConfig;
 
-    public ThumbnailRenderer(IPluginContext pluginContext, IPluginConfig pluginConfig) {
+    public ThumbnailRenderer(final IPluginContext pluginContext, final IPluginConfig pluginConfig) {
         this.pluginConfig = pluginConfig;
         this.pluginContext = pluginContext;
     }
 
     @Override
-    protected Component getViewer(String id, Node node) throws RepositoryException {
+    protected Component getViewer(final String id, final Node node) throws RepositoryException {
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             if (node.hasNode(node.getName())) {
-                Node imageSet = node.getNode(node.getName());
+                final Node imageSet = node.getNode(node.getName());
                 try {
-                    Item primItem = JcrHelper.getPrimaryItem(imageSet);
+                    final Item primItem = JcrHelper.getPrimaryItem(imageSet);
                     if (primItem.isNode()) {
                         if (((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
                             return new ImageContainer(id, new JcrNodeModel((Node) primItem), pluginContext,
@@ -60,7 +59,7 @@ public class ThumbnailRenderer extends AbstractNodeRenderer {
                             log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
                         }
                     }
-                } catch (ItemNotFoundException e) {
+                } catch (final ItemNotFoundException e) {
                     log.debug("ImageSet must have a primary item. " + node.getPath()
                             + " probably not of correct image set type");
                 }

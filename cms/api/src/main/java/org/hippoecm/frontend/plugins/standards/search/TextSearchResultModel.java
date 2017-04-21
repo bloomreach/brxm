@@ -20,10 +20,8 @@ import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResultModel;
 
 public class TextSearchResultModel extends BrowserSearchResultModel {
 
-    private static final long serialVersionUID = 1L;
-
-    private String text;
-    private String[] scope;
+    private final String text;
+    private final String[] scope;
 
     public TextSearchResultModel(final String text, final BrowserSearchResult bsr, final String[] scope) {
         super(bsr);
@@ -31,9 +29,8 @@ public class TextSearchResultModel extends BrowserSearchResultModel {
         this.scope = scope;
     }
 
-    public TextSearchResultModel(String text, BrowserSearchResult bsr) {
-        super(bsr);
-        this.text = text;
+    public TextSearchResultModel(final String text, final BrowserSearchResult bsr) {
+        this(text, bsr, null);
     }
 
     public String getQueryString() {

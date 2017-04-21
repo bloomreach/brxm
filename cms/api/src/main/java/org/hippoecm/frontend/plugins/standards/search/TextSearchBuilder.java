@@ -20,102 +20,103 @@ import java.util.StringTokenizer;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TextSearchBuilder implements IClusterable {
 
-    private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(TextSearchBuilder.class);
 
     public static final String TEXT_QUERY_NAME = "text";
-    
-    private static final String DEFAULT_IGNORED_CHARS = "&|!(){}[]^\"~*?:\\";
 
+    private static final String DEFAULT_IGNORED_CHARS = "&|!(){}[]^\"~*?:\\";
     private static final char MINUS_SIGN = '-';
 
     private String text;
+    private String ignoredChars = DEFAULT_IGNORED_CHARS;
     private String[] scope;
-
     private String[] includePrimaryTypes;
     private String[] excludedPrimaryTypes = ArrayUtils.EMPTY_STRING_ARRAY;
-    private boolean wildcardSearch = false;
-    private String ignoredChars = DEFAULT_IGNORED_CHARS;
+    private boolean wildcardSearch;
     private int limit = -1;
     private int minimalLength = 3;
 
     public TextSearchBuilder() {
-        this.scope = new String[] { "/" };
+        scope = new String[]{"/"};
     }
 
-    public void setScope(String[] paths) {
-        this.scope = paths;
+    public void setScope(final String[] paths) {
+        scope = paths;
     }
-    
-    public void setLimit(int limit) {
+
+    public void setLimit(final int limit) {
         this.limit = limit;
     }
 
     /**
      * Sets the JCR primary types to search for.
+     *
      * @param includePrimaryTypes {@link String}[] of primary types
      */
     public void setIncludePrimaryTypes(final String[] includePrimaryTypes) {
         this.includePrimaryTypes = includePrimaryTypes;
     }
 
-    public void setExcludedPrimaryTypes(String[] excludedPrimaryTypes) {
+    public void setExcludedPrimaryTypes(final String[] excludedPrimaryTypes) {
         this.excludedPrimaryTypes = excludedPrimaryTypes;
     }
 
-    public void setWildcardSearch(boolean wildcardSearch) {
+    public void setWildcardSearch(final boolean wildcardSearch) {
         this.wildcardSearch = wildcardSearch;
     }
 
-    public void setIgnoredChars(String ignoredChars) {
+    public void setIgnoredChars(final String ignoredChars) {
         this.ignoredChars = DEFAULT_IGNORED_CHARS + ignoredChars;
     }
 
-    public void setText(String value) {
-        this.text = value;
+    public void setText(final String value) {
+        text = value;
     }
 
     public TextSearchResultModel getResultModel() {
-        String value = text.trim();
-        if (value.equals("")) {
+        final String value = text.trim();
+        if ("".equals(value)) {
             return null;
         }
 
-        StringBuilder querySb = getQueryStringBuilder();
+        final StringBuilder querySb = getQueryStringBuilder();
         if (querySb == null) {
             return null;
         }
-        
+
         final String query = querySb.toString();
-        IModel<QueryResult> resultModel = new QueryResultModel(query, limit);
+        final IModel<QueryResult> resultModel = new QueryResultModel(query, limit);
         return new TextSearchResultModel(value, new BrowserSearchResult(TEXT_QUERY_NAME, resultModel), scope);
     }
 
     /**
      * Makes the JCR Xpath query string
+     *
      * @return StringBuilder that represents the JCR Xpath query
      */
     StringBuilder getQueryStringBuilder() {
-        String value = isoLatin1AccentReplacer(text.trim());
+        final String value = isoLatin1AccentReplacer(text.trim());
 
         boolean valid = false;
-        StringBuilder querySb = new StringBuilder();
+        final StringBuilder querySb = new StringBuilder();
         querySb.append(getIncludedPrimaryTypeFilter()).append('[');
-        StringBuilder scope = getScope();
+        final StringBuilder scope = getScope();
         if (scope != null) {
             querySb.append(scope);
         }
@@ -124,12 +125,12 @@ public class TextSearchBuilder implements IClusterable {
             if (scope != null) {
                 querySb.append(" and ");
             }
-            String whereClause = getWhereClause(value, false);
+            final String whereClause = getWhereClause(value, false);
             if (wildcardSearch) {
-                String whereClauseWildCards = getWhereClause(value, true);
-                if (whereClauseWildCards.length() > 0) {
+                final String whereClauseWildCards = getWhereClause(value, true);
+                if (!whereClauseWildCards.isEmpty()) {
                     valid = true;
-                    if (whereClause.length() > 0) {
+                    if (!whereClause.isEmpty()) {
                         querySb.append("(");
                         querySb.append("jcr:contains(.,'").append(whereClause).append("')");
                         querySb.append(" or ");
@@ -138,11 +139,11 @@ public class TextSearchBuilder implements IClusterable {
                     } else {
                         querySb.append("jcr:contains(.,'").append(whereClauseWildCards).append("')");
                     }
-                } else if (whereClause.length() > 0) {
+                } else if (!whereClause.isEmpty()) {
                     valid = true;
                     querySb.append("jcr:contains(.,'").append(whereClause).append("')");
                 }
-            } else if (whereClause.length() > 0) {
+            } else if (!whereClause.isEmpty()) {
                 valid = true;
                 querySb.append("jcr:contains(.,'").append(whereClause).append("')");
             }
@@ -159,20 +160,20 @@ public class TextSearchBuilder implements IClusterable {
     }
 
     private String getWhereClause(final String value, final boolean wildcardPostfix) {
-        StringBuilder whereClauseBuilder = new StringBuilder();
+        final StringBuilder whereClauseBuilder = new StringBuilder();
         boolean isOperatorToken;
         String peekedToken = null;
-        for (StringTokenizer st = new StringTokenizer(value, " "); st.hasMoreTokens() || peekedToken != null ;) {
-            String token;
+        for (final StringTokenizer st = new StringTokenizer(value, " "); st.hasMoreTokens() || peekedToken != null; ) {
+            final String token;
             if (peekedToken != null) {
                 token = peekedToken;
                 peekedToken = null;
             } else {
                 token = st.nextToken();
             }
-            StringBuilder tb = new StringBuilder();
+            final StringBuilder tb = new StringBuilder();
             for (int i = 0; i < token.length(); i++) {
-                char c = token.charAt(i);
+                final char c = token.charAt(i);
                 if (ignoredChars.indexOf(c) == -1) {
                     if (c == '\'') {
                         // According to JCR 1.0 (JSR-170), section 6.6.4.9, the apostrophe(') and quotation mark (")
@@ -180,9 +181,9 @@ public class TextSearchBuilder implements IClusterable {
                         tb.append('\'');
                     }
                     if (c == MINUS_SIGN) {
-                        // we do not allowe minus sign followed by a space or ignored char
+                        // we do not allow minus sign followed by a space or ignored char
                         if (token.length() > i + 1) {
-                            char nextChar = token.charAt(i + 1);
+                            final char nextChar = token.charAt(i + 1);
                             if (nextChar == ' ' || ignoredChars.indexOf(nextChar) > -1) {
                                 // not allowed position for -
                             } else {
@@ -198,12 +199,7 @@ public class TextSearchBuilder implements IClusterable {
                 continue;
             }
 
-
-            if (token.equals("OR") || token.equals("AND")) {
-                isOperatorToken = true;
-            } else {
-                isOperatorToken = false;
-            }
+            isOperatorToken = "OR".equals(token) || "AND".equals(token);
 
             if (wildcardPostfix && tb.length() < getMinimalLength() && !isOperatorToken) {
                 // for wildcard postfixing we demand the term to be at least as long as #getMinimalLength()
@@ -215,12 +211,12 @@ public class TextSearchBuilder implements IClusterable {
                 // we do not allow an operator AND or OR as last token
                 continue;
             }
-            
+
             // now we could still have that the problem that the query ends with AND AND : thus we need to peek the next token 
             // if there are more to double check it is not a operator
             if (isOperatorToken && st.hasMoreTokens()) {
                 peekedToken = st.nextToken();
-                if (peekedToken.equals("OR") || peekedToken.equals("AND")) {
+                if ("OR".equals(peekedToken) || "AND".equals(peekedToken)) {
                     // the next token is an operator. Skip current one
                     continue;
                 }
@@ -249,13 +245,13 @@ public class TextSearchBuilder implements IClusterable {
     }
 
     private StringBuilder getScope() {
-        javax.jcr.Session session = UserSession.get().getJcrSession();
+        final Session session = UserSession.get().getJcrSession();
 
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         boolean haveTypeRestriction = false;
         if (excludedPrimaryTypes.length > 0) {
             sb.append("not(");
-            for (String exclude : excludedPrimaryTypes) {
+            for (final String exclude : excludedPrimaryTypes) {
                 if (haveTypeRestriction) {
                     sb.append(" or ");
                 } else {
@@ -266,14 +262,14 @@ public class TextSearchBuilder implements IClusterable {
             sb.append(")");
         }
         boolean haveScope = false;
-        for (String path : scope) {
+        for (final String path : scope) {
             if (!path.startsWith("/")) {
                 throw new IllegalArgumentException("Search path should be absolute: " + path);
             }
             try {
-                Node content = (Node) session.getItem(path);
-                if (content.isNodeType("mix:referenceable")) {
-                    String uuid = content.getIdentifier();
+                final Node content = (Node) session.getItem(path);
+                if (content.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
+                    final String uuid = content.getIdentifier();
                     if (haveScope) {
                         sb.append(" or ");
                     } else {
@@ -287,11 +283,11 @@ public class TextSearchBuilder implements IClusterable {
                 } else {
                     log.info("Skipping non-referenceable node at path {}", path);
                 }
-            } catch (PathNotFoundException e) {
+            } catch (final PathNotFoundException e) {
                 log.warn("Search path not found: " + path);
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 throw new IllegalStateException(
-                        "An error occured while constructing the default search where-clause part", e);
+                        "An error occurred while constructing the default search where-clause part", e);
             }
         }
         if (haveScope) {
@@ -306,17 +302,18 @@ public class TextSearchBuilder implements IClusterable {
     /**
      * Translates the included primary type(s) to a filter for a JCR xpath query.
      *
-     * @return xpath condition with configured document types or a clause that queries {@literal hippo:document} and all its subtypes
-     *          if no document type filter is configured
+     * @return xpath condition with configured document types or a clause that queries {@literal hippo:document} and all
+     * its subtypes if no document type filter is configured
      */
     private StringBuilder getIncludedPrimaryTypeFilter() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         if (includePrimaryTypes == null || includePrimaryTypes.length == 0) {
-            sb.append("//element(*, hippo:document)");
+            sb.append("//element(*, " + HippoNodeType.NT_DOCUMENT + ")");
         } else {
             sb.append("//node()[");
 
-            int i = 0, size = includePrimaryTypes.length;
+            int i = 0;
+            final int size = includePrimaryTypes.length;
             while (i < size) {
                 if (i > 0) {
                     sb.append(" or ");
@@ -329,7 +326,7 @@ public class TextSearchBuilder implements IClusterable {
         return sb;
     }
 
-    public void setMinimalLength(int minimalLength) {
+    public void setMinimalLength(final int minimalLength) {
         this.minimalLength = minimalLength;
     }
 
@@ -337,28 +334,28 @@ public class TextSearchBuilder implements IClusterable {
         return minimalLength;
     }
 
-    public static String isoLatin1AccentReplacer(String input) {
-        if(input == null) {
+    public static String isoLatin1AccentReplacer(final String input) {
+        if (input == null) {
             return null;
         }
 
-        char[] inputChars = input.toCharArray();
+        final char[] inputChars = input.toCharArray();
         // Worst-case length required:
-        char[] output = new char[inputChars.length * 2];
+        final char[] output = new char[inputChars.length * 2];
 
         int outputPos = 0;
 
         int pos = 0;
-        int length = inputChars.length;
+        final int length = inputChars.length;
 
         for (int i = 0; i < length; i++, pos++) {
             final char c = inputChars[pos];
 
             // Quick test: if it's not in range then just keep
             // current character
-            if (c < '\u00c0')
+            if (c < '\u00c0') {
                 output[outputPos++] = c;
-            else {
+            } else {
                 switch (c) {
                     case '\u00C0': // À
                     case '\u00C1': // Á
@@ -491,7 +488,7 @@ public class TextSearchBuilder implements IClusterable {
         }
 
         // now take only the populated chars from output
-        char[] outputChars = new char[outputPos];
+        final char[] outputChars = new char[outputPos];
         System.arraycopy(output, 0, outputChars, 0, outputPos);
         return new String(outputChars);
     }
