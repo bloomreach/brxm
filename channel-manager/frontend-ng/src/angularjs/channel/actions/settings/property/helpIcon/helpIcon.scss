@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.md-tooltip {
-  height: auto;
-  max-width: 80vw;
-  white-space: initial;
-  width: auto;
+.help-icon {
+  cursor: default;
+  position: absolute;
+  right: -24px;
+  top: 10px;
 }
+
 
