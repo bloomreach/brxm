@@ -7,8 +7,8 @@ import java.util.Map;
 
 public interface ResourceLinkResolver {
 
-    ResourceLink resolve(ResourceContainer resource) throws ResourceException;
+    ResourceLink resolve(Resource resource) throws ResourceException;
 
-    ResourceLink resolve(ResourceContainer resource, Map<String, Object> variables) throws ResourceException;
+    ResourceLink resolve(Resource resource, Map<String, Object> variables) throws ResourceException;
 
 }

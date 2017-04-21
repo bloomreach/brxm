@@ -14,14 +14,13 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.onehippo.cms7.crisp.api.resource.Resource;
-import com.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import com.onehippo.cms7.crisp.api.resource.ResourceException;
 
 public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRestTemplateResourceResolver {
 
-    private static ThreadLocal<Map<ResourceContainer, Object>> tlResourceResultCache = new ThreadLocal<Map<ResourceContainer, Object>>() {
+    private static ThreadLocal<Map<Resource, Object>> tlResourceResultCache = new ThreadLocal<Map<Resource, Object>>() {
         @Override
-        protected Map<ResourceContainer, Object> initialValue() {
+        protected Map<Resource, Object> initialValue() {
             return new HashMap<>();
         }
     };
@@ -72,7 +71,7 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
     }
 
     @Override
-    public ResourceContainer findResources(String baseAbsPath, Map<String, Object> pathVariables)
+    public Resource findResources(String baseAbsPath, Map<String, Object> pathVariables)
             throws ResourceException {
         try {
             RestTemplate restTemplate = getRestTemplate();
@@ -82,7 +81,7 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
             if (isSuccessfulResponse(result)) {
                 final String bodyText = result.getBody();
                 JsonNode jsonNode = getObjectMapper().readTree(bodyText);
-                ResourceContainer rootResource = new JacksonResource(jsonNode);
+                Resource rootResource = new JacksonResource(jsonNode);
 
                 if (isCacheEnabled()) {
                     tlResourceResultCache.get().put(rootResource, bodyText);
@@ -104,35 +103,35 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
     }
 
     @Override
-    public boolean isCacheable(ResourceContainer resourceContainer) {
-        return (isCacheEnabled() && resourceContainer instanceof JacksonResource);
+    public boolean isCacheable(Resource resource) {
+        return (isCacheEnabled() && resource instanceof JacksonResource);
     }
 
     @Override
-    public Object toCacheData(ResourceContainer resourceContainer) {
-        if (!isCacheEnabled() || !(resourceContainer instanceof JacksonResource)) {
+    public Object toCacheData(Resource resource) {
+        if (!isCacheEnabled() || !(resource instanceof JacksonResource)) {
             return null;
         }
 
-        Object body = tlResourceResultCache.get().get(resourceContainer);
+        Object body = tlResourceResultCache.get().get(resource);
 
         if (body != null) {
-            tlResourceResultCache.get().remove(resourceContainer);
+            tlResourceResultCache.get().remove(resource);
             return body;
         } else {
-            return ((JacksonResource) resourceContainer).toJsonString(getObjectMapper());
+            return ((JacksonResource) resource).toJsonString(getObjectMapper());
         }
     }
 
     @Override
-    public ResourceContainer fromCacheData(Object cacheData) {
+    public Resource fromCacheData(Object cacheData) {
         if (!isCacheEnabled() || !(cacheData instanceof String)) {
             return null;
         }
 
         try {
             JsonNode jsonNode = getObjectMapper().readTree((String) cacheData);
-            ResourceContainer rootResource = new JacksonResource(jsonNode);
+            Resource rootResource = new JacksonResource(jsonNode);
             return rootResource;
         } catch (JsonProcessingException e) {
             throw new ResourceException("JSON processing error.", e);

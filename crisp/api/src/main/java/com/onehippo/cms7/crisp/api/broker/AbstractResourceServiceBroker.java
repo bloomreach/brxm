@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import com.onehippo.cms7.crisp.api.resource.Resource;
-import com.onehippo.cms7.crisp.api.resource.ResourceContainer;
 import com.onehippo.cms7.crisp.api.resource.ResourceDataCache;
 import com.onehippo.cms7.crisp.api.resource.ResourceException;
 import com.onehippo.cms7.crisp.api.resource.ResourceLink;
@@ -36,17 +35,17 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
     }
 
     @Override
-    public ResourceContainer findResources(String resourceSpace, String baseAbsPath) throws ResourceException {
+    public Resource findResources(String resourceSpace, String baseAbsPath) throws ResourceException {
         return findResources(resourceSpace, baseAbsPath, Collections.emptyMap());
     }
 
     @Override
-    public ResourceLink resolveLink(String resourceSpace, ResourceContainer resource) throws ResourceException {
+    public ResourceLink resolveLink(String resourceSpace, Resource resource) throws ResourceException {
         return resolveLink(resourceSpace, resource, Collections.emptyMap());
     }
 
     @Override
-    public ResourceLink resolveLink(String resourceSpace, ResourceContainer resource, Map<String, Object> linkVariables)
+    public ResourceLink resolveLink(String resourceSpace, Resource resource, Map<String, Object> linkVariables)
             throws ResourceException {
         ResourceResolver resolver = getResourceResolver(resourceSpace);
 

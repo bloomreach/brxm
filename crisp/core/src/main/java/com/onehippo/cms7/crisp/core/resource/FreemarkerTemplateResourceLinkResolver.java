@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.onehippo.cms7.crisp.api.resource.AbstractResourceLinkResolver;
-import com.onehippo.cms7.crisp.api.resource.ResourceContainer;
+import com.onehippo.cms7.crisp.api.resource.Resource;
 import com.onehippo.cms7.crisp.api.resource.ResourceException;
 import com.onehippo.cms7.crisp.api.resource.ResourceLink;
 
@@ -55,7 +55,7 @@ public class FreemarkerTemplateResourceLinkResolver extends AbstractResourceLink
     }
 
     @Override
-    public ResourceLink resolve(ResourceContainer resource, Map<String, Object> variables) throws ResourceException {
+    public ResourceLink resolve(Resource resource, Map<String, Object> variables) throws ResourceException {
         Map<String, Object> context = new HashMap<String, Object>();
 
         if (variables != null) {

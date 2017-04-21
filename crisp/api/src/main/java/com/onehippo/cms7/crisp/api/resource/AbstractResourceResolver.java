@@ -15,7 +15,7 @@ public abstract class AbstractResourceResolver extends AbstractResourceCacheReso
     }
 
     @Override
-    public ResourceContainer findResources(String baseAbsPath) throws ResourceException {
+    public Resource findResources(String baseAbsPath) throws ResourceException {
         return findResources(baseAbsPath, Collections.emptyMap());
     }
 

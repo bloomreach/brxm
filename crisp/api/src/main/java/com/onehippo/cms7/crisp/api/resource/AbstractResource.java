@@ -3,9 +3,9 @@
  */
 package com.onehippo.cms7.crisp.api.resource;
 
-public abstract class AbstractResource extends AbstractResourceContainer implements Resource {
+import java.util.Iterator;
 
-    private static final long serialVersionUID = 1L;
+public abstract class AbstractResource implements Resource {
 
     private final Resource parent;
     private final String resourceType;
@@ -62,6 +62,21 @@ public abstract class AbstractResource extends AbstractResourceContainer impleme
     @Override
     public Resource getParent() {
         return parent;
+    }
+
+    @Override
+    public long getChildCount() {
+        return -1;
+    }
+
+    @Override
+    public Iterator<Resource> getChildIterator() {
+        return getChildIterator(0L, -1L);
+    }
+
+    @Override
+    public Iterable<Resource> getChildren() {
+        return getChildren(0L, -1L);
     }
 
 }

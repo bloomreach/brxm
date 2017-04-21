@@ -3,7 +3,10 @@
  */
 package com.onehippo.cms7.crisp.api.resource;
 
-public interface Resource extends ResourceContainer {
+import java.io.Serializable;
+import java.util.Iterator;
+
+public interface Resource extends Serializable {
 
     String gerResourceType();
 
@@ -18,5 +21,17 @@ public interface Resource extends ResourceContainer {
     ValueMap getValueMap();
 
     Resource getParent();
+
+    boolean isAnyChildContained();
+
+    long getChildCount();
+
+    Iterator<Resource> getChildIterator();
+
+    Iterator<Resource> getChildIterator(long offset, long limit);
+
+    Iterable<Resource> getChildren();
+
+    Iterable<Resource> getChildren(long offset, long limit);
 
 }

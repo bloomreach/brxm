@@ -538,7 +538,7 @@
           <sv:value>${engine}</sv:value>
         </sv:property>
         <sv:property sv:name="external.document.service.facade" sv:type="String">
-          <sv:value>org.onehippo.cms7.crisp.demo.cms.plugin.CommerceProductDataServiceFacade</sv:value>
+          <sv:value>com.onehippo.cms7.crisp.demo.cms.plugin.CommerceProductDataServiceFacade</sv:value>
         </sv:property>
         <sv:property sv:name="mode" sv:type="String">
           <sv:value>${mode}</sv:value>

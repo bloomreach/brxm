@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
-import com.onehippo.cms7.crisp.api.resource.ResourceContainer;
+import com.onehippo.cms7.crisp.api.resource.Resource;
 import com.onehippo.cms7.crisp.api.resource.ResourceException;
 import com.onehippo.cms7.crisp.api.resource.ResourceLink;
 import com.onehippo.cms7.crisp.hst.module.CrispHstServices;
@@ -33,7 +33,7 @@ public class ResourceLinkTag extends VariableContainerTag {
 
     private String resourceSpace;
 
-    private ResourceContainer resource;
+    private Resource resource;
 
     private String var;
 
@@ -112,7 +112,7 @@ public class ResourceLinkTag extends VariableContainerTag {
         return resourceSpace;
     }
 
-    public ResourceContainer getResource() {
+    public Resource getResource() {
         return resource;
     }
 
@@ -141,7 +141,7 @@ public class ResourceLinkTag extends VariableContainerTag {
         this.resourceSpace = resourceSpace;
     }
 
-    public void setResource(ResourceContainer resource) {
+    public void setResource(Resource resource) {
         this.resource = resource;
     }
 

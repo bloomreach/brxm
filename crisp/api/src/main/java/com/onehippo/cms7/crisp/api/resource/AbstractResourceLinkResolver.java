@@ -8,7 +8,7 @@ import java.util.Collections;
 public abstract class AbstractResourceLinkResolver implements ResourceLinkResolver {
 
     @Override
-    public ResourceLink resolve(ResourceContainer resource) throws ResourceException {
+    public ResourceLink resolve(Resource resource) throws ResourceException {
         return resolve(resource, Collections.emptyMap());
     }
 

@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
-import com.onehippo.cms7.crisp.api.resource.ResourceContainer;
+import com.onehippo.cms7.crisp.api.resource.Resource;
 import com.onehippo.cms7.crisp.demo.beans.EventsDocument;
 import com.onehippo.cms7.crisp.hst.module.CrispHstServices;
 
@@ -38,7 +38,7 @@ public class EventsContentComponent extends EssentialsContentComponent {
             final Map<String, Object> pathVars = new HashMap<>();
             // Note: Just as an example, let's try to find all the data by passing empty query string.
             pathVars.put("soql", SOQL_ALL_LEADS);
-            ResourceContainer salesForceLeads = resourceServiceBroker.findResources(RESOURCE_SPACE_DEMO_SALES_FORCE,
+            Resource salesForceLeads = resourceServiceBroker.findResources(RESOURCE_SPACE_DEMO_SALES_FORCE,
                     "/query/?q={soql}", pathVars);
             request.setAttribute("salesForceLeads", salesForceLeads);
         } catch (Exception e) {

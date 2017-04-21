@@ -8,17 +8,17 @@ public abstract class AbstractResourceCacheResolvable implements ResourceCacheRe
     private ResourceDataCache resourceDataCache;
 
     @Override
-    public boolean isCacheable(ResourceContainer resourceContainer) {
+    public boolean isCacheable(Resource resource) {
         return false;
     }
 
     @Override
-    public Object toCacheData(ResourceContainer resourceContainer) {
+    public Object toCacheData(Resource resource) {
         return null;
     }
 
     @Override
-    public ResourceContainer fromCacheData(Object cacheData) {
+    public Resource fromCacheData(Object cacheData) {
         return null;
     }
 

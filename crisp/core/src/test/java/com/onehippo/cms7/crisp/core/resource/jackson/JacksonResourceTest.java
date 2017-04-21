@@ -23,8 +23,6 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onehippo.cms7.crisp.api.resource.Resource;
-import com.onehippo.cms7.crisp.api.resource.ResourceContainer;
-import com.onehippo.cms7.crisp.core.resource.jackson.JacksonResource;
 
 public class JacksonResourceTest {
 
@@ -91,7 +89,7 @@ public class JacksonResourceTest {
         assertSame(widget, images.getParent());
 
         List<Resource> imageResources = new ArrayList<>();
-        for (Iterator<Resource> it = images.getChildIterator(); it.hasNext(); ) {
+        for (Iterator<Resource> it = images.getChildIterator(); it.hasNext();) {
             imageResources.add(it.next());
         }
         assertEquals(2, imageResources.size());
@@ -166,7 +164,7 @@ public class JacksonResourceTest {
     @Test
     public void testPagination() throws Exception {
         Resource widget = rootResource.getValueMap().get("widget", Resource.class);
-        ResourceContainer images = widget.getValueMap().get("images", ResourceContainer.class);
+        Resource images = widget.getValueMap().get("images", Resource.class);
         assertEquals(2, images.getChildCount());
 
         List<Resource> children = (List<Resource>) images.getChildren();

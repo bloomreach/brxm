@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import com.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
 import com.onehippo.cms7.crisp.api.resource.Resource;
-import com.onehippo.cms7.crisp.api.resource.ResourceContainer;
 
 public class CommerceProductDataServiceFacade implements ExternalDocumentServiceFacade<Resource> {
 
@@ -36,10 +35,10 @@ public class CommerceProductDataServiceFacade implements ExternalDocumentService
         ExternalDocumentCollection<Resource> collection = new SimpleExternalDocumentCollection<>();
 
         try {
-            ResourceContainer resourceContainer = findAllProductResources(queryString);
+            Resource rootResource = findAllProductResources(queryString);
 
-            if (resourceContainer.isAnyChildContained()) {
-                for (Resource resource : resourceContainer.getChildren()) {
+            if (rootResource.isAnyChildContained()) {
+                for (Resource resource : rootResource.getChildren()) {
                     collection.add(resource);
                 }
             }
@@ -60,10 +59,10 @@ public class CommerceProductDataServiceFacade implements ExternalDocumentService
                     null);
 
             if (skuValues != null) {
-                ResourceContainer resourceContainer = findAllProductResources(null);
+                Resource rootResource = findAllProductResources(null);
 
                 for (String skuValue : skuValues) {
-                    Resource resource = findResourceBySKU(resourceContainer, skuValue);
+                    Resource resource = findResourceBySKU(rootResource, skuValue);
 
                     if (resource != null) {
                         collection.add(resource);
@@ -111,7 +110,7 @@ public class CommerceProductDataServiceFacade implements ExternalDocumentService
         return "/cms/skin/images/icons/domain-48.png";
     }
 
-    private ResourceContainer findAllProductResources(final String queryString) {
+    private Resource findAllProductResources(final String queryString) {
         ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
         Map<String, Object> variables = new HashMap<>();
         variables.put("queryString", StringUtils.isNotBlank(queryString) ? queryString : "");
@@ -122,8 +121,8 @@ public class CommerceProductDataServiceFacade implements ExternalDocumentService
      * WARNING: This method implementation is intended only for demonstration purpose about how cms code can use
      *          ResourceServiceBroker. So, this kind of implementation shouldn't be used in production.
      */
-    private Resource findResourceBySKU(ResourceContainer resourceContainer, final String sku) {
-        for (Resource resource : resourceContainer.getChildren()) {
+    private Resource findResourceBySKU(Resource rootResource, final String sku) {
+        for (Resource resource : rootResource.getChildren()) {
             if (StringUtils.equals(sku, (String) resource.getValueMap().get("SKU"))) {
                 return resource;
             }

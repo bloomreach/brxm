@@ -35,12 +35,12 @@
     </attribute>
     <attribute>
       <description>
-        A CRISP ResourceContainer or Resource object.
+        A CRISP Resource object.
       </description>
       <name>resource</name>
       <required>true</required>
       <rtexprvalue>true</rtexprvalue>
-      <type>com.onehippo.cms7.crisp.api.resource.ResourceContainer</type>
+      <type>com.onehippo.cms7.crisp.api.resource.Resource</type>
     </attribute>
     <attribute>
       <description>
