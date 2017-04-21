@@ -530,7 +530,7 @@ public class PagesHelper extends AbstractHelper {
 
     private String getValidTargetPageNodeName(final String previewWorkspacePagesPath, final String targetPageNodeName, final Session session) throws RepositoryException {
         String testTargetNodeName = targetPageNodeName;
-        for (int counter = 1; !isValidTarget(session, testTargetNodeName, previewWorkspacePagesPath, getPreviewPagesPath()); counter++) {
+        for (int counter = 1; !isValidTarget(session, testTargetNodeName, previewWorkspacePagesPath, getLivePagesPath()); counter++) {
             log.info("targetPageNodeName '{}' not valid. Trying next one.", targetPageNodeName);
             testTargetNodeName = targetPageNodeName + "-" + counter;
         }
@@ -540,7 +540,7 @@ public class PagesHelper extends AbstractHelper {
     private boolean isValidTarget(final Session session,
                                   final String testTargetNodeName,
                                   final String previewWorkspacePagesPath,
-                                  final String previewPagesPath) throws RepositoryException {
+                                  final String livePagesPath) throws RepositoryException {
         final String testWorkspaceTargetNodePath = previewWorkspacePagesPath + "/" + testTargetNodeName;
         if (session.nodeExists(testWorkspaceTargetNodePath)) {
             Node targetNode = session.getNode(testWorkspaceTargetNodePath);
@@ -557,15 +557,19 @@ public class PagesHelper extends AbstractHelper {
             }
         }
         // the targetNodeName does not yet exist in workspace pages. Confirm it does not exist non workspace pages
-        return !session.nodeExists(previewPagesPath + "/" + testTargetNodeName);
+        return !session.nodeExists(livePagesPath + "/" + testTargetNodeName);
     }
 
     private String getPreviewWorkspacePagesPath() {
         return getPreviewWorkspacePath() + "/" + NODENAME_HST_PAGES;
     }
 
-    private String getPreviewPagesPath() {
-        return pageComposerContextService.getEditingPreviewSite().getConfigurationPath()
+    private String getLivePagesPath() {
+        String liveConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();
+        if (liveConfigurationPath.endsWith("-preview")) {
+            liveConfigurationPath = StringUtils.substringBeforeLast(liveConfigurationPath, "-preview");
+        }
+        return liveConfigurationPath
                 + "/" + NODENAME_HST_PAGES;
     }
 
