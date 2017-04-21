@@ -21,11 +21,19 @@
              ng-model="$ctrl.selectedProject"
              ng-model-options="{Project: '$value.id'}"
              ng-change="$ctrl.projectChanged()">
-    <md-option ng-repeat="project in $ctrl.projects"
+    <md-option ng-repeat="project in $ctrl.withBranch | orderBy: 'name'"
                ng-value="{{project}}">
       <div layout="row"
            layout-align="start center">
-        <span class="project-name">{{ $ctrl.getDisplayName(project) }}</span>
+        <span class="project-name">{{ project.name }}</span>
+      </div>
+    </md-option>
+    <md-divider></md-divider>
+    <md-option ng-repeat="project in $ctrl.withoutBranch | orderBy: 'name'"
+               ng-value="{{project}}">
+      <div layout="row"
+           layout-align="start center">
+        <span class="project-name">{{ project.name }}</span>
       </div>
     </md-option>
   </md-select>

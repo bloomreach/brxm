@@ -15,6 +15,8 @@
  *
  */
 
+const MASTER = { name: 'Default', id: 'master' };
+
 class ProjectToggleController {
   constructor($translate, OverlayService, ChannelService, ProjectService) {
     'ngInject';
@@ -24,6 +26,8 @@ class ProjectToggleController {
     this.ChannelService = ChannelService;
     this.ProjectService = ProjectService;
     this.available = ProjectService.available;
+    this.withBranch = [MASTER];
+    this.selectedProject = MASTER;
     this._setProjects();
   }
   $onInit() {
@@ -31,31 +35,23 @@ class ProjectToggleController {
   }
 
   _setProjects() {
-    const channelId = this.ChannelService.getChannel().id;
-    this.ProjectService.projects(channelId)
+    this.ProjectService.projects(this.ChannelService.getChannel().id)
       .then((response) => {
-        this.projects = response;
+        this.withBranch = this.withBranch.concat(response.withBranch);
+        this.withoutBranch = response.withoutBranch;
       });
   }
 
   _activate() {
-    this.selectedProject = this.ProjectService.master;
     this._projectChanged();
   }
 
   _projectChanged() {
-    if (this.selectedProject.name === 'master') {
-      return;
-    }
-    if (this.selectedProject.isBranch) {
+    if (this.withBranch.indexOf(this.selectedProject) >= 0) {
       this.ProjectService.doSelectBranch(this.selectedProject);
     } else {
       this.ProjectService.doCreateBranch(this.selectedProject);
     }
-  }
-
-  getDisplayName(project) {
-    return project.name;
   }
 
 }

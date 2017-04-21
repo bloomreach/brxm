@@ -16,12 +16,6 @@
  */
 
 const REST_API_PATH = 'ws/projects';
-const MASTER_PROJECT = {
-  id: 'master',
-  name: 'master',
-  isBranch: 'true',
-};
-
 
 class ProjectService {
 
@@ -33,10 +27,6 @@ class ProjectService {
     this.PathService = PathService;
     this.available = false;
     this.doInitializeIsAvailable();
-  }
-
-  get master() {
-    return MASTER_PROJECT;
   }
 
   doInitializeIsAvailable() {
@@ -55,7 +45,7 @@ class ProjectService {
   projects(id) {
     const url = `${this.ConfigService.getCmsContextPath()}${REST_API_PATH}/${id}/channel`;
     return this.$http({ method: 'GET', url, headers: {}, data: {} })
-      .then(result => this._flatten(result.data).concat([MASTER_PROJECT]));
+      .then(result => result.data);
   }
 
   _addBranch(branch) {
@@ -63,11 +53,6 @@ class ProjectService {
       project.isBranch = branch;
       return project;
     };
-  }
-
-  _flatten(data) {
-    return data.withBranch.map(this._addBranch(true))
-      .concat(data.withoutBranch.map(this._addBranch(false)));
   }
 
   doCreateBranch(project) {
