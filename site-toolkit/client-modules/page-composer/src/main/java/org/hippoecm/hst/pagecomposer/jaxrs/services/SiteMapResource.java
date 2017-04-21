@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -221,7 +221,7 @@ public class SiteMapResource extends AbstractConfigResource {
         final ValidatorBuilder preValidators = ValidatorBuilder.builder()
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
                 .add(validatorFactory.getNotNullValidator(siteMapItem.getName(), ClientError.ITEM_NO_NAME))
-                .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
+                .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), true, getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP))
                 .add(validatorFactory.getPrototypePageValidator(siteMapItem.getComponentConfigurationId()))
                 .add(validatorFactory.getNameValidator(siteMapItem.getName()))
