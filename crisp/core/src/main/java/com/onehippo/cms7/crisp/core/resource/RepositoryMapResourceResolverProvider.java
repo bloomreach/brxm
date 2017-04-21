@@ -92,7 +92,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     public class ConfigurationChangeEventListener {
         @Subscribe
         public void handleEvent(HippoEvent event) {
-            if (CrispConstants.SIMPLE_MODULE_NAME.equals(event.application())
+            if (CrispConstants.EVENT_APPLICATION_NAME.equals(event.application())
                     && CrispConstants.EVENT_CATEGORY_CONFIGURATION.equals(event.category())
                     && CrispConstants.EVENT_ACTION_UPDATE_CONFIGURATION.equals(event.action())) {
                 initializeResourceResolvers();

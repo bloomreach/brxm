@@ -53,7 +53,7 @@ public class CrispRegistryModule extends AbstractReconfigurableDaemonModule {
             return;
         }
 
-        HippoEvent event = new HippoEvent(CrispConstants.SIMPLE_MODULE_NAME);
+        HippoEvent event = new HippoEvent(CrispConstants.EVENT_APPLICATION_NAME);
         event.category(CrispConstants.EVENT_CATEGORY_CONFIGURATION)
                 .action(CrispConstants.EVENT_ACTION_UPDATE_CONFIGURATION);
         eventBus.post(event);
