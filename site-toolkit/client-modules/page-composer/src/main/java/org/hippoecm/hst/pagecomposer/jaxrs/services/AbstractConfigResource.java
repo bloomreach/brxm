@@ -163,7 +163,7 @@ public class AbstractConfigResource implements ComponentManagerAware {
     protected void createMandatoryWorkspaceNodesIfMissing(String configPath) throws RepositoryException {
         final Session session = getPageComposerContextService().getRequestContext().getSession();
         if (!session.nodeExists(configPath)) {
-            String msg = String.format("Expected configuration node at %s'%", configPath);
+            String msg = String.format("Expected configuration node at '%s'", configPath);
             throw new ClientException(msg, ClientError.ITEM_NOT_FOUND);
         }
         Node configNode = session.getNode(configPath);
