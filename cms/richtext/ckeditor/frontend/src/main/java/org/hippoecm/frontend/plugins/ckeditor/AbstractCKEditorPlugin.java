@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
+import java.io.IOException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -23,8 +25,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.onehippo.ckeditor.CKEditorConfig;
+import org.onehippo.ckeditor.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,13 +37,13 @@ import org.slf4j.LoggerFactory;
  *     <dt>ckeditor.config.overlayed.json</dt>
  *     <dd>Overlayed JSON configuration for the CKEditor instance. This JSON gets overlayed on top of the
  *         default configuration provided in the constructor using
- *         {@link JsonUtils#overlay(org.json.JSONObject, org.json.JSONObject)}.
+ *         {@link Json#overlay(com.fasterxml.jackson.databind.node.ObjectNode, com.fasterxml.jackson.databind.JsonNode)}.
  *         Use this property to replace default configuration values. Will be ignored when empty or missing.</dd>
  *     <dt>ckeditor.config.appended.json</dt>
  *     <dd>Appended JSON configuration for the CKEditor instance. This JSON gets appended to the default configuration
  *         provided in the constructor overlayed with the JSON in ckeditor.config.overlayed.json (so overlaying goes
  *         first, appended goes seconds). The actual appending is done using
- *         {@link JsonUtils#append(org.json.JSONObject, org.json.JSONObject)}.
+ *         {@link Json#append(com.fasterxml.jackson.databind.node.ObjectNode, com.fasterxml.jackson.databind.JsonNode)}.
  *         Use this property to append strings or values to existing comma-separated string properties or JSON arrays.
  *         Will be ignored when empty or missing.</dd>
  *     <li>htmlprocessor.id: String property with the ID of the HTML processor service to use. Use an empty string
@@ -56,8 +58,6 @@ public abstract class AbstractCKEditorPlugin<ModelType> extends RenderPlugin {
     public static final String CONFIG_HTML_CLEANER_SERVICE_ID = "htmlcleaner.id";
     public static final String CONFIG_HTML_PROCESSOR_SERVICE_ID = "htmlprocessor.id";
     public static final String CONFIG_MODEL_COMPARE_TO = "model.compareTo";
-
-    private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
 
     private static final String WICKET_ID_PANEL = "panel";
     private static final Logger log = LoggerFactory.getLogger(AbstractCKEditorPlugin.class);
@@ -96,42 +96,16 @@ public abstract class AbstractCKEditorPlugin<ModelType> extends RenderPlugin {
      */
     protected abstract Panel createViewPanel(final String id);
 
-    private String createEditorConfiguration(final String defaultEditorConfigJson) {
+    private String createEditorConfiguration(final String defaultJson) {
         try {
-            JSONObject editorConfig = new JSONObject(defaultEditorConfigJson);
-            logEditorConfiguration("Default CKEditor config", editorConfig);
-
-            final JSONObject overlayedConfig = readAndValidateEditorConfig(CONFIG_CKEDITOR_CONFIG_OVERLAYED_JSON);
-            JsonUtils.overlay(editorConfig, overlayedConfig);
-            logEditorConfiguration("Overlayed CKEditor config", editorConfig);
-
-            final JSONObject appendedConfig = readAndValidateEditorConfig(CONFIG_CKEDITOR_CONFIG_APPENDED_JSON);
-            JsonUtils.append(editorConfig, appendedConfig);
-            logEditorConfiguration("Final CKEditor config", editorConfig);
-
-            return editorConfig.toString();
-        } catch (JSONException e) {
-            log.warn("Error while creating CKEditor configuration, using default configuration as-is:\n" + defaultEditorConfigJson, e);
-            return defaultEditorConfigJson;
+            IPluginConfig pluginConfig = getPluginConfig();
+            final String overlayedJson = pluginConfig.getString(CONFIG_CKEDITOR_CONFIG_OVERLAYED_JSON);
+            final String appendedJson = pluginConfig.getString(CONFIG_CKEDITOR_CONFIG_APPENDED_JSON);
+            return CKEditorConfig.combineConfig(defaultJson, overlayedJson, appendedJson).toString();
+        } catch (IOException e) {
+            log.warn("Error while creating CKEditor configuration, using default configuration as-is:\n" + defaultJson, e);
+            return defaultJson;
         }
-    }
-
-    private void logEditorConfiguration(String name, JSONObject config) throws JSONException {
-        if (log.isDebugEnabled()) {
-            log.debug(name + "\n" + config.toString(LOGGED_EDITOR_CONFIG_INDENT_SPACES));
-        }
-    }
-
-    private JSONObject readAndValidateEditorConfig(String key) {
-        String jsonOrNull = getPluginConfig().getString(key);
-        try {
-            // validate JSON and return the sanitized version. This also strips additional extra JSON literals from the end.
-            return JsonUtils.createJSONObject(jsonOrNull);
-        } catch (JSONException e) {
-            log.warn("Ignoring CKEditor configuration variable '{}' because it does not contain valid JSON, but \"{}\"",
-                    key, jsonOrNull);
-        }
-        return null;
     }
 
     /**
