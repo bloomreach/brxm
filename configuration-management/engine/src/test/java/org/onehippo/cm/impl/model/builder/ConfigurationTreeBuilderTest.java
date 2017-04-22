@@ -26,7 +26,7 @@ import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
-import org.onehippo.testutils.log4j.Log4jListener;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -251,9 +251,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         final List<Definition> definitions = parseNoSort(yaml);
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Unnecessary orderBefore: '' (first) for node '/a/b'")));
         }
         final ConfigurationNodeImpl root = builder.build();
@@ -280,9 +280,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         final List<Definition> definitions = parseNoSort(yaml);
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Unnecessary orderBefore: 'c' for node '/a/b'")));
         }
         final ConfigurationNodeImpl root = builder.build();
@@ -634,9 +634,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
 
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.")));
         }
 
@@ -662,9 +662,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
 
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to merge delete node /a/b/c that does not exist.")));
         }
 
@@ -691,9 +691,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
 
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.")));
         }
 
@@ -721,9 +721,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
 
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to merge delete node /a/b/c that does not exist.")));
         }
 
@@ -899,9 +899,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
 
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl)definitions.get(1));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-configuration/test-project/test-module [string]' specifies value equivalent to existing property.")));
         }
 
@@ -934,9 +934,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         final List<Definition> definitions2 = parseNoSort(yaml2);
 
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl)definitions2.get(0));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-configuration/test-project/test-module [string]' specifies value equivalent to existing property.")));
         }
 
@@ -968,9 +968,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
 
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl)definitions.get(1));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-configuration/test-project/test-module [string]' specifies value equivalent to existing property.")));
         }
 
@@ -1007,9 +1007,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         final List<Definition> definitions2 = parseNoSort(yaml2);
 
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl)definitions2.get(0));
-            assertEquals(0, listener.messages().count());
+            assertEquals(0, interceptor.getEvents().size());
         }
 
         final ConfigurationNodeImpl root = builder.build();
@@ -1428,9 +1428,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         final List<Definition> definitions = parseNoSort(yaml);
 
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(0));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to delete property /a/property1 that does not exist.")));
         }
     }
@@ -1481,9 +1481,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         final List<Definition> definitions = parseNoSort(yaml);
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Redundant '.meta:ignore-reordered-children: false' for node '/a/b'")));
         }
     }
@@ -1503,9 +1503,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         final List<Definition> definitions = parseNoSort(yaml);
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Redundant '.meta:ignore-reordered-children: true' for node '/a/b'")));
         }
     }
@@ -1525,9 +1525,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         final List<Definition> definitions = parseNoSort(yaml);
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Overriding '.meta:ignore-reordered-children' for node '/a/b'")));
         }
     }
@@ -1547,9 +1547,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         final List<Definition> definitions = parseNoSort(yaml);
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Overriding '.meta:ignore-reordered-children' for node '/a/b'")));
         }
     }
@@ -1573,9 +1573,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         final List<Definition> definitions = parseNoSort(yaml);
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
-            assertTrue(listener.messages()
+            assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("Potential unnecessary orderBefore: 'c' for node '/a/b' defined in " +
                             "'test-configuration/test-project/test-module [string]': " +
                             "parent '/a' already configured with '.meta:ignore-reordered-children: true'")));
