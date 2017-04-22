@@ -19,14 +19,14 @@ public interface ResourceLinkResolver {
     ResourceLink resolve(Resource resource) throws ResourceException;
 
     /**
-     * Resolves a {@link ResourceLink} for the given {@code resource} with passing {@code variables} that can be
+     * Resolves a {@link ResourceLink} for the given {@code resource} with passing {@code linkVariables} that can be
      * used by implementation to expand its internal link generation template.
-     * <p>How the {@code variables} is used in link generation template expansion is totally up to an implementation. 
+     * <p>How the {@code linkVariables} is used in link generation template expansion is totally up to an implementation.</p>
      * @param resource resource representation
-     * @param variables the variables to expand the internal link generation template
+     * @param linkVariables the variables to expand the internal link generation template
      * @return a {@link ResourceLink} for the given {@code resource}
      * @throws ResourceException if resource resolution operation fails
      */
-    ResourceLink resolve(Resource resource, Map<String, Object> variables) throws ResourceException;
+    ResourceLink resolve(Resource resource, Map<String, Object> linkVariables) throws ResourceException;
 
 }
