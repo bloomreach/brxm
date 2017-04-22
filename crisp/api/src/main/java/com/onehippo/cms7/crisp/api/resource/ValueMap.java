@@ -22,6 +22,7 @@ public interface ValueMap extends Map<String, Object>, Serializable {
      * Get a named property and convert it into the given type.
      * This method does not support conversion into a primitive type or an array of a primitive type.
      * It should return null in this case.
+     * @param <T> value type
      * @param name The name of the property
      * @param type The class of the type
      * @return named value converted to type T or null if non existing or can't be converted
@@ -32,6 +33,7 @@ public interface ValueMap extends Map<String, Object>, Serializable {
      * Get a named property and convert it into the given type.
      * This method does not support conversion into a primitive type or an array of a primitive type.
      * It should return the default value in this case.
+     * @param <T> value type
      * @param name The name of the property
      * @param defaultValue The default value to use if the named property does not exist or cannot be converted
      *        to the requested type. The default value is also used to define the type to convert the value to.

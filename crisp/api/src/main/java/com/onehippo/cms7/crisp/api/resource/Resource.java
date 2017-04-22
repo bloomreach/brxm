@@ -21,7 +21,7 @@ public interface Resource extends Serializable {
 
     /**
      * Returns true if this resource representation is typed and of the specific {@code resourceType} name.
-     * @param resourceType
+     * @param resourceType resource type name
      * @return true if this resource representation is typed and of the specific {@code resourceType} name
      */
     boolean isResourceType(String resourceType);
@@ -69,7 +69,7 @@ public interface Resource extends Serializable {
 
     /**
      * Returns child resource count of this resource representation.
-     * @return
+     * @return child resource count of this resource representation
      */
     long getChildCount();
 

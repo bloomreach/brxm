@@ -7,14 +7,12 @@ import com.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
 
 /**
  * An abstraction responsible for the following:
- * <P>
  * <UL>
  * <LI>to return a {@link ResourceDataCache} as a cache store of resource representations,</LI>
  * <LI>to be able to check whether or not a specific {@link Resource} representation is cacheable,</LI>
  * <LI>to convert a {@link Resource} representation to a cacheable data object to be stored in {@link ResourceDataCache},
  * <LI>and to convert a cached data object back to a {@link Resource} representation.
  * </UL>
- * </P>
  * <P>
  * Note that a {@link Resource} object cannot necessarily be cached into {@link ResourceDataCache} directly in
  * every case. For example, if the underlying {@link ResourceDataCache} depends on object serialization and if
@@ -50,8 +48,8 @@ public interface ResourceCacheResolvable {
 
     /**
      * Convert the given {@code resource} to a cacheable data object to be stored in {@link ResourceDataCache}.
-     * @param resource
-     * @return
+     * @param resource resource representation
+     * @return converted the given {@code resource} to a cacheable data object to be stored in {@link ResourceDataCache}
      */
     Object toCacheData(Resource resource);
 

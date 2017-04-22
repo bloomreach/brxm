@@ -30,10 +30,10 @@ import com.onehippo.cms7.crisp.api.resource.ResourceResolver;
  * <P>
  * Also, this "Broker" service is normally registered through {@link HippoServiceRegistry} as a {@link SingletonService}.
  * So, applications can access this singleton "Broker" service like the following example:
+ * </P>
  * <PRE>
  * ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
  * </PRE>
- * </P>
  */
 @SingletonService
 public interface ResourceServiceBroker {
@@ -139,7 +139,7 @@ public interface ResourceServiceBroker {
      * {@code resourceSpace}.
      * <p>An implementation may return a default resource cache store representation ({@link ResourceDataCache})
      * as a fallback if the resolved {@link ResourceResolver} doesn't have its own {@link ResourceDataCache} instance
-     * (in other words, if the resolved {@link ResourceResolver#getResourceDataCache(String)} return null).
+     * (in other words, if the resolved {@link ResourceResolver#getResourceDataCache()} return null).
      * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
      * @return a proper resource cache store representation ({@link ResourceDataCache}) for the specified
      *         {@code resourceSpace}, or a fallback {@link ResourceDataCache} if the resolved {@link ResourceResolver}
