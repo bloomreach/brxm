@@ -21,7 +21,7 @@ import javax.naming.NamingException;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
- * JndiPropertyFilter
+ * JndiPropertyFilter (Log4j1)
  *
  * <P>
  * This filter retrieves the property value by the name from the JNDI resources.
@@ -35,7 +35,10 @@ import org.apache.log4j.spi.LoggingEvent;
  *   <param name="onMatchOption" value="ACCEPT" />
  * </filter>
  * </XMP>
+ *
+ * @deprecated since the switch to Log4j2 in CMS v12. Instead use {@link LookupFilter} which is log4j2 based.
  */
+@Deprecated
 public class JndiPropertyFilter extends AbstractPropertyFilter {
 
     /** JNDI prefix used in a J2EE container */
