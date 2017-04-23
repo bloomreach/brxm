@@ -161,8 +161,8 @@
               </deployables>
               <container>
                 <systemProperties>
-                  <log4j.configuration>file:${project.basedir}/conf/log4j-dev.xml</log4j.configuration>
-                  <rebel.log4j-plugin>true</rebel.log4j-plugin>
+                  <log4j.configurationFile>file:${project.basedir}/conf/log4j2-dev.xml</log4j.configurationFile>
+                  <rebel.log4j2-plugin>true</rebel.log4j2-plugin>
                   <project.basedir>${project.basedir}</project.basedir>
                   <repo.bootstrap>true</repo.bootstrap>
                 </systemProperties>
