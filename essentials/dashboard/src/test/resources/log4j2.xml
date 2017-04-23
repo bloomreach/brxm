@@ -1,143 +1,72 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
 
-  Licensed under the Apache License, Version 2.0 (the "License");
+  Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  -->
+-->
+<Configuration>
+  <Appenders>
+    <Console name="console" target="SYSTEM_OUT">
+      <ThresholdFilter level="DEBUG"/>
+      <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
 
-<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <!-- CMS logging -->
+    <Logger name="org.apache.jackrabbit.core" level="warn"/>
+    <Logger name="org.apache.jackrabbit.extractor" level="warn"/>
+    <Logger name="org.apache.jackrabbit" level="warn"/>
+    <Logger name="org.hippoecm.repository" level="warn"/>
+    <Logger name="org.hippoecm.frontend" level="warn"/>
+    <Logger name="org.apache.wicket" level="warn"/>
 
-  <!-- ====================================================================== -->
-  <!-- A P P E N D E R S                                                      -->
-  <!-- ====================================================================== -->
+    <!-- audit logging -->
+    <Logger name="org.hippoecm.repository.api.Workflow" level="info"/>
+    <Logger name="org.onehippo.audit" level="info"/>
 
+    <!-- Site logging -->
+    <Logger name="org.hippoecm.hst" level="warn"/>
 
-  <!-- console -->
-  <appender name="console" class="org.apache.log4j.ConsoleAppender">
-    <param name="Target" value="System.out"/>
-    <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%-5p - [%-80m] - at %c.%M(%F:%L)%n"/>
-    </layout>
-    <filter class="org.apache.log4j.varia.LevelRangeFilter">
-      <param name="levelMin" value="DEBUG"/>
-    </filter>
-  </appender>
+    <!-- DiagnosticReportingValve only logs when diagnostics enabled in hst:hosts config in repo hence
+         can be here on level 'info' -->
+    <Logger name="org.hippoecm.hst.core.container.DiagnosticReportingValve" level="info"/>
 
-  <!-- ====================================================================== -->
-  <!-- L O G G E R S                                                          -->
-  <!-- ====================================================================== -->
+    <Logger name="freemarker" level="warn"/>
+    <Logger name="org.apache.cxf" level="warn"/>
+    <Logger name="javax.ws.rs.core" level="warn"/>
+    <Logger name="org.apache.commons.pool" level="warn"/>
+    <Logger name="org.apache.commons.beanutils" level="warn"/>
 
-  <!-- CMS logging -->
-  <logger name="org.apache.jackrabbit.core">
-    <level value="warn"/>
-  </logger>
-  <logger name="org.apache.jackrabbit.extractor">
-    <level value="warn"/>
-  </logger>
-  <logger name="org.apache.jackrabbit">
-    <level value="warn"/>
-  </logger>
-  <logger name="org.hippoecm.repository">
-    <level value="warn"/>
-  </logger>
-  <logger name="org.hippoecm.frontend">
-    <level value="warn"/>
-  </logger>
-  <logger name="org.apache.wicket">
-    <level value="warn"/>
-  </logger>
+    <!-- too many caching warnings -->
+    <Logger name="org.apache.jackrabbit.core.state" level="error"/>
+    <Logger name="org.apache.jackrabbit.core.ItemManager" level="error"/>
+    <Logger name="org.apache.jackrabbit.core.persistence.bundle.util.LRUNodeIdCache" level="error"/>
 
-  <!-- audit logging -->
-  <logger additivity="false" name="org.hippoecm.repository.api.Workflow">
-    <level value="info"/>
-  </logger>
-  <logger additivity="false" name="org.onehippo.audit">
-    <level value="info"/>
-  </logger>
+    <!-- ignore wicket localizer warnings -->
+    <Logger name="org.apache.wicket.Localizer" level="error"/>
 
-  <!-- Site logging -->
-  <logger name="org.hippoecm.hst">
-    <level value="warn"/>
-  </logger>
-
-  <!-- DiagnosticReportingValve only logs when diagnostics enabled in hst:hosts config in repo hence
-       can be here on level 'info' -->
-  <logger name="org.hippoecm.hst.core.container.DiagnosticReportingValve">
-    <level value="info"/>
-  </logger>
-
-  <logger name="freemarker">
-    <level value="warn"/>
-  </logger>
-
-  <logger name="org.apache.cxf">
-    <level value="warn"/>
-  </logger>
-
-  <logger name="javax.ws.rs.core">
-    <level value="warn"/>
-  </logger>
-
-  <logger name="org.apache.commons.pool">
-    <level value="warn"/>
-  </logger>
-
-  <logger name="org.apache.commons.beanutils">
-    <level value="warn"/>
-  </logger>
-
-  <!-- too many caching warnings -->
-  <logger name="org.apache.jackrabbit.core.state">
-    <level value="error"/>
-  </logger>
-  <logger name="org.apache.jackrabbit.core.ItemManager">
-    <level value="error"/>
-  </logger>
-  <logger name="org.apache.jackrabbit.core.persistence.bundle.util.LRUNodeIdCache">
-    <level value="error"/>
-  </logger>
-
-  <!-- ignore wicket localizer warnings -->
-  <logger name="org.apache.wicket.Localizer">
-    <level value="error"/>
-  </logger>
-
-  <!-- more info wanted -->
-  <logger name="org.apache.jackrabbit.core.persistence.bundle">
-    <level value="warn"/>
-  </logger>
-  <logger name="org.hippoecm.repository.jackrabbit.persistence">
-    <level value="info"/>
-  </logger>
-  <logger name="org.hippoecm.repository.updater">
-    <level value="info"/>
-  </logger>
-  <logger name="org.onehippo.cms7.autoexport">
-    <level value="info"/>
-  </logger>
-  <logger name="org.springframework">
-    <level value="warn"/>
-  </logger>
-  <logger name="org.onehippo.cms7.essentials">
-    <level value="warn"/>
-  </logger>
+    <!-- more info wanted -->
+    <Logger name="org.apache.jackrabbit.core.persistence.bundle" level="warn"/>
+    <Logger name="org.hippoecm.repository.jackrabbit.persistence" level="info"/>
+    <Logger name="org.hippoecm.repository.updater" level="info"/>
+    <Logger name="org.hippoecm.repository.export" level="info"/>
+    <Logger name="org.springframework" level="warn"/>
+    <Logger name="org.onehippo.cms7.essentials" level="debug"/>
 
 
-  <root>
-    <level value="info"/>
-    <appender-ref ref="console"/>
-  </root>
-
-</log4j:configuration>
-
+    <Root level="info">
+      <AppenderRef ref="console"/>
+    </Root>
+  </Loggers>
+</Configuration>
