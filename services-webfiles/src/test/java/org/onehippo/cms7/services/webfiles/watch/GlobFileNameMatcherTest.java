@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,12 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.cms7.services.webfiles.LogRecorder;
-import org.onehippo.cms7.services.webfiles.watch.GlobFileNameMatcher;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -203,7 +202,7 @@ public class GlobFileNameMatcherTest {
         assertIncludedFile("a.txt");
         assertIncludedFile("b.txt");
         assertExcludedFile("c");
-        logRecorder.assertLogged(Level.WARN_INT, "Ignoring file name glob pattern '**/*~': cannot contain '/'");
+        logRecorder.assertLogged(Level.WARN, "Ignoring file name glob pattern '**/*~': cannot contain '/'");
     }
 
     @Test
@@ -212,7 +211,7 @@ public class GlobFileNameMatcherTest {
         assertExcludedDir("a");
         assertExcludedDir("b");
         assertIncludedDir("c.txt");
-        logRecorder.assertLogged(Level.WARN_INT, "Ignoring file name glob pattern '**/*~': cannot contain '/'");
+        logRecorder.assertLogged(Level.WARN, "Ignoring file name glob pattern '**/*~': cannot contain '/'");
     }
 
     private void assertIncludedFile(final String firstPath, final String... morePath) {

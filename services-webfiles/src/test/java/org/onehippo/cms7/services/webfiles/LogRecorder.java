@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
 import org.onehippo.repository.testutils.slf4j.LogRecord;
 import org.onehippo.repository.testutils.slf4j.LoggerRecordingWrapper;
 import org.slf4j.Logger;
@@ -43,18 +43,18 @@ public class LogRecorder {
     }
 
     public void assertNoWarningsOrErrorsLogged() {
-        assertLogged(Level.WARN_INT);
-        assertLogged(Level.ERROR_INT);
+        assertLogged(Level.WARN);
+        assertLogged(Level.ERROR);
     }
 
-    public void assertLogged(final int level, final String... expectedMessages) {
+    public void assertLogged(final Level level, final String... expectedMessages) {
         List<String> loggedOfLevel = new ArrayList<>();
         for (LogRecord record : recorder.getLogRecords()) {
-            if (record.getLevel() == level) {
+            if (record.getLevel() == level.intLevel()) {
                 loggedOfLevel.add(record.getFormattedMessage());
             }
         }
-        assertArrayEquals("expected logged " + Level.toLevel(level) + " messages:\n" +
+        assertArrayEquals("expected logged " + level.name() + " messages:\n" +
                         Arrays.toString(expectedMessages) + "\nbut got:\n" + Arrays.toString(loggedOfLevel.toArray()) + "\n",
                 expectedMessages, loggedOfLevel.toArray());
     }
