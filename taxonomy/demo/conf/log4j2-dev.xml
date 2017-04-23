@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <!--
-  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -15,131 +14,89 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+<Configuration>
 
-  <!-- ====================================================================== -->
-  <!-- A P P E N D E R S                                                      -->
-  <!-- ====================================================================== -->
+  <Appenders>
 
-  <!-- hippo-cms.log -->
-  <appender name="cms" class="org.apache.log4j.DailyRollingFileAppender">
-    <param name="File" value="${catalina.base}/logs/hippo-cms.log"/>
-    <param name="Append" value="true"/>
-    <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
-    </layout>
-  </appender>
+    <!-- hippo-cms.log -->
+    <RollingFile name="cms" fileName="${sys:catalina.base}/logs/hippo-cms.log"
+                 filePattern="${sys:catalina.base}/logs/hippo-cms.log.%d{yyyy-MM-dd}">
+      <LookupFilter key="jndi:logging/contextName" value="cms" onMatch="ACCEPT"/>
+      <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy/>
+      </Policies>
+    </RollingFile>
 
-  <!-- hippo-site.log -->
-  <appender name="site" class="org.apache.log4j.DailyRollingFileAppender">
-    <param name="File" value="${catalina.base}/logs/hippo-site.log"/>
-    <param name="Append" value="true"/>
-    <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
-    </layout>
-  </appender>
+    <!-- hippo-site.log -->
+    <RollingFile name="site" fileName="${sys:catalina.base}/logs/hippo-site.log"
+                 filePattern="${sys:catalina.base}/logs/hippo-site.log.%d{yyyy-MM-dd}">
+      <LookupFilter key="jndi:logging/contextName" value="site" onMatch="ACCEPT"/>
+      <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy/>
+      </Policies>
+    </RollingFile>
 
-  <!-- hippo-audit.log -->
-  <appender name="audit" class="org.apache.log4j.DailyRollingFileAppender">
-    <param name="File" value="${catalina.base}/logs/hippo-audit.log"/>
-    <param name="Append" value="true"/>
-    <param name="DatePattern" value="'.'yyyy-MM-dd"/>
-    <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
-    </layout>
-  </appender>
+    <!-- hippo-audit.log -->
+    <RollingFile name="audit" fileName="${sys:catalina.base}/logs/hippo-audit.log"
+                 filePattern="${sys:catalina.base}/logs/hippo-audit.log.%d{yyyy-MM-dd}">
+      <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy/>
+      </Policies>
+    </RollingFile>
 
-  <!-- console -->
-  <appender name="console" class="org.apache.log4j.ConsoleAppender">
-    <param name="Target" value="System.out"/>
-    <layout class="org.apache.log4j.PatternLayout"> 
-      <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
-    </layout> 
- </appender> 
+    <!-- console -->
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
+    </Console>
 
-  <!-- ====================================================================== -->
-  <!-- L O G G E R S                                                          -->
-  <!-- ====================================================================== -->
+  </Appenders>
 
-  <!-- CMS logging -->
-  <logger name="org.apache.jackrabbit.core">
-    <level value="warn"/>
-  </logger>
-  <logger name="org.apache.jackrabbit.extractor">
-    <level value="warn"/>
-  </logger>
-  <logger name="org.apache.jackrabbit">
-    <level value="warn"/>
-  </logger>
-  <logger name="org.hippoecm.repository">
-    <level value="warn"/>
-  </logger>
-  <logger name="org.hippoecm.frontend">
-    <level value="warn"/>
-  </logger>
-  <logger name="org.apache.wicket">
-    <level value="warn"/>
-  </logger>
+  <Loggers>
 
-  <!-- audit logging -->
-  <logger additivity="false" name="org.hippoecm.repository.api.Workflow">
-    <level value="info"/>
-    <appender-ref ref="audit"/>
-  </logger>
+    <!-- CMS logging -->
+    <Logger name="org.apache.jackrabbit.core" level="warn"/>
+    <Logger name="org.apache.jackrabbit.extractor" level="warn"/>
+    <Logger name="org.apache.jackrabbit" level="warn"/>
+    <Logger name="org.hippoecm.repository" level="warn"/>
+    <Logger name="org.hippoecm.frontend" level="warn"/>
+    <Logger name="org.apache.wicket" level="warn"/>
 
-  <!-- Site logging -->
-  <logger additivity="false" name="org.hippoecm.hst">
-    <level value="warn"/>
-    <appender-ref ref="site"/>
-    <appender-ref ref="console"/>
-  </logger>
+    <!-- audit logging -->
+    <Logger additivity="false" name="org.hippoecm.repository.api.Workflow" level="info">
+      <AppenderRef ref="audit"/>
+    </Logger>
+    <Logger additivity="false" name="org.onehippo.audit" level="info">
+      <AppenderRef ref="audit"/>
+    </Logger>
 
-  <!-- too many caching warnings -->
-  <logger name="org.apache.jackrabbit.core.state">
-    <level value="error"/>
-  </logger>
-  <logger name="org.apache.jackrabbit.core.ItemManager">
-    <level value="error"/>
-  </logger>
-  <logger name="org.apache.jackrabbit.core.persistence.bundle.util.LRUNodeIdCache">
-    <level value="error"/>
-  </logger>
+    <!-- Site logging -->
+    <Logger additivity="false" name="org.hippoecm.hst" level="warn">
+      <AppenderRef ref="site"/>
+      <AppenderRef ref="console"/>
+    </Logger>
 
-  <!-- ignore wicket localizer warnings -->
-  <logger name="org.apache.wicket.Localizer">
-    <level value="error"/>
-  </logger>
+    <!-- too many caching warnings -->
+    <Logger name="org.apache.jackrabbit.core.state" level="error"/>
+    <Logger name="org.apache.jackrabbit.core.ItemManager" level="error"/>
+    <Logger name="org.apache.jackrabbit.core.persistence.bundle.util.LRUNodeIdCache" level="error"/>
 
-  <!-- ignore DataNucleus errors -->
-  <logger name="DataNucleus.Plugin">
-    <level value="fatal"/>
-  </logger>
-  <logger name="DataNucleus.ClassLoading">
-    <level value="fatal"/>
-  </logger>
-  <logger name="DataNucleus.Enhancer">
-    <level value="fatal"/>
-  </logger>
+    <!-- ignore wicket localizer warnings -->
+    <Logger name="org.apache.wicket.Localizer" level="error"/>
 
-  <!-- more info wanted -->
-  <logger name="org.apache.jackrabbit.core.persistence.bundle">
-    <level value="info"/>
-  </logger>
-  <logger name="org.hippoecm.repository.jackrabbit.persistence">
-    <level value="info"/>
-  </logger>
-  <logger name="org.hippoecm.repository.updater">
-    <level value="info"/>
-  </logger>
-  <logger name="org.hippoecm.repository.export">
-    <level value="info"/>
-  </logger>
+    <!-- more info wanted -->
+    <Logger name="org.apache.jackrabbit.core.persistence.bundle" level="warn"/>
+    <Logger name="org.hippoecm.repository.jackrabbit.persistence" level="info"/>
+    <Logger name="org.hippoecm.repository.updater" level="info"/>
+    <Logger name="org.hippoecm.repository.export" level="info"/>
 
-  <root>
-    <level value="warn"/>
-    <appender-ref ref="cms"/>
-    <appender-ref ref="console"/>
-  </root>
+    <Root level="warn">
+      <AppenderRef ref="cms"/>
+      <AppenderRef ref="console"/>
+    </Root>
 
-</log4j:configuration>
+  </Loggers>
 
+</Configuration>
