@@ -242,8 +242,8 @@
               </configuration>
               <container>
                 <systemProperties>
-                  <log4j.configuration>file:${project.basedir}/conf/log4j.xml</log4j.configuration>
-                  <rebel.log4j-plugin>true</rebel.log4j-plugin>
+                  <log4j.configurationFile>file:${project.basedir}/conf/log4j2.xml</log4j.configurationFile>
+                  <rebel.log4j2-plugin>true</rebel.log4j2-plugin>
                   <solr.data.dir>${solr.data.dir}</solr.data.dir>
                   <project.basedir>${project.basedir}</project.basedir>
                 </systemProperties>
@@ -384,8 +384,8 @@
       <id>dist</id>
       <dependencies>
         <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-slf4j-impl</artifactId>
           <scope>provided</scope>
         </dependency>
         <dependency>
@@ -394,8 +394,13 @@
           <scope>provided</scope>
         </dependency>
         <dependency>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-core</artifactId>
           <scope>provided</scope>
         </dependency>
       </dependencies>
