@@ -182,12 +182,13 @@ public class MountResource extends AbstractConfigResource {
                 true, getPageComposerContextService());
 
         final SiteMapPagesRepresentation pages = new SiteMapPagesRepresentation().represent(mount.getHstSite().getSiteMap(),
-                mount, getPreviewConfigurationPath());
+                mount, mount.getHstSite().getConfigurationPath());
 
         String prefix = mount.getVirtualHost().getHostName();
         if (StringUtils.isNotEmpty(mount.getMountPath())) {
             prefix += mount.getMountPath();
         }
+
         return new NewPageModelRepresentation(prototypePagesRepresentation.getPrototypes(),
                 pages.getPages(), prefix);
     }

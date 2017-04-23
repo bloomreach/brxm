@@ -91,6 +91,7 @@
     <hippo.services.eventbus.version>4.0.0-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.services.search.version>4.0.0-SNAPSHOT</hippo.services.search.version>
     <hippo.services.contenttype.version>4.0.0-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.testutils.version>1.0.0-SNAPSHOT</hippo.testutils.version>
 
     <sf.htmlcleaner.version>2.12</sf.htmlcleaner.version>
 
