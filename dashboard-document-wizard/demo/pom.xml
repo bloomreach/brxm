@@ -27,7 +27,7 @@
   <description>Hippo Plugin Dashboard Document Wizard Demo</description>
   <groupId>org.onehippo.cms7.dashboard-document-wizard-demo</groupId>
   <artifactId>hippo-plugin-dashboard-document-wizard-demo</artifactId>
-  <version>3.1.0-SNAPSHOT</version>
+  <version>4.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -155,8 +155,8 @@
               </deployables>
               <container>
                 <systemProperties>
-                  <log4j.configuration>file:${project.basedir}/conf/log4j-dev.xml</log4j.configuration>
-                  <rebel.log4j-plugin>true</rebel.log4j-plugin>
+                  <log4j.configurationFile>file:${project.basedir}/conf/log4j2-dev.xml</log4j.configurationFile>
+                  <rebel.log4j2-plugin>true</rebel.log4j2-plugin>
                   <!-- enables auto export: -->
                   <project.basedir>${project.basedir}</project.basedir>
                 </systemProperties>
