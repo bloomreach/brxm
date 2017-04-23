@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
-import org.onehippo.repository.testutils.ExecuteOnLogLevel;
 import org.onehippo.repository.testutils.slf4j.LogRecord;
 import org.onehippo.repository.testutils.slf4j.LoggerRecordingWrapper;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 /**
  * RepositorySCXMLRegistryTest
@@ -156,21 +156,14 @@ public class RepositorySCXMLRegistryTest {
         registry.addScxmlNode(scxmlConfigNode, "hello-no-initial", SCXML_HELLO_NO_INITIAL);
         registry.addScxmlNode(scxmlConfigNode, "hello-nonexisting-initial", SCXML_HELLO_NONEXISTING_INITIAL);
         registry.addScxmlNode(scxmlConfigNode, "hello-wrong-execution-in-state", SCXML_HELLO_WRONG_EXECUTION_IN_STATE);
-        try {
-            ExecuteOnLogLevel.fatal(new ExecuteOnLogLevel.Executable() {
-                @Override
-                public void execute() throws Exception {
-                    registry.setUp(scxmlConfigNode);
-                }
-            }, RepositorySCXMLRegistry.class.getName(), SCXMLReader.class.getName(), "org.apache.commons.scxml2.io.ModelUpdater");
-        }
-        catch (ExecuteOnLogLevel.ExecutableException re) {
-            if (re.getCause() instanceof SCXMLException) {
-                // expected
-            }
-            else {
-                throw re.getCause();
-            }
+
+        try (Log4jInterceptor ignored = Log4jInterceptor.onError()
+                .deny(RepositorySCXMLRegistry.class, SCXMLReader.class)
+                .deny("org.apache.commons.scxml2.io.ModelUpdater")
+                .build()) {
+            registry.setUp(scxmlConfigNode);
+        } catch (SCXMLException expected) {
+            // expected
         }
 
         SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello");
@@ -192,21 +185,13 @@ public class RepositorySCXMLRegistryTest {
         final MockNode scxmlConfigNode = registry.createConfigNode();
         MockNode scxmlDefNode = registry.addScxmlNode(scxmlConfigNode, "hello-with-unknown-custom-actions", SCXML_HELLO_WITH_UNKNOWN_CUSTOM_ACTIONS);
         registry.addCustomAction(scxmlDefNode, "http://www.onehippo.org/cms7/repository/scxml", "known-custom-action", KnownAction.class.getName());
-        try {
-            ExecuteOnLogLevel.fatal(new ExecuteOnLogLevel.Executable() {
-                @Override
-                public void execute() throws Exception {
-                    registry.setUp(scxmlConfigNode);
-                }
-            }, RepositorySCXMLRegistry.class.getName(), SCXMLReader.class.getName());
-        }
-        catch (ExecuteOnLogLevel.ExecutableException re) {
-            if (re.getCause() instanceof SCXMLException) {
-                // expected
-            }
-            else {
-                throw re.getCause();
-            }
+
+        try (Log4jInterceptor ignored = Log4jInterceptor.onError()
+                .deny(RepositorySCXMLRegistry.class, SCXMLReader.class)
+                .build()) {
+            registry.setUp(scxmlConfigNode);
+        } catch (SCXMLException expected) {
+            // expected
         }
 
         SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello-with-unknown-custom-actions");
@@ -223,21 +208,13 @@ public class RepositorySCXMLRegistryTest {
     public void testLoadUnknownLocalCustomActionWhenNoCustomActions() throws Exception {
         final MockNode scxmlConfigNode = registry.createConfigNode();
         registry.addScxmlNode(scxmlConfigNode, "hello-with-unknown-custom-actions", SCXML_HELLO_WITH_UNKNOWN_CUSTOM_ACTIONS);
-        try {
-            ExecuteOnLogLevel.fatal(new ExecuteOnLogLevel.Executable() {
-                @Override
-                public void execute() throws Exception {
-                    registry.setUp(scxmlConfigNode);
-                }
-            }, RepositorySCXMLRegistry.class.getName(), SCXMLReader.class.getName());
-        }
-        catch (ExecuteOnLogLevel.ExecutableException re) {
-            if (re.getCause() instanceof SCXMLException) {
-                // expected
-            }
-            else {
-                throw re.getCause();
-            }
+
+        try (Log4jInterceptor ignored = Log4jInterceptor.onError()
+                .deny(RepositorySCXMLRegistry.class, SCXMLReader.class)
+                .build()) {
+            registry.setUp(scxmlConfigNode);
+        } catch (SCXMLException expected) {
+            // expected
         }
 
         SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello-with-unknown-custom-actions");
@@ -254,21 +231,13 @@ public class RepositorySCXMLRegistryTest {
     public void testLoadUnknownNsCustomAction() throws Exception {
         final MockNode scxmlConfigNode = registry.createConfigNode();
         registry.addScxmlNode(scxmlConfigNode, "hello-with-unknown-ns-custom-actions", SCXML_HELLO_WITH_UNKNOWN_NS_CUSTOM_ACTIONS);
-        try {
-            ExecuteOnLogLevel.fatal(new ExecuteOnLogLevel.Executable() {
-                @Override
-                public void execute() throws Exception {
-                    registry.setUp(scxmlConfigNode);
-                }
-            }, RepositorySCXMLRegistry.class.getName());
-        }
-        catch (ExecuteOnLogLevel.ExecutableException re) {
-            if (re.getCause() instanceof SCXMLException) {
-                // expected
-            }
-            else {
-                throw re.getCause();
-            }
+
+        try (Log4jInterceptor ignored = Log4jInterceptor.onError()
+                .deny(RepositorySCXMLRegistry.class)
+                .build()) {
+            registry.setUp(scxmlConfigNode);
+        } catch (SCXMLException expected) {
+            // expected
         }
 
         SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello-with-unknown-ns-custom-actions");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.onehippo.repository.documentworkflow.integration;
 import org.hippoecm.repository.api.WorkflowException;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
-import org.onehippo.repository.testutils.ExecuteOnLogLevel;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -29,18 +29,12 @@ public class DocumentWorkflowRenameTest extends AbstractDocumentWorkflowIntegrat
     public void testRenameLiveDocumentFails() throws Exception {
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         workflow.publish();
-        try {
-            ExecuteOnLogLevel.fatal(new ExecuteOnLogLevel.Executable() {
-                @Override
-                public void execute() throws Exception {
-                    workflow.rename("failure");
-                }
-            }, "org.onehippo.repository.scxml.SCXMLWorkflowExecutor");
+        try (Log4jInterceptor ignored =
+                     Log4jInterceptor.onError().deny("org.onehippo.repository.scxml.SCXMLWorkflowExecutor").build()) {
+            workflow.rename("failure");
             fail("Shouldn't be able to rename live document");
-        } catch(ExecuteOnLogLevel.ExecutableException expected) {
-            if (!(expected.getCause() instanceof WorkflowException)) {
-                throw expected.getCause();
-            }
+        } catch (WorkflowException expected) {
+            // ignore
         }
     }
 

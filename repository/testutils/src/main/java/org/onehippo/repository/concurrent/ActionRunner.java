@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.onehippo.repository.concurrent;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
@@ -29,9 +28,13 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
 import org.apache.jackrabbit.spi.Event;
-import org.apache.log4j.Appender;
-import org.apache.log4j.spi.LocationInfo;
-import org.apache.log4j.spi.LoggingEvent;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.filter.AbstractFilter;
+import org.apache.logging.log4j.core.filter.Filterable;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.concurrent.action.Action;
 import org.onehippo.repository.concurrent.action.ActionContext;
@@ -128,27 +131,26 @@ public class ActionRunner extends Thread {
     }
 
     protected void setupLogFilter() {
-        final org.apache.log4j.spi.Filter filter = new org.apache.log4j.spi.Filter() {
+        final Filter filter = new AbstractFilter() {
             @Override
-            public int decide(final LoggingEvent event) {
-                final LocationInfo locationInfo = event.getLocationInformation();
-                if (locationInfo.getClassName().startsWith("org.onehippo.repository.concurrent")
-                        || locationInfo.getClassName().startsWith("org.hippoecm.repository.concurrent")) {
-                    return NEUTRAL;
+            public Result filter(final LogEvent event) {
+                if (event.getLoggerFqcn().startsWith("org.onehippo.repository.concurrent")
+                    || event.getLoggerFqcn().startsWith("org.hippoecm.repository.concurrent")) {
+                    return Result.NEUTRAL;
                 }
-                if (event.getThrowableInformation() != null) {
-                    if (isRecoverable(event.getThrowableInformation().getThrowable())) {
-                        return DENY;
+                if (event.getThrown() != null) {
+                    if (isRecoverable(event.getThrown())) {
+                        return Result.DENY;
                     }
                 }
-                return NEUTRAL;
+                return Result.NEUTRAL;
             }
         };
-        final org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
-        final Enumeration appenders = root.getAllAppenders();
-        while (appenders.hasMoreElements()) {
-            final Appender appender = (Appender) appenders.nextElement();
-            appender.addFilter(filter);
+        final Configuration config = LoggerContext.getContext(false).getConfiguration();
+        for (Appender appender : config.getAppenders().values()) {
+            if (appender instanceof Filterable /* should always be true, at least for standard log4j2 appenders */) {
+                ((Filterable)appender).addFilter(filter);
+            }
         }
     }
 

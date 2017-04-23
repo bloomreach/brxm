@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,11 @@ package org.onehippo.repository.testutils.slf4j;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
 import org.slf4j.Marker;
 import org.slf4j.helpers.MessageFormatter;
 
@@ -34,6 +37,9 @@ import org.slf4j.helpers.MessageFormatter;
  * </P>
  */
 public class LogRecord {
+
+    private static final Map<Integer, String> levelMap =
+            Arrays.stream(Level.values()).collect(Collectors.toMap(Level::intLevel, Level::name));
 
     private final Marker marker;
     private final int level;
@@ -55,7 +61,7 @@ public class LogRecord {
 
         StringBuilder sb = new StringBuilder(256);
         sb.append(super.toString()).append(" - ");
-        sb.append(Level.toLevel(level)).append(" ");
+        sb.append(levelMap.get(level)).append(" ");
         formattedMessage = MessageFormatter.arrayFormat(message, argArray).getMessage();
         sb.append(formattedMessage);
 
