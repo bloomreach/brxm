@@ -200,7 +200,7 @@
     </Logger>
 
     <!-- In order to trace batch commit/revert process. -->
-    <Logger name="rg.onehippo.repository.update.UpdaterExecutor" additivity="false" level="info"/>
+    <Logger name="org.onehippo.repository.update.UpdaterExecutor" additivity="false" level="debug"/>
 
     <Root level="warn">
       <AppenderRef ref="cms"/>
