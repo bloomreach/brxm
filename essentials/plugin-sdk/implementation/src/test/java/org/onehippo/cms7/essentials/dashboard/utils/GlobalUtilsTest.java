@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.io.InputStream;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
-import org.onehippo.repository.testutils.ExecuteOnLogLevel;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -53,15 +53,15 @@ public class GlobalUtilsTest extends BaseTest {
         myString = GlobalUtils.newInstance(String.class.getName());
         assertTrue(myString != null);
 
-        ExecuteOnLogLevel.fatal((Runnable) () -> {
-        // not found exception
+        Log4jInterceptor.onError().deny(GlobalUtils.class).run(() -> {
+            // not found exception
             assertNull(GlobalUtils.newInstance("com.foo.Bar.Baz"));
-        }, GlobalUtils.class.getName());
+        });
 
-        ExecuteOnLogLevel.fatal((Runnable) () -> {
-        // cast exception
+        Log4jInterceptor.onError().deny(GlobalUtils.class).run(() -> {
+            // cast exception
             assertNull(GlobalUtils.newInstance(Integer.class.getName()));
-        }, GlobalUtils.class.getName());
+        });
     }
 
     @Test
