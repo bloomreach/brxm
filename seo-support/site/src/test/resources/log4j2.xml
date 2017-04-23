@@ -1,39 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
 
-  Licensed under the Apache License, Version 2.0 (the "License");
+  Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!DOCTYPE log4j:configuration SYSTEM "./log4j.dtd">
-<log4j:configuration>
+<Configuration>
+  <Appenders>
 
-  <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-    <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%-5p %-80m%n"/>
-    </layout>
-    <filter class="org.apache.log4j.varia.LevelRangeFilter">
-      <param name="LevelMin" value="DEBUG"/>
-    </filter>
-  </appender>
-  
-  <logger additivity="false" name="org.onehippo.forge.seo.support">
-    <level value="debug"/>
-    <appender-ref ref="CONSOLE"/>
-  </logger>
+    <!-- console -->
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
+    </Console>
 
-  <root>
-    <level value="info"/>
-    <appender-ref ref="CONSOLE"/>
-  </root>
-  
-</log4j:configuration>
+  </Appenders>
+  <Loggers>
+    <Logger name="org.onehippo.forge.seo.support" level="debug"/>
+    <Root level="info">
+      <AppenderRef ref="console"/>
+    </Root>
+  </Loggers>
+</Configuration>
