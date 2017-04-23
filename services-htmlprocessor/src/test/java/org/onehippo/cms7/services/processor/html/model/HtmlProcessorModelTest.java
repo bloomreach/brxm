@@ -17,13 +17,13 @@ package org.onehippo.cms7.services.processor.html.model;
 
 import java.io.IOException;
 
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.processor.html.HtmlProcessor;
 import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
-import org.onehippo.cms7.services.processor.richtext.TestUtil.TestAppender;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -32,8 +32,6 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.onehippo.cms7.services.processor.richtext.TestUtil.assertLogMessage;
-import static org.onehippo.cms7.services.processor.richtext.TestUtil.createAppender;
-import static org.onehippo.cms7.services.processor.richtext.TestUtil.removeAppender;
 
 public class HtmlProcessorModelTest {
 
@@ -96,34 +94,32 @@ public class HtmlProcessorModelTest {
 
     @Test
     public void testGetLogMessages() throws Exception {
-        final TestAppender appender = createAppender(Level.WARN, HtmlProcessorModel.class);
         final HtmlProcessorFactory processorFactory = createProcessorFactory(processor);
 
         expect(processor.read(eq("test"), eq(null))).andThrow(new IOException("Expected exception"));
         replay(processor, processorFactory);
 
         final HtmlProcessorModel processorModel = new HtmlProcessorModel(Model.of("test"), processorFactory);
-        processorModel.get();
-
-        removeAppender(appender, HtmlProcessorModel.class);
-        assertLogMessage(appender, "Value not retrieved because html processing failed : java.io.IOException: " +
-                "Expected exception", Level.WARN);
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(HtmlProcessorModel.class).build()) {
+            processorModel.get();
+            assertLogMessage(interceptor, "Value not retrieved because html processing failed : java.io.IOException: " +
+                    "Expected exception", Level.WARN);
+        }
     }
 
     @Test
     public void testSetWarningMessages() throws Exception {
-        final TestAppender appender = createAppender(Level.WARN, HtmlProcessorModel.class);
 
         expect(processor.write(eq("test"), eq(null))).andThrow(new IOException("Expected exception"));
         replay(processor, processorFactory);
 
         final HtmlProcessorModel processorModel = new HtmlProcessorModel(Model.of(""), processorFactory);
-        processorModel.set("test");
-
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(HtmlProcessorModel.class).build()) {
+            processorModel.set("test");
+            assertLogMessage(interceptor, "Value not set because html processing failed : java.io.IOException: " +
+                    "Expected exception", Level.WARN);
+        }
         verify(processor, processorFactory);
-        removeAppender(appender, HtmlProcessorModel.class);
-        assertLogMessage(appender, "Value not set because html processing failed : java.io.IOException: " +
-                "Expected exception", Level.WARN);
     }
 
     @Test

@@ -18,20 +18,18 @@ package org.onehippo.cms7.services.processor.richtext.jcr;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.processor.html.model.Model;
 import org.onehippo.repository.mock.MockNode;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.onehippo.cms7.services.processor.richtext.TestUtil.TestAppender;
 import static org.onehippo.cms7.services.processor.richtext.TestUtil.assertLogMessage;
-import static org.onehippo.cms7.services.processor.richtext.TestUtil.createAppender;
-import static org.onehippo.cms7.services.processor.richtext.TestUtil.removeAppender;
 
 public class JcrNodeFactoryTest {
 
@@ -74,25 +72,21 @@ public class JcrNodeFactoryTest {
 
     @Test
     public void testLogMessageOnGetNodeModelByNode () throws Exception {
-        final TestAppender appender = createAppender(Level.ERROR, JcrNodeFactory.class);
-
         final NodeFactory nodeFactory = JcrNodeFactory.of(root);
         final Node brokenNode = EasyMock.createMock(Node.class);
         expect(brokenNode.getIdentifier()).andThrow(new RepositoryException("I have no id"));
         expect(brokenNode.getPath()).andReturn("/broken-node");
         EasyMock.replay(brokenNode);
 
-        nodeFactory.getNodeModelByNode(brokenNode);
-
-        removeAppender(appender, JcrNodeFactory.class);
-        assertLogMessage(appender, "Failed to create node model from node /broken-node", Level.ERROR);
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(JcrNodeFactory.class).build()) {
+            nodeFactory.getNodeModelByNode(brokenNode);
+            assertLogMessage(interceptor, "Failed to create node model from node /broken-node", Level.ERROR);
+        }
         EasyMock.verify(brokenNode);
     }
 
     @Test
     public void testLogMessageOnGet() throws Exception {
-        final TestAppender appender = createAppender(Level.ERROR, JcrNodeFactory.class);
-
         final NodeFactory nodeFactory = new JcrNodeFactory(() -> root.getSession()) {
             @Override
             public Node getNodeByIdentifier(final String uuid) throws RepositoryException {
@@ -102,25 +96,24 @@ public class JcrNodeFactoryTest {
 
         final Model<Node> nodeModel = nodeFactory.getNodeModelByNode(root);
         nodeModel.release();
-        nodeModel.get();
-
-        removeAppender(appender, JcrNodeFactory.class);
-        assertLogMessage(appender, "Failed to load node with uuid cafebabe-cafe-babe-cafe-babecafebabe", Level.ERROR);
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(JcrNodeFactory.class).build()) {
+            nodeModel.get();
+            assertLogMessage(interceptor, "Failed to load node with uuid cafebabe-cafe-babe-cafe-babecafebabe", Level.ERROR);
+        }
     }
 
     @Test
     public void testLogMessageOnSet() throws Exception {
-        final TestAppender appender = createAppender(Level.ERROR, JcrNodeFactory.class);
         final NodeFactory nodeFactory = JcrNodeFactory.of(root);
         final Model<Node> nodeModel = nodeFactory.getNodeModelByNode(root);
         final Node brokenNode = EasyMock.createMock(Node.class);
         expect(brokenNode.getIdentifier()).andThrow(new RepositoryException("I have no id"));
         expect(brokenNode.getPath()).andReturn("/broken-node");
         EasyMock.replay(brokenNode);
-        nodeModel.set(brokenNode);
-
-        removeAppender(appender, JcrNodeFactory.class);
-        assertLogMessage(appender, "Failed to retrieve uuid from node /broken-node", Level.ERROR);
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(JcrNodeFactory.class).build()) {
+            nodeModel.set(brokenNode);
+            assertLogMessage(interceptor, "Failed to retrieve uuid from node /broken-node", Level.ERROR);
+        }
         EasyMock.verify(brokenNode);
     }
 
