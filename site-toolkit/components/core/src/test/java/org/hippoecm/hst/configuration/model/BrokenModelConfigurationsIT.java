@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.repository.testutils.ExecuteOnLogLevel;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
@@ -107,25 +107,22 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         invalidator.eventPaths("/hst:hst/hst:hosts");
         assertTrue(((HstManagerImpl) hstManager).state == HstManagerImpl.BuilderState.STALE);
 
-        ExecuteOnLogLevel.fatal(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final VirtualHosts newModel = hstManager.getVirtualHosts();
-                    assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.FAILED);
-                    assertTrue( ((HstManagerImpl)hstManager).consecutiveBuildFailCounter == 1);
-                    assertSame("hst nodes config should be invalid, hence, old stale model should be reused ",firstModel , newModel);
+        Log4jInterceptor.onWarn().deny(HstManagerImpl.class).run( () -> {
+            try {
+                final VirtualHosts newModel = hstManager.getVirtualHosts();
+                assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.FAILED);
+                assertTrue( ((HstManagerImpl)hstManager).consecutiveBuildFailCounter == 1);
+                assertSame("hst nodes config should be invalid, hence, old stale model should be reused ",firstModel , newModel);
 
-                    hstManager.getVirtualHosts();
-                    assertTrue( ((HstManagerImpl)hstManager).consecutiveBuildFailCounter == 2);
-                    hstManager.getVirtualHosts();
-                    assertTrue(((HstManagerImpl) hstManager).consecutiveBuildFailCounter == 3);
+                hstManager.getVirtualHosts();
+                assertTrue( ((HstManagerImpl)hstManager).consecutiveBuildFailCounter == 2);
+                hstManager.getVirtualHosts();
+                assertTrue(((HstManagerImpl) hstManager).consecutiveBuildFailCounter == 3);
 
-                } catch (ContainerException e) {
-                    fail(e.toString());
-                }
+            } catch (ContainerException e) {
+                fail(e.toString());
             }
-        }, HstManagerImpl.class.getName());
+        });
 
         restoreHstConfigBackup(session);
 
@@ -167,25 +164,22 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.STALE);
         session.save();
 
-        ExecuteOnLogLevel.fatal(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final VirtualHosts newModel = hstManager.getVirtualHosts();
-                    assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.FAILED);
-                    assertTrue( ((HstManagerImpl)hstManager).consecutiveBuildFailCounter == 1);
-                    assertSame("hst nodes config should be invalid, hence, old stale model should be reused ",firstModel , newModel);
+        Log4jInterceptor.onWarn().deny(HstManagerImpl.class).run( () -> {
+            try {
+                final VirtualHosts newModel = hstManager.getVirtualHosts();
+                assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.FAILED);
+                assertTrue( ((HstManagerImpl)hstManager).consecutiveBuildFailCounter == 1);
+                assertSame("hst nodes config should be invalid, hence, old stale model should be reused ",firstModel , newModel);
 
-                    hstManager.getVirtualHosts();
-                    assertTrue( ((HstManagerImpl)hstManager).consecutiveBuildFailCounter == 2);
-                    hstManager.getVirtualHosts();
-                    assertTrue(((HstManagerImpl) hstManager).consecutiveBuildFailCounter == 3);
+                hstManager.getVirtualHosts();
+                assertTrue( ((HstManagerImpl)hstManager).consecutiveBuildFailCounter == 2);
+                hstManager.getVirtualHosts();
+                assertTrue(((HstManagerImpl) hstManager).consecutiveBuildFailCounter == 3);
 
-                } catch (ContainerException e) {
-                    fail(e.toString());
-                }
+            } catch (ContainerException e) {
+                fail(e.toString());
             }
-        }, HstManagerImpl.class.getName());
+        });
 
         restoreHstConfigBackup(session);
         invalidator.eventPaths("/hst:hst/hst:sites");
@@ -209,33 +203,30 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.STALE);
         session.save();
 
-        ExecuteOnLogLevel.fatal(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final VirtualHosts newModel = hstManager.getVirtualHosts();
-                    assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.UP2DATE);
-                    assertTrue(((HstManagerImpl) hstManager).consecutiveBuildFailCounter == 0);
-                    assertNotSame(firstModel, newModel);
-                    final ResolvedMount newResolvedMount = newModel.matchMount("localhost", "/site", "home");
-                    // although the resolved mount is not a valid one, we can still match it : It can namely
-                    // still contain valid child mount
-                    assertNotNull(newResolvedMount);
-                    assertNull(newResolvedMount.getMount().getContentPath());
-                    assertNull(newResolvedMount.getMount().getHstSite());
+        Log4jInterceptor.onWarn().deny(MountService.class, VirtualHostService.class, VirtualHostsService.class).run( () -> {
+            try {
+                final VirtualHosts newModel = hstManager.getVirtualHosts();
+                assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.UP2DATE);
+                assertTrue(((HstManagerImpl) hstManager).consecutiveBuildFailCounter == 0);
+                assertNotSame(firstModel, newModel);
+                final ResolvedMount newResolvedMount = newModel.matchMount("localhost", "/site", "home");
+                // although the resolved mount is not a valid one, we can still match it : It can namely
+                // still contain valid child mount
+                assertNotNull(newResolvedMount);
+                assertNull(newResolvedMount.getMount().getContentPath());
+                assertNull(newResolvedMount.getMount().getHstSite());
 
-                    // assert we can still match the child mount 'subsite' which has
-                    // hst:mountpoint = /hst:hst/hst:sites/unittestsubproject
-                    final ResolvedMount subResolvedMount = newModel.matchMount("localhost", "/site", "subsite/home");
-                    assertNotNull(subResolvedMount);
-                    assertTrue(subResolvedMount.getMount().getParent() == newResolvedMount.getMount());
-                    assertNotNull(subResolvedMount.getMount().getHstSite());
-                    assertEquals("/unittestcontent/documents/unittestsubproject", subResolvedMount.getMount().getContentPath());
-                } catch (ContainerException e) {
-                    fail(e.toString());
-                }
+                // assert we can still match the child mount 'subsite' which has
+                // hst:mountpoint = /hst:hst/hst:sites/unittestsubproject
+                final ResolvedMount subResolvedMount = newModel.matchMount("localhost", "/site", "subsite/home");
+                assertNotNull(subResolvedMount);
+                assertTrue(subResolvedMount.getMount().getParent() == newResolvedMount.getMount());
+                assertNotNull(subResolvedMount.getMount().getHstSite());
+                assertEquals("/unittestcontent/documents/unittestsubproject", subResolvedMount.getMount().getContentPath());
+            } catch (ContainerException e) {
+                fail(e.toString());
             }
-        }, MountService.class.getName(), VirtualHostService.class.getName(), VirtualHostsService.class.getName());
+        });
 
         // restore the unittestproject
         JcrUtils.copy(session, "/hst-backup/hst:sites/unittestproject", "/hst:hst/hst:sites/unittestproject");
@@ -263,32 +254,29 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.STALE);
         session.save();
 
-        ExecuteOnLogLevel.fatal(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final VirtualHosts newModel = hstManager.getVirtualHosts();
-                    assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.UP2DATE);
-                    assertTrue(((HstManagerImpl) hstManager).consecutiveBuildFailCounter == 0);
-                    assertNotSame(firstModel, newModel);
-                    final ResolvedMount newResolvedMount = newModel.matchMount("localhost", "/site", "home");
-                    assertNotNull(newResolvedMount);
-                    assertNull(newResolvedMount.getMount().getContentPath());
-                    // there is a site!
-                    assertNotNull(newResolvedMount.getMount().getHstSite());
+        Log4jInterceptor.onWarn().deny(MountService.class, VirtualHostService.class, VirtualHostsService.class).run( () -> {
+            try {
+                final VirtualHosts newModel = hstManager.getVirtualHosts();
+                assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.UP2DATE);
+                assertTrue(((HstManagerImpl) hstManager).consecutiveBuildFailCounter == 0);
+                assertNotSame(firstModel, newModel);
+                final ResolvedMount newResolvedMount = newModel.matchMount("localhost", "/site", "home");
+                assertNotNull(newResolvedMount);
+                assertNull(newResolvedMount.getMount().getContentPath());
+                // there is a site!
+                assertNotNull(newResolvedMount.getMount().getHstSite());
 
-                    // assert we can still match the child mount 'subsite' which has
-                    // hst:mountpoint = /hst:hst/hst:sites/unittestsubproject
-                    final ResolvedMount subResolvedMount = newModel.matchMount("localhost", "/site", "subsite/home");
-                    assertNotNull(subResolvedMount);
-                    assertTrue(subResolvedMount.getMount().getParent() == newResolvedMount.getMount());
-                    assertNotNull(subResolvedMount.getMount().getHstSite());
-                    assertEquals("/unittestcontent/documents/unittestsubproject", subResolvedMount.getMount().getContentPath());
-                } catch (ContainerException e) {
-                    fail(e.toString());
-                }
+                // assert we can still match the child mount 'subsite' which has
+                // hst:mountpoint = /hst:hst/hst:sites/unittestsubproject
+                final ResolvedMount subResolvedMount = newModel.matchMount("localhost", "/site", "subsite/home");
+                assertNotNull(subResolvedMount);
+                assertTrue(subResolvedMount.getMount().getParent() == newResolvedMount.getMount());
+                assertNotNull(subResolvedMount.getMount().getHstSite());
+                assertEquals("/unittestcontent/documents/unittestsubproject", subResolvedMount.getMount().getContentPath());
+            } catch (ContainerException e) {
+                fail(e.toString());
             }
-        }, MountService.class.getName(), VirtualHostService.class.getName(), VirtualHostsService.class.getName());
+        });
 
         // restore the unittestproject
         session.getNode("/hst:hst/hst:sites/unittestproject").setProperty("hst:content", origContentValue);
@@ -330,18 +318,15 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
             session.save();
             invalidator.eventPaths("/hst:hst/hst:sites/unittestproject");
 
-            ExecuteOnLogLevel.fatal(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        final VirtualHosts changedModel = hstManager.getVirtualHosts();
-                        final ResolvedMount newResolvedMount = changedModel.matchMount("localhost", "/site", "home");
-                        assertNull(newResolvedMount.getMount().getContentPath());
-                    } catch (ContainerException e) {
-                        fail(e.toString());
-                    }
+            Log4jInterceptor.onWarn().deny(MountService.class).run( () -> {
+                try {
+                    final VirtualHosts changedModel = hstManager.getVirtualHosts();
+                    final ResolvedMount newResolvedMount = changedModel.matchMount("localhost", "/site", "home");
+                    assertNull(newResolvedMount.getMount().getContentPath());
+                } catch (ContainerException e) {
+                    fail(e.toString());
                 }
-            }, MountService.class.getName());
+            });
         }
 
         {
@@ -407,22 +392,19 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
     public void testProjectMissingHstComponents() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:components").remove();
         session.save();
-        ExecuteOnLogLevel.fatal(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final VirtualHosts firstModel = hstManager.getVirtualHosts();
-                    final ResolvedMount resolvedMount = firstModel.matchMount("localhost", "/site", "home");
-                    assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
+        Log4jInterceptor.onWarn().deny(HstComponentConfigurationService.class).run( () -> {
+            try {
+                final VirtualHosts firstModel = hstManager.getVirtualHosts();
+                final ResolvedMount resolvedMount = firstModel.matchMount("localhost", "/site", "home");
+                assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
 
-                    for (HstComponentConfiguration compConfig : resolvedMount.getMount().getHstSite().getComponentsConfiguration().getComponentConfigurations().values()) {
-                        assertFalse(compConfig.getCanonicalStoredLocation().contains("/hst:components/"));
-                    }
-                } catch (ContainerException e) {
-                    fail(e.toString());
+                for (HstComponentConfiguration compConfig : resolvedMount.getMount().getHstSite().getComponentsConfiguration().getComponentConfigurations().values()) {
+                    assertFalse(compConfig.getCanonicalStoredLocation().contains("/hst:components/"));
                 }
+            } catch (ContainerException e) {
+                fail(e.toString());
             }
-        }, HstComponentConfigurationService.class.getName());
+        });
     }
 
     @Test
@@ -430,22 +412,19 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:components").remove();
         session.getNode("/hst:hst/hst:configurations/hst:default/hst:components").remove();
         session.save();
-        ExecuteOnLogLevel.fatal(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final VirtualHosts firstModel = hstManager.getVirtualHosts();
-                    final ResolvedMount resolvedMount = firstModel.matchMount("localhost", "/site", "home");
-                    assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
+        Log4jInterceptor.onWarn().deny(HstComponentConfigurationService.class).run( () -> {
+            try {
+                final VirtualHosts firstModel = hstManager.getVirtualHosts();
+                final ResolvedMount resolvedMount = firstModel.matchMount("localhost", "/site", "home");
+                assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
 
-                    for (HstComponentConfiguration compConfig : resolvedMount.getMount().getHstSite().getComponentsConfiguration().getComponentConfigurations().values()) {
-                        assertFalse(compConfig.getCanonicalStoredLocation().contains("/hst:components/"));
-                    }
-                } catch (ContainerException e) {
-                    fail(e.toString());
+                for (HstComponentConfiguration compConfig : resolvedMount.getMount().getHstSite().getComponentsConfiguration().getComponentConfigurations().values()) {
+                    assertFalse(compConfig.getCanonicalStoredLocation().contains("/hst:components/"));
                 }
+            } catch (ContainerException e) {
+                fail(e.toString());
             }
-        }, HstComponentConfigurationService.class.getName());
+        });
     }
 
 
@@ -494,21 +473,18 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         invalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage");
         session.save();
         {
-            ExecuteOnLogLevel.fatal(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        final VirtualHosts model = hstManager.getVirtualHosts();
-                        final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
-                        final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem("/home");
-                        assertNotNull(resolvedSiteMapItem.getHstComponentConfiguration());
-                        // now header component is not inherited any more, and should thus be missing
-                        assertNull(resolvedSiteMapItem.getHstComponentConfiguration().getChildByName("header"));
-                    } catch (ContainerException e) {
-                        fail(e.toString());
-                    }
+            Log4jInterceptor.onWarn().deny(HstComponentConfigurationService.class).run( () -> {
+                try {
+                    final VirtualHosts model = hstManager.getVirtualHosts();
+                    final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+                    final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem("/home");
+                    assertNotNull(resolvedSiteMapItem.getHstComponentConfiguration());
+                    // now header component is not inherited any more, and should thus be missing
+                    assertNull(resolvedSiteMapItem.getHstComponentConfiguration().getChildByName("header"));
+                } catch (ContainerException e) {
+                    fail(e.toString());
                 }
-            }, HstComponentConfigurationService.class.getName());
+            });
         }
     }
 
@@ -536,21 +512,18 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap").remove();
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
         session.save();
-        ExecuteOnLogLevel.fatal(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final VirtualHosts firstModel = hstManager.getVirtualHosts();
-                    final ResolvedMount resolvedMount = firstModel.matchMount("localhost", "/site", "home");
-                    assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
-                    final HstSiteService hstSite = (HstSiteService) resolvedMount.getMount().getHstSite();
-                    final HstSiteMap siteMap = hstSite.getSiteMap();
-                    assertTrue(siteMap instanceof HstNoopSiteMap);
-                } catch (ContainerException e) {
-                    fail(e.toString());
-                }
+        Log4jInterceptor.onWarn().deny(HstSiteService.class).run( () -> {
+            try {
+                final VirtualHosts firstModel = hstManager.getVirtualHosts();
+                final ResolvedMount resolvedMount = firstModel.matchMount("localhost", "/site", "home");
+                assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
+                final HstSiteService hstSite = (HstSiteService) resolvedMount.getMount().getHstSite();
+                final HstSiteMap siteMap = hstSite.getSiteMap();
+                assertTrue(siteMap instanceof HstNoopSiteMap);
+            } catch (ContainerException e) {
+                fail(e.toString());
             }
-        }, HstSiteService.class.getName());
+        });
     }
 
     @Test
@@ -574,26 +547,22 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         session.save();
         invalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home");
         {
-            ExecuteOnLogLevel.fatal(new Runnable() {
-                @Override
-                public void run() {
-                    try {
+            Log4jInterceptor.onWarn().deny(ResolvedSiteMapItemImpl.class).run( () -> {
+                try {
+                    final VirtualHosts model = hstManager.getVirtualHosts();
+                    final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+                    assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
+                    final HstSiteService hstSite = (HstSiteService) resolvedMount.getMount().getHstSite();
 
-                        final VirtualHosts model = hstManager.getVirtualHosts();
-                        final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
-                        assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
-                        final HstSiteService hstSite = (HstSiteService) resolvedMount.getMount().getHstSite();
-
-                        final HstSiteMap siteMap = hstSite.getSiteMap();
-                        assertNotNull(siteMap.getSiteMapItem("home"));
-                        assertEquals("nonexisting", siteMap.getSiteMapItem("home").getComponentConfigurationId());
-                        final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem("/home");
-                        assertNull(resolvedSiteMapItem.getHstComponentConfiguration());
-                    } catch (ContainerException e) {
-                        fail(e.toString());
-                    }
+                    final HstSiteMap siteMap = hstSite.getSiteMap();
+                    assertNotNull(siteMap.getSiteMapItem("home"));
+                    assertEquals("nonexisting", siteMap.getSiteMapItem("home").getComponentConfigurationId());
+                    final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem("/home");
+                    assertNull(resolvedSiteMapItem.getHstComponentConfiguration());
+                } catch (ContainerException e) {
+                    fail(e.toString());
                 }
-            }, ResolvedSiteMapItemImpl.class.getName());
+            });
         }
     }
 
@@ -645,28 +614,24 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         invalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon");
         session.save();
         {
-            ExecuteOnLogLevel.fatal(new Runnable() {
-                @Override
-                public void run() {
-                    try {
+            Log4jInterceptor.onWarn().deny(HstComponentConfigurationService.class).run( () -> {
+                try {
+                    final VirtualHosts model = hstManager.getVirtualHosts();
+                    final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+                    assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
 
-                        final VirtualHosts model = hstManager.getVirtualHosts();
-                        final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
-                        assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
+                    final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem("/home");
+                    assertNotNull(resolvedSiteMapItem.getHstComponentConfiguration());
 
-                        final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem("/home");
-                        assertNotNull(resolvedSiteMapItem.getHstComponentConfiguration());
+                    final String renderPath = resolvedSiteMapItem.getHstComponentConfiguration().getRenderPath();
+                    final String hstTemplate = ((HstComponentConfigurationService) resolvedSiteMapItem.getHstComponentConfiguration()).getHstTemplate();
 
-                        final String renderPath = resolvedSiteMapItem.getHstComponentConfiguration().getRenderPath();
-                        final String hstTemplate = ((HstComponentConfigurationService) resolvedSiteMapItem.getHstComponentConfiguration()).getHstTemplate();
-
-                        assertEquals("webpage", hstTemplate);
-                        assertNull(renderPath);
-                    } catch (ContainerException e) {
-                        fail(e.toString());
-                    }
+                    assertEquals("webpage", hstTemplate);
+                    assertNull(renderPath);
+                } catch (ContainerException e) {
+                    fail(e.toString());
                 }
-            }, HstComponentConfigurationService.class.getName());
+            });
         }
 
     }
@@ -678,27 +643,23 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:configurations/hst:default/hst:templates").remove();
         session.save();
 
-        ExecuteOnLogLevel.fatal(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final VirtualHosts model = hstManager.getVirtualHosts();
-                    final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
-                    assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
+        Log4jInterceptor.onWarn().deny(HstComponentConfigurationService.class).run( () -> {
+            try {
+                final VirtualHosts model = hstManager.getVirtualHosts();
+                final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+                assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
 
-                    final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem("/home");
-                    assertNotNull(resolvedSiteMapItem.getHstComponentConfiguration());
-                    final String renderPath = resolvedSiteMapItem.getHstComponentConfiguration().getRenderPath();
-                    final String hstTemplate = ((HstComponentConfigurationService) resolvedSiteMapItem.getHstComponentConfiguration()).getHstTemplate();
+                final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem("/home");
+                assertNotNull(resolvedSiteMapItem.getHstComponentConfiguration());
+                final String renderPath = resolvedSiteMapItem.getHstComponentConfiguration().getRenderPath();
+                final String hstTemplate = ((HstComponentConfigurationService) resolvedSiteMapItem.getHstComponentConfiguration()).getHstTemplate();
 
-                    assertEquals("webpage", hstTemplate);
-                    assertNull(renderPath);
-                } catch (ContainerException e) {
-                    fail(e.toString());
-                }
+                assertEquals("webpage", hstTemplate);
+                assertNull(renderPath);
+            } catch (ContainerException e) {
+                fail(e.toString());
             }
-        }, HstComponentConfigurationService.class.getName());
-
+        });
     }
 
 
@@ -707,13 +668,14 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:channels").remove();
         session.save();
 
-        final VirtualHosts model = hstManager.getVirtualHosts();
-        final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
-        assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(VirtualHostsService.class).build()) {
+            final VirtualHosts model = hstManager.getVirtualHosts();
+            final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+            assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
 
-        assertTrue(hstManager.getVirtualHosts().getChannels("dev-localhost").size() == 0);
-        assertNull(resolvedMount.getMount().getChannel());
-
+            assertTrue(hstManager.getVirtualHosts().getChannels("dev-localhost").size() == 0);
+            assertNull(resolvedMount.getMount().getChannel());
+        }
     }
 
     @Test
@@ -731,9 +693,11 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         invalidator.eventPaths("/hst:hst/hst:channels");
         session.save();
         {
-            final VirtualHosts model = hstManager.getVirtualHosts();
-            final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
-            assertNull(resolvedMount.getMount().getChannel());
+            try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(VirtualHostsService.class).build()) {
+                final VirtualHosts model = hstManager.getVirtualHosts();
+                final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+                assertNull(resolvedMount.getMount().getChannel());
+            }
         }
     }
 
@@ -774,20 +738,17 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         session.save();
         invalidator.eventPaths(pathsToBeChanged);
         {
-            ExecuteOnLogLevel.fatal(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        VirtualHosts model = hstManager.getVirtualHosts();
-                        final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
-                        final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
-                        assertTrue("there is no preview channel thus live instance and preview should be the same",
-                                mount.getChannel() == mount.getPreviewChannel());
-                    } catch (ContainerException e) {
-                        fail(e.toString());
-                    }
+            Log4jInterceptor.onWarn().deny(VirtualHostsService.class).run( () -> {
+                try {
+                    VirtualHosts model = hstManager.getVirtualHosts();
+                    final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+                    final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
+                    assertTrue("there is no preview channel thus live instance and preview should be the same",
+                            mount.getChannel() == mount.getPreviewChannel());
+                } catch (ContainerException e) {
+                    fail(e.toString());
                 }
-            }, VirtualHostsService.class.getName());
+            });
         }
 
         // restore preview channel but remove the preview configuration now
@@ -798,20 +759,17 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         session.save();
         invalidator.eventPaths(pathsToBeChanged);
         {
-            ExecuteOnLogLevel.fatal(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        VirtualHosts model = hstManager.getVirtualHosts();
-                        final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
-                        final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
-                        assertFalse("there is a preview channel thus live instance and preview should NOT be the same",
-                                mount.getChannel() == mount.getPreviewChannel());
-                    } catch (ContainerException e) {
-                        fail(e.toString());
-                    }
+            Log4jInterceptor.onWarn().deny(VirtualHostsService.class).run( () -> {
+                try {
+                    VirtualHosts model = hstManager.getVirtualHosts();
+                    final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+                    final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
+                    assertFalse("there is a preview channel thus live instance and preview should NOT be the same",
+                            mount.getChannel() == mount.getPreviewChannel());
+                } catch (ContainerException e) {
+                    fail(e.toString());
                 }
-            }, VirtualHostsService.class.getName());
+            });
         }
 
     }
@@ -820,7 +778,4 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
         return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
-
-
-
 }

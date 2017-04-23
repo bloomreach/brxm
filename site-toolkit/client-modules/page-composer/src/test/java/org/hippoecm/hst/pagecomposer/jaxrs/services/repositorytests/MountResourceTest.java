@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import javax.ws.rs.core.Response;
 import com.google.common.eventbus.Subscribe;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.log4j.Log4jListener;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
@@ -45,7 +44,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
-import org.onehippo.repository.testutils.ExecuteOnLogLevel;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE;
@@ -208,14 +207,11 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         mockNewRequest(session, "localhost", "/home");
 
-        ExecuteOnLogLevel.debug((ExecuteOnLogLevel.Executable)() -> {
-            try (Log4jListener listener = Log4jListener.onDebug()) {
-                mountResource.publish();
-                assertTrue(listener.messages().anyMatch(m -> m.contains("Successfully ordered 'about-us-2' before 'about-us-3'")));
-                assertFalse(listener.messages().anyMatch(m -> m.contains(SEEMS_TO_INDICATE_LIVE_AND_PREVIEW_CONFIGURATIONS_ARE_OUT_OF_SYNC_WHICH_INDICATES_AN_ERROR)));
-            }
-
-        }, AbstractHelper.class);
+        try ( Log4jInterceptor listener = Log4jInterceptor.onDebug().trap(AbstractHelper.class).build()) {
+            mountResource.publish();
+            assertTrue(listener.messages().anyMatch(m -> m.contains("Successfully ordered 'about-us-2' before 'about-us-3'")));
+            assertFalse(listener.messages().anyMatch(m -> m.contains(SEEMS_TO_INDICATE_LIVE_AND_PREVIEW_CONFIGURATIONS_ARE_OUT_OF_SYNC_WHICH_INDICATES_AN_ERROR)));
+        };
 
         assertTrue(session.nodeExists(liveConfigurationPath + "/hst:workspace/hst:sitemap/about-us-2"));
         assertTrue(session.nodeExists(liveConfigurationPath + "/hst:workspace/hst:sitemap/about-us-3"));
