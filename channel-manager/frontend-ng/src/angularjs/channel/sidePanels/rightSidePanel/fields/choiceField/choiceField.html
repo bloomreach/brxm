@@ -42,25 +42,25 @@
     </md-icon>
   </h5>
 
-  <div ng-repeat="fieldValue in $ctrl.fieldValues"
-       ng-switch="$ctrl.fieldType.choices[fieldValue.chosenId].type">
+  <div class="collapse-element">
+    <div ng-repeat="fieldValue in $ctrl.fieldValues"
+        ng-switch="$ctrl.fieldType.choices[fieldValue.chosenId].type">
 
-    <compound-field ng-switch-when="COMPOUND"
-                    name="$ctrl.getFieldName($index)"
-                    class="collapse-element"
-                    field-type="::$ctrl.fieldType.choices[fieldValue.chosenId]"
-                    field-values="fieldValue.chosenValue.fields"
-                    on-field-focus="$ctrl.focusChoice()"
-                    on-field-blur="$ctrl.blurChoice()">
-    </compound-field>
+      <compound-field ng-switch-when="COMPOUND"
+                      name="$ctrl.getFieldName($index)"
+                      field-type="::$ctrl.fieldType.choices[fieldValue.chosenId]"
+                      field-values="fieldValue.chosenValue.fields"
+                      on-field-focus="$ctrl.focusChoice()"
+                      on-field-blur="$ctrl.blurChoice()">
+      </compound-field>
 
-    <primitive-field ng-switch-default
-                     name="$ctrl.getFieldName($index)"
-                     field-type="$ctrl.fieldType.choices[fieldValue.chosenId]"
-                     field-values="[fieldValue.chosenValue]"
-                     on-field-focus="$ctrl.focusChoice()"
-                     on-field-blur="$ctrl.blurChoice()">
-    </primitive-field>
+      <primitive-field ng-switch-default
+                      name="$ctrl.getFieldName($index)"
+                      field-type="$ctrl.fieldType.choices[fieldValue.chosenId]"
+                      field-values="[fieldValue.chosenValue]"
+                      on-field-focus="$ctrl.focusChoice()"
+                      on-field-blur="$ctrl.blurChoice()">
+      </primitive-field>
+    </div>
   </div>
-
 </div>

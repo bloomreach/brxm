@@ -1,4 +1,4 @@
-// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,10 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.md-tooltip {
-  height: auto;
-  max-width: 80vw;
-  white-space: initial;
-  width: auto;
-}
+@import 'variables';
 
+ckeditor {
+  textarea {
+    visibility: hidden !important;
+
+    + .cke {
+      border-bottom-width: 2px;
+    }
+
+    &.ng-invalid + .cke {
+      border-bottom-color: $red-500;
+    }
+
+    &.focussed + .cke {
+      border-bottom-color: $blue-500;
+    }
+  }
+}

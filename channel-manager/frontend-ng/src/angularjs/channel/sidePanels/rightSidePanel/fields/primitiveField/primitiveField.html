@@ -62,12 +62,11 @@
     </textarea>
 
     <ckeditor ng-switch-when="HTML"
-              class="textarea-ckeditor"
               ng-model="fieldValue.value"
-              name="{{ ::$ctrl.getFieldName($index) }}"
-              aria-label="{{ ::$ctrl.fieldType.displayName }}"
-              config="::$ctrl.fieldType.config"
-              is-required="{{ ::$ctrl.fieldType.required }}"
+              name="$ctrl.getFieldName($index)"
+              aria-label="$ctrl.fieldType.displayName"
+              config="$ctrl.fieldType.config"
+              is-required="$ctrl.fieldType.required"
               on-focus="$ctrl.focusPrimitive()"
               on-blur="$ctrl.blurPrimitive()">
     </ckeditor>

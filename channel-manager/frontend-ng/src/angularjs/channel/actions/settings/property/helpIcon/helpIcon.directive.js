@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import './helpIcon.scss';
 import template from './helpIcon.html';
 
 function helpIconDirective() {
