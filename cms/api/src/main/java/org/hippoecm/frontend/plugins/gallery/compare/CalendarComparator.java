@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.gallery.columns.compare;
+package org.hippoecm.frontend.plugins.gallery.compare;
+
+import java.util.Calendar;
 
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import java.util.Calendar;
 
 public class CalendarComparator extends PropertyComparator {
 
-    public CalendarComparator(String prop) {
+    public CalendarComparator(final String prop) {
         super(prop);
     }
 
-    public CalendarComparator(String prop, String relPath) {
+    public CalendarComparator(final String prop, final String relPath) {
         super(prop, relPath);
     }
 
     @Override
-    protected int compare(Property p1, Property p2) {
+    protected int compare(final Property p1, final Property p2) {
         try {
-            Calendar c1 = p1 == null ? null : p1.getDate();
-            Calendar c2 = p2 == null ? null : p2.getDate();
+            final Calendar c1 = p1 == null ? null : p1.getDate();
+            final Calendar c2 = p2 == null ? null : p2.getDate();
             if (c1 == null) {
                 if (c2 == null) {
                     return 0;
@@ -43,8 +44,9 @@ public class CalendarComparator extends PropertyComparator {
                 return -1;
             }
             return c1.compareTo(c2);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException ignored) {
         }
+
         return 0;
     }
 }
