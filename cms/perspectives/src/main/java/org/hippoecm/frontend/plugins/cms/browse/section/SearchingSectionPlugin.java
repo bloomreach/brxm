@@ -20,6 +20,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -30,7 +31,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -43,6 +43,7 @@ import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.NodeNameModel;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
@@ -64,6 +65,8 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
     private static final Logger log = LoggerFactory.getLogger(SearchingSectionPlugin.class);
 
+    private static final String GALLERY_PATH = "/content/gallery";
+    private static final String IMAGE_QUERY_NAME = "image";
     private static final IModel<BrowserSearchResult> NO_RESULTS = new Model<>(null);
 
     private final FolderModelService folderService;
@@ -179,12 +182,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         sectionTop = new WebMarkupContainer("section-top");
         sectionTop.setOutputMarkupId(true);
-        sectionTop.add(CssClass.append(new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return hasSearchResult() ? "search-result" : "";
-            }
-        }));
+        sectionTop.add(CssClass.append(ReadOnlyModel.of(() -> hasSearchResult() ? "search-result" : "")));
         sectionTop.add(form);
         add(sectionTop);
     }
@@ -203,7 +201,9 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             if (Strings.isEmpty(query)) {
                 collection.setSearchResult(NO_RESULTS);
             } else {
-                final TextSearchBuilder sb = new TextSearchBuilder();
+                final String queryName = StringUtils.startsWith(scope, GALLERY_PATH) ?
+                        IMAGE_QUERY_NAME : TextSearchBuilder.TEXT_QUERY_NAME;
+                final TextSearchBuilder sb = new TextSearchBuilder(queryName);
                 sb.setScope(new String[]{scope});
                 sb.setWildcardSearch(true);
                 sb.setText(query);
@@ -336,6 +336,13 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     @Override
     public ResourceReference getIcon(final IconSize type) {
         return null;
+    }
+
+    @Override
+    protected void onDetach() {
+        rootModel.detach();
+        scopeModel.detach();
+        super.onDetach();
     }
 
     private boolean hasSearchResult() {

@@ -51,8 +51,14 @@ public class TextSearchBuilder implements IClusterable {
     private boolean wildcardSearch;
     private int limit = -1;
     private int minimalLength = 3;
+    private final String queryName;
 
     public TextSearchBuilder() {
+        this(TEXT_QUERY_NAME);
+    }
+
+    public TextSearchBuilder(final String queryName) {
+        this.queryName = queryName;
         scope = new String[]{"/"};
     }
 
@@ -102,7 +108,7 @@ public class TextSearchBuilder implements IClusterable {
 
         final String query = querySb.toString();
         final IModel<QueryResult> resultModel = new QueryResultModel(query, limit);
-        return new TextSearchResultModel(value, new BrowserSearchResult(TEXT_QUERY_NAME, resultModel), scope);
+        return new TextSearchResultModel(value, new BrowserSearchResult(queryName, resultModel), scope);
     }
 
     /**
