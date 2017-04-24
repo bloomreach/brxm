@@ -206,7 +206,6 @@
               <repo.path>${war.repo.path}</repo.path>
               <repo.config>file:${project.basedir}/conf/repository.xml</repo.config>
               <log4j.configurationFile>file://${project.basedir}/conf/log4j2.xml</log4j.configurationFile>
-              <rebel.log4j2-plugin>true</rebel.log4j2-plugin>
               <java.rmi.server.hostname>localhost</java.rmi.server.hostname>
             </systemProperties>
             <zipUrlInstaller>
