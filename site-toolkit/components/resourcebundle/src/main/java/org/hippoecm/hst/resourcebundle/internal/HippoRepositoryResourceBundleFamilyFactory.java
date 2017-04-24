@@ -101,7 +101,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                         paths.add(nodes.nextNode().getPath());
                     }
                     log.warn("Multiple resource bundles found for resourcebundle:id '{}'. "
-                            + "We only use resource bundle '{}'. Other resource bundles with same id are: '{}'.",
+                                    + "We only use resource bundle '{}'. Other resource bundles with same id are: '{}'.",
                             new String[]{ basename, node.getPath(), paths.toString() });
                 }
             }
@@ -124,7 +124,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
     private void populateResourceBundleFamily(final MutableResourceBundleFamily bundleFamily, Node bundleNode)
             throws RepositoryException {
 
-        bundleFamily.setIdentifier(bundleNode.getParent().getIdentifier());
+        bundleFamily.setVariantUUID(bundleNode.getIdentifier());
 
         String[] keys = getPropertyAsStringArray(bundleNode, "resourcebundle:keys");
         if (keys == null) {

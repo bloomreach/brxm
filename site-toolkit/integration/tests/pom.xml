@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -41,8 +41,8 @@
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -51,8 +51,13 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -200,8 +205,8 @@
               <repo.bootstrap>true</repo.bootstrap>
               <repo.path>${war.repo.path}</repo.path>
               <repo.config>file:${project.basedir}/conf/repository.xml</repo.config>
-              <log4j.configuration>file:${project.basedir}/conf/log4j.xml</log4j.configuration>
-              <rebel.log4j-plugin>true</rebel.log4j-plugin>
+              <log4j.configurationFile>file://${project.basedir}/conf/log4j2.xml</log4j.configurationFile>
+              <rebel.log4j2-plugin>true</rebel.log4j2-plugin>
               <java.rmi.server.hostname>localhost</java.rmi.server.hostname>
             </systemProperties>
             <zipUrlInstaller>
@@ -226,8 +231,13 @@
                 <classpath>extra</classpath>
               </dependency>
               <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <classpath>shared</classpath>
+              </dependency>
+              <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
                 <classpath>shared</classpath>
               </dependency>
               <dependency>
@@ -241,8 +251,8 @@
                 <classpath>shared</classpath>
               </dependency>
               <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
                 <classpath>shared</classpath>
               </dependency>
               <dependency>
