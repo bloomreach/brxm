@@ -144,7 +144,10 @@ public class MountResourceTest extends AbstractMountResourceTest {
         Thread.sleep(200);
 
         mockNewRequest(session, "localhost", "/home");
+        // reload the preview channel : After changes, it *must* be a different object
+        assertTrue("Since there are changes, pccs.getEditingPreviewChannel should return a new object.", previewChannel != pccs.getEditingPreviewChannel());
 
+        previewChannel = pccs.getEditingPreviewChannel();
         changedBySet = previewChannel.getChangedBySet();
         assertTrue(changedBySet.contains("admin"));
 
@@ -157,6 +160,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
         mockNewRequest(session, "localhost", "/home");
 
         // there should be no locks
+        previewChannel = pccs.getEditingPreviewChannel();
         changedBySet = previewChannel.getChangedBySet();
         assertTrue(changedBySet.isEmpty());
     }
