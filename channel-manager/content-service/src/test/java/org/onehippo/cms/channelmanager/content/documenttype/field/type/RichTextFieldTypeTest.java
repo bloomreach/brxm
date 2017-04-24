@@ -33,8 +33,9 @@ import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
 import org.onehippo.repository.mock.MockNode;
-import org.onehippo.testutils.log4j.Log4jListener;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -52,6 +53,7 @@ import static org.powermock.api.easymock.PowerMock.replay;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore("javax.management.*")
 @PrepareForTest({FieldTypeUtils.class, HtmlProcessorFactory.class})
 public class RichTextFieldTypeTest {
 
@@ -87,7 +89,7 @@ public class RichTextFieldTypeTest {
     }
 
     private static void assertWarningsLogged(final long count, final Code code, final Code... verifications) throws Exception {
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(RichTextFieldType.class).build()) {
             try {
                 code.run();
             } finally {
