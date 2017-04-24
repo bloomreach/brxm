@@ -40,14 +40,14 @@ import org.hippoecm.frontend.plugins.reviewedactions.dialogs.DepublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.ScheduleDepublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.SchedulePublishDialog;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.UnpublishedReferencesDialog;
-import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
-import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
-import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 
 public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
@@ -188,12 +188,12 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected IDialogService.Dialog createRequestDialog() {
                 try {
                     Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                    Node unpublished = getVariant(handle, HippoStdNodeType.UNPUBLISHED);
-                    final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(
-                            new ReferenceProvider(new JcrNodeModel(unpublished)));
+                    Node unpublished = getVariant(handle, UNPUBLISHED);
+                    final Map<String, Node> referenced = WorkflowUtils.getReferencesToUnpublishedDocuments(unpublished, UserSession.get().getJcrSession());
                     if (referenced.size() > 0) {
-                        return new UnpublishedReferencesDialog(publishAction, new UnpublishedReferenceNodeProvider(
-                                referenced), getEditorManager());
+                        return new UnpublishedReferencesDialog(publishAction,
+                                new UnpublishedReferenceNodeProvider(referenced),
+                                getEditorManager());
                     }
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
@@ -214,11 +214,10 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected IDialogService.Dialog createRequestDialog() {
                 try {
                     Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                    Node unpublished = getVariant(handle, HippoStdNodeType.UNPUBLISHED);
-                    final UnpublishedReferenceProvider referenced = new UnpublishedReferenceProvider(new ReferenceProvider(
-                            new JcrNodeModel(unpublished)));
-                    if (referenced.size() > 0) {
-                        return new UnpublishedReferencesDialog(this, new UnpublishedReferenceNodeProvider(referenced), getEditorManager());
+                    Node unpublished = getVariant(handle, UNPUBLISHED);
+                    final Map<String, Node> referringDocuments = WorkflowUtils.getReferringDocuments(unpublished, true);
+                    if (referringDocuments.size() > 0) {
+                        return new UnpublishedReferencesDialog(this, new UnpublishedReferenceNodeProvider(referringDocuments), getEditorManager());
                     }
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
@@ -242,7 +241,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected IDialogService.Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 try {
-                    final Node unpublished = getVariant(wdm.getNode(), HippoStdNodeType.UNPUBLISHED);
+                    final Node unpublished = getVariant(wdm.getNode(), UNPUBLISHED);
                     final IModel<String> titleModel = new StringResourceModel("schedule-publish-title",
                             PublicationWorkflowPlugin.this, null, getDocumentName());
 
@@ -274,7 +273,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected IDialogService.Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = getModel();
                 try {
-                    Node unpublished = getVariant(wdm.getNode(), HippoStdNodeType.UNPUBLISHED);
+                    Node unpublished = getVariant(wdm.getNode(), UNPUBLISHED);
                     final IModel<String> titleModel = new StringResourceModel("schedule-publish-title",
                             PublicationWorkflowPlugin.this, null, getDocumentName());
 

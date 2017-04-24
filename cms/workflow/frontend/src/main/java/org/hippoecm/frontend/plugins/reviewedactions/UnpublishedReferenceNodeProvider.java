@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,18 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
-import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,39 +36,23 @@ public final class UnpublishedReferenceNodeProvider implements ISortableDataProv
 
     private static final Logger log = LoggerFactory.getLogger(UnpublishedReferenceNodeProvider.class);
     
-    private final UnpublishedReferenceProvider referenced;
+    private Map<String, Node> referenced;
+    private ISortState state = new SortState();
 
-    public UnpublishedReferenceNodeProvider(UnpublishedReferenceProvider referenced) {
+    public UnpublishedReferenceNodeProvider(Map<String, Node> referenced) {
         this.referenced = referenced;
     }
 
     @Override
     public Iterator<? extends Node> iterator(long first, long count) {
-        final Iterator<String> upstream = referenced.iterator(first, count);
-        return new Iterator<Node>() {
-
-            public boolean hasNext() {
-                return upstream.hasNext();
+        if (first < referenced.size()) {
+            if ((first + count) <= referenced.size()) {
+                return new ArrayList<>(referenced.values()).subList((int) first, (int) (first + count)).iterator();
+            } else {
+                return new ArrayList<>(referenced.values()).subList((int) first, referenced.size()).iterator();
             }
-
-            public Node next() {
-                String uuid = upstream.next();
-                javax.jcr.Session session = UserSession.get().getJcrSession();
-                try {
-                    return session.getNodeByIdentifier(uuid);
-                } catch (ItemNotFoundException e) {
-                    log.info("Document {} has a reference to non-existing UUID {}", referenced.getDocumentPath(), uuid);
-                } catch (RepositoryException e) {
-                    log.error(e.getMessage(), e);
-                }
-                return null;
-            }
-
-            public void remove() {
-                upstream.remove();
-            }
-            
-        };
+        }
+        return Collections.<Node>emptyList().iterator();
     }
 
     @Override
@@ -82,14 +66,13 @@ public final class UnpublishedReferenceNodeProvider implements ISortableDataProv
     }
 
     public void detach() {
-        referenced.detach();
     }
 
     public ISortState getSortState() {
-        return referenced.getSortState();
+        return state;
     }
 
     public void setSortState(ISortState state) {
-        referenced.setSortState(state);
+        this.state = state;
     }
 }
