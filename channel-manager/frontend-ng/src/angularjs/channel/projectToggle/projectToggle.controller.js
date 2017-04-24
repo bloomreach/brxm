@@ -15,7 +15,6 @@
  *
  */
 
-const MASTER = { name: 'Default', id: 'master' };
 
 class ProjectToggleController {
   constructor($translate, OverlayService, ChannelService, ProjectService) {
@@ -26,14 +25,16 @@ class ProjectToggleController {
     this.ChannelService = ChannelService;
     this.ProjectService = ProjectService;
     this.available = ProjectService.available;
-    this.withBranch = [MASTER];
-    this.selectedProject = MASTER;
+    const channel = ChannelService.getChannel();
+    this.MASTER = { name: channel.name, id: channel.id };
+    this.withBranch = [this.MASTER];
+    this.selectedProject = this.MASTER;
     this._setProjects();
+    this.available = false;
   }
-  $onInit() {
-    this._activate();
+  $OnInit() {
+    this.available = this.ProjectService.available;
   }
-
   _setProjects() {
     this.ProjectService.projects(this.ChannelService.getChannel().id)
       .then((response) => {
@@ -41,12 +42,8 @@ class ProjectToggleController {
         this.withoutBranch = response.withoutBranch;
       });
   }
-
-  _activate() {
-    this._projectChanged();
-  }
-
-  _projectChanged() {
+  projectChanged() {
+    if (this.selectedProject.id === this.MASTER.id) return;
     if (this.withBranch.indexOf(this.selectedProject) >= 0) {
       this.ProjectService.doSelectBranch(this.selectedProject);
     } else {

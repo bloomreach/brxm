@@ -25,34 +25,12 @@ class ProjectService {
     this.$http = $http;
     this.ConfigService = ConfigService;
     this.PathService = PathService;
-    this.available = false;
-    this.doInitializeIsAvailable();
-  }
-
-  doInitializeIsAvailable() {
-    this.$http({
-      method: 'GET',
-      url: `${this.ConfigService.getCmsContextPath()}${REST_API_PATH}`,
-    }).then(() => {
-      this.available = true;
-    });
-  }
-
-  get isAvailable() {
-    return this.available;
   }
 
   projects(id) {
     const url = `${this.ConfigService.getCmsContextPath()}${REST_API_PATH}/${id}/channel`;
     return this.$http({ method: 'GET', url, headers: {}, data: {} })
       .then(result => result.data);
-  }
-
-  _addBranch(branch) {
-    return (project) => {
-      project.isBranch = branch;
-      return project;
-    };
   }
 
   doCreateBranch(project) {
