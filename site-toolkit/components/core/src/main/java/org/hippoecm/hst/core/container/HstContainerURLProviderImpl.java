@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -31,6 +30,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.util.PathEncoder;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.hst.util.QueryStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,10 +100,13 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     }
 
     public HstContainerURL parseURL(HttpServletRequest request, ResolvedMount mount, String requestPath, Map<String, String []> queryParams) {
-        return parseURL(mount, request.getContextPath(), requestPath, queryParams, request.getCharacterEncoding());
+        return parseURL(mount, request.getContextPath(), requestPath, queryParams,
+                HstRequestUtils.getCharacterEncoding(request), HstRequestUtils.getURIEncoding(request));
     }
 
-    public HstContainerURL parseURL(ResolvedMount mount, String contextPath, String requestPath, Map<String, String []> queryParams, String requestCharacterEncoding) {
+    public HstContainerURL parseURL(ResolvedMount mount, String contextPath, String requestPath,
+                                    Map<String, String []> queryParams, String requestCharacterEncoding,
+                                    String requestURIEncoding) {
         HstContainerURLImpl url = new HstContainerURLImpl();
         url.setContextPath(contextPath);
         url.setHostName(mount.getMount().getVirtualHost().getHostName());
@@ -111,8 +114,8 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         url.setResolvedMountPath(mount.getResolvedMountPath());
         url.setRequestPath(requestPath);
         url.setPathInfo(requestPath.substring(mount.getResolvedMountPath().length()));
-        String characterEncoding = StringUtils.defaultIfEmpty(requestCharacterEncoding, "ISO-8859-1");
-        url.setCharacterEncoding(characterEncoding);
+        url.setCharacterEncoding(requestCharacterEncoding);
+        url.setURIEncoding(requestURIEncoding);
         url.setPathInfo(requestPath.substring(mount.getResolvedMountPath().length()));
         url.setParameters(queryParams);
 
@@ -131,6 +134,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         url.setRequestPath(requestPath);
         url.setPathInfo(requestPath.substring(mount.getResolvedMountPath().length()));
         url.setCharacterEncoding(baseURL.getCharacterEncoding());
+        url.setURIEncoding(baseURL.getURIEncoding());
         url.setParameters(queryParams);
 
         parseRequestInfo(url);
@@ -146,11 +150,21 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         url.setHostName(HstRequestUtils.getFarthestRequestHost(request));
         url.setPortNumber(HstRequestUtils.getRequestServerPort(request));
         url.setRequestPath(HstRequestUtils.getRequestPath(request));
-        String characterEncoding = HstRequestUtils.getCharacterEncoding(request);
-        url.setCharacterEncoding(characterEncoding);
+        url.setCharacterEncoding(HstRequestUtils.getCharacterEncoding(request));
+        String uriEncoding = HstRequestUtils.getURIEncoding(request);
+        url.setURIEncoding(uriEncoding);
 
-        Map<String, String []> paramMap = HstRequestUtils.parseQueryString(request);
-        url.setParameters(paramMap);
+        try {
+            Map<String, String[]> paramMap = HstRequestUtils.parseQueryString(request);
+            url.setParameters(paramMap);
+        } catch (UnsupportedEncodingException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Unsupported encoding in request, using empty query parameters:", e);
+            } else {
+                log.warn("Unsupported encoding in request, using empty query parameters: " + e.toString());
+            }
+        }
+
         url.setResolvedMountPath(resolvedMount.getResolvedMountPath());
         url.setPathInfo(request.getPathInfo());
 
@@ -172,6 +186,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
 
         url.setRequestPath(baseContainerURL.getResolvedMountPath()+pathInfo);
         url.setCharacterEncoding(baseContainerURL.getCharacterEncoding());
+        url.setURIEncoding(baseContainerURL.getURIEncoding());
         url.setResolvedMountPath(baseContainerURL.getResolvedMountPath());
         url.setPathInfo(pathInfo);
 
@@ -188,6 +203,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         }
 
         url.setCharacterEncoding(baseContainerURL.getCharacterEncoding());
+        url.setURIEncoding(baseContainerURL.getURIEncoding());
 
         // if the Mount is port agnostic, in other words, has port = 0, we take the port from the baseContainerURL
         if (mount.getPort() == 0) {
@@ -312,7 +328,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     }
 
     protected String buildHstURLPath(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException {
-        String characterEncoding = containerURL.getCharacterEncoding();
+        String encoding = containerURL.getURIEncoding();
         StringBuilder url = new StringBuilder(100);
         String pathSuffixDelimiter = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
 
@@ -325,32 +341,28 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 url.append('/');
             }
         } else {
-            final String encoded = PathEncoder.encode(containerUrlPathInfo, characterEncoding);
+            final String encoded = PathEncoder.encode(containerUrlPathInfo, encoding);
             if (!encoded.startsWith("/")) {
                 url.append("/");
             }
             url.append(encoded);
         }
 
-        boolean firstParamDone = (url.indexOf("?") >= 0);
+        final QueryStringBuilder queryStringBuilder = new QueryStringBuilder(encoding);
 
         if (containerURL.getActionWindowReferenceNamespace() != null) {
-            url.append(firstParamDone ? "&" : "?").append(urlNamespacedTypeParamName).append('=').append(HstURL.ACTION_TYPE);
-            url.append('&').append(urlNamespacedReferenceParamName).append('=').append(URLEncoder.encode(containerURL.getActionWindowReferenceNamespace(), characterEncoding));
-            firstParamDone = true;
+            queryStringBuilder.append(urlNamespacedTypeParamName, HstURL.ACTION_TYPE);
+            queryStringBuilder.append(urlNamespacedReferenceParamName, containerURL.getActionWindowReferenceNamespace());
         } else if (containerURL.getResourceWindowReferenceNamespace() != null) {
-            url.append(firstParamDone ? "&" : "?").append(urlNamespacedTypeParamName).append('=').append(HstURL.RESOURCE_TYPE);
-            url.append('&').append(urlNamespacedReferenceParamName).append('=').append(URLEncoder.encode(containerURL.getResourceWindowReferenceNamespace(), characterEncoding));
+            queryStringBuilder.append(urlNamespacedTypeParamName, HstURL.RESOURCE_TYPE);
+            queryStringBuilder.append(urlNamespacedReferenceParamName, containerURL.getResourceWindowReferenceNamespace());
 
             if (containerURL.getResourceId() != null) {
-                url.append('&').append(urlNamespacedResourceIdParamName).append('=').append(URLEncoder.encode(containerURL.getResourceId(), characterEncoding));
+                queryStringBuilder.append(urlNamespacedResourceIdParamName, containerURL.getResourceId());
             }
-
-            firstParamDone = true;
         } else if (containerURL.getComponentRenderingWindowReferenceNamespace() != null) {
-            url.append(firstParamDone ? "&" : "?").append(urlNamespacedTypeParamName).append('=').append(HstURL.COMPONENT_RENDERING_TYPE);
-            url.append('&').append(urlNamespacedReferenceParamName).append('=').append(URLEncoder.encode(containerURL.getComponentRenderingWindowReferenceNamespace(), characterEncoding));
-            firstParamDone = true;
+            queryStringBuilder.append(urlNamespacedTypeParamName, HstURL.COMPONENT_RENDERING_TYPE);
+            queryStringBuilder.append(urlNamespacedReferenceParamName, containerURL.getComponentRenderingWindowReferenceNamespace());
         }
 
         Map<String, String []> parameters = containerURL.getParameterMap();
@@ -360,15 +372,12 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 String name = entry.getKey();
 
                 for (String value : entry.getValue()) {
-                    url.append(firstParamDone ? "&" : "?")
-                    .append(name)
-                    .append('=')
-                    .append(URLEncoder.encode(value, characterEncoding));
-
-                    firstParamDone = true;
+                    queryStringBuilder.append(name, value);
                 }
             }
         }
+
+        url.append(queryStringBuilder.toString());
 
         return url.toString();
     }
