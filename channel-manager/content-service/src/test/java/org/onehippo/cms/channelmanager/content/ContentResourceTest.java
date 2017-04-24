@@ -54,7 +54,7 @@ import static org.easymock.EasyMock.replay;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.net.ssl.*")
+@PowerMockIgnore({"javax.management.*","javax.net.ssl.*"})
 @PrepareForTest({DocumentsService.class, DocumentTypesService.class})
 public class ContentResourceTest extends CXFTest {
 
