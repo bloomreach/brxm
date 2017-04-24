@@ -257,9 +257,8 @@ public class MountResource extends AbstractConfigResource {
     private void createPreviewConfiguration() throws RepositoryException, ClientException {
         String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
         Session session = getPageComposerContextService().getRequestContext().getSession();
-        if (!session.nodeExists(liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE)) {
-            createMandatoryWorkspaceNodesIfMissing(liveConfigurationPath);
-        }
+        createMandatoryWorkspaceNodesIfMissing(liveConfigurationPath);
+
         String liveConfigName = StringUtils.substringAfterLast(liveConfigurationPath, "/");
         Node previewConfigNode = session.getNode(liveConfigurationPath).getParent().addNode(liveConfigName + "-preview", NODETYPE_HST_CONFIGURATION);
         previewConfigNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, new String[] {"../" + liveConfigName});
@@ -344,8 +343,11 @@ public class MountResource extends AbstractConfigResource {
             final HstRequestContext requestContext = context.getRequestContext();
             Session session = requestContext.getSession();
 
-            List<String> mainConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
-            copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainConfigNodeNamesToPublish);
+            List<String> mainNonWorkspaceConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds, false);
+            List<String> mainWorkspaceConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds, true);
+
+            copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainNonWorkspaceConfigNodeNamesToPublish);
+            copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainWorkspaceConfigNodeNamesToPublish);
 
             channelHelper.publishChanges(userIds);
             siteMapHelper.publishChanges(userIds);
@@ -524,8 +526,10 @@ public class MountResource extends AbstractConfigResource {
             String previewConfigurationPath = editingPreviewSite.getConfigurationPath();
 
             Session session = requestContext.getSession();
-            List<String> mainConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
-            copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainConfigNodeNamesToRevert);
+            List<String> mainNonWorkspaceConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds, false);
+            List<String> mainWorkspaceConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds, true);
+            copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainNonWorkspaceConfigNodeNamesToRevert);
+            copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainWorkspaceConfigNodeNamesToRevert);
 
             channelHelper.discardChanges(userIds);
             siteMapHelper.discardChanges(userIds);
@@ -556,18 +560,15 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-
-    /**
-     * @deprecated since CMS 12.0 this should not be supported any more since main config nodes are only edited by the
-     * hst config editor for which we will drop support
-     */
-    @Deprecated
-    private List<String> findChangedMainConfigNodeNamesForUsers(final Session session, String previewConfigurationPath, List<String> userIds) throws RepositoryException {
+    private List<String> findChangedMainConfigNodeNamesForUsers(final Session session,
+                                                                final String previewConfigurationPath,
+                                                                final List<String> userIds,
+                                                                final boolean isWorkspace) throws RepositoryException {
         if (userIds.isEmpty()) {
             return Collections.emptyList();
         }
 
-        final String xpath = buildXPathQueryToFindMainConfigNodesForUsers(previewConfigurationPath, userIds);
+        final String xpath = buildXPathQueryToFindMainConfigNodesForUsers(previewConfigurationPath, userIds, isWorkspace);
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
 
         final NodeIterable mainConfigNodesForUsers = new NodeIterable(result.getNodes());
@@ -611,18 +612,17 @@ public class MountResource extends AbstractConfigResource {
         return xpath.toString();
     }
 
-    /**
-     * @deprecated since CMS 12.0 this should not be supported any more since main config nodes are only edited by the
-     * hst config editor for which we will drop support
-     */
-    @Deprecated
-    static String buildXPathQueryToFindMainConfigNodesForUsers(String previewConfigurationPath, List<String> userIds) {
+    static String buildXPathQueryToFindMainConfigNodesForUsers(final String previewConfigurationPath, final List<String> userIds,
+                                                               final boolean workspace) {
         if (userIds.isEmpty()) {
             throw new IllegalArgumentException("List of user IDs cannot be empty");
         }
 
         StringBuilder xpath = new StringBuilder("/jcr:root");
         xpath.append(ISO9075.encodePath(previewConfigurationPath));
+        if (workspace) {
+            xpath.append("/hst:workspace");
+        }
         xpath.append("/*[");
 
         String concat = "";
@@ -640,17 +640,18 @@ public class MountResource extends AbstractConfigResource {
         return xpath.toString();
     }
 
-    /**
-     * @deprecated since CMS 12.0 this should not be supported any more since main config nodes are only edited by the
-     * hst config editor for which we will drop support
-     */
-    @Deprecated
     private void copyChangedMainConfigNodes(final Session session,
                                             final String fromConfig,
                                             final String toConfig,
                                             final List<String> mainConfigNodeNames) throws RepositoryException {
         for (String mainConfigNodeName : mainConfigNodeNames) {
-            if (mainConfigNodeName.contains("/")) {
+            if (mainConfigNodeName.startsWith("hst:workspace/")) {
+                if (StringUtils.substringAfter(mainConfigNodeName, "hst:workspace/").contains("/")) {
+                    log.warn("Skip illegal main config node name '{}' because it contains a '/' after the " +
+                            "hst:workspace node.", mainConfigNodeName);
+                    continue;
+                }
+            } else if (mainConfigNodeName.contains("/")) {
                 log.warn("Skip illegal main config node name '{}' because it contains a '/'.", mainConfigNodeName);
                 continue;
             }

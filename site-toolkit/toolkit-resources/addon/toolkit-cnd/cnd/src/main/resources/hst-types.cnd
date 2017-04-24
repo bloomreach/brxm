@@ -248,7 +248,10 @@
 [hst:workspace] > nt:base orderable
 + hst:containers (hst:containercomponentfolder) = hst:containercomponentfolder
 + hst:sitemenus (hst:sitemenus) = hst:sitemenus
++ hst:abstractpages (hst:pages) = hst:pages
 + hst:pages (hst:pages) = hst:pages
++ hst:components (hst:components) = hst:components
++ hst:templates (hst:templates) = hst:templates
 + hst:sitemap (hst:sitemap) = hst:sitemap
 + hst:channel (hst:channel) = hst:channel
 

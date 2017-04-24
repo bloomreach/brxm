@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -133,7 +134,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
 
     @Test
     public void test_create_with_prototype_container_items() throws Exception {
-        final Node prototype = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:prototypepages/prototype-page");
+        final Node prototype = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page");
         final Node containerItem1 = prototype.getNode("main/container1").addNode("x", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         containerItem1.setProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE, "HST.Item");
         final Node containerItem2 = prototype.getNode("main/container1").addNode("y", HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
@@ -623,7 +624,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
     @Test
     public void test_create_below_invalid_parent() throws Exception {
         initContext();
-        final Node menuNode = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:sitemenus/main");
+        final Node menuNode = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemenus/main");
         String uuidInvalidLocation = menuNode.getIdentifier();
         final SiteMapItemRepresentation homeChild = createSiteMapItemRepresentation("homeChild", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
@@ -654,6 +655,42 @@ public class CreateTest extends AbstractSiteMapResourceTest {
     @Test
     public void test_create_fails_when_exists_in_non_workspace_sitemap() throws Exception {
         initContext();
+        assertPageCreationFails();
+    }
+
+
+    /**
+     * Since non-workspace items have precedence, we should not be able to override the page in preview workspace
+     * since (an inherited) live workspace already got one : Reason for this is that if we have 'branch' support in,
+     * we have to be able to merge back to master. If master already contains the same page in non-workspace, the
+     * merged page will never become live because non-workspace has precedence.
+     */
+    @Test
+    public void test_create_fails_when_exists_in_non_workspace_sitemap_of_inherited_config() throws Exception {
+        session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode("hst:sitemap", "hst:sitemap");
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/about-us",
+                "/hst:hst/hst:configurations/unittestcommon/hst:sitemap/about-us");
+        session.save();
+        initContext();
+        assertPageCreationFails();
+    }
+
+    /**
+     * Same as above. We do not support non-workspace pages to be overridden in the channel mngr, even of inherited
+     * configuration : Reason for this is that if we have 'branch' support in,
+     * we have to be able to merge back to master. If master already contains the same page in non-workspace, the
+     * merged page will never become live because non-workspace has precedence.
+     */
+    @Test
+    public void test_create_fails_when_exists_in_non_workspace_sitemap_of_inherited_inherited_config() throws Exception {
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/about-us",
+                "/hst:hst/hst:configurations/hst:default/hst:sitemap/about-us");
+        session.save();
+        initContext();
+        assertPageCreationFails();
+    }
+
+    private void assertPageCreationFails() throws RepositoryException {
         final SiteMapItemRepresentation newItem = createSiteMapItemRepresentation("about-us", getPrototypePageUUID());
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newItem);
@@ -662,9 +699,29 @@ public class CreateTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
+    public void test_create_succeeds_when_exists_in_workspace_sitemap_of_inherited_config() throws Exception {
+        Node workspace = session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode("hst:workspace", "hst:workspace");
+        workspace.addNode("hst:sitemap", "hst:sitemap");
+        session.getNode("/hst:hst/hst:configurations/unittestproject")
+                .setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/about-us",
+                "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/about-us");
+        session.save();
+        initContext();
+        assertPageCreationSucceeds();
+    }
+
+
+    private void assertPageCreationSucceeds() throws RepositoryException {
+        final SiteMapItemRepresentation newItem = createSiteMapItemRepresentation("about-us", getPrototypePageUUID());
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.create(newItem);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    }
+
+    @Test
     public void test_create_succeeds_when_no_non_workspace_sitemap() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
-        session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:sitemap").remove();
         session.save();
         initContext();
         final SiteMapItemRepresentation newItem = createSiteMapItemRepresentation("about-us", getPrototypePageUUID());

@@ -178,16 +178,17 @@ public class PagesHelper extends AbstractHelper {
             final Node referencedNode = session.getNodeByIdentifier(sourceReference.getCanonicalIdentifier());
             final List<String> configurationRelativePathSegments = getConfigurationRelativePathSegments(referencedNode);
             final String configurationRelativePath = getConfigurationRelativePath(configurationRelativePathSegments);
-            final String targetAbsolutePath = targetSite.getConfigurationPath() + "/" + configurationRelativePath;
+            String targetWorkspacePath = targetSite.getConfigurationPath() + "/hst:workspace";
+            final String targetAbsolutePath = targetWorkspacePath + "/" + configurationRelativePath;
             if (session.nodeExists(targetAbsolutePath)) {
                 log.debug("Target reference '{}' exists already in '{}'. Most likely it was not yet part of the model before. " +
                         "Nothing needs to be copied.", targetAbsolutePath, targetSite);
                 return;
             }
             final String mainConfigNodeName = configurationRelativePathSegments.get(0);
-            final String mainConfigNodePath = targetSite.getConfigurationPath() + "/" + mainConfigNodeName;
+            final String mainConfigNodePath = targetWorkspacePath + "/" + mainConfigNodeName;
             if (!session.nodeExists(mainConfigNodePath)) {
-                session.getNode(targetSite.getConfigurationPath()).addNode(mainConfigNodeName);
+                session.getNode(targetWorkspacePath).addNode(mainConfigNodeName);
             }
             // try to acquire the lock first
             final Node mainConfigNode = session.getNode(mainConfigNodePath);
@@ -200,8 +201,12 @@ public class PagesHelper extends AbstractHelper {
                     // found the missing node : This one needs to be copied
                     // first find the original
                     final String existingRelativePath = getConfigurationRelativePath(configurationRelativePathSegments.subList(0, i));
-                    final Node copy = JcrUtils.copy(session, sourceSite.getConfigurationPath() + "/" + existingRelativePath + "/" + configurationRelativePathSegments.get(i),
-                            targetSite.getConfigurationPath() + "/" + existingRelativePath + "/" + configurationRelativePathSegments.get(i));
+
+                    String sourcePath = StringUtils.substringBefore(session.getNodeByIdentifier(sourceReference.getCanonicalIdentifier()).getPath(), existingRelativePath)
+                            + existingRelativePath + "/" + configurationRelativePathSegments.get(i);
+
+                    final Node copy = JcrUtils.copy(session, sourcePath,
+                            targetWorkspacePath + "/" + existingRelativePath + "/" + configurationRelativePathSegments.get(i));
                     // repeat the same reference checking for the copied node
                     checkReferencesRecursive(copy, sourceSite, targetSite, checkedNodes);
                 }

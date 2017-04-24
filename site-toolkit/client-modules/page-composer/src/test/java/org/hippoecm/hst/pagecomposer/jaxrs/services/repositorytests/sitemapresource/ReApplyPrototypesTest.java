@@ -64,8 +64,8 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
         testContext.catalogItem = addDefaultCatalogItem();
         final Node secondPrototypeNode;
         if (secondPrototype.length == 0) {
-            secondPrototypeNode = JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject-preview/hst:prototypepages/prototype-page",
-                    "/hst:hst/hst:configurations/unittestproject-preview/hst:prototypepages/protoxxx");
+            secondPrototypeNode = JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/prototype-page",
+                    "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx");
         } else {
             // build it
             RepositoryTestCase.build(secondPrototype, session);

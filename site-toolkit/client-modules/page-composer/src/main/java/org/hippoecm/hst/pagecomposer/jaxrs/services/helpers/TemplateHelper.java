@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_TEMPLATES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_TEMPLATE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_TEMPLATES;
 
@@ -84,7 +86,7 @@ public class TemplateHelper extends AbstractHelper {
                 // present in preview but not yet in live. If the current user then publishes his changes, the template won't
                 // get published because the current user does not own the lock. We need to double check that if
                 // 'hst:templates' section is locked by someone else, that the template we need is already live.
-                final String templatesPath = getTemplatesPath(pageCopyContext.getTargetMount());
+                final String templatesPath = getWorkspaceTemplatesPath(pageCopyContext.getTargetMount());
                 if (session.nodeExists(templatesPath)) {
                     // check whether locked by someone else
                     final boolean locked = lockHelper.getUnLockableNode(session.getNode(templatesPath), false, false) != null;
@@ -123,15 +125,17 @@ public class TemplateHelper extends AbstractHelper {
     private void copyTemplate(final HstComponentsConfigurationService.Template template,
                               final Mount targetMount,
                               final Session session) throws RepositoryException {
-        final String templatesPath = getTemplatesPath(targetMount);
+        final String templatesPath = getWorkspaceTemplatesPath(targetMount);
         if (!session.nodeExists(templatesPath)) {
-            session.getNode(targetMount.getHstSite().getConfigurationPath()).addNode(NODENAME_HST_TEMPLATES, NODETYPE_HST_TEMPLATES);
+            session.getNode(targetMount.getHstSite().getConfigurationPath() +"/" + NODENAME_HST_WORKSPACE).addNode(NODENAME_HST_TEMPLATES, NODETYPE_HST_TEMPLATES);
         }
+        // TODO make the template more fine-grained locked: Instead of locking hst:templates just lock the specific template
+        // TODO unless 'hst:templates' node is just added, see HSTTWO-3959
         lockHelper.acquireSimpleLock(session.getNode(templatesPath), 0L);
         JcrUtils.copy(session, template.getPath(), templatesPath + "/" + template.getName());
     }
 
-    private String getTemplatesPath(final Mount targetMount) {
-        return targetMount.getHstSite().getConfigurationPath() + "/" + NODENAME_HST_TEMPLATES;
+    private String getWorkspaceTemplatesPath(final Mount targetMount) {
+        return targetMount.getHstSite().getConfigurationPath() +"/" + NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_TEMPLATES;
     }
 }
