@@ -31,6 +31,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -176,6 +177,24 @@ public class MountResource extends AbstractConfigResource {
         log.info("New Page model loaded successfully");
         return ok("New Page model loaded successfully", newPageModelRepresentation);
     }
+
+    @POST
+    @Path("/selectbranch")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response selectBranch(@QueryParam("mountId") final String mountId, String branchId) {
+        log.debug("Select branch:{} of mount:{}", branchId, mountId);
+        return ok("Branch selected successfully");
+    }
+
+    @PUT
+    @Path("/createbranch")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createBranch(@QueryParam("mountId") final String mountId, String branchId) {
+        log.debug("Create branch:{} from mount:{}", branchId, mountId);
+        return ok("Branch created successfully");
+    }
+
+
 
     private NewPageModelRepresentation getNewPageModelRepresentation(final Mount mount) {
         PrototypesRepresentation prototypePagesRepresentation = new PrototypesRepresentation().represent(mount.getHstSite(),
