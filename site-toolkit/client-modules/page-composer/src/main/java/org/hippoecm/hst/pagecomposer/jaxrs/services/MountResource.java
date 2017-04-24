@@ -69,6 +69,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.event.HippoEvent;
@@ -178,31 +179,69 @@ public class MountResource extends AbstractConfigResource {
         return ok("New Page model loaded successfully", newPageModelRepresentation);
     }
 
-    @POST
-    @Path("/selectbranch")
+    @PUT
+    @Path("/selectbranch/{branchId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response selectBranch(@QueryParam("mountId") final String mountId, final String branchId) {
-        log.debug("Select branch:{} of mount:{}", branchId, mountId);
+    public Response selectBranch(@PathParam("branchId") final String branchId) {
+        log.debug("Select branch:{} of channel:{}", branchId, getPageComposerContextService().getEditingMount().getChannel());
         return ok("Branch selected successfully");
     }
 
-    @POST
+    @PUT
     @Path("/selectmaster")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response selectMaster(@QueryParam("mountId") final String mountId) {
-        log.debug("Select master  of mount:{}", mountId);
+    public Response selectMaster() {
+        log.debug("Select master  of channel:{}", getPageComposerContextService().getEditingMount().getChannel());
         return ok("Master branch selected successfully");
     }
 
     @PUT
-    @Path("/createbranch")
+    @Path("/createbranch/{branchId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createBranch(@QueryParam("mountId") final String mountId, final String branchId) {
-        log.debug("Create branch:{} from mount:{}", branchId, mountId);
-        return ok("Branch created successfully");
+    public Response createBranch(@PathParam("branchId") final String branchId) {
+        try {
+            doCreateBranch(branchId);
+            log.debug("Create branch:{} from channel:{}", branchId, getPageComposerContextService().getEditingMount().getChannel());
+            return ok("Branch created successfully");
+        } catch (RepositoryException e) {
+            log.warn("Could not create a branch : ", e);
+            return error("Could not create a branch : " + e);
+        } catch (ClientException e) {
+            log.warn("Could not create a branch : ", e);
+            return clientError("Could not create a branch : ", e.getErrorStatus());
+        }
     }
 
+    private void doCreateBranch(final String branchId) throws RepositoryException, ClientException {
+        assertValidName(branchId);
 
+        String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
+        Session session = getPageComposerContextService().getRequestContext().getSession();
+
+        Node liveMasterConfigurationNode = session.getNode(liveConfigurationPath);
+        String liveConfigName = StringUtils.substringAfterLast(liveConfigurationPath, "/");
+        String liveBranchName = liveConfigName + "-" + branchId;
+        if (liveMasterConfigurationNode.getParent().hasNode(liveBranchName)) {
+            throw new ClientException(String.format("Branch '%s' cannot be created or '%s' because it exists already",
+                    liveBranchName, liveConfigurationPath), ClientError.ITEM_EXISTS);
+        }
+        Node liveBranchConfigNode = liveMasterConfigurationNode.getParent().addNode(liveBranchName, NODETYPE_HST_CONFIGURATION);
+        liveBranchConfigNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
+        // TODO if 'master config node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
+        // TODO as well to the preview config, see HSTTWO-3965
+        JcrUtils.copy(session, liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE, liveBranchConfigNode.getPath() + "/" + NODENAME_HST_WORKSPACE);
+        createMandatoryWorkspaceNodesIfMissing(liveBranchConfigNode.getPath());
+    }
+
+    private void assertValidName(final String branchId) {
+        if (StringUtils.isBlank(branchId) || branchId.equals("preview")) {
+            throw new ClientException(String.format("Invalid branchId '%s'", branchId), ClientError.INVALID_NAME);
+        }
+        String encoded = NodeNameCodec.encode(branchId);
+        if (!branchId.equals(encoded)) {
+            throw new ClientException(String.format("Invalid branchId '%s'", branchId), ClientError.INVALID_NAME);
+        }
+    }
 
     private NewPageModelRepresentation getNewPageModelRepresentation(final Mount mount) {
         PrototypesRepresentation prototypePagesRepresentation = new PrototypesRepresentation().represent(mount.getHstSite(),
@@ -275,7 +314,7 @@ public class MountResource extends AbstractConfigResource {
         } catch (RepositoryException e) {
             log.warn("Could not create a preview configuration : ", e);
             return error("Could not create a preview configuration : " + e);
-        } catch (ClientException e){
+        } catch (ClientException e) {
             log.warn("Could not create a preview configuration : ", e);
             return clientError("Could not create a preview configuration : ", e.getErrorStatus());
         }
@@ -288,7 +327,7 @@ public class MountResource extends AbstractConfigResource {
 
         String liveConfigName = StringUtils.substringAfterLast(liveConfigurationPath, "/");
         Node previewConfigNode = session.getNode(liveConfigurationPath).getParent().addNode(liveConfigName + "-preview", NODETYPE_HST_CONFIGURATION);
-        previewConfigNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, new String[] {"../" + liveConfigName});
+        previewConfigNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
         // TODO if 'liveconfig node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
         // TODO as well to the preview config, see HSTTWO-3965
         JcrUtils.copy(session, liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE, previewConfigNode.getPath() + "/" + NODENAME_HST_WORKSPACE);

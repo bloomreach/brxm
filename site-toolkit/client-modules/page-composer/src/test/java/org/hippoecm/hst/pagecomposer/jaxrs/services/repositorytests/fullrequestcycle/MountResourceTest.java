@@ -348,5 +348,31 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         }
     }
 
+    @Test
+    public void create_branch_as_admin() throws Exception {
+        createBranchAssertions(ADMIN_CREDENTIALS, "foo");
+    }
+
+    @Test
+    public void create_branch_as_webmaster() throws Exception {
+        createBranchAssertions(EDITOR_CREDENTIALS, "foo");
+    }
+
+    private Map<String, Object> createBranch(final Credentials creds, final String branchName) throws RepositoryException, IOException, ServletException {
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/"+ mountId + "./createbranch/"+ branchName, null, "PUT");
+
+        final MockHttpServletResponse response = render(mountId, requestResponse, creds);
+        final String restResponse = response.getContentAsString();
+        return mapper.reader(Map.class).readValue(restResponse);
+    }
+
+    private void createBranchAssertions(final Credentials creds, final String branchName) throws RepositoryException, IOException, ServletException {
+        final Map<String, Object> responseMap = createBranch(creds, branchName);
+        assertEquals(Boolean.TRUE, responseMap.get("success"));
+        assertEquals("Branch created successfully", responseMap.get("message"));
+        // TODO add assertions
+    }
 
 }
