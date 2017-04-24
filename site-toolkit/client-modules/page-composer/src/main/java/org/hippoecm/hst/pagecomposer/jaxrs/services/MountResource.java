@@ -181,7 +181,7 @@ public class MountResource extends AbstractConfigResource {
     @POST
     @Path("/selectbranch")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response selectBranch(@QueryParam("mountId") final String mountId, String branchId) {
+    public Response selectBranch(@QueryParam("mountId") final String mountId, final String branchId) {
         log.debug("Select branch:{} of mount:{}", branchId, mountId);
         return ok("Branch selected successfully");
     }
@@ -189,7 +189,7 @@ public class MountResource extends AbstractConfigResource {
     @PUT
     @Path("/createbranch")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createBranch(@QueryParam("mountId") final String mountId, String branchId) {
+    public Response createBranch(@QueryParam("mountId") final String mountId, final String branchId) {
         log.debug("Create branch:{} from mount:{}", branchId, mountId);
         return ok("Branch created successfully");
     }
