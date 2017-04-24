@@ -145,7 +145,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
 
         Channel channel = channelsCache.get(cachekey);
         if (channel != null ) {
-            return channel;
+            return clone(channel);
         }
 
         CompositeConfigurationNodes.CompositeConfigurationNode channelCompositeNode = ccn.getCompositeConfigurationNodes().get(NODENAME_HST_CHANNEL);
@@ -169,7 +169,13 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
             events.add(configurationPath + "-preview/hst:workspace/hst:channel");
         }
         channelsCache.put(cachekey, channel, events.toArray(new String[events.size()]));
-        return channel;
+        return clone(channel);
+    }
+
+    // since org.hippoecm.hst.configuration.site.HstSiteService.init() can change the Channel object with
+    // setters, we return a cloned Channel object to avoid an existing Channel object to be changed
+    private Channel clone(final Channel channel) {
+        return new Channel(channel);
     }
 
     /**
