@@ -41,7 +41,6 @@
     <sf.htmlcleaner.version>2.19</sf.htmlcleaner.version>
 
     <!-- test dependencies -->
-    <hippo.testutils.version>1.0.0-SNAPSHOT</hippo.testutils.version>
     <easymock.version>3.0</easymock.version>
     <junit.version>4.11</junit.version>
   </properties>
@@ -113,13 +112,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-testutils</artifactId>
       <version>${hippo.repository.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-testutils</artifactId>
-      <version>${hippo.testutils.version}</version>
       <scope>test</scope>
     </dependency>
 
