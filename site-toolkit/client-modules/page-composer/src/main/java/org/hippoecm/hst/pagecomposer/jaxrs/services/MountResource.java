@@ -186,6 +186,14 @@ public class MountResource extends AbstractConfigResource {
         return ok("Branch selected successfully");
     }
 
+    @POST
+    @Path("/selectmaster")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response selectMaster(@QueryParam("mountId") final String mountId) {
+        log.debug("Select master  of mount:{}", mountId);
+        return ok("Master branch selected successfully");
+    }
+
     @PUT
     @Path("/createbranch")
     @Produces(MediaType.APPLICATION_JSON)
