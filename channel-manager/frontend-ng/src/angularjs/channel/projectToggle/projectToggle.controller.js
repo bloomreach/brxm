@@ -22,7 +22,6 @@ class ProjectToggleController {
 
     this.$translate = $translate;
     this.OverlayService = OverlayService;
-    this.ChannelService = ChannelService;
     this.ProjectService = ProjectService;
     this.available = ProjectService.available;
     const channel = ChannelService.getChannel();
@@ -30,27 +29,25 @@ class ProjectToggleController {
     this.withBranch = [this.MASTER];
     this.selectedProject = this.MASTER;
     this._setProjects();
-    this.available = false;
-  }
-  $OnInit() {
-    this.available = this.ProjectService.available;
   }
   _setProjects() {
-    this.ProjectService.projects(this.ChannelService.getChannel().id)
+    this.ProjectService.projects()
       .then((response) => {
         this.withBranch = this.withBranch.concat(response.withBranch);
         this.withoutBranch = response.withoutBranch;
       });
   }
   projectChanged() {
-    if (this.selectedProject.id === this.MASTER.id) return;
+    if (this.selectedProject.id === this.MASTER.id) {
+      this.ProjectService.doSelectMaster();
+      return;
+    }
     if (this.withBranch.indexOf(this.selectedProject) >= 0) {
       this.ProjectService.doSelectBranch(this.selectedProject);
     } else {
       this.ProjectService.doCreateBranch(this.selectedProject);
     }
   }
-
 }
 
 export default ProjectToggleController;

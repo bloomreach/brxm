@@ -29,8 +29,8 @@ class ProjectService {
     this.HstService = HstService;
   }
 
-  projects(id) {
-    const url = `${this.ConfigService.getCmsContextPath()}${REST_API_PATH}/${id}/channel`;
+  projects() {
+    const url = `${this.ConfigService.getCmsContextPath()}${REST_API_PATH}/${this.ChannelService.getChannel().mountId}/channel`;
     return this.$http({ method: 'GET', url, headers: {}, data: {} })
       .then(result => result.data);
   }
@@ -41,6 +41,10 @@ class ProjectService {
 
   doSelectBranch(project) {
     this.HstService.doPost(project.id, this.ChannelService.getChannel().mountId, 'selectbranch');
+  }
+
+  doSelectMaster() {
+    this.HstService.doPost(null, this.ChannelService.getChannel().mountId, 'selectmaster');
   }
 
 }
