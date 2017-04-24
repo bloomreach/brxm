@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.repository.testutils.ExecuteOnLogLevel;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -51,17 +51,13 @@ public class TestSameEndpointMultipleTimes extends CXFTest {
     @Test
     public void makingIllegalCallMustBeSuppressible() {
         // Suppress warning for calling non-existing verb
-        ExecuteOnLogLevel.error(
-                new Runnable() {
-                    public void run() {
-                        when()
-                                .delete("/helloworld")
-                        .then()
-                                .statusCode(405);
-                    }
-                },
-                JAXRSUtils.class.getName(),
-                WebApplicationExceptionMapper.class.getName()
-        );
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn()
+                .deny(JAXRSUtils.class, WebApplicationExceptionMapper.class)
+                .build()) {
+            when()
+                    .delete("/helloworld")
+            .then()
+                    .statusCode(405);
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,16 +19,12 @@ package org.hippoecm.repository;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.security.AccessControlException;
-import java.util.Arrays;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.logging.Level;
 
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
@@ -55,8 +51,7 @@ public class LoggingServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-
-    private static final Logger log = LoggerFactory.getLogger(LoggingServlet.class);
+    protected static final Logger log = LoggerFactory.getLogger(LoggingServlet.class);
 
     private static final String REPOS_PARAM = "repository-address";
     private static final String NODE_PARAM = "logging-check-node";
@@ -68,8 +63,13 @@ public class LoggingServlet extends HttpServlet {
 
     private static final String LOG_LEVEL_PARAM_NAME = "ll";
 
-    private static final boolean isLog4jLog = "org.slf4j.impl.Log4jLoggerAdapter".equals(log.getClass().getName());
+    @Deprecated
+    private static final boolean isLog4j1Log = "org.slf4j.impl.Log4jLoggerAdapter".equals(log.getClass().getName());
+    private static final boolean isLog4j2Log = "org.apache.logging.slf4j.Log4jLogger".equals(log.getClass().getName());
     private static final boolean isJDK14Log = "org.slf4j.impl.JDK14LoggerAdapter".equals(log.getClass().getName());
+
+    private transient LoggerLevelManager llManager;
+    private transient List<String> logLevels;
 
     private transient HippoRepository repository;
     private transient Session session;
@@ -77,12 +77,6 @@ public class LoggingServlet extends HttpServlet {
     private String repositoryLocation;
     private String privilege;
     private String absPath;
-
-    private static final String[] log4jLevels = new String[] { "OFF", "SEVERE", "ERROR", "WARN", "INFO", "DEBUG",
-            "TRACE", "ALL" };
-
-    private static final String[] jdk14Levels = new String[] { "OFF", "SEVERE", "WARNING", "INFO", "CONFIG", "FINE",
-            "FINER", "FINEST", "ALL" };
 
     private Configuration freeMarkerConfiguration;
 
@@ -96,6 +90,31 @@ public class LoggingServlet extends HttpServlet {
         freeMarkerConfiguration = createFreemarkerConfiguration();
 
         super.init(config);
+
+        if (isJDK14Log) {
+            llManager = new JDK14LoggerLevelManager();
+            logLevels = llManager.getLogLevels();
+        } else if (isLog4j1Log) {
+            try {
+                Class llManagerClass = Class.forName("org.hippoecm.repository.Log4j1LoggerLevelManager");
+                llManager = (LoggerLevelManager)llManagerClass.newInstance();
+                logLevels = llManager.getLogLevels();
+            } catch (Exception e) {
+                log.error("Error getting Log4j1LoggerLevelManager through reflection: " + e.getMessage(), e);
+            }
+        } else if (isLog4j2Log) {
+            try {
+                Class llManagerClass = Class.forName("org.hippoecm.repository.Log4j2LoggerLevelManager");
+                llManager = (LoggerLevelManager)llManagerClass.newInstance();
+                logLevels = llManager.getLogLevels();
+            } catch (Exception e) {
+                log.error("Error getting Log4j2LoggerLevelManager through reflection: " + e.getMessage(), e);
+            }
+        } else {
+            llManager = null;
+            logLevels = Collections.emptyList();
+            log.error("Unable to determine logger system. Logger class in use: " + log.getClass().getName());
+        }
     }
 
     /**
@@ -200,11 +219,7 @@ public class LoggingServlet extends HttpServlet {
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
         try {
-            if (isJDK14Log) {
-                templateParams.put("logLevels", Arrays.asList(jdk14Levels));
-            } else if (isLog4jLog) {
-                templateParams.put("logLevels", Arrays.asList(log4jLevels));
-            }
+            templateParams.put("logLevels", logLevels);
 
             templateParams.put("loggerInUse", log);
             Map<String, LoggerLevelInfo> loggerLevelInfosMap = getLoggerLevelInfosMap();
@@ -291,70 +306,7 @@ public class LoggingServlet extends HttpServlet {
      * @return SortedMap<String, LoggerLevelInfo>
      */
     private SortedMap<String, LoggerLevelInfo> getLoggerLevelInfosMap() {
-        SortedMap<String, LoggerLevelInfo> loggerLevelInfosMap = new TreeMap<String, LoggerLevelInfo>();
-
-        if (isJDK14Log) {
-            java.util.logging.LogManager manager = java.util.logging.LogManager.getLogManager();
-
-            for (Enumeration<String> namesIter = manager.getLoggerNames(); namesIter.hasMoreElements();) {
-                String loggerName = namesIter.nextElement();
-                java.util.logging.Logger logger = manager.getLogger(loggerName);
-                java.util.logging.Level level = logger.getLevel();
-                java.util.logging.Level effectiveLevel = level;
-
-                // try to find effective level
-                if (level == null) {
-                    for (java.util.logging.Logger l = logger; l != null; l = l.getParent()) {
-                        if (l.getLevel() != null) {
-                            effectiveLevel = l.getLevel();
-                            break;
-                        }
-                    }
-                }
-
-                if (level != null) {
-                    loggerLevelInfosMap.put(loggerName, new LoggerLevelInfo(loggerName, level.toString()));
-                } else {
-                    loggerLevelInfosMap.put(loggerName, new LoggerLevelInfo(loggerName, null, effectiveLevel.toString()));
-                }
-            }
-        } else if (isLog4jLog) {
-            try {
-                // Log4j Classes
-                Class<?> loggerClass = Class.forName("org.apache.log4j.Logger");
-                Class<?> managerClass = Class.forName("org.apache.log4j.LogManager");
-
-                // Log4j Methods
-                Method getName = loggerClass.getMethod("getName", null);
-                Method getLevel = loggerClass.getMethod("getLevel", null);
-                Method getEffectiveLevel = loggerClass.getMethod("getEffectiveLevel", null);
-                Method getLoggers = managerClass.getMethod("getCurrentLoggers", null);
-
-                // get and sort loggers and log levels
-                Enumeration loggers = (Enumeration) getLoggers.invoke(null, null);
-
-                while (loggers.hasMoreElements()) {
-                    try {
-                        Object logger = loggers.nextElement();
-                        String loggerName = (String) getName.invoke(logger, null);
-                        Object level = getLevel.invoke(logger, null);
-                        Object effectiveLevel = getEffectiveLevel.invoke(logger, null);
-
-                        if (level != null) {
-                            loggerLevelInfosMap.put(loggerName, new LoggerLevelInfo(loggerName, level.toString()));
-                        } else {
-                            loggerLevelInfosMap.put(loggerName, new LoggerLevelInfo(loggerName, null, effectiveLevel.toString()));
-                        }
-                    } catch (Exception e) {
-                        log.error("Error getting logger name and level : " + e.getMessage());
-                    }
-                }
-            } catch (Exception e) {
-                log.error("Error getting log4j through reflection: " + e.getMessage(), e);
-            }
-        }
-
-        return loggerLevelInfosMap;
+        return llManager != null ? llManager.getLoggerLevelInfosMap() : Collections.emptySortedMap();
     }
 
     /**
@@ -367,43 +319,8 @@ public class LoggingServlet extends HttpServlet {
             log.warn("Invalid empty name. Not settting log level");
             return;
         }
-
-        if (isJDK14Log) {
-            java.util.logging.LogManager logManager = java.util.logging.LogManager.getLogManager();
-            java.util.logging.Logger logger = logManager.getLogger(name);
-
-            if (logger != null) {
-                logger.setLevel(Level.parse(level));
-            } else {
-                log.warn("Logger not found : " + name);
-            }
-        } else if (isLog4jLog) {
-            try {
-                log.warn("Setting logger " + name + " to level " + level);
-
-                // basic log4j reflection
-                Class<?> loggerClass = Class.forName("org.apache.log4j.Logger");
-                Class<?> levelClass = Class.forName("org.apache.log4j.Level");
-                Class<?> logManagerClass = Class.forName("org.apache.log4j.LogManager");
-                Method setLevel = loggerClass.getMethod("setLevel", levelClass);
-
-                // get the logger
-                Object logger = logManagerClass.getMethod("getLogger", String.class).invoke(null, name);
-
-                // get the static level object field, e.g. Level.INFO
-                Field levelField;
-                levelField = levelClass.getField(level);
-                Object levelObj = levelField.get(null);
-
-                // set the level
-                setLevel.invoke(logger, levelObj);
-            } catch (NoSuchFieldException e) {
-                log.warn("Unable to find Level." + level + " , not adjusting logger " + name);
-            } catch (Exception e) {
-                log.error("Unable to set logger " + name + " + to level " + level, e);
-            }
-        } else {
-            log.warn("Unable to determine logger");
+        if (llManager != null) {
+            llManager.setLoggerLevel(name, level);
         }
     }
 
@@ -413,7 +330,7 @@ public class LoggingServlet extends HttpServlet {
 
         try {
             out = response.getWriter();
-            Map<String, Object> context = new HashMap<String, Object>();
+            Map<String, Object> context = new HashMap<>();
 
             if (templateParams != null && !templateParams.isEmpty()) {
                 for (Map.Entry<String, Object> entry : templateParams.entrySet()) {
@@ -431,6 +348,12 @@ public class LoggingServlet extends HttpServlet {
                 out.close();
             }
         }
+    }
+
+    public interface LoggerLevelManager {
+        List<String> getLogLevels();
+        SortedMap<String, LoggerLevelInfo> getLoggerLevelInfosMap();
+        void setLoggerLevel(String name, String level);
     }
 
     public static class LoggerLevelInfo {

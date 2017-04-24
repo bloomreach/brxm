@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,13 +53,13 @@ public class LoggerRecordingWrapperTest {
 
         assertEquals(3, logRecords.size());
 
-        assertEquals(Level.INFO_INT, logRecords.get(0).getLevel());
+        assertEquals(Level.INFO.intLevel(), logRecords.get(0).getLevel());
         assertEquals("Hello, World!", logRecords.get(0).getFormattedMessage());
 
-        assertEquals(Level.ERROR_INT, logRecords.get(1).getLevel());
+        assertEquals(Level.ERROR.intLevel(), logRecords.get(1).getLevel());
         assertEquals("Hello, Error!", logRecords.get(1).getFormattedMessage());
 
-        assertEquals(Level.ERROR_INT, logRecords.get(2).getLevel());
+        assertEquals(Level.ERROR.intLevel(), logRecords.get(2).getLevel());
         assertEquals("Hello, Runtime Error!", logRecords.get(2).getFormattedMessage());
         assertTrue(logRecords.get(2).getStackTrace().contains("java.lang.RuntimeException: A RuntimeException from Hello"));
     }

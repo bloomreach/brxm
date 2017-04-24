@@ -79,6 +79,7 @@
     <hippo.services.htmlprocessor.version>1.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.utilities.version>4.0.0-SNAPSHOT</hippo.utilities.version>
     <hippo.jcrdiff.version>1.01.05</hippo.jcrdiff.version>
+    <hippo.testutils.version>1.0.0-SNAPSHOT</hippo.testutils.version>
 
     <!-- Test dependencies  -->
     <junit.version>4.10</junit.version>

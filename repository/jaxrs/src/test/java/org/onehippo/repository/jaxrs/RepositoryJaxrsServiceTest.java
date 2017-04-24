@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,9 +43,9 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.RepositoryService;
-import org.onehippo.repository.testutils.ExecuteOnLogLevel;
 import org.onehippo.repository.testutils.PortUtil;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
@@ -161,24 +161,21 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
 
     // Passing in null for the userid will run the check without logging in
     private void expectStatusCode(String userid, String passwd, String path, int statusCode) {
-        ExecuteOnLogLevel.error(
-                new Runnable() {
-                    public void run() {
-                        RequestSpecification client;
-                        if (userid != null) {
-                            client = given().auth().preemptive().basic(userid, String.valueOf(passwd));
-                        } else {
-                            client = given();
-                        }
-                        client.get("http://localhost:" + portNumber + "/jaxrs/" + path + "/")
+        Log4jInterceptor.onWarn()
+            // Adding the following class unfortunately does not suppress the log messages ...
+            // org.apache.http.impl.auth.HttpAuthenticator.class
+            .deny(org.apache.cxf.transport.servlet.ServletController.class)
+            .run(() -> {
+                RequestSpecification client;
+                if (userid != null) {
+                    client = given().auth().preemptive().basic(userid, String.valueOf(passwd));
+                } else {
+                    client = given();
+                }
+                client.get("http://localhost:" + portNumber + "/jaxrs/" + path + "/")
                         .then()
-                                .statusCode(statusCode);
-                    }
-                },
-                org.apache.cxf.transport.servlet.ServletController.class.getName()
-                // Adding the following class unfortunately does not suppress the log messages ...
-                // org.apache.http.impl.auth.HttpAuthenticator.class.getName()
-        );
+                        .statusCode(statusCode);
+            });
     }
 
     private String getTmpTomcatFolderName() {
