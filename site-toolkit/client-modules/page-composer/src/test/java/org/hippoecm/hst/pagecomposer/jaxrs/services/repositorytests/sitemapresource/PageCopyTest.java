@@ -510,12 +510,14 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         moveAbstractPagesFromCommonToUnitTestProject();
         session.save();
         Thread.sleep(100);
-        assertFalse("hst:abstractpages was expected to not exist before the copy page", session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:abstractpages"));
+        assertFalse("hst:abstractpages was expected to not exist before the copy page", session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:abstractpages"));
         crossChannelCopyNewsOverview(MountAction.DISCARD);
         // due to the discard, the 'hst:abstractpages' node should be entirely removed again since the live does not
         // have hst:abstractpages
         assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:abstractpages"));
         assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:abstractpages"));
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:abstractpages"));
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject/hst:workspace/hst:abstractpages"));
 
     }
 
