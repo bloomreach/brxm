@@ -39,6 +39,10 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use {@link org.hippoecm.frontend.plugins.reviewedactions.UnpublishedReferenceNodeProvider}
+ */
+@Deprecated
 public class UnpublishedReferenceProvider implements ISortableDataProvider<String, String> {
 
     private static final long serialVersionUID = 1L;
