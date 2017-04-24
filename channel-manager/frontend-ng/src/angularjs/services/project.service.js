@@ -19,12 +19,14 @@ const REST_API_PATH = 'ws/projects';
 
 class ProjectService {
 
-  constructor($http, ConfigService, PathService) {
+  constructor($http, ConfigService, PathService, ChannelService, HstService) {
     'ngInject';
 
     this.$http = $http;
     this.ConfigService = ConfigService;
     this.PathService = PathService;
+    this.ChannelService = ChannelService;
+    this.HstService = HstService;
   }
 
   projects(id) {
@@ -34,15 +36,11 @@ class ProjectService {
   }
 
   doCreateBranch(project) {
-    // todo(mrop) add url
-    const url = '';
-    return this.$http({ method: 'POST', url, headers: {}, data: project });
+    this.HstService.doPut(project.id, this.ChannelService.getChannel().mountId, 'createbranch');
   }
 
   doSelectBranch(project) {
-    // todo(mrop) add url
-    const url = '';
-    return this.$http({ method: 'POST', url, headers: {}, data: project });
+    this.HstService.doPost(project.id, this.ChannelService.getChannel().mountId, 'selectbranch');
   }
 
 }
