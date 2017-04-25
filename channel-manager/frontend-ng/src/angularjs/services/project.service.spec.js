@@ -21,6 +21,8 @@ describe('ProjectService', () => {
   let $httpBackend;
   let ProjectService;
 
+  const mountId = '12';
+
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
@@ -29,6 +31,13 @@ describe('ProjectService', () => {
 
     angular.mock.module(($provide) => {
       $provide.value('ConfigService', configServiceMock);
+    });
+
+    const channelServiceMock = jasmine.createSpyObj('ChannelService', ['getChannel', 'initialize']);
+    channelServiceMock.getChannel.and.returnValue({ mountId });
+
+    angular.mock.module(($provide) => {
+      $provide.value('ChannelService', channelServiceMock);
     });
 
     inject((_$httpBackend_, _ProjectService_) => {
@@ -61,8 +70,7 @@ describe('ProjectService', () => {
     const returnFromRest = { withBranch, withoutBranch };
     let actual = null;
 
-    $httpBackend.expectGET('/test/ws/projects').respond(404);
-    $httpBackend.expectGET('/test/ws/projects/12/channel').respond(200, returnFromRest);
+    $httpBackend.expectGET(`/test/ws/projects/${mountId}/channel`).respond(200, returnFromRest);
 
     ProjectService.projects(12).then((returned) => {
       actual = returned;
@@ -70,12 +78,5 @@ describe('ProjectService', () => {
     $httpBackend.flush();
 
     expect(actual).toEqual(returnFromRest);
-  });
-
-  it('can detect an absent REST url', () => {
-    $httpBackend.expectGET('/test/ws/projects').respond(404);
-    $httpBackend.flush();
-
-    expect(ProjectService.available).toBe(false);
   });
 });
