@@ -66,6 +66,12 @@
       <url>http://maven.onehippo.com/maven2/</url>
     </repository>
     <repository>
+      <id>hippo-maven2-forge</id>
+      <name>Hippo Maven 2 Forge Repository</name>
+      <url>http://maven.onehippo.com/maven2-forge/</url>
+      <snapshots />
+    </repository>
+    <repository>
       <id>hippo-maven2-enterprise</id>
       <name>Hippo Maven 2 Enterprise</name>
       <url>https://maven.onehippo.com/maven2-enterprise/</url>
