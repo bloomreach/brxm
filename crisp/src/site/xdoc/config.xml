@@ -10,11 +10,92 @@
   </properties>
   <body>
 
-    <section name="Introduction">
+    <section name="Configuring Hippo Addon CRISP">
 
-      <p>
-        TODO
-      </p>
+      <subsection name="Introduction">
+        <p>
+          <strong>CRISP</strong> configurations are maintained in repository by default in the location at
+          <code>/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig</code>, like the following
+          example:
+        </p>
+        <div class="brush: xml">
+          <source><![CDATA[
+  <?xml version="1.0" encoding="UTF-8"?>
+  <sv:node sv:name="hippo:moduleconfig" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>crisp:moduleconfig</sv:value>
+    </sv:property>
+    <sv:node sv:name="crisp:resourceresolvercontainer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>crisp:resourceresolvercontainer</sv:value>
+      </sv:property>
+      <!-- A ResourceResolver configuration child node for 'demoProductCatalogs' resource space! -->
+      <sv:node sv:name="demoProductCatalogs">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>crisp:resourceresolver</sv:value>
+        </sv:property>
+        <sv:property sv:name="crisp:beandefinition" sv:type="String">
+          <sv:value>
+            <!-- XML Bean definition here for a ResourceResolver for the resource space, 'demoProductCatalogs'. -->
+          </sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="crisp:propnames" sv:type="String">
+          <sv:value>example.commerce.api.base.uri</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="crisp:propvalues" sv:type="String">
+          <sv:value>http://localhost:8080/example-commerce/api/v1</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+          ]]></source>
+        </div>
+        <p>
+          You can bootstrap configurations into the node, or you can update the configuration there at runtime.
+          Any changes at runtime will be affected right away.
+        </p>
+        <p>
+          Before going further, let's take a look at how the configuration nodes are structured:
+        </p>
+        <ul>
+          <li>
+            The <strong>CRISP</strong> module configuration node at <code>/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig</code>
+            must be of primary node type, <code>crisp:moduleconfig</code>.
+          </li>
+          <li>
+            The <strong>CRISP</strong> module configuration node has single child node named <code>crisp:resourceresolvercontainer</code>
+            of primary node type, <code>crisp:resourceresolvercontainer</code>, that may contain zero or multiple
+            child node(s) specifying <code>ResourceResolver</code>s, which primary node type is <code>crisp:resourceresolver</code>,
+            for each <strong><i>resource space</i></strong> underneath.
+            So, in the example shown above, there is only one <code>ResourceResolver</code> configuration for a resource
+            named <code>demoProductCatalogs</code>.
+          </li>
+          <li>
+            A <code>ResourceResolver</code> configuration node under <code>/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer</code>
+            must be of primary node type, <code>crisp:resourceresolver</code>.
+          </li>
+          <li>
+            A <code>ResourceResolver</code> configuration node (of primary node type, <code>crisp:resourceresolver</code>)
+            could have <code>crisp:propnames (string multiple)</code>, <code>crisp:propvalues (string multiple)</code>
+            and <code>crisp:beandefinition (string)</code> properties.
+          </li>
+          <li>
+            <code>crisp:propnames (string multiple)</code> and <code>crisp:propvalues (string multiple)</code>
+            properties define pairs of variable property names and values to be interpolated in the <code>crisp:beandefinition (string)</code>
+            property value. So, a management UI tool may let administrator edit those pairs of variable properties
+            without having to expose the XML bean definition in <code>crisp:beandefinition (string)</code> property directly.
+          </li>
+          <li>
+            <code>crisp:beandefinition (string)</code> property defines Spring Framework Bean definition for a
+            <code>ResourceResolver</code> bean in XML format.
+            Find the example bootstrap configurations for details in the demo project.
+          </li>
+        </ul>
+      </subsection>
+
+      <subsection name="Bootstrapping a ResourceResolver configuration for a new resource space">
+        <p>TODO</p>
+      </subsection>
 
     </section>
 

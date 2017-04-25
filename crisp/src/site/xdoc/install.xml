@@ -10,34 +10,36 @@
   </properties>
   <body>
 
-    <section name="Introduction">
+    <section name="Installing Hippo Addon CRISP">
 
-      <p>
-        Installing Hippo Addon CRISP module is slightly different based on whether you want to use it in Content
-        Delivery tier application ("site") only, or you want to use it in both Content Delivery tier application ("site")
-        and Content Authoring tier application ("cms"):
-      </p>
+      <subsection name="Introduction">
 
-      <ul>
-        <li>
-          <a href="#Option_1:_Installing_Hippo_Addon_CRISP_When_Using_Content_Delivery_tier_Application_Only">
-            Option 1: Installing Hippo Addon CRISP When Using Content Delivery tier Application Only
-          </a>
-        </li>
-        <li>
-          <a href="#Option_2:_Installing_Hippo_Addon_CRISP_When_Using_Both_Content_Delivery_and_Authoring_tier_Applications">
-            Option 2: Installing Hippo Addon CRISP When Using Both Content Delivery and Authoring tier Applications
-          </a>
-        </li>
-      </ul>
+        <p>
+          Installing Hippo Addon CRISP module is slightly different based on whether you want to use it in Content
+          Delivery tier application ("site") only, or you want to use it in both Content Delivery tier application ("site")
+          and Content Authoring tier application ("cms"):
+        </p>
 
-      <p>
-        First of all, make sure you have Hippo Maven 2 Enterprise repository reference and dependency definitions
-        in dependency management section in the root pom.xml:
-      </p>
+        <ul>
+          <li>
+            <a href="#Option_1:_Installing_Hippo_Addon_CRISP_When_Using_Content_Delivery_tier_Application_Only">
+              Option 1: Installing Hippo Addon CRISP When Using Content Delivery tier Application Only
+            </a>
+          </li>
+          <li>
+            <a href="#Option_2:_Installing_Hippo_Addon_CRISP_When_Using_Both_Content_Delivery_and_Authoring_tier_Applications">
+              Option 2: Installing Hippo Addon CRISP When Using Both Content Delivery and Authoring tier Applications
+            </a>
+          </li>
+        </ul>
 
-      <div class="brush: xml">
-        <source><![CDATA[
+        <p>
+          First of all, make sure you have Hippo Maven 2 Enterprise repository reference and dependency definitions
+          in dependency management section in the root pom.xml:
+        </p>
+
+        <div class="brush: xml">
+          <source><![CDATA[
     <repositories>
 
       <!-- SNIP -->
@@ -98,10 +100,12 @@
       <!-- SNIP -->
 
     </dependencyManagement>
-      ]]></source>
-      </div>
+        ]]></source>
+        </div>
 
-      <br/>
+        <br/>
+
+      </subsection>
 
     </section>
 
