@@ -10,8 +10,13 @@ public interface ResourceCollection extends Iterable<Resource> {
 
     /**
      * Returns a read-only collection over elements of type {@code Resource}.
+     * <P>
+     * This method is provided for templating language such as Freemarker
+     * because Freemarker doesn't allow to list or iterator an <code>Iterable</code> directly as of v2.3.x. for
+     * instance.
+     * </P>
      *
-     * @return an Iterator.
+     * @return a resource collection.
      */
     Collection<Resource> getCollection();
 
