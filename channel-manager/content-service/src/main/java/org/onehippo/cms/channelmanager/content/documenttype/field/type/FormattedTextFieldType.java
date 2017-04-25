@@ -54,7 +54,7 @@ public class FormattedTextFieldType extends StringFieldType {
     }
 
     @Override
-    public void init(FieldTypeContext fieldContext) {
+    public void init(final FieldTypeContext fieldContext) {
         super.init(fieldContext);
 
         final String overlayedJson = NamespaceUtils.getConfigProperty(fieldContext, CKEDITOR_CONFIG_OVERLAYED_JSON).orElse("");
