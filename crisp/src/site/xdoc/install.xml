@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Installing Hippo Addon CRISP</title>
+  </properties>
+  <body>
+
+    <section name="Introduction">
+
+      <p>
+        Installing Hippo Addon CRISP module is slightly different based on whether you want to use it in Content
+        Delivery tier application ("site") only, or you want to use it in both Content Delivery tier application ("site")
+        and Content Authoring tier application ("cms"):
+      </p>
+
+      <ul>
+        <li>
+          <a href="#Option_1:_Installing_Hippo_Addon_CRISP_When_Using_Content_Delivery_tier_Application_Only">
+            Option 1: Installing Hippo Addon CRISP When Using Content Delivery tier Application Only
+          </a>
+        </li>
+        <li>
+          <a href="#Option_2:_Installing_Hippo_Addon_CRISP_When_Using_Both_Content_Delivery_and_Authoring_tier_Applications">
+            Option 2: Installing Hippo Addon CRISP When Using Both Content Delivery and Authoring tier Applications
+          </a>
+        </li>
+      </ul>
+
+      <p>
+        First of all, make sure you have Hippo Maven 2 Enterprise repository reference and dependency definitions
+        in dependency management section in the root pom.xml:
+      </p>
+
+      <div class="brush: xml">
+        <source><![CDATA[
+    <repositories>
+
+      <!-- SNIP -->
+
+      <repository>
+        <id>hippo-maven2-enterprise</id>
+        <name>Hippo Maven 2 Enterprise</name>
+        <url>https://maven.onehippo.com/maven2-enterprise/</url>
+        <releases>
+          <updatePolicy>never</updatePolicy>
+        </releases>
+      </repository>
+
+      <!-- SNIP -->
+
+    </repositories>
+
+    <!-- SNIP -->
+
+    <dependencyManagement>
+
+      <!-- SNIP -->
+
+      <dependencies>
+
+        <!-- SNIP -->
+
+        <!-- NOTE: You should set a property named 'hippo-addon-crisp.version' to a version of this plugin! -->
+
+        <dependency>
+          <groupId>com.onehippo.cms7</groupId>
+          <artifactId>hippo-addon-crisp-api</artifactId>
+          <version>${hippo-addon-crisp.version}</version>
+        </dependency>
+
+        <dependency>
+          <groupId>com.onehippo.cms7</groupId>
+          <artifactId>hippo-addon-crisp-core</artifactId>
+          <version>${hippo-addon-crisp.version}</version>
+        </dependency>
+
+        <dependency>
+          <groupId>com.onehippo.cms7</groupId>
+          <artifactId>hippo-addon-crisp-repository</artifactId>
+          <version>${hippo-addon-crisp.version}</version>
+        </dependency>
+
+        <dependency>
+          <groupId>com.onehippo.cms7</groupId>
+          <artifactId>hippo-addon-crisp-hst</artifactId>
+          <version>${hippo-addon-crisp.version}</version>
+        </dependency>
+
+        <!-- SNIP -->
+
+      </dependencies>
+
+      <!-- SNIP -->
+
+    </dependencyManagement>
+      ]]></source>
+      </div>
+
+      <br/>
+
+    </section>
+
+    <section name="Option 1: Installing Hippo Addon CRISP When Using Content Delivery tier Application Only">
+
+      <p>
+        In this installation option, <code>hippo-addon-crisp-api</code> JAR module is used by Content Delivery
+        Application only, you don't need to put the JAR module as shared library.
+      </p>
+
+      <subsection name="Add Dependencies">
+
+        <p>
+          Add the following dependencies into your content delivery application subproject (<code>site</code>):
+        </p>
+
+        <div class="brush: xml">
+          <source><![CDATA[
+    <dependencies>
+
+      <!-- SNIP -->
+
+      <dependency>
+        <groupId>com.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-api</artifactId>
+      </dependency>
+
+      <dependency>
+        <groupId>com.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-core</artifactId>
+      </dependency>
+
+      <dependency>
+        <groupId>com.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-hst</artifactId>
+      </dependency>
+
+      <!-- SNIP -->
+
+    </dependencies>
+    ]]></source>
+        </div>
+
+        <br/>
+
+        <p>
+          And, add the following depednencies in the content authoring application (<code>cms</code>):
+        </p>
+
+        <div class="brush: xml">
+          <source><![CDATA[
+    <dependencies>
+
+      <!-- SNIP -->
+
+      <dependency>
+        <groupId>com.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-repository</artifactId>
+      </dependency>
+
+      <!-- SNIP -->
+
+    </dependencies>
+    ]]></source>
+        </div>
+
+        <p>
+          Now, you're ready to use the plugin!
+        </p>
+
+        <br/>
+
+      </subsection>
+
+    </section>
+
+    <section name="Option 2: Installing Hippo Addon CRISP When Using Both Content Delivery and Authoring tier Applications">
+
+      <subsection name="Put CRISP API JAR as Shared Library">
+
+        <p>
+          First of all, <code>hippo-addon-crisp-api</code> JAR module must be added into application submodules
+          as <code>provided</code> scope because it needs to be shared in a shared classpath in this installation option.
+          You can find the API JAR module added as <code>provided</code> scope in the following sections.
+        </p>
+
+        <p>
+          Now, the <code>hippo-addon-crisp-api</code> JAR module must be added in the container's shared classpath.
+          Typically, the container can be started by either <code>cargo.run</code> Maven profile in local development
+          mode, or it can be started in a deployed server that extacted the distribution tar.gz file created by
+          <code>dist</code> Maven profile.
+        </p>
+
+        <p>
+          To deploy the <code>hippo-addon-crisp-api</code> JAR module in local <code>cargo.run</code> profile,
+          you should update the <code>cargo.run</code> Maven profile with <code>hippo-addon-crisp-api</code> dependency
+          like the following example:
+        </p>
+
+        <div class="brush: xml">
+          <source><![CDATA[
+    <profile>
+      <id>cargo.run</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.onehippo.cms7</groupId>
+          <artifactId>hippo-addon-crisp-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <configuration>
+              <configuration>
+                <!-- SNIP -->
+              </configuration>
+              <deployables>
+                <!-- SNIP -->
+              </deployables>
+              <container>
+                <systemProperties>
+                  <!-- SNIP -->
+                </systemProperties>
+                <dependencies>
+                  <dependency>
+                    <groupId>com.onehippo.cms7</groupId>
+                    <artifactId>hippo-addon-crisp-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                </dependencies>
+              </container>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+          ]]></source>
+        </div>
+
+        <p>
+          Now, the tomcat container by running <code>cargo.run</code> profile will include <code>hippo-addon-crisp-api</code>
+          JAR module in the shared classpath.
+        </p>
+
+        <p>
+          When creating a tar.gz file as distribution file through <code>dist</code> Maven profile, shared dependencies
+          are defined in a Maven Assembly Plugin descriptor file. e.g, <code>src/main/assembly/shared-lib-component.xml</code>.
+          You should update the file like the following example:
+        </p>
+
+        <div class="brush: xml">
+          <source><![CDATA[
+<component xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.2"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.2
+                               http://maven.apache.org/xsd/component-1.1.2.xsd">
+  <dependencySets>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <outputDirectory>shared/lib</outputDirectory>
+      <scope>provided</scope>
+      <includes>
+        <include>org.onehippo.cms7:hippo-cms7-commons</include>
+        <include>org.onehippo.cms7:hippo-services</include>
+        <!-- SNIP -->
+        <include>com.onehippo.cms7:hippo-addon-crisp-api</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</component>
+          ]]></source>
+        </div>
+
+        <p>
+          Now, the distribution tar.gz file will contain the <code>hippo-addon-crisp-api</code> JAR module
+          in a shared classpath.
+        </p>
+
+        <br/>
+
+      </subsection>
+
+      <subsection name="Add Dependencies">
+
+        <p>
+          Add the following dependencies into your content delivery application subproject (<code>site</code>):
+        </p>
+
+        <div class="brush: xml">
+          <source><![CDATA[
+    <dependencies>
+
+      <!-- SNIP -->
+
+      <!-- NOTE: hippo-addon-crisp-api JAR module must be 'provided' scope as it's provided by the container! -->
+      <dependency>
+        <groupId>com.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-api</artifactId>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-core</artifactId>
+      </dependency>
+
+      <dependency>
+        <groupId>com.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-hst</artifactId>
+      </dependency>
+
+      <!-- SNIP -->
+
+    </dependencies>
+    ]]></source>
+        </div>
+
+        <br/>
+
+        <p>
+          And, add the following depednencies in the content authoring application (<code>cms</code>):
+        </p>
+
+        <div class="brush: xml">
+          <source><![CDATA[
+    <dependencies>
+
+      <!-- SNIP -->
+
+      <dependency>
+        <groupId>com.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-repository</artifactId>
+      </dependency>
+
+      <!-- NOTE: hippo-addon-crisp-api JAR module must be 'provided' scope as it's provided by the container! -->
+      <dependency>
+        <groupId>com.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-api</artifactId>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- SNIP -->
+
+    </dependencies>
+    ]]></source>
+        </div>
+
+        <p>
+          Now, you're ready to use the plugin!
+        </p>
+
+        <br/>
+
+      </subsection>
+
+    </section>
+
+  </body>
+</document>

@@ -35,12 +35,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>com.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-crisp-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <!-- TEST DEPENDENCIES -->
 
     <dependency>

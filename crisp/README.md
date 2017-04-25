@@ -6,25 +6,13 @@ Hippo Addon CRISP (Common Resource Interface and Service Provider).
 
 | Plugin Version | CMS Version  |
 |:--------------:|:------------:|
-| 1.x            | 11.x         |
+| 0.9.x          | 11.x         |
 
 See [CHANGES](CHANGES.md) for release notes.
 
-## Features
+## TODOs
 
-- Generic External (REST) API Service Invoking Broker Service (```ResourceServiceBroker```)
-- Generic Resource Object Model (```Resource```, ```ResourceContainer```, ```ValueMap```, etc.)
-- Resource Space Routing Configuration (based on Spring Framework Bean configuration XML file(s))
-- Provides single resource retrieval and finding multiple resource results through APIs.
-- Caching service in ```ResourceServiceBroker``` level. By default, for the same service invocation, it caches
-  the response output for 1 minute in EhCache. It is easily configurable and customizable.
-- ```ResourceServiceBroker``` can be used in both SITE and CMS applications.
-- HTTP invocations are done by using ```RestTemplate``` of Spring Framework.
-- OAuth2-based RestTemplate configuration.
-- Dynamic Configuration change instead of properties and xmls.
-- ResourceContainer level pagination.
-- Caching per route.
-- API support to implement a web-hook based event processing easily:
+- Document how to implement a web hook:
 
 ```java
     ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
@@ -32,9 +20,9 @@ See [CHANGES](CHANGES.md) for release notes.
     resourceServiceBroker.getResourceDataCache("demoProductCatalogs").clear();
 ```
 
-- Convenient property access by relative path through ```Resource#getValue(String relPath)```.
-- TODO: Javadocs and documentation (how to configure json api rest service backend, caching, OAuth2 configuration, how to add custom ```ResourceResolver``` for non-JSON-API backends such as RDBMS, NoSQL Database, etc.)
-- TODO: Web-hook example
+- Document how to use convenient property access by relative path through ```Resource#getValue(String relPath)```.
+- Javadocs and documentation (how to configure json api rest service backend, caching, OAuth2 configuration, how to add custom ```ResourceResolver``` for non-JSON-API backends such as RDBMS, NoSQL Database, etc.)
+- Web-hook example
 
 ## Build and install the module itself into local maven repository
 
@@ -55,6 +43,22 @@ The demo project is located udner demo/ folder. So, move to the demo/ folder to 
 After startup, access the CMS at http://localhost:8080/cms and the site at http://localhost:8080/site.
 Logs are located in target/tomcat8x/logs
 
+## Generate Site Documentation
+
+```bash
+    $ mvn site
+```
+
+Open ```target/site/index.html``` after generation succeeds.
+
+You can also generate a PDF document:
+
+```bash
+    $ mvn pdf:pdf
+```
+
+Open ```target/pdf/hippo-addon-crisp.pdf``` after generation succeeds.
+
 ## Demo Scenarios
 
 - Visit http://localhost:8080/site/news.
@@ -66,73 +70,6 @@ Logs are located in target/tomcat8x/logs
 - Select 'Related Products' field and try to add some products through the pop up dialog (part of External Document Picker plugin).
 
 Both product list results are from ```ResourceServiceBroker``` service component. See the code example section below for details.
-
-## Installation
-
-You should add Hippo Enterprise Maven Repository in your root pom.xml to use this enterprise addon module.
-
-```xml
-  <repositories>
-    <!-- SNIP -->
-    <repository>
-      <id>hippo-maven2-enterprise</id>
-      <name>Hippo Maven 2 Enterprise</name>
-      <url>https://maven.onehippo.com/maven2-enterprise/</url>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
-    <!-- SNIP -->
-  </repositories>
-```
-
-In SITE project, add the following in the pom.xml:
-
-```xml
-    <dependency>
-      <groupId>com.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-crisp-api</artifactId>
-      <version>${hippo-addon-crisp.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-crisp-core</artifactId>
-      <version>${hippo-addon-crisp.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-crisp-hst</artifactId>
-      <version>${hippo-addon-crisp.version}</version>
-    </dependency>
-```
-
-In CMS project, add the following in the pom.xml:
-
-```xml
-    <dependency>
-      <groupId>com.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-crisp-api</artifactId>
-      <version>${hippo-addon-crisp.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-crisp-repository</artifactId>
-      <version>${hippo-addon-crisp.version}</version>
-      <scope>provided</scope>
-    </dependency>
-```
-
-
-And, configure your ```ResourceResolver```s in ```/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer```.
-See the example configurations in the demo project.
-
-**Note**: If you want to use the same ```ResourceServiceBroker``` service component in both SITE and CMS application,
-please make sure that the ```hippo-addon-crisp-api``` JAR module should be deployed onto the shared library path, not in each web application's library path.
 
 ## How to Use the ResourceBrokerService?
 

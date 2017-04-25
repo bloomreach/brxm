@@ -12,10 +12,161 @@
 
     <section name="Introduction">
 
-      <subsection name="What is Hippo Addon CRISP?">
+      <subsection name="What is CRISP, in 30s?">
         <p>
-          TODO
+          <strong>CRISP</strong> is <strong><u>C</u></strong>ommon <strong><u>R</u></strong>esource model
+          <strong><u>I</u></strong>nterface and <strong><u>S</u></strong>ervice <strong><u>P</u></strong>rovider
+          module for External APIs (e.g, API Gateway), which enables simple, seamless, enterprise-ready and performant
+          external services integration.
         </p>
+        <p>
+          Also, <i>Content aggregation and personalization</i> become easier, more transparent and reliable in
+          application development if you adopt <strong>CRISP</strong> module as an integration backbone.
+        </p>
+      </subsection>
+
+      <subsection name="Why CRISP?">
+        <p>
+          <strong>CRISP</strong> is characterized as follows:
+        </p>
+        <ul>
+          <li>
+            <strong>CRISP</strong> is a core software asset which is designed as highly reusable and performant
+            in higher quality expectations.
+          </li>
+          <li>
+            <strong>CRISP</strong> enables faster and more cost-effective product and project delivery process.
+          </li>
+          <li>
+            <strong>CRISP</strong> gives developers abilities to integrate and aggregate a wide range of data sources,
+            content and services via various mechanisms, such as API Gateway, ESB, REST, RSS, etc., without much
+            effort.
+          </li>
+          <li>
+            <strong>CRISP</strong> allows to integrate and aggregate external data and content without having to
+            migrate data or content into single repository.
+          </li>
+          <li>
+            <strong>CRISP</strong> provides a cost-effective, performant and reliable toolkit to integrate with
+            any different backends such as BloomReach CrossLink, Commerce APIs, SalesForce, Eloqua, Marketo, etc.
+            for personalization and content aggregation, with increasing digital experiences.
+          </li>
+        </ul>
+      </subsection>
+
+      <subsection name="CRISP's Vision">
+        <ul>
+          <li>Lightweight Common Resource API and Service Provider for various enterprise data, content aggregation and personalization.</li>
+          <li>Easy to use, highly performant and reliable message exchange backbone. E.g, built-in caching control under the hood.</li>
+          <li>Highly customizable and configurable message routing for variants of use cases.</li>
+          <li>Core software asset for products/projects.</li>
+        </ul>
+      </subsection>
+
+      <subsection name="CRISP's Features">
+        <ul>
+          <li>
+            Generic External (REST) API service invoking broker service, <code>ResourceServiceBroker</code>.
+          </li>
+          <li>
+            Generic resource object model, <code>Resource</code>, that enables easy access to resources and properties.
+          </li>
+          <li>
+            Resource space routing configuration through Spring Framework bean configuration in repository.
+          </li>
+          <li>
+            Caching service in <code>ResourceServiceBroker</code> level as well as <code>ResourceResolver</code> level,
+            and it is easily configurable and customizable.
+          </li>
+          <li>
+            <code>ResourceServiceBroker</code> can be used in both Content Delivery and Content Authoring applications.
+          </li>
+          <li>
+            HTTP invocations through Spring Framework <code>RestTemplate</code> (including OAuth2-based <code>RestTemplate</code>
+            configuration example) for more configurability and maintainability.
+          </li>
+          <li>
+            Dynamic configuration management at runtime through repository configuration.
+          </li>
+          <li>
+            <code>Resource</code> level pagination.
+          </li>
+          <li>
+            API support to allow to implement a web-hook (in order to invalidate cache for instance) easily.
+          </li>
+        </ul>
+      </subsection>
+
+      <subsection name="Architectural Views">
+
+        <h4>Components and Connectors View</h4>
+        <br/>
+
+        <p>
+          The following diagram depicts a higher level <i>Components and Connectors View</i> to show how <strong>CRISP</strong>
+          module helps easier and more seamless integration for applications.
+          Please note that this higher level diagram does not necessarily describes all the details as exactly as
+          it is designed or implemented in the detail level though.
+        </p>
+
+        <div>
+          <img src="images/CRISP_CNC.png" />
+        </div>
+
+        <p>
+          <strong>CRISP</strong> Broker component provides the following:
+        </p>
+
+        <ul>
+          <li>
+            Single broker to retrieve content and data from the backend APIs.
+          </li>
+          <li>
+            Configurability with proper routings and executions at runtime.
+          </li>
+          <li>
+            Automatic caching and invalidation capabilities of external data and content for better performance.
+          </li>
+          <li>
+            Resource link resolution capabilities of external data and content.
+          </li>
+        </ul>
+
+        <br/>
+
+        <h4>Module View</h4>
+        <br/>
+
+        <p>
+          The following diagram depicts a higher level <i>Module View</i> to show how <strong>CRISP</strong>
+          module is composed of multiple submodules with dependencies.
+          Please note that this higher level diagram does not necessarily describes all the details as exactly as
+          it is designed or implemented in the detail level though.
+        </p>
+
+        <div>
+          <img src="images/CRISP_Module.png" />
+        </div>
+
+        <ul>
+          <li>
+            <strong>CRISP API</strong> submodule contains all the public APIs (interfaces and abstract base classes)
+            that applications can depend on.
+          </li>
+          <li>
+            <strong>CRISP CORE</strong> submodule contains core components and services that either implement
+            public APIs or internal services.
+          </li>
+          <li>
+            <strong>CRISP Repository</strong> submodule contains repository boostrap configurations, repository
+            addon module to register/unregister configuration change event listener, etc.
+          </li>
+          <li>
+            <strong>CRISP HST</strong> submodule contains utilities and tag libraries that can be used in Hippo
+            Delivery tier applications.
+          </li>
+        </ul>
+
       </subsection>
 
     </section>

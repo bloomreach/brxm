@@ -14,11 +14,24 @@ import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.onehippo.cms7.crisp.api.CrispConstants;
-
 public class CrispRegistryModule extends AbstractReconfigurableDaemonModule {
 
     private static Logger log = LoggerFactory.getLogger(CrispRegistryModule.class);
+
+    /**
+     * <code>HippoEvent</code> application name used internally in configuration change <code>HippoEvent</code> handling.
+     */
+    private static final String EVENT_APPLICATION_NAME = "crisp";
+
+    /**
+     * <code>HippoEvent</code> category name used internally in configuration change <code>HippoEvent</code> handling.
+     */
+    private static final String EVENT_CATEGORY_CONFIGURATION = "configuration";
+
+    /**
+     * <code>HippoEvent</code> action name used internally in configuration change <code>HippoEvent</code> handling.
+     */
+    private static final String EVENT_ACTION_UPDATE_CONFIGURATION = "updateConfiguration";
 
     private boolean configurationUpdated;
 
@@ -53,9 +66,9 @@ public class CrispRegistryModule extends AbstractReconfigurableDaemonModule {
             return;
         }
 
-        HippoEvent event = new HippoEvent(CrispConstants.EVENT_APPLICATION_NAME);
-        event.category(CrispConstants.EVENT_CATEGORY_CONFIGURATION)
-                .action(CrispConstants.EVENT_ACTION_UPDATE_CONFIGURATION);
+        HippoEvent event = new HippoEvent(EVENT_APPLICATION_NAME);
+        event.category(EVENT_CATEGORY_CONFIGURATION)
+                .action(EVENT_ACTION_UPDATE_CONFIGURATION);
         eventBus.post(event);
     }
 
