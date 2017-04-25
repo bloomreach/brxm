@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -285,9 +285,10 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
             if (baseNodeModel != null && baseNodeModel.getNode() != null) {
                 IFieldDescriptor field = helper.getField();
                 try {
-                    if (baseNodeModel.getNode().getSession().itemExists(baseNodeModel.getItemModel().getPath() + '/' + field.getPath())) {
-                        JcrMultiPropertyValueModel<String> baseModel = new JcrMultiPropertyValueModel<>(new JcrItemModel(
-                                baseNodeModel.getItemModel().getPath() + '/' + field.getPath()));
+                    if (baseNodeModel.getNode().hasProperty(field.getPath())) {
+                        JcrMultiPropertyValueModel<String> baseModel = new JcrMultiPropertyValueModel<>(
+                                new JcrItemModel<>(baseNodeModel.getNode().getProperty(field.getPath()))
+                        );
 
                         List<String> baseOptions = baseModel.getObject();
                         List<String> currentOptions = model.getObject();
