@@ -231,6 +231,7 @@ public class MountResource extends AbstractConfigResource {
         // TODO as well to the preview config, see HSTTWO-3965
         JcrUtils.copy(session, liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE, liveBranchConfigNode.getPath() + "/" + NODENAME_HST_WORKSPACE);
         createMandatoryWorkspaceNodesIfMissing(liveBranchConfigNode.getPath());
+        session.save();
     }
 
     private void assertValidName(final String branchId) {
