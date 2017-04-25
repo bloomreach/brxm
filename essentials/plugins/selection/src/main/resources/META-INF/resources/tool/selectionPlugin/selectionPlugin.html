@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@
     <div class="panel panel-default">
         <div class="panel-heading"><h3>Selections Configuration</h3></div>
         <div class="panel-body">
-            <tabset>
-                <tab active>
-                    <tab-heading>Document Types</tab-heading>
+            <uib-tabset>
+                <uib-tab active>
+                    <uib-tab-heading>Document Types</uib-tab-heading>
                     <essentials-draft-warning></essentials-draft-warning>
                     <h4>Add selection fields to document types</h4>
 
@@ -167,11 +167,11 @@
                             </div>
                         </form>
                     </div>
-                </tab>
+                </uib-tab>
 
 
-                <tab disabled="!valueLists.length">
-                    <tab-heading>Site Availability</tab-heading>
+                <uib-tab disabled="!valueLists.length">
+                    <uib-tab-heading>Site Availability</uib-tab-heading>
                     <h4>Make value lists available to the site</h4>
 
                     <p>In this tab, you configure which value lists should be made available to the site by the
@@ -205,8 +205,8 @@
                         <button ng-disabled="!provisionedForm.$valid" class="btn btn-primary pull-right"
                                 ng-click="saveProvisioning()">Save settings</button>
                     </form>
-                </tab>
-            </tabset>
+                </uib-tab>
+            </uib-tabset>
         </div>
     </div>
 </div>
