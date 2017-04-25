@@ -15,14 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
+import java.io.IOException;
 import java.util.Collections;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.Behavior;
 import org.hippoecm.frontend.plugins.ckeditor.hippoautosave.HippoAutoSave;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.onehippo.ckeditor.CKEditorConfig;
+import org.onehippo.ckeditor.Json;
 
 /**
  * Adds the CKEditor plugin 'hippoautosave'.
@@ -36,19 +38,18 @@ public class CKEditorPanelAutoSaveExtension implements CKEditorPanelExtension {
     }
 
     @Override
-    public void addConfiguration(final JSONObject editorConfig) throws JSONException {
-        JsonUtils.appendToCommaSeparatedString(editorConfig, CKEditorConfig.EXTRA_PLUGINS, HippoAutoSave.PLUGIN_NAME);
-        editorConfig.put(HippoAutoSave.CONFIG_CALLBACK_URL, autoSaveBehavior.getCallbackUrl());
+    public void addConfiguration(final ObjectNode editorConfig) throws IOException {
+        Json.appendToCommaSeparatedString(editorConfig, CKEditorConfig.EXTRA_PLUGINS, HippoAutoSave.PLUGIN_NAME);
+        editorConfig.put(HippoAutoSave.CONFIG_CALLBACK_URL, autoSaveBehavior.getCallbackUrl().toString());
     }
 
     @Override
     public Iterable<Behavior> getBehaviors() {
-        return Collections.<Behavior>singleton(autoSaveBehavior);
+        return Collections.singleton(autoSaveBehavior);
     }
 
     @Override
     public void detach() {
         // nothing to do
     }
-
 }

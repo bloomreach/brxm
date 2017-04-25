@@ -18,16 +18,17 @@ package org.hippoecm.frontend.plugins.ckeditor;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.CssUrlReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.easymock.EasyMock;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.ckeditor.CKEditorConfig;
+import org.onehippo.ckeditor.Json;
 
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expectLastCall;
@@ -40,16 +41,16 @@ import static org.easymock.EasyMock.verify;
 public class CKEditorPanelTest {
 
     private IHeaderResponse headerResponse;
-    private JSONObject config;
+    private ObjectNode config;
 
     @Before
     public void setUp() {
         headerResponse = EasyMock.createMock(IHeaderResponse.class);
-        config = new JSONObject();
+        config = Json.object();
     }
 
     @Test
-    public void renderSingleContentsCss() throws JSONException {
+    public void renderSingleContentsCss() {
         config.put(CKEditorConfig.CONTENTS_CSS, "ckeditor/hippocontents.css");
 
         expectCssHeaderItemRendered("ckeditor/hippocontents.css");
@@ -60,9 +61,14 @@ public class CKEditorPanelTest {
     }
 
     @Test
-    public void renderMultipleContentsCss() throws JSONException {
+    public void renderMultipleContentsCss() {
         List<String> files = Arrays.asList("ckeditor/hippocontents.css", "extra.css");
-        config.put(CKEditorConfig.CONTENTS_CSS, new JSONArray(files));
+        ArrayNode array = Json.array();
+        for (String file : files) {
+            array.add(file);
+        }
+
+        config.set(CKEditorConfig.CONTENTS_CSS, array);
 
         expectCssHeaderItemRendered("ckeditor/hippocontents.css");
         expectCssHeaderItemRendered("extra.css");
@@ -77,5 +83,4 @@ public class CKEditorPanelTest {
         headerResponse.render(eq(headerItem));
         expectLastCall();
     }
-
 }

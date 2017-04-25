@@ -50,13 +50,6 @@ public class CKEditorConstants {
     public static final String CKEDITOR_TIMESTAMP = WebApplicationHelper.APPLICATION_HASH;
 
     /**
-     * CKEDITOR constants for keyboard shortcuts
-     */
-    public static final int CTRL = 0x110000;
-    public static final int SHIFT = 0x220000;
-    public static final int ALT = 0x440000;
-
-    /**
      * Checks whether a CKEditor resource reference exists on the class path.
      * @param ref a CKEditor resource reference.
      */
