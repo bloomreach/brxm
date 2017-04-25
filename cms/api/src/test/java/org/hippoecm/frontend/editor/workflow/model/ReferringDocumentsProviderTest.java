@@ -237,7 +237,7 @@ public class ReferringDocumentsProviderTest extends RepositoryTestCase {
     }
 
     private String[] getReferringNodePaths(Node node, boolean retrieveUnpublished) throws Exception {
-        SortedSet<Node> referringNodeSet = ReferringDocumentsProvider.getReferrersSortedByName(node, retrieveUnpublished, 100);
+        SortedSet<Node> referringNodeSet = ReferringDocumentsProvider.getReferrersSortedByName(node, retrieveUnpublished);
         Node[] referringNodeArray = referringNodeSet.toArray(new Node[referringNodeSet.size()]);
         String[] nodePaths = new String[referringNodeArray.length];
 

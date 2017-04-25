@@ -44,8 +44,6 @@ import org.slf4j.LoggerFactory;
 
 public abstract class DocumentCollectionView extends WebMarkupContainer {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(DocumentCollectionView.class);
 
     public static final String FOLDER_VIEWERS = "browser.viewers";
@@ -55,18 +53,18 @@ public abstract class DocumentCollectionView extends WebMarkupContainer {
     private IClusterControl viewer;
     private DocumentCollectionType viewerType;
 
-    private ModelReference providerReference;
-    private IRenderService parentRenderService;
-    private IPluginContext context;
-    private IPluginConfig config;
+    private final ModelReference providerReference;
+    private final IRenderService parentRenderService;
+    private final IPluginContext context;
+    private final IPluginConfig config;
     private transient boolean redraw = false;
     private IRenderService doclisting;
 
-    public DocumentCollectionView(String id, IPluginContext context, IPluginConfig config,
-            IModel<DocumentCollection> collection, IRenderService parentRenderer) {
+    public DocumentCollectionView(final String id, final IPluginContext context, final IPluginConfig config,
+                                  final IModel<DocumentCollection> collection, final IRenderService parentRenderService) {
         super(id, collection);
 
-        this.parentRenderService = parentRenderer;
+        this.parentRenderService = parentRenderService;
         this.config = config;
         this.context = context;
 
@@ -82,7 +80,7 @@ public abstract class DocumentCollectionView extends WebMarkupContainer {
                     return (IObservable) DocumentCollectionView.this.getDefaultModel();
                 }
 
-                public void onEvent(Iterator events) {
+                public void onEvent(final Iterator events) {
                     updateView();
                 }
 
@@ -91,19 +89,18 @@ public abstract class DocumentCollectionView extends WebMarkupContainer {
 
         add(new EmptyPanel("extension.list"));
         context.registerTracker(new ServiceTracker<IRenderService>(IRenderService.class) {
-            private static final long serialVersionUID = 1L;
 
             @Override
-            protected void onServiceAdded(IRenderService service, String name) {
+            protected void onServiceAdded(final IRenderService service, final String name) {
                 super.onServiceAdded(service, name);
-                service.bind(parentRenderService, "extension.list");
+                service.bind(DocumentCollectionView.this.parentRenderService, "extension.list");
                 replace(service.getComponent());
                 doclisting = service;
                 redraw();
             }
 
             @Override
-            protected void onRemoveService(IRenderService service, String name) {
+            protected void onRemoveService(final IRenderService service, final String name) {
                 doclisting = null;
                 replace(new EmptyPanel("extension.list"));
                 service.unbind();
@@ -130,7 +127,7 @@ public abstract class DocumentCollectionView extends WebMarkupContainer {
         redraw = true;
     }
 
-    public void render(PluginRequestTarget target) {
+    public void render(final PluginRequestTarget target) {
         if (redraw) {
             if (target != null) {
                 target.add(this);
@@ -149,7 +146,7 @@ public abstract class DocumentCollectionView extends WebMarkupContainer {
 
     protected void updateView() {
         boolean shown = false;
-        DocumentCollection collection = getCollection();
+        final DocumentCollection collection = getCollection();
         if (collection != null) {
             try {
                 switch (collection.getType()) {
@@ -162,7 +159,7 @@ public abstract class DocumentCollectionView extends WebMarkupContainer {
                 case UNKNOWN:
                     return;
                 }
-            } catch (RepositoryException ex) {
+            } catch (final RepositoryException ex) {
                 log.error(ex.getMessage());
             }
         }
@@ -171,19 +168,19 @@ public abstract class DocumentCollectionView extends WebMarkupContainer {
         }
     }
 
-    private boolean showFolder(Node node) throws RepositoryException {
-        IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
+    private boolean showFolder(final Node node) throws RepositoryException {
+        final IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
-        String viewerFolder = config.getString(FOLDER_VIEWERS);
-        for (String type : pluginConfigService.listClusters(config.getString(FOLDER_VIEWERS))) {
+        final String viewerFolder = config.getString(FOLDER_VIEWERS);
+        for (final String type : pluginConfigService.listClusters(config.getString(FOLDER_VIEWERS))) {
             if (node.isNodeType(type)) {
                 if (viewerType != DocumentCollectionType.FOLDER || !type.equals(viewerName)) {
                     stopViewer();
 
                     providerReference.setModel(getCollection().getFolder());
 
-                    IClusterConfig cluster = pluginConfigService.getCluster(viewerFolder + "/" + type);
-                    IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig("browser.options"));
+                    final IClusterConfig cluster = pluginConfigService.getCluster(viewerFolder + "/" + type);
+                    final IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig("browser.options"));
                     parameters.put("wicket.id", getExtensionPoint());
                     parameters.put("model.folder", getProviderId());
                     parameters.put("model.document", config.getString("model.document"));
@@ -200,19 +197,19 @@ public abstract class DocumentCollectionView extends WebMarkupContainer {
         return false;
     }
 
-    private boolean showSearch(BrowserSearchResult bsr) throws RepositoryException {
-        IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
+    private boolean showSearch(final BrowserSearchResult bsr) throws RepositoryException {
+        final IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
-        String viewerFolder = config.getString(SEARCH_VIEWERS);
-        for (String queryName : pluginConfigService.listClusters(config.getString(SEARCH_VIEWERS))) {
+        final String viewerFolder = config.getString(SEARCH_VIEWERS);
+        for (final String queryName : pluginConfigService.listClusters(config.getString(SEARCH_VIEWERS))) {
             if (queryName.equals(bsr.getQueryName())) {
                 if (viewerType != DocumentCollectionType.SEARCHRESULT || !queryName.equals(viewerName)) {
                     stopViewer();
 
                     providerReference.setModel(getCollection().getSearchResult());
 
-                    IClusterConfig cluster = pluginConfigService.getCluster(viewerFolder + "/" + queryName);
-                    IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig("browser.options"));
+                    final IClusterConfig cluster = pluginConfigService.getCluster(viewerFolder + "/" + queryName);
+                    final IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig("browser.options"));
                     parameters.put("wicket.id", getExtensionPoint());
                     parameters.put("model.search", getProviderId());
                     parameters.put("model.document", config.getString("model.document"));
