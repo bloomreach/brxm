@@ -22,43 +22,55 @@ import java.util.Optional;
 
 import javax.jcr.Node;
 
-import org.apache.commons.lang.StringUtils;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.util.CKEditorUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
 import org.onehippo.cms7.services.processor.html.model.HtmlProcessorModel;
 import org.onehippo.cms7.services.processor.html.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 public class FormattedTextFieldType extends StringFieldType {
+
+    private static final String CKEDITOR_CONFIG_OVERLAYED_JSON = "ckeditor.config.overlayed.json";
+    private static final String CKEDITOR_CONFIG_APPENDED_JSON = "ckeditor.config.appended.json";
 
     private static final Logger log = LoggerFactory.getLogger(FormattedTextFieldType.class);
 
-    private final String defaultConfig;
+    private final String defaultJson;
+    private ObjectNode config;
 
     public FormattedTextFieldType() {
         this(CKEditorConfig.DEFAULT_FORMATTED_TEXT_CONFIG);
     }
 
-    protected FormattedTextFieldType(final String defaultConfig) {
+    protected FormattedTextFieldType(final String defaultJson) {
         setType(Type.HTML);
-        this.defaultConfig = defaultConfig;
+        this.defaultJson = defaultJson;
     }
 
-    public JsonNode getConfig() {
+    @Override
+    public void init(final FieldTypeContext fieldContext) {
+        super.init(fieldContext);
+
+        final String overlayedJson = NamespaceUtils.getConfigProperty(fieldContext, CKEDITOR_CONFIG_OVERLAYED_JSON).orElse("");
+        final String appendedJson = NamespaceUtils.getConfigProperty(fieldContext, CKEDITOR_CONFIG_APPENDED_JSON).orElse("");
+
         try {
-            final JsonNode config = CKEditorUtils.readConfig(defaultConfig);
-            disableCustomConfigLoadingIfNotConfigured(config);
-            return config;
+            final ObjectNode combinedConfig = CKEditorConfig.combineConfig(defaultJson, overlayedJson, appendedJson);
+            final String language = fieldContext.getParentContext().getLocale().getLanguage();
+            config = CKEditorConfig.setDefaults(combinedConfig, language);
         } catch (IOException e) {
-            log.warn("Cannot read config of field '{}'", getId(), e);
+            log.warn("Error while reading config of HTML field '{}'", getId(), e);
         }
-        return null;
+    }
+
+    public ObjectNode getConfig() {
+        return config;
     }
 
     @Override
@@ -79,13 +91,6 @@ public class FormattedTextFieldType extends StringFieldType {
             value.setValue(writer.write(value.getValue()));
         }
         return values;
-    }
-
-    private void disableCustomConfigLoadingIfNotConfigured(final JsonNode config) {
-        if (!config.has(CKEditorConfig.CUSTOM_CONFIG)) {
-            final ObjectNode mutableConfig = (ObjectNode) config;
-            mutableConfig.put(CKEditorConfig.CUSTOM_CONFIG, StringUtils.EMPTY);
-        }
     }
 
     private static class HtmlReader {

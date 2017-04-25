@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,9 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.field.sort.NodeOrderFieldSorter;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
+import org.onehippo.cms.channelmanager.content.documenttype.field.sort.NodeOrderFieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.TwoColumnFieldSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,9 +68,15 @@ public class NamespaceUtils {
     public static Optional<Node> getContentTypeRootNode(final String typeId, final Session session) {
         try {
             final String[] part = typeId.split(":");
-            if (part.length == 2) {
-                final String path = "/hippo:namespaces/" + part[0] + "/" + part[1];
-                return Optional.of(session.getNode(path));
+            switch (part.length) {
+                case 1: {
+                    final String path = "/hippo:namespaces/system/" + part[0];
+                    return Optional.of(session.getNode(path));
+                }
+                case 2: {
+                    final String path = "/hippo:namespaces/" + part[0] + "/" + part[1];
+                    return Optional.of(session.getNode(path));
+                }
             }
         } catch (RepositoryException e) {
             log.debug("Unable to find root node for document type '{}'", typeId, e);
@@ -100,13 +107,13 @@ public class NamespaceUtils {
     }
 
     /**
-     * Retrieve the editor configuration node of a content type, given its root node.
+     * Retrieve all editor configuration nodes of a content type, given its root node.
      *
      * We suppress the warning because JCR unfortunately defines NodeIterator to be a subclass
      * of the raw Iterator instead of Iterator<Node>.
      *
      * @param contentTypeRootNode root node of the content type
-     * @return                    editor config node or nothing, wrapped in an Optional
+     * @return                    all editor config nodes
      */
     @SuppressWarnings("unchecked")
     public static List<Node> getEditorFieldConfigNodes(final Node contentTypeRootNode) {
@@ -136,14 +143,31 @@ public class NamespaceUtils {
     }
 
     /**
-     * Retrieve the maxlength cluster option property from an editor field configuration node.
+     * Retrieves a configuration property for this field. The property is read from the cluster options
+     * for this field. If not found the configuration options of the supertypes of this field are tried.
      *
-     * @param editorFieldConfigNode JCR node representing a field's editor configuration
-     * @return                      String value of the property or nothing, wrapped in an Optional
+     * @param propertyName name of the configuration property to
+     * @return             String value of the property or nothing, wrapped in an Optional
      */
-    public static Optional<String> getClusterOption(final Node editorFieldConfigNode,
-                                                    final String propertyName) {
-        return getStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName);
+    public static Optional<String> getConfigProperty(final FieldTypeContext fieldContext, final String propertyName) {
+        Optional<String> result = getConfigPropertyFromClusterOptions(fieldContext, propertyName);
+        if (!result.isPresent()) {
+            result = getConfigPropertyFromType(fieldContext, propertyName);
+        }
+        return result;
+    }
+
+    private static Optional<String> getConfigPropertyFromClusterOptions(final FieldTypeContext fieldContext, final String propertyName) {
+        return fieldContext.getEditorConfigNode().flatMap((editorFieldConfigNode) ->
+                    getStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName)
+            );
+    }
+
+    private static Optional<String> getConfigPropertyFromType(final FieldTypeContext fieldContext, final String propertyName) {
+        final String fieldTypeId = fieldContext.getContentTypeItem().getItemType();
+        final Session session = fieldContext.getParentContext().getSession();
+        return getContentTypeRootNode(fieldTypeId, session).flatMap((contentTypeRootNode) ->
+                getStringPropertyFromChildNode(contentTypeRootNode, EDITOR_CONFIG_PATH, propertyName));
     }
 
     private static Optional<String> getStringPropertyFromChildNode(final Node node, final String childName,
@@ -184,7 +208,7 @@ public class NamespaceUtils {
      * Retrieve the "field" property for a specific field
      *
      * @param editorFieldConfigNode JCR node representing an editor field configuration node
-     * @return                      valuie of the "field" property or nothing, wrapped in an Optional
+     * @return                      value of the "field" property or nothing, wrapped in an Optional
      */
     public static Optional<String> getFieldProperty(final Node editorFieldConfigNode) {
         return getStringProperty(editorFieldConfigNode, "field");
