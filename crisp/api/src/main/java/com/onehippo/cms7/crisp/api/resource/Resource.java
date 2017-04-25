@@ -4,7 +4,6 @@
 package com.onehippo.cms7.crisp.api.resource;
 
 import java.io.Serializable;
-import java.util.Iterator;
 
 /**
  * Common Resource representation interface, reflecting any content such as JSON, XML, JCR, etc.
@@ -56,6 +55,19 @@ public interface Resource extends Serializable {
     ValueMap getValueMap();
 
     /**
+     * Resolves a property value of this resource by the given {@code relPath}. Or null if not resolved by the {@code relPath}.
+     * <p>If {@code relPath} is a relative value path, like <code>"content/title"</code>, then the return should
+     * be equivalent to the result of the call, <code>((Resource) getValueMap().get("content")).getValueMap().get("title")</code>
+     * if existing.
+     * <p>In addition, a path segment may contain an array index notation like <code>"content/images[1]/title"</code>.
+     * In this case, the value at <code>content/images</code> must be an array type <code>Resource</code> object which
+     * returns true on <code>Resource.isArray()</code>.</p>
+     * @param relPath
+     * @return a resolved property value of this resource by the given {@code relPath}. Or null if not resolved by the {@code relPath}
+     */
+    Object getValue(String relPath);
+
+    /**
      * Returns parent resource representation if there's any.
      * @return parent resource representation if there's any
      */
@@ -68,37 +80,30 @@ public interface Resource extends Serializable {
     boolean isAnyChildContained();
 
     /**
+     * Returns true if this resource representation is purely for an array (e.g, JSON Array if underlying data is based on JSON).
+     * @return true if this resource representation is purely for an array (e.g, JSON Array if underlying data is based on JSON)
+     */
+    boolean isArray();
+
+    /**
      * Returns child resource count of this resource representation.
      * @return child resource count of this resource representation
      */
     long getChildCount();
 
     /**
-     * Return an {@link Iterator} of child resource representations.
-     * @return an {@link Iterator} of child resource representations
+     * Return a {@link ResourceCollection} of child resource representations.
+     * @return a {@link ResourceCollection} of child resource representations
      */
-    Iterator<Resource> getChildIterator();
+    ResourceCollection getChildren();
 
     /**
-     * Return an {@link Iterator} of child resource representations from {@code offset} index with {@code limit} count at max.
+     * Return a {@link ResourceCollection} of child resource representations from {@code offset} index with {@code limit}
+     * count at max.
      * @param offset offset index to start iteration
      * @param limit limit count of iteration
-     * @return an {@link Iterator} of child resource representations
+     * @return a {@link ResourceCollection} of child resource representations
      */
-    Iterator<Resource> getChildIterator(long offset, long limit);
-
-    /**
-     * Return an {@link Iterable} of child resource representations.
-     * @return an {@link Iterable} of child resource representations
-     */
-    Iterable<Resource> getChildren();
-
-    /**
-     * Return an {@link Iterable} of child resource representations from {@code offset} index with {@code limit} count at max.
-     * @param offset offset index to start iteration
-     * @param limit limit count of iteration
-     * @return an {@link Iterable} of child resource representations
-     */
-    Iterable<Resource> getChildren(long offset, long limit);
+    ResourceCollection getChildren(long offset, long limit);
 
 }

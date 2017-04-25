@@ -10,10 +10,6 @@ import java.util.Map;
  * <code>ValueMap</code> is an easy way to access properties or metadata of a resource. With resources, you can
  * use <code>Resource#getValueMap()</code> to obtain the value map of a resource. The various getter methods can
  * be used to get the properties of the resource.
- * <p>In addition a value map returned by a resource supports getting of deep values, like <code>get("content/title")</code>
- * which is equivalent to call <code>get("content")</code> on the resource, get the value map of that resource
- * and call <code>get("title")</code>.
- * </p>
  * <p>A ValueMap should be immutable.</p>
  */
 public interface ValueMap extends Map<String, Object>, Serializable {

@@ -3,7 +3,8 @@
  */
 package com.onehippo.cms7.crisp.api.resource;
 
-import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Abstract {@link Resource} representation.
@@ -11,6 +12,11 @@ import java.util.Iterator;
 public abstract class AbstractResource implements Resource {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * Array index notation regex pattern.
+     */
+    private static final Pattern INDEXED_NAME_PATTERN = Pattern.compile("^(.+)\\[(\\d+)\\]$");
 
     /**
      * Parent resource representation.
@@ -117,6 +123,20 @@ public abstract class AbstractResource implements Resource {
     /**
      * {@inheritDoc}
      */
+    public boolean isAnyChildContained() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isArray() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getChildCount() {
         return -1;
@@ -126,16 +146,66 @@ public abstract class AbstractResource implements Resource {
      * {@inheritDoc}
      */
     @Override
-    public Iterator<Resource> getChildIterator() {
-        return getChildIterator(0L, -1L);
+    public ResourceCollection getChildren() {
+        return getChildren(0L, -1L);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Iterable<Resource> getChildren() {
-        return getChildren(0L, -1L);
-    }
+    public Object getValue(String relPath) {
+        if (!relPath.contains("/")) {
+            return getValueMap().get(relPath);
+        }
 
+        String [] paths = relPath.split("/");
+
+        Resource subject = this;
+        String pathSegment;
+        String name;
+        int valueIndex;
+        Matcher matcher;
+        Object arrayContainer;
+        Object value = null;
+        ResourceCollection childCollection;
+
+        for (int i = 0; i < paths.length; i++) {
+            pathSegment = paths[i];
+            matcher = INDEXED_NAME_PATTERN.matcher(pathSegment);
+
+            if (matcher.matches()) {
+                name = matcher.group(1);
+                valueIndex = Integer.parseInt(matcher.group(2));
+
+                if (valueIndex < 1) {
+                    throw new IllegalArgumentException("Index must be greater than zero.");
+                }
+
+                arrayContainer = subject.getValueMap().get(name);
+
+                if (arrayContainer instanceof Resource && ((Resource) arrayContainer).isArray()) {
+                    childCollection = ((Resource) arrayContainer).getChildren();
+                    value = childCollection.get(valueIndex - 1);
+                } else {
+                    value = null;
+                }
+            } else {
+                name = pathSegment;
+                value = subject.getValueMap().get(name);
+            }
+
+            if (value instanceof Resource) {
+                subject = (Resource) value;
+            } else if (i < paths.length - 1){
+                value = null;
+            }
+
+            if (value == null) {
+                break;
+            }
+        }
+
+        return value;
+    }
 }

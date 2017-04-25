@@ -12,9 +12,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -23,6 +20,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onehippo.cms7.crisp.api.resource.Resource;
+import com.onehippo.cms7.crisp.api.resource.ResourceCollection;
 
 public class JacksonResourceTest {
 
@@ -88,10 +86,7 @@ public class JacksonResourceTest {
         assertTrue(images.getMetadata().isEmpty());
         assertSame(widget, images.getParent());
 
-        List<Resource> imageResources = new ArrayList<>();
-        for (Iterator<Resource> it = images.getChildIterator(); it.hasNext();) {
-            imageResources.add(it.next());
-        }
+        ResourceCollection imageResources = images.getChildren();
         assertEquals(2, imageResources.size());
 
         Resource image = imageResources.get(0);
@@ -124,10 +119,7 @@ public class JacksonResourceTest {
         assertTrue(image.getMetadata().isEmpty());
         assertSame(images, image.getParent());
 
-        imageResources.clear();
-        for (Resource imageRes : images.getChildren()) {
-            imageResources.add(imageRes);
-        }
+        imageResources = images.getChildren();
         assertEquals(2, imageResources.size());
 
         image = imageResources.get(0);
@@ -162,53 +154,82 @@ public class JacksonResourceTest {
     }
 
     @Test
+    public void testValueByRelPaths() throws Exception {
+        assertEquals("on", rootResource.getValue("widget/debug"));
+
+        assertEquals("Sample Konfabulator Widget", rootResource.getValue("widget/window/title"));
+        assertEquals("main_window", rootResource.getValue("widget/window/name"));
+        assertEquals(500, rootResource.getValue("widget/window/width"));
+        assertEquals(500, rootResource.getValue("widget/window/height"));
+
+        assertEquals("Click Here", rootResource.getValue("widget/text/data"));
+        assertEquals(36, rootResource.getValue("widget/text/size"));
+        assertEquals("bold", rootResource.getValue("widget/text/style"));
+        assertEquals("text1", rootResource.getValue("widget/text/name"));
+        assertEquals(250, rootResource.getValue("widget/text/hOffset"));
+        assertEquals("center", rootResource.getValue("widget/text/alignment"));
+
+        assertEquals("Images/Sun.png", rootResource.getValue("widget/images[1]/src"));
+        assertEquals("sun1", rootResource.getValue("widget/images[1]/name"));
+        assertEquals(250, rootResource.getValue("widget/images[1]/hOffset"));
+        assertEquals(250, rootResource.getValue("widget/images[1]/vOffset"));
+        assertEquals("center", rootResource.getValue("widget/images[1]/alignment"));
+
+        assertEquals("Images/Moon.png", rootResource.getValue("widget/images[2]/src"));
+        assertEquals("moon1", rootResource.getValue("widget/images[2]/name"));
+        assertEquals(100, rootResource.getValue("widget/images[2]/hOffset"));
+        assertEquals(100, rootResource.getValue("widget/images[2]/vOffset"));
+        assertEquals("left", rootResource.getValue("widget/images[2]/alignment"));
+    }
+
+    @Test
     public void testPagination() throws Exception {
         Resource widget = rootResource.getValueMap().get("widget", Resource.class);
         Resource images = widget.getValueMap().get("images", Resource.class);
         assertEquals(2, images.getChildCount());
 
-        List<Resource> children = (List<Resource>) images.getChildren();
+        ResourceCollection children = images.getChildren();
         assertEquals(2, children.size());
         assertEquals("Images/Sun.png", children.get(0).getValueMap().get("src"));
         assertEquals("Images/Moon.png", children.get(1).getValueMap().get("src"));
 
         try {
-            children = (List<Resource>) images.getChildren(-1, 0);
+            children = images.getChildren(-1, 0);
             fail("Negative offset should not be allowed.");
         } catch (IllegalArgumentException expectedException) {
         }
 
-        children = (List<Resource>) images.getChildren(0, 0);
+        children = images.getChildren(0, 0);
         assertEquals(0, children.size());
 
-        children = (List<Resource>) images.getChildren(0, 1);
+        children = images.getChildren(0, 1);
         assertEquals(1, children.size());
         assertEquals("Images/Sun.png", children.get(0).getValueMap().get("src"));
 
-        children = (List<Resource>) images.getChildren(0, 2);
+        children = images.getChildren(0, 2);
         assertEquals(2, children.size());
         assertEquals("Images/Sun.png", children.get(0).getValueMap().get("src"));
         assertEquals("Images/Moon.png", children.get(1).getValueMap().get("src"));
 
-        children = (List<Resource>) images.getChildren(0, -1);
+        children = images.getChildren(0, -1);
         assertEquals(2, children.size());
         assertEquals("Images/Sun.png", children.get(0).getValueMap().get("src"));
         assertEquals("Images/Moon.png", children.get(1).getValueMap().get("src"));
 
-        children = (List<Resource>) images.getChildren(1, 1);
+        children = images.getChildren(1, 1);
         assertEquals(1, children.size());
         assertEquals("Images/Moon.png", children.get(0).getValueMap().get("src"));
 
-        children = (List<Resource>) images.getChildren(1, 2);
+        children = images.getChildren(1, 2);
         assertEquals(1, children.size());
         assertEquals("Images/Moon.png", children.get(0).getValueMap().get("src"));
 
-        children = (List<Resource>) images.getChildren(1, Long.MAX_VALUE);
+        children = images.getChildren(1, Long.MAX_VALUE);
         assertEquals(1, children.size());
         assertEquals("Images/Moon.png", children.get(0).getValueMap().get("src"));
 
         try {
-            children = (List<Resource>) images.getChildren(2, Long.MAX_VALUE);
+            children = images.getChildren(2, Long.MAX_VALUE);
             fail("Out of index offset.");
         } catch (IllegalArgumentException expectedException) {
         }

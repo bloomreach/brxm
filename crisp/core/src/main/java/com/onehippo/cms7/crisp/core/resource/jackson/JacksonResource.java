@@ -15,10 +15,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onehippo.cms7.crisp.api.resource.AbstractResource;
 import com.onehippo.cms7.crisp.api.resource.Resource;
+import com.onehippo.cms7.crisp.api.resource.ResourceCollection;
 import com.onehippo.cms7.crisp.api.resource.ResourceException;
 import com.onehippo.cms7.crisp.api.resource.ValueMap;
 import com.onehippo.cms7.crisp.core.resource.DefaultValueMap;
 import com.onehippo.cms7.crisp.core.resource.EmptyValueMap;
+import com.onehippo.cms7.crisp.core.resource.ListResourceCollection;
 
 public class JacksonResource extends AbstractResource {
 
@@ -44,6 +46,11 @@ public class JacksonResource extends AbstractResource {
     }
 
     @Override
+    public boolean isArray() {
+        return jsonNode.isArray();
+    }
+
+    @Override
     public boolean isAnyChildContained() {
         final int size = jsonNode.size();
 
@@ -65,15 +72,9 @@ public class JacksonResource extends AbstractResource {
     }
 
     @Override
-    public Iterator<Resource> getChildIterator(long offset, long limit) {
+    public ResourceCollection getChildren(long offset, long limit) {
         final List<Resource> allChildren = getInternalAllChildren();
-        return createUnmodifiableSubList(allChildren, offset, limit).iterator();
-    }
-
-    @Override
-    public Iterable<Resource> getChildren(long offset, long limit) {
-        final List<Resource> allChildren = getInternalAllChildren();
-        return createUnmodifiableSubList(allChildren, offset, limit);
+        return new ListResourceCollection(createSubList(allChildren, offset, limit));
     }
 
     @Override
@@ -190,7 +191,7 @@ public class JacksonResource extends AbstractResource {
         return new JacksonResource(this, jsonNode, "[" + index + "]");
     }
 
-    private static List<Resource> createUnmodifiableSubList(List<Resource> source, long offset, long limit) {
+    private static List<Resource> createSubList(List<Resource> source, long offset, long limit) {
         if (offset < 0 || offset >= source.size()) {
             throw new IllegalArgumentException("Invalid offset: " + offset + " (size = " + source.size() + ")");
         }
@@ -200,7 +201,7 @@ public class JacksonResource extends AbstractResource {
         }
 
         if ((offset == 0 && limit < 0) || (offset == 0 && limit == source.size())) {
-            return Collections.unmodifiableList(source);
+            return source;
         }
 
         long endIndex;
@@ -215,9 +216,9 @@ public class JacksonResource extends AbstractResource {
             return source.subList((int) offset, (int) endIndex);
         } else {
             if (limit < 0) {
-                return Collections.unmodifiableList(source.subList((int) offset, source.size()));
+                return source.subList((int) offset, source.size());
             } else {
-                return Collections.unmodifiableList(source.subList((int) offset, (int) endIndex));
+                return source.subList((int) offset, (int) endIndex);
             }
         }
     }

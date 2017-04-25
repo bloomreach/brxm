@@ -40,7 +40,7 @@
     <article class="has-edit-button">
       <h3>Related Products</h3>
       <ul>
-        <#list productCatalogs.childIterator as product>
+        <#list productCatalogs.children.collection as product>
           <#assign extendedData=product.valueMap['extendedData'] />
           <li>
             <@crisp.link var="productLink" resourceSpace='demoProductCatalogs' resource=product>
@@ -48,8 +48,9 @@
               <@crisp.variable name="name" value="${product.valueMap['name']}" />
             </@crisp.link>
             <a href="${productLink}">
-              ${extendedData.valueMap['title']!} (${product.valueMap['SKU']!})
+              [${product.valueMap['SKU']!}] ${extendedData.valueMap['title']!}
             </a>
+            (${product.getValue('extendedData/description')!})
           </li>
         </#list>
       </ul>

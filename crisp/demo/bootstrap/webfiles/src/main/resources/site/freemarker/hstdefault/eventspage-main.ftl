@@ -34,7 +34,7 @@
     <article class="has-edit-button">
       <h3>Related Leads</h3>
       <ul>
-        <#list salesForceLeads.valueMap['records'].childIterator as lead>
+        <#list salesForceLeads.valueMap['records'].children.collection as lead>
           <li><a href="mailto:${lead.valueMap['Email']}">${lead.valueMap['FirstName']} ${lead.valueMap['LastName']}</a></li>
         </#list>
       </ul>

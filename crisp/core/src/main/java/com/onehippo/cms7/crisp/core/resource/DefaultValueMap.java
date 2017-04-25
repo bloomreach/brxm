@@ -10,9 +10,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import com.onehippo.cms7.crisp.api.resource.AbstractValueMap;
 import com.onehippo.cms7.crisp.api.resource.ValueMap;
 
-public class DefaultValueMap implements ValueMap {
+public class DefaultValueMap extends AbstractValueMap {
 
     private static final long serialVersionUID = 1L;
 
@@ -71,8 +72,8 @@ public class DefaultValueMap implements ValueMap {
     }
 
     @Override
-    public Object get(Object key) {
-        return delegatedMap.get(key);
+    public Object get(Object name) {
+        return delegatedMap.get(name);
     }
 
     @Override
@@ -88,20 +89,6 @@ public class DefaultValueMap implements ValueMap {
     @Override
     public Set<java.util.Map.Entry<String, Object>> entrySet() {
         return delegatedMap.entrySet();
-    }
-
-    @Override
-    public <T> T get(String name, Class<T> type) {
-        return (T) get(name);
-    }
-
-    @Override
-    public <T> T get(String name, T defaultValue) {
-        if (containsKey(name)) {
-            return (T) get(name);
-        }
-
-        return null;
     }
 
     @Override
