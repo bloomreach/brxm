@@ -1,51 +1,50 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
- *
+ *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.gallery;
+package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.markup.ComponentTag;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.columns.FallbackImageGalleryListColumnProvider;
 import org.hippoecm.frontend.plugins.gallery.columns.ImageGalleryColumnProviderPlugin;
-import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
+import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
-import org.hippoecm.frontend.plugins.standards.list.ExpandCollapseListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.hippoecm.frontend.skin.Icon;
 
-import static org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin.Mode.LIST;
-import static org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin.Mode.THUMBNAILS;
+import static org.hippoecm.frontend.plugins.cms.browse.list.ImageSearchViewPlugin.Mode.LIST;
+import static org.hippoecm.frontend.plugins.cms.browse.list.ImageSearchViewPlugin.Mode.THUMBNAILS;
 
-public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
+/**
+ * Values for <strong>gallery.thumbnail.size</strong> (default value is 60) and
+ * <strong>gallery.thumbnail.box.size</strong> (default value is 32) can be configured at:
+ * <p>
+ * <code>/hippo:configuration/hippo:frontend/cms/cms-search-views/image/root</code>
+ * </p>
+ */
+public final class ImageSearchViewPlugin extends SearchViewPlugin {
 
     private static final String CONFIG_GALLERY_THUMBNAIL_SIZE = "gallery.thumbnail.size";
 
@@ -55,16 +54,19 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
 
     private Mode mode = THUMBNAILS;
 
-    public ImageGalleryPlugin(final IPluginContext context, final IPluginConfig config) throws RepositoryException {
+    public ImageSearchViewPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-
-        setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
 
         add(CssClass.append("image-gallery"));
         add(CssClass.append(ReadOnlyModel.of(() -> mode == LIST ? "image-gallery-list" : "image-gallery-thumbnails")));
 
         addButton(new GalleryModeButton("listButton", LIST, Icon.LIST_UL));
         addButton(new GalleryModeButton("thumbnailsButton", THUMBNAILS, Icon.THUMBNAILS));
+    }
+
+    @Override
+    protected IListColumnProvider getDefaultColumnProvider() {
+        return new FallbackImageGalleryListColumnProvider();
     }
 
     @Override
@@ -85,24 +87,12 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
         }
     }
 
-    public List<ListColumn<Node>> getThumbnailModeColumns() {
-        final int thumbnailSize = getPluginConfig().getAsInteger(CONFIG_GALLERY_THUMBNAIL_SIZE);
+    private List<ListColumn<Node>> getThumbnailModeColumns() {
+        final int thumbnailSize = getPluginConfig().getAsInteger(CONFIG_GALLERY_THUMBNAIL_SIZE, DefaultGalleryProcessor.DEFAULT_THUMBNAIL_SIZE);
         return Arrays.asList(
                 ImageGalleryColumnProviderPlugin.createIconColumn(thumbnailSize, thumbnailSize),
                 ImageGalleryColumnProviderPlugin.NAME_COLUMN
         );
-    }
-
-    @Override
-    protected ISortableDataProvider<Node, String> newDataProvider() {
-        final DocumentListFilter filter = new DocumentListFilter(getPluginConfig());
-        final Map<String, Comparator<Node>> comparators = getTableDefinition().getComparators();
-        return new DocumentsProvider(getModel(), filter, comparators);
-    }
-
-    @Override
-    protected IListColumnProvider getDefaultColumnProvider() {
-        return new FallbackImageGalleryListColumnProvider();
     }
 
     private class GalleryModeButton extends AjaxLink<String> {
@@ -116,20 +106,13 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
             setOutputMarkupId(true);
 
             add(HippoIcon.fromSprite("icon", icon));
-        }
-
-        @Override
-        protected void onComponentTag(final ComponentTag tag) {
-            if (mode == activatedMode) {
-                tag.put("class", "gallery-mode-active");
-            }
-            super.onComponentTag(tag);
+            add(CssClass.append(ReadOnlyModel.of(() -> mode == activatedMode ? "gallery-mode-active" : "")));
         }
 
         @Override
         public void onClick(final AjaxRequestTarget target) {
             mode = activatedMode;
-            ImageGalleryPlugin.this.onModelChanged();
+            ImageSearchViewPlugin.this.onModelChanged();
         }
     }
 

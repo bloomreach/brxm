@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,14 +27,15 @@ import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.gallery.columns.compare.CalendarComparator;
-import org.hippoecm.frontend.plugins.gallery.columns.compare.LongPropertyComparator;
-import org.hippoecm.frontend.plugins.gallery.columns.compare.MimeTypeComparator;
-import org.hippoecm.frontend.plugins.gallery.columns.compare.SizeComparator;
-import org.hippoecm.frontend.plugins.gallery.columns.render.DatePropertyRenderer;
-import org.hippoecm.frontend.plugins.gallery.columns.render.ImageIconRenderer;
-import org.hippoecm.frontend.plugins.gallery.columns.render.SizeRenderer;
-import org.hippoecm.frontend.plugins.gallery.columns.render.StringPropertyRenderer;
+import org.hippoecm.frontend.plugins.gallery.Translations;
+import org.hippoecm.frontend.plugins.gallery.compare.CalendarComparator;
+import org.hippoecm.frontend.plugins.gallery.compare.LongPropertyComparator;
+import org.hippoecm.frontend.plugins.gallery.compare.MimeTypeComparator;
+import org.hippoecm.frontend.plugins.gallery.compare.SizeComparator;
+import org.hippoecm.frontend.plugins.standards.list.render.DatePropertyRenderer;
+import org.hippoecm.frontend.plugins.standards.list.render.ImageIconRenderer;
+import org.hippoecm.frontend.plugins.standards.list.render.SizeRenderer;
+import org.hippoecm.frontend.plugins.standards.list.render.StringPropertyRenderer;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
@@ -44,7 +45,6 @@ import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 
 public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProviderPlugin {
-    private static final long serialVersionUID = 1L;
 
     private static final String GALLERY_THUMBNAIL_SIZE = "gallery.thumbnail.size";
     private static final String GALLERY_THUMBNAIL_BOX_SIZE = "gallery.thumbnail.box.size";
@@ -53,7 +53,7 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     private final String primaryItemName;
 
-    public ImageGalleryColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
+    public ImageGalleryColumnProviderPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         primaryItemName = config.getString("primaryItemName", HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
     }
@@ -144,12 +144,12 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     private static class ImageDimensionRenderer extends StringPropertyRenderer {
 
-        public ImageDimensionRenderer(final String propertyName, final String relPath) {
+        ImageDimensionRenderer(final String propertyName, final String relPath) {
             super(propertyName, relPath);
         }
 
         @Override
-        protected String getValue(Property p) throws RepositoryException {
+        protected String getValue(final Property p) throws RepositoryException {
             return super.getValue(p) + "px";
         }
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.gallery.columns.render;
+package org.hippoecm.frontend.plugins.standards.list.render;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
@@ -35,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public class MimeTypeIconRenderer extends IconRenderer {
 
-    static final Logger log = LoggerFactory.getLogger(MimeTypeIconRenderer.class);
+    private static final Logger log = LoggerFactory.getLogger(MimeTypeIconRenderer.class);
 
     private static final Map<String, Icon> MIMETYPE_TO_ICON = new HashMap<>();
 
@@ -127,18 +128,18 @@ public class MimeTypeIconRenderer extends IconRenderer {
     }
 
     @Override
-    protected HippoIcon getIcon(String id, Node node) throws RepositoryException {
+    protected HippoIcon getIcon(final String id, final Node node) throws RepositoryException {
         try {
             if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
-                Node imageSet = node.getNode(node.getName());
+                final Node imageSet = node.getNode(node.getName());
                 try {
-                    Item primItem = JcrHelper.getPrimaryItem(imageSet);
+                    final Item primItem = JcrHelper.getPrimaryItem(imageSet);
                     if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                        if (!((Node) primItem).hasProperty("jcr:mimeType")) {
+                        if (!((Node) primItem).hasProperty(JcrConstants.JCR_MIMETYPE)) {
                             log.warn("Unset mime type of document");
                             return null;
                         }
-                        String mimeType = ((Node) primItem).getProperty("jcr:mimeType").getString();
+                        final String mimeType = ((Node) primItem).getProperty(JcrConstants.JCR_MIMETYPE).getString();
                         final Icon iconType = mimetypeToIcon(mimeType);
                         if (iconType != null) {
                             return HippoIcon.fromSprite(id, iconType, IconSize.L);
@@ -147,12 +148,12 @@ public class MimeTypeIconRenderer extends IconRenderer {
                         log.warn("primary item of image set must be of type "
                                 + HippoNodeType.NT_RESOURCE);
                     }
-                } catch (ItemNotFoundException e) {
+                } catch (final ItemNotFoundException e) {
                     log.warn("ImageSet must have a primary item. " + node.getPath()
                             + " probably not of correct image set type");
                 }
             }
-        } catch (RepositoryException ex) {
+        } catch (final RepositoryException ex) {
             log.error("Unable to determine mime type of document", ex);
         }
         return super.getIcon(id, node);
