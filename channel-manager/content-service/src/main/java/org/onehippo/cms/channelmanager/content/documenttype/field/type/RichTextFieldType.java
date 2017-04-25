@@ -31,7 +31,9 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
@@ -47,11 +49,22 @@ import org.slf4j.LoggerFactory;
 
 public class RichTextFieldType extends FormattedTextFieldType implements NodeFieldType {
 
-    private static final RichTextNodeProcessor RICH_TEXT_NODE_PROCESSOR = new RichTextNodeProcessor("richtext");
     private static final Logger log = LoggerFactory.getLogger(RichTextFieldType.class);
+
+    private static final String DEFAULT_HTMLPROCESSOR_ID = "richtext";
+
+    private RichTextNodeProcessor processor;
 
     public RichTextFieldType() {
         super(CKEditorConfig.DEFAULT_RICH_TEXT_CONFIG);
+    }
+
+    @Override
+    public void init(final FieldTypeContext fieldContext) {
+        super.init(fieldContext);
+
+        final String processorId = NamespaceUtils.getConfigProperty(fieldContext, HTMLPROCESSOR_ID).orElse(DEFAULT_HTMLPROCESSOR_ID);
+        processor = new RichTextNodeProcessor(processorId);
     }
 
     void initListBasedChoice(final String choiceId) {
@@ -89,7 +102,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
         final FieldValue value = new FieldValue();
         try {
             final String storedHtml = JcrUtils.getStringProperty(node, HippoStdNodeType.HIPPOSTD_CONTENT, null);
-            final String processedHtml = RICH_TEXT_NODE_PROCESSOR.read(storedHtml, node);
+            final String processedHtml = processor.read(storedHtml, node);
             value.setValue(processedHtml);
         } catch (final RepositoryException e) {
             log.warn("Failed to read rich text field '{}' from node '{}'", getId(), JcrUtils.getNodePathQuietly(node), e);
@@ -114,7 +127,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
 
     @Override
     public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException {
-        final String html = RICH_TEXT_NODE_PROCESSOR.write(fieldValue.getValue(), node);
+        final String html = processor.write(fieldValue.getValue(), node);
         node.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, html);
     }
 
@@ -125,25 +138,24 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
 
     private static class RichTextNodeProcessor {
 
-        private final String processorId;
+        // Images are rendered with a relative path, pointing to the binaries servlet. The binaries servlet always
+        // runs at the same level; two directories up from the angular app. Because of this we need to prepend
+        // all internal images with a prefix as shown below.
+        private static final TagVisitor RELATIVE_IMAGE_PATH_VISITOR = new RelativePathImageVisitor("../../");
+
+        private final HtmlProcessorFactory processorFactory;
 
         RichTextNodeProcessor(final String processorId) {
-            this.processorId = processorId;
+            processorFactory = HtmlProcessorFactory.of(processorId);
         }
 
         String read(final String html, final Node node) {
             final Model<String> htmlModel = Model.of(html);
             final Model<Node> nodeModel = Model.of(node);
             final JcrNodeFactory nodeFactory = JcrNodeFactory.of(node);
-            final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of(processorId);
             final HtmlProcessorModel processorModel = new RichTextProcessorModel(htmlModel, nodeModel, processorFactory,
                                                                                  nodeFactory);
-
-            // Images are rendered with a relative path, pointing to the binaries servlet. The binaries servlet always
-            // runs at the same level; two directories up from the angular app. Because of this we need to prepend
-            // all internal images with a prefix as shown below.
-            processorModel.getVisitors().add(new RelativePathImageVisitor("../../"));
-
+            processorModel.getVisitors().add(RELATIVE_IMAGE_PATH_VISITOR);
             return processorModel.get();
         }
 
@@ -151,7 +163,6 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
             final Model<Node> nodeModel = Model.of(node);
             final JcrNodeFactory nodeFactory = JcrNodeFactory.of(node);
             final Model<String> htmlModel = Model.of("");
-            final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of(processorId);
             final HtmlProcessorModel processorModel = new RichTextProcessorModel(htmlModel, nodeModel, processorFactory,
                                                                                  nodeFactory);
             processorModel.set(html);
