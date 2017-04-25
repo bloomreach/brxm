@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Configuring Hippo Addon CRISP</title>
+  </properties>
+  <body>
+
+    <section name="Introduction">
+
+      <p>
+        TODO
+      </p>
+
+    </section>
+
+  </body>
+</document>

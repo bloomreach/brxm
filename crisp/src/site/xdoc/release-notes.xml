@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Release Notes</title>
+  </properties>
+  <body>
+    <section name="Compatibility">
+      <table>
+        <tr>
+          <th>
+            Plugin Version
+          </th>
+          <th>
+            Hippo CMS Release Version
+          </th>
+        </tr>
+        <tr>
+          <td>0.9.x</td>
+          <td>11.x</td>
+        </tr>
+      </table>
+    </section>
+    <section name="Release Notes of 0.9.x">
+      <subsection name="0.9.0">
+        <ul>
+          <li>
+            Initial release.
+          </li>
+        </ul>
+      </subsection>
+    </section>
+  </body>
+</document>

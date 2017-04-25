@@ -2,14 +2,6 @@
 
 Hippo Addon CRISP (Common Resource Interface and Service Provider).
 
-## Release Version Compatibility
-
-| Plugin Version | CMS Version  |
-|:--------------:|:------------:|
-| 0.9.x          | 11.x         |
-
-See [CHANGES](CHANGES.md) for release notes.
-
 ## TODOs
 
 - Document how to implement a web hook:
