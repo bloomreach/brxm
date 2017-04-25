@@ -98,7 +98,7 @@ public abstract class AbstractCKEditorPlugin<ModelType> extends RenderPlugin {
 
     private String createEditorConfiguration(final String defaultJson) {
         try {
-            IPluginConfig pluginConfig = getPluginConfig();
+            final IPluginConfig pluginConfig = getPluginConfig();
             final String overlayedJson = pluginConfig.getString(CONFIG_CKEDITOR_CONFIG_OVERLAYED_JSON);
             final String appendedJson = pluginConfig.getString(CONFIG_CKEDITOR_CONFIG_APPENDED_JSON);
             return CKEditorConfig.combineConfig(defaultJson, overlayedJson, appendedJson).toString();

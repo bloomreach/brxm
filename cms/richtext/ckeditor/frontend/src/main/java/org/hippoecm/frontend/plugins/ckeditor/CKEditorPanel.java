@@ -54,7 +54,6 @@ public class CKEditorPanel extends Panel {
             return Collections.singleton(CmsHeaderItem.get());
         }
     };
-    private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
 
     private static final Logger log = LoggerFactory.getLogger(CKEditorPanel.class);
 
@@ -114,7 +113,7 @@ public class CKEditorPanel extends Panel {
         response.render(OnDomReadyHeaderItem.forScript(getJavaScriptForCKEditorTimestamp()));
         response.render(JavaScriptUrlReferenceHeaderItem.forReference(CKEDITOR_PANEL_JS));
 
-        ObjectNode editorConfig = getConfigurationForEditor();
+        final ObjectNode editorConfig = getConfigurationForEditor();
         renderContentsCss(response, editorConfig);
         response.render(OnDomReadyHeaderItem.forScript(getJavaScriptForEditor(editorConfig)));
     }
