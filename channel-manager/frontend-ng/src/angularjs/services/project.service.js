@@ -36,15 +36,15 @@ class ProjectService {
   }
 
   doCreateBranch(project) {
-    this.HstService.doPut(project.id, this.ChannelService.getChannel().mountId, 'createbranch');
+    this.HstService.doPut(null, this.ChannelService.getChannel().mountId, 'createbranch', project.id);
   }
 
   doSelectBranch(project) {
-    this.HstService.doPost(project.id, this.ChannelService.getChannel().mountId, 'selectbranch');
+    this.HstService.doPut(null, this.ChannelService.getChannel().mountId, 'selectbranch', project.id);
   }
 
   doSelectMaster() {
-    this.HstService.doPost(null, this.ChannelService.getChannel().mountId, 'selectmaster');
+    this.HstService.doPut(null, this.ChannelService.getChannel().mountId, 'selectmaster');
   }
 
 }
