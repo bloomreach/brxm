@@ -37,6 +37,8 @@
           on-manage-changes="channelCtrl.showSubpage('manage-changes')">
         </changes-menu>
 
+        <mode-toggle mode="channelCtrl.mode"></mode-toggle>
+
         <div class="button-toggle" layout>
           <md-button class="qa-button-view"
                      ng-class="{ 'button-active': !channelCtrl.isEditMode }"
@@ -67,7 +69,7 @@
     <hippo-iframe
       flex
       ng-show="channelCtrl.isChannelLoaded()"
-      edit-mode="channelCtrl.isEditMode"
+      edit-mode="channelCtrl.mode.components"
       on-edit-content="channelCtrl.editContent(contentUuid)"
       on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>

@@ -33,7 +33,7 @@ class OverlayService {
     HippoIframeService,
     MaskService,
     PageStructureService,
-    ) {
+  ) {
     'ngInject';
 
     this.$log = $log;

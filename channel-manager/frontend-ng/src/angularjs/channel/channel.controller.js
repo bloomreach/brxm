@@ -45,6 +45,10 @@ class ChannelCtrl {
 
     this.isEditMode = false;
     this.isCreatingPreview = false;
+    this.mode = {
+      components: false,
+      content: true,
+    };
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
 

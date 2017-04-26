@@ -142,15 +142,16 @@ class HippoIframeCtrl {
 
   _toggleOverlay() {
     const mode = this.editMode ? 'edit' : 'view';
+    console.log(mode);
     this.OverlayService.setMode(mode);
   }
 
   _updateDragDrop() {
     if (this.editMode) {
       this.DragDropService.enable()
-      .then(() => {
-        this.OverlayService.attachComponentMouseDown((e, component) => this.DragDropService.startDragOrClick(e, component));
-      });
+        .then(() => {
+          this.OverlayService.attachComponentMouseDown((e, component) => this.DragDropService.startDragOrClick(e, component));
+        });
     } else {
       this.DragDropService.disable();
       this.OverlayService.detachComponentMouseDown();
