@@ -126,13 +126,19 @@ public class HstSiteService implements HstSite {
             ch = configLoadingCache.loadChannel(configurationPath, isPreviewSite,  mount.getIdentifier());
         }
         if (ch != null) {
+
+            final HstNode rootConfigNode = hstNodeLoadingCache.getNode(configurationPath);
+            if (rootConfigNode == null) {
+                throw new ModelLoadingException("No configuration node found at '"+configurationPath+"'. Cannot load model for it.");
+            }
+
             ch.setHstMountPoint(mount.getMountPoint());
             ch.setContentRoot(mountSiteMapConfiguration.getMountContentPath());
             ch.setHstConfigPath(configurationPath);
 
             ch.setPreviewHstConfigExists(hasPreviewConfiguration);
 
-            if (site.getNode(HstNodeTypes.NODENAME_HST_WORKSPACE) != null) {
+            if (rootConfigNode.getNode(HstNodeTypes.NODENAME_HST_WORKSPACE) != null) {
                 ch.setWorkspaceExists(true);
             }
 
