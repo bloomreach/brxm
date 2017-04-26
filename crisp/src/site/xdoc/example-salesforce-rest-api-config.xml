@@ -15,7 +15,9 @@
       <subsection name="Introduction">
 
         <p>
-          TODO
+          The following example <code>ResourceResolver</code> bean definition will give hints on how to configure
+          conneciton information, <code>RestTemplate</code> object configuration, <code>ResourceLinkResolver</code>
+          object configuration, cache control configuration, etc.
         </p>
 
       </subsection>
@@ -85,6 +87,39 @@
             ]]>
           </source>
         </div>
+
+        <ul>
+          <li>
+            <code>baseUri</code> property is to set the base URI of the backend REST API.
+            So, invocations on <code>ResourceServiceBroker</code> for this <strong>resource space</strong>
+            will take a relative resource path to combine it with the base URI to invoke the backend service in the end.
+          </li>
+          <li>
+            <code>restTemplate</code> property is to set a Spring Framework <code>RestTemplate</code> object.
+            In this simple example, because we don't need any authentication against the backend REST API, it simply
+            set an instance of <code>org.springframework.web.client.RestTemplate</code>.
+            <code>org.springframework.http.client.ClientHttpRequestFactory</code> is the default <code>requestFactory</code>
+            bean definition in <code>CRISP</code> module library.
+          </li>
+          <li>
+            <code>resourceLinkResolver</code> is a property to set a custom <code>ResourceLinkResolver</code> component
+            for this <code>ResourceResolver</code>.
+            Because content or data from an external service is not something that we can generate URI links automatically
+            unlike content documents, the URI links must be generated in a custom way if needed.
+            You can add a custom <code>ResourceLinkResolver</code> in this property to generate a URI link for an external
+            content or data item.
+            For your convenience, <strong>CRISP</strong> module library has shipped with a generic Freemarker template based
+            custom resource link resolver component, <code>com.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver</code>,
+            with which you can use templating technique to generate a URI string with a given <code>resource</code> object.
+          </li>
+          <li>
+            Finally, <code>resourceDataCache</code> property specifies a <code>ResourceResolver</code> specific
+            <code>ResourceDataCache</code> object. If this property is set and the specific resource is cacheable,
+            the <code>ResourceServiceBroker</code> may cache resource specific data in the specified <code>ResourceDataCache</code>.
+            If not set but the specific resource is still cacheable, <code>ResourceServiceBroker</code>
+            may cache resource specific data in a globally-shared <code>ResourceDataCache</code> by default.
+          </li>
+        </ul>
 
       </subsection>
 

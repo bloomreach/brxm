@@ -184,11 +184,17 @@
           named <code>demoProductCatalogs</code> which is used as <strong>resource space</strong> name when invoking
           <code>ResourceServiceBroker</code> API.
         </p>
+
+      </subsection>
+
+      <subsection name="ResourceResolver Bean Definition">
+
         <p>
-          Basically the <code>ResourceResolver</code> component will be instantiated and registered for <code>demoProductCatalogs</code>
-          <strong>resource space</strong> name by the <code>crisp:beandefinition</code> property configuration in
-          Spring Framework Bean XML configuration.
+          In the example configuration in the previous section, basically the <code>ResourceResolver</code> component
+          will be instantiated and registered for <code>demoProductCatalogs</code> <strong>resource space</strong>
+          name by the <code>crisp:beandefinition</code> property configuration in Spring Framework Bean XML configuration.
         </p>
+
         <p>
           <strong><em>Note:</em></strong> <strong>CRISP Core</strong> will create a child <code>ApplicationContext</code>
           from the XML beans configuration in the <code>crisp:beandefinition</code> property and simply get a bean
@@ -197,13 +203,50 @@
           configuration node name. Therefore, you don't have to set <code>id</code> attribute of the <code>ResourceResolver</code>
           bean definition.
         </p>
+
         <p>
-          But the <code>crisp:beandefinition</code> property configuration could be interpolated by the variables
+          The <code>crisp:beandefinition</code> property configuration could be interpolated by the variables
           set by pairs of <code>crisp:propnames</code> and <code>crisp:propvalues</code> properties, which possibly
           enables a management UI to be able to give administrator ability to configure those configuration parameters
           without having to look into <code>crisp:beandefinition</code> XML bean configuration in detail in most
           cases.
         </p>
+
+        <p>
+          In the example in the previous section, the <code>ResourceResolver</code> component is configured by the
+          bean definition with <code>class="com.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver"</code>.
+          <code>SimpleJacksonRestTemplateResourceResolver</code> is a <code>ResourceResolver</code> implementation
+          that handles any JSON-based REST APIs in a generic way.
+          Also, please note that the <code>ResourceResolver</code> bean has <code>parent="abstractCrispSimpleJacksonRestTemplateResourceResolver"</code>,
+          which means the bean definition inherits all the common features provided by <strong>CRISP</strong> module library
+          by the "parent" bean definition.
+          If possible, it is a good practice to inherits an <i>abstract</i> bean definitions of <strong>CRISP</strong> module library
+          to inherit all the goodness provided by the <strong>CRISP</strong> library wherever possible.
+          For your information, the following <i>abstract</i> bean definitions for <code>ResourceResolver</code> components
+          are defined by default.
+        </p>
+
+        <div class="brush: xml">
+          <source><![CDATA[
+  <!-- SNIP -->
+
+  <!-- Basic HTTP Client Enabled Abstract Base Bean Definition -->
+  <bean id="abstractCrispHttpRequestResourceResolver" abstract="true">
+    <property name="clientHttpRequestFactory"
+              ref="org.springframework.http.client.ClientHttpRequestFactory" />
+  </bean>
+
+  <!-- SNIP -->
+
+  <!-- Basic JSON Supporting (Jackson Library based) HTTP Client Enabled Abstract Base Bean Definition -->
+  <bean id="abstractCrispSimpleJacksonRestTemplateResourceResolver" abstract="true"
+        parent="abstractCrispHttpRequestResourceResolver">
+    <property name="cacheEnabled" value="true" />
+  </bean>
+
+  <!-- SNIP -->
+          ]]></source>
+        </div>
 
       </subsection>
 
