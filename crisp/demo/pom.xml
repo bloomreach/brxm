@@ -501,6 +501,32 @@
       </build>
     </profile>
 
+    <profile>
+      <id>dist.src</id>
+      <build>
+        <defaultGoal>validate</defaultGoal>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>distro-assembly</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                  <configuration>
+                    <descriptors>
+                      <descriptor>src-assembly.xml</descriptor>
+                    </descriptors>
+                  </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 
 </project>

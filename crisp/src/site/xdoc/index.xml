@@ -206,6 +206,7 @@
             Application code may simply invoke <code>ResourceServiceBroker</code> API operations transparently
             without having to consider the details such as caching and invalidation by itself. <strong>CRISP</strong>
             will take care of the details for best performance for applciation developers.
+            Also, applications can implement a "Web-Hook" very easily through transparent API to invalidate caches.
             In addition, <strong>CRISP</strong> provides clear API interfaces to serve backend services, generate
             links for the external resources, cache or invalidate cache the resources, and so on.
           </li>

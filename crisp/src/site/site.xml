@@ -16,6 +16,7 @@
       <item name="Introduction" href="index.html" />
       <item name="Installation" href="install.html" />
       <item name="Getting Started" href="getstarted.html" />
+      <item name="Demo Project" href="demoproject.html" />
       <item name="Configuration" href="config.html">
         <item name="Example with Simple JSON REST API" href="example-simple-json-rest-api-config.html" />
         <item name="Example with SalesForce REST API" href="example-salesforce-rest-api-config.html" />

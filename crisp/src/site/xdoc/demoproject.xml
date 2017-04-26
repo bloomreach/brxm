@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Demo Project</title>
+  </properties>
+  <body>
+
+    <section name="Demo Project">
+
+      <subsection name="Introduction">
+
+        <p>
+          In the demo project, you can build and run demo application, which contains all the examples explained
+          in this site documentation.
+        </p>
+
+        <p>To build and run demo project:</p>
+        <div class="brush: bash">
+        <source><![CDATA[
+$ cd demo
+$ mvn clean verify
+$ mvn -P cargo.run
+        ]]></source>
+        </div>
+
+      </subsection>
+
+      <subsection name="Testing in Content Delivery tier Application">
+
+        <ul>
+          <li>Visit http://localhost:8080/site/news/.</li>
+          <li>Click on any news article.</li>
+          <li>You will see all the product list with custom-generated URI links at the bottom of the page.</li>
+          <li>
+            The external product data was retrieved through <code>ResourceServiceBroker</code>.
+            See <code>site/src/main/java/com/onehippo/cms7/crisp/demo/components/NewsContentComponent.java</code>
+            and <code>bootstrap/webfiles/src/main/resources/site/freemarker/hstdefault/newspage-main.ftl</code>
+            for detail.
+          </li>
+        </ul>
+
+      </subsection>
+
+      <subsection name="Testing in Content Authoring tier Application">
+
+        <ul>
+          <li>Visit http://localhost:8080/cms/.</li>
+          <li>Select and edit an news document.</li>
+          <li>
+            Select 'Related Products' field and try to add some products through the pop up dialog
+            (which is part of External Document Picker plugin).
+          </li>
+          <li>
+            The external product data was retrieved through <code>ResourceServiceBroker</code>.
+            See <code>cms/src/main/java/com/onehippo/cms7/crisp/demo/cms/plugin/CommerceProductDataServiceFacade.java</code>
+            for detail.
+          </li>
+        </ul>
+
+      </subsection>
+
+      <subsection name="Testing an Example Web-Hook Invalidating Resource Data Cache">
+
+        <p>
+          By default, the <code>ResourceResolver</code> component for demo product catalogs data in the demo project
+          caches result data based on resource space name, operation name, relative resource path, path variables, etc.
+          for 1 minutes ("time-to-live").
+          So, for the same requests, it will return the cached data without having to invoke the backend REST service
+          again as long the the cached data was not expired in 1 minutes ("time-to-live").
+        </p>
+
+        <p>
+          You can clear all the cached data by invoking a "Web-Hook" URL like the following manually.
+        </p>
+
+        <div class="brush: bash">
+          <source><![CDATA[
+$ curl http://localhost:8080/site/examples/invalidate-cache.jsp \
+    -d "resource_space=demoProductCatalogs&secret=some_secret"
+          ]]></source>
+        </div>
+
+        <p>
+          The example "Web-Hook" in the demo project, <code>invalidate-cache.jsp</code>, was implemented in most
+          simplified way intentionally for demonstration purpose like the following.
+          But you will realize how easy to implement a "Web-Hook" in a page, servlet or whatever.
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+<%--
+  Simple ResourceDataCache invalidation example for a resource space.
+  This simple JSP page reads two post request parameters, "resource_space" and "secret",
+  and clears the associated ResourceDataCache specified by the "resource_space" parameter value.
+  For simplicity, this page compares the "secret" parameter with a hard-coded secret string for security.
+  In practice, you will probably want to keep the secret in a different store for security, maintainability, etc.
+--%>
+<%@ page language="java" %>
+<%@ page import="javax.servlet.http.HttpServletResponse" %>
+<%@ page import="org.slf4j.LoggerFactory" %>
+<%@ page import="org.slf4j.Logger" %>
+<%@ page import="com.onehippo.cms7.crisp.api.broker.ResourceServiceBroker" %>
+<%@ page import="com.onehippo.cms7.crisp.api.resource.ResourceDataCache" %>
+<%@ page import="com.onehippo.cms7.crisp.hst.module.CrispHstServices" %>
+
+<%!
+private static final String DEFAULT_SECRET = "some_secret";
+
+private static Logger log = LoggerFactory.getLogger("com.onehippo.cms7.crisp.demo.jsp.invalidate-cache");
+%>
+
+<%
+if (!"POST".equals(request.getMethod())) {
+    log.error("Must be a POST request.");
+    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    return;
+}
+
+String resourceSpace = request.getParameter("resource_space");
+String secret = request.getParameter("secret");
+
+if (resourceSpace == null || "".equals(resourceSpace.trim())) {
+    log.error("Resource space name is missing.");
+    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    return;
+}
+
+if (!DEFAULT_SECRET.equals(secret)) {
+    log.error("Wrong secret.");
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    return;
+}
+
+ResourceServiceBroker broker = CrispHstServices.getDefaultResourceServiceBroker();
+
+if (broker == null) {
+    log.error("CRISP was not initialized.");
+    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    return;
+}
+
+ResourceDataCache resourceDataCache = broker.getResourceDataCache(resourceSpace);
+
+if (resourceDataCache == null) {
+    log.error("No resource data cache for the resource space.");
+    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    return;
+}
+
+log.info("Resource data cache cleared for resource space: '{}'", resourceSpace);
+resourceDataCache.clear();
+out.println("Resource data cache cleared for resource space: '" + resourceSpace + "'.");
+%>
+          ]]></source>
+        </div>
+
+      </subsection>
+
+    </section>
+
+  </body>
+</document>
