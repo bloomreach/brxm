@@ -78,6 +78,8 @@ import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCHOF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
@@ -207,8 +209,7 @@ public class MountResource extends AbstractConfigResource {
             log.warn("Could not create a branch : ", e);
             return error("Could not create a branch : " + e);
         } catch (ClientException e) {
-            log.warn("Could not create a branch : ", e);
-            return clientError("Could not create a branch : ", e.getErrorStatus());
+            return logAndReturnClientError(e);
         }
     }
 
@@ -226,6 +227,8 @@ public class MountResource extends AbstractConfigResource {
                     liveBranchName, liveConfigurationPath), ClientError.ITEM_EXISTS);
         }
         Node liveBranchConfigNode = liveMasterConfigurationNode.getParent().addNode(liveBranchName, NODETYPE_HST_CONFIGURATION);
+        liveBranchConfigNode.addMixin(MIXINTYPE_HST_BRANCH);
+        liveBranchConfigNode.setProperty(BRANCH_PROPERTY_BRANCHOF, liveConfigName);
         liveBranchConfigNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
         // TODO if 'master config node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
         // TODO as well to the preview config, see HSTTWO-3965

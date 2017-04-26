@@ -255,6 +255,9 @@
 + hst:sitemap (hst:sitemap) = hst:sitemap
 + hst:channel (hst:channel) = hst:channel
 
+[hst:branch] mixin
+- hst:branchof (string) mandatory
+
 [hst:configuration] > nt:base, mix:referenceable, mix:versionable
 - hst:inheritsfrom (string) multiple
 // deprecated : not used any more as only fine grained locking

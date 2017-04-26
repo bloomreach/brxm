@@ -26,6 +26,8 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
@@ -37,8 +39,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static java.util.Collections.singletonList;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCHOF;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class MountResourceTest extends AbstractFullRequestCycleTest {
@@ -358,6 +363,44 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         createBranchAssertions(EDITOR_CREDENTIALS, "foo");
     }
 
+    @Test
+    public void branch_is_always_created_from_live_and_not_from_preview() throws Exception {
+        // make sure to trigger some changes in preview of unittestproject before creating a branch
+        copyPage(ADMIN_CREDENTIALS);
+        Session session = createSession("admin", "admin");
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home-copy"));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home-copy"));
+
+        createBranch(ADMIN_CREDENTIALS, "foo");
+
+        // now we expect the branch *not* to contain 'home-copy' because that page was not yet in live
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-foo/hst:workspace/hst:sitemap"));
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject-foo/hst:workspace/hst:sitemap/home-copy"));
+
+        // now remove the created branch, publish the preview page, and create the branch again: Then we expect the
+        // home-copy to be there
+        session.getNode("/hst:hst/hst:configurations/foo").remove();
+        session.save();
+        publish(ADMIN_CREDENTIALS);
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home-copy"));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home-copy"));
+
+        createBranch(ADMIN_CREDENTIALS, "foo");
+        // now we expect the branch to contain 'home-copy' because that page was in live
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-foo/hst:workspace/hst:sitemap/home-copy"));
+
+        session.logout();
+    }
+
+    @Test
+    public void creating_an_existing_branch_not_allowed() throws Exception {
+        createBranch(ADMIN_CREDENTIALS, "foo");
+        final Map<String, Object> responseMap = createBranch(ADMIN_CREDENTIALS, "foo");
+
+        assertEquals(Boolean.FALSE, responseMap.get("success"));
+        assertEquals("ITEM_EXISTS", responseMap.get("errorCode"));
+    }
+
     private Map<String, Object> createBranch(final Credentials creds, final String branchName) throws RepositoryException, IOException, ServletException {
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
         final RequestResponseMock requestResponse = mockGetRequestResponse(
@@ -372,7 +415,24 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         final Map<String, Object> responseMap = createBranch(creds, branchName);
         assertEquals(Boolean.TRUE, responseMap.get("success"));
         assertEquals("Branch created successfully", responseMap.get("message"));
-        // TODO add assertions
+
+        Session session = createSession("admin", "admin");
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace"));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap"));
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages"));
+
+        // the created branch *does* have pages as well in the workspace because always automatically added to a branch
+
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"/hst:workspace"));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"/hst:workspace/hst:sitemap"));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"/hst:workspace/hst:pages"));
+
+        Node branchHstConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject-" + branchName);
+        assertTrue(branchHstConfigNode.isNodeType(MIXINTYPE_HST_BRANCH));
+        assertEquals("unittestproject", branchHstConfigNode.getProperty(BRANCH_PROPERTY_BRANCHOF).getString());
+
+        session.logout();
+
     }
 
 }

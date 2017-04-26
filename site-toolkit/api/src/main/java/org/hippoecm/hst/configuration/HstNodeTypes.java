@@ -60,6 +60,9 @@ public interface HstNodeTypes {
     String MIXINTYPE_HST_EDITABLE = "hst:editable";
     String EDITABLE_PROPERTY_STATE = "hst:state";
 
+    String MIXINTYPE_HST_BRANCH = "hst:branch";
+    String BRANCH_PROPERTY_BRANCHOF = "hst:branchof";
+
     String MIXINTYPE_HST_PROTOTYPE_META = "hst:prototypemeta";
     String PROTOTYPE_META_PROPERTY_DISPLAY_NAME = "hst:displayname";
     String PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER = "hst:primarycontainer";
