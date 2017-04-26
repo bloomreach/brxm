@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Examples</title>
+  </properties>
+  <body>
+
+    <section name="Examples">
+
+      <subsection name="Introduction">
+
+        <p>
+          There are some more advanced examples to apply <strong>CRISP</strong> to your applciations.
+        </p>
+
+        <ul>
+          <a href="example-webhook-invalidate-cache.html">Web-hook Example to Invalidate Cache</a>
+        </ul>
+
+      </subsection>
+
+    </section>
+
+  </body>
+</document>

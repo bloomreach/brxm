@@ -20,6 +20,9 @@
         <item name="Example with Simple JSON REST API" href="example-simple-json-rest-api-config.html" />
         <item name="Example with SalesForce REST API" href="example-salesforce-rest-api-config.html" />
       </item>
+      <item name="Examples" href="examples.html">
+        <item name="Web-hook Example to Invalidate Cache" href="example-webhook-invalidate-cache.html" />
+      </item>
       <item name="FAQ" href="faq.html" />
       <item name="JavaDocs" href="apidocs/index.html" />
       <item name="Release Notes" href="release-notes.html" />
