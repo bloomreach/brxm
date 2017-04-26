@@ -232,7 +232,9 @@ public class MountResource extends AbstractConfigResource {
         liveBranchConfigNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
         // TODO if 'master config node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
         // TODO as well to the preview config, see HSTTWO-3965
-        JcrUtils.copy(session, liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE, liveBranchConfigNode.getPath() + "/" + NODENAME_HST_WORKSPACE);
+        if (session.nodeExists(liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE)) {
+            JcrUtils.copy(session, liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE, liveBranchConfigNode.getPath() + "/" + NODENAME_HST_WORKSPACE);
+        }
         createMandatoryWorkspaceNodesIfMissing(liveBranchConfigNode.getPath());
         session.save();
     }
