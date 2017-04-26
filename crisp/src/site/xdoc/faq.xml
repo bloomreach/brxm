@@ -6,15 +6,17 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <document>
   <properties>
-    <title>CRISP Tutorial - Getting Started</title>
+    <title>FAQ</title>
   </properties>
   <body>
 
-    <section name="Introduction">
+    <section name="FAQ">
 
-      <p>
-        TODO
-      </p>
+      <subsection name="Q: Why ...?">
+        <p>
+          TODO
+        </p>
+      </subsection>
 
     </section>
 

@@ -15,16 +15,12 @@
     <menu name="Home">
       <item name="Introduction" href="index.html" />
       <item name="Installation" href="install.html" />
+      <item name="Getting Started" href="getstarted.html" />
       <item name="Configuration" href="config.html">
         <item name="Example with Simple JSON REST API" href="example-simple-json-rest-api-config.html" />
         <item name="Example with SalesForce REST API" href="example-salesforce-rest-api-config.html" />
       </item>
-      <item name="Tutorials" href="tut-getting-started.html">
-        <item name="Getting Started" href="tut-getting-started.html" />
-        <item name="Accessing JSON based Resource Models" href="tut-access-json-resources.html" />
-      </item>
-      <item name="Extensibility" href="extensibility.html">
-      </item>
+      <item name="FAQ" href="faq.html" />
       <item name="JavaDocs" href="apidocs/index.html" />
       <item name="Release Notes" href="release-notes.html" />
     </menu>

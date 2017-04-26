@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Getting Started</title>
+  </properties>
+  <body>
+
+    <section name="Getting Started">
+
+      <subsection name="Introduction">
+
+        <p>
+          From application's perspective, the main entry point to use <strong>CRISP</strong> services is
+          <a href="apidocs/com/onehippo/cms7/crisp/api/broker/ResourceServiceBroker.html">ResourceServiceBroker</a>.
+          You should always retrieve content or data via <code>ResourceServiceBroker</code> which always returns a
+          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> instance as a result.
+        </p>
+
+      </subsection>
+
+      <subsection name="Finding Resources from Simple JSON API Backend">
+
+        <p>
+          Suppose you have a simple REST API at <code>http://localhost:8080/example-commerce/api/v1/products/</code>
+          which returns product data like the following example in JSON array:
+        </p>
+
+        <div class="brush: javascript">
+          <source><![CDATA[
+[
+  {
+    "SKU": "12345678901",
+    "description": "MultiSync X123BT - 109.22 cm (43 \") , 1920 x 480, 16:4, 500 cd\/m\u00b2, 3000:1, 8 ms",
+    "name": "CBA MultiSync X123BT",
+    "extendedData": {
+      "title": "CBA MultiSync X123BT",
+      "type": "Link",
+      "uri": "Awesome-HIC-Site\/-\/products\/12345678901",
+      "description": "MultiSync X123BT - 109.22 cm (43 \") , 1920 x 480, 16:4, 500 cd\/m\u00b2, 3000:1, 8 ms"
+    }
+  },
+  {
+    "SKU": "12345678902",
+    "description": "PA123W, 68.58 cm (27 \") LCD, 2560 x 1440, 6ms, 1000:1, 300cd\/m2, 1.073B",
+    "name": "CBA PA123W",
+    "extendedData": {
+      "title": "CBA PA123W",
+      "type": "Link",
+      "uri": "Awesome-HIC-Site\/-\/products\/12345678902",
+      "description": "PA123W, 68.58 cm (27 \") LCD, 2560 x 1440, 6ms, 1000:1, 300cd\/m2, 1.073B"
+    }
+  },
+  //...
+]
+          ]]></source>
+        </div>
+
+        <p>
+          You can configure the <code>baseUri</code> property to <code>http://localhost:8080/example-commerce/api/v1</code>
+          in <code>ResourceResolver</code> component configuration
+          (see <a href="example-simple-json-rest-api-config.html">Example with Simple JSON REST API</a>
+          page as a reference).
+          Then you can use "/products/" as a resource relative path when invoking <code>ResourceServiceBroker</code>
+          like the following example:
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
+    Resource productCatalogs = resourceServiceBroker.findResources("demoProductCatalogs", "/products/");
+    request.setAttribute("productCatalogs", productCatalogs);
+          ]]></source>
+        </div>
+
+        <p>
+          As you can see, it's very simple. Get a reference to the singleton <code>ResourceServiceBroker</code>
+          by using <code>HippoServiceRegistry.getService(ResourceServiceBroker.class)</code>
+          (or alternatively you can use <code>CrispHstServices.getDefaultResourceServiceBroker()</code> instead
+          in Content Delivery tier application as well).
+        </p>
+        <p>
+          After that, you can get content or data from an external backend by passing its <strong>resource space</strong> name,
+          "demoProductCatalogs" in this example (see <a href="example-simple-json-rest-api-config.html">Example with Simple JSON REST API</a>
+          page as a reference) and a relative resource path, "/products/" in this example.
+        </p>
+        <p>
+          The <code>ResourceServiceBroker</code> may invoke the backend REST service or it may retrieve a cached
+          resource data for the caller. Anyway, it always returns a <code>Resource</code> object that allows to
+          retrieve all the properties and traverse child <code>Resource</code> objects and properteis very easily.
+        </p>
+        <p>
+          In the example code shown above, it sets the returned <code>Resource</code> object to "productCatalog" request attribute.
+          So, that attribute can be accessed in a template (in Freemarker, JSP, etc) through the variable name, "productCatalog".
+        </p>
+        <p>
+          For example, the following example shows how you can retrieve properites and child resources in Freemarker templates:
+        </p>
+        <div class="brush: html">
+          <source><![CDATA[
+  <#if productCatalogs?? && productCatalogs.anyChildContained>
+    <article class="has-edit-button">
+      <h3>Related Products</h3>
+      <ul>
+        <#list productCatalogs.children.collection as product>
+          <#assign extendedData=product.valueMap['extendedData'] />
+          <li>
+            <@crisp.link var="productLink" resourceSpace='demoProductCatalogs' resource=product>
+              <@crisp.variable name="preview" value="${hstRequestContext.preview?then('true', 'false')}" />
+              <@crisp.variable name="name" value="${product.valueMap['name']}" />
+            </@crisp.link>
+            <a href="${productLink}">
+              [${product.valueMap['SKU']!}] ${extendedData.valueMap['title']!}
+            </a>
+            (${product.getValue('extendedData/description')!})
+          </li>
+        </#list>
+      </ul>
+    </article>
+  </#if>
+          ]]></source>
+        </div>
+
+        <ul>
+          <li>
+            You can check if there's any child <code>Resource</code> objects through <code>Resource#isAnyChildContained()</code>
+            Java method or <code>resource.anyChildContainer</code> in an evaluation expression in templates.
+          </li>
+          <li>
+            <code>Resource#getChildren()#getCollection()</code> returns a read-only <code>java.util.Collection</code> object
+            to be able to easily iterate child items in Freemarker templates.
+          </li>
+          <li>
+            <code>Resource#getValueMap()</code> returns a <code>ValueMap</code> object (extension of <code>java.util.Map</code> interface)
+            through which you can access all the properties or child resource objects very easily.
+          </li>
+          <li>
+            Also, <code>Resource#getValue(String relPath)</code> method supports a relative property path for convenience.
+            For example, if a "product" resource object (backed by a JSON object) contains a child JSON object ("extendedData"),
+            then you can access "description" property of "extendedData" resource object directly through
+            <code>Resource#getValue("extendedData/description")</code> which is equivalent to
+            <code>((Resource) Resource#getValueMap().get("extendedData")).getValueMap().get("description")</code>.
+          </li>
+          <li>
+            In the example shown above, &lt;@crisp.link /&gt; (or &lt;crisp:link /&gt; in JSTL) tab library used
+            to generate a URI link for the specific <code>Resource</code> object.
+            The link generation topic is discussed in the next section.
+          </li>
+        </ul>
+
+      </subsection>
+
+      <subsection name="Custom Link Generation for Resources">
+
+        <p>
+          In the previous example, the following <strong>CRISP</strong> link tag library is used:
+        </p>
+
+        <div class="brush: html">
+          <source><![CDATA[
+  <@crisp.link var="productLink" resourceSpace='demoProductCatalogs' resource=product>
+    <@crisp.variable name="preview" value="${hstRequestContext.preview?then('true', 'false')}" />
+    <@crisp.variable name="name" value="${product.valueMap['name']}" />
+  </@crisp.link>
+          ]]></source>
+        </div>
+
+        <p>
+          Basically, a link for a <code>Resource</code> cannot be generated without a configured custom
+          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/ResourceLinkResolver.html">ResourceLinkResolver</a>
+          component in a <code>ResourceResolver</code> component.
+          Please see <a href="example-simple-json-rest-api-config.html">Example with Simple JSON REST API</a>
+          page for an example configuration with a custom <code>ResourceLinkResolver</code>.
+        </p>
+
+        <p>
+          Anyway, the idea is that if you use &lt;@crisp.link /&gt; (or &lt;crisp:link /&gt; in JSTL) tag library
+          in a template with specifying <strong>resource space</strong> name, <strong>resource</strong> bean,
+          then the tag library will invoke <code>ResourceServiceBroker</code> to invoke the underlying <code>ResourceLinkResolver</code>
+          for the specific <code>ResourceResolver</code> component specified by the <strong>resource space</strong> name
+          to create a URI link for the template.
+          So, the underlying custom <code>ResourceLinkResolver</code> will ge given a <strong>resource space</strong> name
+          anda <code>Resource</code> object to generate a URI link.
+        </p>
+
+        <p>
+          However, sometimes it might not be enough only with those, but it may require more "variables" to determine
+          a right URI link for the <code>Resource</code> object. For that reason, &lt;@crisp.link /&gt;
+          (or &lt;crisp:link /&gt; in JSTL) tag library supports embedding &lt;@crisp.variable /&gt;
+          (or &lt;crisp:variable /&gt; in JSTL) tags to pass more variables to use in URI link generation process.
+        </p>
+
+        <p>
+          For example, you will be able to find the following Freemarker templating based custom <code>ResourceLinkResolver</code>
+          configuration in <a href="example-simple-json-rest-api-config.html">Example with Simple JSON REST API</a> page:
+        </p>
+
+        <div class="brush: xml">
+          <source><![CDATA[
+  <bean class="com.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver">
+    <property name="templateSource">
+      <value>http://www.example.com/products/${(preview == "true")?then("staging", "current")}/sku/${resource.valueMap['SKU']!"unknown"}/overview.html</value>
+    </property>
+  </bean>
+          ]]></source>
+        </div>
+
+        <p>
+          The template may use two variables, "preview" and "name", passed by the &lt;@crisp.variable /&gt;
+          (or &lt;crisp:variable /&gt; in JSTL) tags inside &lt;@crisp.link /&gt; (or &lt;crisp:link /&gt; in JSTL) tag
+          in its expressions. But in this specific example, it used "preview" variable only for demonstration purpose.
+        </p>
+
+      </subsection>
+
+      <subsection name="Finding Resources with Path Variables to Expand Resource Relative Path">
+
+        <p>
+          It was discussed that we can find <code>Resource</code> objects on <code>ResourceServiceBroker</code>
+          by passing a logical <strong>resource space</strong> name and a <strong>relative resource path</strong> in the previous
+          sections.
+          However, sometimes, you might want to change the <strong>relative resource path</strong> dynamically
+          based on some runtime variables because the backend REST API URL could vary in situations.
+          For that reason, <code>ResourceServiceBroker</code> supports <strong>Path Variables</strong> on invocations, too.
+          See the following example:
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
+    final Map<String, Object> pathVars = new HashMap<>();
+    // Note: Just as an example, let's try to find all the data by passing empty query string.
+    pathVars.put("fullTextSearchTerm", "");
+    Resource productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG,
+            "/products/?q={fullTextSearchTerm}", pathVars);
+    request.setAttribute("productCatalogs", productCatalogs);
+          ]]></source>
+        </div>
+
+        <p>
+          In this example, it is assumed that the relative resource path cannot be statically determined every time,
+          but could be determined at runtime based on some variables. e.g, "/products/q=hippo" where "hippo" can
+          be determined at runtime by variables.
+        </p>
+
+        <p>
+          In this case, you can pass variables map on <code>ResourceServiceBroker#findResources(String resourceSpace, String baseAbsPath, Map pathVariables)</code>
+          operation.
+        </p>
+
+        <p>
+          The resource relative path parameter will be expanded using the given path variables (<code>pathVariables</code>), if there's any.
+          For example, if <code>pathVariables</code> looks like <code>{"var1":"hello","var2":"world"}</code>
+          and the resource relative path parameter is <code>".../some/path/{var1}/{var2}/overview"</code>,
+          then it is expanded to <code>".../some/path/hello/world/overview"</code> when making a real request to the backend.
+        </p>
+
+      </subsection>
+
+      <subsection name="Resolving Single Resource">
+
+        <p>
+          Resolving single resource is similar to finding multiple resources from <code>ResourceServiceBroker</code>.
+          You can simply replace the operation by "resolveResource(...)" and expect the result <code>Resource</code>
+          object represents the single resource directly.
+        </p>
+
+        <p>
+          Suppose <code>http://localhost:8080/example-commerce/api/v1/products/sku/12345678901</code> returns the following
+          JSON data:
+        </p>
+
+        <div class="brush: javascript">
+          <source><![CDATA[
+{
+  "SKU": "12345678901",
+  "description": "MultiSync X123BT - 109.22 cm (43 \") , 1920 x 480, 16:4, 500 cd\/m\u00b2, 3000:1, 8 ms",
+  "name": "CBA MultiSync X123BT",
+  "extendedData": {
+    "title": "CBA MultiSync X123BT",
+    "type": "Link",
+    "uri": "Awesome-HIC-Site\/-\/products\/12345678901",
+    "description": "MultiSync X123BT - 109.22 cm (43 \") , 1920 x 480, 16:4, 500 cd\/m\u00b2, 3000:1, 8 ms"
+  }
+}
+          ]]></source>
+        </div>
+
+        <p>
+          Then the following code will return a product resource representation backed by the JSON data.
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
+    Resource product = resourceServiceBroker.resolve("demoProductCatalogs", "/products/sku/12345678901");
+    assert "CBA MultiSync X123BT".equals(product.getValueMap().get("name"));
+          ]]></source>
+        </div>
+
+        <p>
+          You can also expand the resource relative path by variables, too.
+          Suppose <code>http://localhost:8080/example-commerce/api/v1/products/sku/12345678901</code>
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
+    final Map<String, Object> pathVars = new HashMap<>();
+    pathVars.put("sku", "12345678901");
+    Resource product = resourceServiceBroker.resolve("demoProductCatalogs", "/products/sku/{sku}", pathVars);
+    assert "CBA MultiSync X123BT".equals(product.getValueMap().get("name"));
+          ]]></source>
+        </div>
+
+      </subsection>
+
+    </section>
+
+  </body>
+</document>

@@ -77,6 +77,26 @@
           </source>
         </div>
 
+        <p>
+          The following properties are used in the bean configuration through pairs of
+          <code>crisp:propnames</code> and <code>crisp:propvalues</code> properties.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Property Name</th>
+              <th>Example Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>example.commerce.api.base.uri</td>
+              <td>http://localhost:8080/example-commerce/api/v1</td>
+            </tr>
+          </tbody>
+        </table>
+
         <ul>
           <li>
             <code>baseUri</code> property is to set the base URI of the backend REST API.

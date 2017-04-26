@@ -89,6 +89,46 @@
           </source>
         </div>
 
+        <p>
+          The following properties are used in the bean configuration through pairs of
+          <code>crisp:propnames</code> and <code>crisp:propvalues</code> properties.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Property Name</th>
+              <th>Example Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>salesforce.clientId</td>
+              <td>someClientId</td>
+            </tr>
+            <tr>
+              <td>salesforce.clientSecret</td>
+              <td>someClientSecret</td>
+            </tr>
+            <tr>
+              <td>salesforce.username</td>
+              <td>john.doe@example.com</td>
+            </tr>
+            <tr>
+              <td>salesforce.password</td>
+              <td>somePassword</td>
+            </tr>
+            <tr>
+              <td>salesforce.securityToken</td>
+              <td>someSecurityToken</td>
+            </tr>
+            <tr>
+              <td>salesforce.baseUrl</td>
+              <td>https://na1.salesforce.com</td>
+            </tr>
+          </tbody>
+        </table>
+
         <ul>
           <li>
             <code>baseUri</code> property is to set the base URI of the backend SalesForce REST API.
