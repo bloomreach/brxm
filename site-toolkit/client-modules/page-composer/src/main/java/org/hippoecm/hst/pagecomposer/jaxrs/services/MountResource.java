@@ -79,6 +79,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCHOF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
@@ -229,7 +230,7 @@ public class MountResource extends AbstractConfigResource {
         Node liveBranchConfigNode = liveMasterConfigurationNode.getParent().addNode(liveBranchName, NODETYPE_HST_CONFIGURATION);
         liveBranchConfigNode.addMixin(MIXINTYPE_HST_BRANCH);
         liveBranchConfigNode.setProperty(BRANCH_PROPERTY_BRANCHOF, liveConfigName);
-        liveBranchConfigNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
+        liveBranchConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
         // TODO if 'master config node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
         // TODO as well to the preview config, see HSTTWO-3965
         if (session.nodeExists(liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE)) {
@@ -333,7 +334,7 @@ public class MountResource extends AbstractConfigResource {
 
         String liveConfigName = StringUtils.substringAfterLast(liveConfigurationPath, "/");
         Node previewConfigNode = session.getNode(liveConfigurationPath).getParent().addNode(liveConfigName + "-preview", NODETYPE_HST_CONFIGURATION);
-        previewConfigNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
+        previewConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
         // TODO if 'liveconfig node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
         // TODO as well to the preview config, see HSTTWO-3965
         JcrUtils.copy(session, liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE, previewConfigNode.getPath() + "/" + NODENAME_HST_WORKSPACE);
