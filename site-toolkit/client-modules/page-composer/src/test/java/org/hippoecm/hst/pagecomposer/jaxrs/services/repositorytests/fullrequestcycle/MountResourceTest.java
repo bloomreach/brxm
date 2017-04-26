@@ -379,7 +379,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
 
         // now remove the created branch, publish the preview page, and create the branch again: Then we expect the
         // home-copy to be there
-        session.getNode("/hst:hst/hst:configurations/foo").remove();
+        session.getNode("/hst:hst/hst:configurations/unittestproject-foo").remove();
         session.save();
         publish(ADMIN_CREDENTIALS);
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home-copy"));
