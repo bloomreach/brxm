@@ -2,20 +2,6 @@
 
 Hippo Addon CRISP (Common Resource Interface and Service Provider).
 
-## TODOs
-
-- Document how to implement a web hook:
-
-```java
-    ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
-    // clear all the cache for instance...
-    resourceServiceBroker.getResourceDataCache("demoProductCatalogs").clear();
-```
-
-- Document how to use convenient property access by relative path through ```Resource#getValue(String relPath)```.
-- Javadocs and documentation (how to configure json api rest service backend, caching, OAuth2 configuration, how to add custom ```ResourceResolver``` for non-JSON-API backends such as RDBMS, NoSQL Database, etc.)
-- Web-hook example
-
 ## Build and install the module itself into local maven repository
 
 ```bash
