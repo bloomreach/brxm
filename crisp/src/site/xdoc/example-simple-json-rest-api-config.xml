@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Example with Simple JSON REST API</title>
+  </properties>
+  <body>
+
+    <section name="Example with Simple JSON REST API">
+
+      <subsection name="Introduction">
+
+        <p>
+          TODO
+        </p>
+
+      </subsection>
+
+      <subsection name="ResourceResolver Configuration">
+
+        <div class="brush: xml">
+          <source><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+  <bean parent="abstractCrispSimpleJacksonRestTemplateResourceResolver"
+        class="com.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver">
+    <property name="baseUri" value="${example.commerce.api.base.uri}" />
+    <property name="restTemplate">
+      <bean class="org.springframework.web.client.RestTemplate">
+        <property name="requestFactory" ref="org.springframework.http.client.ClientHttpRequestFactory" />
+      </bean>
+    </property>
+    <property name="resourceLinkResolver">
+      <bean class="com.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver">
+        <property name="templateSource">
+          <value>http://www.example.com/products/${(preview == "true")?then("staging", "current")}/sku/${resource.valueMap['SKU']!"unknown"}/overview.html</value>
+        </property>
+      </bean>
+    </property>
+    <property name="resourceDataCache">
+      <bean class="com.onehippo.cms7.crisp.core.resource.SpringResourceDataCache">
+        <constructor-arg>
+          <bean class="org.springframework.cache.ehcache.EhCacheCache">
+            <constructor-arg>
+              <bean parent="abstractCrispResourceEhCache">
+                <property name="cacheName" value="demoProductCatalogsCache" />
+                <property name="maxEntriesLocalHeap" value="1000" />
+                <property name="maxEntriesLocalDisk" value="0" />
+                <property name="timeToLiveSeconds" value="60" />
+                <property name="timeToIdleSeconds" value="60" />
+              </bean>
+            </constructor-arg>
+          </bean>
+        </constructor-arg>
+      </bean>
+    </property>
+  </bean>
+
+</beans>
+            ]]>
+          </source>
+        </div>
+
+      </subsection>
+
+    </section>
+
+  </body>
+</document>

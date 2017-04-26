@@ -190,6 +190,14 @@
           Spring Framework Bean XML configuration.
         </p>
         <p>
+          <strong><em>Note:</em></strong> <strong>CRISP Core</strong> will create a child <code>ApplicationContext</code>
+          from the XML beans configuration in the <code>crisp:beandefinition</code> property and simply get a bean
+          of type, <code>com.onehippo.cms7.crisp.api.resource.ResourceResolver</code>, to register the bean for
+          the <strong>resource space</strong>, the name of which is specified by the <code>ResourceResolver</code>
+          configuration node name. Therefore, you don't have to set <code>id</code> attribute of the <code>ResourceResolver</code>
+          bean definition.
+        </p>
+        <p>
           But the <code>crisp:beandefinition</code> property configuration could be interpolated by the variables
           set by pairs of <code>crisp:propnames</code> and <code>crisp:propvalues</code> properties, which possibly
           enables a management UI to be able to give administrator ability to configure those configuration parameters
