@@ -88,7 +88,7 @@
             In this simple example, because we don't need any authentication against the backend REST API, it simply
             set an instance of <code>org.springframework.web.client.RestTemplate</code>.
             <code>org.springframework.http.client.ClientHttpRequestFactory</code> is the default <code>requestFactory</code>
-            bean definition in <code>CRISP</code> module library.
+            bean definition in <strong>CRISP</strong> module library.
           </li>
           <li>
             <code>resourceLinkResolver</code> is a property to set a custom <code>ResourceLinkResolver</code> component
