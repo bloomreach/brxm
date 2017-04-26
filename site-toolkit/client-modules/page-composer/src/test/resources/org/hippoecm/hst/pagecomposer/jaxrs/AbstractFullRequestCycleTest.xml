@@ -23,9 +23,7 @@
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-filterDelegatee.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-jackson.xml" />
   <import resource="classpath:/org/hippoecm/hst/pagecomposer/SpringComponentManager-pagecomposer.xml" />
-
-  <!-- listeners are problematic in unit tests : override the security model listener with something that doesn't do anything -->
-  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel#SecurityModelEventListener" class="java.lang.Object"/>
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-observation.xml" />
 
   <bean id="jcrPathTemplateComposer" class="java.lang.String">
     <constructor-arg value="/hst:hst/hst:hosts/dev-localhost/localhost/hst:root"/>
