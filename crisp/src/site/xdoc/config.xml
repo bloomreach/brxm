@@ -29,7 +29,7 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>crisp:resourceresolvercontainer</sv:value>
       </sv:property>
-      <!-- A ResourceResolver configuration child node for 'demoProductCatalogs' resource space! -->
+      <!-- An example ResourceResolver configuration child node for 'demoProductCatalogs' resource space. -->
       <sv:node sv:name="demoProductCatalogs">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>crisp:resourceresolver</sv:value>
@@ -68,7 +68,7 @@
             child node(s) specifying <code>ResourceResolver</code>s, which primary node type is <code>crisp:resourceresolver</code>,
             for each <strong><i>resource space</i></strong> underneath.
             So, in the example shown above, there is only one <code>ResourceResolver</code> configuration for a resource
-            named <code>demoProductCatalogs</code>.
+            named <code>demoProductCatalogs</code> which is going to be used when invoking <code>ResourceServiceBroker</code> APIs.
           </li>
           <li>
             A <code>ResourceResolver</code> configuration node under <code>/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer</code>
@@ -82,7 +82,7 @@
           <li>
             <code>crisp:propnames (string multiple)</code> and <code>crisp:propvalues (string multiple)</code>
             properties define pairs of variable property names and values to be interpolated in the <code>crisp:beandefinition (string)</code>
-            property value. So, a management UI tool may let administrator edit those pairs of variable properties
+            property value. So, a management UI tool may possibly let administrator edit those pairs of variable properties
             without having to expose the XML bean definition in <code>crisp:beandefinition (string)</code> property directly.
           </li>
           <li>
@@ -94,7 +94,109 @@
       </subsection>
 
       <subsection name="Bootstrapping a ResourceResolver configuration for a new resource space">
-        <p>TODO</p>
+        <p>
+          By default, there is no <code>ResourceResolver</code> configuration under
+          <code>/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer</code>.
+          You can configure <code>ResourceResolver</code> configuration nodes there at runtime, or you can bootstrap
+          those configurations from your source with the following example initialize item in <code>hippoecm-extension.xml</code>:
+        </p>
+        <div class="brush: xml">
+          <source><![CDATA[
+  <sv:node sv:name="myhippoproject-hippo-configuration-hippo-modules-crispregistry-hippo-moduleconfig-crisp-resourceresolvercontainer-demoproductcatalogs">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>30100.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>configuration/modules/crispregistry/moduleconfig/resourceresolvercontainer/demoproductcatalogs.xml</sv:value>
+    </sv:property>
+  </sv:node>
+          ]]></source>
+        </div>
+        <p>And, <code>demoproductcatalogs.xml</code> could be like the following example:</p>
+        <div class="brush: xml">
+          <source>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;sv:node sv:name="demoProductCatalogs" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"&gt;
+  &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
+    &lt;sv:value>crisp:resourceresolver&lt;/sv:value&gt;
+  &lt;/sv:property>
+  &lt;sv:property sv:name="crisp:beandefinition" sv:type="String"&gt;
+    &lt;sv:value>&lt;!&#91;CDATA&#91;&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd"&gt;
+
+  &lt;bean parent="abstractCrispSimpleJacksonRestTemplateResourceResolver"
+        class="com.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver"&gt;
+    &lt;property name="baseUri" value="${example.commerce.api.base.uri}" /&gt;
+    &lt;property name="restTemplate"&gt;
+      &lt;bean class="org.springframework.web.client.RestTemplate"&gt;
+        &lt;property name="requestFactory" ref="org.springframework.http.client.ClientHttpRequestFactory" /&gt;
+      &lt;/bean&gt;
+    &lt;/property&gt;
+    &lt;property name="resourceLinkResolver"&gt;
+      &lt;bean class="com.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver"&gt;
+        &lt;property name="templateSource"&gt;
+          &lt;value>http://www.example.com/products/${(preview == "true")?then("staging", "current")}/sku/${resource.valueMap['SKU']!"unknown"}/overview.html&lt;/value&gt;
+        &lt;/property&gt;
+      &lt;/bean&gt;
+    &lt;/property&gt;
+    &lt;property name="resourceDataCache"&gt;
+      &lt;bean class="com.onehippo.cms7.crisp.core.resource.SpringResourceDataCache"&gt;
+        &lt;constructor-arg&gt;
+          &lt;bean class="org.springframework.cache.ehcache.EhCacheCache"&gt;
+            &lt;constructor-arg&gt;
+              &lt;bean parent="abstractCrispResourceEhCache"&gt;
+                &lt;property name="cacheName" value="demoProductCatalogsCache" /&gt;
+                &lt;property name="maxEntriesLocalHeap" value="1000" /&gt;
+                &lt;property name="maxEntriesLocalDisk" value="0" /&gt;
+                &lt;property name="timeToLiveSeconds" value="60" /&gt;
+                &lt;property name="timeToIdleSeconds" value="60" /&gt;
+              &lt;/bean&gt;
+            &lt;/constructor-arg&gt;
+          &lt;/bean&gt;
+        &lt;/constructor-arg&gt;
+      &lt;/bean&gt;
+    &lt;/property&gt;
+  &lt;/bean&gt;
+
+&lt;/beans&gt;
+    &#93;&#93;&gt;&lt;/sv:value&gt;
+  &lt;/sv:property&gt;
+  &lt;sv:property sv:multiple="true" sv:name="crisp:propnames" sv:type="String"&gt;
+    &lt;sv:value&gt;example.commerce.api.base.uri&lt;/sv:value&gt;
+  &lt;/sv:property&gt;
+  &lt;sv:property sv:multiple="true" sv:name="crisp:propvalues" sv:type="String"&gt;
+    &lt;sv:value>http://localhost:8080/example-commerce/api/v1&lt;/sv:value&gt;
+  &lt;/sv:property&gt;
+&lt;/sv:node&gt;
+          </source>
+        </div>
+
+        <p>
+          The example configuration shown above is going to add a <code>ResourceResolver</code> configuration node
+          named <code>demoProductCatalogs</code> which is used as <strong>resource space</strong> name when invoking
+          <code>ResourceServiceBroker</code> API.
+        </p>
+        <p>
+          Basically the <code>ResourceResolver</code> component will be instantiated and registered for <code>demoProductCatalogs</code>
+          <strong>resource space</strong> name by the <code>crisp:beandefinition</code> property configuration in
+          Spring Framework Bean XML configuration.
+        </p>
+        <p>
+          But the <code>crisp:beandefinition</code> property configuration could be interpolated by the variables
+          set by pairs of <code>crisp:propnames</code> and <code>crisp:propvalues</code> properties, which possibly
+          enables a management UI to be able to give administrator ability to configure those configuration parameters
+          without having to look into <code>crisp:beandefinition</code> XML bean configuration in detail in most
+          cases.
+        </p>
+
       </subsection>
 
     </section>
