@@ -13,9 +13,115 @@
     <section name="Web-hook Example to Invalidate Cache">
 
       <subsection name="Introduction">
+
         <p>
-          TODO
+          By default, the <code>ResourceResolver</code> component for demo product catalogs data in the demo project
+          caches result data based on resource space name, operation name, relative resource path, path variables, etc.
+          for 1 minutes ("time-to-live").
+          So, for the same requests, it will return the cached data without having to invoke the backend REST service
+          again as long the the cached data was not expired in 1 minutes ("time-to-live").
         </p>
+        <p>
+          Suppose you want to increase the "time-to-live" internal to maximize cacheability, but you also want to
+          invalidate the whole cache or part of the cache if there's any change occurred in the backend by invoking
+          your custom "Web-Hook" URL. "Web-Hook" is very useful in this scenario to maximize efficiency and performance.
+        </p>
+
+      </subsection>
+
+      <subsection name="Simple Web-Hook Page Example">
+
+        <p>
+          The example "Web-Hook" in the demo project, <code>invalidate-cache.jsp</code>, was implemented in most
+          simplified way intentionally for demonstration purpose like the following.
+          But you will realize how easy to implement a "Web-Hook" in a page, servlet or whatever.
+        </p>
+
+        <p>
+          You can invoke the demo "Web-Hook" page like the following with the two POST parameters (one to specifiy
+          the target <strong>resource space</strong> name and the other for "secret" for minimal security):
+        </p>
+
+        <div class="brush: bash">
+          <source><![CDATA[
+$ curl http://localhost:8080/site/examples/invalidate-cache.jsp \
+    -d "resource_space=demoProductCatalogs&secret=some_secret"
+          ]]></source>
+        </div>
+
+        <p>
+          The example "Web-Hook" page is very simple like the following. It simply invokes
+          <code>ResourceServiceBroker#getResourceDataCache(resourceSpace).clear()</code> in the end.
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+<%--
+  Simple ResourceDataCache invalidation example for a resource space.
+  This simple JSP page reads two post request parameters, "resource_space" and "secret",
+  and clears the associated ResourceDataCache specified by the "resource_space" parameter value.
+  For simplicity, this page compares the "secret" parameter with a hard-coded secret string for security.
+  In practice, you will probably want to keep the secret in a different store for security, maintainability, etc.
+--%>
+<%@ page language="java" %>
+<%@ page import="javax.servlet.http.HttpServletResponse" %>
+<%@ page import="org.slf4j.LoggerFactory" %>
+<%@ page import="org.slf4j.Logger" %>
+<%@ page import="com.onehippo.cms7.crisp.api.broker.ResourceServiceBroker" %>
+<%@ page import="com.onehippo.cms7.crisp.api.resource.ResourceDataCache" %>
+<%@ page import="com.onehippo.cms7.crisp.hst.module.CrispHstServices" %>
+
+<%!
+private static final String DEFAULT_SECRET = "some_secret";
+
+private static Logger log = LoggerFactory.getLogger("com.onehippo.cms7.crisp.demo.jsp.invalidate-cache");
+%>
+
+<%
+if (!"POST".equals(request.getMethod())) {
+    log.error("Must be a POST request.");
+    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    return;
+}
+
+String resourceSpace = request.getParameter("resource_space");
+String secret = request.getParameter("secret");
+
+if (resourceSpace == null || "".equals(resourceSpace.trim())) {
+    log.error("Resource space name is missing.");
+    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    return;
+}
+
+if (!DEFAULT_SECRET.equals(secret)) {
+    log.error("Wrong secret.");
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    return;
+}
+
+ResourceServiceBroker broker = CrispHstServices.getDefaultResourceServiceBroker();
+
+if (broker == null) {
+    log.error("CRISP was not initialized.");
+    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    return;
+}
+
+ResourceDataCache resourceDataCache = broker.getResourceDataCache(resourceSpace);
+
+if (resourceDataCache == null) {
+    log.error("No resource data cache for the resource space.");
+    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    return;
+}
+
+log.info("Resource data cache cleared for resource space: '{}'", resourceSpace);
+resourceDataCache.clear();
+out.println("Resource data cache cleared for resource space: '" + resourceSpace + "'.");
+%>
+          ]]></source>
+        </div>
+
       </subsection>
 
     </section>
