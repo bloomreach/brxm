@@ -12,9 +12,19 @@
 
     <section name="FAQ">
 
-      <subsection name="Q: Why ...?">
+      <subsection name="Q: Can I use CRISP in non-CMS delivery / authoring tier applciations?">
         <p>
-          TODO
+          Yes, <code>CRISP</code> API and CORE is basically independent from CMS specific APIs.
+          However, you will need to include all the <strong>provided</strong> dependencies referred by
+          <code>CRISP</code> API and <code>CRISP</code> Core by yourself in your application.
+        </p>
+      </subsection>
+
+      <subsection name="Q: Which is more crispy, granny apples or CRISP?">
+        <p>
+          Depends. If you're more interested in baking or cooking than programming, perhaps granny apples look
+          more crispy, but if you have struggled with implementing backend integrations in content delivery or
+          authoring tier on and on, probably you will pick <strong>CRISP</strong>.
         </p>
       </subsection>
 
