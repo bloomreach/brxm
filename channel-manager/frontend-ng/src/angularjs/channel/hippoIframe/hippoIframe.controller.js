@@ -43,6 +43,7 @@ class HippoIframeCtrl {
 
     this.$log = $log;
     this.$q = $q;
+    this.$scope = $scope;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.SidePanelService = SidePanelService;
@@ -82,9 +83,15 @@ class HippoIframeCtrl {
     const deleteComponentHandler = componentId => this.deleteComponent(componentId);
     CmsService.subscribe('delete-component', deleteComponentHandler);
     $scope.$on('$destroy', () => CmsService.unsubscribe('delete-component', deleteComponentHandler));
+  }
 
-    $scope.$watch('iframe.editMode', () => {
-      this._toggleOverlay();
+  $onInit() {
+    this.$scope.$watchGroup([
+      'iframe.showComponentsOverlay',
+      'iframe.showContentOverlay',
+    ], () => {
+      this._setComponentsOverlay(this.showComponentsOverlay);
+      this._setContentOverlay(this.showContentOverlay);
       this._updateDragDrop();
     });
   }
@@ -140,14 +147,16 @@ class HippoIframeCtrl {
     return this.DialogService.show(confirm);
   }
 
-  _toggleOverlay() {
-    const mode = this.editMode ? 'edit' : 'view';
-    console.log(mode);
-    this.OverlayService.setMode(mode);
+  _setComponentsOverlay(state) {
+    this.OverlayService.setComponentsOverlay(state);
+  }
+
+  _setContentOverlay(state) {
+    this.OverlayService.setContentOverlay(state);
   }
 
   _updateDragDrop() {
-    if (this.editMode) {
+    if (this.showComponentsOverlay) {
       this.DragDropService.enable()
         .then(() => {
           this.OverlayService.attachComponentMouseDown((e, component) => this.DragDropService.startDragOrClick(e, component));
@@ -206,15 +215,15 @@ class HippoIframeCtrl {
   }
 
   getContainers() {
-    return this.editMode ? this.PageStructureService.getContainers() : [];
+    return this.showComponentsOverlay ? this.PageStructureService.getContainers() : [];
   }
 
   getContentLinks() {
-    return !this.editMode ? this.PageStructureService.getContentLinks() : [];
+    return !this.showComponentsOverlay ? this.PageStructureService.getContentLinks() : [];
   }
 
   getEditMenuLinks() {
-    return this.editMode ? this.PageStructureService.getEditMenuLinks() : [];
+    return this.showComponentsOverlay ? this.PageStructureService.getEditMenuLinks() : [];
   }
 
   getSrc() {

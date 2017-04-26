@@ -48,6 +48,7 @@ class OverlayService {
 
     this.editMenuHandler = angular.noop;
     this.editContentHandler = angular.noop;
+    this.overlays = {};
 
     PageStructureService.registerChangeListener(() => this.sync());
   }
@@ -129,15 +130,21 @@ class OverlayService {
     this.overlay.off('click');
   }
 
-  setMode(mode) {
-    this.mode = mode;
+  setComponentsOverlay(state) {
+    this.overlays.components = state;
     this._updateModeClass();
+  }
+
+  setContentOverlay(state) {
+    this.overlays.content = state;
+    console.log('set content overlay');
   }
 
   _updateModeClass() {
     if (this.iframeWindow) {
       const html = $(this.iframeWindow.document.documentElement);
-      html.toggleClass('hippo-mode-edit', this._isEditMode());
+      console.log(html);
+      html.toggleClass('hippo-mode-edit', this.overlays.components);
       // don't call sync() explicitly: the DOM mutation will trigger it automatically
     }
   }
@@ -370,15 +377,15 @@ class OverlayService {
   _isElementVisible(structureElement, boxElement) {
     switch (structureElement.getType()) {
       case 'component':
-        return this._isEditMode() && !this.isInAddMode;
+        return this.overlays.component && !this.isInAddMode;
       case 'container':
-        return this._isEditMode();
+        return this.overlays.component;
       case 'content-link':
-        return !this._isEditMode() && this.DomService.isVisible(boxElement);
+        return !this.overlays.component && this.DomService.isVisible(boxElement);
       case 'menu-link':
-        return this._isEditMode() && !this.isInAddMode && this.DomService.isVisible(boxElement);
+        return this.overlays.component && !this.isInAddMode && this.DomService.isVisible(boxElement);
       default:
-        return this._isEditMode() && !this.isInAddMode;
+        return this.overlays.component && !this.isInAddMode;
     }
   }
 

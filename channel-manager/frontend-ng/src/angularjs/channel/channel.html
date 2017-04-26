@@ -70,6 +70,8 @@
       flex
       ng-show="channelCtrl.isChannelLoaded()"
       edit-mode="channelCtrl.mode.components"
+      show-components-overlay="channelCtrl.mode.components"
+      show-content-overlay="channelCtrl.mode.content"
       on-edit-content="channelCtrl.editContent(contentUuid)"
       on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>
