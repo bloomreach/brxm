@@ -68,7 +68,7 @@
             Suppose you want to integrate with SalesForce backend REST services as an example. You want to be able
             to change the connection configuration sometimes at runtime without having to redeploy or restart the server.
             How can we achieve that kind of runtime configurabililty without compromising any other quality attributes?
-            How can we maximize manageability to avoid unnecessary redeployment or restarts?
+            How can we maximize manageability to avoid unnecessary redeployments or restarts?
           </li>
           <li>
             <strong>Modifiability</strong>:
@@ -224,7 +224,7 @@
             <strong>Configurability / Manageability</strong>:
             <strong>CRISP</strong> provides all the configuration in the repository. So, administrator may update
             the configuration stored in the repository and all the changes will be reflected at runtime on the fly
-            without having to worry about redeployment or restarts at all.
+            without having to worry about redeployments or restarts at all.
           </li>
           <li>
             <strong>Modifiability</strong>:
