@@ -372,7 +372,6 @@
         <configuration>
           <skip>false</skip>
           <aggregate>true</aggregate>
-          <sourcepath>${basedir}/api/src/main/java</sourcepath>
         </configuration>
         <reportSets>
           <reportSet>

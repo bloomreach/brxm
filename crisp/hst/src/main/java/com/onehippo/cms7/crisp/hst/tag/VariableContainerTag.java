@@ -32,9 +32,8 @@ public abstract class VariableContainerTag extends TagSupport {
 
     /**
      * Adds a variable by the name and value to the variables map. 
-     * @param key String
-     * @param value String
-     * @return void
+     * @param name variable name
+     * @param value variable value
      */
     protected void addVariable(String name, String value) {
         if (name == null) {

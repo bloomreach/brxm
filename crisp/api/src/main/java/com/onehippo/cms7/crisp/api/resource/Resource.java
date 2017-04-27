@@ -62,7 +62,7 @@ public interface Resource extends Serializable {
      * <p>In addition, a path segment may contain an array index notation like <code>"content/images[1]/title"</code>.
      * In this case, the value at <code>content/images</code> must be an array type <code>Resource</code> object which
      * returns true on <code>Resource.isArray()</code>.</p>
-     * @param relPath
+     * @param relPath property or child resource relative path
      * @return a resolved property value of this resource by the given {@code relPath}. Or null if not resolved by the {@code relPath}
      */
     Object getValue(String relPath);

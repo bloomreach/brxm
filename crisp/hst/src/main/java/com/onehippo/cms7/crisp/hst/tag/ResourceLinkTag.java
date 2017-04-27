@@ -127,7 +127,6 @@ public class ResourceLinkTag extends VariableContainerTag {
     /**
      * Sets the var property.
      * @param var The var to set
-     * @return void
      */
     public void setVar(String var) {
         this.var = var;
@@ -147,8 +146,7 @@ public class ResourceLinkTag extends VariableContainerTag {
 
     /**
      * Sets the escapeXml property.
-     * @param escapeXml
-     * @return void
+     * @param escapeXml whether or not escape generated markup string
      */
     public void setEscapeXml(Boolean escapeXml) {
         this.escapeXml = escapeXml;
