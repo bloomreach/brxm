@@ -28,7 +28,7 @@
       <subsection name="Why CRISP?">
 
         <p>
-          Let's think about a typical integration scenario with an external (REST, Web Services, API, etc) services
+          Let's think about a typical integration scenario with an external (REST, Web Services, API, etc) service
           in an application:
         </p>
 
