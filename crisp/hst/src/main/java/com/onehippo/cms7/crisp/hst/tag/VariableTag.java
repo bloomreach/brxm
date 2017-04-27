@@ -16,8 +16,8 @@ public class VariableTag extends TagSupport {
     private String name = null;
     private String value = null;
 
-    /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int doStartTag() throws JspException {

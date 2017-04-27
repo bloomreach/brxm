@@ -10,6 +10,9 @@ import java.util.Map;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
+/**
+ * Abstract JSTL Tag Library base class that may embed tags processed by {@link VariableTag}.
+ */
 public abstract class VariableContainerTag extends TagSupport {
 
     private static final long serialVersionUID = 1L;
@@ -22,8 +25,8 @@ public abstract class VariableContainerTag extends TagSupport {
         }
     }
 
-    /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int doStartTag() throws JspException {

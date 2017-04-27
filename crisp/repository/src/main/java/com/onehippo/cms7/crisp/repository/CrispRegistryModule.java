@@ -14,6 +14,10 @@ import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * CRISP Repository Addon <code>DaemonModule</code> implementation that produces {@link HippoEvent} on any module
+ * configuration change through {@link HippoEventBus}.
+ */
 public class CrispRegistryModule extends AbstractReconfigurableDaemonModule {
 
     private static Logger log = LoggerFactory.getLogger(CrispRegistryModule.class);
@@ -33,13 +37,22 @@ public class CrispRegistryModule extends AbstractReconfigurableDaemonModule {
      */
     private static final String EVENT_ACTION_UPDATE_CONFIGURATION = "updateConfiguration";
 
+    /**
+     * Flag whether or not the module configuration was changed.
+     */
     private boolean configurationUpdated;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void doConfigure(Node moduleConfig) throws RepositoryException {
         configurationUpdated = true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void doInitialize(Session session) throws RepositoryException {
         if (configurationUpdated) {
@@ -48,16 +61,25 @@ public class CrispRegistryModule extends AbstractReconfigurableDaemonModule {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onConfigurationChange(final Node moduleConfig) throws RepositoryException {
         super.onConfigurationChange(moduleConfig);
         doInitialize(moduleConfig.getSession());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void doShutdown() {
     }
 
+    /**
+     * Posts a {@link HippoEvent} through {@link HippoEventBus} about a module configuration change event.
+     */
     private void postConfigurationChangeEvent() {
         HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
 
