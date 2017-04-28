@@ -1,5 +1,21 @@
 .btn-overlay-toggle {
+  $color-blue: #4286f4;
+  $color-dark: #4f4f4f;
+
+  color: $color-dark !important;
+  user-select: none;
+
   &.active {
-    color: #4286f4;
+    color: $color-blue !important;
+  }
+
+  &:focus {
+    border: 0 !important;
+    box-shadow: 0 !important;
+    outline: none !important;
+  }
+
+  &:hover {
+    cursor: pointer;
   }
 }
