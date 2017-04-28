@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.wicket.behavior.Behavior;
-import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
+import org.onehippo.ckeditor.HippoPicker;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
 import org.junit.Before;

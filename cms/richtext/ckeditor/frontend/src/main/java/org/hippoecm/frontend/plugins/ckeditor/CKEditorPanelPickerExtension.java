@@ -22,11 +22,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.Behavior;
-import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
+import org.onehippo.ckeditor.HippoPicker;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
-import org.onehippo.ckeditor.CKEditorConfig;
-import org.onehippo.ckeditor.Json;
 
 /**
  * Adds the CKEditor plugin 'hippopicker'.
@@ -43,8 +41,6 @@ public class CKEditorPanelPickerExtension implements CKEditorPanelExtension {
 
     @Override
     public void addConfiguration(final ObjectNode editorConfig) throws IOException {
-        Json.appendToCommaSeparatedString(editorConfig, CKEditorConfig.EXTRA_PLUGINS, HippoPicker.PLUGIN_NAME);
-
         final ObjectNode pickerPluginConfig = editorConfig.with(HippoPicker.CONFIG_KEY);
         addInternalLinkPickerConfiguration(pickerPluginConfig);
         addImagePickerConfiguration(pickerPluginConfig);

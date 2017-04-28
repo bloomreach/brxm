@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
-import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
+import org.onehippo.ckeditor.HippoPicker;
 import org.hippoecm.frontend.plugins.richtext.dialog.RichTextEditorAction;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorDocumentLink;
 
