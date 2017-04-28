@@ -106,4 +106,18 @@
 
   </dependencies>
 
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>net.sourceforge.maven-taglib</groupId>
+        <artifactId>maven-taglib-plugin</artifactId>
+        <configuration>
+          <taglib.src.dir>hst/src/main/resources/META-INF</taglib.src.dir>
+          <title>CRISP ${project.version} JSP tag</title>
+          <tldDocDir>${basedir}/../target/site/tlddoc</tldDocDir>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
 </project>

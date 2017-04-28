@@ -13,7 +13,8 @@
 
   <tag>
     <description>
-      This tag creates a link for a CRISP resource.
+      This tag creates a URI link for a CRISP resource through
+      ResourceServiceBroker#resolveLink(String resourceSpace, Resource resource)  API.
     </description>
     <name>link</name>
     <tag-class>com.onehippo.cms7.crisp.hst.tag.ResourceLinkTag</tag-class>
@@ -27,7 +28,7 @@
       <type>java.lang.String</type>
     </attribute>
     <attribute>
-      <description>The variable name of the link tag</description>
+      <description>The resource space name of the resource for which to generate a URI link</description>
       <name>resourceSpace</name>
       <required>true</required>
       <rtexprvalue>false</rtexprvalue>
@@ -53,11 +54,23 @@
       <rtexprvalue>false</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>
+    <example><![CDATA[
+      <%-- In JSP, --%>
+
+      <crisp:link var="productLink" resourceSpace="demoProductCatalogs" resource="${product}" />
+      <a href="${productLink}">${product.valueMap['name']}</a>
+
+      <#-- In Freemarker, -->
+
+      <@crisp.link var="productLink" resourceSpace="demoProductCatalogs" resource=product />
+      <a href="${productLink}">${product.valueMap['name']}</a>
+     ]]></example>
   </tag>
 
   <tag>
     <description>
-      This variable tag can be nested into 'link' tag to provide additional link variables.
+      This variable tag can be nested in 'link' tag to provide additional link variables
+      that are passed to the undelying ResourceLinkResolver for the resource space.
     </description>
     <name>variable</name>
     <tag-class>com.onehippo.cms7.crisp.hst.tag.VariableTag</tag-class>
@@ -76,6 +89,25 @@
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.String</type>
     </attribute>
+    <example><![CDATA[
+      <%-- In JSP, --%>
+
+      <!-- You can nest crisp:variable tag(s) inside crisp:link tag to pass variables to the underlying ResourceLinkResolver. -->
+      <crisp:link var="productLink" resourceSpace="demoProductCatalogs" resource="${product}">
+        <crisp:variable name="preview" value="${hstRequestContext.preview ? 'true' : 'false'}" />
+        <crisp:variable name="name" value="${product.valueMap['name']}" />
+      </crisp:link>
+      <a href="${productLink}">${product.valueMap['name']}</a>
+
+      <#-- In Freemarker, -->
+
+      <!-- You can nest crisp.variable tag(s) inside crisp.link tag to pass variables to the underlying ResourceLinkResolver. -->
+      <@crisp.link var="productLink" resourceSpace="demoProductCatalogs" resource=product>
+        <@crisp.variable name="preview" value="${hstRequestContext.preview?then('true', 'false')}" />
+        <@crisp.variable name="name" value="${product.valueMap['name']}" />
+      </@crisp.link>
+      <a href="${productLink}">${product.valueMap['name']}</a>
+     ]]></example>
   </tag>
 
 </taglib>
