@@ -155,6 +155,27 @@
             API support to allow to implement a web-hook (in order to invalidate cache for instance) easily.
           </li>
         </ul>
+
+        <p>
+          The following features are considered to be shipped in the <strong>future</strong>, too.
+        </p>
+
+        <ul>
+          <li>
+            Default implementation support for XML based <code>Resource</code> representations such as RSS Feeds.
+          </li>
+          <li>
+            Example <code>ResourceResolver</code> and <code>Resource</code> implementations for custom Java API
+            calls on the backends instead of JSON/XML in the demo project. For example, if a backend media server
+            supports a full Java API encapsulating REST API payloads for developers, then the example can show
+            how to implement a custom <code>ResourceResolver</code> and <code>Resource</code> for the backend.
+          </li>
+          <li>
+            More <code>ResourceResolver</code> Spring bean configuration examples for different backends to be copied
+            and pasted right away. Please let us know if you want to contribute some from your experiences! :-)
+          </li>
+        </ul>
+
       </subsection>
 
       <subsection name="Architectural Views">
