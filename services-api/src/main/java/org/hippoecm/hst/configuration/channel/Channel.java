@@ -76,6 +76,7 @@ public class Channel implements Serializable {
     private Calendar lastModified;
 
     private String branchId;
+    private String branchOf;
 
     /**
      * {@link Channel} default constructor it is required for REST de/serialization
@@ -133,6 +134,7 @@ public class Channel implements Serializable {
         lockedOn = channel.lockedOn;
         lastModified = channel.lastModified;
         branchId = channel.branchId;
+        branchOf = channel.branchOf;
     }
 
     /**
@@ -443,12 +445,27 @@ public class Channel implements Serializable {
         this.lastModified = lastModified;
     }
 
+    /**
+     * @return The id of this branch if this {@link Channel} is a branch and {@code null} otherwise
+     */
     public String getBranchId() {
         return branchId;
     }
 
     public void setBranchId(final String branchId) {
         this.branchId = branchId;
+    }
+
+    /**
+     * @return The {@link #getId()} of the {@link Channel} of which this channel is a branch and {@code null} if this
+     * channel is not a branch
+     */
+    public String getBranchOf() {
+        return branchOf;
+    }
+
+    public void setBranchOf(final String branchOf) {
+        this.branchOf = branchOf;
     }
 
     @Override
@@ -509,6 +526,7 @@ public class Channel implements Serializable {
                 ", lockedOn=" + lockedOn +
                 ", lastModified=" + lastModified +
                 ", branchId=" + branchId +
+                ", branchOf=" + branchOf +
                 '}';
     }
 }
