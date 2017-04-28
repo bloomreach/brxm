@@ -48,7 +48,7 @@
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
       this.iframeToHost.subscribe('destroy-component-properties-window', this._destroyComponentPropertiesWindow, this);
-      this.iframeToHost.subscribe('show-picker', this._showPicker, this);
+      this.iframeToHost.subscribe('show-path-picker', this._showPathPicker, this);
       this.iframeToHost.subscribe('open-content', this._openContent, this);
       this.iframeToHost.subscribe('close-content', this._closeContent, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
@@ -229,13 +229,13 @@
       );
     },
 
-    _showPicker: function(field, value, pickerConfig) {
-      this.pickedField = field;
-      Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(value, pickerConfig, this._onPicked.bind(this));
+    _showPathPicker: function(field, value, pickerConfig) {
+      this.pathPickerField = field;
+      Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(value, pickerConfig, this._onPathPicked.bind(this));
     },
 
-    _onPicked: function(path, displayValue) {
-      this.hostToIFrame.publish('picked', this.pickedField, path, displayValue);
+    _onPathPicked: function(path, displayValue) {
+      this.hostToIFrame.publish('path-picked', this.pathPickerField, path, displayValue);
     },
 
     _maskSurroundings: function() {

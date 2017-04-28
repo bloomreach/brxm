@@ -225,9 +225,9 @@ describe('ChannelProperty', () => {
     spyOn(window.APP_TO_CMS, 'publish');
     const ChannelPropertyCtrl = compileDirectiveAndGetController();
 
-    ChannelPropertyCtrl.showPicker();
+    ChannelPropertyCtrl.showPathPicker();
 
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-picker', 'testField', 'testValue', {
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
       configuration: 'testPickerConfiguration',
       initialPath: 'testInitialPath',
       isRelativePath: 'testIsRelative',
@@ -247,9 +247,9 @@ describe('ChannelProperty', () => {
     spyOn(ChannelService, 'getContentRootPath').and.returnValue('testChannelContentRootPath');
     const ChannelPropertyCtrl = compileDirectiveAndGetController();
 
-    ChannelPropertyCtrl.showPicker();
+    ChannelPropertyCtrl.showPathPicker();
 
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-picker', 'testField', 'testValue', {
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
       configuration: undefined,
       initialPath: undefined,
       isRelativePath: undefined,
@@ -267,7 +267,7 @@ describe('ChannelProperty', () => {
     };
     const ChannelPropertyCtrl = compileDirectiveAndGetController();
 
-    window.CMS_TO_APP.publish('picked', 'testField', '/picked/path');
+    window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path');
 
     expect(ChannelPropertyCtrl.value).toEqual('/picked/path');
   });
@@ -280,7 +280,7 @@ describe('ChannelProperty', () => {
     };
     const ChannelPropertyCtrl = compileDirectiveAndGetController();
 
-    window.CMS_TO_APP.publish('picked', 'otherField', '/picked/path');
+    window.CMS_TO_APP.publish('path-picked', 'otherField', '/picked/path');
 
     expect(ChannelPropertyCtrl.value).toEqual('testValue');
   });
@@ -293,9 +293,9 @@ describe('ChannelProperty', () => {
     };
     const ChannelPropertyCtrl = compileDirectiveAndGetController();
 
-    window.CMS_TO_APP.publish('picked', 'testField', '/picked/path/one');
+    window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/one');
     $scope.$destroy();
-    window.CMS_TO_APP.publish('picked', 'testField', '/picked/path/two');
+    window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/two');
     expect(ChannelPropertyCtrl.value).toEqual('/picked/path/one');
   });
 
@@ -358,9 +358,9 @@ describe('ChannelProperty', () => {
     spyOn(window.APP_TO_CMS, 'publish');
     const ChannelPropertyCtrl = compileDirectiveAndGetController();
 
-    ChannelPropertyCtrl.showPicker();
+    ChannelPropertyCtrl.showPathPicker();
 
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-picker', 'testField', 'testValue', {
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
       configuration: 'testPickerConfiguration',
       initialPath: 'testInitialPath',
       isRelativePath: undefined,
