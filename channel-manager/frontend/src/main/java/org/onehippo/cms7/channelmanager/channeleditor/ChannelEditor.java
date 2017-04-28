@@ -179,7 +179,7 @@ public class ChannelEditor extends ExtPanel {
     public void viewChannel(final String channelId, final String initialPath) {
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
-            final String loadChannelScript = String.format("Ext.getCmp('%1s').loadChannel('%2s', '%3s');",
+            final String loadChannelScript = String.format("Ext.getCmp('%s').loadChannel('%s', '%s');",
                     getMarkupId(), channelId, initialPath);
             target.appendJavaScript(loadChannelScript);
         }
@@ -242,7 +242,7 @@ public class ChannelEditor extends ExtPanel {
             AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
                 try {
-                    final String killEditorScript = String.format("Ext.getCmp('%1s').killEditor('%2s');",
+                    final String killEditorScript = String.format("Ext.getCmp('%s').killEditor('%s');",
                             getMarkupId(), model.getObject().getIdentifier());
                     target.appendJavaScript(killEditorScript);
                 } catch (RepositoryException e) {
