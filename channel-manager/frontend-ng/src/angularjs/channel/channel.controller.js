@@ -44,10 +44,8 @@ class ChannelCtrl {
     this.SessionService = SessionService;
 
     this.isCreatingPreview = false;
-    this.overlays = {
-      components: false,
-      content: true,
-    };
+    this.isContentOverlayDisplayed = true;
+    this.isComponentsOverlayDisplayed = false;
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
 

@@ -37,8 +37,8 @@
           on-manage-changes="channelCtrl.showSubpage('manage-changes')">
         </changes-menu>
 
-        <overlay-toggle state="channelCtrl.overlays.components" icon="view_quilt"></overlay-toggle>
-        <overlay-toggle state="channelCtrl.overlays.content" icon="description"></overlay-toggle>
+        <overlay-toggle state="channelCtrl.isComponentsOverlayDisplayed" icon="view_quilt"></overlay-toggle>
+        <overlay-toggle state="channelCtrl.isContentOverlayDisplayed" icon="description"></overlay-toggle>
       </div>
     </div>
     <md-progress-linear md-mode="indeterminate"
@@ -47,18 +47,18 @@
   </md-toolbar>
 
   <md-content layout="row" flex ng-class="{ 'hide-scrollbar': !channelCtrl.isSubpageOpen() }">
-    <left-side-panel layout="row" edit-mode="channelCtrl.overlays.components"></left-side-panel>
+    <left-side-panel layout="row" edit-mode="channelCtrl.isComponentsOverlayDisplayed"></left-side-panel>
 
     <hippo-iframe
       flex
       ng-show="channelCtrl.isChannelLoaded()"
-      show-components-overlay="channelCtrl.overlays.components"
-      show-content-overlay="channelCtrl.overlays.content"
+      show-components-overlay="channelCtrl.isComponentsOverlayDisplayed"
+      show-content-overlay="channelCtrl.isContentOverlayDisplayed"
       on-edit-content="channelCtrl.editContent(contentUuid)"
       on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>
 
-    <right-side-panel layout="row" edit-mode="channelCtrl.overlays.components"></right-side-panel>
+    <right-side-panel layout="row" edit-mode="channelCtrl.isComponentsOverlayDisplayed"></right-side-panel>
   </md-content>
 </div>
 

@@ -48,7 +48,9 @@ class OverlayService {
 
     this.editMenuHandler = angular.noop;
     this.editContentHandler = angular.noop;
-    this.overlays = {};
+
+    this.isComponentsOverlayDisplayed = false;
+    this.isContentOverlayDisplayed = false;
 
     PageStructureService.registerChangeListener(() => this.sync());
   }
@@ -131,20 +133,20 @@ class OverlayService {
   }
 
   setComponentsOverlay(state) {
-    this.overlays.components = state;
+    this.isComponentsOverlayDisplayed = state;
     this._updateOverlayClasses();
   }
 
   setContentOverlay(state) {
-    this.overlays.content = state;
+    this.isContentOverlayDisplayed = state;
     this._updateOverlayClasses();
   }
 
   _updateOverlayClasses() {
     if (this.iframeWindow) {
       const html = $(this.iframeWindow.document.documentElement);
-      html.toggleClass('hippo-show-components', this.overlays.components);
-      html.toggleClass('hippo-show-content', this.overlays.content);
+      html.toggleClass('hippo-show-components', this.isComponentsOverlayDisplayed);
+      html.toggleClass('hippo-show-content', this.isContentOverlayDisplayed);
       // don't call sync() explicitly: the DOM mutation will trigger it automatically
     }
   }
@@ -373,15 +375,15 @@ class OverlayService {
   _isElementVisible(structureElement, boxElement) {
     switch (structureElement.getType()) {
       case 'component':
-        return this.overlays.components && !this.isInAddMode;
+        return this.isComponentsOverlayDisplayed && !this.isInAddMode;
       case 'container':
-        return this.overlays.components;
+        return this.isComponentsOverlayDisplayed;
       case 'content-link':
-        return this.overlays.content && this.DomService.isVisible(boxElement);
+        return this.isContentOverlayDisplayed && this.DomService.isVisible(boxElement);
       case 'menu-link':
-        return this.overlays.components && !this.isInAddMode && this.DomService.isVisible(boxElement);
+        return this.isComponentsOverlayDisplayed && !this.isInAddMode && this.DomService.isVisible(boxElement);
       default:
-        return this.overlays.components && !this.isInAddMode;
+        return this.isComponentsOverlayDisplayed && !this.isInAddMode;
     }
   }
 
