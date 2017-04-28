@@ -271,7 +271,7 @@
     Resource result = broker.findResources("demoSalesForce", "/query/?q={soql}", pathVars);
     Resource records = (Resource) result.getValueMap().get("records");
 
-    for (Resource lead : records) {
+    for (Resource lead : records.getChildren()) {
         String firstName = (String) lead.getValueMap().get("FirstName");
         String lastName = (String) lead.getValueMap().get("LastName");
         String email = (String) lead.getValueMap().get("Email");
@@ -279,6 +279,36 @@
     }
           ]]></source>
         </div>
+
+      </subsection>
+
+      <subsection name="Pagination with Resource Object">
+
+        <p>
+          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object supports paginating
+          methods. For example, you can pass <code>offset</code> index and <code>limit</code> count of the paginated
+          result on <code>Resource#getChildren(long offset, long limit)</code>
+          like the following example to retrieve only specific set of the page:
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    // ...
+    Resource records = (Resource) result.getValueMap().get("records");
+
+    // The following will retrieve only the first page of the result when the page size is 10.
+    for (Resource lead : records.getChildren(0, 10)) {
+        String firstName = (String) lead.getValueMap().get("FirstName");
+        String lastName = (String) lead.getValueMap().get("LastName");
+        String email = (String) lead.getValueMap().get("Email");
+        // ...
+    }
+          ]]></source>
+        </div>
+
+        <p>
+          Please see the JavaDoc for detail: <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a>.
+        </p>
 
       </subsection>
 
