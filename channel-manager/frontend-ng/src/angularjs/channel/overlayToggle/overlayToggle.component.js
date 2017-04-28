@@ -1,12 +1,13 @@
-import template from './modeToggle.html';
-import controller from './modeToggle.controller';
+import template from './overlayToggle.html';
+import controller from './overlayToggle.controller';
 
 const modeToggleComponent = {
   restrict: 'E',
   template,
   controller,
   bindings: {
-    mode: '=',
+    state: '=',
+    icon: '@',
   },
 };
 

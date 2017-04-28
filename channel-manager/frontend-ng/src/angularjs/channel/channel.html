@@ -20,9 +20,9 @@
       <div flex="30" layout layout-align="start center">
         <left-side-panel-toggle disabled="channelCtrl.isControlsDisabled()"></left-side-panel-toggle>
 
-        <channel-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
+        <channel-actions ng-if="channelCtrl.isEditable()" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
 
-        <page-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
+        <page-actions ng-if="channelCtrl.isEditable()" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
       </div>
 
       <div flex="40" layout layout-align="center center">
@@ -37,25 +37,8 @@
           on-manage-changes="channelCtrl.showSubpage('manage-changes')">
         </changes-menu>
 
-        <mode-toggle mode="channelCtrl.mode"></mode-toggle>
-
-        <div class="button-toggle" layout>
-          <md-button class="qa-button-view"
-                     ng-class="{ 'button-active': !channelCtrl.isEditMode }"
-                     ng-if="channelCtrl.isEditable()"
-                     ng-disabled="channelCtrl.isControlsDisabled()"
-                     ng-click="channelCtrl.disableEditMode()">
-                     {{ 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' | translate }}
-          </md-button>
-
-          <md-button class="qa-button-edit"
-                     ng-class="{ 'button-active': channelCtrl.isEditMode }"
-                     ng-if="channelCtrl.isEditable()"
-                     ng-disabled="channelCtrl.isControlsDisabled()"
-                     ng-click="channelCtrl.enableEditMode()">
-            {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
-          </md-button>
-        </div>
+        <overlay-toggle state="channelCtrl.overlays.components" icon="view_quilt"></overlay-toggle>
+        <overlay-toggle state="channelCtrl.overlays.content" icon="description"></overlay-toggle>
       </div>
     </div>
     <md-progress-linear md-mode="indeterminate"
@@ -64,19 +47,18 @@
   </md-toolbar>
 
   <md-content layout="row" flex ng-class="{ 'hide-scrollbar': !channelCtrl.isSubpageOpen() }">
-    <left-side-panel layout="row" edit-mode="channelCtrl.isEditMode"></left-side-panel>
+    <left-side-panel layout="row" edit-mode="channelCtrl.overlays.components"></left-side-panel>
 
     <hippo-iframe
       flex
       ng-show="channelCtrl.isChannelLoaded()"
-      edit-mode="channelCtrl.mode.components"
-      show-components-overlay="channelCtrl.mode.components"
-      show-content-overlay="channelCtrl.mode.content"
+      show-components-overlay="channelCtrl.overlays.components"
+      show-content-overlay="channelCtrl.overlays.content"
       on-edit-content="channelCtrl.editContent(contentUuid)"
       on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>
 
-    <right-side-panel layout="row" edit-mode="channelCtrl.isEditMode"></right-side-panel>
+    <right-side-panel layout="row" edit-mode="channelCtrl.overlays.components"></right-side-panel>
   </md-content>
 </div>
 

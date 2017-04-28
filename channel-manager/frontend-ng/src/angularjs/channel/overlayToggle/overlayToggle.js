@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import modeToggleComponent from './modeToggle.component';
-import './modeToggle.scss';
+import overlayToggleComponent from './overlayToggle.component';
+import './overlayToggle.scss';
 
-const modeToggleModule = angular.module('hippo-cm.channel.modeToggle', [])
-  .component('modeToggle', modeToggleComponent);
-export default modeToggleModule;
+const overlayToggleModule = angular.module('hippo-cm.channel.overlayToggle', [])
+  .component('overlayToggle', overlayToggleComponent);
+export default overlayToggleModule;
