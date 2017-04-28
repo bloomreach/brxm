@@ -35,6 +35,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.util.WebFileUtils;
+import org.hippoecm.hst.utils.TagUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webfiles.WebFileBundle;
 import org.onehippo.cms7.services.webfiles.WebFileException;
@@ -76,7 +77,7 @@ public class HstWebFileTag extends ParamContainerTag {
     public int doStartTag() throws JspException {
 
         if (var != null) {
-            pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
+            TagUtils.removeVar(var, pageContext, scope);
         }
 
         return EVAL_BODY_INCLUDE;
