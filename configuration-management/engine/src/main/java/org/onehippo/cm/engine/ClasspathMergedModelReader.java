@@ -22,10 +22,15 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
+import java.util.Map;
 
 import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.engine.parser.ParserException;
 import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
 
+import static java.util.stream.Collectors.toMap;
 import static org.onehippo.cm.engine.Constants.REPO_CONFIG_YAML;
 
 public class ClasspathMergedModelReader {
@@ -43,7 +48,11 @@ public class ClasspathMergedModelReader {
                 final Path repoConfig = fs.getPath(REPO_CONFIG_YAML);
                 final PathConfigurationReader.ReadResult result =
                         new PathConfigurationReader().read(repoConfig, verifyOnly);
-                builder.push(result.getConfigurations(), result.getResourceInputProviders());
+                Map<Module, ModuleContext> resourceInputProviders = result.getModuleContexts();
+                Map<Module, ResourceInputProvider> configInputProviders = resourceInputProviders.entrySet().stream() //TODO SS: review this transformation
+                        .collect(toMap(Map.Entry::getKey, v -> v.getValue().getConfigInputProvider()));
+
+                builder.push(result.getConfigurations(), configInputProviders);
             }
         }
         return builder.build();

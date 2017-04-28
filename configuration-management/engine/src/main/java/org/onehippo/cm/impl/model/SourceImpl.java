@@ -19,12 +19,13 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Source;
 
-public class SourceImpl implements Source {
+public abstract class SourceImpl implements Source {
 
     private String path;
     private Module module;
@@ -104,4 +105,18 @@ public class SourceImpl implements Source {
         return definition;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SourceImpl)) return false;
+        if (!(this.getClass() == o.getClass())) return false;
+        SourceImpl source = (SourceImpl) o;
+        return Objects.equals(path, source.path) &&
+                Objects.equals(module, source.module);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path, module, modifiableDefinitions, definitions);
+    }
 }

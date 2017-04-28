@@ -61,8 +61,5 @@ definitions:
           operation: add
           type: name
           value: ['some:mixin']
-  content:
-    /content/documents/myhippoproject:
-      property: document
   webfilebundle:
   - site

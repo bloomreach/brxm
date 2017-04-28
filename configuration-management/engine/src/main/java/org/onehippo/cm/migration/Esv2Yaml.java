@@ -20,6 +20,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,9 +38,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.engine.FileConfigurationWriter;
-import org.onehippo.cm.engine.FileResourceInputProvider;
-import org.onehippo.cm.engine.FileResourceOutputProvider;
-import org.onehippo.cm.engine.SourceSerializer;
+import org.onehippo.cm.engine.ModuleContext;
+import org.onehippo.cm.engine.serializer.SourceSerializer;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
@@ -64,6 +66,9 @@ public class Esv2Yaml {
         }
         try {
             if (args.length == 2) {
+                System.out.println("---------------------------------------------------------");
+                System.out.println("args[0] = " + args[0]);
+                System.out.println("args[1] = " + args[1]);
                 new Esv2Yaml(new File(args[0]), new File(args[1])).convert();
             } else {
                 new Esv2Yaml(new File(args[0]), new File(args[1]), new File(args[2])).convert();
@@ -111,8 +116,19 @@ public class Esv2Yaml {
             if (target.isFile()) {
                 throw new IllegalArgumentException("Target is not a directory");
             } else {
-                FileUtils.deleteDirectory(target);
-                target.mkdirs();
+                Path configFolder = Paths.get(target.toURI()).resolve("repo-config");
+                Path contentFolder = Paths.get(target.toURI()).resolve("repo-content");
+
+                if (Files.exists(configFolder) && Files.isDirectory(configFolder)) {
+                    FileUtils.forceDelete(configFolder.toFile());
+                }
+
+                if (Files.exists(contentFolder) && Files.isDirectory(contentFolder)) {
+                    FileUtils.forceDelete(contentFolder.toFile());
+                }
+
+                Files.createDirectory(configFolder);
+                Files.createDirectory(contentFolder);
             }
         }
         esvParser = new EsvParser(src);
@@ -291,9 +307,11 @@ public class Esv2Yaml {
                 sourceIter.remove();
             }
         }
-        final FileResourceInputProvider resourceInputProvider = new FileResourceInputProvider(src.toPath());
-        final FileResourceOutputProvider resourceOutputProvider = new FileResourceOutputProvider(target.toPath());
-        new FileConfigurationWriter().writeModule(module, resourceOutputProvider.getModulePath(),
-                new SourceSerializer(), resourceInputProvider, resourceOutputProvider);
+
+        boolean multiModule = module.getProject().getConfiguration().getProjects().stream().mapToInt(p -> p.getModules().size()).sum() > 1;
+        ModuleContext moduleContext = new LegacyModuleContext(module, src.toPath(), multiModule);
+        moduleContext.createOutputProviders(target.toPath());
+
+        new FileConfigurationWriter().writeModule(module, new SourceSerializer(), moduleContext);
     }
 }

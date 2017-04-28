@@ -34,7 +34,12 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
+import org.onehippo.cm.engine.serializer.ResourceNameResolver;
+import org.onehippo.cm.engine.serializer.ResourceNameResolverImpl;
+import org.onehippo.cm.engine.serializer.SourceSerializer;
 import org.onehippo.cm.engine.snakeyaml.MutableScalarNode;
+import org.onehippo.cm.impl.model.ConfigSourceImpl;
 import org.yaml.snakeyaml.nodes.Node;
 
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
@@ -54,9 +59,9 @@ public class FileConfigurationWriter {
         this.explicitSequencing = explicitSequencing;
     }
 
-    public void write(final Path destination,
+    public void write (final Path destination,
                       final Map<String, Configuration> configurations,
-                      final Map<Module, ResourceInputProvider> resourceInputProviders) throws IOException {
+                      final Map<Module, ModuleContext> moduleContextMap) throws IOException {
         final RepoConfigSerializer repoConfigSerializer = new RepoConfigSerializer(explicitSequencing);
         final SourceSerializer sourceSerializer = new SourceSerializer(explicitSequencing);
         final Path repoConfigPath = destination.resolve(Constants.REPO_CONFIG_YAML);
@@ -65,48 +70,62 @@ public class FileConfigurationWriter {
             repoConfigSerializer.serialize(repoConfigOutputStream, configurations);
         }
 
-        final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(configurations);
 
         for (Configuration configuration : configurations.values()) {
             for (Project project : configuration.getProjects()) {
                 for (Module module : project.getModules()) {
-                    final Path modulePath =
-                            FileConfigurationUtils.getModuleBasePath(repoConfigPath, module, hasMultipleModules);
-                    final ResourceInputProvider resourceInputProvider = resourceInputProviders.get(module);
-                    final ResourceOutputProvider resourceOutputProvider = new FileResourceOutputProvider(modulePath);
-
-                    writeModule(module, modulePath, sourceSerializer, resourceInputProvider, resourceOutputProvider);
+                    final ModuleContext moduleContext = moduleContextMap.get(module);
+                    moduleContext.createOutputProviders(repoConfigPath);
+                    writeModule(module, sourceSerializer, moduleContext);
                 }
             }
         }
     }
 
-    public void writeModule(final Module module, final Path modulePath, final SourceSerializer sourceSerializer,
-                            final ResourceInputProvider resourceInputProvider,
-                            final ResourceOutputProvider resourceOutputProvider) throws IOException {
+    public void writeModule(final Module module, final SourceSerializer sourceSerializer,
+                            final ModuleContext moduleContext) throws IOException {
 
         final ResourceNameResolver moduleNameResolver = new ResourceNameResolverImpl();
 
         for (final Source source : module.getSources()) {
+
             final List<PostProcessItem> resources = new ArrayList<>();
+            final Node node = sourceSerializer.representSource(source, resources::add);
 
-                final Node node = sourceSerializer.representSource(source, resources::add);
+            ResourceInputProvider inputProvider;
+            ResourceOutputProvider outputProvider;
 
-                for (final PostProcessItem resource : resources) {
-                    if (resource instanceof CopyItem) {
-                        processCopyItem(resourceInputProvider, resourceOutputProvider, source, (CopyItem) resource);
-                    } else if (resource instanceof BinaryItem) {
-                        processBinaryItem(source, resourceOutputProvider, (BinaryItem) resource, moduleNameResolver);
-                    } else if (resource instanceof BinaryArrayItem) {
-                        processBinaryArray(source, resourceOutputProvider, (BinaryArrayItem) resource, moduleNameResolver);
-                    }
+            if (source instanceof ConfigSourceImpl) {
+                inputProvider = moduleContext.getConfigInputProvider();
+                outputProvider = moduleContext.getConfigOutputProvider();
+            } else {
+                inputProvider = moduleContext.getContentInputProvider();
+                outputProvider = moduleContext.getContentOutputProvider();
+            }
+
+            for (final PostProcessItem resource : resources) {
+                if (resource instanceof CopyItem) {
+                    processCopyItem(inputProvider, outputProvider, source, (CopyItem) resource);
+                } else if (resource instanceof BinaryItem) {
+                    processBinaryItem(source, outputProvider, (BinaryItem) resource, moduleNameResolver);
+                } else if (resource instanceof BinaryArrayItem) {
+                    processBinaryArray(source, outputProvider, (BinaryArrayItem) resource, moduleNameResolver);
                 }
+            }
 
-            try (final OutputStream sourceOutputStream = getSourceOutputStream(modulePath, source)) {
+            try (final OutputStream sourceOutputStream = getSourceOutputStream(moduleContext, source)) {
                 sourceSerializer.serializeNode(sourceOutputStream, node);
             }
 
         }
+    }
+
+    private OutputStream getSourceOutputStream(final ModuleContext moduleContext, final Source source) throws IOException {
+        final Path modulePath = source instanceof ConfigSourceImpl ? ((FileResourceOutputProvider)moduleContext.getConfigOutputProvider()).getModulePath() :
+                ((FileResourceOutputProvider)moduleContext.getContentOutputProvider()).getModulePath();
+        final Path sourceDestPath = modulePath.resolve(source.getPath());
+        Files.createDirectories(sourceDestPath.getParent());
+        return new FileOutputStream(sourceDestPath.toFile());
     }
 
     private void processBinaryArray(Source source, ResourceOutputProvider resourceOutputProvider, BinaryArrayItem resource, ResourceNameResolver nameResolver) throws IOException {
@@ -165,17 +184,11 @@ public class FileConfigurationWriter {
                                  Source source, CopyItem copyItem) throws IOException {
         try (
                 final InputStream resourceInputStream =
-                        resourceInputProvider.getResourceInputStream(source, copyItem.getSourceLocation() );
+                        resourceInputProvider.getResourceInputStream(source, copyItem.getSourceLocation());
                 final OutputStream resourceOutputStream =
                         resourceOutputProvider.getResourceOutputStream(source, copyItem.getSourceLocation())
         ) {
             IOUtils.copy(resourceInputStream, resourceOutputStream);
         }
-    }
-
-    private OutputStream getSourceOutputStream(final Path modulePath, final Source source) throws IOException {
-        final Path sourceDestPath = modulePath.resolve(source.getPath());
-        Files.createDirectories(sourceDestPath.getParent());
-        return new FileOutputStream(sourceDestPath.toFile());
     }
 }

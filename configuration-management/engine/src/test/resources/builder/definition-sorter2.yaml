@@ -1,12 +1,11 @@
 definitions:
-  content:
+  config:
     /b:
       jcr:primaryType: foo
       propertyB1: bli1
     /a/a:
       jcr:primaryType: foo
       propertyB2: bli2
-  config:
     /a/b/c/d/e:
       jcr:primaryType: foo
       propertyB3: bli3

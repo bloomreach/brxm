@@ -39,6 +39,7 @@ import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueFormatException;
 import org.onehippo.cm.api.model.ValueType;
+import org.onehippo.cm.engine.parser.ParserException;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.engine.parser;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -64,13 +64,13 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
-public class SourceParser extends AbstractBaseParser {
+public abstract class SourceParser extends AbstractBaseParser {
 
     // After the compose step, SnakeYaml does not yet provide parsed scalar values. An extension of the Constructor
     // class is needed to access the protected Constructor#construct method which uses the built-in parsers for the
     // known basic scalar types. The additional check for the ConstructYamlTimestamp is done as the constructor for
     // timestamp returns a Date by internally constructing a Calendar.
-    private static final class ScalarConstructor extends Constructor {
+    static final class ScalarConstructor extends Constructor {
         Object constructScalarNode(final ScalarNode node) {
             final Construct constructor = getConstructor(node);
             final Object object = constructor.construct(node);
@@ -83,10 +83,10 @@ public class SourceParser extends AbstractBaseParser {
         }
     }
 
-    private static final ScalarConstructor scalarConstructor = new ScalarConstructor();
+    static final ScalarConstructor scalarConstructor = new ScalarConstructor();
 
-    private final ResourceInputProvider resourceInputProvider;
-    private final boolean verifyOnly;
+    final ResourceInputProvider resourceInputProvider;
+    final boolean verifyOnly;
 
     public SourceParser(final ResourceInputProvider resourceInputProvider) {
         this(resourceInputProvider, false);
@@ -116,135 +116,23 @@ public class SourceParser extends AbstractBaseParser {
         constructSource(relativePath, node, parent);
     }
 
-    protected void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException {
-        final Map<String, Node> sourceMap = asMapping(src, new String[]{DEFINITIONS}, null);
-        final SourceImpl source = parent.addSource(path);
+    protected abstract void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException;
 
-        final Map<String, Node> definitionsMap = asMapping(sourceMap.get(DEFINITIONS), null,
-                DefinitionType.NAMES);
-
-        for (String definitionName : definitionsMap.keySet()) {
-            final Node definitionNode = definitionsMap.get(definitionName);
-            switch (DefinitionType.valueOf(definitionName.toUpperCase())) {
-                case NAMESPACE:
-                    constructNamespaceDefinitions(definitionNode, source);
-                    break;
-                case CND:
-                    constructNodeTypeDefinitions(definitionNode, source);
-                    break;
-                case CONFIG:
-                    constructConfigDefinitions(definitionNode, source);
-                    break;
-                case CONTENT:
-                    constructContentDefinitions(definitionNode, source);
-                    break;
-                case WEBFILEBUNDLE:
-                    constructWebFileBundleDefinition(definitionNode, source);
-                    break;
-            }
-        }
-    }
-
-    private void constructNamespaceDefinitions(final Node src, final SourceImpl parent) throws ParserException {
-        for (Node node : asSequence(src)) {
-            final Map<String, Node> namespaceMap = asMapping(node, new String[]{PREFIX_KEY, URI_KEY}, null);
-            final String prefix = asStringScalar(namespaceMap.get(PREFIX_KEY));
-            final URI uri = asURIScalar(namespaceMap.get(URI_KEY));
-            parent.addNamespaceDefinition(prefix, uri);
-        }
-    }
-
-    private void constructNodeTypeDefinitions(final Node src, final SourceImpl parent) throws ParserException {
-        for (Node node : asSequence(src)) {
-            switch (node.getNodeId()) {
-                case scalar:
-                    final String cndString = asStringScalar(node);
-                    parent.addNodeTypeDefinition(cndString, false);
-                    break;
-                case mapping:
-                    final Map<String, Node> map = asMapping(node, new String[]{RESOURCE_KEY}, new String[0]);
-                    final String resource = asResourcePathScalar(map.get(RESOURCE_KEY), parent, resourceInputProvider);
-                    parent.addNodeTypeDefinition(resource, true);
-                    break;
-                default:
-                    throw new ParserException("CND definition item must be a string or a map with key '"+RESOURCE_KEY+"'", node);
-            }
-        }
-    }
-
-    private void constructConfigDefinitions(final Node src, final SourceImpl parent) throws ParserException {
-        for (NodeTuple nodeTuple : asTuples(src)) {
-            final ConfigDefinitionImpl definition = parent.addConfigDefinition();
-            final String key = asPathScalar(nodeTuple.getKeyNode(), true);
-            constructDefinitionNode(key, nodeTuple.getValueNode(), definition);
-        }
-    }
-
-    private void constructContentDefinitions(final Node src, final SourceImpl parent) throws ParserException {
-        for (NodeTuple nodeTuple : asTuples(src)) {
-            final ContentDefinitionImpl definition = parent.addContentDefinition();
-            final String key = asPathScalar(nodeTuple.getKeyNode(), true);
-            constructDefinitionNode(key, nodeTuple.getValueNode(), definition);
-        }
-    }
-
-    private void constructDefinitionNode(final String path, final Node value, final ContentDefinitionImpl definition) throws ParserException {
+    void constructDefinitionNode(final String path, final Node value, final ContentDefinitionImpl definition) throws ParserException {
         final String name = StringUtils.substringAfterLast(path, "/");
         final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(path, name, definition);
         definition.setNode(definitionNode);
         populateDefinitionNode(definitionNode, value);
     }
 
-    private void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node node) throws ParserException {
-        final List<NodeTuple> tuples = asTuples(node);
-        for (NodeTuple tuple : tuples) {
-            final String key = asStringScalar(tuple.getKeyNode());
-            final Node tupleValue = tuple.getValueNode();
-            if (key.equals(META_DELETE_KEY)) {
-                if (!verifyOnly) {
-                    if (tuples.size() > 1) {
-                        throw new ParserException("Node cannot contain '"+META_DELETE_KEY+"' and other keys", node);
-                    }
-                }
-                final boolean delete = asNodeDeleteValue(tupleValue);
-                definitionNode.setDelete(delete);
-            } else if (key.equals(META_ORDER_BEFORE_KEY)) {
-                final String name = asNodeOrderBeforeValue(tupleValue);
-                if (definitionNode.getName().equals(name)) {
-                    throw new ParserException("Invalid "+META_ORDER_BEFORE_KEY+" targeting this node itself", node);
-                }
-                definitionNode.setOrderBefore(name);
-            } else if (key.equals(META_IGNORE_REORDERED_CHILDREN)) {
-                final Boolean ignoreReorderedChildren = (Boolean)constructValueFromScalar(tupleValue, ValueType.BOOLEAN).getObject();
-                definitionNode.setIgnoreReorderedChildren(ignoreReorderedChildren);
-            } else if (key.startsWith("/")) {
-                final String name = key.substring(1);
-                constructDefinitionNode(name, tupleValue, definitionNode);
-            } else {
-                constructDefinitionProperty(key, tupleValue, definitionNode);
-            }
-        }
-    }
+    protected abstract void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node node) throws ParserException;
 
-    private boolean asNodeDeleteValue(final Node node) throws ParserException {
-        final ScalarNode scalar = asScalar(node);
-        final Object object = scalarConstructor.constructScalarNode(scalar);
-        if (!object.equals(true)) {
-            throw new ParserException("Value for "+META_DELETE_KEY+" must be boolean value 'true'", node);
-        }
-        return true;
-    }
-
-    private String asNodeOrderBeforeValue(final Node node) throws ParserException {
-        return asStringScalar(node);
-    }
-
-    private void constructDefinitionNode(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
+    protected void constructDefinitionNode(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
         final DefinitionNodeImpl node = parent.addNode(name);
         populateDefinitionNode(node, value);
     }
 
-    private void constructDefinitionProperty(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
+    protected void constructDefinitionProperty(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
         if (name.equals(JCR_PRIMARYTYPE)) {
             constructJcrPrimaryTypeProperty(name, value, parent);
         } else if (name.equals(JCR_MIXINTYPES)) {
@@ -335,10 +223,10 @@ public class SourceParser extends AbstractBaseParser {
         }
     }
 
-    private DefinitionPropertyImpl constructDefinitionPropertyFromMap(final String name, final Node value, final ValueType defaultValueType, final DefinitionNodeImpl parent) throws ParserException {
+    DefinitionPropertyImpl constructDefinitionPropertyFromMap(final String name, final Node value, final ValueType defaultValueType, final DefinitionNodeImpl parent) throws ParserException {
         final DefinitionPropertyImpl property;
-        final Map<String, Node> map = asMapping(value, new String[0], 
-        		new String[]{OPERATION_KEY,TYPE_KEY,VALUE_KEY,RESOURCE_KEY,PATH_KEY});
+        final Map<String, Node> map = asMapping(value, new String[0],
+                new String[]{OPERATION_KEY,TYPE_KEY,VALUE_KEY,RESOURCE_KEY,PATH_KEY});
 
         int expectedMapSize = 1; // the 'value', 'resource', or 'path' key
         final PropertyOperation operation;
@@ -371,11 +259,11 @@ public class SourceParser extends AbstractBaseParser {
                     value);
         }
 
-        if (map.keySet().contains(VALUE_KEY)) {
+        if (map.containsKey(VALUE_KEY)) {
             property = constructDefinitionPropertyFromValueMap(name, map.get(VALUE_KEY), parent, valueType);
-        } else if (map.keySet().contains(RESOURCE_KEY)) {
+        } else if (map.containsKey(RESOURCE_KEY)) {
             property = constructDefinitionPropertyFromResourceMap(name, map.get(RESOURCE_KEY), parent, valueType);
-        } else if (map.keySet().contains(PATH_KEY)) {
+        } else if (map.containsKey(PATH_KEY)) {
             property = constructDefinitionPropertyFromPathMap(name, map.get(PATH_KEY), parent, valueType);
         } else {
             throw new ParserException(
@@ -456,7 +344,7 @@ public class SourceParser extends AbstractBaseParser {
      * @return parsed {@link Value}
      * @throws ParserException in case the value cannot be parsed or it is not of the expected type
      */
-    private ValueImpl constructValueFromScalar(final Node node, final ValueType expectedValueType) throws ParserException {
+    ValueImpl constructValueFromScalar(final Node node, final ValueType expectedValueType) throws ParserException {
         switch (expectedValueType) {
             case DECIMAL:
                 return constructDecimalValue(node);
@@ -668,7 +556,7 @@ public class SourceParser extends AbstractBaseParser {
         }
     }
 
-    private void constructWebFileBundleDefinition(final Node definitionNode, final SourceImpl source) throws ParserException {
+    void constructWebFileBundleDefinition(final Node definitionNode, final SourceImpl source) throws ParserException {
         final List<Node> nodes = asSequence(definitionNode);
         for (Node node : nodes) {
             final String name = asStringScalar(node);

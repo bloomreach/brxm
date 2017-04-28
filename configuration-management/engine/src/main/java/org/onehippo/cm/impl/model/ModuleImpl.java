@@ -22,6 +22,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.model.Definition;
@@ -38,7 +39,13 @@ public class ModuleImpl implements Module {
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
     private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator.comparing(Source::getPath));
+
+    private final Set<SourceImpl> contentSortedSources = new TreeSet<>(Comparator.comparing(Source::getPath));
+
     private final Set<Source> sources = Collections.unmodifiableSet(sortedSources);
+
+
+    //TODO SS add split sources list into content & config sources
 
     private final List<NamespaceDefinitionImpl> namespaceDefinitions = new ArrayList<>();
     private final List<NodeTypeDefinitionImpl> nodeTypeDefinitions = new ArrayList<>();
@@ -82,17 +89,42 @@ public class ModuleImpl implements Module {
         return sources;
     }
 
+    @Override
+    public Set<Source> getContentSources() {
+        return sources.stream().filter(x -> x instanceof ContentSourceImpl).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<Source> getConfigSources() {
+        return sources.stream().filter(x -> x instanceof ConfigSourceImpl).collect(Collectors.toSet());
+    }
+
+    @Deprecated
     public SourceImpl addSource(final String path) {
-        final SourceImpl source = new SourceImpl(path, this);
-        if (sortedSources.add(source)) {
-            return source;
-        } else {
-            // path already added before: return existing source
-            return sortedSources
-                    .stream()
-                    .filter(s -> s.getPath().equals(path))
-                    .findFirst().get();
-        }
+        final SourceImpl source = new ConfigSourceImpl(path, this);
+        return addSource(source);
+    }
+
+    public SourceImpl addContentSource(final String path) {
+        final SourceImpl source = new ContentSourceImpl(path, this);
+        return addSource(source);
+    }
+
+    public SourceImpl addConfigSource(final String path) {
+        final SourceImpl source = new ConfigSourceImpl(path, this);
+        return addSource(source);
+    }
+
+    /**
+     * Returns existing or adds new source to the source list
+     * @param source
+     * @return
+     */
+    private SourceImpl addSource(SourceImpl source) {
+        return sortedSources.add(source) ? source : sortedSources
+                .stream()
+                .filter(s -> s.getPath().equals(source.getPath()) && s.getClass().equals(source.getClass()))
+                .findFirst().get();
     }
 
     public Set<SourceImpl> getModifiableSources() {

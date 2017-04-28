@@ -10,6 +10,12 @@ definitions:
     /a/b:
       jcr:primaryType: foo
       property4: bla4
+    /a/b/c/d:
+      jcr:primaryType: foo
+      property5: bla5
+    /a/b/a:
+      jcr:primaryType: foo
+      property6: bla6
   namespace:
   - prefix: myhippoproject
     uri: http://www.onehippo.org/myhippoproject/nt/1.0
@@ -18,10 +24,3 @@ definitions:
     <'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
     <'myhippoproject'='http://www.onehippo.org/myhippoproject/nt/1.0'>
     [myhippoproject:basedocument] > hippo:document orderable
-  content:
-    /a/b/c/d:
-      jcr:primaryType: foo
-      property5: bla5
-    /a/b/a:
-      jcr:primaryType: foo
-      property6: bla6

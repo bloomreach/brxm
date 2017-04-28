@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.engine;
+package org.onehippo.cm.engine.parser;
 
 import java.io.StringReader;
 
 import org.junit.Test;
+import org.onehippo.cm.engine.AbstractBaseTest;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
@@ -1211,7 +1212,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                                        final String exceptionMessage,
                                        final boolean explicitSequencing) {
         try {
-            final SourceParser sourceParser = new SourceParser(DUMMY_RESOURCE_INPUT_PROVIDER, false, explicitSequencing);
+            final SourceParser sourceParser = new ConfigSourceParser(DUMMY_RESOURCE_INPUT_PROVIDER, false, explicitSequencing);
             sourceParser.constructSource("sourcePath", inputNode, module);
             fail("An exception should have occurred");
         } catch (ParserException e) {

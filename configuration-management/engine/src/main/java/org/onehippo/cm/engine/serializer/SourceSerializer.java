@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.engine.serializer;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -52,6 +52,10 @@ import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.api.model.WebFileBundleDefinition;
+import org.onehippo.cm.engine.BinaryArrayItem;
+import org.onehippo.cm.engine.BinaryItem;
+import org.onehippo.cm.engine.CopyItem;
+import org.onehippo.cm.engine.PostProcessItem;
 import org.onehippo.cm.engine.snakeyaml.MutableScalarNode;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
@@ -77,7 +81,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         serializeNode(outputStream, node);
     }
 
-    Node representSource(final Source source, final Consumer<PostProcessItem> resourceConsumer) {
+    public Node representSource(final Source source, final Consumer<PostProcessItem> resourceConsumer) {
         final List<NodeTuple> configDefinitionTuples = new ArrayList<>();
         final List<NodeTuple> contentDefinitionTuples = new ArrayList<>();
         final List<Node> namespaceDefinitionNodes = new ArrayList<>();

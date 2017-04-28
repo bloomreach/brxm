@@ -30,12 +30,16 @@ import java.util.UUID;
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.ValueType;
+import org.onehippo.cm.engine.parser.ConfigSourceParser;
+import org.onehippo.cm.engine.parser.ParserException;
+import org.onehippo.cm.engine.parser.SourceParser;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
@@ -53,8 +57,17 @@ public class ParserValueTest extends AbstractBaseTest {
 
         final Configuration base = assertConfiguration(configurations, "base", new String[0], 1);
         final Project project = assertProject(base, "project1", new String[0], 1);
-        final Module module = assertModule(project, "module1", new String[0], 1);
+        final Module module = assertModule(project, "module1", new String[0], 2);
         final Source source = assertSource(module, "base.yaml", 4);
+        final Source contentSource = assertSource(module, "content.yaml", 1);
+
+        final ContentDefinition contentDefinition = assertDefinition(contentSource, 0, ContentDefinition.class);
+        final DefinitionNode contentDetectedNode = assertNode(contentDefinition, "/node", "node", contentDefinition, 0, 6);
+        assertProperty(contentDetectedNode, "/node/double", "double", contentDefinition, ValueType.DOUBLE, 3.1415);
+        assertProperty(contentDetectedNode, "/node/longAsInt", "longAsInt", contentDefinition, ValueType.LONG, (long) 42);
+        assertProperty(contentDetectedNode, "/node/longAsLong", "longAsLong", contentDefinition, ValueType.LONG, 4200000000L);
+        assertProperty(contentDetectedNode, "/node/string", "string", contentDefinition, ValueType.STRING, "hello world");
+
 
         final ConfigDefinition autoDetectedDefinition = assertDefinition(source, 0, ConfigDefinition.class);
         final DefinitionNode autoDetectedNode = assertNode(autoDetectedDefinition, "/autodetected", "autodetected", autoDetectedDefinition, 2, 6);
@@ -137,7 +150,7 @@ public class ParserValueTest extends AbstractBaseTest {
 
     @Test
     public void expect_property_value_map_without_type_to_yield_string() throws ParserException {
-        final SourceParser sourceParser = new SourceParser(DUMMY_RESOURCE_INPUT_PROVIDER);
+        final SourceParser sourceParser = new ConfigSourceParser(DUMMY_RESOURCE_INPUT_PROVIDER);
         final ConfigurationImpl configuration = new ConfigurationImpl("configuration");
         final ProjectImpl project = new ProjectImpl("project", configuration);
         final ModuleImpl module = new ModuleImpl("module", project);
@@ -160,7 +173,7 @@ public class ParserValueTest extends AbstractBaseTest {
 
     @Test
     public void expect_date_without_time_to_yield_non_lenient_UTC_date() throws ParserException {
-        final SourceParser sourceParser = new SourceParser(DUMMY_RESOURCE_INPUT_PROVIDER);
+        final SourceParser sourceParser = new ConfigSourceParser(DUMMY_RESOURCE_INPUT_PROVIDER);
         final ConfigurationImpl configuration = new ConfigurationImpl("configuration");
         final ProjectImpl project = new ProjectImpl("project", configuration);
         final ModuleImpl module = new ModuleImpl("module", project);

@@ -26,13 +26,18 @@ import java.util.Map;
 import java.util.function.BiPredicate;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.engine.parser.ConfigSourceParser;
+import org.onehippo.cm.engine.parser.ContentSourceParser;
+import org.onehippo.cm.engine.parser.ParserException;
+import org.onehippo.cm.engine.parser.RepoConfigParser;
+import org.onehippo.cm.engine.parser.SourceParser;
 import org.onehippo.cm.impl.model.ModuleImpl;
 
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.engine.Constants.YAML_EXT;
 
 public class PathConfigurationReader {
 
@@ -40,16 +45,19 @@ public class PathConfigurationReader {
 
     public static class ReadResult {
         private final Map<String, Configuration> configurations;
-        private final Map<Module, ResourceInputProvider> resourceInputProviders;
-        public ReadResult(Map<String, Configuration> configurations, Map<Module, ResourceInputProvider> resourceInputProviders) {
+        private final Map<Module, ModuleContext> moduleContexts;
+
+        public ReadResult(Map<String, Configuration> configurations, Map<Module, ModuleContext> moduleContexts) {
             this.configurations = configurations;
-            this.resourceInputProviders = resourceInputProviders;
+            this.moduleContexts = moduleContexts;
         }
+
         public Map<String, Configuration> getConfigurations() {
             return configurations;
         }
-        public Map<Module, ResourceInputProvider> getResourceInputProviders() {
-            return resourceInputProviders;
+
+        public Map<Module, ModuleContext> getModuleContexts() {
+            return moduleContexts;
         }
     }
 
@@ -66,35 +74,48 @@ public class PathConfigurationReader {
     }
 
     public ReadResult read(final Path repoConfigPath, final boolean verifyOnly) throws IOException, ParserException {
-        final RepoConfigParser parser = new RepoConfigParser(explicitSequencing);
+        final RepoConfigParser repoConfigParser = new RepoConfigParser(explicitSequencing);
         final Map<String, Configuration> configurations =
-                parser.parse(repoConfigPath.toUri().toURL().openStream(), repoConfigPath.toAbsolutePath().toString());
+                repoConfigParser.parse(repoConfigPath.toUri().toURL().openStream(), repoConfigPath.toAbsolutePath().toString());
         final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(configurations);
-        final Map<Module, ResourceInputProvider> resourceDataProviders = new HashMap<>();
+        final Map<Module, ModuleContext> moduleContexts = new HashMap<>();
 
         for (Configuration configuration : configurations.values()) {
             for (Project project : configuration.getProjects()) {
                 for (Module module : project.getModules()) {
-                    final Path moduleRootPath =
-                            FileConfigurationUtils.getModuleBasePath(repoConfigPath, module, hasMultipleModules);
-                    final ResourceInputProvider provider = new FileResourceInputProvider(moduleRootPath);
-                    resourceDataProviders.put(module, provider);
-                    final SourceParser sourceParser = new SourceParser(provider, verifyOnly, explicitSequencing);
 
-                    for (Pair<Path, String> pair : getSourceData(moduleRootPath)) {
-                        sourceParser.parse(pair.getLeft().toUri().toURL().openStream(), pair.getRight(), moduleRootPath.resolve(pair.getRight()).toString(), (ModuleImpl) module);
+                    final ModuleContext moduleContext = new ModuleContext(module, repoConfigPath, hasMultipleModules);
+                    moduleContexts.put(module, moduleContext);
+
+                    final SourceParser sourceParser = new ConfigSourceParser(moduleContext.getConfigInputProvider(), verifyOnly, explicitSequencing);
+                    final Path configRootPath = moduleContext.getConfigRoot();
+
+                    parseSources((ModuleImpl) module, configRootPath, sourceParser);
+
+                    final Path contentRootPath = moduleContext.getContentRoot();
+                    if (Files.exists(contentRootPath)) {
+                        final SourceParser contentSourceParser = new ContentSourceParser(moduleContext.getContentInputProvider(), verifyOnly, explicitSequencing);
+                        parseSources((ModuleImpl) module, contentRootPath, contentSourceParser);
                     }
                 }
             }
         }
 
-        return new ReadResult(configurations, resourceDataProviders);
+        return new ReadResult(configurations, moduleContexts);
     }
 
+    private void parseSources(ModuleImpl module, Path rootPath, SourceParser sourceParser) throws IOException, ParserException {
+        final List<Pair<Path, String>> contentSourceData = getSourceData(rootPath);
+        for (Pair<Path, String> pair : contentSourceData) {
+            sourceParser.parse(pair.getLeft().toUri().toURL().openStream(), pair.getRight(), rootPath.resolve(pair.getRight()).toString(), module);
+        }
+    }
+
+    //TODO use to collect all content sources and then sort them appropriately.
     private List<Pair<Path, String>> getSourceData(final Path modulePath) throws IOException {
         final List<Path> paths = new ArrayList<>();
         final BiPredicate<Path, BasicFileAttributes> matcher =
-                (filePath, fileAttr) -> filePath.toString().toLowerCase().endsWith("yaml") && fileAttr.isRegularFile();
+                (filePath, fileAttr) -> filePath.toString().toLowerCase().endsWith(YAML_EXT) && fileAttr.isRegularFile();
         Files.find(modulePath, Integer.MAX_VALUE, matcher).forEachOrdered(paths::add);
         final int modulePathSize = modulePath.getNameCount();
 

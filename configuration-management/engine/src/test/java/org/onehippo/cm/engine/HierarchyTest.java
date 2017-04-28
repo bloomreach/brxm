@@ -30,6 +30,7 @@ import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.ValueType;
+import org.onehippo.cm.engine.parser.ParserException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -45,8 +46,9 @@ public class HierarchyTest extends AbstractBaseTest {
 
         final Configuration base = assertConfiguration(configurations, "base", new String[0], 1);
         final Project project1 = assertProject(base, "project1", new String[0], 1);
-        final Module module1 = assertModule(project1, "module1", new String[0], 2);
-        final Source source1 = assertSource(module1, "config.yaml", 9);
+        final Module module1 = assertModule(project1, "module1", new String[0], 3);
+        final Source source1 = assertSource(module1, "config.yaml", 8);
+        final Source contentSource1 = assertSource(module1, "content.yaml", 1);
 
         final NamespaceDefinition namespace = assertDefinition(source1, 0, NamespaceDefinition.class);
         assertEquals("myhippoproject", namespace.getPrefix());
@@ -119,7 +121,7 @@ public class HierarchyTest extends AbstractBaseTest {
         assertProperty(nodeWithMixinAdd, "/path/to/node/node-with-mixin-add/jcr:mixinTypes", "jcr:mixinTypes",
                 source1definition4, PropertyOperation.ADD, ValueType.NAME, new String[]{"some:mixin"});
 
-        final ContentDefinition contentDefinition = assertDefinition(source1, 7, ContentDefinition.class);
+        final ContentDefinition contentDefinition = assertDefinition(contentSource1, 0, ContentDefinition.class);
         assertNode(contentDefinition, "/content/documents/myhippoproject", "myhippoproject", contentDefinition, 0, 1);
 
         final Source source2 = assertSource(module1, "folder/resources.yaml", 2);

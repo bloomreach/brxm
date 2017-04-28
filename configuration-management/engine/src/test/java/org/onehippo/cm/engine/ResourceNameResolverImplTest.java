@@ -18,8 +18,8 @@ package org.onehippo.cm.engine;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
+import org.onehippo.cm.engine.serializer.ResourceNameResolver;
+import org.onehippo.cm.engine.serializer.ResourceNameResolverImpl;
 
 
 public class ResourceNameResolverImplTest {

@@ -1,0 +1,4 @@
+definitions:
+  content:
+    /content/documents/myhippoproject:
+      property: document

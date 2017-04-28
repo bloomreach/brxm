@@ -34,7 +34,7 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.engine.SourceParser;
+import org.onehippo.cm.engine.parser.ConfigSourceParser;
 
 public class ModelTestUtils {
 
@@ -118,7 +118,7 @@ public class ModelTestUtils {
     }
 
     private static void loadYAMLStream(final InputStream input, final String sourcePath, final ModuleImpl module, final boolean verifyOnly) throws Exception {
-        new SourceParser(resourceInputProvider, verifyOnly).parse(input, sourcePath, sourcePath, module);
+        new ConfigSourceParser(resourceInputProvider, verifyOnly).parse(input, sourcePath, sourcePath, module);
     }
 
 }

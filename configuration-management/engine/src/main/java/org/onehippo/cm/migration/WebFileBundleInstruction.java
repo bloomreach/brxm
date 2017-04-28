@@ -18,8 +18,11 @@ package org.onehippo.cm.migration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
+import org.onehippo.cm.engine.Constants;
 import org.onehippo.cm.impl.model.SourceImpl;
 
 public class WebFileBundleInstruction extends InitializeInstruction {
@@ -34,7 +37,8 @@ public class WebFileBundleInstruction extends InitializeInstruction {
         log.info("Processing " + getType().getPropertyName() + " named '" + bundleName + "'");
         source.addWebFileBundleDefinition(getResourcePath());
 
-        final File bundleDirectory = new File(moduleRoot, bundleName);
+        final Path dirPath = Paths.get(moduleRoot.toString(), Constants.REPO_CONFIG_FOLDER, bundleName);
+        final File bundleDirectory = dirPath.toFile();
         try {
             FileUtils.copyDirectory(getResource(), bundleDirectory);
         } catch (IOException e) {

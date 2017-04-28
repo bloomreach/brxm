@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -37,6 +38,7 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.engine.parser.ParserException;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
@@ -74,68 +76,6 @@ public class SerializerTest extends AbstractBaseTest {
         readAndWrite("/parser/not_explicitly_sequenced_test/repo-config.yaml", false);
     }
 
-    @Test
-    public void ad_hoc() throws IOException {
-        // small test setup that can be used to quickly validate some serialization use case
-        final ConfigurationImpl configuration = new ConfigurationImpl("configuration");
-        final ProjectImpl project = configuration.addProject("project");
-        final ModuleImpl module = project.addModule("module");
-        final SourceImpl source = module.addSource("test.yaml");
-        final ConfigDefinitionImpl config = source.addConfigDefinition();
-        final DefinitionNodeImpl node = new DefinitionNodeImpl("/foo", "foo", config);
-        config.setNode(node);
-
-        final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
-            if (i > 0) builder.append(' ');
-            builder.append("0123456789");
-        }
-        node.addProperty("str", new ValueImpl(builder.toString()));
-
-        final Map<String, Configuration> configurations = new LinkedHashMap<>();
-        configurations.put(configuration.getName(), configuration);
-
-        final FileConfigurationWriter writer = new FileConfigurationWriter();
-        writer.write(folder.getRoot().toPath(), configurations, getFailingResourceInputProviders(configurations));
-        final Path path = folder.getRoot().toPath().resolve("repo-config").resolve("test.yaml");
-
-        assertEquals(
-                "definitions:\n" +
-                "  config:\n" +
-                "    /foo:\n" +
-                "      str: 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789\n" +
-                "        0123456789 0123456789 0123456789\n",
-                new String(Files.readAllBytes(path)));
-    }
-
-    private Map<Module, ResourceInputProvider> getFailingResourceInputProviders(final Map<String, Configuration> configurations) {
-        final Map<Module, ResourceInputProvider> result = new HashMap<>();
-        for (Configuration configuration : configurations.values()) {
-            for (Project project : configuration.getProjects()) {
-                for (Module module : project.getModules()) {
-                    result.put(module, new ResourceInputProvider() {
-                        @Override
-                        public boolean hasResource(final Source source, final String resourcePath) {
-                            fail();
-                            return false;
-                        }
-                        @Override
-                        public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
-                            fail();
-                            return null;
-                        }
-                        @Override
-                        public URL getModuleRoot() {
-                            fail();
-                            return null;
-                        }
-                    });
-                }
-            }
-        }
-        return result;
-    }
-
     private void readAndWrite(final String repoConfig) throws IOException, ParserException {
         readAndWrite(repoConfig, DEFAULT_EXPLICIT_SEQUENCING);
     }
@@ -144,7 +84,7 @@ public class SerializerTest extends AbstractBaseTest {
         final PathConfigurationReader.ReadResult result = readFromResource(repoConfig, explicitSequencing);
 
         final FileConfigurationWriter writer = new FileConfigurationWriter(explicitSequencing);
-        writer.write(folder.getRoot().toPath(), result.getConfigurations(), result.getResourceInputProviders());
+        writer.write(folder.getRoot().toPath(), result.getConfigurations(), result.getModuleContexts());
 
         final Path expectedRoot = findBase(repoConfig);
         final Path actualRoot = folder.getRoot().toPath();

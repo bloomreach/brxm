@@ -13,11 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.engine.parser;
 
 import org.yaml.snakeyaml.nodes.Node;
 
-class ParserException extends Exception {
+public class ParserException extends Exception {
 
     private final Node node;
 

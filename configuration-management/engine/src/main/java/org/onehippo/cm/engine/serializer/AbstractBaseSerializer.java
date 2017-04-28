@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.engine.serializer;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -42,7 +42,7 @@ public abstract class AbstractBaseSerializer {
         this.explicitSequencing = explicitSequencing;
     }
 
-    protected void serializeNode(final OutputStream outputStream, final Node node) throws IOException {
+    public void serializeNode(final OutputStream outputStream, final Node node) throws IOException {
         final Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
         final DumperOptions dumperOptions = new DumperOptions();
         if (explicitSequencing) {

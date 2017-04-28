@@ -13,26 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.api.model;
+package org.onehippo.cm.impl.model;
 
-import java.util.Set;
-
-public interface Module extends Orderable {
-
-    Project getProject();
-
-    Set<Source> getSources();
-
-    /**
-     * @return The immutable set of content {@link Source}s of this module, ordered by path ({@link Source#getPath()})
-     *         relative to the module's base resource path.
-     */
-    Set<Source> getContentSources();
-
-    /**
-     * @return The immutable set of config {@link Source}s of this module, ordered by path ({@link Source#getPath()})
-     *         relative to the module's base resource path.
-     */
-    Set<Source> getConfigSources();
-
+public class ContentSourceImpl extends SourceImpl {
+    public ContentSourceImpl(String path, ModuleImpl module) {
+        super(path, module);
+    }
 }
