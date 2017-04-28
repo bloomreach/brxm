@@ -15,12 +15,13 @@
  */
 
 class CKEditorController {
-  constructor($scope, $element, CKEditorService, ConfigService) {
+  constructor($scope, $element, CKEditorService, CmsService, ConfigService) {
     'ngInject';
 
     this.$scope = $scope;
     this.$element = $element;
     this.CKEditorService = CKEditorService;
+    this.CmsService = CmsService;
     this.ConfigService = ConfigService;
   }
 
@@ -36,6 +37,7 @@ class CKEditorController {
       this.editor.on('change', () => this.onEditorChange());
       this.editor.on('focus', () => this.onEditorFocus());
       this.editor.on('blur', () => this.onEditorBlur());
+      this.editor.on('openLinkPicker', event => this._showLinkPicker(event.data));
     });
   }
 
@@ -60,6 +62,20 @@ class CKEditorController {
     this.$scope.$apply(() => {
       this.textAreaElement.removeClass('focussed');
       this.onBlur();
+    });
+  }
+
+  _showLinkPicker(parameters) {
+    this.CmsService.publish('show-link-picker', parameters.f_uuid, parameters.f_title, parameters.f_target,
+      this._onLinkPicked.bind(this));
+  }
+
+  _onLinkPicked(uuid, title, target) {
+    this.editor.execCommand('insertInternalLink', {
+      // map empty strings to 'undefined'
+      f_uuid: uuid || undefined,
+      f_title: title || undefined,
+      f_target: target || undefined,
     });
   }
 }

@@ -49,6 +49,7 @@
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
       this.iframeToHost.subscribe('destroy-component-properties-window', this._destroyComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-path-picker', this._showPathPicker, this);
+      this.iframeToHost.subscribe('show-link-picker', this._showLinkPicker, this);
       this.iframeToHost.subscribe('open-content', this._openContent, this);
       this.iframeToHost.subscribe('close-content', this._closeContent, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
@@ -236,6 +237,17 @@
 
     _onPathPicked: function(path, displayValue) {
       this.hostToIFrame.publish('path-picked', this.pathPickerField, path, displayValue);
+    },
+
+    _showLinkPicker: function(uuid, title, target, callback) {
+      this.linkPickerCallback = callback;
+      this.fireEvent('open-link-picker', uuid, title, target);
+    },
+
+    onLinkPicked: function(uuid, title, target) {
+      if (this.linkPickerCallback) {
+        this.linkPickerCallback(uuid, title, target);
+      }
     },
 
     _maskSurroundings: function() {
