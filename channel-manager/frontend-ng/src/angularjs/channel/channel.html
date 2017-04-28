@@ -37,8 +37,14 @@
           on-manage-changes="channelCtrl.showSubpage('manage-changes')">
         </changes-menu>
 
-        <overlay-toggle state="channelCtrl.isComponentsOverlayDisplayed" icon="view_quilt"></overlay-toggle>
-        <overlay-toggle state="channelCtrl.isContentOverlayDisplayed" icon="description"></overlay-toggle>
+        <overlay-toggle state="channelCtrl.isComponentsOverlayDisplayed"
+                        icon="view_quilt"
+                        ng-if="channelCtrl.isEditable()">
+        </overlay-toggle>
+
+        <overlay-toggle state="channelCtrl.isContentOverlayDisplayed"
+                        icon="description">
+        </overlay-toggle>
       </div>
     </div>
     <md-progress-linear md-mode="indeterminate"
