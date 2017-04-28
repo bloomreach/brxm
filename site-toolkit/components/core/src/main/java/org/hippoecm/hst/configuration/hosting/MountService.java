@@ -38,7 +38,9 @@ import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.configuration.site.CompositeHstSite;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.site.HstSiteFactory;
 import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.configuration.site.MountSiteMapConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -579,11 +581,11 @@ public class MountService implements ContextualizableMount, MutableMount {
                 long start = System.currentTimeMillis();
                 if (Mount.PREVIEW_NAME.equals(type)) {
                     // explicit preview
-                    previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
+                    previewHstSite = new HstSiteFactory().createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
                     hstSite = previewHstSite;
                 } else {
-                    hstSite = HstSiteService.createLiveSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
-                    previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
+                    hstSite = new HstSiteFactory().createLiveSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
+                    previewHstSite = new HstSiteFactory().createPreviewSiteService(hstSiteNodeForMount, this, mountSiteMapConfiguration, hstNodeLoadingCache);
                 }
 
                 assertContentPathNotEmpty(mount, contentPath);

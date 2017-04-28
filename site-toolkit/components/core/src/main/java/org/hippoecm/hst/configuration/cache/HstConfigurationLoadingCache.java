@@ -136,6 +136,11 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
         List<UUID> cachekey = ccn.getCacheKey();
         // mount needs to be part of the cache key for channel objects
         cachekey.add(UUID.fromString(mountIdentifier));
+        // configuration node needs to be part of the cache key for channel objects otherwise for for example branches the same
+        // channel object will be returned
+        final HstNode rootConfigNode = hstNodeLoadingCache.getNode(configurationPath);
+        cachekey.add(UUID.fromString(rootConfigNode.getValueProvider().getIdentifier()));
+
         final WeakTaggedCache<List<UUID>, Channel, String> channelsCache;
         if (isPreviewSite) {
             channelsCache = previewChannelsCache;

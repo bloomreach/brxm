@@ -16,7 +16,9 @@
 package org.hippoecm.hst.configuration.site;
 
 import java.util.HashSet;
+import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -25,25 +27,34 @@ import javax.jcr.SimpleCredentials;
 import com.google.common.base.Optional;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.util.JcrUtils;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNotSame;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertSame;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCHOF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class SiteServiceIT extends AbstractTestConfigurations {
@@ -129,7 +140,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
                 final ContextualizableMount mount = (ContextualizableMount)resMount.getMount();
                 // since we do not have a preview yet, previewChannel and live channel should have the same #getId, though
                 // there instances are different
-                Assert.assertNotSame(mount.getPreviewChannel(), mount.getChannel());
+                assertNotSame(mount.getPreviewChannel(), mount.getChannel());
                 assertEquals("Since there is not preview, the preview channel id should be same as the live channel" +
                         " instance", mount.getPreviewChannel().getId(), mount.getChannel().getId());
 
@@ -394,4 +405,140 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         }
     }
 
+
+    @Test
+    public void channels_for_branches_get_loaded_as_well() throws Exception {
+        Session session = createSession();
+        try {
+            createHstConfigBackup(session);
+            createBranch(session, "unittestproject-branchid-000");
+            Channel branchChannel = hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000");
+            assertNotNull(branchChannel);
+            assertEquals("branchid-000", branchChannel.getBranchId());
+            assertEquals("unittestproject", branchChannel.getBranchOf());
+
+            Channel masterChannel = hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject");
+            assertEquals(masterChannel.getMountId(), branchChannel.getMountId());
+            assertEquals("Because the branch does not have its own channel node, the channel node is inherited",
+                    masterChannel.getChannelPath(), branchChannel.getChannelPath());
+
+            Mount mount = hstManager.getVirtualHosts().getMountByIdentifier(branchChannel.getMountId());
+            assertTrue(mount.getHstSite() instanceof CompositeHstSite);
+
+            Channel subChannel = hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestsubproject");
+            Mount subMount = hstManager.getVirtualHosts().getMountByIdentifier(subChannel.getMountId());
+            assertFalse(subMount.getHstSite() instanceof CompositeHstSite);
+        } finally {
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    private void createBranch(final Session session, final String name) throws RepositoryException {
+        Node branchNode = session.getNode("/hst:hst/hst:configurations").addNode(name);
+        branchNode.addNode(NODENAME_HST_WORKSPACE, NODETYPE_HST_WORKSPACE);
+        branchNode.addMixin(MIXINTYPE_HST_BRANCH);
+        branchNode.setProperty(BRANCH_PROPERTY_BRANCHOF, "unittestproject");
+        branchNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[] {"../unittestproject"});
+        session.save();
+    }
+
+    @Test
+    public void branch_channel_that_does_not_point_to_a_existing_master_is_not_loaded() throws Exception {
+        Session session = createSession();
+        try {
+            createHstConfigBackup(session);
+            createBranch(session, "unittestproject-branchid-000");
+            Node branchNode = session.getNode("/hst:hst/hst:configurations/unittestproject-branchid-000");
+            branchNode.setProperty(BRANCH_PROPERTY_BRANCHOF, "nonexisting");
+            session.save();
+            assertNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000"));
+        } finally {
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    @Test
+    public void incorrect_configured_branch_is_not_loaded() throws Exception {
+        incorrectNameAssertions("incorrectname-branchid-000");
+    }
+
+    private void incorrectNameAssertions(final String name) throws RepositoryException, ContainerException {
+        Session session = createSession();
+        try {
+            createHstConfigBackup(session);
+            // since the branch is a branchof 'unittestproject', it should start with the name 'unittestproject-' and is
+            // thus incorrect like this and hence won't be loaded
+            createBranch(session, name);
+            session.save();
+            assertNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get(name));
+        } finally {
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    @Test
+    public void subtle_incorrect_configured_branch_is_not_loaded() throws Exception {
+        incorrectNameAssertions("unittestprojectbranchid-000");
+    }
+
+    @Test
+    public void hst_site_not_allowed_to_point_to_branch() throws Exception {
+        Session session = createSession();
+        try {
+            createHstConfigBackup(session);
+            createBranch(session, "unittestproject-branchid-000");
+            // add a hst:site node
+            session.getNode("/hst:hst/hst:sites").addNode("unittestproject-branchid-000");
+            JcrUtils.copy(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite",
+                    "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/unittestproject-branchid-000");
+            Node mount = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/unittestproject-branchid-000");
+            mount.setProperty(MOUNT_PROPERTY_MOUNTPOINT, "/hst:hst/hst:sites/unittestproject-branchid-000");
+            session.save();
+            // now assert that the resolved mount for unittestproject-branchid-000 has a HstSite that is null
+            final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/unittestproject-branchid-000");
+            assertNull(resolvedMount.getMount().getHstSite());
+        } finally {
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    @Test
+    public void existing_preview_of_master_does_not_influence_branch_channels() throws Exception {
+        Session session = createSession();
+        try {
+            createHstConfigBackup(session);
+            createBranch(session, "unittestproject-branchid-000");
+            JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject",
+                    "/hst:hst/hst:configurations/unittestproject-preview");
+            session.save();
+            assertNotNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-preview"));
+            assertNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000-preview"));
+        } finally {
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    @Test
+    public void preview_of_branch_is_loaded_in_channels() throws Exception {
+        Session session = createSession();
+        try {
+            createHstConfigBackup(session);
+            createBranch(session, "unittestproject-branchid-000");
+            JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject-branchid-000",
+                    "/hst:hst/hst:configurations/unittestproject-branchid-000-preview");
+            // preview branch extends from the live branch
+            session.getNode("/hst:hst/hst:configurations/unittestproject-branchid-000-preview").setProperty(GENERAL_PROPERTY_INHERITS_FROM,
+                    new String[] {"../unittestproject-branchid-000"});
+            session.save();
+            assertNotNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000-preview"));
+        } finally {
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
 }

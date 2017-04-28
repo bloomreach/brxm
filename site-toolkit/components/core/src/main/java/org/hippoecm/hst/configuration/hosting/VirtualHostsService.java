@@ -49,6 +49,8 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.configuration.site.CompositeHstSite;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -394,37 +396,62 @@ public class VirtualHostsService implements MutableVirtualHosts {
                         log.debug("Explicit preview mounts are not added as channel (only their live equivalent");
                         continue;
                     }
-                    if (!mount.isMapped() || mount.getHstSite() == null || mount.getHstSite().getChannel() == null) {
+                    HstSite hstSite = mount.getHstSite();
+                    if (!mount.isMapped() || hstSite == null || hstSite.getChannel() == null) {
                         log.debug("Mount '{}' does not have channel associated with it", mount.getName());
                         continue;
                     }
-                    Channel channel = mount.getHstSite().getChannel();
+
+                    Channel channel = hstSite.getChannel();
+
                     if (hostGroupChannels.containsKey(channel.getId())) {
-                        log.warn("Skip channel with id '{}' because already present for host group '{}'. Most likely there is a " +
-                                "parent channel that already is a channel mngr channel. Set '{} = true' on mount " +
-                                "'{}' to avoid this problem.", channel.getId(), hostGroupName, MOUNT_PROPERTY_NOCHANNELINFO, mount);
+                        warnDuplicateChannel(hostGroupName, mount, channel);
                         continue;
                     }
-                    hostGroupChannels.put(channel.getId(), channel);
-                    if (channel.isPreviewHstConfigExists()) {
-                        Channel previewChannel = ((ContextualizableMount)mount).getPreviewChannel();
-                        if (previewChannel == null) {
-                            log.error("Missing preview channel for '{}' which is unexpected because there is an preview " +
-                                    "configuration.", channel);
-                            continue;
-                        }
+                    HstSite previewHstSite = ((ContextualizableMount)mount).getPreviewHstSite();
+                    Channel previewChannel = previewHstSite.getChannel();
 
+                    if (previewChannel != null && hostGroupChannels.containsKey(previewChannel.getId())) {
+                        warnDuplicateChannel(hostGroupName, mount, previewChannel);
+                        continue;
+                    }
+
+                    hostGroupChannels.put(channel.getId(), channel);
+                    if (previewChannel.getId().equals(channel.getId())) {
+                        log.debug("For channel '{}' there is no explicit preview configuration (yet).", channel);
+                    } else {
                         hostGroupChannels.put(previewChannel.getId(), previewChannel);
                     }
+
+                    for (HstSite s : new HstSite[]{hstSite, previewHstSite}) {
+                        if (s instanceof CompositeHstSite) {
+                            CompositeHstSite compositeHstSite = (CompositeHstSite)s;
+                            for (HstSite site : compositeHstSite.getBranches()) {
+                                Channel branch = site.getChannel();
+                                if (hostGroupChannels.containsKey(branch.getId())) {
+                                    warnDuplicateChannel(hostGroupName, mount, branch);
+                                    continue;
+                                }
+                                hostGroupChannels.put(branch.getId(), branch);
+                            }
+                        }
+                    }
+
                 }
             }
         }
 
     }
 
+    private void warnDuplicateChannel(final String hostGroupName, final Mount mount, final Channel channel) {
+        log.warn("Skip channel with id '{}' because already present for host group '{}'. Most likely there is a " +
+                "parent channel that already is a channel mngr channel. Set '{} = true' on mount " +
+                "'{}' to avoid this problem.", channel.getId(), hostGroupName, MOUNT_PROPERTY_NOCHANNELINFO, mount);
+    }
+
     private void quickModelCheck() {
         final String rootPath = hstNodeLoadingCache.getRootPath();
-        String[] mandatoryNodes = new String[]{rootPath +"/hst:hosts", rootPath +"/hst:sites", rootPath +"/hst:configurations"};
+        String[] mandatoryNodes = new String[]{rootPath + "/hst:hosts", rootPath +"/hst:sites", rootPath +"/hst:configurations"};
         for (String mandatoryNode : mandatoryNodes) {
             if (hstNodeLoadingCache.getNode(mandatoryNode) == null) {
                 throw new ModelLoadingException("Hst Model cannot be loaded because missing node '"+mandatoryNode+"'");

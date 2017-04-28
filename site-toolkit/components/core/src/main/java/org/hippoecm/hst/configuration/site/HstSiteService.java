@@ -48,6 +48,9 @@ import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONFIGURATIONS;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITE_CONFIGURATIONPATH;
+
 public class HstSiteService implements HstSite {
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
@@ -66,43 +69,47 @@ public class HstSiteService implements HstSite {
     private HstConfigurationLoadingCache configLoadingCache;
     private final Object hstModelMutex;
 
-    public static HstSiteService createLiveSiteService(final HstNode site,
-                                                       final Mount mount,
-                                                       final MountSiteMapConfiguration mountSiteMapConfiguration,
-                                                       final HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
-        return new HstSiteService(site, mount, mountSiteMapConfiguration, hstNodeLoadingCache, false);
-    }
-
-    public static HstSiteService createPreviewSiteService(final HstNode site,
-                                                          final Mount mount,
-                                                       final MountSiteMapConfiguration mountSiteMapConfiguration,
-                                                       final HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
-        return new HstSiteService(site, mount, mountSiteMapConfiguration, hstNodeLoadingCache, true);
-    }
-
-    private HstSiteService(final HstNode site,
-                           final Mount mount,
-                           final MountSiteMapConfiguration mountSiteMapConfiguration,
-                           final HstNodeLoadingCache hstNodeLoadingCache,
-                           final boolean isPreviewSite) throws ModelLoadingException {
+    HstSiteService(final HstNode site,
+                   final Mount mount,
+                   final MountSiteMapConfiguration mountSiteMapConfiguration,
+                   final HstNodeLoadingCache hstNodeLoadingCache,
+                   final boolean isPreviewSite) throws ModelLoadingException {
         hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
         configLoadingCache = HstServices.getComponentManager().getComponent(HstConfigurationLoadingCache.class.getName());
         name = site.getValueProvider().getName();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         this.mountSiteMapConfiguration = mountSiteMapConfiguration;
         findAndSetConfigurationPath(site, hstNodeLoadingCache, isPreviewSite);
-        init(site, mount, isPreviewSite, hstNodeLoadingCache);
+        init(site, mount, isPreviewSite, hstNodeLoadingCache, null);
+    }
+
+    public HstSiteService(final HstNode site, final Mount mount, final MountSiteMapConfiguration mountSiteMapConfiguration,
+                          final HstNodeLoadingCache hstNodeLoadingCache,
+                          final String configurationPath,
+                          final Channel master) {
+        hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
+        configLoadingCache = HstServices.getComponentManager().getComponent(HstConfigurationLoadingCache.class.getName());
+        name = site.getValueProvider().getName();
+        canonicalIdentifier = site.getValueProvider().getIdentifier();
+        this.mountSiteMapConfiguration = mountSiteMapConfiguration;
+        this.configurationPath = configurationPath;
+        if (configurationPath.endsWith("-preview")) {
+            hasPreviewConfiguration = true;
+            init(site, mount, true, hstNodeLoadingCache, master);
+        } else {
+            init(site, mount, false, hstNodeLoadingCache, master);
+        }
     }
 
     private void findAndSetConfigurationPath(final HstNode site,
                                              final HstNodeLoadingCache hstNodeLoadingCache,
                                              final boolean isPreviewSite
                                              ) {
-        if (site.getValueProvider().hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-            configurationPath = site.getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH);
+        if (site.getValueProvider().hasProperty(SITE_CONFIGURATIONPATH)) {
+            configurationPath = site.getValueProvider().getString(SITE_CONFIGURATIONPATH);
         } else {
             configurationPath = hstNodeLoadingCache.getRootPath() + "/" +
-                    HstNodeTypes.NODENAME_HST_CONFIGURATIONS + "/" +site.getValueProvider().getName();
+                    NODENAME_HST_CONFIGURATIONS + "/" +site.getValueProvider().getName();
         }
         String previewConfigurationPath = configurationPath + "-preview";
         HstNode previewConfig = hstNodeLoadingCache.getNode(previewConfigurationPath);
@@ -115,7 +122,7 @@ public class HstSiteService implements HstSite {
     }
 
     private void init(final HstNode site, final Mount mount, final boolean isPreviewSite,
-                      final HstNodeLoadingCache hstNodeLoadingCache) {
+                      final HstNodeLoadingCache hstNodeLoadingCache, final Channel master) {
 
         log.debug("Loading channel configuration for '{}'", configurationPath);
 
@@ -126,6 +133,14 @@ public class HstSiteService implements HstSite {
             ch = configLoadingCache.loadChannel(configurationPath, isPreviewSite,  mount.getIdentifier());
         }
         if (ch != null) {
+            if (master != null) {
+                ch.setBranchOf(master.getId());
+                if (!ch.getId().startsWith(master.getId() + "-")) {
+                    throw new ModelLoadingException(String.format("Invalid branch '%s' because it does not start with " +
+                            "the id '%s' plus '-' of the master.", ch.getId(), master.getId()));
+                }
+                ch.setBranchId(StringUtils.substringAfter(ch.getId(), master.getId()+"-"));
+            }
 
             final HstNode rootConfigNode = hstNodeLoadingCache.getNode(configurationPath);
             if (rootConfigNode == null) {

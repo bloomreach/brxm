@@ -48,7 +48,6 @@ public class MountServiceIT extends AbstractTestConfigurations {
 
     @Test
     public void test_mount_properties_dont_return_inherited() throws Exception {
-
         /*
             + hst:root
                 - hst:alias = root
@@ -78,9 +77,8 @@ public class MountServiceIT extends AbstractTestConfigurations {
 
         assertEquals("home", subResolvedMount.getMount().getProperty("hst:homepage"));
         assertEquals("CustomPipeline", subResolvedMount.getMount().getProperty("hst:namedpipeline"));
-
-
-
     }
+
+
 
 }
