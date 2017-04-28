@@ -1,0 +1,52 @@
+<'hcm'='http://www.onehippo.org/jcr/hcm/1.0'>
+<'jcr'='http://www.jcp.org/jcr/1.0'>
+<'mix'='http://www.jcp.org/jcr/mix/1.0'>
+<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+
+[hcm:digested] mixin
+  - hcm:digest (string) mandatory
+
+[hcm:content] > nt:base
+  - hcm:contentpath (string) primary mandatory
+
+[hcm:contentfolder] > nt:base
+  + * (hcm:contentfolder)
+  + * (hcm:content)
+
+[hcm:actions] > nt:base, hcm:digested
+  - hcm:yaml (string) primary mandatory
+
+[hcm:dependencies] > nt:base, hcm:digested
+  - hcm:yaml (string) primary mandatory
+
+[hcm:definitions] > nt:base, hcm:digested
+  - hcm:yaml (string) primary mandatory
+
+[hcm:cnd] > nt:base, hcm:digested
+  - hcm:cnd (string) primary mandatory
+
+[hcm:binary] > nt:base, hcm:digested
+  - jcr:data (binary) primary mandatory
+
+[hcm:configfolder] > nt:base
+  + * (hcm:configfolder)
+  + * (hcm:definitions)
+  + * (hcm:cnd)
+  + * (hcm:binary)
+
+[hcm:module] > nt:base
+  - hcm:lastexecutedaction (string)
+  + hcm:dependencies (hcm:dependencies) mandatory
+  + hcm:config (hcm:configfolder)
+  + hcm:actions (hcm:actions)
+  + hcm:content (hcm:contentfolder)
+
+[hcm:project] > nt:base
+  + * (hcm:module)
+
+[hcm:group] > nt:base
+  + * (hcm:project)
+
+[hcm:baseline] > nt:base, mix:lockable
+  - hcm:lastupdated (date)
+  + * (hcm:group)

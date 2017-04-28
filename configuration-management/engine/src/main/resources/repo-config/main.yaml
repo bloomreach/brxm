@@ -1,6 +1,6 @@
 definitions:
   namespace:
-  - prefix: hippocfg
-    uri: http://www.onehippo.org/jcr/hippocfg/1.0
+  - prefix: hcm
+    uri: http://www.onehippo.org/jcr/hcm/1.0
   cnd:
-  - resource: hippocfg.cnd
+  - resource: hcm.cnd
