@@ -22,6 +22,7 @@
         <item name="Example with SalesForce REST API" href="example-salesforce-rest-api-config.html" />
       </item>
       <item name="Examples" href="examples.html">
+        <item name="Using Generic Resource Objects" href="example-using-generic-resources.html" />
         <item name="Web-hook Example to Invalidate Cache" href="example-webhook-invalidate-cache.html" />
       </item>
       <item name="FAQ" href="faq.html" />
