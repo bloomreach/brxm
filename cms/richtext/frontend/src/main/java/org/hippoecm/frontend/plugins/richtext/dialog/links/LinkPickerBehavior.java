@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,11 +22,10 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.dialog.AbstractAjaxDialogBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.AbstractRichTextEditorDialog;
+import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorDocumentLink;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorInternalLink;
 
-public class LinkPickerBehavior extends AbstractAjaxDialogBehavior {
-
-    private static final long serialVersionUID = 1L;
+public class LinkPickerBehavior extends AbstractAjaxDialogBehavior<RichTextEditorDocumentLink> {
 
     private final RichTextEditorLinkService linkService;
 
@@ -38,10 +37,10 @@ public class LinkPickerBehavior extends AbstractAjaxDialogBehavior {
     }
 
     @Override
-    protected AbstractRichTextEditorDialog createDialog() {
+    protected AbstractRichTextEditorDialog<RichTextEditorDocumentLink> createDialog() {
         final RichTextEditorInternalLink internalLink = linkService.create(getParameters());
-        final IModel<RichTextEditorInternalLink> model = new Model<RichTextEditorInternalLink>(internalLink);
-        return new DocumentBrowserDialog<RichTextEditorInternalLink>(getPluginContext(), getPluginConfig(), model);
+        final IModel<RichTextEditorDocumentLink> model = Model.of(internalLink);
+        return new DocumentBrowserDialog<>(getPluginContext(), getPluginConfig(), model);
     }
 
     @Override
@@ -51,5 +50,4 @@ public class LinkPickerBehavior extends AbstractAjaxDialogBehavior {
             linkService.detach();
         }
     }
-
 }
