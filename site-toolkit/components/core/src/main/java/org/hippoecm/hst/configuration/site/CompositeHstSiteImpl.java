@@ -16,7 +16,6 @@
 package org.hippoecm.hst.configuration.site;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
@@ -24,31 +23,43 @@ import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
-import org.hippoecm.hst.core.linking.LocationMapTree;
 
-public class CompositeHstSite implements HstSite {
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.linking.LocationMapTree;
+import org.hippoecm.hst.site.HstServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class CompositeHstSiteImpl implements CompositeHstSite {
+
+    private static final Logger log = LoggerFactory.getLogger(CompositeHstSiteImpl.class);
 
     private final HstSite master;
-    private final Set<HstSite> branches;
-    public CompositeHstSite(final HstSite master, final Set<HstSite> branches) {
+    private final Map<String, HstSite> branches;
+    private final DelegatingHstSiteProvider delegatingHstSiteProvider;
+
+    public CompositeHstSiteImpl(final HstSite master, final Map<String, HstSite> branches) {
         this.master = master;
         this.branches = branches;
+        delegatingHstSiteProvider = HstServices.getComponentManager().getComponent(DelegatingHstSiteProvider.class);
+        if (delegatingHstSiteProvider == null) {
+            log.warn("No DelegatingHstSiteProvider is found.");
+        }
     }
 
     public HstSite getMaster() {
         return master;
     }
 
-    public Set<HstSite> getBranches() {
+    public Map<String, HstSite> getBranches() {
         return branches;
     }
 
-    public HstSite getActiveHstSite() {
-        if (branches.isEmpty()) {
+    private HstSite getActiveHstSite() {
+        if (branches.isEmpty() || delegatingHstSiteProvider == null) {
             return master;
         }
-        // TODO HSTTWO-3983
-        return master;
+        return delegatingHstSiteProvider.getHstSite(this, RequestContextProvider.get());
     }
 
     @Override
@@ -115,5 +126,13 @@ public class CompositeHstSite implements HstSite {
     @Override
     public <T extends ChannelInfo> T getChannelInfo() {
         return getActiveHstSite().getChannelInfo();
+    }
+
+    @Override
+    public String toString() {
+        return "CompositeHstSiteImpl{" +
+                "master=" + master +
+                ", branches=" + branches +
+                '}';
     }
 }

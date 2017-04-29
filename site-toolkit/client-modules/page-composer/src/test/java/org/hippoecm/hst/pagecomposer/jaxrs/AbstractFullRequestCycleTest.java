@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -117,9 +118,12 @@ public class AbstractFullRequestCycleTest {
     }
 
     public MockHttpServletResponse render(final String mountId, final RequestResponseMock requestResponse, final Credentials authenticatedCmsUser) throws IOException, ServletException {
-        final MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute(CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
-        requestResponse.getRequest().setSession(mockHttpSession);
+        MockHttpSession session = (MockHttpSession)requestResponse.getRequest().getSession(false);
+        if (session == null) {
+            session = new MockHttpSession();
+            requestResponse.getRequest().setSession(session);
+        }
+        session.setAttribute(CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
         return render(requestResponse, authenticatedCmsUser);
     }
 

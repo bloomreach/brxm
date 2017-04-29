@@ -426,7 +426,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
                     for (HstSite s : new HstSite[]{hstSite, previewHstSite}) {
                         if (s instanceof CompositeHstSite) {
                             CompositeHstSite compositeHstSite = (CompositeHstSite)s;
-                            for (HstSite site : compositeHstSite.getBranches()) {
+                            for (HstSite site : compositeHstSite.getBranches().values()) {
                                 Channel branch = site.getChannel();
                                 if (hostGroupChannels.containsKey(branch.getId())) {
                                     warnDuplicateChannel(hostGroupName, mount, branch);

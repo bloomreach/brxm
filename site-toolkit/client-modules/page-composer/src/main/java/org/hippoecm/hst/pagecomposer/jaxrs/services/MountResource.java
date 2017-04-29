@@ -17,7 +17,9 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
@@ -29,6 +31,8 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -36,6 +40,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -45,7 +50,9 @@ import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.site.CompositeHstSite;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.site.HstSiteProvider;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
@@ -83,6 +90,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHER
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
+import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
 
 @Path("/hst:mount/")
@@ -185,16 +193,33 @@ public class MountResource extends AbstractConfigResource {
     @PUT
     @Path("/selectbranch/{branchId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response selectBranch(@PathParam("branchId") final String branchId) {
-        log.debug("Select branch:{} of channel:{}", branchId, getPageComposerContextService().getEditingMount().getChannel());
+    public Response selectBranch(@Context HttpServletRequest servletRequest, @PathParam("branchId") final String branchId) {
+        HttpSession session = servletRequest.getSession();
+        Map<String,String> mountToBranchIdMap = (Map<String,String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        if (mountToBranchIdMap == null) {
+            mountToBranchIdMap = new HashMap<>();
+            session.setAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY, mountToBranchIdMap);
+        }
+        Mount editingMount = getPageComposerContextService().getEditingMount();
+        if (!(editingMount.getHstSite() instanceof CompositeHstSite)) {
+            log.warn("Cannot select a branch for '{}' because there are no branches for the mount.", editingMount);
+            return error("Cannot select branch");
+        }
+        mountToBranchIdMap.put(editingMount.getIdentifier(), branchId);
+        log.debug("Selected branch:{} of channel:{}", branchId, editingMount.getChannel());
         return ok("Branch selected successfully");
     }
 
     @PUT
     @Path("/selectmaster")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response selectMaster() {
-        log.debug("Select master  of channel:{}", getPageComposerContextService().getEditingMount().getChannel());
+    public Response selectMaster(@Context HttpServletRequest servletRequest) {
+        HttpSession session = servletRequest.getSession();
+        Map<String,String> mountToBranchIdMap = (Map<String,String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        if (mountToBranchIdMap != null) {
+            mountToBranchIdMap.remove(getPageComposerContextService().getEditingMount().getIdentifier());
+        }
+        log.debug("Selected master of channel:{}", getPageComposerContextService().getEditingMount().getChannel());
         return ok("Master branch selected successfully");
     }
 
@@ -237,6 +262,14 @@ public class MountResource extends AbstractConfigResource {
             JcrUtils.copy(session, liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE, liveBranchConfigNode.getPath() + "/" + NODENAME_HST_WORKSPACE);
         }
         createMandatoryWorkspaceNodesIfMissing(liveBranchConfigNode.getPath());
+
+        // we need for branches directly a preview as well otherwise we can't select this branch via #selectBranch : That is
+        // because the 'editingMount' is decorated to preview and hence will return only the preview channels
+        JcrUtils.copy(session, liveBranchConfigNode.getPath(), liveBranchConfigNode.getPath() + "-preview");
+        // TODO if 'master config node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
+        // TODO as well to the preview config, see HSTTWO-3965
+        session.getNode(liveBranchConfigNode.getPath() + "-preview").setProperty(GENERAL_PROPERTY_INHERITS_FROM,
+                new String[]{"../" + liveBranchConfigNode.getName()});
         session.save();
     }
 

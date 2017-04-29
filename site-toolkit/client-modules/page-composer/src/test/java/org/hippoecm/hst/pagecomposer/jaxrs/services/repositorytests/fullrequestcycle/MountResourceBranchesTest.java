@@ -24,33 +24,27 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
-import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
 import org.hippoecm.hst.site.HstServices;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 
-import static java.util.Collections.singletonList;
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCHOF;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
-import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
+import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class MountResourceBranchingTest extends MountResourceTest {
+public class MountResourceBranchesTest extends MountResourceTest {
 
     private static final SimpleCredentials ADMIN_CREDENTIALS = new SimpleCredentials("admin", "admin".toCharArray());
     private final SimpleCredentials EDITOR_CREDENTIALS = new SimpleCredentials("editor", "editor".toCharArray());
@@ -82,6 +76,7 @@ public class MountResourceBranchingTest extends MountResourceTest {
         // now remove the created branch, publish the preview page, and create the branch again: Then we expect the
         // home-copy to be there
         session.getNode("/hst:hst/hst:configurations/unittestproject-foo").remove();
+        session.getNode("/hst:hst/hst:configurations/unittestproject-foo-preview").remove();
         session.save();
         publish(ADMIN_CREDENTIALS);
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home-copy"));
@@ -133,9 +128,17 @@ public class MountResourceBranchingTest extends MountResourceTest {
         assertArrayEquals(new String[]{"../unittestproject"}, getMultipleStringProperty(branchHstConfigNode, GENERAL_PROPERTY_INHERITS_FROM, null));
         assertTrue(branchHstConfigNode.isNodeType(MIXINTYPE_HST_BRANCH));
 
-
         assertEquals("unittestproject", branchHstConfigNode.getProperty(BRANCH_PROPERTY_BRANCHOF).getString());
 
+        // assert that the branch preview is also directly created (since directly required for MountResource#selectBranch
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"-preview/hst:workspace"));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"-preview/hst:workspace/hst:sitemap"));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"-preview/hst:workspace/hst:pages"));
+
+        Node previewBranchHstConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject-" + branchName + "-preview");
+        assertArrayEquals(new String[]{"../unittestproject-" +branchName}, getMultipleStringProperty(previewBranchHstConfigNode, GENERAL_PROPERTY_INHERITS_FROM, null));
+        assertTrue(previewBranchHstConfigNode.isNodeType(MIXINTYPE_HST_BRANCH));
+        assertEquals("unittestproject", previewBranchHstConfigNode.getProperty(BRANCH_PROPERTY_BRANCHOF).getString());
         session.logout();
     }
 
@@ -173,21 +176,47 @@ public class MountResourceBranchingTest extends MountResourceTest {
                 "the branch as well", branch.isChannelSettingsEditable());
     }
 
-    // TODO assertions when creating a preview from the branch (and when creating preview from master)
+    @Test
+    public void select_branch_and_select_master_again() throws Exception {
+        createBranch(ADMIN_CREDENTIALS, "foo");
+        Thread.sleep(100);
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/"+ mountId + "./selectbranch/foo", null, "PUT");
+        final Map<String, Object> responseMap = render(ADMIN_CREDENTIALS, mountId, requestResponse);
+        assertEquals(Boolean.TRUE, responseMap.get("success"));
 
-//    @Test
-//    public void branch_when_channel_is_in_workspace() throws Exception {
-//        Session session = createSession("admin", "admin");
-//        session.move("/hst:hst/hst:configurations/unittestproject/hst:channel",
-//                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:channel");
-//        session.save();
-//        session.logout();
-//        createBranch(ADMIN_CREDENTIALS, "foo");
-//        Thread.sleep(100);
-//        final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-//        VirtualHosts virtualHosts = hstManager.getVirtualHosts();Map<String, Channel> channels = virtualHosts.getChannels("dev-localhost");
-//        Channel branch = channels.get("unittestproject-foo");
-//        assertTrue("Since 'unittestproject' does have channel node in workspace, it should be editable in " +
-//                "the branch as well", branch.isChannelSettingsEditable());
-//    }
+        final Map<String, String> mountToBranchMap = (Map<String, String>)requestResponse.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        assertTrue(mountToBranchMap.containsKey(mountId));
+        assertEquals("foo", mountToBranchMap.get(mountId));
+
+        final RequestResponseMock requestResponse2 = mockGetRequestResponse(
+                "http", "localhost", "/_rp/"+ mountId + "./selectmaster", null, "PUT");
+        final MockHttpSession session = new MockHttpSession();
+        session.setAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY, mountToBranchMap);
+        requestResponse2.getRequest().setSession(session);
+        final Map<String, Object> responseMap2 = render(ADMIN_CREDENTIALS, mountId, requestResponse2);
+        assertEquals(Boolean.TRUE, responseMap2.get("success"));
+        final Map<String, String> mountToBranchMap2 = (Map<String, String>)requestResponse2.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        assertFalse(mountToBranchMap2.containsKey(mountId));
+    }
+
+    @Test
+    public void select_non_existing_branch() throws Exception {
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/"+ mountId + "./selectbranch/foo", null, "PUT");
+        Map<String, Object> responseMap = render(ADMIN_CREDENTIALS, mountId, requestResponse);
+        assertEquals(Boolean.FALSE, responseMap.get("success"));
+        assertTrue(((Map)requestResponse.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY)).isEmpty());
+    }
+
+    private Map<String, Object> render(final Credentials creds, final String mountId, final RequestResponseMock requestResponse)
+            throws RepositoryException, IOException, ServletException {
+
+        final MockHttpServletResponse response = render(mountId, requestResponse, creds);
+        final String restResponse = response.getContentAsString();
+        return mapper.reader(Map.class).readValue(restResponse);
+    }
+
 }

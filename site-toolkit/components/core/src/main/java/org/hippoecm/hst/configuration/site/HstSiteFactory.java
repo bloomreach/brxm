@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.configuration.site;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
@@ -26,6 +26,7 @@ import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.unmodifiableMap;
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCHOF;
 
 public class HstSiteFactory {
@@ -72,7 +73,7 @@ public class HstSiteFactory {
 
         HstNode configurationsNode = masterConfiguration.getParent();
 
-        Set<HstSite> branches = new HashSet<>();
+        Map<String, HstSite> branches = new HashMap<>();
         for (HstNode branchNode : configurationsNode.getNodes()) {
             if (!branchNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCHOF)) {
                 log.debug("Skipping config '{}' which is not a branch.", branchNode.getName());
@@ -101,7 +102,7 @@ public class HstSiteFactory {
             try {
                 final HstSite branch = new HstSiteService(site, mount, mountSiteMapConfiguration,
                         hstNodeLoadingCache, branchNode.getValueProvider().getPath(), master.getChannel());
-                branches.add(branch);
+                branches.put(branch.getChannel().getBranchId(), branch);
             } catch (ModelLoadingException e) {
                 log.error("Could not load branch '{}'. Skip that branch.", branchNode.getName(), e);
             }
@@ -111,7 +112,8 @@ public class HstSiteFactory {
             return master;
         }
         log.info("Return CompositeHstSite consisting of master '{}' and branches '{}'", master, branches);
-        return new CompositeHstSite(master, branches);
+
+        return new CompositeHstSiteImpl(master, unmodifiableMap(branches));
 
     }
 
