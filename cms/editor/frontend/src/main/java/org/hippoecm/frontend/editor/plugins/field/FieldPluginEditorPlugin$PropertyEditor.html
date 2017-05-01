@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,8 +15,11 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-        <div wicket:id="fieldPluginEditor">[ field parameters here ]</div>
-        <div wicket:id="templateParameterEditor">[ template config here ]</div>
-        <div wicket:id="fieldEditor">[ field config here ]</div>
+      <div class="hippo-editor-template-field-title">
+          <wicket:message key="field-properties" />
+      </div>
+      <div wicket:id="fieldEditor">[ field config here ]</div>
+      <div wicket:id="fieldPluginEditor">[ field parameters here ]</div>
+      <div wicket:id="templateParameterEditor">[ template config here ]</div>
   </wicket:panel>
 </html>
