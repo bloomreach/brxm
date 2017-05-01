@@ -42,7 +42,7 @@ class ProjectToggleController {
       this.ProjectService.doSelectMaster();
       return;
     }
-    if (this.withBranch.indexOf(this.selectedProject) >= 0) {
+    if (this.withBranch.contains(this.selectedProject)) {
       this.ProjectService.doSelectBranch(this.selectedProject);
     } else {
       this.ProjectService.doCreateBranch(this.selectedProject);
