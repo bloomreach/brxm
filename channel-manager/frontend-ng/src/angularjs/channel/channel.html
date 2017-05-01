@@ -40,13 +40,13 @@
         <overlay-toggle state="channelCtrl.isComponentsOverlayDisplayed"
                         icon="view_quilt"
                         tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'Hide' : 'Show' }} components"
-                        class="qa-edit"
+                        class="qa-toggle-components"
                         ng-if="channelCtrl.isEditable()">
         </overlay-toggle>
 
         <overlay-toggle state="channelCtrl.isContentOverlayDisplayed"
                         icon="description"
-                        class="qa-view"
+                        class="qa-toggle-content"
                         tooltip="{{ channelCtrl.isContentOverlayDisplayed ? 'Hide' : 'Show' }} content">
         </overlay-toggle>
       </div>
