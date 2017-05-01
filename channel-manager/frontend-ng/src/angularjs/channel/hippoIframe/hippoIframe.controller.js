@@ -156,12 +156,13 @@ class HippoIframeCtrl {
   }
 
   _updateDragDrop() {
-    if (this.showComponentsOverlay) {
+    if (this.showComponentsOverlay === true) {
       this.DragDropService.enable()
         .then(() => {
           this.OverlayService.attachComponentMouseDown((e, component) => this.DragDropService.startDragOrClick(e, component));
         });
     } else {
+      console.log('test');
       this.DragDropService.disable();
       this.OverlayService.detachComponentMouseDown();
     }
