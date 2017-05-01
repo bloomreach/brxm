@@ -83,7 +83,7 @@
 
   <repositories>
     <repository>
-      <id>hippo</id>
+      <id>hippo-maven2</id>
       <name>Hippo Maven 2</name>
       <url>https://maven.onehippo.com/maven2/</url>
       <snapshots>
@@ -91,22 +91,9 @@
       </snapshots>
       <releases>
         <updatePolicy>never</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
       </releases>
-      <layout>default</layout>
     </repository>
-    <repository>
-      <id>hippo-forge</id>
-      <name>Hippo Forge maven 2 repository.</name>
-      <url>https://maven.onehippo.com/maven2-forge/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
-    </repository>
-
   </repositories>
 
   <dependencyManagement>
