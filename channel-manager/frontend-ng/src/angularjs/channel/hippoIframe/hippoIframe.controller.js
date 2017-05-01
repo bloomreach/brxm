@@ -162,7 +162,6 @@ class HippoIframeCtrl {
           this.OverlayService.attachComponentMouseDown((e, component) => this.DragDropService.startDragOrClick(e, component));
         });
     } else {
-      console.log('test');
       this.DragDropService.disable();
       this.OverlayService.detachComponentMouseDown();
     }
