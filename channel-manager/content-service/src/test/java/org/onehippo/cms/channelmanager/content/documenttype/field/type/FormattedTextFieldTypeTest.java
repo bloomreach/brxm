@@ -44,7 +44,8 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 @PrepareForTest({NamespaceUtils.class})
 public class FormattedTextFieldTypeTest {
 
-    private FormattedTextFieldType initField(final String defaultJson, final String overlayedJson, final String appendedJson) {
+    private FormattedTextFieldType initField(final String defaultJson, final String overlayedJson,
+                                             final String appendedJson, final String htmlProcessorId) {
         final ContentTypeContext parentContext = EasyMock.createMock(ContentTypeContext.class);
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
@@ -66,10 +67,11 @@ public class FormattedTextFieldTypeTest {
         expect(NamespaceUtils.getConfigProperty(fieldContext, "maxlength")).andReturn(Optional.empty());
         expect(NamespaceUtils.getConfigProperty(fieldContext, "ckeditor.config.overlayed.json")).andReturn(Optional.of(overlayedJson));
         expect(NamespaceUtils.getConfigProperty(fieldContext, "ckeditor.config.appended.json")).andReturn(Optional.of(appendedJson));
+        expect(NamespaceUtils.getConfigProperty(fieldContext, "htmlprocessor.id")).andReturn(Optional.of(htmlProcessorId));
 
         replayAll(parentContext, fieldContext, contentTypeItem);
 
-        final FormattedTextFieldType field = new FormattedTextFieldType(defaultJson);
+        final FormattedTextFieldType field = new FormattedTextFieldType(defaultJson, htmlProcessorId);
         field.init(fieldContext);
 
         return field;
@@ -77,38 +79,40 @@ public class FormattedTextFieldTypeTest {
 
     @Test
     public void getType() {
-        final FormattedTextFieldType field = new FormattedTextFieldType("");
+        final FormattedTextFieldType field = new FormattedTextFieldType("", "formatted");
         assertEquals(FieldType.Type.HTML, field.getType());
     }
 
     @Test
     public void configWithErrorsIsNull() {
-        final FormattedTextFieldType field = new FormattedTextFieldType("{ this is not valid json ");
+        final FormattedTextFieldType field = new FormattedTextFieldType("{ this is not valid json ", "formatted");
         assertNull(field.getConfig());
     }
 
     @Test
     public void configContainsLanguage() {
-        final FormattedTextFieldType field = initField("", "", "");
+        final FormattedTextFieldType field = initField("", "", "", "formatted");
         assertEquals("nl", field.getConfig().get("language").asText());
     }
 
     @Test
     public void configIsCombined() {
-        final FormattedTextFieldType field = initField("{ test: 1, plugins: 'a,b' }", "{ test: 2 }", "{ plugins: 'c,d' }");
+        final FormattedTextFieldType field = initField("{ test: 1, plugins: 'a,b' }", "{ test: 2 }", "{ plugins: 'c,d' }",
+                "formatted");
         assertEquals(2, field.getConfig().get("test").asInt());
         assertEquals("a,b,c,d", field.getConfig().get("plugins").asText());
     }
 
     @Test
     public void customConfigIsDisabledWhenNotConfigured() {
-        final FormattedTextFieldType field = initField("", "", "");
+        final FormattedTextFieldType field = initField("", "", "", "formatted");
         assertEquals("", field.getConfig().get(CKEditorConfig.CUSTOM_CONFIG).asText());
     }
 
     @Test
     public void customConfigIsKeptWhenConfigured() {
-        final FormattedTextFieldType field = initField("{ customConfig: 'myconfig.js' }", "", "");
+        final FormattedTextFieldType field = initField("{ customConfig: 'myconfig.js' }", "", "",
+                "formatted");
         assertEquals("myconfig.js", field.getConfig().get(CKEditorConfig.CUSTOM_CONFIG).asText());
     }
 }

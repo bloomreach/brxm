@@ -19,18 +19,25 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
@@ -51,10 +58,11 @@ import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replay;
 import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({FieldTypeUtils.class, HtmlProcessorFactory.class})
+@PrepareForTest({FieldTypeUtils.class, HtmlProcessorFactory.class, NamespaceUtils.class})
 public class RichTextFieldTypeTest {
 
     private static final String FIELD_NAME = "test:richtextfield";
@@ -65,13 +73,38 @@ public class RichTextFieldTypeTest {
     @Before
     public void setUp() throws RepositoryException {
         document = MockNode.root();
-        type = new RichTextFieldType();
-        type.setId(FIELD_NAME);
+
+        final ContentTypeContext parentContext = EasyMock.createMock(ContentTypeContext.class);
+        expect(parentContext.getDocumentType()).andReturn(new DocumentType());
+        expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
+
+        final ContentTypeItem contentTypeItem = EasyMock.createMock(ContentTypeItem.class);
+        expect(contentTypeItem.getName()).andReturn(FIELD_NAME);
+        expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList()).anyTimes();
+        expect(contentTypeItem.isMultiple()).andReturn(false);
+
+        final FieldTypeContext fieldContext = EasyMock.createMock(FieldTypeContext.class);
+        expect(fieldContext.getContentTypeItem()).andReturn(contentTypeItem).anyTimes();
+        expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
+        expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
+
+        final Locale locale = new Locale("nl");
+        expect(parentContext.getLocale()).andReturn(locale);
+
+        mockStatic(NamespaceUtils.class);
+        expect(NamespaceUtils.getConfigProperty(fieldContext, "maxlength")).andReturn(Optional.empty());
+        expect(NamespaceUtils.getConfigProperty(fieldContext, "ckeditor.config.overlayed.json")).andReturn(Optional.empty());
+        expect(NamespaceUtils.getConfigProperty(fieldContext, "ckeditor.config.appended.json")).andReturn(Optional.empty());
+        expect(NamespaceUtils.getConfigProperty(fieldContext, "htmlprocessor.id")).andReturn(Optional.of("richtext"));
 
         mockStatic(HtmlProcessorFactory.class);
         expect(HtmlProcessorFactory.of(eq("richtext")))
                 .andReturn((HtmlProcessorFactory) () -> HtmlProcessorFactory.NOOP).anyTimes();
-        replay(HtmlProcessorFactory.class);
+
+        replayAll(parentContext, fieldContext, contentTypeItem);
+
+        type = new RichTextFieldType();
+        type.init(fieldContext);
     }
 
     private Node addValue(final String html) {
@@ -226,7 +259,7 @@ public class RichTextFieldTypeTest {
         PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeNodeValues");
         FieldTypeUtils.writeNodeValues(anyObject(), anyObject(), anyInt(), anyObject());
         expectLastCall().andThrow(new RepositoryException());
-        replayAll();
+        replay(FieldTypeUtils.class);
 
         addValue("<p>value</p>");
         final FieldValue newValue = new FieldValue("<p>changed</p>");

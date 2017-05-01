@@ -40,21 +40,23 @@ public class FormattedTextFieldType extends StringFieldType {
 
     private static final String CKEDITOR_CONFIG_OVERLAYED_JSON = "ckeditor.config.overlayed.json";
     private static final String CKEDITOR_CONFIG_APPENDED_JSON = "ckeditor.config.appended.json";
+    private static final String HTMLPROCESSOR_ID = "htmlprocessor.id";
     private static final String DEFAULT_HTMLPROCESSOR_ID = "formatted";
-
-    static final String HTMLPROCESSOR_ID = "htmlprocessor.id";
 
     private final String defaultJson;
     private ObjectNode config;
-    private FormattedTextProcessor processor;
+    private final String defaultHtmlProcessorId;
+
+    protected HtmlProcessorFactory processorFactory;
 
     public FormattedTextFieldType() {
-        this(CKEditorConfig.DEFAULT_FORMATTED_TEXT_CONFIG);
+        this(CKEditorConfig.DEFAULT_FORMATTED_TEXT_CONFIG, DEFAULT_HTMLPROCESSOR_ID);
     }
 
-    protected FormattedTextFieldType(final String defaultJson) {
+    protected FormattedTextFieldType(final String defaultJson, final String defaultHtmlProcessorId) {
         setType(Type.HTML);
         this.defaultJson = defaultJson;
+        this.defaultHtmlProcessorId = defaultHtmlProcessorId;
     }
 
     @Override
@@ -72,8 +74,8 @@ public class FormattedTextFieldType extends StringFieldType {
             log.warn("Error while reading config of HTML field '{}'", getId(), e);
         }
 
-        final String processorId = NamespaceUtils.getConfigProperty(fieldContext, HTMLPROCESSOR_ID).orElse(DEFAULT_HTMLPROCESSOR_ID);
-        processor = new FormattedTextProcessor(processorId);
+        final String processorId = NamespaceUtils.getConfigProperty(fieldContext, HTMLPROCESSOR_ID).orElse(defaultHtmlProcessorId);
+        processorFactory = HtmlProcessorFactory.of(processorId);
     }
 
     public ObjectNode getConfig() {
@@ -84,7 +86,7 @@ public class FormattedTextFieldType extends StringFieldType {
     protected List<FieldValue> readValues(final Node node) {
         List<FieldValue> values = super.readValues(node);
         for (final FieldValue value : values) {
-            value.setValue(processor.read(value.getValue()));
+            value.setValue(read(value.getValue()));
         }
         return values;
     }
@@ -93,30 +95,22 @@ public class FormattedTextFieldType extends StringFieldType {
     protected List<FieldValue> writeValues(final Optional<List<FieldValue>> optionalValues) {
         List<FieldValue> values = super.writeValues(optionalValues);
         for (final FieldValue value : values) {
-            value.setValue(processor.write(value.getValue()));
+            value.setValue(write(value.getValue()));
         }
         return values;
     }
 
-    private static class FormattedTextProcessor {
+    private String read(final String html) {
+        final Model<String> htmlModel = Model.of(html);
+        final HtmlProcessorModel processorModel = new HtmlProcessorModel(htmlModel, processorFactory);
+        return processorModel.get();
 
-        private final HtmlProcessorFactory processorFactory;
+    }
 
-        FormattedTextProcessor(final String processorId) {
-            processorFactory = HtmlProcessorFactory.of(processorId);
-        }
-
-        String read(final String html) {
-            final Model<String> htmlModel = Model.of(html);
-            final HtmlProcessorModel processorModel = new HtmlProcessorModel(htmlModel, processorFactory);
-            return processorModel.get();
-        }
-
-        String write(final String html) {
-            final Model<String> htmlModel = Model.of("");
-            final HtmlProcessorModel processorModel = new HtmlProcessorModel(htmlModel, processorFactory);
-            processorModel.set(html);
-            return htmlModel.get();
-        }
+    private String write(final String html) {
+        final Model<String> htmlModel = Model.of("");
+        final HtmlProcessorModel processorModel = new HtmlProcessorModel(htmlModel, processorFactory);
+        processorModel.set(html);
+        return htmlModel.get();
     }
 }
