@@ -1,6 +1,8 @@
-<md-icon class="btn-overlay-toggle"
-         ng-click="$ctrl.toggleState()"
-         ng-class="{
-          'active': $ctrl.state
-         }">{{ $ctrl.icon }}
-</md-icon>
+<md-button class="btn-overlay-toggle">
+  <md-icon ng-click="$ctrl.toggleState()"
+           ng-class="{
+            'active': $ctrl.state
+           }">{{ $ctrl.icon }}
+  </md-icon>
+  <md-tooltip ng-if="$ctrl.tooltip" ng-bind="$ctrl.tooltip"></md-tooltip>
+</md-button>

@@ -2,20 +2,25 @@
   $color-blue: #4286f4;
   $color-dark: #4f4f4f;
 
-  color: $color-dark !important;
-  user-select: none;
+  min-width: 1%;
+  margin: 0;
 
-  &.active {
-    color: $color-blue !important;
-  }
+  md-icon {
+    color: $color-dark !important;
+    user-select: none;
 
-  &:focus {
-    border: 0 !important;
-    box-shadow: 0 !important;
-    outline: none !important;
-  }
+    &.active {
+      color: $color-blue !important;
+    }
 
-  &:hover {
-    cursor: pointer;
+    &:focus {
+      border: 0 !important;
+      box-shadow: 0 !important;
+      outline: none !important;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 }

@@ -8,6 +8,7 @@ const modeToggleComponent = {
   bindings: {
     state: '=',
     icon: '@',
+    tooltip: '@?',
   },
 };
 
