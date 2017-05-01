@@ -153,23 +153,35 @@ describe('OverlayService', () => {
     });
   });
 
-  it('sets the class hippo-mode-edit on the HTML element when edit mode is active', (done) => {
+  it('sets the class hippo overlay classes on the HTML element', (done) => {
     spyOn(PageStructureService, 'getContainers').and.returnValue([]);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
     loadIframeFixture(() => {
-      OverlayService.setMode('view');
-      expect(iframe('html')).not.toHaveClass('hippo-mode-edit');
+      // Components overlay
+      OverlayService.setComponentsOverlay(true);
+      expect(iframe('html')).toHaveClass('hippo-show-components');
 
-      OverlayService.setMode('edit');
-      expect(iframe('html')).toHaveClass('hippo-mode-edit');
+      OverlayService.setComponentsOverlay(false);
+      expect(iframe('html')).not.toHaveClass('hippo-show-components');
 
-      // repeat same mode
-      OverlayService.setMode('edit');
-      expect(iframe('html')).toHaveClass('hippo-mode-edit');
+      // Content overlay
+      OverlayService.setContentOverlay(true);
+      expect(iframe('html')).toHaveClass('hippo-show-content');
 
-      // change mode again
-      OverlayService.setMode('view');
-      expect(iframe('html')).not.toHaveClass('hippo-mode-edit');
+      OverlayService.setContentOverlay(false);
+      expect(iframe('html')).not.toHaveClass('hippo-show-content');
+
+      // Combined
+      OverlayService.setComponentsOverlay(true);
+      OverlayService.setContentOverlay(true);
+      expect(iframe('html')).toHaveClass('hippo-show-components');
+      expect(iframe('html')).toHaveClass('hippo-show-content');
+
+      OverlayService.setComponentsOverlay(false);
+      OverlayService.setContentOverlay(false);
+      expect(iframe('html')).not.toHaveClass('hippo-show-components');
+      expect(iframe('html')).not.toHaveClass('hippo-show-content');
+
       done();
     });
   });
@@ -361,8 +373,8 @@ describe('OverlayService', () => {
     });
   });
 
-  it('syncs the position of overlay elements in view mode', (done) => {
-    OverlayService.setMode('view');
+  it('syncs the position of overlay elements when content overlay is active', (done) => {
+    OverlayService.setContentOverlay(true);
     loadIframeFixture(() => {
       const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
 
