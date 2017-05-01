@@ -45,6 +45,7 @@ public class ChannelManagerHstSiteProvider implements HstSiteProvider {
             log.info("Unexpected branchId '{}' for mount '{}' found on http session because no such branch present. Removing " +
                     "branch now and return master.", branchId, mount);
             mountToBranchIdMapping.remove(branchId);
+            return compositeHstSite.getMaster();
         }
         log.info("Using branch '{}' for mount '{}'", branch.getName(), mount);
         return branch;
