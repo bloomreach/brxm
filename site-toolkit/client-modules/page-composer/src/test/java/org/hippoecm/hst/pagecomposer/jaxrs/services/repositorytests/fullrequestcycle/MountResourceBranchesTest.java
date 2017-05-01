@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -104,6 +105,14 @@ public class MountResourceBranchesTest extends MountResourceTest {
                 "http", "localhost", "/_rp/"+ mountId + "./createbranch/"+ branchName, null, "PUT");
 
         final MockHttpServletResponse response = render(mountId, requestResponse, creds);
+
+        // creating a branch should result in a direct selection of that branch
+        if (response.getStatus() == 200) {
+            HttpSession session = requestResponse.getRequest().getSession();
+            Map<String, String> mountToBranchIdMap = (Map<String, String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+            assertEquals(branchName, mountToBranchIdMap.get(mountId));
+        }
+
         final String restResponse = response.getContentAsString();
         return mapper.reader(Map.class).readValue(restResponse);
     }
@@ -202,13 +211,13 @@ public class MountResourceBranchesTest extends MountResourceTest {
     }
 
     @Test
-    public void select_non_existing_branch() throws Exception {
+    public void select_non_existing_branch_does_not_return_error() throws Exception {
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/"+ mountId + "./selectbranch/foo", null, "PUT");
         Map<String, Object> responseMap = render(ADMIN_CREDENTIALS, mountId, requestResponse);
-        assertEquals(Boolean.FALSE, responseMap.get("success"));
-        assertTrue(((Map)requestResponse.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY)).isEmpty());
+        assertEquals(Boolean.TRUE, responseMap.get("success"));
+        assertFalse(((Map)requestResponse.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY)).isEmpty());
     }
 
     private Map<String, Object> render(final Credentials creds, final String mountId, final RequestResponseMock requestResponse)

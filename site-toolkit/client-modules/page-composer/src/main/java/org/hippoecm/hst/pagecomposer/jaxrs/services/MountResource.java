@@ -194,18 +194,8 @@ public class MountResource extends AbstractConfigResource {
     @Path("/selectbranch/{branchId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response selectBranch(@Context HttpServletRequest servletRequest, @PathParam("branchId") final String branchId) {
-        HttpSession session = servletRequest.getSession();
-        Map<String,String> mountToBranchIdMap = (Map<String,String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
-        if (mountToBranchIdMap == null) {
-            mountToBranchIdMap = new HashMap<>();
-            session.setAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY, mountToBranchIdMap);
-        }
         Mount editingMount = getPageComposerContextService().getEditingMount();
-        if (!(editingMount.getHstSite() instanceof CompositeHstSite)) {
-            log.warn("Cannot select a branch for '{}' because there are no branches for the mount.", editingMount);
-            return error("Cannot select branch");
-        }
-        mountToBranchIdMap.put(editingMount.getIdentifier(), branchId);
+        setMountToBranchId(servletRequest, branchId, editingMount);
         log.debug("Selected branch:{} of channel:{}", branchId, editingMount.getChannel());
         return ok("Branch selected successfully");
     }
@@ -214,22 +204,30 @@ public class MountResource extends AbstractConfigResource {
     @Path("/selectmaster")
     @Produces(MediaType.APPLICATION_JSON)
     public Response selectMaster(@Context HttpServletRequest servletRequest) {
+        Mount editingMount = getPageComposerContextService().getEditingMount();
+        clearMountToBranchId(servletRequest, editingMount);
+
+        log.debug("Selected master of channel:{}", editingMount.getChannel());
+        return ok("Master branch selected successfully");
+    }
+
+    private void clearMountToBranchId(final HttpServletRequest servletRequest, final Mount mount) {
         HttpSession session = servletRequest.getSession();
         Map<String,String> mountToBranchIdMap = (Map<String,String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
         if (mountToBranchIdMap != null) {
-            mountToBranchIdMap.remove(getPageComposerContextService().getEditingMount().getIdentifier());
+            mountToBranchIdMap.remove(mount.getIdentifier());
         }
-        log.debug("Selected master of channel:{}", getPageComposerContextService().getEditingMount().getChannel());
-        return ok("Master branch selected successfully");
     }
 
     @PUT
     @Path("/createbranch/{branchId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createBranch(@PathParam("branchId") final String branchId) {
+    public Response createBranch(@Context HttpServletRequest servletRequest, @PathParam("branchId") final String branchId) {
         try {
             doCreateBranch(branchId);
-            log.debug("Create branch:{} from channel:{}", branchId, getPageComposerContextService().getEditingMount().getChannel());
+            Mount editingMount = getPageComposerContextService().getEditingMount();
+            log.debug("Create branch:{} from channel:{}", branchId, editingMount.getChannel());
+            selectBranch(servletRequest, branchId);
             return ok("Branch created successfully");
         } catch (RepositoryException e) {
             log.warn("Could not create a branch : ", e);
@@ -237,6 +235,16 @@ public class MountResource extends AbstractConfigResource {
         } catch (ClientException e) {
             return logAndReturnClientError(e);
         }
+    }
+
+    private void setMountToBranchId(final HttpServletRequest servletRequest, String branchId, final Mount mount) {
+        HttpSession session = servletRequest.getSession();
+        Map<String,String> mountToBranchIdMap = (Map<String,String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        if (mountToBranchIdMap == null) {
+            mountToBranchIdMap = new HashMap<>();
+            session.setAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY, mountToBranchIdMap);
+        }
+        mountToBranchIdMap.put(mount.getIdentifier(), branchId);
     }
 
     private void doCreateBranch(final String branchId) throws RepositoryException, ClientException {
