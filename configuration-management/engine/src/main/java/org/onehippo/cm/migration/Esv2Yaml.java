@@ -34,9 +34,16 @@ import java.util.Set;
 
 import javax.jcr.PropertyType;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.onehippo.cm.api.model.DefinitionNode;
+import org.onehippo.cm.engine.Constants;
 import org.onehippo.cm.engine.FileConfigurationWriter;
 import org.onehippo.cm.engine.ModuleContext;
 import org.onehippo.cm.engine.serializer.SourceSerializer;
@@ -52,26 +59,42 @@ public class Esv2Yaml {
 
     static final Logger log = LoggerFactory.getLogger(Esv2Yaml.class);
 
-    public static final String HIPPOECM_EXTENSION_FILE = "hippoecm-extension.xml";
-    public static final String TRANSLATIONS_ROOT_PATH = "/hippo:configuration/hippo:translations";
+    private static final String HIPPOECM_EXTENSION_FILE = "hippoecm-extension.xml";
+    private static final String TRANSLATIONS_ROOT_PATH = "/hippo:configuration/hippo:translations";
+    private static final String SOURCE_FOLDER = "s";
+    private static final String TARGET_FOLDER = "t";
+    private static final String AGGREGATE = "a";
+    private static final String ECM_LOCATION = "i";
+    private static final String[] MAIN_YAML_NAMES = {"main", "root", "base", "index"};
 
-    public static void main(final String[] args) throws IOException, EsvParseException {
+    private final File src;
+    private final File target;
+    private final EsvParser esvParser;
+    private final File extensionFile;
+    private final ModuleImpl module;
+    private final boolean aggregate;
 
-        if (args.length < 2 || args.length > 3) {
-            System.out.println("usage: [<init>] <src> <target>\n" +
-                    "<init>   : (optional) location of hippoecm-extension.xml file, if not within <src> folder\n" +
-                    "<src>    : bootstrap initialization resources folder\n" +
-                    "<target> : directory for writing the repo-config (will be emptied first)");
-            return;
-        }
+    public static void main(final String[] args) throws IOException, EsvParseException, ParseException {
+
+        final Options options = createCmdOptions();
+
         try {
-            if (args.length == 2) {
-                System.out.println("---------------------------------------------------------");
-                System.out.println("args[0] = " + args[0]);
-                System.out.println("args[1] = " + args[1]);
-                new Esv2Yaml(new File(args[0]), new File(args[1])).convert();
+
+            final CommandLineParser parser = new DefaultParser();
+            final CommandLine cmd = parser.parse(options, args);
+            if (cmd.hasOption(SOURCE_FOLDER) && cmd.hasOption(TARGET_FOLDER)) {
+                final boolean aggregate = cmd.hasOption(AGGREGATE);
+                final String src = cmd.getOptionValue(SOURCE_FOLDER);
+                final String target = cmd.getOptionValue(TARGET_FOLDER);
+
+                if (cmd.hasOption(ECM_LOCATION)) {
+                    new Esv2Yaml(new File(cmd.getOptionValue(ECM_LOCATION)), new File(src), new File(target), aggregate).convert();
+                } else {
+                    new Esv2Yaml(new File(src), new File(target), aggregate).convert();
+                }
             } else {
-                new Esv2Yaml(new File(args[0]), new File(args[1]), new File(args[2])).convert();
+                final HelpFormatter formatter = new HelpFormatter();
+                formatter.printHelp("esv2yaml", options);
             }
         } catch (Exception e) {
             Throwable t = e;
@@ -87,19 +110,21 @@ public class Esv2Yaml {
         }
     }
 
-    private static final String[] MAIN_YAML_NAMES = {"main", "root", "base", "index"};
-
-    private final File src;
-    private final File target;
-    private final EsvParser esvParser;
-    private final File extensionFile;
-    private final ModuleImpl module;
-
-    public Esv2Yaml(final File src, final File target) throws IOException, EsvParseException {
-        this(null, src, target);
+    private static Options createCmdOptions() {
+        Options options = new Options();
+        options.addOption(ECM_LOCATION, "init", true, "(optional) location of hippoecm-extension.xml file, if not within <src> folder");
+        options.addOption(SOURCE_FOLDER, "src", true, "bootstrap initialization resources folder");
+        options.addOption(TARGET_FOLDER, "target", true, "directory for writing the repo-config (will be emptied first)");
+        options.addOption(AGGREGATE, "aggregate", false, "Aggregate module");
+        return options;
     }
 
-    public Esv2Yaml(final File init, final File src, final File target) throws IOException, EsvParseException {
+    public Esv2Yaml(final File src, final File target, final boolean aggregate) throws IOException, EsvParseException {
+        this(null, src, target, aggregate);
+    }
+
+    public Esv2Yaml(final File init, final File src, final File target, final boolean aggregate) throws IOException, EsvParseException {
+        this.aggregate = aggregate;
         this.src = src;
         this.target = target;
         extensionFile = init != null ? new File(init, HIPPOECM_EXTENSION_FILE) : new File(src, HIPPOECM_EXTENSION_FILE);
@@ -116,8 +141,8 @@ public class Esv2Yaml {
             if (target.isFile()) {
                 throw new IllegalArgumentException("Target is not a directory");
             } else {
-                Path configFolder = Paths.get(target.toURI()).resolve("repo-config");
-                Path contentFolder = Paths.get(target.toURI()).resolve("repo-content");
+                final Path configFolder = Paths.get(target.toURI()).resolve(Constants.REPO_CONFIG_FOLDER);
+                final Path contentFolder = Paths.get(target.toURI()).resolve(Constants.REPO_CONTENT_FOLDER);
 
                 if (Files.exists(configFolder) && Files.isDirectory(configFolder)) {
                     FileUtils.forceDelete(configFolder.toFile());
@@ -126,9 +151,6 @@ public class Esv2Yaml {
                 if (Files.exists(contentFolder) && Files.isDirectory(contentFolder)) {
                     FileUtils.forceDelete(contentFolder.toFile());
                 }
-
-                Files.createDirectory(configFolder);
-                Files.createDirectory(contentFolder);
             }
         }
         esvParser = new EsvParser(src);
@@ -309,7 +331,8 @@ public class Esv2Yaml {
         }
 
         boolean multiModule = module.getProject().getConfiguration().getProjects().stream().mapToInt(p -> p.getModules().size()).sum() > 1;
-        ModuleContext moduleContext = new LegacyModuleContext(module, src.toPath(), multiModule);
+        ModuleContext moduleContext = aggregate ? new AggregatedModuleContext(module, src.toPath(), multiModule) :
+                new LegacyModuleContext(module, src.toPath(), multiModule);
         moduleContext.createOutputProviders(target.toPath());
 
         new FileConfigurationWriter().writeModule(module, new SourceSerializer(), moduleContext);

@@ -61,9 +61,4 @@ public class LegacyModuleContext extends ModuleContext {
         return contentOutputProvider;
     }
 
-    public void createInputProviders(Path path) {
-        configInputProvider = new FileResourceInputProvider(path);
-        contentInputProvider = new FileResourceInputProvider(path);
-    }
-
 }

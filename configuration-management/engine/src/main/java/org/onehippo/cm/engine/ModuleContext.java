@@ -24,17 +24,15 @@ public class ModuleContext {
 
     protected ResourceInputProvider configInputProvider;
     protected ResourceInputProvider contentInputProvider;
-
     protected ResourceOutputProvider configOutputProvider;
     protected ResourceOutputProvider contentOutputProvider;
 
     protected final Module module;
-    protected final Path repoConfigPath;
-
     protected final boolean multiModule;
 
-    protected Path moduleConfigRootPath;
-    protected Path moduleContentRootPath;
+    private final Path repoConfigPath;
+    private Path moduleConfigRootPath;
+    private Path moduleContentRootPath;
 
     public ModuleContext(Module module, Path repoConfigPath, boolean multiModule) {
         this.module = module;
@@ -99,8 +97,4 @@ public class ModuleContext {
         return contentOutputProvider;
     }
 
-    public void createInputProviders(Path path) {
-        configInputProvider = new FileResourceInputProvider(path);
-        contentInputProvider = new FileResourceInputProvider(path);
-    }
 }

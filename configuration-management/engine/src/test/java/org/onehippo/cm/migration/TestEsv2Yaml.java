@@ -15,22 +15,20 @@
  */
 package org.onehippo.cm.migration;
 
-import java.io.IOException;
-
 import org.junit.Test;
 
 public class TestEsv2Yaml {
 
     @Test
-    public void main() throws IOException, EsvParseException {
+    public void main() throws Exception {
         String init = System.getProperty("init");
         String src = System.getProperty("src");
         String target = System.getProperty("target");
         if (src != null && target != null) {
             if (init != null) {
-                Esv2Yaml.main(new String[]{init, src, target});
+                Esv2Yaml.main(new String[]{"-i", init, "-s", src, "-t", target});
             } else {
-                Esv2Yaml.main(new String[]{src, target});
+                Esv2Yaml.main(new String[]{"-s", src, "-t", target});
             }
         }
     }

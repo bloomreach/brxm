@@ -43,6 +43,7 @@
     <snakeyaml.version>1.18</snakeyaml.version>
     <commons-lang3.version>3.5</commons-lang3.version>
     <commons-io.version>2.5</commons-io.version>
+    <commons-cli.version>1.4</commons-cli.version>
     <tdunning-json.version>1.8</tdunning-json.version>
     <lib.json.version>20160810</lib.json.version>
 

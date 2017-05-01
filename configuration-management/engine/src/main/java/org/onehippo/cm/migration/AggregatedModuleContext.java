@@ -16,7 +16,6 @@
 package org.onehippo.cm.migration;
 
 import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.engine.FileConfigurationUtils;
 import org.onehippo.cm.engine.FileResourceOutputProvider;
 import org.onehippo.cm.engine.ResourceOutputProvider;
 
