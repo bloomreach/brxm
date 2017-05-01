@@ -24,14 +24,14 @@ public class DelegatingHstSiteProvider  {
     private HstSiteProvider channelManagerHstSiteProvider;
     private HstSiteProvider websiteHstSiteProvider = (compositeHstSite, requestContext) -> compositeHstSite.getMaster();
 
-    public void setChannelManagerHstSiteProvider(ChannelManagerHstSiteProvider channelManagerHstSiteProvider) {
+    public void setChannelManagerHstSiteProvider(final HstSiteProvider channelManagerHstSiteProvider) {
         this.channelManagerHstSiteProvider = channelManagerHstSiteProvider;
     }
 
     /**
      * this setter can be used by enterprise / end project modules to inject a custom HstSiteProvider for the website
      */
-    public void setWebsiteHstSiteProvider(HstSiteProvider websiteHstSiteProvider) {
+    public void setWebsiteHstSiteProvider(final HstSiteProvider websiteHstSiteProvider) {
         this.websiteHstSiteProvider = websiteHstSiteProvider;
     }
 
