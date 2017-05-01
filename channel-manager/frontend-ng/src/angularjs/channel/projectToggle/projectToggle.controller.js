@@ -17,7 +17,7 @@
 
 
 class ProjectToggleController {
-  constructor($translate, OverlayService, ChannelService, ProjectService) {
+  constructor($translate, OverlayService, ChannelService, ProjectService, ConfigService) {
     'ngInject';
 
     this.$translate = $translate;
@@ -28,7 +28,10 @@ class ProjectToggleController {
     this.MASTER = { name: channel.name, id: channel.id };
     this.withBranch = [this.MASTER];
     this.selectedProject = this.MASTER;
-    this._setProjects();
+    this.projectsEnabled = ConfigService.projectsEnabled;
+    if (this.projectsEnabled) {
+      this._setProjects();
+    }
   }
   _setProjects() {
     this.ProjectService.projects()

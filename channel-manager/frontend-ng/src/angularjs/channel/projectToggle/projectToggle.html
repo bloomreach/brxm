@@ -14,7 +14,7 @@
   ~ limitations under the License.
   ~
   -->
-<div layout layout-align="start center">
+<div ng-show="$ctrl.projectsEnabled" layout layout-align="start center">
   <label flex="none">{{ 'TOOLBAR_PROJECT_LABEL' | translate }}</label>
   <md-select aria-label="{{ 'TOOLBAR_PROJECT_LABEL' | translate }}"
              ng-disabled="$ctrl.disabled"
