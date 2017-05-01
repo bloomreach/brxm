@@ -63,6 +63,12 @@ class ChannelCtrl {
     } else {
       this.hasPreviewConfiguration = true;
     }
+
+    this.$rootScope.$watch(() => this.isComponentsOverlayDisplayed, () => {
+      if (!this.isComponentsOverlayDisplayed && !this.ChannelService.hasPreviewConfiguration) {
+        this._createPreviewConfiguration();
+      }
+    });
   }
 
   _clear() {
@@ -102,6 +108,7 @@ class ChannelCtrl {
     this.ChannelService.createPreviewConfiguration().then(() => {
       this.HippoIframeService.reload().then(() => {
         this.hasPreviewConfiguration = true;
+        this.isComponentsOverlayDisplayed = true;
       })
       .finally(() => {
         this.isCreatingPreview = false;

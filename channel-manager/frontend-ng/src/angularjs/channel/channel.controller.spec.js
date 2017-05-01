@@ -100,10 +100,15 @@ describe('ChannelCtrl', () => {
   it('checks with the session service is the current user has write access', () => {
     spyOn(SessionService, 'hasWriteAccess');
 
-    SessionService.hasWriteAccess.and.returnValue(true);
-    expect(ChannelCtrl.isEditable()).toBe(true);
+    ChannelCtrl.$onInit();
+
     SessionService.hasWriteAccess.and.returnValue(false);
+    expect(ChannelCtrl.hasPreviewConfiguration).toBe(false);
     expect(ChannelCtrl.isEditable()).toBe(false);
+
+    SessionService.hasWriteAccess.and.returnValue(true);
+    ChannelCtrl.hasPreviewConfiguration = true;
+    expect(ChannelCtrl.isEditable()).toBe(true);
   });
 
   it('gets the render variant from the page meta-data service', () => {
@@ -111,17 +116,8 @@ describe('ChannelCtrl', () => {
     expect(ChannelCtrl.getRenderVariant()).toBe('variant1');
   });
 
-  it('is not in edit mode by default', () => {
-    expect(ChannelCtrl.isEditMode).toEqual(false);
-  });
-
-  it('enables and disables edit mode when toggling it', () => {
-    ChannelService.hasPreviewConfiguration.and.returnValue(true);
-
-    ChannelCtrl.enableEditMode();
-    expect(ChannelCtrl.isEditMode).toEqual(true);
-    ChannelCtrl.disableEditMode();
-    expect(ChannelCtrl.isEditMode).toEqual(false);
+  it('should not be true by default (components overlay)', () => {
+    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
   });
 
   it('creates preview configuration when it has not been created yet before enabling edit mode', () => {
@@ -133,25 +129,25 @@ describe('ChannelCtrl', () => {
     HippoIframeService.reload.and.returnValue(deferReload.promise);
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    ChannelCtrl.enableEditMode();
+    ChannelCtrl.$onInit();
 
     expect(ChannelService.createPreviewConfiguration).toHaveBeenCalled();
     expect(ChannelCtrl.isCreatingPreview).toEqual(true);
-    expect(ChannelCtrl.isEditMode).toEqual(false);
+    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
     expect(HippoIframeService.reload).not.toHaveBeenCalled();
 
     deferCreatePreview.resolve(); // preview creation completed successfully, reload page
     $rootScope.$digest();
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(true);
-    expect(ChannelCtrl.isEditMode).toEqual(false);
+    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
     expect(HippoIframeService.reload).toHaveBeenCalled();
 
     deferReload.resolve(); // reload completed successfully, enter edit mode
     $rootScope.$digest();
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    expect(ChannelCtrl.isEditMode).toEqual(true);
+    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(true);
   });
 
   it('shows an error when the creation of the preview configuration fails', () => {
@@ -161,23 +157,24 @@ describe('ChannelCtrl', () => {
     ChannelService.createPreviewConfiguration.and.returnValue(deferCreatePreview.promise);
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    ChannelCtrl.enableEditMode();
+    ChannelCtrl.$onInit();
+    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
 
     expect(ChannelService.createPreviewConfiguration).toHaveBeenCalled();
     expect(ChannelCtrl.isCreatingPreview).toEqual(true);
-    expect(ChannelCtrl.isEditMode).toEqual(false);
+    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
 
     deferCreatePreview.reject();
     $rootScope.$digest();
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    expect(ChannelCtrl.isEditMode).toEqual(false);
+    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ENTER_EDIT');
   });
 
   it('does not create preview configuration when it has already been created when enabling edit mode', () => {
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
-    ChannelCtrl.enableEditMode();
+    ChannelCtrl.isComponentsOverlayDisplayed = true;
     expect(ChannelService.createPreviewConfiguration).not.toHaveBeenCalled();
   });
 
