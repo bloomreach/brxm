@@ -36,21 +36,27 @@ import org.slf4j.LoggerFactory;
 
 public class FormattedTextFieldType extends StringFieldType {
 
+    private static final Logger log = LoggerFactory.getLogger(FormattedTextFieldType.class);
+
     private static final String CKEDITOR_CONFIG_OVERLAYED_JSON = "ckeditor.config.overlayed.json";
     private static final String CKEDITOR_CONFIG_APPENDED_JSON = "ckeditor.config.appended.json";
-
-    private static final Logger log = LoggerFactory.getLogger(FormattedTextFieldType.class);
+    private static final String HTMLPROCESSOR_ID = "htmlprocessor.id";
+    private static final String DEFAULT_HTMLPROCESSOR_ID = "formatted";
 
     private final String defaultJson;
     private ObjectNode config;
+    private final String defaultHtmlProcessorId;
+
+    protected HtmlProcessorFactory processorFactory;
 
     public FormattedTextFieldType() {
-        this(CKEditorConfig.DEFAULT_FORMATTED_TEXT_CONFIG);
+        this(CKEditorConfig.DEFAULT_FORMATTED_TEXT_CONFIG, DEFAULT_HTMLPROCESSOR_ID);
     }
 
-    protected FormattedTextFieldType(final String defaultJson) {
+    protected FormattedTextFieldType(final String defaultJson, final String defaultHtmlProcessorId) {
         setType(Type.HTML);
         this.defaultJson = defaultJson;
+        this.defaultHtmlProcessorId = defaultHtmlProcessorId;
     }
 
     @Override
@@ -67,6 +73,9 @@ public class FormattedTextFieldType extends StringFieldType {
         } catch (IOException e) {
             log.warn("Error while reading config of HTML field '{}'", getId(), e);
         }
+
+        final String processorId = NamespaceUtils.getConfigProperty(fieldContext, HTMLPROCESSOR_ID).orElse(defaultHtmlProcessorId);
+        processorFactory = HtmlProcessorFactory.of(processorId);
     }
 
     public ObjectNode getConfig() {
@@ -76,9 +85,8 @@ public class FormattedTextFieldType extends StringFieldType {
     @Override
     protected List<FieldValue> readValues(final Node node) {
         List<FieldValue> values = super.readValues(node);
-        final HtmlReader reader = new HtmlReader();
         for (final FieldValue value : values) {
-            value.setValue(reader.read(value.getValue()));
+            value.setValue(read(value.getValue()));
         }
         return values;
     }
@@ -86,29 +94,23 @@ public class FormattedTextFieldType extends StringFieldType {
     @Override
     protected List<FieldValue> writeValues(final Optional<List<FieldValue>> optionalValues) {
         List<FieldValue> values = super.writeValues(optionalValues);
-        final HtmlWriter writer = new HtmlWriter();
         for (final FieldValue value : values) {
-            value.setValue(writer.write(value.getValue()));
+            value.setValue(write(value.getValue()));
         }
         return values;
     }
 
-    private static class HtmlReader {
-        String read(final String html) {
-            final Model<String> htmlModel = Model.of(html);
-            final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of("formatted");
-            final HtmlProcessorModel processorModel = new HtmlProcessorModel(htmlModel, processorFactory);
-            return processorModel.get();
-        }
+    private String read(final String html) {
+        final Model<String> htmlModel = Model.of(html);
+        final HtmlProcessorModel processorModel = new HtmlProcessorModel(htmlModel, processorFactory);
+        return processorModel.get();
+
     }
 
-    private static class HtmlWriter {
-        String write(final String html) {
-            final Model<String> htmlModel = Model.of("");
-            final HtmlProcessorFactory processorFactory = HtmlProcessorFactory.of("formatted");
-            final HtmlProcessorModel processorModel = new HtmlProcessorModel(htmlModel, processorFactory);
-            processorModel.set(html);
-            return htmlModel.get();
-        }
+    private String write(final String html) {
+        final Model<String> htmlModel = Model.of("");
+        final HtmlProcessorModel processorModel = new HtmlProcessorModel(htmlModel, processorFactory);
+        processorModel.set(html);
+        return htmlModel.get();
     }
 }

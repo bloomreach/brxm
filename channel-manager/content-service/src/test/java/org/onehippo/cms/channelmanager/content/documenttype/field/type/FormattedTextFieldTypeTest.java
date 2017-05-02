@@ -29,22 +29,30 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConte
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
+import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({NamespaceUtils.class})
+@PrepareForTest({NamespaceUtils.class, HtmlProcessorFactory.class})
 public class FormattedTextFieldTypeTest {
 
     private FormattedTextFieldType initField(final String defaultJson, final String overlayedJson, final String appendedJson) {
+        return initField(defaultJson, overlayedJson, appendedJson, "formatted", "formatted");
+    }
+
+    private FormattedTextFieldType initField(final String defaultJson, final String overlayedJson, final String appendedJson,
+                                             final String defaultHtmlProcessorId, final String htmlProcessorId) {
         final ContentTypeContext parentContext = EasyMock.createMock(ContentTypeContext.class);
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
@@ -66,10 +74,11 @@ public class FormattedTextFieldTypeTest {
         expect(NamespaceUtils.getConfigProperty(fieldContext, "maxlength")).andReturn(Optional.empty());
         expect(NamespaceUtils.getConfigProperty(fieldContext, "ckeditor.config.overlayed.json")).andReturn(Optional.of(overlayedJson));
         expect(NamespaceUtils.getConfigProperty(fieldContext, "ckeditor.config.appended.json")).andReturn(Optional.of(appendedJson));
+        expect(NamespaceUtils.getConfigProperty(fieldContext, "htmlprocessor.id")).andReturn(Optional.of(htmlProcessorId));
 
         replayAll(parentContext, fieldContext, contentTypeItem);
 
-        final FormattedTextFieldType field = new FormattedTextFieldType(defaultJson);
+        final FormattedTextFieldType field = new FormattedTextFieldType(defaultJson, defaultHtmlProcessorId);
         field.init(fieldContext);
 
         return field;
@@ -77,13 +86,13 @@ public class FormattedTextFieldTypeTest {
 
     @Test
     public void getType() {
-        final FormattedTextFieldType field = new FormattedTextFieldType("");
+        final FormattedTextFieldType field = new FormattedTextFieldType("", "formatted");
         assertEquals(FieldType.Type.HTML, field.getType());
     }
 
     @Test
     public void configWithErrorsIsNull() {
-        final FormattedTextFieldType field = new FormattedTextFieldType("{ this is not valid json ");
+        final FormattedTextFieldType field = new FormattedTextFieldType("{ this is not valid json ", "formatted");
         assertNull(field.getConfig());
     }
 
@@ -110,5 +119,16 @@ public class FormattedTextFieldTypeTest {
     public void customConfigIsKeptWhenConfigured() {
         final FormattedTextFieldType field = initField("{ customConfig: 'myconfig.js' }", "", "");
         assertEquals("myconfig.js", field.getConfig().get(CKEditorConfig.CUSTOM_CONFIG).asText());
+    }
+
+    @Test
+    public void customHtmlProcessorId() {
+        mockStatic(HtmlProcessorFactory.class);
+        expect(HtmlProcessorFactory.of(eq("custom-formatted")))
+                .andReturn((HtmlProcessorFactory) () -> HtmlProcessorFactory.NOOP);
+
+
+        initField("", "", "", "formatted", "custom-formatted");
+        verifyAll();
     }
 }
