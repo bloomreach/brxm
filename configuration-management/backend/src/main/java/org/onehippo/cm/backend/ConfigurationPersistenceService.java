@@ -523,7 +523,7 @@ public class ConfigurationPersistenceService {
                 return factory.createValue(modelValue.getString(), type.ordinal());
             case REFERENCE:
             case WEAKREFERENCE:
-                return factory.createValue(getReferredNode(modelValue, jcrNode), type == ValueType.WEAKREFERENCE);
+                return factory.createValue(getReferredNodeIdentifier(modelValue, jcrNode), type.ordinal());
             case DECIMAL:
                 return factory.createValue((BigDecimal)modelValue.getObject());
             default:
@@ -532,10 +532,6 @@ public class ConfigurationPersistenceService {
                         modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty), type);
                 throw new RuntimeException(msg);
         }
-    }
-
-    private Node getReferredNode(final Value modelValue, final Node jcrNode) throws RepositoryException {
-        return session.getNodeByIdentifier(getReferredNodeIdentifier(modelValue, jcrNode));
     }
 
     private void applyUnprocessedReferences() throws Exception {
