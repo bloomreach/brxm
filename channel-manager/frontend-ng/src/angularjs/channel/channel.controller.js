@@ -63,12 +63,6 @@ class ChannelCtrl {
     } else {
       this.hasPreviewConfiguration = true;
     }
-
-    this.$rootScope.$watch(() => this.isComponentsOverlayDisplayed, () => {
-      if (!this.isComponentsOverlayDisplayed && !this.ChannelService.hasPreviewConfiguration) {
-        this._createPreviewConfiguration();
-      }
-    });
   }
 
   _clear() {

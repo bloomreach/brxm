@@ -97,6 +97,16 @@ describe('ChannelCtrl', () => {
     expect(HippoIframeService.load).toHaveBeenCalledWith('/testPath');
   });
 
+  it('initializes controller', () => {
+    ChannelService.hasPreviewConfiguration.and.returnValue(true);
+    ChannelCtrl.$onInit();
+    expect(ChannelCtrl.hasPreviewConfiguration).toEqual(true);
+
+    ChannelService.hasPreviewConfiguration.and.returnValue(false);
+    ChannelCtrl.$onInit();
+    expect(ChannelCtrl.hasPreviewConfiguration).toEqual(false);
+  });
+
   it('checks with the session service is the current user has write access', () => {
     spyOn(SessionService, 'hasWriteAccess');
 
