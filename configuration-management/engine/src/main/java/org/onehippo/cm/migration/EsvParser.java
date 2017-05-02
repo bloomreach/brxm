@@ -55,7 +55,11 @@ public class EsvParser extends DefaultHandler {
     private static final String ESV_LOCATION = "location";
     private static final String ESV_FILE = "file";
 
-    private static final String[] IGNORED_PROPERTIES = new String[]{"hippo:paths", "hippo:related"};
+    private static final String[] IGNORED_PROPERTIES = new String[] {
+            "hippo:paths",
+            "hippo:related",
+            "hippo:related___pathreference"
+    };
 
     private final File baseDir;
     private final Stack<EsvNode> stack = new Stack<>();

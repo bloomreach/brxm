@@ -272,7 +272,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
 
     private boolean requiresValueMap(final DefinitionProperty property) {
 
-        if (property.getOperation() != PropertyOperation.REPLACE || hasResourceValues(property)) {
+        if (property.getOperation() != PropertyOperation.REPLACE || hasResourceValues(property) || hasPathValues(property)) {
             return true;
         }
 

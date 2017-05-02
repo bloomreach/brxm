@@ -490,6 +490,9 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
                 + "        path: foo/bar\n"
                 + "      /foo:\n"
                 + "        jcr:primaryType: nt:unstructured\n"
+                + "        root-relative:\n"
+                + "          type: reference\n"
+                + "          path: ''\n"
                 + "        /bar:\n"
                 + "          jcr:primaryType: nt:unstructured\n"
                 + "          jcr:mixinTypes: ['mix:referenceable']\n"
@@ -500,6 +503,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         final Node bar = testNode.getNode("foo/bar");
         expectProp("/test/absolute", PropertyType.REFERENCE, bar.getIdentifier());
         expectProp("/test/relative", PropertyType.REFERENCE, bar.getIdentifier());
+        expectProp("/test/foo/root-relative", PropertyType.REFERENCE, testNode.getIdentifier());
 
         // when applying the same definition again, expect no events
         final ExpectedEvents expectedEvents = new ExpectedEvents();

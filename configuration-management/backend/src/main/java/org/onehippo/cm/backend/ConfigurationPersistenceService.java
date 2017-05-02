@@ -54,6 +54,7 @@ import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
+import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
@@ -468,19 +469,18 @@ public class ConfigurationPersistenceService {
     }
 
     private String getReferredNodeIdentifier(final Value modelValue, final Node jcrNode) throws RepositoryException {
+        String identifier = modelValue.getString();
         if (modelValue.isPath()) {
-            return resolveReference(modelValue.getString(), jcrNode);
-        } else {
-            return modelValue.getString();
+            String nodePath = identifier;
+            if (!nodePath.startsWith("/")) {
+                // path reference is relative to content definition root path
+                final String rootPath = ((ContentDefinition) modelValue.getParent().getDefinition()).getNode().getPath();
+                nodePath = rootPath + ("".equals(nodePath) ? "" : "/" + nodePath);
+            }
+            // lookup node identifier by node path
+            identifier = jcrNode.getSession().getNode(nodePath).getIdentifier();
         }
-    }
-
-    private String resolveReference(final String path, final Node jcrNode) throws RepositoryException {
-        if (path.startsWith("/")) {
-            return jcrNode.getSession().getNode(path).getIdentifier();
-        } else {
-            return jcrNode.getNode(path).getIdentifier();
-        }
+        return identifier;
     }
 
     private javax.jcr.Value[] valuesFrom(final ConfigurationProperty modelProperty,

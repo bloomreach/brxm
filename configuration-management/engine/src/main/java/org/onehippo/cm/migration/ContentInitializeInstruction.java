@@ -260,11 +260,23 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                                  final PropertyOperation op, final boolean isPathReference)
             throws EsvParseException {
         DefinitionPropertyImpl prop;
-        ValueType valueType = ValueType.values()[property.getType()];
+        ValueType valueType = isPathReference ? ValueType.REFERENCE : ValueType.values()[property.getType()];
         ValueImpl[] newValues = property.isMultiple() ? new ValueImpl[property.getValues().size()] : new ValueImpl[1];
         for (int i = 0; i < newValues.length; i++) {
             EsvValue value = property.getValues().get(i);
-            newValues[i] = new ValueImpl(value.getValue(), valueType, value.isResourcePath(), isPathReference);
+            Object valueObject = value.getValue();
+            if (isPathReference) {
+                final String referencePath = (String)valueObject;
+                if (!referencePath.startsWith("/")) {
+                    // While esv path references may be relative, for esv2yaml migration we cannot easily support this
+                    // as the esv export *may* generate relative references *outside* the scope of the esv (and thus yaml)
+                    // content/config definition itself.
+                    // The latter is *not* supported for relative yaml path references, which always must be relative to
+                    // the definition root path ("" being used/needed for a relative reference to the root node itself).
+                    valueObject = StringUtils.substringBeforeLast(getContentPath(), "/") + "/" + referencePath;
+                }
+            }
+            newValues[i] = new ValueImpl(valueObject, valueType, value.isResourcePath(), isPathReference);
         }
         if (current != null && PropertyOperation.ADD == op) {
             ValueImpl[] oldValues = cloneValues(current.getValues());
