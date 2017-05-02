@@ -51,7 +51,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
@@ -385,6 +384,19 @@ public class RichTextFieldTypeTest {
             final List<FieldValue> fieldValues = field.readFrom(document)
                     .orElseThrow(() -> new Exception("Failed to read from document"));
             assertThat(fieldValues.get(0).getValue(), equalTo("<img src=\"../../path/to/image.gif\" data-uuid=\"cafebabe\" />"));
+        });
+    }
+
+    @Test
+    public void linkedImagesWithoutDataUuidAreNotTouched() throws Exception {
+        final HtmlProcessor processor = new HtmlProcessorImpl(new HtmlProcessorConfig());
+        final RichTextFieldType field = initField(processor);
+
+        addValue("<img src=\"path/to/image.gif\"/>");
+        assertNoWarningsLogged(() -> {
+            final List<FieldValue> fieldValues = field.readFrom(document)
+                    .orElseThrow(() -> new Exception("Failed to read from document"));
+            assertThat(fieldValues.get(0).getValue(), equalTo("<img src=\"path/to/image.gif\" />"));
         });
     }
 }
