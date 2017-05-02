@@ -16,7 +16,11 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -27,7 +31,6 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
-import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
@@ -59,8 +62,7 @@ public class StringFieldType extends AbstractFieldType {
     }
 
     void initializeMaxLength(final FieldTypeContext fieldContext) {
-        NamespaceUtils.getConfigProperty(fieldContext, "maxlength")
-                .ifPresent(this::setMaxLength);
+        fieldContext.getStringConfig("maxlength").ifPresent(this::setMaxLength);
     }
 
     void setMaxLength(final String maxLengthString) {

@@ -270,24 +270,12 @@ public class NamespaceUtilsTest {
 
     @Test
     public void getConfigPropertyFromClusterOptions() throws Exception {
-        final String propertyName = "maxlength";
-        final Node editorFieldConfigNode = createMock(Node.class);
-        final Node clusterOptionsNode = createMock(Node.class);
-        final Property property = createMock(Property.class);
+        final Node editorFieldConfigNode = MockNode.root();
+        final Node clusterOptionsNode = editorFieldConfigNode.addNode(NamespaceUtils.CLUSTER_OPTIONS, null);
+        clusterOptionsNode.setProperty("maxlength", "256");
         final FieldTypeContext fieldContext = new FieldTypeContext(null, null, editorFieldConfigNode);
 
-        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(true);
-        expect(editorFieldConfigNode.getNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(clusterOptionsNode);
-        expect(clusterOptionsNode.hasProperty(propertyName)).andReturn(true);
-        expect(clusterOptionsNode.getProperty(propertyName)).andReturn(property);
-        expect(property.getString()).andReturn("256");
-
-        replay(editorFieldConfigNode, clusterOptionsNode, property);
-
-        assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName).get(),
-                equalTo("256"));
-
-        verify(editorFieldConfigNode, clusterOptionsNode, property);
+        assertThat(NamespaceUtils.getConfigProperty(fieldContext, "maxlength", JcrStringReader.get()).get(), equalTo("256"));
     }
 
     @Test
@@ -318,7 +306,7 @@ public class NamespaceUtilsTest {
 
         replay(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
 
-        assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName).get(),
+        assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName, JcrStringReader.get()).get(),
                 equalTo("256"));
 
         verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
@@ -350,7 +338,7 @@ public class NamespaceUtilsTest {
 
         replay(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
 
-        assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName).get(),
+        assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName, JcrStringReader.get()).get(),
                 equalTo("256"));
 
         verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
@@ -380,118 +368,7 @@ public class NamespaceUtilsTest {
 
         replay(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
 
-        assertFalse(NamespaceUtils.getConfigProperty(fieldContext, propertyName).isPresent());
-
-        verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
-    }
-
-    @Test
-    public void getConfigMultiplePropertyFromClusterOptions() throws Exception {
-        final String propertyName = "nodetypes";
-        final Node editorFieldConfigNode = createMock(Node.class);
-        final Node clusterOptionsNode = createMock(Node.class);
-        final Property property = createMock(Property.class);
-        final FieldTypeContext fieldContext = new FieldTypeContext(null, null, editorFieldConfigNode);
-
-        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(true);
-        expect(editorFieldConfigNode.getNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(clusterOptionsNode);
-        expect(JcrUtils.getMultipleStringProperty(clusterOptionsNode, propertyName, null)).andReturn(new String[] { "hippostd:folder" });
-
-        replayAll(editorFieldConfigNode, clusterOptionsNode, property);
-
-        assertThat(NamespaceUtils.getConfigMultipleProperty(fieldContext, propertyName).get()[0],
-                equalTo("hippostd:folder"));
-
-        verify(editorFieldConfigNode, clusterOptionsNode, property);
-    }
-
-    @Test
-    public void getConfigMultiplePropertyNotInClusterOptionsFromType() throws Exception {
-        final String propertyName = "nodetypes";
-        final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final Node editorFieldConfigNode = createMock("editorFieldConfigNode", Node.class);
-        final Node clusterOptionsNode = createMock("clusterOptionNode", Node.class);
-        final Node contentTypeRootNode = createMock("contentTypeRootNode", Node.class);
-        final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
-        final Property property = createMock(Property.class);
-        final Session session = createMock(Session.class);
-        final FieldTypeContext fieldContext = new FieldTypeContext(contentTypeItem, parentContext, editorFieldConfigNode);
-
-        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(true);
-        expect(editorFieldConfigNode.getNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(clusterOptionsNode);
-        expect(JcrUtils.getMultipleStringProperty(clusterOptionsNode, propertyName, null)).andReturn(null);
-
-        expect(contentTypeItem.getItemType()).andReturn("hippo:fieldtype");
-        expect(parentContext.getSession()).andReturn(session);
-        expect(session.getNode("/hippo:namespaces/hippo/fieldtype")).andReturn(contentTypeRootNode);
-        expect(contentTypeRootNode.hasNode("editor:templates/_default_")).andReturn(true);
-        expect(contentTypeRootNode.getNode("editor:templates/_default_")).andReturn(contentTypeEditorConfigNode);
-        expect(JcrUtils.getMultipleStringProperty(contentTypeEditorConfigNode, propertyName, null)).andReturn(new String[] { "hippostd:folder" });
-
-        replayAll(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
-
-        assertThat(NamespaceUtils.getConfigMultipleProperty(fieldContext, propertyName).get()[0],
-                equalTo("hippostd:folder"));
-
-        verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
-    }
-
-    @Test
-    public void getConfigMultiplePropertyNoClusterOptionsFromType() throws Exception {
-        final String propertyName = "nodetypes";
-        final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final Node editorFieldConfigNode = createMock("editorFieldConfigNode", Node.class);
-        final Node clusterOptionsNode = createMock("clusterOptionNode", Node.class);
-        final Node contentTypeRootNode = createMock("contentTypeRootNode", Node.class);
-        final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
-        final Property property = createMock(Property.class);
-        final Session session = createMock(Session.class);
-        final FieldTypeContext fieldContext = new FieldTypeContext(contentTypeItem, parentContext, editorFieldConfigNode);
-
-        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(false);
-
-        expect(contentTypeItem.getItemType()).andReturn("hippo:fieldtype");
-        expect(parentContext.getSession()).andReturn(session);
-        expect(session.getNode("/hippo:namespaces/hippo/fieldtype")).andReturn(contentTypeRootNode);
-        expect(contentTypeRootNode.hasNode("editor:templates/_default_")).andReturn(true);
-        expect(contentTypeRootNode.getNode("editor:templates/_default_")).andReturn(contentTypeEditorConfigNode);
-        expect(JcrUtils.getMultipleStringProperty(contentTypeEditorConfigNode, propertyName, null)).andReturn(new String[] { "hippostd:folder" });
-
-        replayAll(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
-
-        assertThat(NamespaceUtils.getConfigMultipleProperty(fieldContext, propertyName).get()[0],
-                equalTo("hippostd:folder"));
-
-        verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
-    }
-
-    @Test
-    public void getConfigMultiplePropertyNoClusterOptionsNotInType() throws Exception {
-        final String propertyName = "nodetypes";
-        final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final Node editorFieldConfigNode = createMock("editorFieldConfigNode", Node.class);
-        final Node clusterOptionsNode = createMock("clusterOptionNode", Node.class);
-        final Node contentTypeRootNode = createMock("contentTypeRootNode", Node.class);
-        final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
-        final Property property = createMock(Property.class);
-        final Session session = createMock(Session.class);
-        final FieldTypeContext fieldContext = new FieldTypeContext(contentTypeItem, parentContext, editorFieldConfigNode);
-
-        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(false);
-
-        expect(contentTypeItem.getItemType()).andReturn("hippo:fieldtype");
-        expect(parentContext.getSession()).andReturn(session);
-        expect(session.getNode("/hippo:namespaces/hippo/fieldtype")).andReturn(contentTypeRootNode);
-        expect(contentTypeRootNode.hasNode("editor:templates/_default_")).andReturn(true);
-        expect(contentTypeRootNode.getNode("editor:templates/_default_")).andReturn(contentTypeEditorConfigNode);
-        expect(JcrUtils.getMultipleStringProperty(contentTypeEditorConfigNode, propertyName, null)).andReturn(null);
-
-        replayAll(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
-
-        assertFalse(NamespaceUtils.getConfigMultipleProperty(fieldContext, propertyName).isPresent());
+        assertFalse(NamespaceUtils.getConfigProperty(fieldContext, propertyName, JcrStringReader.get()).isPresent());
 
         verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
     }

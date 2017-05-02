@@ -27,6 +27,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.FieldScanningContext;
+import org.onehippo.cms.channelmanager.content.documenttype.util.JcrMultipleStringReader;
+import org.onehippo.cms.channelmanager.content.documenttype.util.JcrStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -218,5 +220,29 @@ public class FieldTypeContextTest {
 
         verify(contentTypeItem);
         PowerMock.verifyAll();
+    }
+
+    @Test
+    public void getStringConfig() {
+        final FieldTypeContext context = new FieldTypeContext(null, null);
+        final Optional<String> value = Optional.of("value");
+
+        expect(NamespaceUtils.getConfigProperty(context, "test", JcrStringReader.get())).andReturn(value);
+
+        PowerMock.replayAll();
+
+        assertThat(context.getStringConfig("test"), equalTo(value));
+    }
+
+    @Test
+    public void getMultipleStringConfig() {
+        final FieldTypeContext context = new FieldTypeContext(null, null);
+        final Optional<String[]> values = Optional.of(new String[]{"a", "b"});
+
+        expect(NamespaceUtils.getConfigProperty(context, "test", JcrMultipleStringReader.get())).andReturn(values);
+
+        PowerMock.replayAll();
+
+        assertThat(context.getMultipleStringConfig("test"), equalTo(values));
     }
 }

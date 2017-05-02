@@ -34,7 +34,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
-import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -64,14 +63,13 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({FieldTypeUtils.class, HtmlProcessorFactory.class, NamespaceUtils.class})
+@PrepareForTest({FieldTypeUtils.class, HtmlProcessorFactory.class})
 public class RichTextFieldTypeTest {
 
     private static final String FIELD_NAME = "test:richtextfield";
     private static final String VALUE_PROPERTY = "hippostd:content";
 
     private Node document;
-    private HtmlProcessor htmlProcessor;
 
     @Before
     public void setUp() throws RepositoryException {
@@ -100,11 +98,10 @@ public class RichTextFieldTypeTest {
         final Locale locale = new Locale("nl");
         expect(parentContext.getLocale()).andReturn(locale);
 
-        mockStatic(NamespaceUtils.class);
-        expect(NamespaceUtils.getConfigProperty(fieldContext, "maxlength")).andReturn(Optional.empty());
-        expect(NamespaceUtils.getConfigProperty(fieldContext, "ckeditor.config.overlayed.json")).andReturn(Optional.empty());
-        expect(NamespaceUtils.getConfigProperty(fieldContext, "ckeditor.config.appended.json")).andReturn(Optional.empty());
-        expect(NamespaceUtils.getConfigProperty(fieldContext, "htmlprocessor.id")).andReturn(Optional.of("richtext"));
+        expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
+        expect(fieldContext.getStringConfig("ckeditor.config.overlayed.json")).andReturn(Optional.empty());
+        expect(fieldContext.getStringConfig("ckeditor.config.appended.json")).andReturn(Optional.empty());
+        expect(fieldContext.getStringConfig("htmlprocessor.id")).andReturn(Optional.of("richtext"));
 
         mockStatic(HtmlProcessorFactory.class);
         expect(HtmlProcessorFactory.of(eq("richtext")))

@@ -70,15 +70,14 @@ public class StringFieldTypeTest {
         final StringFieldType fieldType = new StringFieldType();
         final FieldTypeContext context = createMock(FieldTypeContext.class);
 
-        expect(NamespaceUtils.getConfigProperty(context, "maxlength"))
-                .andReturn(Optional.empty());
+        expect(context.getStringConfig("maxlength")).andReturn(Optional.empty());
 
-        PowerMock.replayAll(context);
+        replay(context);
 
         fieldType.initializeMaxLength(context);
         assertNull(fieldType.getMaxLength());
 
-        PowerMock.verifyAll();
+        verify(context);
     }
 
     @Test
@@ -86,8 +85,7 @@ public class StringFieldTypeTest {
         final StringFieldType fieldType = new StringFieldType();
         final FieldTypeContext context = createMock(FieldTypeContext.class);
 
-        expect(NamespaceUtils.getConfigProperty(context, "maxlength"))
-                .andReturn(Optional.of("bad format"));
+        expect(context.getStringConfig("maxlength")).andReturn(Optional.of("bad format"));
 
         PowerMock.replayAll(context);
 
@@ -102,8 +100,7 @@ public class StringFieldTypeTest {
         final StringFieldType fieldType = new StringFieldType();
         final FieldTypeContext context = createMock(FieldTypeContext.class);
 
-        expect(NamespaceUtils.getConfigProperty(context, "maxlength"))
-                .andReturn(Optional.of("123"));
+        expect(context.getStringConfig("maxlength")).andReturn(Optional.of("123"));
 
         PowerMock.replayAll(context);
 

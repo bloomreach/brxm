@@ -27,7 +27,6 @@ import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
-import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -44,7 +43,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({NamespaceUtils.class, HtmlProcessorFactory.class})
+@PrepareForTest({HtmlProcessorFactory.class})
 public class FormattedTextFieldTypeTest {
 
     private FormattedTextFieldType initField(final String defaultJson, final String overlayedJson, final String appendedJson) {
@@ -70,11 +69,10 @@ public class FormattedTextFieldTypeTest {
         final Locale locale = new Locale("nl");
         expect(parentContext.getLocale()).andReturn(locale);
 
-        mockStatic(NamespaceUtils.class);
-        expect(NamespaceUtils.getConfigProperty(fieldContext, "maxlength")).andReturn(Optional.empty());
-        expect(NamespaceUtils.getConfigProperty(fieldContext, "ckeditor.config.overlayed.json")).andReturn(Optional.of(overlayedJson));
-        expect(NamespaceUtils.getConfigProperty(fieldContext, "ckeditor.config.appended.json")).andReturn(Optional.of(appendedJson));
-        expect(NamespaceUtils.getConfigProperty(fieldContext, "htmlprocessor.id")).andReturn(Optional.of(htmlProcessorId));
+        expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
+        expect(fieldContext.getStringConfig("ckeditor.config.overlayed.json")).andReturn(Optional.of(overlayedJson));
+        expect(fieldContext.getStringConfig("ckeditor.config.appended.json")).andReturn(Optional.of(appendedJson));
+        expect(fieldContext.getStringConfig("htmlprocessor.id")).andReturn(Optional.of(htmlProcessorId));
 
         replayAll(parentContext, fieldContext, contentTypeItem);
 

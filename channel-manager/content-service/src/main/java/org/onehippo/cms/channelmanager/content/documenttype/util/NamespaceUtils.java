@@ -139,7 +139,7 @@ public class NamespaceUtils {
      * @return             Value of the path property or nothing, wrapped in an Optional
      */
     public static Optional<String> getPathForNodeTypeField(final Node nodeTypeNode, final String fieldName) {
-        return getStringPropertyFromChildNode(nodeTypeNode, fieldName, HippoNodeType.HIPPO_PATH);
+        return getPropertyFromChildNode(nodeTypeNode, fieldName, HippoNodeType.HIPPO_PATH, JcrStringReader.get());
     }
 
     /**
@@ -147,78 +147,43 @@ public class NamespaceUtils {
      * for this field. If not found the configuration options of the supertypes of this field are tried.
      *
      * @param propertyName name of the configuration property to
-     * @return             String value of the property or nothing, wrapped in an Optional
+     * @return             value of the property or nothing, wrapped in an Optional
      */
-    public static Optional<String> getConfigProperty(final FieldTypeContext fieldContext, final String propertyName) {
-        Optional<String> result = getConfigPropertyFromClusterOptions(fieldContext, propertyName);
+    public static <T> Optional<T> getConfigProperty(final FieldTypeContext fieldContext,
+                                                    final String propertyName,
+                                                    final JcrPropertyReader<T> propertyReader) {
+        Optional<T> result = getConfigPropertyFromClusterOptions(fieldContext, propertyName, propertyReader);
         if (!result.isPresent()) {
-            result = getConfigPropertyFromType(fieldContext, propertyName);
+            result = getConfigPropertyFromType(fieldContext, propertyName, propertyReader);
         }
         return result;
     }
 
-    private static Optional<String> getConfigPropertyFromClusterOptions(final FieldTypeContext fieldContext, final String propertyName) {
+    private static <T> Optional<T> getConfigPropertyFromClusterOptions(final FieldTypeContext fieldContext,
+                                                                        final String propertyName,
+                                                                        final JcrPropertyReader<T> propertyReader) {
         return fieldContext.getEditorConfigNode().flatMap((editorFieldConfigNode) ->
-                getStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName)
+                getPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName, propertyReader)
         );
     }
 
-    private static Optional<String> getConfigPropertyFromType(final FieldTypeContext fieldContext, final String propertyName) {
+    private static <T> Optional<T> getConfigPropertyFromType(final FieldTypeContext fieldContext,
+                                                             final String propertyName,
+                                                             final JcrPropertyReader<T> propertyReader) {
         final String fieldTypeId = fieldContext.getContentTypeItem().getItemType();
         final Session session = fieldContext.getParentContext().getSession();
         return getContentTypeRootNode(fieldTypeId, session).flatMap((contentTypeRootNode) ->
-                getStringPropertyFromChildNode(contentTypeRootNode, EDITOR_CONFIG_PATH, propertyName));
+                getPropertyFromChildNode(contentTypeRootNode, EDITOR_CONFIG_PATH, propertyName, propertyReader));
     }
 
-    private static Optional<String> getStringPropertyFromChildNode(final Node node, final String childName,
-                                                                   final String propertyName) {
+    private static <T> Optional<T> getPropertyFromChildNode(final Node node,
+                                                             final String childName,
+                                                             final String propertyName,
+                                                             final JcrPropertyReader<T> propertyReader) {
         try {
             if (node.hasNode(childName)) {
                 final Node childNode = node.getNode(childName);
-                return getStringProperty(childNode, propertyName);
-            }
-        } catch (RepositoryException e) {
-            log.warn("Failed to retrieve child node '{}' of node '{}'.", childName,
-                    JcrUtils.getNodePathQuietly(node), e);
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Retrieves a 'multiple' configuration property for this field. The property is read from the cluster options
-     * for this field. If not found the configuration options of the supertypes of this field are tried.
-     *
-     * @param propertyName name of the configuration property to
-     * @return             String[] value of the property or nothing, wrapped in an Optional
-     */
-    public static Optional<String[]> getConfigMultipleProperty(final FieldTypeContext fieldContext, final String propertyName) {
-        Optional<String[]> result = getConfigMultiplePropertyFromClusterOptions(fieldContext, propertyName);
-        if (!result.isPresent()) {
-            result = getConfigMultiplePropertyFromType(fieldContext, propertyName);
-        }
-        return result;
-    }
-
-
-    private static Optional<String[]> getConfigMultiplePropertyFromClusterOptions(final FieldTypeContext fieldContext, final String propertyName) {
-        return fieldContext.getEditorConfigNode().flatMap((editorFieldConfigNode) ->
-                    getMultipleStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName)
-            );
-    }
-
-    private static Optional<String[]> getConfigMultiplePropertyFromType(final FieldTypeContext fieldContext, final String propertyName) {
-        final String fieldTypeId = fieldContext.getContentTypeItem().getItemType();
-        final Session session = fieldContext.getParentContext().getSession();
-        return getContentTypeRootNode(fieldTypeId, session).flatMap((contentTypeRootNode) ->
-                getMultipleStringPropertyFromChildNode(contentTypeRootNode, EDITOR_CONFIG_PATH, propertyName));
-    }
-
-    private static Optional<String[]> getMultipleStringPropertyFromChildNode(final Node node, final String childName,
-                                                                   final String propertyName) {
-        try {
-            if (node.hasNode(childName)) {
-                final Node childNode = node.getNode(childName);
-                return getMultipleStringProperty(childNode, propertyName);
+                return propertyReader.read(childNode, propertyName);
             }
         } catch (RepositoryException e) {
             log.warn("Failed to retrieve child node '{}' of node '{}'.", childName,
@@ -234,7 +199,7 @@ public class NamespaceUtils {
      * @return                      the plugin class name or nothing, wrapped in an Optional
      */
     public static Optional<String> getPluginClassForField(final Node editorFieldConfigNode) {
-        return getStringProperty(editorFieldConfigNode, "plugin.class");
+        return JcrStringReader.get().read(editorFieldConfigNode, "plugin.class");
     }
 
     /**
@@ -244,7 +209,7 @@ public class NamespaceUtils {
      * @return                      the Wicket ID or nothing, wrapped in an Optional
      */
     public static Optional<String> getWicketIdForField(final Node editorFieldConfigNode) {
-        return getStringProperty(editorFieldConfigNode, "wicket.id");
+        return JcrStringReader.get().read(editorFieldConfigNode, "wicket.id");
     }
 
     /**
@@ -254,29 +219,7 @@ public class NamespaceUtils {
      * @return                      value of the "field" property or nothing, wrapped in an Optional
      */
     public static Optional<String> getFieldProperty(final Node editorFieldConfigNode) {
-        return getStringProperty(editorFieldConfigNode, "field");
-    }
-
-    private static Optional<String> getStringProperty(final Node node, final String propertyName) {
-        try {
-            if (node.hasProperty(propertyName)) {
-                return Optional.of(node.getProperty(propertyName).getString());
-            }
-        } catch (RepositoryException e) {
-            log.warn("Failed to read property '{}' from node '{}'.", propertyName,
-                    JcrUtils.getNodePathQuietly(node), e);
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<String[]> getMultipleStringProperty(final Node node, final String propertyName) {
-        try {
-            return Optional.ofNullable(JcrUtils.getMultipleStringProperty(node, propertyName, null));
-        } catch (RepositoryException e) {
-            log.warn("Failed to read property '{}' from node '{}'.", propertyName,
-                    JcrUtils.getNodePathQuietly(node), e);
-        }
-        return Optional.empty();
+        return JcrStringReader.get().read(editorFieldConfigNode, "field");
     }
 
     /**
