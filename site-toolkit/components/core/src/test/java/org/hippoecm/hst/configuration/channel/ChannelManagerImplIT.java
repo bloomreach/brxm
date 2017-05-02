@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.security.PrivilegedActionException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -46,10 +47,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import junit.framework.Assert;
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNotSame;
+import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
@@ -169,6 +174,11 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertTrue(channelsAgain == channels);
+        Iterator<Channel> iterator1 = channels.values().iterator();
+        Iterator<Channel> iterator2 = channelsAgain.values().iterator();
+        while (iterator1.hasNext()) {
+            assertSame(iterator1.next(), iterator2.next());
+        }
     }
 
     @Test
@@ -182,7 +192,56 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         resetDummyHostOnRequestContext();
         Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertTrue("After a change, getChannels should return different instance for the Map", channelsAgain != channels);
+    }
 
+    @Test
+    public void channel_caching_assertions() throws Exception {
+        final Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
+        final Channel unittestproject = channels.get("unittestproject");
+        final Channel unittestsubproject = channels.get("unittestsubproject");
+        session.getNode(unittestproject.getChannelPath()).setProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME, "new value");
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+        session.save();
+        invalidator.eventPaths(pathsToBeChanged);
+        final Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels("dev-localhost");
+        assertNotSame(unittestproject, channelsAgain.get("unittestproject"));
+        assertFalse(unittestproject.getName().equals(channelsAgain.get("unittestproject").getName()));
+
+        // although 'unittestsubproject' is not changed, still a new object is expected because
+        // org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache.loadChannel() invoke clone(channel)
+        assertNotSame(unittestsubproject, channelsAgain.get("unittestsubproject"));
+        assertTrue(unittestsubproject.getName().equals(channelsAgain.get("unittestsubproject").getName()));
+
+        // very dirty check (but important to prove caching : the Channel#viewportMap is during #clone(Channel) not cloned
+        // hence if org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache.loadChannel() returns a cached
+        // channel, we expect the same object instance for Channel#viewportMap (making a bit use of a very tiny bug in this unit test)
+        // since 'unittestproject' we expect a new Channel#viewportMap object. For 'unittestsubproject' we expect the same object
+        // as we have before : If not, caching is broken!
+
+        assertNotSame(unittestproject.getViewportMap(), channelsAgain.get("unittestproject").getViewportMap());
+        assertSame(unittestsubproject.getViewportMap(), channelsAgain.get("unittestsubproject").getViewportMap());
+    }
+
+    @Test
+    public void channel_caching_assertions_with_preview_that_inherits_channel_node_from_live() throws Exception {
+        // test with non-workspace channel node
+        Node previewConfig = session.getNode("/hst:hst/hst:configurations").addNode("unittestproject-preview");
+        previewConfig.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../unittestproject"});
+        session.save();
+        final Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
+
+        assertFalse("Because there is no preview channel node, the channels only contain the 'live' channel id",
+                channels.containsKey("unittestproject-preview"));
+
+        Node workspace = session.getNode("/hst:hst/hst:configurations/unittestproject-preview").addNode("hst:workspace");
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:channel", workspace.getPath()  + "/hst:channel");
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+        session.save();
+        invalidator.eventPaths(pathsToBeChanged);
+        final Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels("dev-localhost");
+        // now the preview channel should be loaded
+        assertTrue("There should be a preview channel since there is a node now in workspace",
+                channelsAgain.containsKey("unittestproject-preview"));
     }
 
 
@@ -307,7 +366,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
                 //expected
             }
             // assert content *not* created because of STOP_CHANNEL_PROCESSING exception
-            assertFalse(session.nodeExists("/unittestcontent/documents/newchannel"));
+            junit.framework.Assert.assertFalse(session.nodeExists("/unittestcontent/documents/newchannel"));
 
         } finally {
             if (session.nodeExists("/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/testblueprint")) {
@@ -380,7 +439,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
 
         assertEquals(numberOfChannerBeforeAddingAnOrphanOne, channels.size());
-        assertFalse(channels.containsKey("cmit-test-channel"));
+        junit.framework.Assert.assertFalse(channels.containsKey("cmit-test-channel"));
 
     }
 
@@ -392,7 +451,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertTrue("unittestproject should be part of channels since has wrong contextpath",
                 channels.containsKey("unittestproject"));
-        assertFalse("intranettestproject should not be part of channels since has wrong contextpath",
+        junit.framework.Assert.assertFalse("intranettestproject should not be part of channels since has wrong contextpath",
                 channels.containsKey("intranettestproject"));
     }
 
