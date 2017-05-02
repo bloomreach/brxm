@@ -38,7 +38,10 @@ import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
+import org.onehippo.cms7.services.processor.html.HtmlProcessor;
+import org.onehippo.cms7.services.processor.html.HtmlProcessorConfig;
 import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
+import org.onehippo.cms7.services.processor.html.HtmlProcessorImpl;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.powermock.api.easymock.PowerMock;
@@ -48,6 +51,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
@@ -58,7 +62,6 @@ import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replay;
 import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -66,14 +69,21 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 public class RichTextFieldTypeTest {
 
     private static final String FIELD_NAME = "test:richtextfield";
+    private static final String VALUE_PROPERTY = "hippostd:content";
 
     private Node document;
-    private RichTextFieldType type;
+    private HtmlProcessor htmlProcessor;
 
     @Before
     public void setUp() throws RepositoryException {
         document = MockNode.root();
+    }
 
+    private RichTextFieldType initField() {
+        return initField(null);
+    }
+
+    private RichTextFieldType initField(final HtmlProcessor htmlProcessor) {
         final ContentTypeContext parentContext = EasyMock.createMock(ContentTypeContext.class);
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
@@ -99,12 +109,14 @@ public class RichTextFieldTypeTest {
 
         mockStatic(HtmlProcessorFactory.class);
         expect(HtmlProcessorFactory.of(eq("richtext")))
-                .andReturn((HtmlProcessorFactory) () -> HtmlProcessorFactory.NOOP).anyTimes();
+                .andReturn((HtmlProcessorFactory) () -> htmlProcessor != null ? htmlProcessor : HtmlProcessorFactory.NOOP).anyTimes();
 
         replayAll(parentContext, fieldContext, contentTypeItem);
 
-        type = new RichTextFieldType();
-        type.init(fieldContext);
+        final RichTextFieldType field = new RichTextFieldType();
+        field.init(fieldContext);
+
+        return field;
     }
 
     private Node addValue(final String html) {
@@ -113,6 +125,14 @@ public class RichTextFieldTypeTest {
             value.setProperty("hippostd:content", html);
             return value;
         } catch (final RepositoryException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getValue() {
+        try {
+            return document.getNode(FIELD_NAME).getProperty(VALUE_PROPERTY).getString();
+        } catch (RepositoryException e) {
             throw new RuntimeException(e);
         }
     }
@@ -140,9 +160,10 @@ public class RichTextFieldTypeTest {
 
     @Test
     public void readSingleValue() throws Exception {
+        final RichTextFieldType field = initField();
         addValue("<p>value</p>");
         assertNoWarningsLogged(() -> {
-            final List<FieldValue> fieldValues = type.readFrom(document)
+            final List<FieldValue> fieldValues = field.readFrom(document)
                     .orElseThrow(() -> new Exception("Failed to read from document"));
             assertThat(fieldValues.size(), equalTo(1));
             assertThat(fieldValues.get(0).getValue(), equalTo("<p>value</p>"));
@@ -151,11 +172,12 @@ public class RichTextFieldTypeTest {
 
     @Test
     public void readMultipleValue() throws Exception {
+        final RichTextFieldType field = initField();
         addValue("<p>one</p>");
         addValue("<p>two</p>");
-        type.setMaxValues(2);
+        field.setMaxValues(2);
         assertNoWarningsLogged(() -> {
-            final List<FieldValue> fieldValues = type.readFrom(document)
+            final List<FieldValue> fieldValues = field.readFrom(document)
                     .orElseThrow(() -> new Exception("Failed to read from document"));
             assertThat(fieldValues.size(), equalTo(2));
             assertThat(fieldValues.get(0).getValue(), equalTo("<p>one</p>"));
@@ -165,27 +187,30 @@ public class RichTextFieldTypeTest {
 
     @Test
     public void readOptionalEmptyValue() throws Exception {
-        assertNoWarningsLogged(() -> assertFalse(type.readFrom(document).isPresent()));
+        final RichTextFieldType field = initField();
+        assertNoWarningsLogged(() -> assertFalse(field.readFrom(document).isPresent()));
     }
 
     @Test
     public void exceptionWhileReading() throws Exception {
+        final RichTextFieldType field = initField();
         // make hippostd:content property multi-valued so reading it will throw an exception
         final Node value = addValue("");
         value.getProperty("hippostd:content").setValue(new String[]{"one", "two"});
 
-        assertWarningsLogged(1, () -> assertFalse(type.readFrom(document).isPresent()));
+        assertWarningsLogged(1, () -> assertFalse(field.readFrom(document).isPresent()));
     }
 
     @Test
     public void writeSingleValue() throws Exception {
+        final RichTextFieldType field = initField();
         addValue("<p>value</p>");
         assertNoWarningsLogged(() -> {
             final FieldValue newValue = new FieldValue("<p>changed</p>");
 
-            type.writeTo(document, Optional.of(Collections.singletonList(newValue)));
+            field.writeTo(document, Optional.of(Collections.singletonList(newValue)));
 
-            final List<FieldValue> fieldValues = type.readFrom(document)
+            final List<FieldValue> fieldValues = field.readFrom(document)
                     .orElseThrow(() -> new Exception("Failed to read from document"));
             assertThat(fieldValues.size(), equalTo(1));
             assertThat(fieldValues.get(0).getValue(), equalTo("<p>changed</p>"));
@@ -194,16 +219,17 @@ public class RichTextFieldTypeTest {
 
     @Test
     public void writeMultipleValues() throws Exception {
+        final RichTextFieldType field = initField();
         addValue("<p>one</p>");
         addValue("<p>two</p>");
-        type.setMaxValues(2);
+        field.setMaxValues(2);
         assertNoWarningsLogged(() -> {
             final FieldValue newValue1 = new FieldValue("<p>one changed</p>");
             final FieldValue newValue2 = new FieldValue("<p>two changed</p>");
 
-            type.writeTo(document, Optional.of(Arrays.asList(newValue1, newValue2)));
+            field.writeTo(document, Optional.of(Arrays.asList(newValue1, newValue2)));
 
-            final List<FieldValue> fieldValues = type.readFrom(document)
+            final List<FieldValue> fieldValues = field.readFrom(document)
                     .orElseThrow(() -> new Exception("Failed to read from document"));
             assertThat(fieldValues.size(), equalTo(2));
             assertThat(fieldValues.get(0).getValue(), equalTo("<p>one changed</p>"));
@@ -213,29 +239,33 @@ public class RichTextFieldTypeTest {
 
     @Test
     public void writeOptionalEmptyValue() throws Exception {
-        type.setMinValues(0);
+        final RichTextFieldType field = initField();
+        field.setMinValues(0);
         assertNoWarningsLogged(() -> {
-            type.writeTo(document, Optional.of(Collections.emptyList()));
-            assertFalse(type.readFrom(document).isPresent());
+            field.writeTo(document, Optional.of(Collections.emptyList()));
+            assertFalse(field.readFrom(document).isPresent());
         });
     }
 
     @Test(expected = BadRequestException.class)
     public void writeLessValuesThanMinimum() throws Exception {
+        final RichTextFieldType field = initField();
         // default minimum is 1
-        type.writeTo(document, Optional.of(Collections.emptyList()));
+        field.writeTo(document, Optional.of(Collections.emptyList()));
     }
 
     @Test(expected = BadRequestException.class)
     public void writeMoreValuesThanMaximum() throws Exception {
+        final RichTextFieldType field = initField();
         // default maximum is 1
         final FieldValue newValue1 = new FieldValue("<p>one</p>");
         final FieldValue newValue2 = new FieldValue("<p>two</p>");
-        type.writeTo(document, Optional.of(Arrays.asList(newValue1, newValue2)));
+        field.writeTo(document, Optional.of(Arrays.asList(newValue1, newValue2)));
     }
 
     @Test
     public void writeLessValuesThanStored() throws Exception {
+        final RichTextFieldType field = initField();
         addValue("<p>one</p>");
         addValue("<p>two</p>");
         addValue("<p>three</p>");
@@ -244,9 +274,9 @@ public class RichTextFieldTypeTest {
         assertNoWarningsLogged(
                 () -> {
                     final FieldValue newValue = new FieldValue("<p>changed</p>");
-                    type.writeTo(document, Optional.of(Collections.singletonList(newValue)));
+                    field.writeTo(document, Optional.of(Collections.singletonList(newValue)));
                 }, () -> {
-                    final List<FieldValue> fieldValues = type.readFrom(document)
+                    final List<FieldValue> fieldValues = field.readFrom(document)
                             .orElseThrow(() -> new Exception("Failed to read from document"));
                     assertThat(fieldValues.size(), equalTo(1));
                     assertThat(fieldValues.get(0).getValue(), equalTo("<p>changed</p>"));
@@ -256,6 +286,7 @@ public class RichTextFieldTypeTest {
 
     @Test(expected = InternalServerErrorException.class)
     public void exceptionWhileWriting() throws Exception {
+        final RichTextFieldType field = initField();
         PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeNodeValues");
         FieldTypeUtils.writeNodeValues(anyObject(), anyObject(), anyInt(), anyObject());
         expectLastCall().andThrow(new RepositoryException());
@@ -265,9 +296,9 @@ public class RichTextFieldTypeTest {
         final FieldValue newValue = new FieldValue("<p>changed</p>");
 
         assertWarningsLogged(1,
-                () -> type.writeTo(document, Optional.of(Collections.singletonList(newValue))),
+                () -> field.writeTo(document, Optional.of(Collections.singletonList(newValue))),
                 () -> {
-                    final List<FieldValue> fieldValues = type.readFrom(document)
+                    final List<FieldValue> fieldValues = field.readFrom(document)
                             .orElseThrow(() -> new Exception("Failed to read from document"));
                     assertThat(fieldValues.size(), equalTo(1));
                     assertThat(fieldValues.get(0).getValue(), equalTo("<p>value</p>"));
@@ -276,36 +307,85 @@ public class RichTextFieldTypeTest {
 
     @Test
     public void validateRequired() {
-        type.addValidator(FieldType.Validator.REQUIRED);
+        final RichTextFieldType field = initField();
+        field.addValidator(FieldType.Validator.REQUIRED);
 
-        assertTrue(type.isRequired());
-        assertTrue(type.validate(Collections.singletonList(new FieldValue("test"))));
-        assertFalse(type.validate(Collections.singletonList(new FieldValue(""))));
-        assertFalse(type.validate(Arrays.asList(new FieldValue("test"), new FieldValue(""))));
+        assertTrue(field.isRequired());
+        assertTrue(field.validate(Collections.singletonList(new FieldValue("test"))));
+        assertFalse(field.validate(Collections.singletonList(new FieldValue(""))));
+        assertFalse(field.validate(Arrays.asList(new FieldValue("test"), new FieldValue(""))));
     }
 
     @Test
     public void validateNotRequired() {
-        assertFalse(type.isRequired());
-        assertTrue(type.validate(Collections.singletonList(new FieldValue("test"))));
-        assertTrue(type.validate(Collections.singletonList(new FieldValue(""))));
-        assertTrue(type.validate(Arrays.asList(new FieldValue("test"), new FieldValue(""))));
+        final RichTextFieldType field = initField();
+        assertFalse(field.isRequired());
+        assertTrue(field.validate(Collections.singletonList(new FieldValue("test"))));
+        assertTrue(field.validate(Collections.singletonList(new FieldValue(""))));
+        assertTrue(field.validate(Arrays.asList(new FieldValue("test"), new FieldValue(""))));
     }
 
     @Test
     public void validateRequiredValue() {
-        type.addValidator(FieldType.Validator.REQUIRED);
+        final RichTextFieldType field = initField();
+        field.addValidator(FieldType.Validator.REQUIRED);
 
-        assertTrue(type.isRequired());
-        assertTrue(type.validateValue(new FieldValue("test")));
-        assertFalse(type.validateValue(new FieldValue("")));
+        assertTrue(field.isRequired());
+        assertTrue(field.validateValue(new FieldValue("test")));
+        assertFalse(field.validateValue(new FieldValue("")));
     }
 
     @Test
     public void validateNotRequiredValue() {
-        assertFalse(type.isRequired());
-        assertTrue(type.validateValue(new FieldValue("test")));
-        assertTrue(type.validateValue(new FieldValue("")));
+        final RichTextFieldType field = initField();
+        assertFalse(field.isRequired());
+        assertTrue(field.validateValue(new FieldValue("test")));
+        assertTrue(field.validateValue(new FieldValue("")));
+    }
+
+    @Test
+    public void processValueWhenReading() throws Exception {
+        final HtmlProcessor processor = EasyMock.createMock(HtmlProcessor.class);
+        expect(processor.read(eq("<p>value</p>"), anyObject())).andReturn("<p>processed</p>");
+        replay(processor);
+
+        final RichTextFieldType field = initField(processor);
+
+        addValue("<p>value</p>");
+        assertNoWarningsLogged(() -> {
+            final List<FieldValue> fieldValues = field.readFrom(document)
+                    .orElseThrow(() -> new Exception("Failed to read from document"));
+            assertThat(fieldValues.get(0).getValue(), equalTo("<p>processed</p>"));
+        });
+    }
+
+    @Test
+    public void processValueWhenWriting() throws Exception {
+        final HtmlProcessor processor = EasyMock.createMock(HtmlProcessor.class);
+        expect(processor.write(eq("<p>value</p>"), anyObject())).andReturn("<p>processed</p>");
+        replay(processor);
+
+        final RichTextFieldType field = initField(processor);
+
+        addValue("");
+        assertNoWarningsLogged(() -> {
+            final FieldValue newValue = new FieldValue("<p>value</p>");
+            field.writeTo(document, Optional.of(Collections.singletonList(newValue)));
+            assertThat(getValue(), equalTo("<p>processed</p>"));
+        });
+    }
+
+    @Test
+    public void linkedImagesHaveRelativePaths() throws Exception {
+        final HtmlProcessor processor = new HtmlProcessorImpl(new HtmlProcessorConfig());
+        final RichTextFieldType field = initField(processor);
+
+        addValue("<img src=\"path/to/image.gif\" data-uuid=\"cafebabe\"/>");
+        assertNoWarningsLogged(() -> {
+            final List<FieldValue> fieldValues = field.readFrom(document)
+                    .orElseThrow(() -> new Exception("Failed to read from document"));
+            assertThat(fieldValues.get(0).getValue(), equalTo("<img src=\"../../path/to/image.gif\" data-uuid=\"cafebabe\" />"));
+        });
     }
 }
 
