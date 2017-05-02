@@ -89,6 +89,7 @@ public class JcrNodeIcon {
         primaryTypeNameIcons.put("hippogallery:stdImageGallery", FontAwesomeIcon.PICTURE_O);
         primaryTypeNameIcons.put("hst:containeritemcomponent", FontAwesomeIcon.CUBE);
         primaryTypeNameIcons.put("hst:containeritempackage", FontAwesomeIcon.DROPBOX);
+        primaryTypeNameIcons.put("hst:containercomponentreference", FontAwesomeIcon.TOGGLE_DOWN);
         primaryTypeNameIcons.put("hst:containercomponent", FontAwesomeIcon.COLUMNS);
         primaryTypeNameIcons.put("hst:containercomponentfolder", FontAwesomeIcon.TRELLO);
         primaryTypeNameIcons.put("hst:sitemenus", FontAwesomeIcon.TH_LIST);

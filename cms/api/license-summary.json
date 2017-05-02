@@ -1,99 +1,72 @@
 {
-  "angular-animate@1.4.8": {
+  "blueimp-canvas-to-blob@3.5.0": {
     "licenses": "MIT",
-    "repository": "https://github.com/angular/angular.js"
+    "repository": "https://github.com/blueimp/JavaScript-Canvas-to-Blob",
+    "publisher": "Sebastian Tschan",
+    "url": "https://blueimp.net"
   },
-  "angular-aria@1.4.8": {
+  "blueimp-canvas-to-blob@3.7.0": {
     "licenses": "MIT",
-    "repository": "https://github.com/angular/angular.js"
+    "repository": "https://github.com/blueimp/JavaScript-Canvas-to-Blob",
+    "publisher": "Sebastian Tschan",
+    "url": "https://blueimp.net"
   },
-  "angular-chosen-localytics@1.4.0": {
+  "blueimp-file-upload@9.18.0": {
     "licenses": "MIT",
-    "repository": "https://github.com/leocaseiro/angular-chosen",
-    "licenseFile": "node_modules/angular-chosen-localytics/LICENSE"
+    "repository": "https://github.com/blueimp/jQuery-File-Upload",
+    "publisher": "Sebastian Tschan",
+    "url": "https://blueimp.net",
+    "licenseFile": "node_modules/blueimp-file-upload/LICENSE"
   },
-  "angular-tablesort@1.1.1": {
+  "blueimp-load-image@2.12.2": {
     "licenses": "MIT",
-    "repository": "https://github.com/mattiash/angular-tablesort",
-    "licenseFile": "node_modules/angular-tablesort/LICENSE"
+    "repository": "https://github.com/blueimp/JavaScript-Load-Image",
+    "publisher": "Sebastian Tschan",
+    "url": "https://blueimp.net"
   },
-  "angular-ui-bootstrap@0.14.3": {
+  "blueimp-tmpl@3.6.0": {
     "licenses": "MIT",
-    "repository": "https://github.com/angular-ui/bootstrap"
+    "repository": "https://github.com/blueimp/JavaScript-Templates",
+    "publisher": "Sebastian Tschan",
+    "url": "https://blueimp.net"
   },
-  "angular-ui-tree@2.11.0": {
+  "blueimp-tmpl@3.8.0": {
     "licenses": "MIT",
-    "repository": "https://github.com/angular-ui-tree/angular-ui-tree",
-    "licenseFile": "node_modules/angular-ui-tree/LICENSE"
+    "repository": "https://github.com/blueimp/JavaScript-Templates",
+    "publisher": "Sebastian Tschan",
+    "url": "https://blueimp.net"
   },
-  "angular@1.4.8": {
-    "licenses": "MIT",
-    "repository": "https://github.com/angular/angular.js"
-  },
-  "angular@1.5.7": {
-    "licenses": "MIT",
-    "repository": "https://github.com/angular/angular.js",
-    "licenseFile": "node_modules/angular-chosen-localytics/node_modules/angular/LICENSE.md"
-  },
-  "blueimp-canvas-to-blob@3.1.0": {
-    "licenses": "MIT",
-    "repository": "https://github.com/blueimp/JavaScript-Canvas-to-Blob"
-  },
-  "blueimp-file-upload@9.9.4": {
-    "licenses": "MIT",
-    "repository": "https://github.com/blueimp/jQuery-File-Upload"
-  },
-  "blueimp-load-image@2.1.0": {
-    "licenses": "MIT",
-    "repository": "https://github.com/blueimp/JavaScript-Load-Image"
-  },
-  "blueimp-tmpl@3.1.0": {
-    "licenses": "MIT",
-    "repository": "https://github.com/blueimp/JavaScript-Templates"
-  },
-  "bootstrap-sass@3.3.4": {
+  "bootstrap-sass@3.3.7": {
     "licenses": "MIT",
     "repository": "https://github.com/twbs/bootstrap-sass",
     "licenseFile": "node_modules/bootstrap-sass/LICENSE"
   },
-  "chosen-npm@1.4.2": {
-    "licenses": "MIT",
-    "repository": "https://github.com/harvesthq/chosen",
-    "licenseFile": "node_modules/chosen-npm/LICENSE.md"
-  },
-  "google-code-prettify@1.0.1": {
-    "licenses": "UNKNOWN"
-  },
-  "hippo-cms-api@": {
-    "licenses": "Apache-2.0"
-  },
-  "hippo-theme@3.1.0-SNAPSHOT": {
-    "licenses": "MIT*",
-    "licenseFile": "node_modules/hippo-theme/LICENSE"
-  },
-  "jquery@2.2.4": {
+  "jquery@3.2.1": {
     "licenses": "MIT",
     "repository": "https://github.com/jquery/jquery",
+    "publisher": "JS Foundation and other contributors",
+    "url": "https://github.com/jquery/jquery/blob/3.2.1/AUTHORS.txt",
     "licenseFile": "node_modules/jquery/LICENSE.txt"
   },
-  "normalize.css@3.0.2": {
+  "normalize.css@6.0.0": {
     "licenses": "MIT",
-    "repository": "https://github.com/necolas/normalize.css"
+    "repository": "https://github.com/necolas/normalize.css",
+    "licenseFile": "node_modules/normalize.css/LICENSE.md"
   },
   "open-sans-fontface@1.4.0": {
     "licenses": "Apache License version 2.0",
     "repository": "https://github.com/FontFaceKit/open-sans"
   },
-  "retinajs@2.0.1": {
+  "retinajs@2.1.0": {
     "licenses": "MIT",
     "repository": "https://github.com/imulus/retinajs",
     "licenseFile": "node_modules/retinajs/LICENSE"
   },
-  "selectric@1.9.2": {
-    "licenses": [
-      "MIT",
-      "GPL-3.0"
-    ],
-    "repository": "https://github.com/lcdsantos/jQuery-Selectric"
+  "selectric@1.11.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lcdsantos/jQuery-Selectric",
+    "publisher": "Leonardo Santos",
+    "email": "leocs.1991@gmail.com",
+    "licenseFile": "node_modules/selectric/LICENSE"
   }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,11 +24,9 @@ import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.list.SearchDocumentsProvider;
 import org.hippoecm.frontend.skin.DocumentListColumn;
 
-public final class SearchViewPlugin extends DocumentListingPlugin<BrowserSearchResult> {
+public class SearchViewPlugin extends DocumentListingPlugin<BrowserSearchResult> {
 
-    private static final long serialVersionUID = 1L;
-
-    public SearchViewPlugin(IPluginContext context, IPluginConfig config) {
+    public SearchViewPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
@@ -43,5 +41,4 @@ public final class SearchViewPlugin extends DocumentListingPlugin<BrowserSearchR
     protected ISortableDataProvider<Node, String> newDataProvider() {
         return new SearchDocumentsProvider(getModel(), getTableDefinition().getComparators());
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -237,7 +237,7 @@ public class ReferringDocumentsProviderTest extends RepositoryTestCase {
     }
 
     private String[] getReferringNodePaths(Node node, boolean retrieveUnpublished) throws Exception {
-        SortedSet<Node> referringNodeSet = ReferringDocumentsProvider.getReferrersSortedByName(node, retrieveUnpublished, 100);
+        SortedSet<Node> referringNodeSet = ReferringDocumentsProvider.getReferrersSortedByName(node, retrieveUnpublished);
         Node[] referringNodeArray = referringNodeSet.toArray(new Node[referringNodeSet.size()]);
         String[] nodePaths = new String[referringNodeArray.length];
 

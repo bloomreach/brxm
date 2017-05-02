@@ -84,6 +84,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
+    <hippo.jackrabbit.version>2.14.0-h1-SNAPSHOT</hippo.jackrabbit.version>
     <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.utilities.version>4.0.0-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
@@ -100,7 +101,7 @@
 
     <!-- Project Dependencies -->
     <commons-codec.version>1.4</commons-codec.version>
-    <commons-collections.version>3.1</commons-collections.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
     <commons-beanutils.version>1.7.0</commons-beanutils.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>1.4</commons-io.version>
@@ -114,7 +115,7 @@
     <wicket.version>6.19.0</wicket.version>
     <wicket-extjs.version>0.25.3</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
-    <httpclient.version>4.2.2</httpclient.version>
+    <httpclient.version>4.5.2</httpclient.version>
 
     <joda-time.version>2.0</joda-time.version>
     <json-lib.version>2.2.2</json-lib.version>
@@ -266,7 +267,15 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-api</artifactId>
-        <version>${patched.jackrabbit.version}</version>
+        <version>${hippo.jackrabbit.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-jcr-commons</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+        <scope>provided</scope>
       </dependency>
 
       <dependency>

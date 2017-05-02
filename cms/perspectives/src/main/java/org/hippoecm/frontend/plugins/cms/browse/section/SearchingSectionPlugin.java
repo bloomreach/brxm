@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -30,7 +31,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -43,6 +43,7 @@ import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.NodeNameModel;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
@@ -64,6 +65,8 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
     private static final Logger log = LoggerFactory.getLogger(SearchingSectionPlugin.class);
 
+    private static final String GALLERY_PATH = "/content/gallery";
+    private static final String IMAGE_QUERY_NAME = "image";
     private static final IModel<BrowserSearchResult> NO_RESULTS = new Model<>(null);
 
     private final FolderModelService folderService;
@@ -77,7 +80,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
     private transient boolean redrawSearch = false;
 
-    public SearchingSectionPlugin(IPluginContext context, IPluginConfig config) {
+    public SearchingSectionPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         rootPath = config.getString("model.folder.root", "/");
@@ -105,13 +108,13 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         };
         form.setOutputMarkupId(true);
 
-        TextField<String> tx = new SubmittingTextField("searchBox", PropertyModel.of(this, "query"));
+        final TextField<String> tx = new SubmittingTextField("searchBox", PropertyModel.of(this, "query"));
         tx.setLabel(Model.of(getString("placeholder")));
         form.add(tx);
 
         final AjaxSubmitLink browseLink = new AjaxSubmitLink("toggle") {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 if (hasSearchResult()) {
                     collection.setSearchResult(NO_RESULTS);
                     query = "";
@@ -123,7 +126,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         browseLink.add(createSearchIcon("search-icon", collection));
         form.add(browseLink);
 
-        WebMarkupContainer scopeContainer = new WebMarkupContainer("scope-container") {
+        final WebMarkupContainer scopeContainer = new WebMarkupContainer("scope-container") {
             @Override
             public boolean isVisible() {
                 return hasSearchResult() && !rootModel.equals(scopeModel);
@@ -133,7 +136,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         final AjaxLink scopeLink = new AjaxLink("scope") {
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 folderService.setModel(scopeModel);
             }
 
@@ -154,7 +157,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         scopeContainer.add(scopeLink);
         form.add(scopeContainer);
 
-        WebMarkupContainer allContainer = new WebMarkupContainer("all-container") {
+        final WebMarkupContainer allContainer = new WebMarkupContainer("all-container") {
             @Override
             public boolean isVisible() {
                 return hasSearchResult();
@@ -162,8 +165,8 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         };
         final AjaxLink allLink = new AjaxLink("all") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
-                IModel<Node> backup = folderService.getModel();
+            public void onClick(final AjaxRequestTarget target) {
+                final IModel<Node> backup = folderService.getModel();
                 folderService.setModel(rootModel);
                 scopeModel = backup;
             }
@@ -179,12 +182,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         sectionTop = new WebMarkupContainer("section-top");
         sectionTop.setOutputMarkupId(true);
-        sectionTop.add(CssClass.append(new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return hasSearchResult() ? "search-result" : "";
-            }
-        }));
+        sectionTop.add(CssClass.append(ReadOnlyModel.of(() -> hasSearchResult() ? "search-result" : "")));
         sectionTop.add(form);
         add(sectionTop);
     }
@@ -193,8 +191,8 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         redrawSearch = true;
     }
 
-    private void updateSearch(boolean forceQuery) {
-        IModel<Node> model = folderService.getModel();
+    private void updateSearch(final boolean forceQuery) {
+        final IModel<Node> model = folderService.getModel();
         String scope = "/";
         if (model instanceof JcrNodeModel) {
             scope = ((JcrNodeModel) model).getItemModel().getPath();
@@ -203,8 +201,10 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             if (Strings.isEmpty(query)) {
                 collection.setSearchResult(NO_RESULTS);
             } else {
-                TextSearchBuilder sb = new TextSearchBuilder();
-                sb.setScope(new String[] { scope });
+                final String queryName = StringUtils.startsWith(scope, GALLERY_PATH) ?
+                        IMAGE_QUERY_NAME : TextSearchBuilder.TEXT_QUERY_NAME;
+                final TextSearchBuilder sb = new TextSearchBuilder(queryName);
+                sb.setScope(new String[]{scope});
                 sb.setWildcardSearch(true);
                 sb.setText(query);
                 sb.setIncludePrimaryTypes(getPluginConfig().getStringArray("nodetypes"));
@@ -226,7 +226,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     }
 
     @Override
-    public void render(PluginRequestTarget target) {
+    public void render(final PluginRequestTarget target) {
         if (target != null) {
             if (redrawSearch && isVisibleInHierarchy()) {
                 target.add(sectionTop);
@@ -235,7 +235,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         super.render(target);
     }
 
-    public void onFolderChange(IModel<Node> model) {
+    public void onFolderChange(final IModel<Node> model) {
         folderService.updateModel(model);
         collection.setFolder(model);
 
@@ -244,7 +244,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         }
     }
 
-    public void select(IModel<Node> document) {
+    public void select(final IModel<Node> document) {
         if (document == null) {
             return;
         }
@@ -253,16 +253,16 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         if (hasSearchResult()) {
             if (!BrowserHelper.isFolder(document)) {
                 toBrowseMode = true;
-                Node docNode = document.getObject();
+                final Node docNode = document.getObject();
                 if (docNode != null) {
-                    BrowserSearchResult bsr = collection.getSearchResult().getObject();
-                    QueryResult result = bsr.getQueryResult();
+                    final BrowserSearchResult bsr = collection.getSearchResult().getObject();
+                    final QueryResult result = bsr.getQueryResult();
                     try {
-                        NodeIterator nodes = result.getNodes();
+                        final NodeIterator nodes = result.getNodes();
                         while (nodes.hasNext()) {
-                            Node node = nodes.nextNode();
+                            final Node node = nodes.nextNode();
                             if (node != null && node.getDepth() > 0) {
-                                Node parent = node.getParent();
+                                final Node parent = node.getParent();
                                 if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
                                     if (parent.isSame(docNode)) {
                                         return;
@@ -274,7 +274,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                                 }
                             }
                         }
-                    } catch (RepositoryException ex) {
+                    } catch (final RepositoryException ex) {
                         log.error("Error processing query results", ex);
                         return;
                     }
@@ -303,9 +303,9 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         return collection;
     }
 
-    public Match contains(IModel<Node> nodeModel) {
+    public Match contains(final IModel<Node> nodeModel) {
         try {
-            String path = nodeModel.getObject().getPath();
+            final String path = nodeModel.getObject().getPath();
             if (path != null && path.startsWith(rootPath)) {
                 Node node = nodeModel.getObject();
                 int distance = 0;
@@ -313,11 +313,11 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                     distance++;
                     node = node.getParent();
                 }
-                Match match = new Match();
+                final Match match = new Match();
                 match.setDistance(distance);
                 return match;
             }
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.error(e.getMessage());
         }
         return null;
@@ -334,8 +334,15 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     }
 
     @Override
-    public ResourceReference getIcon(IconSize type) {
+    public ResourceReference getIcon(final IconSize type) {
         return null;
+    }
+
+    @Override
+    protected void onDetach() {
+        rootModel.detach();
+        scopeModel.detach();
+        super.onDetach();
     }
 
     private boolean hasSearchResult() {
@@ -343,7 +350,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     }
 
     private Component createSearchIcon(final String id, final DocumentCollection collection) {
-        IModel<Icon> iconModel = new LoadableDetachableModel<Icon>() {
+        final IModel<Icon> iconModel = new LoadableDetachableModel<Icon>() {
             @Override
             protected Icon load() {
                 return collection.getType() == DocumentCollectionType.SEARCHRESULT ? Icon.TIMES : Icon.SEARCH;
@@ -353,7 +360,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     }
 
     private class SubmittingTextField extends TextField<String> implements IFormSubmittingComponent {
-        private SubmittingTextField(String id, IModel<String> model) {
+        private SubmittingTextField(final String id, final IModel<String> model) {
             super(id, model);
 
             add(new HTML5Attributes());
@@ -361,12 +368,12 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             add(new OnEnterAjaxBehavior() {
 
                 @Override
-                protected void onSubmit(AjaxRequestTarget target) {
+                protected void onSubmit(final AjaxRequestTarget target) {
                     updateSearch(true);
                 }
 
                 @Override
-                protected void onError(AjaxRequestTarget target) {
+                protected void onError(final AjaxRequestTarget target) {
                 }
             });
         }
@@ -396,11 +403,11 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
     private class FolderModelService extends ModelReference<Node> {
 
-        FolderModelService(IPluginConfig config, IModel<Node> document) {
+        FolderModelService(final IPluginConfig config, final IModel<Node> document) {
             super(config.getString("model.folder"), document);
         }
 
-        public void updateModel(IModel<Node> model) {
+        public void updateModel(final IModel<Node> model) {
             if (hasSearchResult()
                     || (getModel() != null && getModel().equals(scopeModel))) {
                 scopeModel = model;
@@ -409,7 +416,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
         }
 
         @Override
-        public void setModel(IModel<Node> model) {
+        public void setModel(final IModel<Node> model) {
             if (model == null) {
                 throw new IllegalArgumentException("invalid folder model null");
             } else if (model.getObject() == null) {
@@ -424,7 +431,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         private final AjaxLink scopeLink;
 
-        public SearchScopeModel(final AjaxLink scopeLink) {
+        SearchScopeModel(final AjaxLink scopeLink) {
             this.scopeLink = scopeLink;
         }
 

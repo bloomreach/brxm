@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,8 +25,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
@@ -41,6 +40,7 @@ import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
@@ -156,7 +156,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         });
 
         add(copyAction = new StdWorkflow("copy", new StringResourceModel("copy-label", this, null), context, getModel()) {
-            NodeModelWrapper destination = null;
+            NodeModelWrapper<Node> destination = null;
             String name = null;
 
             @Override
@@ -171,32 +171,29 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
-                destination = new NodeModelWrapper(getFolder()) {};
+                destination = new NodeModelWrapper<Node>(getFolder()) {};
 
                 try {
-                    IModel<StringCodec> codec = new AbstractReadOnlyModel<StringCodec>() {
-                        @Override
-                        public StringCodec getObject() {
-                            try {
-                                return getNodeNameCodec(getModelNode(), getFolder().getNode());
-                            } catch (RepositoryException e) {
-                                return getNodeNameCodec(getFolder().getNode());
-                            }
+                    IModel<StringCodec> codec = ReadOnlyModel.of(() -> {
+                        try {
+                            return getNodeNameCodec(getModelNode(), getFolder().getNode());
+                        } catch (RepositoryException e) {
+                            return getNodeNameCodec(getFolder().getNode());
                         }
-                    };
+                    });
 
-                    final CopyNameHelper copyNameHelper = new CopyNameHelper(codec,
-                            new StringResourceModel("copyof", DocumentWorkflowPlugin.this, null).getString());
-                    name = copyNameHelper.getCopyName(getModelNode().getDisplayName(),
-                            destination.getNodeModel().getNode());
+                    final CopyNameHelper copyNameHelper = new CopyNameHelper(codec, translate("copyof"));
+                    final Node destinationNode = destination.getChainedModel().getObject();
+                    name = copyNameHelper.getCopyName(getModelNode().getDisplayName(), destinationNode);
                 } catch (RepositoryException ex) {
                     return new ExceptionDialog(ex);
                 }
-                return new DestinationDialog(
-                        new StringResourceModel("copy-title", DocumentWorkflowPlugin.this, null),
-                        new StringResourceModel("copy-name", DocumentWorkflowPlugin.this, null),
-                        new PropertyModel<>(this, "name"),
-                        destination, getPluginContext(), getPluginConfig()) {
+                return new DestinationDialog(Model.of(translate("copy-title")),
+                                             Model.of(translate("copy-name")),
+                                             PropertyModel.of(this, "name"),
+                                             destination,
+                                             getPluginContext(),
+                                             getPluginConfig()) {
                     {
                         setOkEnabled(true);
                     }
@@ -220,7 +217,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                Node folder = destination != null ? destination.getNodeModel().getNode() : new JcrNodeModel("/").getNode();
+                Node folder = destination != null ? destination.getChainedModel().getObject() :
+                        new JcrNodeModel("/").getNode();
                 Node document = getModel().getNode();
 
                 String nodeName = getNodeNameCodec(document, folder).encode(name);
@@ -246,7 +244,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         });
 
         add(moveAction = new StdWorkflow("move", new StringResourceModel("move-label", this, null), context, getModel()) {
-            NodeModelWrapper destination;
+            NodeModelWrapper<Node> destination;
 
             @Override
             public String getSubMenu() {
@@ -269,10 +267,9 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
-                destination = new NodeModelWrapper(getFolder()) {
+                destination = new NodeModelWrapper<Node>(getFolder()) {
                 };
-                return new DestinationDialog(new StringResourceModel("move-title",
-                        DocumentWorkflowPlugin.this, null), null, null, destination,
+                return new DestinationDialog(Model.of(translate("move-title")), null, null, destination,
                         getPluginContext(), getPluginConfig()) {
                     @Override
                     public void invokeWorkflow() throws Exception {
@@ -294,7 +291,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected String execute(Workflow wf) throws Exception {
                 Node document = getModel().getNode();
-                Node folder = destination != null ? destination.getNodeModel().getObject()
+                Node folder = destination != null ? destination.getChainedModel().getObject()
                         : new JcrNodeModel("/").getNode();
 
                 String nodeName = document.getName();
@@ -433,6 +430,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
         hideOrDisable(info, "copy", copyAction);
         hideOrDisable(info, "listVersions", historyAction);
+    }
+
+    // Helper method for referencing translations from the DocumentWorkflowPlugin from nested anonymous classes
+    private String translate(final String key) {
+        return getString(key);
     }
 
     /**
