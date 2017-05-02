@@ -17,7 +17,7 @@
 
 
 class ProjectToggleController {
-  constructor($translate, OverlayService, ChannelService, ProjectService, ConfigService) {
+  constructor($translate, OverlayService, ChannelService, ProjectService, ConfigService, HippoIframeService) {
     'ngInject';
 
     this.$translate = $translate;
@@ -29,6 +29,7 @@ class ProjectToggleController {
     this.withBranch = [this.MASTER];
     this.selectedProject = this.MASTER;
     this.projectsEnabled = ConfigService.projectsEnabled;
+    this.HippoIframeService = HippoIframeService;
     if (this.projectsEnabled) {
       this._setProjects();
     }
@@ -41,15 +42,16 @@ class ProjectToggleController {
       });
   }
   projectChanged() {
-    if (this.selectedProject.id === this.MASTER.id) {
-      this.ProjectService.doSelectMaster();
+    if (this.selectedProject === this.MASTER) {
+      this.ProjectService.selectMaster();
       return;
     }
-    if (this.withBranch.contains(this.selectedProject)) {
-      this.ProjectService.doSelectBranch(this.selectedProject);
+    if (this.withBranch.indexOf(this.selectedProject) === -1) {
+      this.ProjectService.selectBranch(this.selectedProject);
     } else {
-      this.ProjectService.doCreateBranch(this.selectedProject);
+      this.ProjectService.createBranch(this.selectedProject);
     }
+    this.HippoIframeService.reload();
   }
 }
 

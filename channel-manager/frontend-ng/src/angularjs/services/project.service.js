@@ -35,15 +35,15 @@ class ProjectService {
       .then(result => result.data);
   }
 
-  doCreateBranch(project) {
+  createBranch(project) {
     this.HstService.doPut(null, this.ChannelService.getChannel().mountId, 'createbranch', project.id);
   }
 
-  doSelectBranch(project) {
+  selectBranch(project) {
     this.HstService.doPut(null, this.ChannelService.getChannel().mountId, 'selectbranch', project.id);
   }
 
-  doSelectMaster() {
+  selectMaster() {
     this.HstService.doPut(null, this.ChannelService.getChannel().mountId, 'selectmaster');
   }
 
