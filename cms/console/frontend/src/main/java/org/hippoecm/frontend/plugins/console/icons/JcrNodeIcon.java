@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.console.icons;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public class JcrNodeIcon {
     public static final String FA_UNKNOWN_NODE_CSS_CLASS = FA_CSS_CLASS + " " + FA_UNKNOWN_NODE_ICON_CLASS + " " + DEFAULT_NODE_CSS_CLASS;
 
     private static final List<String> nodeTypes = new ArrayList<>();
-    private static final Map<String, String> pathCssClass = new HashMap<>();
+    private static final Map<String, String> pathCssMatchers = new LinkedHashMap<>();
     private static final Map<String, FontAwesomeIcon> primaryTypeNameIcons = new HashMap<>();
 
     static {
@@ -177,15 +178,16 @@ public class JcrNodeIcon {
         primaryTypeNameIcons.put("targeting:services", FontAwesomeIcon.SUN_O);
         primaryTypeNameIcons.put("targeting:service", FontAwesomeIcon.CERTIFICATE);
 
-        pathCssClass.put("/hst:hst", "hst");
-        pathCssClass.put("/" + CONFIGURATION_PATH, "conf");
-        pathCssClass.put("/content", "content");
-        pathCssClass.put("/hippo:namespaces", "namespaces");
-        pathCssClass.put("/formdata", "formdata");
-        pathCssClass.put("/webfiles", "webfiles");
-        pathCssClass.put("/hippo:reports", "reports");
-        pathCssClass.put("/hippo:log", "log");
-        pathCssClass.put("/targeting:targeting", "targeting");
+        pathCssMatchers.put("^/hst:hst.*-preview.*$", "hst-preview");
+        pathCssMatchers.put("^/hst:hst.*$", "hst");
+        pathCssMatchers.put("^/" + CONFIGURATION_PATH + ".*$", "conf");
+        pathCssMatchers.put("^/content.*$", "content");
+        pathCssMatchers.put("^/hippo:namespaces.*$", "namespaces");
+        pathCssMatchers.put("^/formdata.*$", "formdata");
+        pathCssMatchers.put("^/webfiles.*$", "webfiles");
+        pathCssMatchers.put("^/hippo:reports.*$", "reports");
+        pathCssMatchers.put("^/hippo:log.*$", "log");
+        pathCssMatchers.put("^/targeting:targeting.*$", "targeting");
     }
 
     /**
@@ -250,9 +252,9 @@ public class JcrNodeIcon {
                 return VIRTUAL_NODE_CSS_CLASS;
             }
 
-            for (Map.Entry<String, String> pathColor : pathCssClass.entrySet()) {
-                if (path.startsWith(pathColor.getKey())) {
-                    return NODE_CSS_CLASS_PREFIX + pathColor.getValue();
+            for (Map.Entry<String, String> pathCssMatcher : pathCssMatchers.entrySet()) {
+                if (path.matches(pathCssMatcher.getKey())) {
+                    return NODE_CSS_CLASS_PREFIX + pathCssMatcher.getValue();
                 }
             }
         } catch (RepositoryException e) {
