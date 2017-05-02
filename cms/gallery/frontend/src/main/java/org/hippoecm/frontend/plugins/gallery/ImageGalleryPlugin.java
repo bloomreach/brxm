@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.columns.FallbackImageGalleryListColumnProvider;
@@ -41,15 +41,11 @@ import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.hippoecm.frontend.skin.Icon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin.Mode.LIST;
 import static org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin.Mode.THUMBNAILS;
 
 public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
-
-    final static Logger log = LoggerFactory.getLogger(ImageGalleryPlugin.class);
 
     private static final String CONFIG_GALLERY_THUMBNAIL_SIZE = "gallery.thumbnail.size";
 
@@ -62,15 +58,10 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
     public ImageGalleryPlugin(final IPluginContext context, final IPluginConfig config) throws RepositoryException {
         super(context, config);
 
-        this.setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
+        setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
 
         add(CssClass.append("image-gallery"));
-        add(CssClass.append(new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return mode == LIST ? "image-gallery-list" : "image-gallery-thumbnails";
-            }
-        }));
+        add(CssClass.append(ReadOnlyModel.of(() -> mode == LIST ? "image-gallery-list" : "image-gallery-thumbnails")));
 
         addButton(new GalleryModeButton("listButton", LIST, Icon.LIST_UL));
         addButton(new GalleryModeButton("thumbnailsButton", THUMBNAILS, Icon.THUMBNAILS));
@@ -95,7 +86,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
     }
 
     public List<ListColumn<Node>> getThumbnailModeColumns() {
-        int thumbnailSize = getPluginConfig().getAsInteger(ImageGalleryPlugin.CONFIG_GALLERY_THUMBNAIL_SIZE);
+        final int thumbnailSize = getPluginConfig().getAsInteger(CONFIG_GALLERY_THUMBNAIL_SIZE);
         return Arrays.asList(
                 ImageGalleryColumnProviderPlugin.createIconColumn(thumbnailSize, thumbnailSize),
                 ImageGalleryColumnProviderPlugin.NAME_COLUMN
@@ -118,7 +109,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
 
         private final Mode activatedMode;
 
-        public GalleryModeButton(final String id, final Mode activatedMode, final Icon icon) {
+        GalleryModeButton(final String id, final Mode activatedMode, final Icon icon) {
             super(id);
 
             this.activatedMode = activatedMode;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,6 +57,11 @@ public final class TestLocaleProvider implements ILocaleProvider {
 
     public HippoLocale getLocale(String name) {
         return locales.get(name);
+    }
+
+    @Override
+    public boolean isKnown(String locale) {
+        return locales.get(locale) != null;
     }
 
     public List<? extends HippoLocale> getLocales() {
