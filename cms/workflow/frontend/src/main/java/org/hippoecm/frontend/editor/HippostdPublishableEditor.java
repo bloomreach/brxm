@@ -149,9 +149,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 }
                 return state.draft;
             default:
-                if (state.draft != null) {
-                    return state.draft;
-                }
                 if (!compareToVersion && (state.unpublished == null || state.published == null)) {
                     throw new EditorException("Can only compare when both unpublished and published are present");
                 }
