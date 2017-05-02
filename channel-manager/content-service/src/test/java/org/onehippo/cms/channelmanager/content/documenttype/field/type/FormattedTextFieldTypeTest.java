@@ -47,10 +47,8 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @PrepareForTest({NamespaceUtils.class, HtmlProcessorFactory.class})
 public class FormattedTextFieldTypeTest {
 
-    private static final String DEFAULT_HTMLPROCESSOR_ID = "formatted";
-
     private FormattedTextFieldType initField(final String defaultJson, final String overlayedJson, final String appendedJson) {
-        return initField(defaultJson, overlayedJson, appendedJson, DEFAULT_HTMLPROCESSOR_ID, DEFAULT_HTMLPROCESSOR_ID);
+        return initField(defaultJson, overlayedJson, appendedJson, "formatted", "formatted");
     }
 
     private FormattedTextFieldType initField(final String defaultJson, final String overlayedJson, final String appendedJson,
@@ -88,13 +86,13 @@ public class FormattedTextFieldTypeTest {
 
     @Test
     public void getType() {
-        final FormattedTextFieldType field = new FormattedTextFieldType("", DEFAULT_HTMLPROCESSOR_ID);
+        final FormattedTextFieldType field = new FormattedTextFieldType("", "formatted");
         assertEquals(FieldType.Type.HTML, field.getType());
     }
 
     @Test
     public void configWithErrorsIsNull() {
-        final FormattedTextFieldType field = new FormattedTextFieldType("{ this is not valid json ", DEFAULT_HTMLPROCESSOR_ID);
+        final FormattedTextFieldType field = new FormattedTextFieldType("{ this is not valid json ", "formatted");
         assertNull(field.getConfig());
     }
 
@@ -130,7 +128,7 @@ public class FormattedTextFieldTypeTest {
                 .andReturn((HtmlProcessorFactory) () -> HtmlProcessorFactory.NOOP);
 
 
-        initField("", "", "", DEFAULT_HTMLPROCESSOR_ID, "custom-formatted");
+        initField("", "", "", "formatted", "custom-formatted");
         verifyAll();
     }
 }
