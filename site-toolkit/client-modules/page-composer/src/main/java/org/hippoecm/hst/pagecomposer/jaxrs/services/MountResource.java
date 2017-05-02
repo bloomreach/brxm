@@ -190,11 +190,24 @@ public class MountResource extends AbstractConfigResource {
         return ok("New Page model loaded successfully", newPageModelRepresentation);
     }
 
+    @GET
+    @Path("/currentbranch")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response currentBranch(@Context HttpServletRequest servletRequest) {
+        final Mount mount = getPageComposerContextService().getEditingMount();
+        final HttpSession session = servletRequest.getSession();
+        Map<String,String> mountToBranchIdMap = (Map<String,String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        if (mountToBranchIdMap == null || mountToBranchIdMap.get(mount.getIdentifier()) == null) {
+            return ok("No current branch", null);
+        }
+        return ok("Current branch id:", mountToBranchIdMap.get(mount.getIdentifier()));
+    }
+
     @PUT
     @Path("/selectbranch/{branchId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response selectBranch(@Context HttpServletRequest servletRequest, @PathParam("branchId") final String branchId) {
-        Mount editingMount = getPageComposerContextService().getEditingMount();
+        final Mount editingMount = getPageComposerContextService().getEditingMount();
         setMountToBranchId(servletRequest, branchId, editingMount);
         log.debug("Selected branch:{} of channel:{}", branchId, editingMount.getChannel());
         return ok("Branch selected successfully");
@@ -204,7 +217,7 @@ public class MountResource extends AbstractConfigResource {
     @Path("/selectmaster")
     @Produces(MediaType.APPLICATION_JSON)
     public Response selectMaster(@Context HttpServletRequest servletRequest) {
-        Mount editingMount = getPageComposerContextService().getEditingMount();
+        final Mount editingMount = getPageComposerContextService().getEditingMount();
         clearMountToBranchId(servletRequest, editingMount);
 
         log.debug("Selected master of channel:{}", editingMount.getChannel());
@@ -212,7 +225,7 @@ public class MountResource extends AbstractConfigResource {
     }
 
     private void clearMountToBranchId(final HttpServletRequest servletRequest, final Mount mount) {
-        HttpSession session = servletRequest.getSession();
+        final HttpSession session = servletRequest.getSession();
         Map<String,String> mountToBranchIdMap = (Map<String,String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
         if (mountToBranchIdMap != null) {
             mountToBranchIdMap.remove(mount.getIdentifier());
@@ -225,7 +238,7 @@ public class MountResource extends AbstractConfigResource {
     public Response createBranch(@Context HttpServletRequest servletRequest, @PathParam("branchId") final String branchId) {
         try {
             doCreateBranch(branchId);
-            Mount editingMount = getPageComposerContextService().getEditingMount();
+            final Mount editingMount = getPageComposerContextService().getEditingMount();
             log.debug("Create branch:{} from channel:{}", branchId, editingMount.getChannel());
             selectBranch(servletRequest, branchId);
             return ok("Branch created successfully");
