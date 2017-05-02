@@ -110,7 +110,7 @@ public class MountResourceBranchesTest extends MountResourceTest {
         if (response.getStatus() == 200) {
             HttpSession session = requestResponse.getRequest().getSession();
             Map<String, String> mountToBranchIdMap = (Map<String, String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
-            assertEquals(branchName, mountToBranchIdMap.get(mountId));
+            assertEquals(branchName + "-preview", mountToBranchIdMap.get(mountId));
         }
 
         final String restResponse = response.getContentAsString();
@@ -197,7 +197,7 @@ public class MountResourceBranchesTest extends MountResourceTest {
 
         final Map<String, String> mountToBranchMap = (Map<String, String>)requestResponse.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
         assertTrue(mountToBranchMap.containsKey(mountId));
-        assertEquals("foo", mountToBranchMap.get(mountId));
+        assertEquals("foo-preview", mountToBranchMap.get(mountId));
 
         final RequestResponseMock requestResponse2 = mockGetRequestResponse(
                 "http", "localhost", "/_rp/"+ mountId + "./selectmaster", null, "PUT");

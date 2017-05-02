@@ -50,9 +50,7 @@ import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.site.CompositeHstSite;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.configuration.site.HstSiteProvider;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
@@ -208,7 +206,7 @@ public class MountResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response selectBranch(@Context HttpServletRequest servletRequest, @PathParam("branchId") final String branchId) {
         final Mount editingMount = getPageComposerContextService().getEditingMount();
-        setMountToBranchId(servletRequest, branchId, editingMount);
+        setMountToPreviewBranchId(servletRequest, branchId, editingMount);
         log.debug("Selected branch:{} of channel:{}", branchId, editingMount.getChannel());
         return ok("Branch selected successfully");
     }
@@ -250,14 +248,18 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-    private void setMountToBranchId(final HttpServletRequest servletRequest, String branchId, final Mount mount) {
+    private void setMountToPreviewBranchId(final HttpServletRequest servletRequest, String branchId, final Mount mount) {
         HttpSession session = servletRequest.getSession();
         Map<String,String> mountToBranchIdMap = (Map<String,String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
         if (mountToBranchIdMap == null) {
             mountToBranchIdMap = new HashMap<>();
             session.setAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY, mountToBranchIdMap);
         }
-        mountToBranchIdMap.put(mount.getIdentifier(), branchId);
+        if (branchId.endsWith("-preview")) {
+            mountToBranchIdMap.put(mount.getIdentifier(), branchId);
+        } else {
+            mountToBranchIdMap.put(mount.getIdentifier(), branchId + "-preview");
+        }
     }
 
     private void doCreateBranch(final String branchId) throws RepositoryException, ClientException {
