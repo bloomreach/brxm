@@ -17,7 +17,6 @@
 package org.onehippo.cms.channelmanager.content.documenttype.util;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -83,21 +82,21 @@ public class NamespaceUtilsTest {
         assertThat(NamespaceUtils.getContentTypeRootNode("String", session).get(), equalTo(rootNode));
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void getRootNodeWithInvalidId() throws Exception {
         final Session session = createMock(Session.class);
 
-        NamespaceUtils.getContentTypeRootNode("bla:bla:bla", session).get();
+        assertFalse(NamespaceUtils.getContentTypeRootNode("bla:bla:bla", session).isPresent());
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void getRootNodeWithRepositoryException() throws Exception {
         final Session session = createMock(Session.class);
 
         expect(session.getNode("/hippo:namespaces/ns/testdocument")).andThrow(new RepositoryException());
         replay(session);
 
-        NamespaceUtils.getContentTypeRootNode("ns:testdocument", session).get();
+        assertFalse(NamespaceUtils.getContentTypeRootNode("ns:testdocument", session).isPresent());
     }
 
     @Test
@@ -107,8 +106,7 @@ public class NamespaceUtilsTest {
         expect(JcrUtils.getNodePathQuietly(contentTypeRootNode)).andReturn("/bla");
         expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andThrow(new RepositoryException());
 
-        replayAll();
-        replay(contentTypeRootNode);
+        replayAll(contentTypeRootNode);
 
         assertFalse(NamespaceUtils.getNodeTypeNode(contentTypeRootNode, false).isPresent());
 
@@ -522,16 +520,15 @@ public class NamespaceUtilsTest {
         assertFalse(NamespaceUtils.getPluginClassForField(editorFieldNode).isPresent());
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void getPluginClassWithRepositoryException() throws Exception {
         final Node editorFieldNode = createMock(Node.class);
 
         expect(editorFieldNode.hasProperty("plugin.class")).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(editorFieldNode)).andReturn("/bla");
-        replay(editorFieldNode);
-        replayAll();
+        replayAll(editorFieldNode);
 
-        NamespaceUtils.getPluginClassForField(editorFieldNode).get();
+        assertFalse(NamespaceUtils.getPluginClassForField(editorFieldNode).isPresent());
     }
 
     @Test
@@ -577,8 +574,7 @@ public class NamespaceUtilsTest {
         expect(editorNode.hasNode("root")).andReturn(true);
         expect(editorNode.getNode("root")).andReturn(layout);
         expect(NamespaceUtils.getPluginClassForField(layout)).andReturn(Optional.of("org.hippoecm.frontend.editor.layout.TwoColumn"));
-        replay(root, editorNode);
-        replayAll();
+        replayAll(root, editorNode);
 
         assertThat("2-col sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof TwoColumnFieldSorter);
     }
@@ -596,8 +592,7 @@ public class NamespaceUtilsTest {
         expect(editorNode.hasNode("root")).andReturn(true);
         expect(editorNode.getNode("root")).andReturn(layout);
         expect(NamespaceUtils.getPluginClassForField(layout)).andReturn(Optional.of("unknown"));
-        replay(root, editorNode);
-        replayAll();
+        replayAll(root, editorNode);
 
         assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof NodeOrderFieldSorter);
     }
@@ -615,8 +610,7 @@ public class NamespaceUtilsTest {
         expect(editorNode.hasNode("root")).andReturn(true);
         expect(editorNode.getNode("root")).andReturn(layout);
         expect(NamespaceUtils.getPluginClassForField(layout)).andReturn(Optional.empty());
-        replay(root, editorNode);
-        replayAll();
+        replayAll(root, editorNode);
 
         assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof NodeOrderFieldSorter);
     }
@@ -634,25 +628,24 @@ public class NamespaceUtilsTest {
         assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof NodeOrderFieldSorter);
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void retrieveFieldSorterNoEditorNode() throws Exception {
         final Node root = createMock(Node.class);
 
         expect(root.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(false);
         replay(root);
 
-        NamespaceUtils.retrieveFieldSorter(root).get();
+        assertFalse(NamespaceUtils.retrieveFieldSorter(root).isPresent());
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void retrieveFieldSorterRepositoryException() throws Exception {
         final Node root = createMock(Node.class);
 
         expect(root.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(root)).andReturn("/bla");
-        replay(root);
-        replayAll();
+        replayAll(root);
 
-        NamespaceUtils.retrieveFieldSorter(root).get();
+        assertFalse(NamespaceUtils.retrieveFieldSorter(root).isPresent());
     }
 }
