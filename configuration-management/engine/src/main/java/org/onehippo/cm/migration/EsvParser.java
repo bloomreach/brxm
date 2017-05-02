@@ -58,7 +58,8 @@ public class EsvParser extends DefaultHandler {
     private static final String[] IGNORED_PROPERTIES = new String[] {
             "hippo:paths",
             "hippo:related",
-            "hippo:related___pathreference"
+            "hippo:related___pathreference",
+            "hippostd:stateSummary"
     };
 
     private final File baseDir;

@@ -75,7 +75,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
-import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
 import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getBaseZipFileFromURL;
@@ -350,13 +350,9 @@ public class ConfigurationPersistenceService {
                 JCR_PRIMARYTYPE,
                 JCR_MIXINTYPES,
                 JCR_UUID,
-// todo: actually needed               HIPPO_AVAILABILITY,
                 HIPPO_RELATED,
                 HIPPO_PATHS,
-// todo: needed for now               HIPPOSTD_STATE,
-// todo: actually needed               HIPPOSTD_HOLDER,
-// todo: needed for now               HIPPOSTD_STATESUMMARY,
-                HIPPOSTDPUBWF_PUBLICATION_DATE
+                HIPPOSTD_STATESUMMARY
         };
         return ArrayUtils.contains(knownProtectedPropertyNames, modelPropertyName);
     }
