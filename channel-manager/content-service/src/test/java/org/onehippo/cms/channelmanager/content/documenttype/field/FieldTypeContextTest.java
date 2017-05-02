@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.FieldScanningContext;
+import org.onehippo.cms.channelmanager.content.documenttype.util.JcrBooleanReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrMultipleStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
@@ -220,6 +221,18 @@ public class FieldTypeContextTest {
 
         verify(contentTypeItem);
         PowerMock.verifyAll();
+    }
+
+    @Test
+    public void getBooleanConfig() {
+        final FieldTypeContext context = new FieldTypeContext(null, null);
+        final Optional<Boolean> value = Optional.of(true);
+
+        expect(NamespaceUtils.getConfigProperty(context, "test", JcrBooleanReader.get())).andReturn(value);
+
+        PowerMock.replayAll();
+
+        assertThat(context.getBooleanConfig("test"), equalTo(value));
     }
 
     @Test

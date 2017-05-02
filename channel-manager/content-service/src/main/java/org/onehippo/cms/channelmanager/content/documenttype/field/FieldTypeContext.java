@@ -16,12 +16,14 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.jcr.Node;
 
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.FieldScanningContext;
+import org.onehippo.cms.channelmanager.content.documenttype.util.JcrBooleanReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrMultipleStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
@@ -57,7 +59,7 @@ public class FieldTypeContext {
         return context.getFieldScanningContexts()
                 .stream()
                 .map(scanningContext -> createForParentType(scanningContext, fieldName, context, editorFieldConfigNode))
-                .filter(fieldContext -> fieldContext != null)
+                .filter(Objects::nonNull)
                 .findFirst();
     }
 
@@ -105,6 +107,10 @@ public class FieldTypeContext {
     public Optional<ContentTypeContext> createContextForCompound() {
         final String id = getContentTypeItem().getItemType();
         return ContentTypeContext.createFromParent(id, getParentContext());
+    }
+
+    public Optional<Boolean> getBooleanConfig(final String propertyName) {
+        return NamespaceUtils.getConfigProperty(this, propertyName, JcrBooleanReader.get());
     }
 
     public Optional<String> getStringConfig(final String propertyName) {
