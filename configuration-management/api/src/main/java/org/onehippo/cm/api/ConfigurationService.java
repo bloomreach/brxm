@@ -24,6 +24,18 @@ import org.onehippo.cms7.services.SingletonService;
 @SingletonService
 public interface ConfigurationService {
 
+    /**
+     * Apply the whole or a part of a merged configuration model to the JCR as the new active configuration.
+     * @param mergedModel the configuration model to apply
+     * @param includeDefinitionTypes the set of definition types to apply -- may be a subset
+     */
     void apply(final MergedModel mergedModel, final EnumSet<DefinitionType> includeDefinitionTypes) throws Exception;
+
+    /**
+     * Store a merged configuration model as a baseline configuration in the JCR.
+     * The provided MergedModel is assumed to be fully formed and validated.
+     * @param mergedModel the configuration model to store as the new baseline
+     */
+    void storeBaseline(final MergedModel mergedModel) throws Exception;
 
 }

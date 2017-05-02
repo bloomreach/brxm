@@ -15,11 +15,13 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -35,12 +37,13 @@ public class ModuleImpl implements Module {
     private final String name;
     private final Project project;
 
+    /**
+     * Warning! not preserved in final MergedModel!
+     */
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
     private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator.comparing(Source::getPath));
-
-    private final Set<SourceImpl> contentSortedSources = new TreeSet<>(Comparator.comparing(Source::getPath));
 
     private final Set<Source> sources = Collections.unmodifiableSet(sortedSources);
 
@@ -164,6 +167,8 @@ public class ModuleImpl implements Module {
     }
 
     void pushDefinitions(final ModuleImpl module) {
+        this.sortedSources.addAll(module.sortedSources);
+
         // sort definitions into the different types
         module.getSources().forEach(source ->
                 source.getDefinitions().forEach(definition -> {
@@ -226,5 +231,11 @@ public class ModuleImpl implements Module {
                     this.getProject().equals(otherModule.getProject());
         }
         return false;
+    }
+
+    // hashCode() and equals() should be consistent!
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, project);
     }
 }

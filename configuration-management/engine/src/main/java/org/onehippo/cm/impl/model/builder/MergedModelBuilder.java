@@ -16,10 +16,13 @@
 
 package org.onehippo.cm.impl.model.builder;
 
+import java.nio.file.FileSystem;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
@@ -45,6 +48,9 @@ public class MergedModelBuilder {
     private final Map<String, ConfigurationImpl> configurationMap = new HashMap<>();
     private final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
 
+    // Used for cleanup when done with this MergedModel
+    private final Set<FileSystem> filesystems = new HashSet<>();
+
     public MergedModel build() {
         sort();
 
@@ -65,6 +71,8 @@ public class MergedModelBuilder {
         );
         mergedModel.setConfigurationRootNode(configurationTreeBuilder.build());
         mergedModel.addResourceInputProviders(resourceInputProviders);
+
+        mergedModel.setFileSystems(filesystems);
 
         return mergedModel;
     }
@@ -113,5 +121,14 @@ public class MergedModelBuilder {
     private void sort() {
         configurationSorter.sort(configurations);
         configurations.forEach(ConfigurationImpl::sortProjects);
+    }
+
+    /**
+     * Track a FileSystem for later cleanup in MergedModel#close().
+     * @param fs
+     * @see MergedModel#close()
+     */
+    public void addFileSystem(FileSystem fs) {
+        filesystems.add(fs);
     }
 }

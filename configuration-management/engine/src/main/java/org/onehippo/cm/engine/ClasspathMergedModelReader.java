@@ -35,6 +35,16 @@ import static org.onehippo.cm.engine.Constants.REPO_CONFIG_YAML;
 
 public class ClasspathMergedModelReader {
 
+    /**
+     * Searches the classpath for module manifest files and uses these as entry points for loading HCM module
+     * configuration and content into a MergedModel.
+     *
+     * @param classLoader the ClassLoader which will be searched for HCM modules
+     * @param verifyOnly TODO explain this
+     * @return a MergedModel of configuration and content definitions
+     * @throws IOException
+     * @throws ParserException
+     */
     public MergedModel read(final ClassLoader classLoader, final boolean verifyOnly)
             throws IOException, ParserException {
         final Enumeration<URL> resources = classLoader.getResources(REPO_CONFIG_YAML);
@@ -44,16 +54,20 @@ public class ClasspathMergedModelReader {
             // note: the below mapping of resource url to path assumes the jar physically exists on the filesystem,
             // using a non-exploded war based classloader might fail here, but that is (currently) not supported anyway
             Path jarPath = Paths.get(resource.getFile().substring("file:".length(), resource.getFile().lastIndexOf("!/")));
-            try (FileSystem fs = FileSystems.newFileSystem(jarPath, null)) {
-                final Path repoConfig = fs.getPath(REPO_CONFIG_YAML);
-                final PathConfigurationReader.ReadResult result =
-                        new PathConfigurationReader().read(repoConfig, verifyOnly);
-                Map<Module, ModuleContext> resourceInputProviders = result.getModuleContexts();
-                Map<Module, ResourceInputProvider> configInputProviders = resourceInputProviders.entrySet().stream() //TODO SS: review this transformation
-                        .collect(toMap(Map.Entry::getKey, v -> v.getValue().getConfigInputProvider()));
 
-                builder.push(result.getConfigurations(), configInputProviders);
-            }
+            // FileSystems must remain open for the life of a MergedModel, and must be closed when processing is complete
+            // via MergedModel.close()!
+            FileSystem fs = FileSystems.newFileSystem(jarPath, null);
+            builder.addFileSystem(fs);
+
+            final Path repoConfig = fs.getPath(REPO_CONFIG_YAML);
+            final PathConfigurationReader.ReadResult result =
+                    new PathConfigurationReader().read(repoConfig, verifyOnly);
+            Map<Module, ModuleContext> resourceInputProviders = result.getModuleContexts();
+            Map<Module, ResourceInputProvider> configInputProviders = resourceInputProviders.entrySet().stream() //TODO SS: review this transformation
+                    .collect(toMap(Map.Entry::getKey, v -> v.getValue().getConfigInputProvider()));
+
+            builder.push(result.getConfigurations(), configInputProviders);
         }
         return builder.build();
     }

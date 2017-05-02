@@ -16,10 +16,14 @@
 
 package org.onehippo.cm.impl;
 
+import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
@@ -43,6 +47,9 @@ public class MergedModelImpl implements MergedModel {
     private ConfigurationNode configurationRootNode;
     private final List<WebFileBundleDefinition> webFileBundleDefinitions = new ArrayList<>();
     private final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
+
+    // Used for cleanup when done with this MergedModel
+    private Set<FileSystem> filesystems = new HashSet<>();
 
     @Override
     public List<Configuration> getSortedConfigurations() {
@@ -107,6 +114,23 @@ public class MergedModelImpl implements MergedModel {
                 throw new IllegalArgumentException(msg);
             }
             this.resourceInputProviders.put(module, resourceInputProviders.get(module));
+        }
+    }
+
+    /**
+     * Used for cleaning up resources in close(), when client code is done with this model.
+     */
+    public void setFileSystems(Set<FileSystem> fs) {
+        this.filesystems = fs;
+    }
+
+    /**
+     * Closes open FileSystems used by ResourceInputProviders.
+     * @throws IOException
+     */
+    public void close() throws IOException {
+        for (FileSystem fs : filesystems) {
+            fs.close();
         }
     }
 

@@ -73,6 +73,15 @@ public class PathConfigurationReader {
         return read(repoConfigPath, false);
     }
 
+    /**
+     * Read the module dependency data to extract the raw components of a configuration model.
+     * These raw portions of config will be assembled into a MergedModel later.
+     * @param repoConfigPath
+     * @param verifyOnly
+     * @return
+     * @throws IOException
+     * @throws ParserException
+     */
     public ReadResult read(final Path repoConfigPath, final boolean verifyOnly) throws IOException, ParserException {
         final RepoConfigParser repoConfigParser = new RepoConfigParser(explicitSequencing);
         final Map<String, Configuration> configurations =

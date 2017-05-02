@@ -21,8 +21,30 @@ import java.net.URL;
 
 import org.onehippo.cm.api.model.Source;
 
+/**
+ * Abstracts access to configuration module content from various storage formats, e.g. classpath, the native FileSystem,
+ * or the JCR.
+ */
 public interface ResourceInputProvider {
+    /**
+     * Can an InputProvider be created for a given resource reference, relative to the given YAML Source or the module
+     * root?
+     * @param source the base YAML Source from which a reference should be resolved, or null if the module root should be used
+     * @param resourcePath a relative path from the source, or an absolute path from the module root, to the desired resource
+     */
     boolean hasResource(final Source source, final String resourcePath);
+
+    /**
+     * Get an InputProvider to resolve a resource reference in a YAML Source or from the module root. Note, caller is
+     * responsible for closing the stream when finished with it.
+     * @param source the base YAML Source from which a reference should be resolved, or null if the module root should be used
+     * @param resourcePath a relative path from the source, or an absolute path from the module root, to the desired resource
+     * @throws IOException
+     */
     InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException;
+
+    /**
+     * @return the root URL of the Module for which this ResourceInputProvider is responsible.
+     */
     URL getModuleRoot();
 }
