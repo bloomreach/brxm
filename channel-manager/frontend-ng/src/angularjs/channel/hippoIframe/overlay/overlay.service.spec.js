@@ -401,7 +401,7 @@ describe('OverlayService', () => {
   });
 
   it('syncs the position of overlay elements in edit mode', (done) => {
-    OverlayService.setMode('edit');
+    OverlayService.setComponentsOverlay(true);
     loadIframeFixture(() => {
       const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
 
@@ -437,7 +437,7 @@ describe('OverlayService', () => {
   });
 
   it('takes the scroll position of the iframe into account when positioning overlay elements', (done) => {
-    OverlayService.setMode('view');
+    OverlayService.setContentOverlay(true);
     loadIframeFixture(() => {
       // enlarge body so the iframe can scroll
       const body = iframe('body');
@@ -542,7 +542,7 @@ describe('OverlayService', () => {
     const editMenuHandler = jasmine.createSpy('editMenuHandler');
 
     OverlayService.onEditMenu(editMenuHandler);
-    OverlayService.setMode('edit');
+    OverlayService.setComponentsOverlay(true);
     loadIframeFixture(() => {
       const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
 
@@ -556,7 +556,7 @@ describe('OverlayService', () => {
   });
 
   it('removes overlay elements when they are no longer part of the page structure', (done) => {
-    OverlayService.setMode('edit');
+    OverlayService.setComponentsOverlay(true);
 
     loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(10);
