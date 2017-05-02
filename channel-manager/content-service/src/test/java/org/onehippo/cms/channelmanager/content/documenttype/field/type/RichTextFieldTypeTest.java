@@ -25,6 +25,8 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -103,6 +105,25 @@ public class RichTextFieldTypeTest {
         expect(fieldContext.getStringConfig("ckeditor.config.appended.json")).andReturn(Optional.empty());
         expect(fieldContext.getStringConfig("htmlprocessor.id")).andReturn(Optional.of("richtext"));
 
+        expect(fieldContext.getBooleanConfig("linkpicker.language.context.aware")).andReturn(Optional.empty());
+        expect(fieldContext.getBooleanConfig("linkpicker.last.visited.enabled")).andReturn(Optional.of(true));
+        expect(fieldContext.getBooleanConfig("linkpicker.open.in.new.window.enabled")).andReturn(Optional.of(false));
+        expect(fieldContext.getStringConfig("linkpicker.base.uuid")).andReturn(Optional.of("cafebabe"));
+        expect(fieldContext.getStringConfig("linkpicker.cluster.name")).andReturn(Optional.of("linkpicker-cluster"));
+        expect(fieldContext.getStringConfig("linkpicker.last.visited.key")).andReturn(Optional.of("linkpicker-last-visited-key"));
+        expect(fieldContext.getMultipleStringConfig("linkpicker.last.visited.nodetypes")).andReturn(Optional.of(new String[]{"hippostd:folder"}));
+        expect(fieldContext.getMultipleStringConfig("linkpicker.nodetypes")).andReturn(Optional.of(new String[]{"hippo:document"}));
+
+        expect(fieldContext.getBooleanConfig("imagepicker.last.visited.enabled")).andReturn(Optional.of(true));
+        expect(fieldContext.getStringConfig("imagepicker.base.uuid")).andReturn(Optional.of("cafebabe"));
+        expect(fieldContext.getStringConfig("imagepicker.cluster.name")).andReturn(Optional.of("imagepicker-cluster"));
+        expect(fieldContext.getStringConfig("imagepicker.last.visited.key")).andReturn(Optional.of("imagepicker-last-visited-key"));
+        expect(fieldContext.getStringConfig("imagepicker.preferred.image.variant")).andReturn(Optional.of("hippogallery:original"));
+        expect(fieldContext.getMultipleStringConfig("excluded.image.variants")).andReturn(Optional.of(new String[]{"hippogallery:thumbnail"}));
+        expect(fieldContext.getMultipleStringConfig("imagepicker.last.visited.nodetypes")).andReturn(Optional.of(new String[]{"hippostd:folder"}));
+        expect(fieldContext.getMultipleStringConfig("imagepicker.nodetypes")).andReturn(Optional.of(new String[]{"hippostd:gallery"}));
+        expect(fieldContext.getMultipleStringConfig("included.image.variants")).andReturn(Optional.of(new String[0]));
+
         mockStatic(HtmlProcessorFactory.class);
         expect(HtmlProcessorFactory.of(eq("richtext")))
                 .andReturn((HtmlProcessorFactory) () -> htmlProcessor != null ? htmlProcessor : HtmlProcessorFactory.NOOP).anyTimes();
@@ -152,6 +173,35 @@ public class RichTextFieldTypeTest {
 
     private static void assertNoWarningsLogged(final Code code, final Code... verifications) throws Exception {
         assertWarningsLogged(0, code, verifications);
+    }
+
+    @Test
+    public void readHippoPickerConfig() throws Exception {
+        final RichTextFieldType field = initField();
+        final JsonNode hippopicker = field.getConfig().get("hippopicker");
+
+        assertNoWarningsLogged(() -> {
+            final JsonNode internalLink = hippopicker.get("internalLink");
+            assertFalse(internalLink.has("language.context.aware"));
+            assertThat(internalLink.get("last.visited.enabled").booleanValue(), equalTo(true));
+            assertThat(internalLink.get("open.in.new.window.enabled").booleanValue(), equalTo(false));
+            assertThat(internalLink.get("base.uuid").asText(), equalTo("cafebabe"));
+            assertThat(internalLink.get("cluster.name").asText(), equalTo("linkpicker-cluster"));
+            assertThat(internalLink.get("last.visited.key").asText(), equalTo("linkpicker-last-visited-key"));
+            assertThat(internalLink.get("last.visited.nodetypes").toString(), equalTo("[\"hippostd:folder\"]"));
+            assertThat(internalLink.get("nodetypes").toString(), equalTo("[\"hippo:document\"]"));
+
+            final JsonNode image = hippopicker.get("image");
+            assertThat(image.get("last.visited.enabled").booleanValue(), equalTo(true));
+            assertThat(image.get("base.uuid").asText(), equalTo("cafebabe"));
+            assertThat(image.get("cluster.name").asText(), equalTo("imagepicker-cluster"));
+            assertThat(image.get("last.visited.key").asText(), equalTo("imagepicker-last-visited-key"));
+            assertThat(image.get("preferred.image.variant").asText(), equalTo("hippogallery:original"));
+            assertThat(image.get("excluded.image.variants").toString(), equalTo("[\"hippogallery:thumbnail\"]"));
+            assertThat(image.get("last.visited.nodetypes").toString(), equalTo("[\"hippostd:folder\"]"));
+            assertThat(image.get("nodetypes").toString(), equalTo("[\"hippostd:gallery\"]"));
+            assertThat(image.get("included.image.variants").toString(), equalTo("[]"));
+        });
     }
 
     @Test

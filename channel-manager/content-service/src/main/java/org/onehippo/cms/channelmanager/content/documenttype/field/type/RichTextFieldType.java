@@ -25,18 +25,20 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.ckeditor.CKEditorConfig;
+import org.onehippo.ckeditor.HippoPicker;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
 import org.onehippo.cms7.services.processor.html.model.HtmlProcessorModel;
 import org.onehippo.cms7.services.processor.html.model.Model;
 import org.onehippo.cms7.services.processor.html.visit.Tag;
@@ -51,6 +53,40 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
 
     private static final Logger log = LoggerFactory.getLogger(RichTextFieldType.class);
 
+    private static final String[] LINKPICKER_BOOLEAN_PROPERTIES = {
+            "linkpicker.language.context.aware",
+            "linkpicker.last.visited.enabled",
+            "linkpicker.open.in.new.window.enabled"
+    };
+    private static final String[] LINKPICKER_STRING_PROPERTIES = {
+            "linkpicker.base.uuid",
+            "linkpicker.cluster.name",
+            "linkpicker.last.visited.key"
+    };
+    private static final String[] LINKPICKER_MULTIPLE_STRING_PROPERTIES = {
+            "linkpicker.last.visited.nodetypes",
+            "linkpicker.nodetypes"
+    };
+    private static final String LINKPICKER_REMOVED_PREFIX = "linkpicker.";
+
+    private static final String[] IMAGEPICKER_BOOLEAN_PROPERTIES = {
+            "imagepicker.last.visited.enabled"
+    };
+    private static final String[] IMAGEPICKER_STRING_PROPERTIES = {
+            "imagepicker.base.uuid",
+            "imagepicker.cluster.name",
+            "imagepicker.last.visited.key",
+            "imagepicker.preferred.image.variant"
+    };
+
+    private static final String[] IMAGEPICKER_MULTIPLE_PROPERTIES = {
+            "excluded.image.variants",
+            "imagepicker.last.visited.nodetypes",
+            "imagepicker.nodetypes",
+            "included.image.variants"
+    };
+    private static final String IMAGEPICKER_REMOVED_PREFIX = "imagepicker.";
+
     private static final String DEFAULT_HTMLPROCESSOR_ID = "richtext";
 
     // Images are rendered with a relative path, pointing to the binaries servlet. The binaries servlet always
@@ -64,6 +100,59 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
 
     void initListBasedChoice(final String choiceId) {
         setId(choiceId);
+    }
+
+    @Override
+    public void init(final FieldTypeContext fieldContext) {
+        super.init(fieldContext);
+
+        final ObjectNode hippoPickerConfig = getConfig().with(HippoPicker.CONFIG_KEY);
+        initInternalLinkPicker(fieldContext, hippoPickerConfig);
+        initImagePicker(fieldContext, hippoPickerConfig);
+    }
+
+    private void initInternalLinkPicker(final FieldTypeContext fieldContext, final ObjectNode hippoPickerConfig) {
+        final ObjectNode internalLinkConfig = hippoPickerConfig.with(HippoPicker.InternalLink.CONFIG_KEY);
+        readBooleanConfig(internalLinkConfig, LINKPICKER_BOOLEAN_PROPERTIES, LINKPICKER_REMOVED_PREFIX, fieldContext);
+        readStringConfig(internalLinkConfig, LINKPICKER_STRING_PROPERTIES, LINKPICKER_REMOVED_PREFIX, fieldContext);
+        readMultipleStringConfig(internalLinkConfig, LINKPICKER_MULTIPLE_STRING_PROPERTIES, LINKPICKER_REMOVED_PREFIX, fieldContext);
+    }
+
+    private void initImagePicker(final FieldTypeContext fieldContext, final ObjectNode hippoPickerConfig) {
+        final ObjectNode imagePickerConfig = hippoPickerConfig.with(HippoPicker.Image.CONFIG_KEY);
+        readBooleanConfig(imagePickerConfig, IMAGEPICKER_BOOLEAN_PROPERTIES, IMAGEPICKER_REMOVED_PREFIX, fieldContext);
+        readStringConfig(imagePickerConfig, IMAGEPICKER_STRING_PROPERTIES, IMAGEPICKER_REMOVED_PREFIX, fieldContext);
+        readMultipleStringConfig(imagePickerConfig, IMAGEPICKER_MULTIPLE_PROPERTIES, IMAGEPICKER_REMOVED_PREFIX, fieldContext);
+    }
+
+    private void readBooleanConfig(final ObjectNode config, final String[] propertyNames, final String removePrefix, final FieldTypeContext fieldContext) {
+        for (String propertyName : propertyNames) {
+            fieldContext.getBooleanConfig(propertyName).ifPresent((value) -> {
+                final String key = StringUtils.removeStart(propertyName, removePrefix);
+                config.put(key, value);
+            });
+        }
+    }
+
+    private void readStringConfig(final ObjectNode config, final String[] propertyNames, final String removePrefix, final FieldTypeContext fieldContext) {
+        for (String propertyName : propertyNames) {
+            fieldContext.getStringConfig(propertyName).ifPresent((value) -> {
+                final String key = StringUtils.removeStart(propertyName, removePrefix);
+                config.put(key, value);
+            });
+        }
+    }
+
+    private void readMultipleStringConfig(final ObjectNode config, final String[] propertyNames, final String removePrefix, final FieldTypeContext fieldContext) {
+        for (String propertyName : propertyNames) {
+            fieldContext.getMultipleStringConfig(propertyName).ifPresent((values -> {
+                final String key = StringUtils.removeStart(propertyName, removePrefix);
+                final ArrayNode array = config.putArray(key);
+                for (String value : values) {
+                    array.add(value);
+                }
+            }));
+        }
     }
 
     @Override
