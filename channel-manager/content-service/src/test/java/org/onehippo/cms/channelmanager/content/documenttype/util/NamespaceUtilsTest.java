@@ -49,6 +49,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -106,7 +107,7 @@ public class NamespaceUtilsTest {
         expect(JcrUtils.getNodePathQuietly(contentTypeRootNode)).andReturn("/bla");
         expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andThrow(new RepositoryException());
 
-        PowerMock.replayAll();
+        replayAll();
         replay(contentTypeRootNode);
 
         assertFalse(NamespaceUtils.getNodeTypeNode(contentTypeRootNode, false).isPresent());
@@ -182,7 +183,7 @@ public class NamespaceUtilsTest {
         expect(contentTypeRootNode.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(contentTypeRootNode)).andReturn("/bla");
 
-        PowerMock.replayAll();
+        replayAll();
         replay(contentTypeRootNode);
 
         assertTrue(NamespaceUtils.getEditorFieldConfigNodes(contentTypeRootNode).isEmpty());
@@ -228,7 +229,7 @@ public class NamespaceUtilsTest {
         expect(nodeTypeNode.hasNode("fieldName")).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(nodeTypeNode)).andReturn("/bla");
 
-        PowerMock.replayAll();
+        replayAll();
         replay(nodeTypeNode);
 
         assertFalse(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode, "fieldName").isPresent());
@@ -330,10 +331,10 @@ public class NamespaceUtilsTest {
         final String propertyName = "maxlength";
         final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final Node editorFieldConfigNode = createMock(Node.class);
-        final Node clusterOptionsNode = createMock(Node.class);
-        final Node contentTypeRootNode = createMock(Node.class);
-        final Node contentTypeEditorConfigNode = createMock(Node.class);
+        final Node editorFieldConfigNode = createMock("editorFieldConfigNode", Node.class);
+        final Node clusterOptionsNode = createMock("clusterOptionNode", Node.class);
+        final Node contentTypeRootNode = createMock("contentTypeRootNode", Node.class);
+        final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
         final Property property = createMock(Property.class);
         final Session session = createMock(Session.class);
         final FieldTypeContext fieldContext = new FieldTypeContext(contentTypeItem, parentContext, editorFieldConfigNode);
@@ -362,10 +363,10 @@ public class NamespaceUtilsTest {
         final String propertyName = "maxlength";
         final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final Node editorFieldConfigNode = createMock(Node.class);
-        final Node clusterOptionsNode = createMock(Node.class);
-        final Node contentTypeRootNode = createMock(Node.class);
-        final Node contentTypeEditorConfigNode = createMock(Node.class);
+        final Node editorFieldConfigNode = createMock("editorFieldConfigNode", Node.class);
+        final Node clusterOptionsNode = createMock("clusterOptionNode", Node.class);
+        final Node contentTypeRootNode = createMock("contentTypeRootNode", Node.class);
+        final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
         final Property property = createMock(Property.class);
         final Session session = createMock(Session.class);
         final FieldTypeContext fieldContext = new FieldTypeContext(contentTypeItem, parentContext, editorFieldConfigNode);
@@ -382,6 +383,117 @@ public class NamespaceUtilsTest {
         replay(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
 
         assertFalse(NamespaceUtils.getConfigProperty(fieldContext, propertyName).isPresent());
+
+        verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+    }
+
+    @Test
+    public void getConfigMultiplePropertyFromClusterOptions() throws Exception {
+        final String propertyName = "nodetypes";
+        final Node editorFieldConfigNode = createMock(Node.class);
+        final Node clusterOptionsNode = createMock(Node.class);
+        final Property property = createMock(Property.class);
+        final FieldTypeContext fieldContext = new FieldTypeContext(null, null, editorFieldConfigNode);
+
+        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(true);
+        expect(editorFieldConfigNode.getNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(clusterOptionsNode);
+        expect(JcrUtils.getMultipleStringProperty(clusterOptionsNode, propertyName, null)).andReturn(new String[] { "hippostd:folder" });
+
+        replayAll(editorFieldConfigNode, clusterOptionsNode, property);
+
+        assertThat(NamespaceUtils.getConfigMultipleProperty(fieldContext, propertyName).get()[0],
+                equalTo("hippostd:folder"));
+
+        verify(editorFieldConfigNode, clusterOptionsNode, property);
+    }
+
+    @Test
+    public void getConfigMultiplePropertyNotInClusterOptionsFromType() throws Exception {
+        final String propertyName = "nodetypes";
+        final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        final Node editorFieldConfigNode = createMock("editorFieldConfigNode", Node.class);
+        final Node clusterOptionsNode = createMock("clusterOptionNode", Node.class);
+        final Node contentTypeRootNode = createMock("contentTypeRootNode", Node.class);
+        final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
+        final Property property = createMock(Property.class);
+        final Session session = createMock(Session.class);
+        final FieldTypeContext fieldContext = new FieldTypeContext(contentTypeItem, parentContext, editorFieldConfigNode);
+
+        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(true);
+        expect(editorFieldConfigNode.getNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(clusterOptionsNode);
+        expect(JcrUtils.getMultipleStringProperty(clusterOptionsNode, propertyName, null)).andReturn(null);
+
+        expect(contentTypeItem.getItemType()).andReturn("hippo:fieldtype");
+        expect(parentContext.getSession()).andReturn(session);
+        expect(session.getNode("/hippo:namespaces/hippo/fieldtype")).andReturn(contentTypeRootNode);
+        expect(contentTypeRootNode.hasNode("editor:templates/_default_")).andReturn(true);
+        expect(contentTypeRootNode.getNode("editor:templates/_default_")).andReturn(contentTypeEditorConfigNode);
+        expect(JcrUtils.getMultipleStringProperty(contentTypeEditorConfigNode, propertyName, null)).andReturn(new String[] { "hippostd:folder" });
+
+        replayAll(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+
+        assertThat(NamespaceUtils.getConfigMultipleProperty(fieldContext, propertyName).get()[0],
+                equalTo("hippostd:folder"));
+
+        verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+    }
+
+    @Test
+    public void getConfigMultiplePropertyNoClusterOptionsFromType() throws Exception {
+        final String propertyName = "nodetypes";
+        final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        final Node editorFieldConfigNode = createMock("editorFieldConfigNode", Node.class);
+        final Node clusterOptionsNode = createMock("clusterOptionNode", Node.class);
+        final Node contentTypeRootNode = createMock("contentTypeRootNode", Node.class);
+        final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
+        final Property property = createMock(Property.class);
+        final Session session = createMock(Session.class);
+        final FieldTypeContext fieldContext = new FieldTypeContext(contentTypeItem, parentContext, editorFieldConfigNode);
+
+        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(false);
+
+        expect(contentTypeItem.getItemType()).andReturn("hippo:fieldtype");
+        expect(parentContext.getSession()).andReturn(session);
+        expect(session.getNode("/hippo:namespaces/hippo/fieldtype")).andReturn(contentTypeRootNode);
+        expect(contentTypeRootNode.hasNode("editor:templates/_default_")).andReturn(true);
+        expect(contentTypeRootNode.getNode("editor:templates/_default_")).andReturn(contentTypeEditorConfigNode);
+        expect(JcrUtils.getMultipleStringProperty(contentTypeEditorConfigNode, propertyName, null)).andReturn(new String[] { "hippostd:folder" });
+
+        replayAll(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+
+        assertThat(NamespaceUtils.getConfigMultipleProperty(fieldContext, propertyName).get()[0],
+                equalTo("hippostd:folder"));
+
+        verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+    }
+
+    @Test
+    public void getConfigMultiplePropertyNoClusterOptionsNotInType() throws Exception {
+        final String propertyName = "nodetypes";
+        final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        final Node editorFieldConfigNode = createMock("editorFieldConfigNode", Node.class);
+        final Node clusterOptionsNode = createMock("clusterOptionNode", Node.class);
+        final Node contentTypeRootNode = createMock("contentTypeRootNode", Node.class);
+        final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
+        final Property property = createMock(Property.class);
+        final Session session = createMock(Session.class);
+        final FieldTypeContext fieldContext = new FieldTypeContext(contentTypeItem, parentContext, editorFieldConfigNode);
+
+        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(false);
+
+        expect(contentTypeItem.getItemType()).andReturn("hippo:fieldtype");
+        expect(parentContext.getSession()).andReturn(session);
+        expect(session.getNode("/hippo:namespaces/hippo/fieldtype")).andReturn(contentTypeRootNode);
+        expect(contentTypeRootNode.hasNode("editor:templates/_default_")).andReturn(true);
+        expect(contentTypeRootNode.getNode("editor:templates/_default_")).andReturn(contentTypeEditorConfigNode);
+        expect(JcrUtils.getMultipleStringProperty(contentTypeEditorConfigNode, propertyName, null)).andReturn(null);
+
+        replayAll(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+
+        assertFalse(NamespaceUtils.getConfigMultipleProperty(fieldContext, propertyName).isPresent());
 
         verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
     }
@@ -417,7 +529,7 @@ public class NamespaceUtilsTest {
         expect(editorFieldNode.hasProperty("plugin.class")).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(editorFieldNode)).andReturn("/bla");
         replay(editorFieldNode);
-        PowerMock.replayAll();
+        replayAll();
 
         NamespaceUtils.getPluginClassForField(editorFieldNode).get();
     }
@@ -466,7 +578,7 @@ public class NamespaceUtilsTest {
         expect(editorNode.getNode("root")).andReturn(layout);
         expect(NamespaceUtils.getPluginClassForField(layout)).andReturn(Optional.of("org.hippoecm.frontend.editor.layout.TwoColumn"));
         replay(root, editorNode);
-        PowerMock.replayAll();
+        replayAll();
 
         assertThat("2-col sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof TwoColumnFieldSorter);
     }
@@ -485,7 +597,7 @@ public class NamespaceUtilsTest {
         expect(editorNode.getNode("root")).andReturn(layout);
         expect(NamespaceUtils.getPluginClassForField(layout)).andReturn(Optional.of("unknown"));
         replay(root, editorNode);
-        PowerMock.replayAll();
+        replayAll();
 
         assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof NodeOrderFieldSorter);
     }
@@ -504,7 +616,7 @@ public class NamespaceUtilsTest {
         expect(editorNode.getNode("root")).andReturn(layout);
         expect(NamespaceUtils.getPluginClassForField(layout)).andReturn(Optional.empty());
         replay(root, editorNode);
-        PowerMock.replayAll();
+        replayAll();
 
         assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof NodeOrderFieldSorter);
     }
@@ -539,7 +651,7 @@ public class NamespaceUtilsTest {
         expect(root.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(root)).andReturn("/bla");
         replay(root);
-        PowerMock.replayAll();
+        replayAll();
 
         NamespaceUtils.retrieveFieldSorter(root).get();
     }

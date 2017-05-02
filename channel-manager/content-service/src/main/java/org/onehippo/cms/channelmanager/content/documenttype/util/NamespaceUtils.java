@@ -159,8 +159,8 @@ public class NamespaceUtils {
 
     private static Optional<String> getConfigPropertyFromClusterOptions(final FieldTypeContext fieldContext, final String propertyName) {
         return fieldContext.getEditorConfigNode().flatMap((editorFieldConfigNode) ->
-                    getStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName)
-            );
+                getStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName)
+        );
     }
 
     private static Optional<String> getConfigPropertyFromType(final FieldTypeContext fieldContext, final String propertyName) {
@@ -176,6 +176,49 @@ public class NamespaceUtils {
             if (node.hasNode(childName)) {
                 final Node childNode = node.getNode(childName);
                 return getStringProperty(childNode, propertyName);
+            }
+        } catch (RepositoryException e) {
+            log.warn("Failed to retrieve child node '{}' of node '{}'.", childName,
+                    JcrUtils.getNodePathQuietly(node), e);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Retrieves a 'multiple' configuration property for this field. The property is read from the cluster options
+     * for this field. If not found the configuration options of the supertypes of this field are tried.
+     *
+     * @param propertyName name of the configuration property to
+     * @return             String[] value of the property or nothing, wrapped in an Optional
+     */
+    public static Optional<String[]> getConfigMultipleProperty(final FieldTypeContext fieldContext, final String propertyName) {
+        Optional<String[]> result = getConfigMultiplePropertyFromClusterOptions(fieldContext, propertyName);
+        if (!result.isPresent()) {
+            result = getConfigMultiplePropertyFromType(fieldContext, propertyName);
+        }
+        return result;
+    }
+
+
+    private static Optional<String[]> getConfigMultiplePropertyFromClusterOptions(final FieldTypeContext fieldContext, final String propertyName) {
+        return fieldContext.getEditorConfigNode().flatMap((editorFieldConfigNode) ->
+                    getMultipleStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName)
+            );
+    }
+
+    private static Optional<String[]> getConfigMultiplePropertyFromType(final FieldTypeContext fieldContext, final String propertyName) {
+        final String fieldTypeId = fieldContext.getContentTypeItem().getItemType();
+        final Session session = fieldContext.getParentContext().getSession();
+        return getContentTypeRootNode(fieldTypeId, session).flatMap((contentTypeRootNode) ->
+                getMultipleStringPropertyFromChildNode(contentTypeRootNode, EDITOR_CONFIG_PATH, propertyName));
+    }
+
+    private static Optional<String[]> getMultipleStringPropertyFromChildNode(final Node node, final String childName,
+                                                                   final String propertyName) {
+        try {
+            if (node.hasNode(childName)) {
+                final Node childNode = node.getNode(childName);
+                return getMultipleStringProperty(childNode, propertyName);
             }
         } catch (RepositoryException e) {
             log.warn("Failed to retrieve child node '{}' of node '{}'.", childName,
@@ -219,6 +262,16 @@ public class NamespaceUtils {
             if (node.hasProperty(propertyName)) {
                 return Optional.of(node.getProperty(propertyName).getString());
             }
+        } catch (RepositoryException e) {
+            log.warn("Failed to read property '{}' from node '{}'.", propertyName,
+                    JcrUtils.getNodePathQuietly(node), e);
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<String[]> getMultipleStringProperty(final Node node, final String propertyName) {
+        try {
+            return Optional.ofNullable(JcrUtils.getMultipleStringProperty(node, propertyName, null));
         } catch (RepositoryException e) {
             log.warn("Failed to read property '{}' from node '{}'.", propertyName,
                     JcrUtils.getNodePathQuietly(node), e);
