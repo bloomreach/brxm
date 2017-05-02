@@ -35,6 +35,11 @@ class ProjectService {
       .then(result => result.data);
   }
 
+  currentBranch() {
+    return this.HstService.doGet(this.ChannelService.getChannel().mountId, 'currentbranch')
+      .then(result => result.data);
+  }
+
   createBranch(project) {
     this.HstService.doPut(null, this.ChannelService.getChannel().mountId, 'createbranch', project.id);
   }
@@ -46,7 +51,6 @@ class ProjectService {
   selectMaster() {
     this.HstService.doPut(null, this.ChannelService.getChannel().mountId, 'selectmaster');
   }
-
 }
 
 export default ProjectService;

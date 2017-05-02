@@ -17,39 +17,65 @@
 
 
 class ProjectToggleController {
-  constructor($translate, OverlayService, ChannelService, ProjectService, ConfigService, HippoIframeService) {
+  constructor($scope, $translate, OverlayService, ChannelService, ProjectService, ConfigService, HippoIframeService, SessionService) {
     'ngInject';
 
     this.$translate = $translate;
     this.OverlayService = OverlayService;
     this.ProjectService = ProjectService;
     this.available = ProjectService.available;
-    const channel = ChannelService.getChannel();
-    this.MASTER = { name: channel.name, id: channel.id };
-    this.withBranch = [this.MASTER];
-    this.selectedProject = this.MASTER;
+    this.ChannelService = ChannelService;
     this.projectsEnabled = ConfigService.projectsEnabled;
     this.HippoIframeService = HippoIframeService;
     if (this.projectsEnabled) {
-      this._setProjects();
+      // In order to have a way to trigger the reloading of the global variants, we tie the reloading
+      // to a successful SessionService.initialize call, which happens upon channel switching.
+      SessionService.registerInitCallback('reloadProjects', () => this._setCurrentBranch());
+      $scope.$on('$destroy', () => SessionService.unregisterInitCallback('reloadProjects'));
+      this._setProjectsAndSelectedProject();
     }
   }
-  _setProjects() {
+  _setProjectsAndSelectedProject() {
+    const channel = this.ChannelService.getChannel();
+    this.MASTER = { name: channel.name, id: channel.id };
+    this.withBranch = [this.MASTER];
     this.ProjectService.projects()
       .then((response) => {
         this.withBranch = this.withBranch.concat(response.withBranch);
         this.withoutBranch = response.withoutBranch;
+        this._setCurrentBranch();
       });
   }
+
+  _setCurrentBranch() {
+    this.ProjectService.currentBranch()
+      .then((branchId) => {
+        if (branchId) {
+          const currentProject = this.withBranch.find(project => project.id === branchId);
+          this.selectedProject = currentProject || this.MASTER;
+        } else {
+          this.selectedProject = this.MASTER;
+        }
+      });
+  }
+
+  compareId(p1) {
+    return p2 => p1.id === p2.id;
+  }
+
   projectChanged() {
-    if (this.selectedProject === this.MASTER) {
+    const p = this.selectedProject;
+    if (this.compareId(this.MASTER)(p)) {
       this.ProjectService.selectMaster();
-      return;
-    }
-    if (this.withBranch.indexOf(this.selectedProject) === -1) {
-      this.ProjectService.selectBranch(this.selectedProject);
-    } else {
-      this.ProjectService.createBranch(this.selectedProject);
+    } else
+    if (this.withBranch.some(this.compareId(p))) {
+      this.ProjectService.selectBranch(p);
+    } else
+    if (this.withoutBranch.some(this.compareId(p))) {
+      this.ProjectService.createBranch(p);
+      this.withBranch = this.withBranch.concat(p);
+      this.withoutBranch = this.withoutBranch.filter(project => project.id !== p.id);
+      this.selectedProject = p;
     }
     this.HippoIframeService.reload();
   }
