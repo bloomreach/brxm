@@ -207,27 +207,33 @@ public class RichTextFieldTypeTest {
     @Test
     public void readSingleValue() throws Exception {
         final RichTextFieldType field = initField();
-        addValue("<p>value</p>");
+        final Node fieldNode = addValue("<p>value</p>");
         assertNoWarningsLogged(() -> {
             final List<FieldValue> fieldValues = field.readFrom(document)
                     .orElseThrow(() -> new Exception("Failed to read from document"));
             assertThat(fieldValues.size(), equalTo(1));
-            assertThat(fieldValues.get(0).getValue(), equalTo("<p>value</p>"));
+            final FieldValue value = fieldValues.get(0);
+            assertThat(value.getValue(), equalTo("<p>value</p>"));
+            assertThat(value.getId(), equalTo(fieldNode.getIdentifier()));
         });
     }
 
     @Test
     public void readMultipleValue() throws Exception {
         final RichTextFieldType field = initField();
-        addValue("<p>one</p>");
-        addValue("<p>two</p>");
+        final Node fieldNode1 = addValue("<p>one</p>");
+        final Node fieldNode2 = addValue("<p>two</p>");
         field.setMaxValues(2);
         assertNoWarningsLogged(() -> {
             final List<FieldValue> fieldValues = field.readFrom(document)
                     .orElseThrow(() -> new Exception("Failed to read from document"));
             assertThat(fieldValues.size(), equalTo(2));
-            assertThat(fieldValues.get(0).getValue(), equalTo("<p>one</p>"));
-            assertThat(fieldValues.get(1).getValue(), equalTo("<p>two</p>"));
+            final FieldValue value1 = fieldValues.get(0);
+            assertThat(value1.getValue(), equalTo("<p>one</p>"));
+            assertThat(value1.getId(), equalTo(fieldNode1.getIdentifier()));
+            final FieldValue value2 = fieldValues.get(1);
+            assertThat(value2.getValue(), equalTo("<p>two</p>"));
+            assertThat(value2.getId(), equalTo(fieldNode2.getIdentifier()));
         });
     }
 

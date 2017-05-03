@@ -188,6 +188,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
             final String storedHtml = JcrUtils.getStringProperty(node, HippoStdNodeType.HIPPOSTD_CONTENT, null);
             final String processedHtml = read(storedHtml, node);
             value.setValue(processedHtml);
+            value.setId(node.getIdentifier());
         } catch (final RepositoryException e) {
             log.warn("Failed to read rich text field '{}' from node '{}'", getId(), JcrUtils.getNodePathQuietly(node), e);
         }

@@ -35,6 +35,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Val
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FieldValue {
     private String value;                         // Stringified value for primitive fields
+    private String id;                            // UUID of the field, if needed
     private Map<String, List<FieldValue>> fields; // Subfields of compound
     private String chosenId;                      // ID of a choice in case of a choice field
     private FieldValue chosenValue;               // Singular value of a choice field
@@ -72,6 +73,14 @@ public class FieldValue {
 
     public void setValue(final String value) {
         this.value = value;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(final String id) {
+        this.id = id;
     }
 
     public Optional<Map<String, List<FieldValue>>> findFields() {
