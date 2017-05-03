@@ -96,7 +96,8 @@ public class ChannelServiceImpl implements ChannelService {
             final Map<String, String> localizedResources = getLocalizedResources(channelId, locale);
 
             final String lockedBy = getChannelLockedBy(channelId);
-            return new ChannelInfoDescription(validFieldGroups, visiblePropertyDefinitions, localizedResources, lockedBy);
+            final boolean editable = isChannelSettingsEditable(channelId);
+            return new ChannelInfoDescription(validFieldGroups, visiblePropertyDefinitions, localizedResources, lockedBy, editable);
         } catch (ChannelException e) {
             if (log.isDebugEnabled()) {
                 log.info("Failed to retrieve channel info class for channel with id '{}'", channelId, e);
@@ -155,6 +156,12 @@ public class ChannelServiceImpl implements ChannelService {
     private List<HstPropertyDefinition> getHstPropertyDefinitions(final String channelId) {
         final String currentHostGroupName = getCurrentVirtualHost().getHostGroupName();
         return getAllVirtualHosts().getPropertyDefinitions(currentHostGroupName, channelId);
+    }
+
+    private boolean isChannelSettingsEditable(final String channelId) {
+        final String hostGroupName = getCurrentVirtualHost().getHostGroupName();
+        Channel channel = getAllVirtualHosts().getChannelById(hostGroupName, channelId);
+        return channel.isChannelSettingsEditable();
     }
 
     private String getChannelLockedBy(final String channelId) {
