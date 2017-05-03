@@ -15,7 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.richtext.model;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -28,8 +31,17 @@ public abstract class RichTextEditorLink extends AbstractPersistedMap {
     public static final String TARGET = "f_target";
     public static final String TARGET_OPEN_IN_NEW_WINDOW = "_blank";
 
+    private static final List<String> KNOWN_KEYS = Arrays.asList(UUID, TITLE, TARGET);
+
     public RichTextEditorLink(Map<String, String> values) {
-        super(values);
+        super(onlyKnownKeys(values));
+    }
+
+    private static Map<String, String> onlyKnownKeys(final Map<String, String> values) {
+        return values.entrySet()
+                .stream()
+                .filter(entry -> KNOWN_KEYS.contains(entry.getKey()))
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
     public String getUuid() {
