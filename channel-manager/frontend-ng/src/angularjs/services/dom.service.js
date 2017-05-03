@@ -39,25 +39,15 @@ class DomService {
   }
 
   addCssLink(files) {
-    const path = this.ConfigService.cmsLocation.origin + (this.ConfigService.cmsLocation.pathname || '');
-
-    if (!Array.isArray(files)) {
-      this._appendLinkElement(path + files);
-    } else {
-      files.forEach((file) => {
-        this._appendLinkElement(path + file);
+    files.forEach((file) => {
+      const link = $('<link>', {
+        rel: 'stylesheet',
+        href: file,
       });
-    }
-  }
 
-  _appendLinkElement(href) {
-    const link = $('<link>', {
-      rel: 'stylesheet',
-      href,
+      const head = $('head')[0];
+      $(head).append(link);
     });
-
-    const head = $('head')[0];
-    $(head).append(link);
   }
 
   addScript(window, url) {

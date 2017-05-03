@@ -31,9 +31,7 @@ class CKEditorController {
     this.CKEditorService.loadCKEditor().then((CKEDITOR) => {
       this.config.language = this.ConfigService.locale;
 
-      if (this.config.contentsCss) {
-        this.DomService.addCssLink(this.config.contentsCss);
-      }
+      this._applyEditorCSS();
 
       this.editor = CKEDITOR.replace(this.textAreaElement[0], this.config);
       this.editor.setData(this.ngModel.$viewValue);
@@ -46,6 +44,16 @@ class CKEditorController {
 
   $onDestroy() {
     this.editor.destroy();
+  }
+
+  _applyEditorCSS() {
+    if (this.config.contentsCss) {
+      if (!Array.isArray(this.config.contentsCss)) {
+        this.config.contentsCss = [this.config.contentsCss];
+      }
+      this.config.contentsCss = this.config.contentsCss.map(file => `../../${file}`);
+      this.DomService.addCssLink(this.config.contentsCss);
+    }
   }
 
   onEditorChange() {
