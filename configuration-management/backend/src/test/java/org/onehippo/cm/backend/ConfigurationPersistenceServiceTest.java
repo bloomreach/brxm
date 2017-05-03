@@ -618,6 +618,26 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
     }
 
     @Test
+    public void expect_protected_properties_to_be_untouched() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      jcr:mixinTypes: ['mix:created']\n" // will auto-created protected properties jcr:created and jcr:createdBy
+                + "";
+
+        applyDefinitions(definition);
+        expectProp("/test/jcr:createdBy", PropertyType.STRING, "admin");
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents(); // aka, expect to see no events
+
+        // validate the auto-created/protected and non-configured property jcr:createdBy is not (tried) to be removed
+        applyDefinitions(definition, expectedEvents);
+        expectProp("/test/jcr:createdBy", PropertyType.STRING, "admin");
+    }
+
+    @Test
     public void expect_unchanged_existing_nodes_to_be_untouched() throws Exception {
         addNode("/test", "a", "nt:unstructured");
         addNode("/test/a", "z", "nt:unstructured");
@@ -841,9 +861,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
                 + "          jcr:primaryType: nt:unstructured\n"
                 + "";
 
-        // TODO: replace hippo types with custom test types to get rid of changed hippo:paths property
-        final ExpectedEvents expectedEvents = new ExpectedEvents()
-                .expectPropertyChanged("/test/non-orderable/hippo:paths");
+        final ExpectedEvents expectedEvents = new ExpectedEvents();
 
         applyDefinitions(source, expectedEvents);
 

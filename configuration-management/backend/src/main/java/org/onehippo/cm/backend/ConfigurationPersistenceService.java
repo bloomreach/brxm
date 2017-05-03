@@ -88,6 +88,12 @@ public class ConfigurationPersistenceService {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationPersistenceService.class);
 
+    private static final String[] knownDerivedPropertyNames = new String[] {
+            HIPPO_RELATED,
+            HIPPO_PATHS,
+            HIPPOSTD_STATESUMMARY
+    };
+
     private final Session session;
     private final Map<Module, ResourceInputProvider> resourceInputProviders;
     private final List<Pair<ConfigurationProperty, Node>> unprocessedReferences = new ArrayList<>();
@@ -321,7 +327,7 @@ public class ConfigurationPersistenceService {
         final PropertyIterator iterator = target.getProperties();
         while (iterator.hasNext()) {
             final Property property = iterator.nextProperty();
-            if (!property.getDefinition().isProtected()) {
+            if (!property.getDefinition().isProtected() && !isKnownDerivedPropertyName(property.getName())) {
                 if (!source.getProperties().containsKey(property.getName())) {
                     property.remove();
                 }
@@ -364,7 +370,11 @@ public class ConfigurationPersistenceService {
     private void applyProperty(final ConfigurationProperty modelProperty, final Node jcrNode) throws Exception {
         final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, modelProperty.getName());
 
-        if (isKnownProtectedPropertyName(modelProperty.getName())) {
+        if (jcrProperty != null && jcrProperty.getDefinition().isProtected()) {
+            return;
+        }
+
+        if (isKnownDerivedPropertyName(modelProperty.getName())) {
             return;
         }
 
@@ -418,16 +428,8 @@ public class ConfigurationPersistenceService {
         return value;
     }
 
-    private boolean isKnownProtectedPropertyName(final String modelPropertyName) {
-        final String[] knownProtectedPropertyNames = new String[] {
-                JCR_PRIMARYTYPE,
-                JCR_MIXINTYPES,
-                JCR_UUID,
-                HIPPO_RELATED,
-                HIPPO_PATHS,
-                HIPPOSTD_STATESUMMARY
-        };
-        return ArrayUtils.contains(knownProtectedPropertyNames, modelPropertyName);
+    private boolean isKnownDerivedPropertyName(final String modelPropertyName) {
+        return ArrayUtils.contains(knownDerivedPropertyNames, modelPropertyName);
     }
 
     private boolean isOverride(final ConfigurationProperty modelProperty,
