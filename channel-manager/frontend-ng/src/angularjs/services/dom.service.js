@@ -38,15 +38,14 @@ class DomService {
     $(window.document).find('head').append(link);
   }
 
-  addCssLink(files) {
+  addCssLinks(window, files) {
     files.forEach((file) => {
       const link = $('<link>', {
         rel: 'stylesheet',
         href: file,
       });
 
-      const head = $('head')[0];
-      $(head).append(link);
+      $(window.document).find('head').append(link);
     });
   }
 

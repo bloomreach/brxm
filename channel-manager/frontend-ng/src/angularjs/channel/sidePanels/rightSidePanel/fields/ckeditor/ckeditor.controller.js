@@ -15,11 +15,12 @@
  */
 
 class CKEditorController {
-  constructor($scope, $element, CKEditorService, ConfigService, DomService) {
+  constructor($scope, $element, $window, CKEditorService, ConfigService, DomService) {
     'ngInject';
 
     this.$scope = $scope;
     this.$element = $element;
+    this.$window = $window;
     this.CKEditorService = CKEditorService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
@@ -52,7 +53,7 @@ class CKEditorController {
         this.config.contentsCss = [this.config.contentsCss];
       }
       this.config.contentsCss = this.config.contentsCss.map(file => `../../${file}`);
-      this.DomService.addCssLink(this.config.contentsCss);
+      this.DomService.addCssLinks(this.$window, this.config.contentsCss);
     }
   }
 

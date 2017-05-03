@@ -50,7 +50,7 @@ describe('DomService', () => {
     iframe.attr('src', `${fixturesPath}/services/dom.service.iframe.fixture.html`);
   }
 
-  it('can add a css file to the head', (done) => {
+  it('should add a style file to the head', (done) => {
     testInIframe((iframeWindow) => {
       const cssFile = `${fixturesPath}/services/dom.service.fixture.css`;
       $j.get(cssFile).done((cssData) => {
@@ -62,7 +62,23 @@ describe('DomService', () => {
     });
   });
 
-  it('can add a script file to the body', (done) => {
+  it('should add a link tag to the head', (done) => {
+    testInIframe((iframeWindow) => {
+      DomService.addCssLinks(iframeWindow, [
+        'testFile.css',
+        'anotherFile.css',
+      ]);
+
+      const head = $j(iframeWindow.document).find('head');
+      const links = $j(head).children('link');
+      expect(links.length).toEqual(2);
+      expect(links[0]).toHaveAttr('href', 'testFile.css');
+      expect(links[1]).toHaveAttr('href', 'anotherFile.css');
+      done();
+    });
+  });
+
+  it('should add a script file to the body', (done) => {
     testInIframe((iframeWindow) => {
       const script = `${fixturesPath}/services/dom.service.fixture.js`;
       expect(iframeWindow.DomServiceTestScriptLoaded).not.toBeDefined();
@@ -94,7 +110,7 @@ describe('DomService', () => {
     }
   }
 
-  it('can copy the computed style of an element', () => {
+  it('should copy the computed style of an element', () => {
     window.loadStyleFixtures('services/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
@@ -116,7 +132,7 @@ describe('DomService', () => {
     expect(target.css('width')).toEqual('42px');
   });
 
-  it('can copy the computed style of an element except excluded properties', () => {
+  it('should copy the computed style of an element except excluded properties', () => {
     window.loadStyleFixtures('services/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
@@ -128,7 +144,7 @@ describe('DomService', () => {
     expect(target.css('position')).toEqual('static');
   });
 
-  it('can copy the computed style of descendants', () => {
+  it('should copy the computed style of descendants', () => {
     window.loadStyleFixtures('services/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
@@ -137,7 +153,7 @@ describe('DomService', () => {
     expectEqualComputedStyle(source.find('*'), target.find('*'));
   });
 
-  it('can copy the computed style of descendants except excluded properties', () => {
+  it('should copy the computed style of descendants except excluded properties', () => {
     window.loadStyleFixtures('services/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
@@ -148,7 +164,7 @@ describe('DomService', () => {
     expect(target.find('ul').css('color')).toEqual('rgb(0, 0, 0)');
   });
 
-  it('can create a mousedown event', () => {
+  it('should create a mousedown event', () => {
     const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
     expect(mouseDownEvent.type).toEqual('mousedown');
     expect(mouseDownEvent.bubbles).toEqual(true);
@@ -157,7 +173,7 @@ describe('DomService', () => {
     expect(mouseDownEvent.view).toEqual(window);
   });
 
-  it('can create a mousedown event in Edge', () => {
+  it('should create a mousedown event in Edge', () => {
     spyOn(BrowserService, 'isEdge').and.returnValue(true);
     const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
     expect(mouseDownEvent.type).toEqual('pointerdown');
@@ -167,7 +183,7 @@ describe('DomService', () => {
     expect(mouseDownEvent.view).toEqual(window);
   });
 
-  it('can create a mousedown event in IE11', () => {
+  it('should create a mousedown event in IE11', () => {
     spyOn(BrowserService, 'isIE').and.returnValue(true);
     const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
     expect(mouseDownEvent.type).toEqual('MSPointerDown');
@@ -177,24 +193,24 @@ describe('DomService', () => {
     expect(mouseDownEvent.view).toEqual(window);
   });
 
-  it('can calculate the scroll bar width', () => {
+  it('should calculate the scroll bar width', () => {
     const width = DomService.getScrollBarWidth();
     expect(width).toBeGreaterThan(-1);
   });
 
-  it('can check if an element is hidden on the page', () => {
+  it('should check if an element is hidden on the page', () => {
     $j('.shouldBeHidden').each((index, el) => {
       expect(DomService.isVisible($j(el))).toBe(false);
     });
   });
 
-  it('can check if an element is visible on the page', () => {
+  it('should check if an element is visible on the page', () => {
     $j('.shouldBeVisible').each((index, el) => {
       expect(DomService.isVisible($j(el))).toBe(true);
     });
   });
 
-  it('can check whether the body is visible', () => {
+  it('should check whether the body is visible', () => {
     expect(DomService.isVisible($j(document.body))).toBe(true);
   });
 

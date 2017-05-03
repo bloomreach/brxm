@@ -21,6 +21,7 @@ describe('CKEditor Component', () => {
   let $scope;
   let CKEditorService;
   let ConfigService;
+  let DomService;
   let CKEditor;
   let config;
   let editor;
@@ -36,11 +37,13 @@ describe('CKEditor Component', () => {
             $rootScope,
             _CKEditorService_,
             _ConfigService_,
+            _DomService_,
             _$q_) => {
       $componentController = _$componentController_;
       $scope = $rootScope.$new();
       CKEditorService = _CKEditorService_;
       ConfigService = _ConfigService_;
+      DomService = _DomService_;
       $q = _$q_;
     });
 
@@ -105,6 +108,17 @@ describe('CKEditor Component', () => {
     expect($ctrl.onFocus).toBeDefined();
     expect($ctrl.onBlur).toBeDefined();
     expect($ctrl.textAreaElement).toBeDefined();
+  });
+
+  it('should apply CSS to editor', () => {
+    init();
+
+    spyOn(DomService, 'addCssLinks');
+    $ctrl.config.contentsCss = 'hippocontents.css';
+    $ctrl._applyEditorCSS();
+    expect(DomService.addCssLinks).toHaveBeenCalled();
+    expect(Array.isArray($ctrl.config.contentsCss)).toBe(true);
+    expect($ctrl.config.contentsCss[0]).toEqual('../../hippocontents.css');
   });
 
   it('uses the current language', () => {
