@@ -239,14 +239,23 @@
       this.hostToIFrame.publish('path-picked', this.pathPickerField, path, displayValue);
     },
 
-    _showLinkPicker: function(uuid, title, target, callback) {
+    _showLinkPicker: function(fieldId, dialogConfig, selectedLink, callback) {
       this.linkPickerCallback = callback;
-      this.fireEvent('open-link-picker', uuid, title, target);
+
+      Ext.apply(selectedLink, {
+        'fieldId': fieldId,
+        'dialogConfig': JSON.stringify(dialogConfig)
+      });
+
+      Wicket.Ajax.post({
+        u: this.initialConfig.linkPickerWicketUrl,
+        ep: selectedLink
+      });
     },
 
-    onLinkPicked: function(uuid, title, target) {
+    onLinkPicked: function(link) {
       if (this.linkPickerCallback) {
-        this.linkPickerCallback(uuid, title, target);
+        this.linkPickerCallback(link);
       }
     },
 

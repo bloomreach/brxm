@@ -37,7 +37,7 @@ class CKEditorController {
       this.editor.on('change', () => this.onEditorChange());
       this.editor.on('focus', () => this.onEditorFocus());
       this.editor.on('blur', () => this.onEditorBlur());
-      this.editor.on('openLinkPicker', event => this._showLinkPicker(event.data));
+      this.editor.on('openLinkPicker', event => this._openLinkPicker(event.data));
     });
   }
 
@@ -65,18 +65,16 @@ class CKEditorController {
     });
   }
 
-  _showLinkPicker(parameters) {
-    this.CmsService.publish('show-link-picker', parameters.f_uuid, parameters.f_title, parameters.f_target,
-      this._onLinkPicked.bind(this));
+  _openLinkPicker(selectedLink) {
+    this.CmsService.publish('show-link-picker', this.id, this._linkPickerConfig(), selectedLink, this._onLinkPicked.bind(this));
   }
 
-  _onLinkPicked(uuid, title, target) {
-    this.editor.execCommand('insertInternalLink', {
-      // map empty strings to 'undefined'
-      f_uuid: uuid || undefined,
-      f_title: title || undefined,
-      f_target: target || undefined,
-    });
+  _linkPickerConfig() {
+    return this.config.hippopicker.internalLink;
+  }
+
+  _onLinkPicked(link) {
+    this.editor.execCommand('insertInternalLink', link);
   }
 }
 

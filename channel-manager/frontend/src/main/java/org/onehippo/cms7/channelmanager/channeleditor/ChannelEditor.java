@@ -109,6 +109,7 @@ public class ChannelEditor extends ExtPanel {
     private static final String ANTI_CACHE = WebApplicationHelper.APPLICATION_HASH;
 
     private ExtStoreFuture<Object> channelStoreFuture;
+    private final LinkPickerManager linkPickerManager;
     private final EditorOpenListener EDITOR_OPEN_LISTENER = new EditorOpenListener();
 
     public ChannelEditor(final IPluginContext context, final IPluginConfig config, final String apiUrlPrefix,
@@ -137,7 +138,9 @@ public class ChannelEditor extends ExtPanel {
 
         addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
         addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context, getMarkupId()));
-        addEventListener(OPEN_LINK_PICKER_EVENT, new OpenLinkPickerEventListener(getMarkupId()));
+
+        linkPickerManager = new LinkPickerManager(context, getMarkupId());
+        add(linkPickerManager.getBehavior());
     }
 
     @Override
@@ -164,6 +167,7 @@ public class ChannelEditor extends ExtPanel {
     protected void onRenderProperties(final JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
         properties.put("channelStoreFuture", new JSONIdentifier(this.channelStoreFuture.getJsObjectId()));
+        properties.put("linkPickerWicketUrl", this.linkPickerManager.getBehavior().getCallbackUrl().toString());
     }
 
     @Override

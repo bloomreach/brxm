@@ -27,6 +27,7 @@ const ckeditorComponent = {
   bindings: {
     ariaLabel: '<',
     config: '<',
+    id: '<',
     isRequired: '<',
     name: '<',
     onBlur: '&',
