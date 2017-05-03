@@ -35,9 +35,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.jcr.Binary;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
@@ -49,6 +51,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.jackrabbit.core.NodeImpl;
+import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
@@ -93,7 +97,7 @@ public class ConfigurationPersistenceService {
         this.resourceInputProviders = resourceInputProviders;
     }
 
-    public void apply(final MergedModel model, EnumSet<DefinitionType> includeDefinitionTypes) throws Exception {
+    public synchronized void apply(final MergedModel model, EnumSet<DefinitionType> includeDefinitionTypes) throws Exception {
         unprocessedReferences.clear();
 
         if (includeDefinitionTypes.contains(DefinitionType.NAMESPACE)) {
@@ -174,7 +178,7 @@ public class ConfigurationPersistenceService {
             // create child if necessary
             final Node jcrChild = retainedChildren.containsKey(name)
                     ? retainedChildren.get(name)
-                    : jcrNode.addNode(name, getPrimaryType(modelChild));
+                    : addNode(jcrNode, modelChild);
 
             nextChildNameProvider.ignore(name); // 'name' is consumed.
 
@@ -191,6 +195,43 @@ public class ConfigurationPersistenceService {
 
             applyProperties(modelChild, jcrChild);
             applyNodes(modelChild, jcrChild);
+        }
+    }
+
+    /**
+     * Adding a child node with optionally a configured jcr:uuid
+     * <p>
+     * If a configured uuid already is in use, a warning will be logged and a new jcr:uuid will be generated instead.
+     * </p>
+     * @param parentNode the parent node for the child node
+     * @param modelNode the configuration for the child node
+     * @return the new JCR Node
+     * @throws Exception
+     */
+    private Node addNode(final Node parentNode, final ConfigurationNode modelNode) throws RepositoryException {
+        final ConfigurationProperty uuidProperty = modelNode.getProperties().get(JCR_UUID);
+        final String name = modelNode.getName();
+        final String primaryType = getPrimaryType(modelNode);
+        final String uuid = uuidProperty != null ? uuidProperty.getValue().getString() : null;
+        final NodeImpl parentNodeImpl = (NodeImpl)NodeDecorator.unwrap(parentNode);
+        if (uuid != null) {
+            if (!isUuidInUse(uuid)) {
+                // uuid not in use: create node with the requested uuid
+                return parentNodeImpl.addNodeWithUuid(name, primaryType, uuid);
+            }
+            logger.warn(String.format("Specified jcr:uuid %s for node '%s' defined in %s already in use: a new jcr:uuid will be generated instead.",
+                    uuid, modelNode.getPath(), ModelUtils.formatDefinitions(modelNode)));
+        }
+        // create node with a new uuid
+        return parentNodeImpl.addNodeWithUuid(name, primaryType, null);
+    }
+
+    private boolean isUuidInUse(final String uuid) throws RepositoryException {
+        try {
+            session.getNodeByIdentifier(uuid);
+            return true;
+        } catch (ItemNotFoundException e) {
+            return false;
         }
     }
 
@@ -257,14 +298,18 @@ public class ConfigurationPersistenceService {
         }
     }
 
+    private boolean isReferenceTypeProperty(final ConfigurationProperty modelProperty) {
+        return (modelProperty.getValueType() == ValueType.REFERENCE ||
+                modelProperty.getValueType() == ValueType.WEAKREFERENCE);
+    }
+
     private void applyProperties(final ConfigurationNode source, final Node target) throws Exception {
         removeNonModelProperties(source, target);
 
         applyPrimaryAndMixinTypes(source, target);
 
         for (ConfigurationProperty modelProperty : source.getProperties().values()) {
-            if (modelProperty.getValueType() == ValueType.REFERENCE ||
-                    modelProperty.getValueType() == ValueType.WEAKREFERENCE) {
+            if (isReferenceTypeProperty(modelProperty)) {
                 unprocessedReferences.add(Pair.of(modelProperty, target));
             } else {
                 applyProperty(modelProperty, target);
@@ -323,19 +368,35 @@ public class ConfigurationPersistenceService {
             return;
         }
 
-        if (jcrProperty != null) {
-            if (isOverride(modelProperty, jcrProperty)) {
-                jcrProperty.remove();
-            } else if (valuesAreIdentical(modelProperty, jcrNode, jcrProperty)) {
-                return;
+        final List<Value> modelValues = new ArrayList<>();
+        if (modelProperty.getType() == PropertyType.SINGLE) {
+            final Value value = getVerifiedValue(modelProperty, modelProperty.getValue());
+            if (value != null) {
+                modelValues.add(value);
+            }
+        } else {
+            for (Value value : modelProperty.getValues()) {
+                value = getVerifiedValue(modelProperty, value);
+                if (value != null) {
+                    modelValues.add(value);
+                }
             }
         }
 
+        if (jcrProperty != null) {
+            if (isOverride(modelProperty, jcrProperty)) {
+                jcrProperty.remove();
+            } else if (valuesAreIdentical(modelProperty, modelValues, jcrProperty)) {
+                return;
+            }
+        }
         try {
             if (modelProperty.getType() == PropertyType.SINGLE) {
-                jcrNode.setProperty(modelProperty.getName(), valueFrom(modelProperty, modelProperty.getValue(), jcrNode));
+                if (modelValues.size() > 0) {
+                    jcrNode.setProperty(modelProperty.getName(), valueFrom(modelProperty, modelValues.get(0)));
+                }
             } else {
-                jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelProperty, modelProperty.getValues(), jcrNode));
+                jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelProperty, modelValues));
             }
         } catch (RepositoryException e) {
             String msg = String.format(
@@ -343,6 +404,18 @@ public class ConfigurationPersistenceService {
                     modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty), e.getMessage());
             throw new RuntimeException(msg, e);
         }
+    }
+
+    private Value getVerifiedValue(final ConfigurationProperty modelProperty, final Value value) throws RepositoryException {
+        if (isReferenceTypeProperty(modelProperty)) {
+            final String uuid = getVerifiedReferenceIdentifier(modelProperty, value);
+            if (uuid != null) {
+                return new VerifiedReferenceValue(value, uuid);
+            } else {
+                return null;
+            }
+        }
+        return value;
     }
 
     private boolean isKnownProtectedPropertyName(final String modelPropertyName) {
@@ -369,23 +442,22 @@ public class ConfigurationPersistenceService {
         }
     }
 
-    private boolean valuesAreIdentical(final ConfigurationProperty modelProperty,
-                                       final Node jcrNode,
+    private boolean valuesAreIdentical(final ConfigurationProperty modelProperty, final List<Value> modelValues,
                                        final Property jcrProperty) throws Exception {
-        if (isOverride(modelProperty, jcrProperty)) {
-            return false;
-        }
-
         if (modelProperty.getType() == PropertyType.SINGLE) {
-            return valueIsIdentical(modelProperty, modelProperty.getValue(), jcrNode, jcrProperty.getValue());
+            if (modelValues.size() > 0) {
+                return valueIsIdentical(modelProperty, modelProperty.getValue(), jcrProperty.getValue());
+            } else {
+                // ignore/skip: cannot apply an invalid reference (uuid or path based)
+                return true;
+            }
         } else {
-            final Value[] modelValues = modelProperty.getValues();
             final javax.jcr.Value[] jcrValues = jcrProperty.getValues();
-            if (modelValues.length != jcrValues.length) {
+            if (modelValues.size() != jcrValues.length) {
                 return false;
             }
-            for (int i = 0; i < modelValues.length; i++) {
-                if (!valueIsIdentical(modelProperty, modelValues[i], jcrNode, jcrValues[i])) {
+            for (int i = 0; i < jcrValues.length; i++) {
+                if (!valueIsIdentical(modelProperty, modelValues.get(i), jcrValues[i])) {
                     return false;
                 }
             }
@@ -395,7 +467,6 @@ public class ConfigurationPersistenceService {
 
     private boolean valueIsIdentical(final ConfigurationProperty modelProperty,
                                      final Value modelValue,
-                                     final Node jcrNode,
                                      final javax.jcr.Value jcrValue) throws Exception {
         if (modelValue.getType().ordinal() != jcrValue.getType()) {
             return false;
@@ -424,10 +495,10 @@ public class ConfigurationPersistenceService {
             case URI:
             case NAME:
             case PATH:
-                return modelValue.getString().equals(jcrValue.getString());
             case REFERENCE:
             case WEAKREFERENCE:
-                return getReferredNodeIdentifier(modelValue, jcrNode).equals(jcrValue.getString());
+                // REFERENCE and WEAKREFERENCE type values already are resolved to hold a validated uuid
+                return modelValue.getString().equals(jcrValue.getString());
             case DECIMAL:
                 return modelValue.getObject().equals(jcrValue.getDecimal());
             default:
@@ -464,34 +535,53 @@ public class ConfigurationPersistenceService {
         return getResourceInputStream(modelValue.getParent().getDefinition().getSource(), modelValue.getString());
     }
 
-    private String getReferredNodeIdentifier(final Value modelValue, final Node jcrNode) throws RepositoryException {
+    private String getVerifiedReferenceIdentifier(final ConfigurationProperty modelProperty, final Value modelValue)
+            throws RepositoryException {
         String identifier = modelValue.getString();
         if (modelValue.isPath()) {
             String nodePath = identifier;
             if (!nodePath.startsWith("/")) {
                 // path reference is relative to content definition root path
                 final String rootPath = ((ContentDefinition) modelValue.getParent().getDefinition()).getNode().getPath();
-                nodePath = rootPath + ("".equals(nodePath) ? "" : "/" + nodePath);
+                final StringBuilder pathBuilder = new StringBuilder(rootPath);
+                if (!"".equals(nodePath)) {
+                    if (!"/".equals(rootPath)) {
+                        pathBuilder.append("/");
+                    }
+                    pathBuilder.append(nodePath);
+                }
+                nodePath = pathBuilder.toString();
             }
             // lookup node identifier by node path
-            identifier = jcrNode.getSession().getNode(nodePath).getIdentifier();
+            try {
+                identifier = session.getNode(nodePath).getIdentifier();
+            } catch (PathNotFoundException e) {
+                logger.warn(String.format("Path reference '%s' for property '%s' defined in %s not found: skipping.",
+                        nodePath, modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty)));
+                return null;
+            }
+        }
+        try {
+            session.getNodeByIdentifier(identifier);
+        } catch (ItemNotFoundException e) {
+            logger.warn(String.format("Reference %s for property '%s' defined in %s not found: skipping.",
+                    identifier, modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty)));
+            return null;
         }
         return identifier;
     }
 
     private javax.jcr.Value[] valuesFrom(final ConfigurationProperty modelProperty,
-                                         final Value[] modelValues,
-                                         final Node jcrNode) throws Exception {
-        final javax.jcr.Value[] jcrValues = new javax.jcr.Value[modelValues.length];
-        for (int i = 0; i < modelValues.length; i++) {
-            jcrValues[i] = valueFrom(modelProperty, modelValues[i], jcrNode);
+                                         final List<Value> modelValues) throws Exception {
+        final javax.jcr.Value[] jcrValues = new javax.jcr.Value[modelValues.size()];
+        for (int i = 0; i < jcrValues.length; i++) {
+            jcrValues[i] = valueFrom(modelProperty, modelValues.get(i));
         }
         return jcrValues;
     }
 
     private javax.jcr.Value valueFrom(final ConfigurationProperty modelProperty,
-                                      final Value modelValue,
-                                      final Node jcrNode) throws Exception {
+                                      final Value modelValue) throws Exception {
         final ValueFactory factory = session.getValueFactory();
         final ValueType type = modelValue.getType();
 
@@ -516,10 +606,10 @@ public class ConfigurationPersistenceService {
             case URI:
             case NAME:
             case PATH:
-                return factory.createValue(modelValue.getString(), type.ordinal());
             case REFERENCE:
             case WEAKREFERENCE:
-                return factory.createValue(getReferredNodeIdentifier(modelValue, jcrNode), type.ordinal());
+                // REFERENCE and WEAKREFERENCE type values already are resolved to hold a validated uuid
+                return factory.createValue(modelValue.getString(), type.ordinal());
             case DECIMAL:
                 return factory.createValue((BigDecimal)modelValue.getObject());
             default:
@@ -564,5 +654,4 @@ public class ConfigurationPersistenceService {
             }
         }
     }
-
 }

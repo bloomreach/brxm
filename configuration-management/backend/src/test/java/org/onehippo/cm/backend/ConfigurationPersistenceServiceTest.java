@@ -44,9 +44,12 @@ import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModelTestUtils;
 import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
@@ -504,10 +507,114 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         expectProp("/test/absolute", PropertyType.REFERENCE, bar.getIdentifier());
         expectProp("/test/relative", PropertyType.REFERENCE, bar.getIdentifier());
         expectProp("/test/foo/root-relative", PropertyType.REFERENCE, testNode.getIdentifier());
+    }
 
-        // when applying the same definition again, expect no events
-        final ExpectedEvents expectedEvents = new ExpectedEvents();
-        applyDefinitions(definition, expectedEvents);
+    @Test
+    public void expect_uuid_reference_to_be_resolved() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /foo:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:uuid: e4ecf93e-2708-40b4-b091-51d84169a174\n"
+                + "        /bar:\n"
+                + "          jcr:primaryType: nt:unstructured\n"
+                + "          jcr:mixinTypes: ['mix:referenceable']\n"
+                + "          uuid-reference:\n"
+                + "            type: reference\n"
+                + "            value: e4ecf93e-2708-40b4-b091-51d84169a174\n"
+                + "";
+
+        applyDefinitions(definition);
+        final Node foo = testNode.getNode("foo");
+        expectProp("/test/foo/bar/uuid-reference", PropertyType.REFERENCE, foo.getIdentifier());
+    }
+
+    @Test
+    public void expect_unresolved_references_to_be_removed() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /foo:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:uuid: e4ecf93e-2708-40b4-b091-51d84169a170\n"
+                + "        /bar:\n"
+                + "          jcr:primaryType: nt:unstructured\n"
+                + "          jcr:mixinTypes: ['mix:referenceable']\n"
+                + "          uuid-reference:\n"
+                + "            type: reference\n"
+                + "            value: e4ecf93e-2708-40b4-b091-51d84169a174\n"
+                + "          uuid-references:\n"
+                + "            type: reference\n"
+                + "            value: [e4ecf93e-2708-40b4-b091-51d84169a174, e4ecf93e-2708-40b4-b091-51d84169a170]\n"
+                + "          path-reference:\n"
+                + "            type: reference\n"
+                + "            path: /undefined\n"
+                + "";
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationPersistenceService.class).build()) {
+            applyDefinitions(definition);
+            assertFalse(testNode.hasProperty("foo/bar/uuid-reference"));
+            assertTrue(testNode.hasProperty("foo/bar/uuid-references"));
+            assertEquals(1, testNode.getProperty("foo/bar/uuid-references").getValues().length);
+            assertFalse(testNode.hasProperty("foo/bar/path-reference"));
+            assertTrue(interceptor.messages().anyMatch(m->m.equals("Reference e4ecf93e-2708-40b4-b091-51d84169a174 " +
+                    "for property '/test/foo/bar/uuid-reference' defined in " +
+                    "[test-configuration/test-project/test-module-0 [string]] not found: skipping.")));
+            assertTrue(interceptor.messages().anyMatch(m->m.equals("Reference e4ecf93e-2708-40b4-b091-51d84169a174 " +
+                    "for property '/test/foo/bar/uuid-references' defined in " +
+                    "[test-configuration/test-project/test-module-0 [string]] not found: skipping.")));
+            assertTrue(interceptor.messages().anyMatch(m->m.equals("Path reference '/undefined' for property " +
+                    "'/test/foo/bar/path-reference' defined in " +
+                    "[test-configuration/test-project/test-module-0 [string]] not found: skipping.")));
+        }
+    }
+
+    @Test
+    public void expect_jcr_uuid_to_be_retained() throws Exception {
+        final String uuid = "e4ecf93e-2708-40b4-b091-51d84169a174";
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /child:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:uuid: "+uuid+"\n"
+                + "";
+
+        applyDefinitions(definition);
+        assertEquals(uuid, testNode.getNode("child").getIdentifier());
+    }
+
+    @Test
+    public void expect_new_jcr_uuid_created_on_collision() throws Exception {
+        final String uuid = "e4ecf93e-2708-40b4-b091-51d84169a174";
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /child:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:uuid: "+uuid+"\n"
+                + "      /child2:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:uuid: "+uuid+"\n"
+                + "";
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationPersistenceService.class).build()) {
+            applyDefinitions(definition);
+            assertEquals(uuid, testNode.getNode("child").getIdentifier());
+            assertNotEquals(uuid, testNode.getNode("child2").getIdentifier());
+            assertTrue(interceptor.messages().anyMatch(m->m.equals("Specified jcr:uuid " + uuid +
+                    " for node '/test/child2' defined in [test-configuration/test-project/test-module-0 [string]]" +
+                    " already in use: a new jcr:uuid will be generated instead.")));
+        }
     }
 
     @Test
