@@ -52,8 +52,8 @@ class CKEditorController {
       if (!Array.isArray(this.config.contentsCss)) {
         this.config.contentsCss = [this.config.contentsCss];
       }
-      this.config.contentsCss = this.config.contentsCss.map(file => `../../${file}`);
-      this.DomService.addCssLinks(this.$window, this.config.contentsCss);
+      const files = this.config.contentsCss.map(file => `../../${file}`);
+      this.DomService.addCssLinks(this.$window, files);
     }
   }
 
