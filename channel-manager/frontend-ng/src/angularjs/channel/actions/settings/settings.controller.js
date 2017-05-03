@@ -37,7 +37,6 @@ class ChannelSettingsCtrl {
 
     this.ChannelService.getChannelInfoDescription()
       .then((channelInfoDescription) => {
-        console.log(channelInfoDescription);
         this.channelInfoDescription = channelInfoDescription;
         if (this.isLockedByOther()) {
           this.FeedbackService.showErrorOnSubpage('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: channelInfoDescription.lockedBy });
