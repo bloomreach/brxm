@@ -265,6 +265,16 @@ public class MountResource extends AbstractConfigResource {
     private void doCreateBranch(final String branchId) throws RepositoryException, ClientException {
         assertValidName(branchId);
 
+        final HstSite editingPreviewSite = getPageComposerContextService().getEditingPreviewSite();
+        if (!editingPreviewSite.hasPreviewConfiguration()) {
+            // when creating a branch, there must be a -preview version of the to-be-branched-configuration
+            createPreviewConfiguration();
+        }
+
+        // TODO if the liveConfigurationPath points to a branch, below goes wrong since we need the master (at least, as
+        // TODO long as we do not want to branch of a branch). Perhaps we initially just only support branching of
+        // TODO master, but later on, we could extend this to branching of branching : Then the code below is right!
+        // TODO perhaps best to initially only allow branching when 'master' is selected in the Channel Mngr
         String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
         Session session = getPageComposerContextService().getRequestContext().getSession();
 
@@ -291,9 +301,13 @@ public class MountResource extends AbstractConfigResource {
         JcrUtils.copy(session, liveBranchConfigNode.getPath(), liveBranchConfigNode.getPath() + "-preview");
         // TODO if 'master config node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
         // TODO as well to the preview config, see HSTTWO-3965
-        session.getNode(liveBranchConfigNode.getPath() + "-preview").setProperty(GENERAL_PROPERTY_INHERITS_FROM,
+        Node previewBranchNode = session.getNode(liveBranchConfigNode.getPath() + "-preview");
+        previewBranchNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM,
                 new String[]{"../" + liveBranchConfigNode.getName()});
-        session.save();
+        previewBranchNode.setProperty(BRANCH_PROPERTY_BRANCHOF, liveConfigName + "-preview");
+
+        log.info("Branch '{}' created.", liveBranchConfigNode.getName());
+        HstConfigurationUtils.persistChanges(session);
     }
 
     private void assertValidName(final String branchId) {

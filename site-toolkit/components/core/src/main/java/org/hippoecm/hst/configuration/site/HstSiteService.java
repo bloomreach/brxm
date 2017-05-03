@@ -48,6 +48,8 @@ import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang.StringUtils.substringBefore;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONFIGURATIONS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITE_CONFIGURATIONPATH;
 
@@ -135,11 +137,12 @@ public class HstSiteService implements HstSite {
         if (ch != null) {
             if (master != null) {
                 ch.setBranchOf(master.getId());
-                if (!ch.getId().startsWith(master.getId() + "-")) {
-                    throw new ModelLoadingException(String.format("Invalid branch '%s' because it does not start with " +
-                            "the id '%s' plus '-' of the master.", ch.getId(), master.getId()));
+                // TODO improve clumsy logic below
+                if (master.getId().endsWith("-preview")) {
+                    ch.setBranchId(substringAfter(ch.getId(), substringBefore(master.getId(), "preview")));
+                } else {
+                    ch.setBranchId(substringAfter(ch.getId(), master.getId()+"-"));
                 }
-                ch.setBranchId(StringUtils.substringAfter(ch.getId(), master.getId()+"-"));
             }
 
             final HstNode rootConfigNode = hstNodeLoadingCache.getNode(configurationPath);

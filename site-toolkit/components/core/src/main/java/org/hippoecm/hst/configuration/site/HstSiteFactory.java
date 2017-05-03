@@ -85,11 +85,6 @@ public class HstSiteFactory {
                 log.debug("Skipping branch '{}' because not a branch of '{}'.", branchNode.getName(), masterName);
                 continue;
             }
-            if (!branchNode.getName().startsWith(masterName + "-")) {
-                log.warn("Invalid branch '{}' because the branch node name '{}' does not start with the master '{}' name " +
-                        " plus '-'. Skip trying to load this branch", branchNode.getName(),  branchNode.getName(), masterName);
-                continue;
-            }
             if (isPreviewSite && !branchNode.getName().endsWith("-preview")) {
                 log.debug("Skip loading live branch '{}' for preview master.", branchNode.getName());
                 continue;

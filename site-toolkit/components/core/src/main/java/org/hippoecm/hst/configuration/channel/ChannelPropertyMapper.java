@@ -151,10 +151,6 @@ public class ChannelPropertyMapper {
             }
         }
 
-        // TODO (meggermont): get branches from somewhere
-        if (true) {
-            channel.setBranchId("foo");
-        }
         return channel;
     }
 

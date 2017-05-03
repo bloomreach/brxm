@@ -125,7 +125,8 @@ public class MountResourceBranchesTest extends MountResourceTest {
         Session session = createSession("admin", "admin");
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace"));
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap"));
-        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages"));
+        // hst:pages are being added to the master as well by branching!
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages"));
 
         // the created branch *does* have pages as well in the workspace because always automatically added to a branch
 
@@ -147,7 +148,7 @@ public class MountResourceBranchesTest extends MountResourceTest {
         Node previewBranchHstConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject-" + branchName + "-preview");
         assertArrayEquals(new String[]{"../unittestproject-" +branchName}, getMultipleStringProperty(previewBranchHstConfigNode, GENERAL_PROPERTY_INHERITS_FROM, null));
         assertTrue(previewBranchHstConfigNode.isNodeType(MIXINTYPE_HST_BRANCH));
-        assertEquals("unittestproject", previewBranchHstConfigNode.getProperty(BRANCH_PROPERTY_BRANCHOF).getString());
+        assertEquals("unittestproject-preview", previewBranchHstConfigNode.getProperty(BRANCH_PROPERTY_BRANCHOF).getString());
         session.logout();
     }
 
