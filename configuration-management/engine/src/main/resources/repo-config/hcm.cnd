@@ -36,8 +36,8 @@
 [hcm:actions] > nt:base, hcm:digested
   - hcm:yaml (string) primary mandatory
 
-// Stores a module manifest file with name, project, group, and dependencies
-[hcm:manifest] > nt:base, hcm:digested
+// Stores a module descriptor file with name, project, group, and dependencies
+[hcm:descriptor] > nt:base, hcm:digested
   - hcm:yaml (string) primary mandatory
 
 // Stores a config definitions file
@@ -59,10 +59,10 @@
   + * (hcm:cnd)
   + * (hcm:binary)
 
-// Stores a module, including manifest, actions, and definition sources
+// Stores a module, including descriptor, actions, and definition sources
 [hcm:module] > nt:base
   - hcm:lastexecutedaction (string)
-  + hcm:manifest (hcm:manifest) mandatory
+  + hcm:descriptor (hcm:descriptor) mandatory
   + hcm:actions (hcm:actions)
   + * (hcm:configfolder)
   + * (hcm:contentfolder)
@@ -81,6 +81,7 @@
   + * (hcm:project)
 
 // Stores an entire configuration baseline with multiple groups, projects, and modules
-[hcm:baseline] > nt:base, mix:lockable
+[hcm:baseline] > nt:base, mix:lockable, hcm:digested
   - hcm:lastupdated (date)
+  - hcm:manifest (string)
   + * (hcm:group)

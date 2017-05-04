@@ -63,20 +63,23 @@ public final class Constants {
 
     public static final String LAST_UPDATED_PROPERTY = "hcm:lastupdated";
     public static final String MANIFEST_PROPERTY = "hcm:manifest";
-    public static final String MANIFEST_TYPE = "hcm:manifest";
+
+    public static final String MODULE_DESCRIPTOR_PROPERTY = "hcm:descriptor";
+    public static final String MODULE_DESCRIPTOR_TYPE = "hcm:descriptor";
     public static final String ACTIONS_TYPE = "hcm:actions";
     public static final String ACTIONS_PROPERTY = "hcm:actions";
-    public static final String YAML_PROPERTY = "hcm:yaml";
-
     public static final String CONTENT_TYPE = "hcm:content";
+
     public static final String CONTENT_FOLDER_TYPE = "hcm:contentfolder";
     public static final String CONTENT_PATH_PROPERTY = "hcm:contentpath";
-
     public static final String CONFIG_FOLDER_TYPE = "hcm:configfolder";
+
     public static final String DEFINITIONS_TYPE = "hcm:definitions";
     public static final String CND_TYPE = "hcm:cnd";
-    public static final String CND_PROPERTY = "hcm:cnd";
     public static final String BINARY_TYPE = "hcm:binary";
+
+    public static final String YAML_PROPERTY = "hcm:yaml";
+    public static final String CND_PROPERTY = "hcm:cnd";
 
     // This should be one of the required digest algorithms (MD5, SHA-1, or SHA-256)
     public static final String DIGEST_PROPERTY = "hcm:digest";

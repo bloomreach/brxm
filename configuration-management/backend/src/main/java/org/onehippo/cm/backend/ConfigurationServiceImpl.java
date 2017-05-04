@@ -25,17 +25,19 @@ import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.Calendar;
 import java.util.EnumSet;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.jackrabbit.util.Text;
 import org.onehippo.cm.api.ConfigurationService;
 import org.onehippo.cm.api.MergedModel;
@@ -71,7 +73,8 @@ import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
 import static org.onehippo.cm.engine.Constants.DEFAULT_DIGEST;
 import static org.onehippo.cm.engine.Constants.DEFINITIONS_TYPE;
 import static org.onehippo.cm.engine.Constants.MANIFEST_PROPERTY;
-import static org.onehippo.cm.engine.Constants.MANIFEST_TYPE;
+import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_PROPERTY;
+import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_TYPE;
 import static org.onehippo.cm.engine.Constants.DIGEST_PROPERTY;
 import static org.onehippo.cm.engine.Constants.GROUP_TYPE;
 import static org.onehippo.cm.engine.Constants.LAST_UPDATED_PROPERTY;
@@ -94,10 +97,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public void apply(final MergedModel mergedModel, final EnumSet<DefinitionType> includeDefinitionTypes)
             throws Exception {
         try {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+
             final ConfigurationPersistenceService service =
                     new ConfigurationPersistenceService(session, mergedModel.getResourceInputProviders());
             service.apply(mergedModel, includeDefinitionTypes);
             session.save();
+
+            stopWatch.stop();
+            log.info("MergedModel applied in {} for definitionTypes: {}", stopWatch.toString(), includeDefinitionTypes);
         }
         catch (Exception e) {
             log.warn("Failed to apply configuration", e);
@@ -108,17 +117,28 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     /**
      * Store a merged configuration model as a baseline configuration in the JCR.
      * The provided MergedModel is assumed to be fully formed and validated.
-     * @param mergedModel the configuration model to store as the new baseline
+     * @param model the configuration model to store as the new baseline
      */
     @Override
     public void storeBaseline(final MergedModel model) throws Exception {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         try {
+            // TODO determine what possible race conditions exist here, perhaps during clean bootstrap
+
             // find baseline root node, or create if necessary
             final Node rootNode = session.getRootNode();
+            boolean baselineNodeExisted = rootNode.hasNode(BASELINE_PATH);
             Node baseline = createNodeIfNecessary(rootNode, BASELINE_PATH, BASELINE_TYPE, false);
 
-            // save the baseline before attempting to lock it
-            session.save();
+            // if the baseline node didn't exist before, save it before attempting to lock it
+            if (!baselineNodeExisted) {
+                // set empty digest and manifest for now
+                baseline.setProperty(DIGEST_PROPERTY, "");
+                baseline.setProperty(MANIFEST_PROPERTY, "");
+
+                session.save();
+            }
 
             // lock baseline root
             session.getWorkspace().getLockManager()
@@ -126,8 +146,25 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             session.save();
 
             try {
+                // TODO: implement a smarter partial-update process instead of brute-force removal
+                // Clear existing group nodes before creating new ones
+                for (NodeIterator nodes = rootNode.getNode(BASELINE_PATH).getNodes(); nodes.hasNext();) {
+                    Node groupNode = nodes.nextNode();
+                    groupNode.remove();
+                }
+
                 // set lastupdated date to now
                 baseline.setProperty(LAST_UPDATED_PROPERTY, Calendar.getInstance());
+
+                // TODO: compute baseline digest accumulator-fashion to avoid processing streams twice
+                // Compute model manifest
+                final String modelManifest = model.compileManifest();
+                log.debug("model manifest:\n"+modelManifest);
+                baseline.setProperty(MANIFEST_PROPERTY, modelManifest);
+
+                // Compute and store digest from model manifest
+                String modelDigestString = computeManifestDigest(modelManifest);
+                baseline.setProperty(DIGEST_PROPERTY, modelDigestString);
 
                 // create group, project, and module nodes, if necessary
                 // foreach group
@@ -156,6 +193,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 session.refresh(false);
                 session.getWorkspace().getLockManager().unlock(baseline.getPath());
                 session.save();
+
+                stopWatch.stop();
+                log.info("MergedModel stored as baseline configuration in {}", stopWatch.toString());
             }
         }
         catch (Exception e) {
@@ -180,22 +220,22 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             log.warn("Cannot find ResourceInputProvider for module {}", module.getName());
         }
 
-        // create manifest node, if necessary
-        Node depNode = createNodeIfNecessary(moduleNode, MANIFEST_PROPERTY, MANIFEST_TYPE, false);
+        // create descriptor node, if necessary
+        Node descriptorNode = createNodeIfNecessary(moduleNode, MODULE_DESCRIPTOR_PROPERTY, MODULE_DESCRIPTOR_TYPE, false);
 
-        // AFAIK, a module MUST have a manifest, but check here for a malformed package or special case
+        // AFAIK, a module MUST have a descriptor, but check here for a malformed package or special case
         if (rip.hasResource(null, "/"+REPO_CONFIG_YAML)) {
-            // open manifest InputStream
+            // open descriptor InputStream
             InputStream is = rip.getResourceInputStream(null, "/"+REPO_CONFIG_YAML);
 
             // store yaml and digest (this call will close the input stream)
-            storeStringAndDigest(is, depNode, YAML_PROPERTY);
+            storeStringAndDigest(is, descriptorNode, YAML_PROPERTY);
         }
         else {
-            // if manifest doesn't exist, set the manifest property and digest to empty strings
+            // if descriptor doesn't exist, set the descriptor property and digest to empty strings
             // TODO: throw an appropriate exception if this is to be forbidden, once demo config is reorganized
-            depNode.setProperty(YAML_PROPERTY, "");
-            depNode.setProperty(DIGEST_PROPERTY, "");
+            descriptorNode.setProperty(YAML_PROPERTY, "");
+            descriptorNode.setProperty(DIGEST_PROPERTY, "");
         }
 
         // if this Module has an actions file...
@@ -254,7 +294,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         // foreach definition
         for (Definition def : source.getDefinitions()) {
             switch (def.getType()) {
-                case NAMESPACE: case WEBFILEBUNDLE:
+                case NAMESPACE:
+                case WEBFILEBUNDLE:
                     // no special processing required
                     break;
                 case CONTENT:
@@ -486,10 +527,84 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         // compute MD5 from stream
         byte[] digest = md.digest();
 
-        // prepend algorithm using same style as used in Hippo CMS password hashing
-        String digestString = "$"+DEFAULT_DIGEST+"$"+ Base64.getEncoder().encodeToString(digest);
-
         // store digest property
-        resourceNode.setProperty(DIGEST_PROPERTY, digestString);
+        resourceNode.setProperty(DIGEST_PROPERTY, toDigestHexString(digest));
+    }
+
+    /**
+     * Load a (partial) MergedModel from the stored configuration baseline in the JCR. This model will not contain
+     * content definitions, which are not stored in the baseline.
+     * @throws Exception
+     */
+    @Override
+    public MergedModel loadBaseline() throws Exception {
+        return null;
+    }
+
+    /**
+     * Compare a MergedModel against the baseline by comparing manifests produced by model.compileManifest()
+     */
+    public boolean matchesBaselineManifest(MergedModel model) throws Exception {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
+        final Node rootNode = session.getRootNode();
+        boolean result;
+
+        // if the baseline node doesn't exist yet...
+        if (!rootNode.hasNode(BASELINE_PATH)) {
+            // ... there's a trivial mismatch, regardless of the model
+            result = false;
+        }
+        else {
+            // otherwise, if the baseline node DOES exist...
+            // ... load the digest directly from the baseline JCR node
+            String baselineDigestString = rootNode.getNode(BASELINE_PATH).getProperty(DIGEST_PROPERTY).getString();
+            log.debug("baseline digest:\n"+baselineDigestString);
+
+            // compute a digest from the model manifest
+            String modelManifest = model.compileManifest();
+            log.debug("model manifest:\n"+modelManifest);
+            String modelDigestString = computeManifestDigest(modelManifest);
+
+            // compare the baseline digest with the model manifest digest
+            result = modelDigestString.equals(baselineDigestString);
+        }
+
+        stopWatch.stop();
+        log.info("MergedModel compared against baseline configuration in {}", stopWatch.toString());
+
+        return result;
+    }
+
+    /**
+     * Helper method to compute a digest string from a MergedModel manifest.
+     * @param modelManifest the manifest whose digest we want to compute
+     * @return a digest string comparable to the baseline digest string, or "" if none can be computed
+     */
+    private String computeManifestDigest(final String modelManifest) {
+        try {
+            MessageDigest md = MessageDigest.getInstance(DEFAULT_DIGEST);
+            byte[] digest = md.digest(StandardCharsets.UTF_8.encode(modelManifest).array());
+            String modelDigestString = toDigestHexString(digest);
+            log.debug("model digest:\n"+modelDigestString);
+
+            return modelDigestString;
+        }
+        catch (NoSuchAlgorithmException e) {
+            // NOTE: this should never happen, since the Java spec requires MD5 to be supported
+            log.error("{} algorithm not available for configuration baseline diff", DEFAULT_DIGEST, e);
+            return "";
+        }
+    }
+
+    /**
+     * Helper method to convert a byte[] produced by MessageDigest into a hex string marked with the digest algorithm.
+     * @param digest the raw digest byte[]
+     * @return a String suitable for long-term storage and eventual comparisons
+     */
+    public static String toDigestHexString(final byte[] digest) {
+        // prepend algorithm using same style as used in Hippo CMS password hashing
+        return "$"+DEFAULT_DIGEST+"$"+ DatatypeConverter.printHexBinary(digest);
     }
 }

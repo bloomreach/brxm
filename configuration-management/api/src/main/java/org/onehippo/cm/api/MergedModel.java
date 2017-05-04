@@ -64,6 +64,14 @@ public interface MergedModel extends Closeable {
     Map<Module, ResourceInputProvider> getResourceInputProviders();
 
     /**
+     * Compile a manifest of contents including all referenced Modules, Sources, and resource files.
+     * A cryptographic digest of this manifest should be sufficient to detect changes in any config definitions,
+     * actions, or the root definition paths for content definitions, at minimum.
+     * @return a String containing a manifest of model contents, in a format determined by the implementation
+     */
+    String compileManifest();
+
+    /**
      * When processing of this model is complete, this method must be closed to free up resources used by
      * ResourceInputProviders to access raw data streams from underlying storage.
      * @throws IOException

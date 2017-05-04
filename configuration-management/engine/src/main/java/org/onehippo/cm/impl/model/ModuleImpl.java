@@ -25,13 +25,14 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.apache.jackrabbit.util.Text;
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 
-public class ModuleImpl implements Module {
+public class ModuleImpl implements Module, Comparable<Module> {
 
     private final String name;
     private final Project project;
@@ -242,5 +243,31 @@ public class ModuleImpl implements Module {
     @Override
     public int hashCode() {
         return Objects.hash(name, project);
+    }
+
+    /**
+     * @return the full group/project/module name for this module
+     */
+    public String getFullName() {
+        return buildFullName(this);
+    }
+
+    /**
+     * @return the full group/project/module name for the given module
+     */
+    public static String buildFullName(Module m) {
+        return String.join("/",
+                m.getProject().getConfiguration().getName(),
+                m.getProject().getName(),
+                m.getName());
+    }
+
+    /**
+     * Compare on the basis of lexical order of the full group/project/module names.
+     * @param o another Module
+     */
+    @Override
+    public int compareTo(final Module o) {
+        return getFullName().compareTo(buildFullName(o));
     }
 }

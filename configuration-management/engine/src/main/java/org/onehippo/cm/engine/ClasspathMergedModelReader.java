@@ -24,16 +24,21 @@ import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Map;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.engine.parser.ParserException;
 import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toMap;
 import static org.onehippo.cm.engine.Constants.REPO_CONFIG_YAML;
 
 public class ClasspathMergedModelReader {
+
+    private static final Logger log = LoggerFactory.getLogger(ClasspathMergedModelReader.class);
 
     /**
      * Searches the classpath for module manifest files and uses these as entry points for loading HCM module
@@ -47,6 +52,9 @@ public class ClasspathMergedModelReader {
      */
     public MergedModel read(final ClassLoader classLoader, final boolean verifyOnly)
             throws IOException, ParserException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
         final Enumeration<URL> resources = classLoader.getResources(REPO_CONFIG_YAML);
         final MergedModelBuilder builder = new MergedModelBuilder();
         while (resources.hasMoreElements()) {
@@ -69,6 +77,11 @@ public class ClasspathMergedModelReader {
 
             builder.push(result.getConfigurations(), configInputProviders);
         }
-        return builder.build();
+        MergedModel model = builder.build();
+
+        stopWatch.stop();
+        log.info("MergedModel loaded in {}", stopWatch.toString());
+
+        return model;
     }
 }
