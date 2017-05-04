@@ -19,7 +19,7 @@
   <md-select aria-label="{{ 'TOOLBAR_PROJECT_LABEL' | translate }}"
              ng-model="$ctrl.selectedProject"
              ng-change="$ctrl.projectChanged()">
-    <md-option ng-repeat="project in $ctrl.withBranch | orderBy: 'name'"
+    <md-option ng-repeat="project in $ctrl.getWithBranch() | orderBy: 'name'"
                ng-value="project">
       <div layout="row"
            layout-align="start center">
@@ -27,7 +27,7 @@
       </div>
     </md-option>
     <md-divider></md-divider>
-    <md-option ng-repeat="project in $ctrl.withoutBranch | orderBy: 'name'"
+    <md-option ng-repeat="project in $ctrl.getWithoutBranch() | orderBy: 'name'"
                ng-value="project">
       <div layout="row"
            layout-align="start center">

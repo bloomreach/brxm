@@ -80,6 +80,10 @@ class ChannelCtrl {
     return this.HippoIframeService.isPageLoaded();
   }
 
+  projectsEnabled() {
+    return this.ConfigService.projectsEnabled;
+  }
+
   enableEditMode() {
     if (!this.isEditMode && !this.ChannelService.hasPreviewConfiguration()) {
       this._createPreviewConfiguration();

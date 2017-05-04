@@ -19,37 +19,84 @@ const REST_API_PATH = 'ws/projects';
 
 class ProjectService {
 
-  constructor($http, ConfigService, PathService, ChannelService, HstService) {
+  constructor($http, ConfigService, PathService, HstService) {
     'ngInject';
 
     this.$http = $http;
     this.ConfigService = ConfigService;
     this.PathService = PathService;
-    this.ChannelService = ChannelService;
     this.HstService = HstService;
   }
 
+  load(channel) {
+    this._mountId = channel.mountId;
+    this._master = {
+      name: this._masterName(channel),
+      id: channel.id,
+    };
+    this.projects();
+  }
+
+  _masterName(channel) {
+    return `${channel.name} Core`;
+  }
+
   projects() {
-    const url = `${this.ConfigService.getCmsContextPath()}${REST_API_PATH}/${this.ChannelService.getChannel().mountId}/channel`;
+    const url = `${this.ConfigService.getCmsContextPath()}${REST_API_PATH}/${this._mountId}/channel`;
     return this.$http({ method: 'GET', url, headers: {}, data: {} })
-      .then(result => result.data);
+      .then((result) => {
+        this.currentBranch()
+          .then((branchId) => {
+            this.withBranch = [this._master];
+            this.withBranch = this.withBranch.concat(result.data.withBranch);
+            this.withoutBranch = result.data.withoutBranch;
+            this.selectedProject = this._master;
+            if (branchId) {
+              this.selectedProject = this.withBranch.find(project => this._compareIgnorePreview(project.id, branchId));
+            }
+          });
+      });
+  }
+
+  compareId(p1) {
+    return p2 => this._compareIgnorePreview(p1.id, p2.id);
+  }
+
+  _compareIgnorePreview(id1, id2) {
+    return this._stripPreview(id1) === this._stripPreview(id2);
+  }
+
+  _stripPreview(id) {
+    return id.replace('-preview', '');
+  }
+
+  projectChanged(selectedProject) {
+    if (this.compareId(this._master)(selectedProject)) {
+      this.selectMaster();
+    } else if (this.withBranch.some(this.compareId(selectedProject))) {
+      this.selectBranch(selectedProject);
+    } else if (this.withoutBranch.some(this.compareId(selectedProject))) {
+      this.createBranch(selectedProject);
+      this.withBranch = this.withBranch.concat(selectedProject);
+      this.withoutBranch = this.withoutBranch.filter(project => project.id !== selectedProject.id);
+    }
   }
 
   currentBranch() {
-    return this.HstService.doGet(this.ChannelService.getChannel().mountId, 'currentbranch')
+    return this.HstService.doGet(this._mountId, 'currentbranch')
       .then(result => result.data);
   }
 
   createBranch(project) {
-    this.HstService.doPut(null, this.ChannelService.getChannel().mountId, 'createbranch', project.id);
+    this.HstService.doPut(null, this._mountId, 'createbranch', project.id);
   }
 
   selectBranch(project) {
-    this.HstService.doPut(null, this.ChannelService.getChannel().mountId, 'selectbranch', project.id);
+    this.HstService.doPut(null, this._mountId, 'selectbranch', project.id);
   }
 
   selectMaster() {
-    this.HstService.doPut(null, this.ChannelService.getChannel().mountId, 'selectmaster');
+    this.HstService.doPut(null, this._mountId, 'selectmaster');
   }
 }
 
