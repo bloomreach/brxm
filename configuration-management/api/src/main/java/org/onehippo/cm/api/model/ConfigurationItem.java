@@ -29,4 +29,5 @@ public interface ConfigurationItem {
      */
     List<DefinitionItem> getDefinitions();
     boolean isDeleted();
+    boolean isRoot();
 }

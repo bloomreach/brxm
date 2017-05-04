@@ -25,6 +25,7 @@ import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
+import org.onehippo.cm.engine.SnsUtils;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ConfigurationPropertyImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
@@ -51,16 +52,13 @@ class ConfigurationTreeBuilder {
 
     private final ConfigurationNodeImpl root = new ConfigurationNodeImpl();
 
-
     ConfigurationTreeBuilder() {
-        root.setPath("/");
         root.setName("");
 
         // add required jcr:primaryType: rep:root
         final ConfigurationPropertyImpl primaryTypeProperty = new ConfigurationPropertyImpl();
         primaryTypeProperty.setName(JCR_PRIMARYTYPE);
         primaryTypeProperty.setParent(root);
-        primaryTypeProperty.setPath("/" + JCR_PRIMARYTYPE);
         primaryTypeProperty.setType(PropertyType.SINGLE);
         primaryTypeProperty.setValueType(ValueType.NAME);
         primaryTypeProperty.setValue(new ValueImpl(REP_ROOT_NT, ValueType.NAME, false, false));
@@ -70,7 +68,6 @@ class ConfigurationTreeBuilder {
         final ConfigurationPropertyImpl mixinTypesProperty = new ConfigurationPropertyImpl();
         mixinTypesProperty.setName(JCR_MIXINTYPES);
         mixinTypesProperty.setParent(root);
-        mixinTypesProperty.setPath("/" + JCR_PRIMARYTYPE);
         mixinTypesProperty.setType(PropertyType.LIST);
         mixinTypesProperty.setValueType(ValueType.NAME);
         mixinTypesProperty.setValues(new Value[]{new ValueImpl(MIX_REFERENCEABLE, ValueType.NAME, false, false)});
@@ -98,7 +95,12 @@ class ConfigurationTreeBuilder {
      */
     private void mergeNode(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
         if (definitionNode.isDeleted()) {
-            markNodeAsDeletedBy(node, definitionNode);
+            final String indexedName = SnsUtils.createIndexedName(definitionNode.getName());
+            if (SnsUtils.hasSns(indexedName, node.getModifiableParent().getNodes().keySet())) {
+                node.getModifiableParent().removeNode(indexedName, true);
+            } else {
+                markNodeAsDeletedBy(node, definitionNode);
+            }
             return;
         } else if (definitionNode.isDelete() && !node.isNew()) {
             final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
@@ -124,24 +126,25 @@ class ConfigurationTreeBuilder {
 
         final ConfigurationNodeImpl parent = node.getModifiableParent();
         if (parent != null && definitionNode.getOrderBefore().isPresent()) {
-            final String destChildName = definitionNode.getOrderBefore().get();
+            final String orderBefore = definitionNode.getOrderBefore().get();
             if (parent.getIgnoreReorderedChildren() != null && parent.getIgnoreReorderedChildren()) {
                 final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
                 logger.warn("Potential unnecessary orderBefore: '{}' for node '{}' defined in '{}': parent '{}' already configured with '{}: true'",
-                        destChildName, node.getPath(), culprit, parent.getPath(), META_IGNORE_REORDERED_CHILDREN);
+                        orderBefore, node.getPath(), culprit, parent.getPath(), META_IGNORE_REORDERED_CHILDREN);
             }
-            final boolean orderFirst = "".equals(destChildName);
+            final boolean orderFirst = "".equals(orderBefore);
+            final String orderBeforeIndexedName = SnsUtils.createIndexedName(orderBefore);
             if (!orderFirst) {
-                if (node.getName().equals(destChildName)) {
+                if (node.getName().equals(orderBeforeIndexedName)) {
                     final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
                     final String msg = String.format("Invalid orderBefore: '%s' for node '%s' defined in '%s': targeting this node itself.",
-                            destChildName, node.getPath(), culprit);
+                            orderBeforeIndexedName, node.getPath(), culprit);
                     throw new IllegalArgumentException(msg);
                 }
-                if (!parent.getNodes().containsKey(destChildName)) {
+                if (!parent.getNodes().containsKey(orderBeforeIndexedName)) {
                     final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
                     final String msg = String.format("Invalid orderBefore: '%s' for node '%s' defined in '%s': no sibling named '%s'.",
-                            destChildName, node.getPath(), culprit, destChildName);
+                            orderBeforeIndexedName, node.getPath(), culprit, orderBeforeIndexedName);
                     throw new IllegalArgumentException(msg);
                 }
             }
@@ -163,16 +166,16 @@ class ConfigurationTreeBuilder {
                     // current != src != first
                     parent.orderBefore(node.getName(), name);
                     break;
-                } else if (name.equals(destChildName)) {
+                } else if (name.equals(orderBeforeIndexedName)) {
                     // found dest: only reorder if prev != src
                     if (prevIsSrc) {
                         // previous was src, current is dest: already is right order
                         final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
                         logger.warn("Unnecessary orderBefore: '{}' for node '{}' defined in '{}': already ordered before sibling '{}'.",
-                                destChildName, node.getPath(), culprit, destChildName);
+                                orderBefore, node.getPath(), culprit, orderBeforeIndexedName);
                     } else {
                         // dest < src: reorder
-                        parent.orderBefore(node.getName(), destChildName);
+                        parent.orderBefore(node.getName(), orderBeforeIndexedName);
                     }
                     break;
                 } else {
@@ -190,16 +193,16 @@ class ConfigurationTreeBuilder {
 
         final Map<String, ConfigurationNodeImpl> children = node.getModifiableNodes();
         for (DefinitionNodeImpl definitionChild : definitionNode.getModifiableNodes().values()) {
-            final String name = definitionChild.getName();
+            final String indexedName = SnsUtils.createIndexedName(definitionChild.getName());
             final ConfigurationNodeImpl child;
-            if (children.containsKey(name)) {
-                child = children.get(name);
+            if (children.containsKey(indexedName)) {
+                child = children.get(indexedName);
                 if (child.isDeleted()) {
                     logger.warn("Trying to modify already deleted node '{}', skipping.", child.getPath());
                     continue;
                 }
             } else {
-                child = createChildNode(node, definitionChild.getName(), definitionChild);
+                child = createChildNode(node, indexedName, definitionChild);
                 if (child == null) {
                     continue;
                 }
@@ -258,7 +261,6 @@ class ConfigurationTreeBuilder {
     private ConfigurationNodeImpl createChildNode(final ConfigurationNodeImpl parent, final String name,
                                                   final DefinitionNodeImpl definitionNode) {
         final ConfigurationNodeImpl node = new ConfigurationNodeImpl();
-        final boolean parentIsRoot = parent.getParent() == null;
 
         if (definitionNode.isDelete()) {
             final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
@@ -272,7 +274,6 @@ class ConfigurationTreeBuilder {
 
         node.setName(name);
         node.setParent(parent);
-        node.setPath((parentIsRoot ? "" : parent.getPath()) + "/" + name);
         node.addDefinitionItem(definitionNode);
 
         parent.addNode(name, node);
@@ -326,7 +327,6 @@ class ConfigurationTreeBuilder {
 
             property.setName(name);
             property.setParent(parent);
-            property.setPath(definitionProperty.getPath());
             property.setType(definitionProperty.getType());
             property.setValueType(definitionProperty.getValueType());
         }
@@ -479,12 +479,16 @@ class ConfigurationTreeBuilder {
             return new String[0];
         }
 
-        return path.substring(1).split("/");
+        final String[] pathSegments = path.substring(1).split("/");
+        for (int i = 0; i < pathSegments.length; i++) {
+            pathSegments[i] = SnsUtils.createIndexedName(pathSegments[i]);
+        }
+        return pathSegments;
     }
 
     private void pruneDeletedItems(final ConfigurationNodeImpl node) {
         if (node.isDeleted()) {
-            node.getModifiableParent().removeNode(node.getName());
+            node.getModifiableParent().removeNode(node.getName(), false);
             return;
         }
 
@@ -492,7 +496,7 @@ class ConfigurationTreeBuilder {
         final List<String> deletedProperties = propertyMap.keySet().stream()
                 .filter(propertyName -> propertyMap.get(propertyName).isDeleted())
                 .collect(Collectors.toList());
-        deletedProperties.forEach(propertyMap::remove);
+        deletedProperties.forEach(node::removeProperty);
 
         final Map<String, ConfigurationNodeImpl> childMap = node.getModifiableNodes();
         final List<String> children = childMap.keySet().stream().collect(Collectors.toList());

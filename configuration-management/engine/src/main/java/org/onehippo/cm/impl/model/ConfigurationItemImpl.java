@@ -26,7 +26,6 @@ import org.onehippo.cm.api.model.DefinitionItem;
 public abstract class ConfigurationItemImpl implements ConfigurationItem {
 
     private String name;
-    private String path;
     private ConfigurationNodeImpl parent;
     private final List<DefinitionItemImpl> modifiableDefinitions = new ArrayList<>();
     private final List<DefinitionItem> definitions = Collections.unmodifiableList(modifiableDefinitions);
@@ -43,11 +42,15 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
 
     @Override
     public String getPath() {
-        return path;
-    }
-
-    public void setPath(final String path) {
-        this.path = path;
+        if (isRoot()) {
+            return "/";
+        } else {
+            final String base = parent.getPath() + (parent.isRoot() ? "" : "/");
+            if (name.endsWith("[1]") && !parent.getNodes().containsKey(name.substring(0, name.length() - 3) + "[2]")) {
+                return base + name.substring(0, name.length() - 3);
+            }
+            return base + name;
+        }
     }
 
     @Override
@@ -80,4 +83,10 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
     public void setDeleted(final boolean deleted) {
         this.deleted = deleted;
     }
+
+    @Override
+    public boolean isRoot() {
+        return parent == null;
+    }
+
 }

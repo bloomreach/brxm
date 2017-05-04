@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
+import org.onehippo.cm.engine.SnsUtils;
 
 public class ConfigurationNodeImpl extends ConfigurationItemImpl implements ConfigurationNode {
 
@@ -38,40 +39,11 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     }
 
     public Map<String, ConfigurationNodeImpl> getModifiableNodes() {
-        return modifiableNodes;
+        return Collections.unmodifiableMap(modifiableNodes);
     }
 
     public void addNode(final String name, final ConfigurationNodeImpl node) {
         modifiableNodes.put(name, node);
-    }
-
-    public void removeNode(final String name) {
-        modifiableNodes.remove(name);
-    }
-
-    public void clearNodes() {
-        modifiableNodes.clear();
-    }
-
-    public boolean isNew() {
-        return modifiableNodes.isEmpty() && modifiableProperties.isEmpty();
-    }
-
-    @Override
-    public Map<String, ConfigurationProperty> getProperties() {
-        return properties;
-    }
-
-    public Map<String, ConfigurationPropertyImpl> getModifiableProperties() {
-        return modifiableProperties;
-    }
-
-    public void addProperty(final String name, final ConfigurationPropertyImpl property) {
-        modifiableProperties.put(name, property);
-    }
-
-    public void clearProperties() {
-        modifiableProperties.clear();
     }
 
     public void orderBefore(final String srcChildName, final String destChildName) {
@@ -98,6 +70,64 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
 
         modifiableNodes.put(srcChildName, modifiableNodes.remove(srcChildName));
         toBeReinsertedChildren.forEach(child -> modifiableNodes.put(child, modifiableNodes.remove(child)));
+
+        if (SnsUtils.hasSns(srcChildName, modifiableNodes.keySet())) {
+            updateSnsIndices(srcChildName);
+        }
+    }
+
+    private void updateSnsIndices(final String indexedName) {
+        final String unindexedName = SnsUtils.getUnindexedName(indexedName);
+        final Map<String, ConfigurationNodeImpl> copy = new LinkedHashMap<>(modifiableNodes);
+        modifiableNodes.clear();
+        int index = 1;
+        for (String sibling : copy.keySet()) {
+            if (unindexedName.equals(SnsUtils.getUnindexedName(sibling))) {
+                final String newName = SnsUtils.createIndexedName(unindexedName, index);
+                final ConfigurationNodeImpl siblingNode = copy.get(sibling);
+                siblingNode.setName(newName);
+                modifiableNodes.put(newName, copy.get(sibling));
+                index++;
+            } else {
+                modifiableNodes.put(sibling, copy.get(sibling));
+            }
+        }
+    }
+
+    public void removeNode(final String name, boolean updateSnsIndices) {
+        modifiableNodes.remove(name);
+        if (updateSnsIndices) {
+            updateSnsIndices(name);
+        }
+    }
+
+    public void clearNodes() {
+        modifiableNodes.clear();
+    }
+
+    public boolean isNew() {
+        return modifiableNodes.isEmpty() && modifiableProperties.isEmpty();
+    }
+
+    @Override
+    public Map<String, ConfigurationProperty> getProperties() {
+        return properties;
+    }
+
+    public Map<String, ConfigurationPropertyImpl> getModifiableProperties() {
+        return Collections.unmodifiableMap(modifiableProperties);
+    }
+
+    public void addProperty(final String name, final ConfigurationPropertyImpl property) {
+        modifiableProperties.put(name, property);
+    }
+
+    public void removeProperty(final String name) {
+        modifiableProperties.remove(name);
+    }
+
+    public void clearProperties() {
+        modifiableProperties.clear();
     }
 
     @Override
@@ -108,4 +138,5 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     public void setIgnoreReorderedChildren(final boolean ignoreReorderedChildren) {
         this.ignoreReorderedChildren = ignoreReorderedChildren;
     }
+
 }

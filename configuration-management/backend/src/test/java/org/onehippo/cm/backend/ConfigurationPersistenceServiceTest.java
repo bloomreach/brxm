@@ -868,6 +868,118 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         expectNode("/test/non-orderable", "[a, b, c]", "[hippo:paths, jcr:mixinTypes, jcr:primaryType]");
     }
 
+    @Test
+    public void expect_sns_nodes_to_be_written() throws Exception {
+        final String source
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /sns[1]:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        property1: value1\n"
+                + "      /sns[2]:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        property2: value2\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectNodeAdded("/test/sns", JCR_PRIMARYTYPE)
+                .expectPropertyAdded("/test/sns/property1")
+                .expectNodeAdded("/test/sns[2]", JCR_PRIMARYTYPE)
+                .expectPropertyAdded("/test/sns[2]/property2");
+
+        applyDefinitions(source, expectedEvents);
+
+        expectNode("/test", "[sns, sns]", "[jcr:primaryType]");
+        expectNode("/test/sns[1]", "[]", "[jcr:primaryType, property1]");
+        expectNode("/test/sns[2]", "[]", "[jcr:primaryType, property2]");
+    }
+
+    @Test
+    public void expect_sns_nodes_to_be_merged() throws Exception {
+        addNode("/test", "sns", "nt:unstructured");
+        addNode("/test", "sns", "nt:unstructured");
+        setProperty("/test/sns[1]", "property1", PropertyType.STRING, "value1");
+        setProperty("/test/sns[2]", "property2", PropertyType.STRING, "value2");
+
+        final String source
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /sns[1]:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        property1: value1\n"
+                + "        property2: value2\n"
+                + "      /sns[2]:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        property1: value1\n"
+                + "        property2: value2\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectPropertyAdded("/test/sns/property2")
+                .expectPropertyAdded("/test/sns[2]/property1");
+
+        applyDefinitions(source, expectedEvents);
+
+        expectNode("/test", "[sns, sns]", "[jcr:primaryType]");
+        expectNode("/test/sns[1]", "[]", "[jcr:primaryType, property1, property2]");
+        expectNode("/test/sns[2]", "[]", "[jcr:primaryType, property1, property2]");
+    }
+
+    @Test
+    public void expect_redundant_sns_node_to_be_removed() throws Exception {
+        addNode("/test", "sns", "nt:unstructured");
+        addNode("/test", "sns", "nt:unstructured");
+
+        final String source
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /sns:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectNodeRemoved("/test/sns[2]");
+
+        applyDefinitions(source, expectedEvents);
+
+        expectNode("/test", "[sns]", "[jcr:primaryType]");
+        expectNode("/test/sns", "[]", "[jcr:primaryType]");
+    }
+
+    @Test
+    public void expect_no_fancy_sns_merging() throws Exception {
+        addNode("/test", "sns", "nt:unstructured");
+        addNode("/test", "sns", "nt:unstructured");
+        addNode("/test/sns[2]", "foo", "nt:unstructured");
+
+        final String source
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /sns:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        /foo:\n"
+                + "          jcr:primaryType: nt:unstructured\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectNodeAdded("/test/sns/foo", JCR_PRIMARYTYPE)
+                .expectNodeRemoved("/test/sns[2]")
+                .expectNodeRemoved("/test/sns[2]/foo");
+
+        applyDefinitions(source, expectedEvents);
+
+        expectNode("/test", "[sns]", "[jcr:primaryType]");
+        expectNode("/test/sns", "[foo]", "[jcr:primaryType]");
+    }
+
     private void setProperty(final String nodePath, final String name, final int valueType, final String value) throws RepositoryException {
         session.getNode(nodePath).setProperty(name, value, valueType);
         session.save();

@@ -68,6 +68,7 @@ import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.api.model.WebFileBundleDefinition;
+import org.onehippo.cm.engine.SnsUtils;
 import org.onehippo.cm.impl.model.ModelUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
@@ -195,7 +196,7 @@ public class ConfigurationPersistenceService {
                     nextChildName = nextChildNameProvider.next();
                 } else {
                     // jcrChild is not at next child position, move it there
-                    jcrNode.orderBefore(jcrChild.getName(), nextChildName);
+                    jcrNode.orderBefore(SnsUtils.createIndexedName(jcrChild), nextChildName);
                 }
             }
 
@@ -215,7 +216,7 @@ public class ConfigurationPersistenceService {
      * @throws Exception
      */
     private Node addNode(final Node parentNode, final ConfigurationNode modelNode) throws RepositoryException {
-        final String name = modelNode.getName();
+        final String name = SnsUtils.getUnindexedName(modelNode.getName());
         final String primaryType = getPrimaryType(modelNode);
         final ConfigurationProperty uuidProperty = modelNode.getProperties().get(JCR_UUID);
         if (uuidProperty != null) {
@@ -262,8 +263,9 @@ public class ConfigurationPersistenceService {
         final NodeIterator iterator = jcrNode.getNodes();
         while (iterator.hasNext()) {
             final Node jcrChild = iterator.nextNode();
-            if (modelNode.getNodes().containsKey(jcrChild.getName())) {
-                retainedChildren.put(jcrChild.getName(), jcrChild);
+            final String indexedName = SnsUtils.createIndexedName(jcrChild);
+            if (modelNode.getNodes().containsKey(indexedName)) {
+                retainedChildren.put(indexedName, jcrChild);
             } else {
                 nonModelNodes.add(jcrChild);
             }
