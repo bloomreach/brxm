@@ -381,10 +381,10 @@ public class ConfigurationPersistenceService {
 
         final List<Value> modelValues = new ArrayList<>();
         if (modelProperty.getType() == PropertyType.SINGLE) {
-            addVerifiedValue(modelProperty, modelProperty.getValue(), modelValues);
+            collectVerifiedValue(modelProperty, modelProperty.getValue(), modelValues);
         } else {
             for (Value value : modelProperty.getValues()) {
-                addVerifiedValue(modelProperty, value, modelValues);
+                collectVerifiedValue(modelProperty, value, modelValues);
             }
         }
 
@@ -411,7 +411,7 @@ public class ConfigurationPersistenceService {
         }
     }
 
-    private void addVerifiedValue(final ConfigurationProperty modelProperty, final Value value, final List<Value> modelValues)
+    private void collectVerifiedValue(final ConfigurationProperty modelProperty, final Value value, final List<Value> modelValues)
             throws RepositoryException {
         if (isReferenceTypeProperty(modelProperty)) {
             final String uuid = getVerifiedReferenceIdentifier(modelProperty, value);
