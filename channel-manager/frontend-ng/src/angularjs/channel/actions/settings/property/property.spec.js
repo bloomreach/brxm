@@ -193,7 +193,8 @@ describe('ChannelProperty', () => {
     expect(ChannelPropertyCtrl.getDropDownListValues()).toEqual([]);
   });
 
-  it('enters read-only mode if the channel is locked by someone else', () => {
+  it('enters read-only mode if the channel is locked by someone else even if the channel is editable', () => {
+    channelInfoDescription.editable = true;
     ConfigService.cmsUser = 'admin';
     channelInfoDescription.lockedBy = 'tester';
     let ChannelPropertyCtrl = compileDirectiveAndGetController();

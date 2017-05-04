@@ -47,9 +47,7 @@ class ChannelPropertyCtrl {
     this.annotation = this._getFirstFieldAnnotation();
     this.type = this._getType();
     this.qaClass = this._getQaClass();
-    if (!this.data.editable || (this.data.lockedBy && this.data.lockedBy !== ConfigService.cmsUser)) {
-      this.readOnly = true;
-    }
+    this.readOnly = !this.data.editable || (this.data.lockedBy && this.data.lockedBy !== ConfigService.cmsUser);
     this.required = this.definition && this.definition.isRequired;
 
     if (this._isPickerField()) {
