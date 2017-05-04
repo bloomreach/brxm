@@ -1,4 +1,8 @@
 {
   "root": true,
-  "extends": "./node_modules/frontend-build/.eslintrc"
+  "extends": "./node_modules/frontend-build/.eslintrc",
+  "rules": {
+    "no-console": "off",
+    "no-debugger": "off",
+  }
 }

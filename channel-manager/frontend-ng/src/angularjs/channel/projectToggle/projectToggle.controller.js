@@ -15,47 +15,85 @@
  *
  */
 
-
 class ProjectToggleController {
-  constructor($scope, $translate, OverlayService, ChannelService, ProjectService, ConfigService, HippoIframeService, SessionService) {
+  constructor(
+    $scope,
+    $translate,
+    ChannelService,
+    CmsService,
+    HippoIframeService,
+    OverlayService,
+    ProjectService,
+    SessionService,
+  ) {
     'ngInject';
 
     this.$translate = $translate;
+    this.CmsService = CmsService;
+    this.ChannelService = ChannelService;
+    this.HippoIframeService = HippoIframeService;
     this.OverlayService = OverlayService;
     this.ProjectService = ProjectService;
-    this.available = ProjectService.available;
-    this.ChannelService = ChannelService;
-    this.projectsEnabled = ConfigService.projectsEnabled;
-    this.HippoIframeService = HippoIframeService;
-    if (this.projectsEnabled) {
-      // In order to have a way to trigger the reloading of the global variants, we tie the reloading
-      // to a successful SessionService.initialize call, which happens upon channel switching.
-      SessionService.registerInitCallback('reloadProjects', () => this._setCurrentBranch());
-      $scope.$on('$destroy', () => SessionService.unregisterInitCallback('reloadProjects'));
-      this._setProjectsAndSelectedProject();
-    }
+    this.SessionService = SessionService;
   }
-  _setProjectsAndSelectedProject() {
+
+  $onInit() {
+    // In order to have a way to trigger the reloading of the global variants, we tie the reloading
+    // to a successful SessionService.initialize call, which happens upon channel switching.
+    this.SessionService.registerInitCallback('reloadProjects', () => {
+      this._setCurrentBranch();
+    });
+
+    this._getProjects();
+  }
+
+  $onDestroy() {
+    this.SessionService.unregisterInitCallback('reloadProjects');
+  }
+
+  _replaceMaster() {
     const channel = this.ChannelService.getChannel();
-    this.MASTER = { name: channel.name, id: channel.id };
-    this.withBranch = [this.MASTER];
+    const index = this.withBranch.findIndex((project) => {
+      if (this.MASTER) {
+        return project.id === this.MASTER.id;
+      }
+
+      return false;
+    });
+
+    if (index !== -1) {
+      this.withBranch.splice(index, 1);
+    }
+
+    this.MASTER = {
+      name: channel.name,
+      id: channel.id.replace('-preview', ''),
+    };
+
+    this.withBranch.push(this.MASTER);
+  }
+
+  _getProjects() {
     this.ProjectService.projects()
       .then((response) => {
-        this.withBranch = this.withBranch.concat(response.withBranch);
+        this.withBranch = response.withBranch;
         this.withoutBranch = response.withoutBranch;
-        this._setCurrentBranch();
       });
   }
 
   _setCurrentBranch() {
     this.ProjectService.currentBranch()
       .then((branchId) => {
+        this._replaceMaster();
+
         if (branchId) {
+          branchId = branchId.replace('-preview', '');
           const currentProject = this.withBranch.find(project => project.id === branchId);
-          this.selectedProject = currentProject || this.MASTER;
-        } else {
-          this.selectedProject = this.MASTER;
+          this.selectedProject = currentProject;
+          return;
         }
+
+        this.selectedProject = this.MASTER;
       });
   }
 
@@ -65,18 +103,20 @@ class ProjectToggleController {
 
   projectChanged() {
     const p = this.selectedProject;
+
     if (this.compareId(this.MASTER)(p)) {
+      console.log('selected master');
       this.ProjectService.selectMaster();
-    } else
-    if (this.withBranch.some(this.compareId(p))) {
+    } else if (this.withBranch.some(this.compareId(p))) {
+      console.log('selected project', p.name);
       this.ProjectService.selectBranch(p);
-    } else
-    if (this.withoutBranch.some(this.compareId(p))) {
+    } else if (this.withoutBranch.some(this.compareId(p))) {
+      console.log('selected withoutBranch');
       this.ProjectService.createBranch(p);
       this.withBranch = this.withBranch.concat(p);
       this.withoutBranch = this.withoutBranch.filter(project => project.id !== p.id);
-      this.selectedProject = p;
     }
+
     this.HippoIframeService.reload();
   }
 }

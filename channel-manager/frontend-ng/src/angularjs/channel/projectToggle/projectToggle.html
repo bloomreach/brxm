@@ -14,15 +14,13 @@
   ~ limitations under the License.
   ~
   -->
-<div ng-show="$ctrl.projectsEnabled" layout layout-align="start center">
+<div layout layout-align="start center">
   <label flex="none">{{ 'TOOLBAR_PROJECT_LABEL' | translate }}</label>
   <md-select aria-label="{{ 'TOOLBAR_PROJECT_LABEL' | translate }}"
-             ng-disabled="$ctrl.disabled"
              ng-model="$ctrl.selectedProject"
-             ng-model-options="{trackBy: '$value.id'}"
              ng-change="$ctrl.projectChanged()">
     <md-option ng-repeat="project in $ctrl.withBranch | orderBy: 'name'"
-               ng-value="{{project}}">
+               ng-value="project">
       <div layout="row"
            layout-align="start center">
         <span class="project-name">{{ project.name }}</span>
@@ -30,7 +28,7 @@
     </md-option>
     <md-divider></md-divider>
     <md-option ng-repeat="project in $ctrl.withoutBranch | orderBy: 'name'"
-               ng-value="{{project}}">
+               ng-value="project">
       <div layout="row"
            layout-align="start center">
         <span class="project-name">{{ project.name }}</span>
