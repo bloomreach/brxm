@@ -25,6 +25,7 @@ class ChannelService {
     FeedbackService,
     HstService,
     ConfigService,
+    ProjectService,
     CmsService,
     SiteMapService,
     PathService,
@@ -42,6 +43,7 @@ class ChannelService {
     this.CmsService = CmsService;
     this.SiteMapService = SiteMapService;
     this.PathService = PathService;
+    this.ProjectService = ProjectService;
 
     this.channel = {};
 
@@ -113,7 +115,11 @@ class ChannelService {
     this.channelPrefix = this._makeContextPrefix(channel.contextPath);
 
     this.CatalogService.load(this.getMountId());
+
     this.SiteMapService.load(channel.siteMapId);
+    if (this.ConfigService.projectsEnabled) {
+      this.ProjectService.load(channel);
+    }
 
     if (this.SessionService.hasWriteAccess()) {
       this._augmentChannelWithPrototypeInfo();

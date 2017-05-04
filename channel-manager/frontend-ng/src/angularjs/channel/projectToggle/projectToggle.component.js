@@ -17,9 +17,6 @@ import template from './projectToggle.html';
 import ProjectToggleController from './projectToggle.controller';
 
 const projectToggleComponent = {
-  bindings: {
-    disabled: '<',
-  },
   controller: ProjectToggleController,
   template,
 };

@@ -14,69 +14,39 @@
  * limitations under the License.
  *
  */
-
-
 class ProjectToggleController {
-  constructor($scope, $translate, OverlayService, ChannelService, ProjectService, ConfigService, HippoIframeService, SessionService) {
+  constructor(
+    $scope,
+    $translate,
+    HippoIframeService,
+    ProjectService,
+  ) {
     'ngInject';
 
+    this.$scope = $scope;
     this.$translate = $translate;
-    this.OverlayService = OverlayService;
-    this.ProjectService = ProjectService;
-    this.available = ProjectService.available;
-    this.ChannelService = ChannelService;
-    this.projectsEnabled = ConfigService.projectsEnabled;
     this.HippoIframeService = HippoIframeService;
-    if (this.projectsEnabled) {
-      // In order to have a way to trigger the reloading of the global variants, we tie the reloading
-      // to a successful SessionService.initialize call, which happens upon channel switching.
-      SessionService.registerInitCallback('reloadProjects', () => this._setCurrentBranch());
-      $scope.$on('$destroy', () => SessionService.unregisterInitCallback('reloadProjects'));
-      this._setProjectsAndSelectedProject();
-    }
-  }
-  _setProjectsAndSelectedProject() {
-    const channel = this.ChannelService.getChannel();
-    this.MASTER = { name: channel.name, id: channel.id };
-    this.withBranch = [this.MASTER];
-    this.ProjectService.projects()
-      .then((response) => {
-        this.withBranch = this.withBranch.concat(response.withBranch);
-        this.withoutBranch = response.withoutBranch;
-        this._setCurrentBranch();
-      });
+    this.ProjectService = ProjectService;
   }
 
-  _setCurrentBranch() {
-    this.ProjectService.currentBranch()
-      .then((branchId) => {
-        if (branchId) {
-          const currentProject = this.withBranch.find(project => project.id === branchId);
-          this.selectedProject = currentProject || this.MASTER;
-        } else {
-          this.selectedProject = this.MASTER;
-        }
-      });
+  getWithBranch() {
+    return this.ProjectService.withBranch;
   }
 
-  compareId(p1) {
-    return p2 => p1.id === p2.id;
+  getWithoutBranch() {
+    return this.ProjectService.withoutBranch;
+  }
+
+  get selectedProject() {
+    return this.ProjectService.selectedProject;
+  }
+
+  set selectedProject(selectedProject) {
+    this.ProjectService.selectedProject = selectedProject;
   }
 
   projectChanged() {
-    const p = this.selectedProject;
-    if (this.compareId(this.MASTER)(p)) {
-      this.ProjectService.selectMaster();
-    } else
-    if (this.withBranch.some(this.compareId(p))) {
-      this.ProjectService.selectBranch(p);
-    } else
-    if (this.withoutBranch.some(this.compareId(p))) {
-      this.ProjectService.createBranch(p);
-      this.withBranch = this.withBranch.concat(p);
-      this.withoutBranch = this.withoutBranch.filter(project => project.id !== p.id);
-      this.selectedProject = p;
-    }
+    this.ProjectService.projectChanged(this.selectedProject);
     this.HippoIframeService.reload();
   }
 }
