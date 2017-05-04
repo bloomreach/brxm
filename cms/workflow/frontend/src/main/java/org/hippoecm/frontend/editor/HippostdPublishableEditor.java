@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,8 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     private static final Logger log = LoggerFactory.getLogger(HippostdPublishableEditor.class);
 
-    private static class WorkflowState {
+    // CMS-10723 Made WorkflowState protected to be able to unit test
+    protected static class WorkflowState {
         private IModel<Node> draft;
         private IModel<Node> unpublished;
         private IModel<Node> published;
@@ -107,6 +108,23 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
         void setUser(final String user) {
             this.user = user;
+        }
+
+        /* For testing purposes */
+        public void setDraft(final IModel<Node> draft) {
+            this.draft = draft;
+        }
+
+        public void setUnpublished(final IModel<Node> unpublished) {
+            this.unpublished = unpublished;
+        }
+
+        public void setPublished(final IModel<Node> published) {
+            this.published = published;
+        }
+
+        public void setHolder(final boolean holder) {
+            isHolder = holder;
         }
 
     }
