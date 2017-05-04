@@ -15,6 +15,8 @@
  */
 package org.onehippo.cm.engine.mapper;
 
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.api.model.Definition;
@@ -27,8 +29,6 @@ import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
 import org.onehippo.cm.impl.model.ValueImpl;
-
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -92,7 +92,7 @@ public class HippoImageFileMapperTest {
         value = new ValueImpl("Dummy value");
         childNode1.addProperty("dummyProperty", value);
         childNode1.addProperty(AbstractFileMapper.JCR_MIME_TYPE, new ValueImpl("image/png"));
-        ValueImpl jcrTypeValue = new ValueImpl(AbstractFileMapper.HIPPOGALLERY_IMAGE);
+        ValueImpl jcrTypeValue = new ValueImpl(HippoImageFileMapper.HIPPOGALLERY_IMAGE);
         childNode1.addProperty(AbstractFileMapper.JCR_PRIMARY_TYPE, jcrTypeValue);
 
         DefinitionNodeImpl childNode2 = new DefinitionNodeImpl("jpgImageNode", parentNode);
@@ -104,12 +104,12 @@ public class HippoImageFileMapperTest {
         childNode2.addProperty("dataProperty", ValueType.BINARY, new ValueImpl[]{arrValue0, arrValue1, arrValue2});
 
         DefinitionNodeImpl imageSetNode = new DefinitionNodeImpl("imageSetNode", parentNode);
-        ValueImpl imageSetTypevalue = new ValueImpl(AbstractFileMapper.HIPPOGALLERY_IMAGESET);
+        ValueImpl imageSetTypevalue = new ValueImpl(HippoImageFileMapper.HIPPOGALLERY_IMAGESET);
         imageSetNode.addProperty(AbstractFileMapper.JCR_PRIMARY_TYPE, imageSetTypevalue);
 
         DefinitionNodeImpl galleryImage = new DefinitionNodeImpl("galleryImage", imageSetNode);
         galleryImage.addProperty(AbstractFileMapper.JCR_MIME_TYPE, new ValueImpl("image/gif"));
-        galleryImage.addProperty(AbstractFileMapper.JCR_PRIMARY_TYPE, new ValueImpl(AbstractFileMapper.HIPPOGALLERY_IMAGE));
+        galleryImage.addProperty(AbstractFileMapper.JCR_PRIMARY_TYPE, new ValueImpl(HippoImageFileMapper.HIPPOGALLERY_IMAGE));
 
         giValue = new ValueImpl("dummy");
         galleryImage.addProperty("dummy", giValue);

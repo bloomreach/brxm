@@ -30,9 +30,6 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
     static final String PATH_DELIMITER = "/";
     static final String NS_DELIMITER = ":";
     public static final String JCR_PRIMARY_TYPE = "jcr:primaryType";
-    public static final String HIPPOGALLERY_IMAGE = "hippogallery:image";
-    public static final String HIPPOGALLERY_IMAGESET = "hippogallery:imageset";
-    public static final String HIPPOGALLERY_FILENAME = "hippogallery:filename";
     public static final String JCR_MIME_TYPE = "jcr:mimeType";
     public static final String DEFAULT_EXTENSION = "bin";
     public static final String DOT_SEPARATOR = ".";

@@ -26,42 +26,48 @@ import org.onehippo.cm.api.model.Value;
 
 /**
  * File mapper for hippogallery:image & hippogallery:imageset node types
+ *
+ * TODO: move into CMS (gallery functionality) and get rid of duplicate constant definitions
  */
 public class HippoImageFileMapper extends AbstractFileMapper {
 
-    public static final String IMAGE_NAME_ARRAY_PATTERN = "%s[%s].%s";
-    public static final String GALLERY_IMAGE_ARRAY_NAME_PATTERN = "%s_" + IMAGE_NAME_ARRAY_PATTERN;
+    static final String HIPPOGALLERY_IMAGE = "hippogallery:image";
+    static final String HIPPOGALLERY_IMAGESET = "hippogallery:imageset";
+    private static final String HIPPOGALLERY_FILENAME = "hippogallery:filename";
 
-    public static final String IMAGE_NAME_PATTERN = "%s.%s";
-    public static final String GALLERY_IMAGE_NAME_PATTERN = "%s_" + IMAGE_NAME_PATTERN;
+    private static final String IMAGE_NAME_ARRAY_PATTERN = "%s[%s].%s";
+    private static final String GALLERY_IMAGE_ARRAY_NAME_PATTERN = "%s_" + IMAGE_NAME_ARRAY_PATTERN;
+
+    private static final String IMAGE_NAME_PATTERN = "%s.%s";
+    private static final String GALLERY_IMAGE_NAME_PATTERN = "%s_" + IMAGE_NAME_PATTERN;
 
     @Override
     public Optional<String> apply(Value value) {
 
         final DefinitionProperty property = value.getParent();
-        final DefinitionNode node = property.getParent();
+        final DefinitionNode imageNode = property.getParent();
 
-        if (!isType(node, HIPPOGALLERY_IMAGE)) {
+        if (!isType(imageNode, HIPPOGALLERY_IMAGE)) {
             return Optional.empty();
         }
 
-        final Optional<Integer> arrayIndex = calculateArrayIndex(value);
+        final Optional<Integer> arrayIndex = calculateArrayIndex(property, value);
 
-        final DefinitionNode imageSetNode = node.getParent();
+        final DefinitionNode imageSetNode = imageNode.getParent();
         if (isType(imageSetNode, HIPPOGALLERY_IMAGESET)) {
-            final DefinitionProperty fileProperty = imageSetNode.getProperties().get(HIPPOGALLERY_FILENAME);
-            final String fileName = fileProperty != null ? fileProperty.getValue().getString() : mapNodeNameToFileName(imageSetNode.getName());
+            final DefinitionProperty fileNameProperty = imageSetNode.getProperties().get(HIPPOGALLERY_FILENAME);
+            final String fileName = fileNameProperty != null ? fileNameProperty.getValue().getString() : mapNodeNameToFileName(imageSetNode.getName());
             final String baseName = StringUtils.substringBeforeLast(fileName, DOT_SEPARATOR);
-            final String suffix = mapNodeNameToFileName(node.getName());
-            final String extension = fileName.contains(DOT_SEPARATOR) ? StringUtils.substringAfterLast(fileName, DOT_SEPARATOR) : getFileExtension(node);
+            final String suffix = mapNodeNameToFileName(imageNode.getName());
+            final String extension = fileName.contains(DOT_SEPARATOR) ? StringUtils.substringAfterLast(fileName, DOT_SEPARATOR) : getFileExtension(imageNode);
             final String finalName = arrayIndex.map(integer -> String.format(GALLERY_IMAGE_ARRAY_NAME_PATTERN, baseName, suffix, integer, extension))
                     .orElseGet(() -> String.format(GALLERY_IMAGE_NAME_PATTERN, baseName, suffix, extension));
             final String fullName = String.format("%s/%s", constructFilePathFromJcrPath(imageSetNode.getParent().getPath()), finalName);
             return Optional.of(fullName);
         } else {
-            final String folderPath = constructFilePathFromJcrPath(node.getPath());
-            final String name = mapNodeNameToFileName(node.getName());
-            final String extension = getFileExtension(node);
+            final String folderPath = constructFilePathFromJcrPath(imageNode.getPath());
+            final String name = mapNodeNameToFileName(imageNode.getName());
+            final String extension = getFileExtension(imageNode);
             final String finalName = arrayIndex.map(integer -> String.format(IMAGE_NAME_ARRAY_PATTERN, name, integer, extension))
                     .orElseGet(() -> String.format(IMAGE_NAME_PATTERN, name, extension));
             final String fullName = String.format("%s/%s", folderPath, finalName);
@@ -69,9 +75,9 @@ public class HippoImageFileMapper extends AbstractFileMapper {
         }
     }
 
-    private Optional<Integer> calculateArrayIndex(Value value) {
-        if (value.getParent().getType() == PropertyType.LIST || value.getParent().getType() == PropertyType.SET) {
-            return Optional.of(Arrays.asList(value.getParent().getValues()).indexOf(value));
+    private Optional<Integer> calculateArrayIndex(DefinitionProperty property, Value value) {
+        if (property.getType() == PropertyType.LIST || property.getType() == PropertyType.SET) {
+            return Optional.of(Arrays.asList(property.getValues()).indexOf(value));
         }
         return Optional.empty();
     }
