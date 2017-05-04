@@ -22,28 +22,21 @@ import org.onehippo.cm.engine.FileResourceOutputProvider;
 import org.onehippo.cm.engine.ModuleContext;
 import org.onehippo.cm.engine.ResourceOutputProvider;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
+/**
+ * Support for esv2yaml tool. Input provider relies onto the root of module instead of module/repo-config folder
+ */
 public class LegacyModuleContext extends ModuleContext {
 
-    public LegacyModuleContext(Module module, Path repoConfigPath, boolean multiModule) {
+    LegacyModuleContext(Module module, Path repoConfigPath, boolean multiModule) throws IOException {
 
         super(module, repoConfigPath, multiModule);
         this.configInputProvider = this.contentInputProvider = new FileResourceInputProvider(repoConfigPath);
     }
 
-    public ResourceOutputProvider createConfigOutputProvider(Path destinationPath) {
-        Path moduleBasePath = FileConfigurationUtils.getModuleBasePath(destinationPath, module, multiModule);
-        configOutputProvider = new FileResourceOutputProvider(moduleBasePath);
-        return configOutputProvider;
-    }
-
-    public ResourceOutputProvider createContentOutputProvider(Path destinationPath) {
-        Path moduleBasePath = FileConfigurationUtils.getModuleContentBasePath(destinationPath, module, multiModule);
-        contentOutputProvider = new FileResourceOutputProvider(moduleBasePath);
-        return contentOutputProvider;
-    }
-
+    @Override
     public void createOutputProviders(Path destinationPath) {
         Path configModuleBasePath = FileConfigurationUtils.getModuleBasePath(destinationPath, module, multiModule);
         configOutputProvider = new FileResourceOutputProvider(configModuleBasePath);
@@ -51,14 +44,4 @@ public class LegacyModuleContext extends ModuleContext {
         Path contentModuleBasePath = FileConfigurationUtils.getModuleContentBasePath(destinationPath, module, multiModule);
         contentOutputProvider = new FileResourceOutputProvider(contentModuleBasePath);
     }
-
-
-    public ResourceOutputProvider getConfigOutputProvider() {
-        return configOutputProvider;
-    }
-
-    public ResourceOutputProvider getContentOutputProvider() {
-        return contentOutputProvider;
-    }
-
 }

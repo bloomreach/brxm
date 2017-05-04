@@ -15,6 +15,9 @@
  */
 package org.onehippo.cm.engine.serializer;
 
+/**
+ * Unique name manager
+ */
 public interface ResourceNameResolver {
     String generateName(String filePath);
 }

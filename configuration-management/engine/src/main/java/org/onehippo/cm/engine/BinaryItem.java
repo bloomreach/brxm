@@ -16,17 +16,16 @@
 package org.onehippo.cm.engine;
 
 import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.engine.snakeyaml.MutableScalarNode;
-import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.ScalarNode;
 
 public final class BinaryItem implements PostProcessItem {
 
     private final Value value;
 
-    private final MutableScalarNode node;
+    private final ScalarNode node;
 
-    public BinaryItem(final Value value, Node valueNode) {
-        this.node = (MutableScalarNode) valueNode;
+    public BinaryItem(final Value value, ScalarNode valueNode) {
+        this.node =  valueNode;
         this.value = value;
     }
 
@@ -34,7 +33,7 @@ public final class BinaryItem implements PostProcessItem {
         return value;
     }
 
-    public MutableScalarNode getNode() {
+    public ScalarNode getNode() {
         return node;
     }
 

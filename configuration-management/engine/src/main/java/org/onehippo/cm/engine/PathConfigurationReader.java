@@ -96,10 +96,12 @@ public class PathConfigurationReader {
                     final ModuleContext moduleContext = new ModuleContext(module, repoConfigPath, hasMultipleModules);
                     moduleContexts.put(module, moduleContext);
 
-                    final SourceParser sourceParser = new ConfigSourceParser(moduleContext.getConfigInputProvider(), verifyOnly, explicitSequencing);
                     final Path configRootPath = moduleContext.getConfigRoot();
 
-                    parseSources((ModuleImpl) module, configRootPath, sourceParser);
+                    if (Files.exists(configRootPath)) {
+                        final SourceParser sourceParser = new ConfigSourceParser(moduleContext.getConfigInputProvider(), verifyOnly, explicitSequencing);
+                        parseSources((ModuleImpl) module, configRootPath, sourceParser);
+                    }
 
                     final Path contentRootPath = moduleContext.getContentRoot();
                     if (Files.exists(contentRootPath)) {
@@ -120,7 +122,7 @@ public class PathConfigurationReader {
         }
     }
 
-    //TODO use to collect all content sources and then sort them appropriately.
+    //TODO use to collect all content sources and then sort them in processing order appropriately.
     private List<Pair<Path, String>> getSourceData(final Path modulePath) throws IOException {
         final List<Path> paths = new ArrayList<>();
         final BiPredicate<Path, BasicFileAttributes> matcher =

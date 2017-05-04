@@ -17,9 +17,27 @@ package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
 
 import org.onehippo.cm.api.model.Source;
 
 public interface ResourceOutputProvider {
+
+    /**
+     * Get an OutputProvider to resolve a resource reference in a YAML Source or from the module root. Note, caller is
+     * responsible for closing the stream when finished with it.
+     * @param source
+     * @param resourcePath
+     * @throws IOException
+     */
     OutputStream getResourceOutputStream(final Source source, final String resourcePath) throws IOException;
+
+    /**
+     * Gets path based on combination of source and resource path
+     * @param source
+     * @param resourcePath
+     * @return
+     * @throws IOException
+     */
+    Path getResourceOutputPath(final Source source, final String resourcePath) throws IOException;
 }

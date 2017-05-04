@@ -46,7 +46,6 @@ import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.engine.Constants;
 import org.onehippo.cm.engine.FileConfigurationWriter;
 import org.onehippo.cm.engine.ModuleContext;
-import org.onehippo.cm.engine.serializer.SourceSerializer;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
@@ -203,7 +202,7 @@ public class Esv2Yaml {
                 }
 
                 // generate unique 'main.yaml' source, optionally using 'root.yaml', 'base.yaml' or 'index.yaml' as fallback
-                final SourceImpl mainSource = module.addSource(createSourcePath(MAIN_YAML_NAMES, sourcePaths, 0));
+                final SourceImpl mainSource = module.addConfigSource(createSourcePath(MAIN_YAML_NAMES, sourcePaths, 0));  //TODO SS: review this. how to distinguish content from config definitions
 
                 processInitializeInstructions(mainSource, instructions);
                 serializeModule();
@@ -335,6 +334,6 @@ public class Esv2Yaml {
                 new LegacyModuleContext(module, src.toPath(), multiModule);
         moduleContext.createOutputProviders(target.toPath());
 
-        new FileConfigurationWriter().writeModule(module, new SourceSerializer(), moduleContext);
+        new FileConfigurationWriter().writeModule(module, Constants.DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
     }
 }

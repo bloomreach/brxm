@@ -16,12 +16,14 @@
 package org.onehippo.cm.engine.parser;
 
 import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
+import org.onehippo.cm.impl.model.WebFileBundleDefinitionImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
@@ -52,12 +54,13 @@ public class ConfigSourceParser extends SourceParser {
         super(resourceInputProvider, verifyOnly, explicitSequencing);
     }
 
+    @Override
     protected void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException {
         final Map<String, Node> sourceMap = asMapping(src, new String[]{DEFINITIONS}, null);
         final SourceImpl source = parent.addConfigSource(path);
 
         final Map<String, Node> definitionsMap = asMapping(sourceMap.get(DEFINITIONS), null,
-                DefinitionType.NAMES);
+                DefinitionType.CONFIG_NAMES);
 
         for (String definitionName : definitionsMap.keySet()) {
             final Node definitionNode = definitionsMap.get(definitionName);
@@ -113,6 +116,7 @@ public class ConfigSourceParser extends SourceParser {
         }
     }
 
+    @Override
     protected void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node node) throws ParserException {
         final List<NodeTuple> tuples = asTuples(node);
         for (NodeTuple tuple : tuples) {
@@ -155,5 +159,21 @@ public class ConfigSourceParser extends SourceParser {
 
     private String asNodeOrderBeforeValue(final Node node) throws ParserException {
         return asStringScalar(node);
+    }
+
+    private void constructWebFileBundleDefinition(final Node definitionNode, final SourceImpl source) throws ParserException {
+        final List<Node> nodes = asSequence(definitionNode);
+        for (Node node : nodes) {
+            final String name = asStringScalar(node);
+            for (Definition definition : source.getModifiableDefinitions()) {
+                if (definition instanceof WebFileBundleDefinitionImpl) {
+                    final WebFileBundleDefinitionImpl existingDefinition = (WebFileBundleDefinitionImpl) definition;
+                    if (existingDefinition.getName().equals(name)) {
+                        throw new ParserException("Duplicate web file bundle name '" + name + "'", node);
+                    }
+                }
+            }
+            source.addWebFileBundleDefinition(name);
+        }
     }
 }

@@ -48,7 +48,7 @@ public class ResourcebundlesInitializeInstruction extends InitializeInstruction 
     public void processResourceBundles(final ModuleImpl module, final ConfigDefinitionImpl resourceBundleParents,
                                        final Set<String> bundles) throws IOException, EsvParseException {
         JSONObject json = new JSONObject(IOUtils.toString(new FileInputStream(getResource()), "UTF-8"));
-        parse(json, new Stack<>(), module.addSource(getSourcePath()), resourceBundleParents, bundles);
+        parse(json, new Stack<>(), module.addConfigSource(getSourcePath()), resourceBundleParents, bundles); //TODO SS: review this. how to distinguish content from config definitions
     }
 
     private void parse(final JSONObject json, final Stack<String> path, SourceImpl source,

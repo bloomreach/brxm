@@ -63,8 +63,8 @@ public class ClasspathMergedModelReader {
             final Path repoConfig = fs.getPath(REPO_CONFIG_YAML);
             final PathConfigurationReader.ReadResult result =
                     new PathConfigurationReader().read(repoConfig, verifyOnly);
-            Map<Module, ModuleContext> resourceInputProviders = result.getModuleContexts();
-            Map<Module, ResourceInputProvider> configInputProviders = resourceInputProviders.entrySet().stream() //TODO SS: review this transformation
+            Map<Module, ModuleContext> moduleContexts = result.getModuleContexts();
+            Map<Module, ResourceInputProvider> configInputProviders = moduleContexts.entrySet().stream() //TODO SS: review this transformation
                     .collect(toMap(Map.Entry::getKey, v -> v.getValue().getConfigInputProvider()));
 
             builder.push(result.getConfigurations(), configInputProviders);

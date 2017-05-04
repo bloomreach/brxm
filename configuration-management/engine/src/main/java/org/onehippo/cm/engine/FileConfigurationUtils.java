@@ -17,7 +17,6 @@ package org.onehippo.cm.engine;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;

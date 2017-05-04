@@ -17,7 +17,6 @@ package org.onehippo.cm.engine.serializer;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
-import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.engine.Constants.DEFINITIONS;
 import static org.onehippo.cm.engine.Constants.META_DELETE_KEY;
 import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
@@ -30,14 +29,11 @@ import static org.onehippo.cm.engine.Constants.TYPE_KEY;
 import static org.onehippo.cm.engine.Constants.URI_KEY;
 import static org.onehippo.cm.engine.Constants.VALUE_KEY;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
@@ -52,11 +48,11 @@ import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.api.model.WebFileBundleDefinition;
-import org.onehippo.cm.engine.BinaryArrayItem;
 import org.onehippo.cm.engine.BinaryItem;
 import org.onehippo.cm.engine.CopyItem;
+import org.onehippo.cm.engine.ModuleContext;
 import org.onehippo.cm.engine.PostProcessItem;
-import org.onehippo.cm.engine.snakeyaml.MutableScalarNode;
+import org.onehippo.cm.engine.mapper.ValueFileMapperProvider;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -68,20 +64,18 @@ public class SourceSerializer extends AbstractBaseSerializer {
 
     private final static YamlRepresenter representer = new YamlRepresenter();
 
-    public SourceSerializer() {
-        this(DEFAULT_EXPLICIT_SEQUENCING);
-    }
+    private final ModuleContext moduleContext;
+    private final Source source;
+    private final ValueFileMapperProvider mapperProvider = ValueFileMapperProvider.getInstance();
 
-    public SourceSerializer(final boolean explicitSequencing) {
+
+    public SourceSerializer(ModuleContext moduleContext, Source source, boolean explicitSequencing) {
         super(explicitSequencing);
+        this.moduleContext = moduleContext;
+        this.source = source;
     }
 
-    public void serialize(final OutputStream outputStream, final Source source, final Consumer<PostProcessItem> resourceConsumer) throws IOException {
-        final Node node = representSource(source, resourceConsumer);
-        serializeNode(outputStream, node);
-    }
-
-    public Node representSource(final Source source, final Consumer<PostProcessItem> resourceConsumer) {
+    public Node representSource(final Consumer<PostProcessItem> resourceConsumer) {
         final List<NodeTuple> configDefinitionTuples = new ArrayList<>();
         final List<NodeTuple> contentDefinitionTuples = new ArrayList<>();
         final List<Node> namespaceDefinitionNodes = new ArrayList<>();
@@ -215,24 +209,17 @@ public class SourceSerializer extends AbstractBaseSerializer {
                     processSingleResource(resourceConsumer, value, valueNode);
                 }
             } else {
-
                 final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
-                final List<BinaryItem> binaryItems = new ArrayList<>();
-
                 for (Value value : property.getValues()) {
                     final Node valueNode = representValue(value);
                     valueNodes.add(valueNode);
 
                     if (isBinaryEmbedded(value)) {
-                        binaryItems.add(new BinaryItem(value, valueNode));
+                        resourceConsumer.accept(new BinaryItem(value, (ScalarNode) valueNode));
                     }
                     else if (exposeAsResource) {
                         resourceConsumer.accept(new CopyItem(value.getString()));
                     }
-                }
-
-                if (binaryItems.size() > 0) {
-                    resourceConsumer.accept(new BinaryArrayItem(binaryItems));
                 }
 
                 valueMapTuples.add(createStrSeqTuple(key, valueNodes, true));
@@ -243,7 +230,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     private void processSingleResource(Consumer<PostProcessItem> resourceConsumer, Value value, Node valueNode) {
-        final PostProcessItem postProcessItem = isBinaryEmbedded(value) ? new BinaryItem(value, valueNode) : new CopyItem(value.getString());
+        final PostProcessItem postProcessItem = isBinaryEmbedded(value) ? new BinaryItem(value, (ScalarNode) valueNode) : new CopyItem(value.getString());
         resourceConsumer.accept(postProcessItem);
     }
 
@@ -341,8 +328,8 @@ public class SourceSerializer extends AbstractBaseSerializer {
             case URI:
                 return representer.represent(value.getString());
             case BINARY:
-                String nodeValue = value.isResource() ? value.getString() : StringUtils.EMPTY;
-                return MutableScalarNode.create(Tag.STR, nodeValue);
+                String nodeValue = value.isResource() ? value.getString() : moduleContext.generateUniqueName(source, mapperProvider.generateSmartName(value));
+                return representer.represent(nodeValue);
             default:
                 return representer.represent(value.getObject());
         }

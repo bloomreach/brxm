@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,19 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.engine.mapper;
 
-import java.util.List;
+import org.onehippo.cm.api.model.Value;
 
-public final class BinaryArrayItem implements PostProcessItem{
+import java.util.Optional;
 
-    private List<BinaryItem> items;
+/**
+ * Value to File mapper. Maps JCR value to filename using smart name resolvers
+ */
+public interface ValueFileMapper {
 
-    public BinaryArrayItem(List<BinaryItem> items) {
-        this.items = items;
-    }
-
-    public List<BinaryItem> getItems() {
-        return items;
-    }
+    /**
+     * Generates filename with full path
+     * @param value Property's value
+     * @return Path with filename
+     */
+    Optional<String> apply(Value value);
 }

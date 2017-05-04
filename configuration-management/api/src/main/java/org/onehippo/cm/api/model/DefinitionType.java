@@ -23,9 +23,8 @@ public enum DefinitionType {
     CND,
     WEBFILEBUNDLE;
 	
-	public static final String[] NAMES = {
+	public static final String[] CONFIG_NAMES = {
 			CONFIG.toString(),
-			CONTENT.toString(),
 			NAMESPACE.toString(),
 			CND.toString(),
 			WEBFILEBUNDLE.toString()

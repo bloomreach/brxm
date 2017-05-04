@@ -25,11 +25,10 @@ public final class Constants {
     public static final String REPO_CONTENT_FOLDER = "repo-content";
     public static final String REPO_CONFIG_FOLDER = "repo-config";
 
-    public static final String REPO_CONFIG_YAML = "repo-config.yaml";
+    public static final String YAML_EXT =".yaml";
+    public static final String REPO_CONFIG_YAML = "repo-config" + YAML_EXT;
     public static final String ACTIONS_YAML = "hcm-actions.yaml";
 
-    public static final String YAML_EXT ="yaml";
-    
     // Following keys used in repo-config.yaml
     public static final String CONFIGURATIONS_KEY = "configurations";
     public static final String PROJECTS_KEY = "projects";

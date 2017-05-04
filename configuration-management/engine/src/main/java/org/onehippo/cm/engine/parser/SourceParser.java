@@ -15,20 +15,24 @@
  */
 package org.onehippo.cm.engine.parser;
 
-import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
-import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
-import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
-import static org.onehippo.cm.engine.Constants.DEFINITIONS;
-import static org.onehippo.cm.engine.Constants.META_DELETE_KEY;
-import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
-import static org.onehippo.cm.engine.Constants.META_ORDER_BEFORE_KEY;
-import static org.onehippo.cm.engine.Constants.OPERATION_KEY;
-import static org.onehippo.cm.engine.Constants.PATH_KEY;
-import static org.onehippo.cm.engine.Constants.PREFIX_KEY;
-import static org.onehippo.cm.engine.Constants.RESOURCE_KEY;
-import static org.onehippo.cm.engine.Constants.TYPE_KEY;
-import static org.onehippo.cm.engine.Constants.URI_KEY;
-import static org.onehippo.cm.engine.Constants.VALUE_KEY;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.PropertyOperation;
+import org.onehippo.cm.api.model.PropertyType;
+import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.api.model.ValueType;
+import org.onehippo.cm.impl.model.ContentDefinitionImpl;
+import org.onehippo.cm.impl.model.DefinitionNodeImpl;
+import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
+import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.impl.model.ValueImpl;
+import org.yaml.snakeyaml.constructor.Construct;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.error.YAMLException;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.ScalarNode;
+import org.yaml.snakeyaml.nodes.Tag;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -39,30 +43,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionType;
-import org.onehippo.cm.api.model.PropertyOperation;
-import org.onehippo.cm.api.model.PropertyType;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
-import org.onehippo.cm.impl.model.ContentDefinitionImpl;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.SourceImpl;
-import org.onehippo.cm.impl.model.ValueImpl;
-import org.onehippo.cm.impl.model.WebFileBundleDefinitionImpl;
-import org.yaml.snakeyaml.constructor.Construct;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.error.YAMLException;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.NodeTuple;
-import org.yaml.snakeyaml.nodes.ScalarNode;
-import org.yaml.snakeyaml.nodes.Tag;
+import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.engine.Constants.OPERATION_KEY;
+import static org.onehippo.cm.engine.Constants.PATH_KEY;
+import static org.onehippo.cm.engine.Constants.RESOURCE_KEY;
+import static org.onehippo.cm.engine.Constants.TYPE_KEY;
+import static org.onehippo.cm.engine.Constants.VALUE_KEY;
 
 public abstract class SourceParser extends AbstractBaseParser {
 
@@ -556,20 +544,5 @@ public abstract class SourceParser extends AbstractBaseParser {
         }
     }
 
-    void constructWebFileBundleDefinition(final Node definitionNode, final SourceImpl source) throws ParserException {
-        final List<Node> nodes = asSequence(definitionNode);
-        for (Node node : nodes) {
-            final String name = asStringScalar(node);
-            for (Definition definition : source.getModifiableDefinitions()) {
-                if (definition instanceof WebFileBundleDefinitionImpl) {
-                    final WebFileBundleDefinitionImpl existingDefinition = (WebFileBundleDefinitionImpl) definition;
-                    if (existingDefinition.getName().equals(name)) {
-                        throw new ParserException("Duplicate web file bundle name '" + name + "'", node);
-                    }
-                }
-            }
-            source.addWebFileBundleDefinition(name);
-        }
-    }
 
 }

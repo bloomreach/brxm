@@ -15,7 +15,6 @@
  */
 package org.onehippo.cm.impl.model;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -46,9 +45,6 @@ public class ModuleImpl implements Module {
     private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator.comparing(Source::getPath));
 
     private final Set<Source> sources = Collections.unmodifiableSet(sortedSources);
-
-
-    //TODO SS add split sources list into content & config sources
 
     private final List<NamespaceDefinitionImpl> namespaceDefinitions = new ArrayList<>();
     private final List<NodeTypeDefinitionImpl> nodeTypeDefinitions = new ArrayList<>();
@@ -103,7 +99,7 @@ public class ModuleImpl implements Module {
     }
 
     @Deprecated
-    public SourceImpl addSource(final String path) {
+    private SourceImpl addSource(final String path) {
         final SourceImpl source = new ConfigSourceImpl(path, this);
         return addSource(source);
     }
@@ -221,6 +217,15 @@ public class ModuleImpl implements Module {
         }
     }
 
+    @Override
+    public String toString() {
+        return "ModuleImpl{" +
+                "name='" + name + '\'' +
+                ", project=" + project +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object other) {
         if (this == other) {
             return true;

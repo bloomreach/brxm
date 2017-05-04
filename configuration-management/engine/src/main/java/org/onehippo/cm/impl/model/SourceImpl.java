@@ -63,16 +63,14 @@ public abstract class SourceImpl implements Source {
         return modifiableDefinitions;
     }
 
-    public NamespaceDefinitionImpl addNamespaceDefinition(final String prefix, final URI uri) {
+    public void addNamespaceDefinition(final String prefix, final URI uri) {
         final NamespaceDefinitionImpl definition = new NamespaceDefinitionImpl(this, prefix, uri);
         modifiableDefinitions.add(definition);
-        return definition;
     }
 
-    public NodeTypeDefinitionImpl addNodeTypeDefinition(final String value, final boolean isResource) {
+    public void addNodeTypeDefinition(final String value, final boolean isResource) {
         final NodeTypeDefinitionImpl definition = new NodeTypeDefinitionImpl(this, value, isResource);
         modifiableDefinitions.add(definition);
-        return definition;
     }
 
     public ConfigDefinitionImpl addConfigDefinition() {
@@ -99,10 +97,9 @@ public abstract class SourceImpl implements Source {
         modifiableDefinitions.add(definition);
     }
 
-    public WebFileBundleDefinitionImpl addWebFileBundleDefinition(final String name) {
+    public void addWebFileBundleDefinition(final String name) {
         final WebFileBundleDefinitionImpl definition = new WebFileBundleDefinitionImpl(this, name);
         modifiableDefinitions.add(definition);
-        return definition;
     }
 
     @Override
@@ -117,6 +114,6 @@ public abstract class SourceImpl implements Source {
 
     @Override
     public int hashCode() {
-        return Objects.hash(path, module, modifiableDefinitions, definitions);
+        return Objects.hash(path, module);
     }
 }

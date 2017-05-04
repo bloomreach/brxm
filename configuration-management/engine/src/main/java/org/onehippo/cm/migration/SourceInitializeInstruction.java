@@ -73,7 +73,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
 
     public void processSource(final ModuleImpl module, final Map<String, DefinitionNodeImpl> nodeDefinitions,
                               final Set<DefinitionNode> deltaNodes) throws EsvParseException {
-        final SourceImpl source = module.addSource(getSourcePath());
+        final SourceImpl source = module.addConfigSource(getSourcePath()); //TODO SS: review this. how to distinguish content from config definitions
         log.info("Processing " + getType().getPropertyName() + " " + getContentPath() + " from file " + getResourcePath());
         processNode(sourceNode, getContentPath(), source, null, nodeDefinitions, deltaNodes);
     }

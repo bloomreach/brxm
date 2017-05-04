@@ -36,8 +36,13 @@ public class FileResourceOutputProvider implements ResourceOutputProvider {
 
     @Override
     public OutputStream getResourceOutputStream(final Source source, final String resourcePath) throws IOException {
-        final Path path = FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath);
+        final Path path = getResourceOutputPath(source, resourcePath);
         Files.createDirectories(path.getParent());
         return new FileOutputStream(path.toFile());
+    }
+
+    @Override
+    public Path getResourceOutputPath(final Source source, final String resourcePath) throws IOException {
+        return FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath);
     }
 }

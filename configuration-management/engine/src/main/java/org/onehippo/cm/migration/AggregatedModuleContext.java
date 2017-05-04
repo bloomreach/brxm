@@ -17,25 +17,19 @@ package org.onehippo.cm.migration;
 
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.engine.FileResourceOutputProvider;
-import org.onehippo.cm.engine.ResourceOutputProvider;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
+/**
+ * Aggregated modules support
+ */
 public class AggregatedModuleContext extends LegacyModuleContext {
-    public AggregatedModuleContext(Module module, Path repoConfigPath, boolean multiModule) {
+    public AggregatedModuleContext(Module module, Path repoConfigPath, boolean multiModule) throws IOException {
         super(module, repoConfigPath, multiModule);
     }
 
-    public ResourceOutputProvider createConfigOutputProvider(Path destinationPath) {
-        configOutputProvider = new FileResourceOutputProvider(destinationPath);
-        return configOutputProvider;
-    }
-
-    public ResourceOutputProvider createContentOutputProvider(Path destinationPath) {
-        contentOutputProvider = new FileResourceOutputProvider(destinationPath);
-        return contentOutputProvider;
-    }
-
+    @Override
     public void createOutputProviders(Path destinationPath) {
         configOutputProvider = new FileResourceOutputProvider(destinationPath);
         contentOutputProvider = new FileResourceOutputProvider(destinationPath);
