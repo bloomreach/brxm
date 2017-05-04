@@ -15,8 +15,10 @@
  */
 package org.onehippo.cm.engine.parser;
 
+import java.util.List;
+import java.util.Map;
+
 import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
@@ -25,9 +27,6 @@ import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
-
-import java.util.List;
-import java.util.Map;
 
 import static org.onehippo.cm.api.model.DefinitionType.CONTENT;
 import static org.onehippo.cm.engine.Constants.DEFINITIONS;
@@ -60,15 +59,8 @@ public class ContentSourceParser extends SourceParser {
 
         final Map<String, Node> definitionsMap = asMapping(sourceMap.get(DEFINITIONS), new String[]{CONTENT.toString()}, null);
 
-        for (String definitionName : definitionsMap.keySet()) {
-            final Node definitionNode = definitionsMap.get(definitionName);
-            switch (DefinitionType.valueOf(definitionName.toUpperCase())) {
-                case CONTENT:
-                    constructContentDefinitions(definitionNode, source);
-                    break;
-                default:
-                    throw new ParserException("Not supported");
-            }
+        for (Node definitionNode : definitionsMap.values()) {
+            constructContentDefinitions(definitionNode, source);
         }
     }
 

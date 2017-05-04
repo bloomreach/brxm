@@ -15,14 +15,14 @@
  */
 package org.onehippo.cm.engine.mapper;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * File mapper for hippogallery:image & hippogallery:imageset node types
@@ -50,17 +50,17 @@ public class HippoImageFileMapper extends AbstractFileMapper {
         final DefinitionNode imageSetNode = node.getParent();
         if (isType(imageSetNode, HIPPOGALLERY_IMAGESET)) {
             final DefinitionProperty fileProperty = imageSetNode.getProperties().get(HIPPOGALLERY_FILENAME);
-            final String fileName = fileProperty != null ? fileProperty.getValue().getString() : normalizeJcrName(imageSetNode.getName());
+            final String fileName = fileProperty != null ? fileProperty.getValue().getString() : mapNodeNameToFileName(imageSetNode.getName());
             final String baseName = StringUtils.substringBeforeLast(fileName, DOT_SEPARATOR);
-            final String suffix = normalizeJcrName(node.getName());
+            final String suffix = mapNodeNameToFileName(node.getName());
             final String extension = fileName.contains(DOT_SEPARATOR) ? StringUtils.substringAfterLast(fileName, DOT_SEPARATOR) : getFileExtension(node);
             final String finalName = arrayIndex.map(integer -> String.format(GALLERY_IMAGE_ARRAY_NAME_PATTERN, baseName, suffix, integer, extension))
                     .orElseGet(() -> String.format(GALLERY_IMAGE_NAME_PATTERN, baseName, suffix, extension));
-            final String fullName = String.format("%s/%s", constructPathFromJcrPath(imageSetNode.getParent().getPath()), finalName);
+            final String fullName = String.format("%s/%s", constructFilePathFromJcrPath(imageSetNode.getParent().getPath()), finalName);
             return Optional.of(fullName);
         } else {
-            final String folderPath = constructPathFromJcrPath(node.getPath());
-            final String name = normalizeJcrName(node.getName());
+            final String folderPath = constructFilePathFromJcrPath(node.getPath());
+            final String name = mapNodeNameToFileName(node.getName());
             final String extension = getFileExtension(node);
             final String finalName = arrayIndex.map(integer -> String.format(IMAGE_NAME_ARRAY_PATTERN, name, integer, extension))
                     .orElseGet(() -> String.format(IMAGE_NAME_PATTERN, name, extension));

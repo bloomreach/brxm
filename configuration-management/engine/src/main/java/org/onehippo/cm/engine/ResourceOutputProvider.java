@@ -24,8 +24,8 @@ import org.onehippo.cm.api.model.Source;
 public interface ResourceOutputProvider {
 
     /**
-     * Get an OutputProvider to resolve a resource reference in a YAML Source or from the module root. Note, caller is
-     * responsible for closing the stream when finished with it.
+     * Get an OutputStream to write to a resource referenced in a YAML Source.
+     * Note, caller is responsible for closing the stream when finished with it.
      * @param source
      * @param resourcePath
      * @throws IOException
@@ -33,7 +33,7 @@ public interface ResourceOutputProvider {
     OutputStream getResourceOutputStream(final Source source, final String resourcePath) throws IOException;
 
     /**
-     * Gets path based on combination of source and resource path
+     * Gets absolute filesystem path based on combination of source and resource path
      * @param source
      * @param resourcePath
      * @return

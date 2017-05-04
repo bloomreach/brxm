@@ -15,9 +15,9 @@
  */
 package org.onehippo.cm.engine.mapper;
 
-import org.onehippo.cm.api.model.Value;
-
 import java.util.Optional;
+
+import org.onehippo.cm.api.model.Value;
 
 /**
  * Value to File mapper. Maps JCR value to filename using smart name resolvers
@@ -25,7 +25,7 @@ import java.util.Optional;
 public interface ValueFileMapper {
 
     /**
-     * Generates filename with full path
+     * Generates filename and path relative to the module root
      * @param value Property's value
      * @return Path with filename
      */

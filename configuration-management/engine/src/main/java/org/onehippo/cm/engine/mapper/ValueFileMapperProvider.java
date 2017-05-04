@@ -15,19 +15,19 @@
  */
 package org.onehippo.cm.engine.mapper;
 
-import org.onehippo.cm.api.model.Value;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.type.filter.AssignableTypeFilter;
-
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import org.onehippo.cm.api.model.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.filter.AssignableTypeFilter;
 
 /**
  * Extension scanner. Loads all available mappers
@@ -50,7 +50,7 @@ public class ValueFileMapperProvider {
     }
 
     private ValueFileMapperProvider() {
-        valueFileMappers.addAll(loadAvailableMappers());
+        loadAvailableMappers();
     }
 
     /**
@@ -58,7 +58,7 @@ public class ValueFileMapperProvider {
      * @param value
      * @return Best matching filename
      */
-    public String generateSmartName(Value value) {
+    public String generateName(Value value) {
 
         return valueFileMappers.stream().map(x -> x.apply(value))
                 .filter(Optional::isPresent)
@@ -75,15 +75,12 @@ public class ValueFileMapperProvider {
     /**
      * @return Loads list of all available mappers available at current class's package
      */
-    private List<ValueFileMapper> loadAvailableMappers() {
-
-        final List<ValueFileMapper> list = new ArrayList<>();
-
-        final String packageName = this.getClass().getPackage().getName();
+    private void loadAvailableMappers() {
         final ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
         provider.addIncludeFilter(new AssignableTypeFilter(ValueFileMapper.class));
         provider.addExcludeFilter(new AssignableTypeFilter(DefaultFileMapper.class));
 
+        final String packageName = this.getClass().getPackage().getName();
         final Set<BeanDefinition> classes = provider.findCandidateComponents(packageName);
         for (BeanDefinition beanDefinition : classes) {
             final String className = beanDefinition.getBeanClassName();
@@ -92,12 +89,11 @@ public class ValueFileMapperProvider {
                 final boolean isAbstract = Modifier.isAbstract(clazz.getModifiers());
                 if (!isAbstract) {
                     final ValueFileMapper mapper = (ValueFileMapper) clazz.newInstance();
-                    list.add(mapper);
+                    valueFileMappers.add(mapper);
                 }
             } catch (Exception ignored) {
                 log.debug(String.format("Instantiating '%s' class failed", className));
             }
         }
-        return list;
     }
 }

@@ -15,10 +15,10 @@
  */
 package org.onehippo.cm.engine.mapper;
 
+import java.util.Optional;
+
 import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Value;
-
-import java.util.Optional;
 
 /**
  * Default (fallback) file mapper. Uses property name as filename
@@ -29,7 +29,7 @@ public class DefaultFileMapper extends AbstractFileMapper {
     public Optional<String> apply(Value value) {
         final DefinitionProperty property = value.getParent();
         final String propertyPath = property.getPath();
-        final String filePath = constructPathFromJcrPath(propertyPath);
+        final String filePath = constructFilePathFromJcrPath(propertyPath);
         final String finalName = String.format("%s.%s", filePath, getFileExtension(property.getParent()));
         return Optional.of(finalName);
     }

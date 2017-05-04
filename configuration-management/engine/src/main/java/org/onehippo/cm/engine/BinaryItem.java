@@ -25,7 +25,7 @@ public final class BinaryItem implements PostProcessItem {
     private final ScalarNode node;
 
     public BinaryItem(final Value value, ScalarNode valueNode) {
-        this.node =  valueNode;
+        this.node = valueNode;
         this.value = value;
     }
 

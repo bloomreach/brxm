@@ -15,6 +15,10 @@
  */
 package org.onehippo.cm.engine;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Set;
+
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Source;
@@ -22,10 +26,6 @@ import org.onehippo.cm.engine.parser.SourceResourceCrawler;
 import org.onehippo.cm.engine.serializer.ResourceNameResolver;
 import org.onehippo.cm.engine.serializer.ResourceNameResolverImpl;
 import org.onehippo.cm.impl.model.ConfigSourceImpl;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Set;
 
 /**
  * Incapsulates module's input/output providers and unique name resolver
@@ -44,8 +44,8 @@ public class ModuleContext {
     private Path moduleConfigRootPath;
     private Path moduleContentRootPath;
 
-    private ResourceNameResolver configNamesResolver = new ResourceNameResolverImpl();
-    private ResourceNameResolver contentNamesResolver = new ResourceNameResolverImpl();
+    private ResourceNameResolver configNameResolver = new ResourceNameResolverImpl();
+    private ResourceNameResolver contentNameResolver = new ResourceNameResolverImpl();
 
 
     public ModuleContext(Module module, Path repoConfigPath, boolean multiModule) throws IOException {
@@ -99,7 +99,7 @@ public class ModuleContext {
     }
 
     public String generateUniqueName(Source source, String filePath) {
-        return source instanceof ConfigSourceImpl ? configNamesResolver.generateName(filePath) : contentNamesResolver.generateName(filePath);
+        return source instanceof ConfigSourceImpl ? configNameResolver.generateName(filePath) : contentNameResolver.generateName(filePath);
     }
 
     /**
@@ -116,8 +116,8 @@ public class ModuleContext {
         for (final Source source : module.getSources()) {
             final Set<String> resources = crawler.collect(source);
             for (final String resource : resources) {
-                final Path resourcePath = this.getOutputProvider(source).getResourceOutputPath(source, resource);
-                this.generateUniqueName(source, resourcePath.toString());
+                final Path resourcePath = getOutputProvider(source).getResourceOutputPath(source, resource);
+                generateUniqueName(source, resourcePath.toString());
             }
         }
     }

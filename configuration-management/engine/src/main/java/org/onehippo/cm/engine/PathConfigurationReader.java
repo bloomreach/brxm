@@ -97,10 +97,9 @@ public class PathConfigurationReader {
                     moduleContexts.put(module, moduleContext);
 
                     final Path configRootPath = moduleContext.getConfigRoot();
-
                     if (Files.exists(configRootPath)) {
-                        final SourceParser sourceParser = new ConfigSourceParser(moduleContext.getConfigInputProvider(), verifyOnly, explicitSequencing);
-                        parseSources((ModuleImpl) module, configRootPath, sourceParser);
+                        final SourceParser configSourceParser = new ConfigSourceParser(moduleContext.getConfigInputProvider(), verifyOnly, explicitSequencing);
+                        parseSources((ModuleImpl) module, configRootPath, configSourceParser);
                     }
 
                     final Path contentRootPath = moduleContext.getContentRoot();

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 package org.onehippo.cm.engine.parser;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
@@ -23,21 +26,15 @@ import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueType;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
- * Source node crawler. Searches for predefined resources
+ * Collect a list of (YAML-)external resource files referred to by a {@link Source}.
+ * The resources files are represented by their file path, relative to the directory of the Source.
  */
 public class SourceResourceCrawler {
 
     /**
-     * Returns all external resources from source
-     * @param source resource to look from
-     * @return external resources from current source
+     * Build list of resources referred to by a {@link Source}
      */
     public Set<String> collect(final Source source) {
 
@@ -47,10 +44,10 @@ public class SourceResourceCrawler {
             switch (definition.getType()) {
                 case CONFIG:
                 case CONTENT:
-                    representDefinitionNode(((ContentDefinition)definition).getNode(), resources);
+                    collectResourcesForNode(((ContentDefinition)definition).getNode(), resources);
                     break;
                 case CND:
-                    representNodetypeDefinition((NodeTypeDefinition) definition, resources);
+                    collectResourcesForNodeType((NodeTypeDefinition) definition, resources);
                     break;
             }
         }
@@ -58,67 +55,32 @@ public class SourceResourceCrawler {
         return resources;
     }
 
-    private void representDefinitionNode(final DefinitionNode node, final Set<String> resources) {
+    private void collectResourcesForNode(final DefinitionNode node, final Set<String> resources) {
         for (DefinitionProperty childProperty : node.getProperties().values()) {
-            representProperty(childProperty, resources);
+            collectResourcesForProperty(childProperty, resources);
         }
 
         for (DefinitionNode childNode : node.getNodes().values()) {
-            representDefinitionNode(childNode, resources);
+            collectResourcesForNode(childNode, resources);
         }
     }
 
-    private void representProperty(final DefinitionProperty property, final Set<String> resources) {
-        if (requiresValueMap(property)) {
-            representPropertyUsingMap(property, resources);
-        }
-    }
-
-    private void representPropertyUsingMap(final DefinitionProperty property, final Set<String> resources) {
-            final boolean exposeAsResource = hasResourceValues(property);
-
-            if (property.getType() == PropertyType.SINGLE) {
-                final Value value = property.getValue();
-                if (exposeAsResource) {
-                    processSingleResource(resources, value);
-                }
-            } else {
-                for (Value value : property.getValues()) {
-                    if (exposeAsResource) {
-                        resources.add(value.getString());
-                    }
+    private void collectResourcesForProperty(final DefinitionProperty property, final Set<String> resources) {
+        if (property.getType() == PropertyType.SINGLE) {
+            final Value value = property.getValue();
+            if (value.isResource()) {
+                resources.add(value.getString());
+            }
+        } else {
+            for (Value value : property.getValues()) {
+                if (value.isResource()) {
+                    resources.add(value.getString());
                 }
             }
-    }
-
-    private void processSingleResource(final Set<String> resources, final Value value) {
-        if (!isBinaryEmbedded(value))  {
-            resources.add(value.getString());
         }
     }
 
-    private boolean isBinaryEmbedded(final Value value) {
-        return value.getType() == ValueType.BINARY && !value.isResource();
-    }
-
-    private boolean requiresValueMap(final DefinitionProperty property) {
-        if (hasResourceValues(property)) {
-            return true;
-        }
-
-        final ValueType valueType = property.getValueType();
-        return valueType == ValueType.BINARY;
-    }
-
-    private boolean hasResourceValues(final DefinitionProperty property) {
-        if (property.getType() == PropertyType.SINGLE) {
-            return property.getValue().isResource();
-        }
-
-        return Arrays.stream(property.getValues()).anyMatch(Value::isResource);
-    }
-
-    private void representNodetypeDefinition(final NodeTypeDefinition definition, final Set<String> resources) {
+    private void collectResourcesForNodeType(final NodeTypeDefinition definition, final Set<String> resources) {
         if (definition.isResource()) {
             resources.add(definition.getValue());
         }

@@ -15,8 +15,6 @@
  */
 package org.onehippo.cm.engine.serializer;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -24,6 +22,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Unique file name generator
@@ -77,7 +77,7 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
     public static final String PATH_DELIMITER = "/";
     public static final String SEQ_PREFIX = "-";
 
-    private Set<FileEntry> knownPaths = new HashSet<>();
+    private Set<FileEntry> knownFileEntries = new HashSet<>();
 
     /**
      * Generates file unique name and add it to known list along with its full path.
@@ -88,9 +88,9 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
     public String generateName(String filePath) {
 
         final String folderPath = filePath.toLowerCase().substring(0, filePath.lastIndexOf(PATH_DELIMITER));
-        final String filename = extractFilenameFromFullPath(filePath);
+        final String filename = StringUtils.substringAfterLast(filePath, PATH_DELIMITER);
 
-        final Set<String> knownFiles = knownPaths.stream().filter(p -> p.getPath().toLowerCase().equals(folderPath.toLowerCase()))
+        final Set<String> knownFiles = knownFileEntries.stream().filter(p -> p.getPath().toLowerCase().equals(folderPath.toLowerCase()))
                 .map(FileEntry::getFileName).collect(Collectors.toSet());
 
         final String generatedName = generateUniqueName(filename, knownFiles, 0);
@@ -98,7 +98,7 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
         final String finalPath = Paths.get(folderPath, generatedName).toString();
 
         final FileEntry fileEntry = new FileEntry(finalPath);
-        knownPaths.add(fileEntry);
+        knownFileEntries.add(fileEntry);
         return finalPath;
     }
 
@@ -113,9 +113,5 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
 
     private String calculateNameSuffix(int sequence) {
         return sequence == 0 ? StringUtils.EMPTY : SEQ_PREFIX + Integer.toString(sequence);
-    }
-
-    private String extractFilenameFromFullPath(String filePath) {
-        return StringUtils.substringAfterLast(filePath, PATH_DELIMITER);
     }
 }

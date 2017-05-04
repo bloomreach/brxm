@@ -15,20 +15,6 @@
  */
 package org.onehippo.cm.engine.serializer;
 
-import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
-import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
-import static org.onehippo.cm.engine.Constants.DEFINITIONS;
-import static org.onehippo.cm.engine.Constants.META_DELETE_KEY;
-import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
-import static org.onehippo.cm.engine.Constants.META_ORDER_BEFORE_KEY;
-import static org.onehippo.cm.engine.Constants.OPERATION_KEY;
-import static org.onehippo.cm.engine.Constants.PATH_KEY;
-import static org.onehippo.cm.engine.Constants.PREFIX_KEY;
-import static org.onehippo.cm.engine.Constants.RESOURCE_KEY;
-import static org.onehippo.cm.engine.Constants.TYPE_KEY;
-import static org.onehippo.cm.engine.Constants.URI_KEY;
-import static org.onehippo.cm.engine.Constants.VALUE_KEY;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,6 +45,20 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.reader.StreamReader;
+
+import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.onehippo.cm.engine.Constants.DEFINITIONS;
+import static org.onehippo.cm.engine.Constants.META_DELETE_KEY;
+import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
+import static org.onehippo.cm.engine.Constants.META_ORDER_BEFORE_KEY;
+import static org.onehippo.cm.engine.Constants.OPERATION_KEY;
+import static org.onehippo.cm.engine.Constants.PATH_KEY;
+import static org.onehippo.cm.engine.Constants.PREFIX_KEY;
+import static org.onehippo.cm.engine.Constants.RESOURCE_KEY;
+import static org.onehippo.cm.engine.Constants.TYPE_KEY;
+import static org.onehippo.cm.engine.Constants.URI_KEY;
+import static org.onehippo.cm.engine.Constants.VALUE_KEY;
 
 public class SourceSerializer extends AbstractBaseSerializer {
 
@@ -328,7 +328,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
             case URI:
                 return representer.represent(value.getString());
             case BINARY:
-                String nodeValue = value.isResource() ? value.getString() : moduleContext.generateUniqueName(source, mapperProvider.generateSmartName(value));
+                String nodeValue = value.isResource() ? value.getString() : moduleContext.generateUniqueName(source, mapperProvider.generateName(value));
                 return representer.represent(nodeValue);
             default:
                 return representer.represent(value.getObject());

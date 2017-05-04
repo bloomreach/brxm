@@ -15,8 +15,6 @@
  */
 package org.onehippo.cm.engine.mapper;
 
-import org.onehippo.cm.api.model.DefinitionNode;
-
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,6 +22,8 @@ import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.onehippo.cm.api.model.DefinitionNode;
 
 public abstract class AbstractFileMapper implements ValueFileMapper {
 
@@ -52,12 +52,12 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
                 : DEFAULT_EXTENSION;
     }
 
-    protected String constructPathFromJcrPath(String jcrPath) {
+    protected String constructFilePathFromJcrPath(String jcrPath) {
         final String[] split = jcrPath.split(PATH_DELIMITER);
-        return Arrays.stream(split).map(this::normalizeJcrName).collect(Collectors.joining(PATH_DELIMITER));
+        return Arrays.stream(split).map(this::mapNodeNameToFileName).collect(Collectors.joining(PATH_DELIMITER));
     }
 
-    protected String normalizeJcrName(String part) {
+    protected String mapNodeNameToFileName(String part) {
         return part.contains(NS_DELIMITER) ? part.substring(part.indexOf(NS_DELIMITER) + 1) : part;
     }
 

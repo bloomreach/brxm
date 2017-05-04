@@ -15,6 +15,9 @@
  */
 package org.onehippo.cm.engine.mapper;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.Test;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Value;
@@ -26,9 +29,6 @@ import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
 import org.onehippo.cm.impl.model.ValueImpl;
-
-import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -56,7 +56,7 @@ public class ValueFileMapperProviderTest {
         ValueImpl value = new ValueImpl(DUMMY_VALUE);
         definitionNode.addProperty("dummyProperty", value);
 
-        String smartName = provider.generateSmartName(value);
+        String smartName = provider.generateName(value);
         assertEquals(DUMMY_VALUE, smartName);
     }
 }

@@ -64,8 +64,8 @@ public class SerializerTest extends AbstractBaseTest {
     private void readAndWrite(final String repoConfig, final boolean explicitSequencing) throws IOException, ParserException {
         final PathConfigurationReader.ReadResult result = readFromResource(repoConfig, explicitSequencing);
 
-        final FileConfigurationWriter writer = new FileConfigurationWriter(explicitSequencing);
-        writer.write(folder.getRoot().toPath(), result.getConfigurations(), result.getModuleContexts());
+        final FileConfigurationWriter writer = new FileConfigurationWriter();
+        writer.write(folder.getRoot().toPath(), result.getConfigurations(), result.getModuleContexts(), explicitSequencing);
 
         final Path expectedRoot = findBase(repoConfig);
         final Path actualRoot = folder.getRoot().toPath();
