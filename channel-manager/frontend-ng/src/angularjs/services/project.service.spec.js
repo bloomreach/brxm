@@ -72,7 +72,7 @@ describe('ProjectService', () => {
 
     $httpBackend.expectGET(`/test/ws/projects/${mountId}/channel`).respond(200, returnFromRest);
 
-    ProjectService.projects(12).then((returned) => {
+    ProjectService._getProjects(12).then((returned) => {
       actual = returned;
     });
     $httpBackend.flush();

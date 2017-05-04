@@ -42,20 +42,24 @@ class ProjectService {
   }
 
   projects() {
-    const url = `${this.ConfigService.getCmsContextPath()}${REST_API_PATH}/${this._mountId}/channel`;
-    return this.$http({ method: 'GET', url, headers: {}, data: {} })
+    return this._getProjects(this._mountId)
       .then((result) => {
         this.currentBranch()
           .then((branchId) => {
             this.withBranch = [this._master];
-            this.withBranch = this.withBranch.concat(result.data.withBranch);
-            this.withoutBranch = result.data.withoutBranch;
+            this.withBranch = this.withBranch.concat(result.withBranch);
+            this.withoutBranch = result.withoutBranch;
             this.selectedProject = this._master;
             if (branchId) {
               this.selectedProject = this.withBranch.find(project => this._compareIgnorePreview(project.id, branchId));
             }
           });
       });
+  }
+
+  _getProjects(mountId) {
+    const url = `${this.ConfigService.getCmsContextPath()}${REST_API_PATH}/${mountId}/channel`;
+    return this.$http({ method: 'GET', url, headers: {}, data: {} }).then(result => result.data);
   }
 
   compareId(p1) {
