@@ -215,21 +215,22 @@ public class ConfigurationPersistenceService {
      * @throws Exception
      */
     private Node addNode(final Node parentNode, final ConfigurationNode modelNode) throws RepositoryException {
-        final ConfigurationProperty uuidProperty = modelNode.getProperties().get(JCR_UUID);
         final String name = modelNode.getName();
         final String primaryType = getPrimaryType(modelNode);
-        final String uuid = uuidProperty != null ? uuidProperty.getValue().getString() : null;
-        final NodeImpl parentNodeImpl = (NodeImpl)NodeDecorator.unwrap(parentNode);
-        if (uuid != null) {
+        final ConfigurationProperty uuidProperty = modelNode.getProperties().get(JCR_UUID);
+        if (uuidProperty != null) {
+            final String uuid = uuidProperty.getValue().getString();
             if (!isUuidInUse(uuid)) {
                 // uuid not in use: create node with the requested uuid
+                final NodeImpl parentNodeImpl = (NodeImpl)NodeDecorator.unwrap(parentNode);
                 return parentNodeImpl.addNodeWithUuid(name, primaryType, uuid);
             }
-            logger.warn(String.format("Specified jcr:uuid %s for node '%s' defined in %s already in use: a new jcr:uuid will be generated instead.",
+            logger.warn(String.format("Specified jcr:uuid %s for node '%s' defined in %s already in use: "
+                            + "a new jcr:uuid will be generated instead.",
                     uuid, modelNode.getPath(), ModelUtils.formatDefinitions(modelNode)));
         }
         // create node with a new uuid
-        return parentNodeImpl.addNodeWithUuid(name, primaryType, null);
+        return parentNode.addNode(name, primaryType);
     }
 
     private boolean isUuidInUse(final String uuid) throws RepositoryException {
@@ -380,16 +381,10 @@ public class ConfigurationPersistenceService {
 
         final List<Value> modelValues = new ArrayList<>();
         if (modelProperty.getType() == PropertyType.SINGLE) {
-            final Value value = getVerifiedValue(modelProperty, modelProperty.getValue());
-            if (value != null) {
-                modelValues.add(value);
-            }
+            addVerifiedValue(modelProperty, modelProperty.getValue(), modelValues);
         } else {
             for (Value value : modelProperty.getValues()) {
-                value = getVerifiedValue(modelProperty, value);
-                if (value != null) {
-                    modelValues.add(value);
-                }
+                addVerifiedValue(modelProperty, value, modelValues);
             }
         }
 
@@ -416,16 +411,16 @@ public class ConfigurationPersistenceService {
         }
     }
 
-    private Value getVerifiedValue(final ConfigurationProperty modelProperty, final Value value) throws RepositoryException {
+    private void addVerifiedValue(final ConfigurationProperty modelProperty, final Value value, final List<Value> modelValues)
+            throws RepositoryException {
         if (isReferenceTypeProperty(modelProperty)) {
             final String uuid = getVerifiedReferenceIdentifier(modelProperty, value);
             if (uuid != null) {
-                return new VerifiedReferenceValue(value, uuid);
-            } else {
-                return null;
+                modelValues.add(new VerifiedReferenceValue(value, uuid));
             }
+        } else {
+            modelValues.add(value);
         }
-        return value;
     }
 
     private boolean isKnownDerivedPropertyName(final String modelPropertyName) {
@@ -450,7 +445,9 @@ public class ConfigurationPersistenceService {
             if (modelValues.size() > 0) {
                 return valueIsIdentical(modelProperty, modelProperty.getValue(), jcrProperty.getValue());
             } else {
-                // ignore/skip: cannot apply an invalid reference (uuid or path based)
+                // No modelValue indicates that a reference failed verification (of UUID or path).
+                // We leave the current reference (existing or not) unchanged and return true to
+                // short-circuit further processing of this modelProperty.
                 return true;
             }
         } else {
@@ -562,13 +559,14 @@ public class ConfigurationPersistenceService {
                         nodePath, modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty)));
                 return null;
             }
-        }
-        try {
-            session.getNodeByIdentifier(identifier);
-        } catch (ItemNotFoundException e) {
-            logger.warn(String.format("Reference %s for property '%s' defined in %s not found: skipping.",
-                    identifier, modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty)));
-            return null;
+        } else {
+            try {
+                session.getNodeByIdentifier(identifier);
+            } catch (ItemNotFoundException e) {
+                logger.warn(String.format("Reference %s for property '%s' defined in %s not found: skipping.",
+                        identifier, modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty)));
+                return null;
+            }
         }
         return identifier;
     }
