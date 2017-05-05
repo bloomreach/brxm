@@ -15,23 +15,29 @@
  */
 
 class CKEditorController {
-  constructor($scope, $element, CKEditorService, CmsService, ConfigService) {
+  constructor($scope, $element, $window, CKEditorService, CmsService, ConfigService, DomService) {
     'ngInject';
 
     this.$scope = $scope;
     this.$element = $element;
+    this.$window = $window;
     this.CKEditorService = CKEditorService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
+    this.DomService = DomService;
   }
 
   $onInit() {
     this.textAreaElement = this.$element.find('textarea');
 
     this.CKEditorService.loadCKEditor().then((CKEDITOR) => {
-      this.config.language = this.ConfigService.locale;
+      const editorConfig = angular.copy(this.config);
 
-      this.editor = CKEDITOR.replace(this.textAreaElement[0], this.config);
+      editorConfig.language = this.ConfigService.locale;
+
+      this._applyEditorCSS(editorConfig);
+
+      this.editor = CKEDITOR.replace(this.textAreaElement[0], editorConfig);
       this.editor.setData(this.ngModel.$viewValue);
 
       this.editor.on('change', () => this.onEditorChange());
@@ -43,6 +49,17 @@ class CKEditorController {
 
   $onDestroy() {
     this.editor.destroy();
+  }
+
+  _applyEditorCSS(editorConfig) {
+    if (editorConfig.contentsCss) {
+      if (!Array.isArray(editorConfig.contentsCss)) {
+        editorConfig.contentsCss = [editorConfig.contentsCss];
+      }
+      const files = editorConfig.contentsCss.map(file => `../../${file}`);
+      editorConfig.contentsCss = files;
+      this.DomService.addCssLinks(this.$window, files);
+    }
   }
 
   onEditorChange() {

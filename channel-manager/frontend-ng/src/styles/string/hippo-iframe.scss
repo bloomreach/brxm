@@ -187,12 +187,12 @@
 .hippo-overlay-box-empty {
   display: none;
 
-  .hippo-mode-edit & {
+  .hippo-show-components & {
     display: block;
   }
 }
 
-.hippo-mode-edit .hippo-overlay-box:not(.hippo-overlay-box-container-filled) {
+.hippo-show-components .hippo-overlay-box:not(.hippo-overlay-box-container-filled) {
   min-height: $overlay-box-minheight;
 }
 

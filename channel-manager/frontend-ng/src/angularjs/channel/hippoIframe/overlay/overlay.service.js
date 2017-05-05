@@ -33,7 +33,7 @@ class OverlayService {
     HippoIframeService,
     MaskService,
     PageStructureService,
-    ) {
+  ) {
     'ngInject';
 
     this.$log = $log;
@@ -48,6 +48,9 @@ class OverlayService {
 
     this.editMenuHandler = angular.noop;
     this.editContentHandler = angular.noop;
+
+    this.isComponentsOverlayDisplayed = false;
+    this.isContentOverlayDisplayed = false;
 
     PageStructureService.registerChangeListener(() => this.sync());
   }
@@ -91,7 +94,7 @@ class OverlayService {
   _initOverlay() {
     this.overlay = $('<div class="hippo-overlay"></div>');
     $(this.iframeWindow.document.body).append(this.overlay);
-    this._updateModeClass();
+    this._updateOverlayClasses();
 
     this.overlay.mousedown((event) => {
       // let right-click trigger context-menu instead of starting dragging
@@ -129,21 +132,23 @@ class OverlayService {
     this.overlay.off('click');
   }
 
-  setMode(mode) {
-    this.mode = mode;
-    this._updateModeClass();
+  showComponentsOverlay(isDisplayed) {
+    this.isComponentsOverlayDisplayed = isDisplayed;
+    this._updateOverlayClasses();
   }
 
-  _updateModeClass() {
+  showContentOverlay(isDisplayed) {
+    this.isContentOverlayDisplayed = isDisplayed;
+    this._updateOverlayClasses();
+  }
+
+  _updateOverlayClasses() {
     if (this.iframeWindow) {
       const html = $(this.iframeWindow.document.documentElement);
-      html.toggleClass('hippo-mode-edit', this._isEditMode());
+      html.toggleClass('hippo-show-components', this.isComponentsOverlayDisplayed);
+      html.toggleClass('hippo-show-content', this.isContentOverlayDisplayed);
       // don't call sync() explicitly: the DOM mutation will trigger it automatically
     }
-  }
-
-  _isEditMode() {
-    return this.mode === 'edit';
   }
 
   sync() {
@@ -370,15 +375,15 @@ class OverlayService {
   _isElementVisible(structureElement, boxElement) {
     switch (structureElement.getType()) {
       case 'component':
-        return this._isEditMode() && !this.isInAddMode;
+        return this.isComponentsOverlayDisplayed && !this.isInAddMode;
       case 'container':
-        return this._isEditMode();
+        return this.isComponentsOverlayDisplayed;
       case 'content-link':
-        return !this._isEditMode() && this.DomService.isVisible(boxElement);
+        return this.isContentOverlayDisplayed && this.DomService.isVisible(boxElement);
       case 'menu-link':
-        return this._isEditMode() && !this.isInAddMode && this.DomService.isVisible(boxElement);
+        return this.isComponentsOverlayDisplayed && !this.isInAddMode && this.DomService.isVisible(boxElement);
       default:
-        return this._isEditMode() && !this.isInAddMode;
+        return this.isComponentsOverlayDisplayed && !this.isInAddMode;
     }
   }
 

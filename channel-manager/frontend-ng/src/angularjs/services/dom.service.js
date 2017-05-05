@@ -37,6 +37,17 @@ class DomService {
     $(window.document).find('head').append(link);
   }
 
+  addCssLinks(window, files) {
+    files.forEach((file) => {
+      const link = $('<link>', {
+        rel: 'stylesheet',
+        href: file,
+      });
+
+      $(window.document).find('head').append(link);
+    });
+  }
+
   addScript(window, url) {
     return this.$q((resolve, reject) => {
       const script = window.document.createElement('script');

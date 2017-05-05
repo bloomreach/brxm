@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,9 @@
  * limitations under the License.
  */
 
-import template from './hippoIframe.html';
+import overlayToggleComponent from './overlayToggle.component';
+import './overlayToggle.scss';
 
-function hippoIframe() {
-  'ngInject';
-
-  return {
-    restrict: 'E',
-    scope: {},
-    bindToController: {
-      showComponentsOverlay: '=',
-      showContentOverlay: '=',
-      onEditMenu: '&',
-      onEditContent: '&',
-    },
-    template,
-    controller: 'hippoIframeCtrl',
-    controllerAs: 'iframe',
-  };
-}
-
-export default hippoIframe;
+const overlayToggleModule = angular.module('hippo-cm.channel.overlayToggle', [])
+  .component('overlayToggle', overlayToggleComponent);
+export default overlayToggleModule;
