@@ -147,7 +147,7 @@ class HippoIframeCtrl {
   }
 
   _updateDragDrop() {
-    if (this.showComponentsOverlay === true) {
+    if (this.showComponentsOverlay) {
       this.DragDropService.enable()
         .then(() => {
           this.OverlayService.attachComponentMouseDown((e, component) => this.DragDropService.startDragOrClick(e, component));
