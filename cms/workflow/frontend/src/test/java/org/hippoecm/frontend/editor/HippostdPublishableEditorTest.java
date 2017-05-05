@@ -95,7 +95,7 @@ public class HippostdPublishableEditorTest extends PluginTest {
     }
 
     private void createDocument(final String name) throws RepositoryException {
-        final Map<String, String> pars = new MiniMap(1);
+        final Map<String, String> pars = new MiniMap<>(1);
         pars.put("name", name);
         build(session, mount("/test/content", instantiate(CMS_TEST_DOCUMENT, pars)));
     }
@@ -107,13 +107,11 @@ public class HippostdPublishableEditorTest extends PluginTest {
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
-        final IModel<Node> editorModel = editor.getEditorModel();
-
-        verify(HippostdPublishableEditor.class);
+        editor.getEditorModel();
     }
 
     @Test
-    public void testEditorModelNT_VersionEditValid() throws RepositoryException, EditorException {
+    public void testEditorModelNtVersionEditValid() throws RepositoryException, EditorException {
         expect(HippostdPublishableEditor.getMode(anyObject())).andReturn(Mode.EDIT);
         final WorkflowState state = new WorkflowState();
         final IModel<Node> draft = new JcrNodeModel("/test/content/document/draft");
@@ -181,25 +179,29 @@ public class HippostdPublishableEditorTest extends PluginTest {
     }
 
     @Test(expected = EditorException.class)
-    public void testEditorModelCompareNotNT_Version() throws RepositoryException, EditorException {
+    public void testEditorModelCompareNotNtVersion() throws RepositoryException, EditorException {
         expect(HippostdPublishableEditor.getMode(anyObject())).andReturn(Mode.COMPARE);
         expect(HippostdPublishableEditor.getWorkflowState(anyObject())).andReturn(new WorkflowState());
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
-
-        final IModel<Node> editorModel = editor.getEditorModel();
-        verify(HippostdPublishableEditor.class);
+        editor.getEditorModel();
     }
 
     @Test
-    public void testEditorModelNT_VersionPublished() throws RepositoryException, EditorException {
+    public void testEditorModelNtVersionPublished() throws RepositoryException, EditorException {
         expect(HippostdPublishableEditor.getMode(anyObject())).andReturn(Mode.COMPARE);
         final WorkflowState state = new WorkflowState();
+
+        final IModel<Node> draft = new JcrNodeModel("/test/content/document/draft");
+        state.setDraft(draft);
+
         final IModel<Node> unpublished = new JcrNodeModel("/test/content/document/unpublished");
         state.setUnpublished(unpublished);
+
         final IModel<Node> published = new JcrNodeModel("/test/content/document/published");
         state.setPublished(published);
+
         expect(HippostdPublishableEditor.getWorkflowState(anyObject())).andReturn(state);
         replayAll();
 
