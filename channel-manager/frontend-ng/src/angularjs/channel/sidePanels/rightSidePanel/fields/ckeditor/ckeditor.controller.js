@@ -30,11 +30,13 @@ class CKEditorController {
     this.textAreaElement = this.$element.find('textarea');
 
     this.CKEditorService.loadCKEditor().then((CKEDITOR) => {
-      this.config.language = this.ConfigService.locale;
+      const editorConfig = angular.copy(this.config);
 
-      this._applyEditorCSS();
+      editorConfig.language = this.ConfigService.locale;
 
-      this.editor = CKEDITOR.replace(this.textAreaElement[0], this.config);
+      this._applyEditorCSS(editorConfig);
+
+      this.editor = CKEDITOR.replace(this.textAreaElement[0], editorConfig);
       this.editor.setData(this.ngModel.$viewValue);
 
       this.editor.on('change', () => this.onEditorChange());
@@ -47,12 +49,13 @@ class CKEditorController {
     this.editor.destroy();
   }
 
-  _applyEditorCSS() {
-    if (this.config.contentsCss) {
-      if (!Array.isArray(this.config.contentsCss)) {
-        this.config.contentsCss = [this.config.contentsCss];
+  _applyEditorCSS(editorConfig) {
+    if (editorConfig.contentsCss) {
+      if (!Array.isArray(editorConfig.contentsCss)) {
+        editorConfig.contentsCss = [editorConfig.contentsCss];
       }
-      const files = this.config.contentsCss.map(file => `../../${file}`);
+      const files = editorConfig.contentsCss.map(file => `../../${file}`);
+      editorConfig.contentsCss = files;
       this.DomService.addCssLinks(this.$window, files);
     }
   }

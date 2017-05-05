@@ -114,11 +114,13 @@ describe('CKEditor Component', () => {
     init();
 
     spyOn(DomService, 'addCssLinks');
-    $ctrl.config.contentsCss = 'hippocontents.css';
-    $ctrl._applyEditorCSS();
+    const config = {
+      contentsCss: 'hippocontents.css',
+    };
+    $ctrl._applyEditorCSS(config);
     expect(DomService.addCssLinks).toHaveBeenCalled();
-    expect(Array.isArray($ctrl.config.contentsCss)).toBe(true);
-    expect($ctrl.config.contentsCss[0]).toEqual('../../hippocontents.css');
+    expect(Array.isArray(config.contentsCss)).toBe(true);
+    expect(config.contentsCss[0]).toEqual('../../hippocontents.css');
   });
 
   it('uses the current language', () => {

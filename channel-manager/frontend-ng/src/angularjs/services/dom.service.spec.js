@@ -62,7 +62,7 @@ describe('DomService', () => {
     });
   });
 
-  it('should add a link tag to the head', (done) => {
+  it('should add a CSS link tag to the head', (done) => {
     testInIframe((iframeWindow) => {
       DomService.addCssLinks(iframeWindow, [
         'testFile.css',
