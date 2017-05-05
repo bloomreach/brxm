@@ -14,27 +14,22 @@
  * limitations under the License.
  */
 
-/* eslint-disable prefer-const */
-
 import angular from 'angular';
 import 'angular-mocks';
 
 describe('overlayToggle component', () => {
-  let $componentController;
   let $ctrl;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
     inject((
-      _$componentController_,
+      $componentController,
     ) => {
-      $componentController = _$componentController_;
-    });
-
-    $ctrl = $componentController('overlayToggle', {}, {
-      state: false,
-      icon: 'md-icon-name',
+      $ctrl = $componentController('overlayToggle', {}, {
+        state: false,
+        icon: 'md-icon-name',
+      });
     });
   });
 
