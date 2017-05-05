@@ -53,10 +53,10 @@ describe('LeftSidePanel', () => {
     spyOn(HippoIframeService, 'getCurrentRenderPathInfo');
   });
 
-  function instantiateController(editMode) {
+  function instantiateController(componentsVisible) {
     parentScope = $rootScope.$new();
-    parentScope.editMode = editMode;
-    const el = angular.element('<left-side-panel edit-mode="editMode"></left-side-panel>');
+    parentScope.componentsVisible = componentsVisible;
+    const el = angular.element('<left-side-panel components-visible="componentsVisible"></left-side-panel>');
     $compile(el)(parentScope);
     $rootScope.$digest();
     return el.controller('left-side-panel');
@@ -87,18 +87,18 @@ describe('LeftSidePanel', () => {
     expect(ChannelLeftSidePanelCtrl.getCatalog()).toBe(catalogComponents);
   });
 
-  it('only shows the components tab in edit mode, and if there are catalog items', () => {
+  it('only shows the components tab when components are visible, and if there are catalog items', () => {
     const ChannelLeftSidePanelCtrl = instantiateController(false);
     expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(false);
 
-    parentScope.editMode = true;
+    parentScope.componentsVisible = true;
     $rootScope.$digest();
     expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(false);
 
     CatalogService.getComponents.and.returnValue(catalogComponents);
     expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(true);
 
-    parentScope.editMode = false;
+    parentScope.componentsVisible = false;
     $rootScope.$digest();
     expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(false);
   });

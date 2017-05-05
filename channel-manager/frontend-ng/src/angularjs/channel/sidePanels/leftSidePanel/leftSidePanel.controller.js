@@ -41,7 +41,7 @@ class LeftSidePanelCtrl {
 
   showComponentsTab() {
     const catalog = this.getCatalog();
-    return this.editMode && catalog.length > 0;
+    return this.componentsVisible && catalog.length > 0;
   }
 
   getCatalog() {

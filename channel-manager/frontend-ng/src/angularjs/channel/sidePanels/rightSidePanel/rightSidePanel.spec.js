@@ -117,8 +117,6 @@ describe('RightSidePanel', () => {
       DialogService,
       HippoIframeService,
       FeedbackService,
-    }, {
-      editMode: false,
     });
     $ctrl.form = jasmine.createSpyObj('form', ['$setPristine']);
     $rootScope.$apply();
