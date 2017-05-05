@@ -86,9 +86,10 @@ describe('hippoIframeCtrl', () => {
     scope.onEditContent = jasmine.createSpy('onEditContent');
 
     const el = angular.element(
-      `<hippo-iframe edit-mode="testEditMode"
-                    on-edit-content="onEditContent(contentUuid)"
-                    on-edit-menu="onEditMenu(menuUuid)">
+      `<hippo-iframe show-components-overlay="false"
+                     show-content-overlay="true"
+                     on-edit-content="onEditContent(contentUuid)"
+                     on-edit-menu="onEditMenu(menuUuid)">
       </hippo-iframe>`);
     $compile(el)(scope);
     scope.$digest();
@@ -190,38 +191,38 @@ describe('hippoIframeCtrl', () => {
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
-  it('enables/disables drag-drop when edit-mode is toggled', () => {
+  it('enables/disables drag-drop when the components overlay is toggled', () => {
     const enableSpy = spyOn(DragDropService, 'enable').and.returnValue($q.resolve());
     const disableSpy = spyOn(DragDropService, 'disable');
 
-    hippoIframeCtrl.editMode = true;
+    hippoIframeCtrl.showComponentsOverlay = true;
     $rootScope.$digest();
 
     expect(enableSpy).toHaveBeenCalled();
     expect(disableSpy).not.toHaveBeenCalled();
 
     enableSpy.calls.reset();
-    hippoIframeCtrl.editMode = false;
+    hippoIframeCtrl.showComponentsOverlay = false;
     $rootScope.$digest();
 
     expect(enableSpy).not.toHaveBeenCalled();
     expect(disableSpy).toHaveBeenCalled();
   });
 
-  it('attaches/detaches component mousedown handler when edit-mode is toggled', () => {
+  it('attaches/detaches component mousedown handler when the components overlay is toggled', () => {
     spyOn(DragDropService, 'enable').and.returnValue($q.resolve());
     spyOn(DragDropService, 'disable');
     const attachSpy = spyOn(OverlayService, 'attachComponentMouseDown');
     const detachSpy = spyOn(OverlayService, 'detachComponentMouseDown');
 
-    hippoIframeCtrl.editMode = true;
+    hippoIframeCtrl.showComponentsOverlay = true;
     $rootScope.$digest();
 
     expect(attachSpy).toHaveBeenCalled();
     expect(detachSpy).not.toHaveBeenCalled();
 
     attachSpy.calls.reset();
-    hippoIframeCtrl.editMode = false;
+    hippoIframeCtrl.showComponentsOverlay = false;
     $rootScope.$digest();
 
     expect(attachSpy).not.toHaveBeenCalled();

@@ -15,13 +15,14 @@
  */
 
 class CKEditorController {
-  constructor($scope, $element, CKEditorService, ConfigService) {
+  constructor($scope, $element, CKEditorService, ConfigService, DomService) {
     'ngInject';
 
     this.$scope = $scope;
     this.$element = $element;
     this.CKEditorService = CKEditorService;
     this.ConfigService = ConfigService;
+    this.DomService = DomService;
   }
 
   $onInit() {
@@ -29,6 +30,10 @@ class CKEditorController {
 
     this.CKEditorService.loadCKEditor().then((CKEDITOR) => {
       this.config.language = this.ConfigService.locale;
+
+      if (this.config.contentsCss) {
+        this.DomService.addCssLink(this.config.contentsCss);
+      }
 
       this.editor = CKEDITOR.replace(this.textAreaElement[0], this.config);
       this.editor.setData(this.ngModel.$viewValue);

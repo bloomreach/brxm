@@ -43,23 +43,28 @@ class ChannelCtrl {
     this.PageMetaDataService = PageMetaDataService;
     this.SessionService = SessionService;
 
-    this.isEditMode = false;
     this.isCreatingPreview = false;
+    this.isContentOverlayDisplayed = true;
+    this.isComponentsOverlayDisplayed = false;
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
 
-    // editToggleState is only used as a 'fake' model for the toggle; isEditMode is updated in the onChange callback,
-    // which may happen asynchronously if preview configuration needs to be created.
-    this.editToggleState = false;
-    this.isEditMode = false;
-
     CmsService.subscribe('clear-channel', () => this._clear());
+  }
+
+  $onInit() {
+    this.hasPreviewConfiguration = false;
+
+    if (!this.ChannelService.hasPreviewConfiguration()) {
+      this._createPreviewConfiguration();
+    } else {
+      this.hasPreviewConfiguration = true;
+    }
   }
 
   _clear() {
     this.$rootScope.$apply(() => {
       this.hideSubpage();
-      this.disableEditMode();
       this.ChannelService.clearChannel();
     });
   }
@@ -76,20 +81,8 @@ class ChannelCtrl {
     return this.HippoIframeService.isPageLoaded();
   }
 
-  enableEditMode() {
-    if (!this.isEditMode && !this.ChannelService.hasPreviewConfiguration()) {
-      this._createPreviewConfiguration();
-    } else {
-      this.isEditMode = true;
-    }
-  }
-
-  disableEditMode() {
-    this.isEditMode = false;
-  }
-
   isEditable() {
-    return this.SessionService.hasWriteAccess();
+    return this.SessionService.hasWriteAccess() && this.hasPreviewConfiguration;
   }
 
   editMenu(menuUuid) {
@@ -105,7 +98,8 @@ class ChannelCtrl {
     this.isCreatingPreview = true;
     this.ChannelService.createPreviewConfiguration().then(() => {
       this.HippoIframeService.reload().then(() => {
-        this.isEditMode = true;
+        this.hasPreviewConfiguration = true;
+        this.isComponentsOverlayDisplayed = true;
       })
       .finally(() => {
         this.isCreatingPreview = false;

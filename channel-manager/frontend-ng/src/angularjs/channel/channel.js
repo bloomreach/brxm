@@ -25,6 +25,7 @@ import channelMenuModule from './menu/editor';
 import maskModule from './mask/mask.module';
 import channelRelevanceModule from './relevance/relevance';
 import viewportsModule from './viewportToggle/viewportToggle.module';
+import overlayToggleModule from './overlayToggle/overlayToggle';
 import config from './channel.config';
 import ChannelCtrl from './channel.controller';
 import ChannelService from './channel.service';
@@ -42,6 +43,7 @@ const channelModule = angular
     channelMenuModule.name,
     channelRelevanceModule.name,
     viewportsModule.name,
+    overlayToggleModule.name,
     maskModule.name,
   ])
   .config(config)

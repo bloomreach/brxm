@@ -16,7 +16,7 @@
 
 class DomService {
 
-  constructor($q, $rootScope, $document, BrowserService) {
+  constructor($q, $rootScope, $document, BrowserService, ConfigService) {
     'ngInject';
 
     this.$q = $q;
@@ -24,6 +24,7 @@ class DomService {
     this.$document = $document;
     this._scrollBarWidth = 0;
     this.BrowserService = BrowserService;
+    this.ConfigService = ConfigService;
   }
 
   getAppRootUrl() {
@@ -35,6 +36,28 @@ class DomService {
   addCss(window, css) {
     const link = $(`<style>${css}</style>`);
     $(window.document).find('head').append(link);
+  }
+
+  addCssLink(files) {
+    const path = this.ConfigService.cmsLocation.origin + (this.ConfigService.cmsLocation.pathname || '');
+
+    if (!Array.isArray(files)) {
+      this._appendLinkElement(path + files);
+    } else {
+      files.forEach((file) => {
+        this._appendLinkElement(path + file);
+      });
+    }
+  }
+
+  _appendLinkElement(href) {
+    const link = $('<link>', {
+      rel: 'stylesheet',
+      href,
+    });
+
+    const head = $('head')[0];
+    $(head).append(link);
   }
 
   addScript(window, url) {
