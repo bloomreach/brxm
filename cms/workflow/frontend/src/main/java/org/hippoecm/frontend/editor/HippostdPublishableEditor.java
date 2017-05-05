@@ -77,8 +77,8 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     private static final Logger log = LoggerFactory.getLogger(HippostdPublishableEditor.class);
 
-    // CMS-10723 Made WorkflowState protected to be able to unit test
-    protected static class WorkflowState {
+    // CMS-10723 Made WorkflowState package-private to be able to unit test
+    static class WorkflowState {
         private IModel<Node> draft;
         private IModel<Node> unpublished;
         private IModel<Node> published;
@@ -111,19 +111,19 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         }
 
         /* For testing purposes */
-        public void setDraft(final IModel<Node> draft) {
+        void setDraft(final IModel<Node> draft) {
             this.draft = draft;
         }
 
-        public void setUnpublished(final IModel<Node> unpublished) {
+        void setUnpublished(final IModel<Node> unpublished) {
             this.unpublished = unpublished;
         }
 
-        public void setPublished(final IModel<Node> published) {
+        void setPublished(final IModel<Node> published) {
             this.published = published;
         }
 
-        public void setHolder(final boolean holder) {
+        void setHolder(final boolean holder) {
             isHolder = holder;
         }
 
