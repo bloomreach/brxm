@@ -61,8 +61,8 @@
 
 // Stores a module, including descriptor, actions, and definition sources
 [hcm:module] > nt:base
+  + hcm:descriptor (hcm:descriptor) primary mandatory
   - hcm:lastexecutedaction (string)
-  + hcm:descriptor (hcm:descriptor) mandatory
   + hcm:actions (hcm:actions)
   + * (hcm:configfolder)
   + * (hcm:contentfolder)
@@ -82,6 +82,6 @@
 
 // Stores an entire configuration baseline with multiple groups, projects, and modules
 [hcm:baseline] > nt:base, mix:lockable, hcm:digested
+  - hcm:manifest (string) primary mandatory
   - hcm:lastupdated (date)
-  - hcm:manifest (string)
   + * (hcm:group)

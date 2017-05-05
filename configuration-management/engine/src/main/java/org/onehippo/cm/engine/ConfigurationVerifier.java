@@ -34,10 +34,10 @@ public class ConfigurationVerifier {
         }
         final Path repoConfig = Paths.get(args[0]);
         final PathConfigurationReader.ReadResult result = new PathConfigurationReader().read(repoConfig, true);
-        final Map<String, Configuration> configurations = result.getConfigurations();
+        final Map<String, ConfigurationImpl> configurations = result.getConfigurations();
         MergedModelBuilder builder = new MergedModelBuilder();
-        for (Configuration config : configurations.values()) {
-            builder.push((ConfigurationImpl)config);
+        for (ConfigurationImpl config : configurations.values()) {
+            builder.push(config);
         }
         builder.build();
     }

@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,12 +34,18 @@ import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
 import org.onehippo.cm.engine.serializer.SourceSerializer;
+import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.impl.model.ProjectImpl;
 import org.yaml.snakeyaml.nodes.Node;
+
+import static org.onehippo.cm.engine.Constants.REPO_CONFIG_FOLDER;
+import static org.onehippo.cm.engine.Constants.REPO_CONFIG_YAML;
 
 public class FileConfigurationWriter {
 
     void write(final Path destination,
-               final Map<String, Configuration> configurations,
+               final Map<String, ConfigurationImpl> configurations,
                final Map<Module, ModuleContext> moduleContextMap,
                final boolean explicitSequencing) throws IOException {
         final RepoConfigSerializer repoConfigSerializer = new RepoConfigSerializer(explicitSequencing);
@@ -48,7 +55,7 @@ public class FileConfigurationWriter {
             repoConfigSerializer.serialize(repoConfigOutputStream, configurations);
         }
 
-        for (Configuration configuration : configurations.values()) {
+        for (ConfigurationImpl configuration : configurations.values()) {
             for (Project project : configuration.getProjects()) {
                 for (Module module : project.getModules()) {
                     final ModuleContext moduleContext = moduleContextMap.get(module);

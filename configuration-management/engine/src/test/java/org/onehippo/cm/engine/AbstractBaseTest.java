@@ -40,6 +40,7 @@ import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueFormatException;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.engine.parser.ParserException;
+import org.onehippo.cm.impl.model.ConfigurationImpl;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -62,7 +63,7 @@ public abstract class AbstractBaseTest {
             throw new UnsupportedOperationException();
         }
         @Override
-        public URL getModuleRoot() {
+        public URL getBaseURL() {
             throw new UnsupportedOperationException();
         }
     };
@@ -96,7 +97,7 @@ public abstract class AbstractBaseTest {
         return find(repoConfigResourceName).getParent();
     }
 
-    Configuration assertConfiguration(final Map<String, Configuration> parent, final String name, final String[] after, final int projectCount) {
+    Configuration assertConfiguration(final Map<String, ConfigurationImpl> parent, final String name, final String[] after, final int projectCount) {
         final Configuration configuration = parent.get(name);
         assertNotNull(configuration);
         assertEquals(name, configuration.getName());

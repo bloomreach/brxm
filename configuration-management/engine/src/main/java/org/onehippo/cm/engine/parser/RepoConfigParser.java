@@ -39,10 +39,10 @@ public class RepoConfigParser extends AbstractBaseParser {
         super(explicitSequencing);
     }
 
-    public Map<String, Configuration> parse(final InputStream inputStream, final String location) throws ParserException {
+    public Map<String, ConfigurationImpl> parse(final InputStream inputStream, final String location) throws ParserException {
         final Node node = composeYamlNode(inputStream, location);
 
-        final Map<String, Configuration> result = new LinkedHashMap<>();
+        final Map<String, ConfigurationImpl> result = new LinkedHashMap<>();
         final Map<String, Node> sourceMap = asMapping(node, new String[]{CONFIGURATIONS_KEY}, null);
 
         for (Node configurationNode : asSequence(sourceMap.get(CONFIGURATIONS_KEY))) {
@@ -52,7 +52,7 @@ public class RepoConfigParser extends AbstractBaseParser {
         return result;
     }
 
-    private void constructConfiguration(final Node src, final Map<String, Configuration> parent) throws ParserException {
+    private void constructConfiguration(final Node src, final Map<String, ConfigurationImpl> parent) throws ParserException {
         final Map<String, Node> configurationMap = asMapping(src, new String[]{CONFIGURATION_KEY, PROJECTS_KEY}, new String[]{AFTER_KEY});
         final String name = asStringScalar(configurationMap.get(CONFIGURATION_KEY));
         final ConfigurationImpl configuration = new ConfigurationImpl(name);

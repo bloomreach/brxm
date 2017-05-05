@@ -24,6 +24,7 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.impl.model.ConfigurationImpl;
 
 import static org.onehippo.cm.engine.Constants.REPO_CONFIG_FOLDER;
 import static org.onehippo.cm.engine.Constants.REPO_CONTENT_FOLDER;
@@ -65,15 +66,15 @@ public class FileConfigurationUtils {
         }
     }
 
-    public static Path getResourcePath(final Path modulePath, final Source source, final String resourcePath) {
+    public static Path getResourcePath(final Path basePath, final Source source, final String resourcePath) {
         if (resourcePath.startsWith("/")) {
-            return modulePath.resolve(StringUtils.stripStart(resourcePath, "/"));
+            return basePath.resolve(StringUtils.stripStart(resourcePath, "/"));
         } else {
-            return modulePath.resolve(source.getPath()).getParent().resolve(resourcePath);
+            return basePath.resolve(source.getPath()).getParent().resolve(resourcePath);
         }
     }
 
-    public static boolean hasMultipleModules(Map<String, Configuration> configurations) {
+    public static boolean hasMultipleModules(Map<String, ConfigurationImpl> configurations) {
         return configurations.values().stream().flatMap(p -> p.getProjects().stream()).mapToInt(p -> p.getModules().size()).sum() > 1;
     }
 }

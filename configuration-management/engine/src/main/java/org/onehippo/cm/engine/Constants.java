@@ -64,10 +64,10 @@ public final class Constants {
     public static final String LAST_UPDATED_PROPERTY = "hcm:lastupdated";
     public static final String MANIFEST_PROPERTY = "hcm:manifest";
 
-    public static final String MODULE_DESCRIPTOR_PROPERTY = "hcm:descriptor";
+    public static final String MODULE_DESCRIPTOR_NODE = "hcm:descriptor";
     public static final String MODULE_DESCRIPTOR_TYPE = "hcm:descriptor";
     public static final String ACTIONS_TYPE = "hcm:actions";
-    public static final String ACTIONS_PROPERTY = "hcm:actions";
+    public static final String ACTIONS_NODE = "hcm:actions";
     public static final String CONTENT_TYPE = "hcm:content";
 
     public static final String CONTENT_FOLDER_TYPE = "hcm:contentfolder";

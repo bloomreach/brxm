@@ -27,36 +27,36 @@ import org.onehippo.cm.api.model.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Provides access to resource InputStreams using path references relative to a base path. The base path is typically
+ * the config or content root folder, not the module root.
+ */
 public class FileResourceInputProvider implements ResourceInputProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(FileResourceInputProvider.class);
 
-    private final Path modulePath;
+    private final Path basePath;
 
-    public FileResourceInputProvider(final Path modulePath) {
-        this.modulePath = modulePath;
-    }
-
-    public Path getModulePath() {
-        return modulePath;
+    public FileResourceInputProvider(final Path basePath) {
+        this.basePath = basePath;
     }
 
     @Override
     public boolean hasResource(final Source source, final String resourcePath) {
-        return Files.isRegularFile(FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath));
+        return Files.isRegularFile(FileConfigurationUtils.getResourcePath(basePath, source, resourcePath));
     }
 
     @Override
     public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
-        return FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath).toUri().toURL().openStream();
+        return FileConfigurationUtils.getResourcePath(basePath, source, resourcePath).toRealPath().toUri().toURL().openStream();
     }
 
     @Override
-    public URL getModuleRoot() {
+    public URL getBaseURL() {
         try {
-            return modulePath.toUri().toURL();
+            return basePath.toUri().toURL();
         } catch (MalformedURLException e) {
-            logger.error("Cannot create URL from modulePath '{}'", modulePath, e.getMessage());
+            logger.error("Cannot create URL from basePath '{}'", basePath, e.getMessage());
             return null;
         }
     }

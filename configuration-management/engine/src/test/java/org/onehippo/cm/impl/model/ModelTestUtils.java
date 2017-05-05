@@ -55,7 +55,7 @@ public class ModelTestUtils {
             return IOUtils.toInputStream(content, StandardCharsets.UTF_8);
         }
         @Override
-        public URL getModuleRoot() {
+        public URL getBaseURL() {
             throw new UnsupportedOperationException();
         }
     };

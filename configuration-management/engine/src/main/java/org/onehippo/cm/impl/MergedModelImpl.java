@@ -36,6 +36,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigDefinition;
@@ -62,7 +63,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.engine.Constants.DEFAULT_DIGEST;
+import static org.onehippo.cm.engine.Constants.REPO_CONFIG_FOLDER;
 import static org.onehippo.cm.engine.Constants.REPO_CONFIG_YAML;
+import static org.onehippo.cm.engine.Constants.REPO_CONTENT_FOLDER;
 
 public class MergedModelImpl implements MergedModel {
 
@@ -186,10 +189,10 @@ public class MergedModelImpl implements MergedModel {
             }
 
             // digest the descriptor
-            digestResource(null, "/"+REPO_CONFIG_YAML, rip, items);
+            digestResource(null, "/../"+REPO_CONFIG_YAML, rip, items);
 
             // digest the actions file
-            digestResource(null, "/"+ACTIONS_YAML, rip, items);
+            digestResource(null, "/../"+ACTIONS_YAML, rip, items);
 
             // for each content source
             for (Source source : module.getContentSources()) {
@@ -197,7 +200,7 @@ public class MergedModelImpl implements MergedModel {
                 ContentDefinition firstDef = (ContentDefinition) source.getDefinitions().get(0);
 
                 // add the first definition path to manifest
-                items.put("/"+source.getPath(), firstDef.getNode().getPath());
+                items.put("/"+REPO_CONTENT_FOLDER+"/"+source.getPath(), firstDef.getNode().getPath());
             }
 
             // for each config source
@@ -245,7 +248,7 @@ public class MergedModelImpl implements MergedModel {
             items.forEach((p,d) -> {
                 sb.append("    ");
                 sb.append(p);
-                sb.append(':');
+                sb.append(": ");
                 sb.append(d);
                 sb.append('\n');
             });
@@ -298,7 +301,7 @@ public class MergedModelImpl implements MergedModel {
      * @param items accumulator of [path,digest] Strings
      */
     protected void digestResource(Source source, String path, ResourceInputProvider rip, TreeMap<String,String> items) {
-        // if path starts with /, this is already module-relative, otherwise we must adjust it
+        // if path starts with /, this is already relative to the config root, otherwise we must adjust it
         if (!path.startsWith("/")) {
             String sourcePath = source.getPath();
 
@@ -327,6 +330,14 @@ public class MergedModelImpl implements MergedModel {
 
             // prepend algorithm using same style as used in Hippo CMS password hashing
             String digestString = "$"+DEFAULT_DIGEST+"$"+ DatatypeConverter.printHexBinary(md.digest());
+
+            // TODO dirty hack because RIP uses paths relative to content root instead of module root
+            if (path.startsWith("/../")) {
+                path = StringUtils.removeStart(path, "/..");
+            }
+            else {
+                path = "/"+REPO_CONFIG_FOLDER+path;
+            }
 
             items.put(path, digestString);
         }

@@ -645,13 +645,13 @@ public class ConfigurationPersistenceService {
 
             final ResourceInputProvider resourceInputProvider =
                     resourceInputProviders.get(webFileBundleDefinition.getSource().getModule());
-            final URL moduleRoot = resourceInputProvider.getModuleRoot();
-            if (moduleRoot.toString().contains("jar!")) {
+            final URL baseURL = resourceInputProvider.getBaseURL();
+            if (baseURL.toString().contains("jar!")) {
                 final PartialZipFile bundleZipFile =
-                        new PartialZipFile(getBaseZipFileFromURL(moduleRoot), bundleName);
+                        new PartialZipFile(getBaseZipFileFromURL(baseURL), bundleName);
                 service.importJcrWebFileBundle(session, bundleZipFile, true);
-            } else if (moduleRoot.toString().startsWith("file:")) {
-                final File bundleDir = new File(FileUtils.toFile(moduleRoot), bundleName);
+            } else if (baseURL.toString().startsWith("file:")) {
+                final File bundleDir = new File(FileUtils.toFile(baseURL), bundleName);
                 service.importJcrWebFileBundle(session, bundleDir, true);
             }
         }

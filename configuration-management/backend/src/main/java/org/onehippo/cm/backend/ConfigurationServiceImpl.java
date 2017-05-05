@@ -17,6 +17,7 @@
 package org.onehippo.cm.backend;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,8 +26,12 @@ import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
@@ -54,11 +59,24 @@ import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.engine.BaselineResourceInputProvider;
+import org.onehippo.cm.engine.parser.ConfigSourceParser;
+import org.onehippo.cm.engine.parser.ParserException;
+import org.onehippo.cm.engine.parser.RepoConfigParser;
+import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
+import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.ContentDefinitionImpl;
+import org.onehippo.cm.impl.model.ContentSourceImpl;
+import org.onehippo.cm.impl.model.DefinitionNodeImpl;
+import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.impl.model.ProjectImpl;
+import org.onehippo.cm.impl.model.SourceImpl;
+import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cm.engine.Constants.ACTIONS_PROPERTY;
+import static org.onehippo.cm.engine.Constants.ACTIONS_NODE;
 import static org.onehippo.cm.engine.Constants.ACTIONS_TYPE;
 import static org.onehippo.cm.engine.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.engine.Constants.BASELINE_PATH;
@@ -71,16 +89,19 @@ import static org.onehippo.cm.engine.Constants.CONTENT_FOLDER_TYPE;
 import static org.onehippo.cm.engine.Constants.CONTENT_PATH_PROPERTY;
 import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
 import static org.onehippo.cm.engine.Constants.DEFAULT_DIGEST;
+import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.engine.Constants.DEFINITIONS_TYPE;
 import static org.onehippo.cm.engine.Constants.MANIFEST_PROPERTY;
-import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_PROPERTY;
+import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_NODE;
 import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_TYPE;
 import static org.onehippo.cm.engine.Constants.DIGEST_PROPERTY;
 import static org.onehippo.cm.engine.Constants.GROUP_TYPE;
 import static org.onehippo.cm.engine.Constants.LAST_UPDATED_PROPERTY;
 import static org.onehippo.cm.engine.Constants.MODULE_TYPE;
 import static org.onehippo.cm.engine.Constants.PROJECT_TYPE;
+import static org.onehippo.cm.engine.Constants.REPO_CONFIG_FOLDER;
 import static org.onehippo.cm.engine.Constants.REPO_CONFIG_YAML;
+import static org.onehippo.cm.engine.Constants.REPO_CONTENT_FOLDER;
 import static org.onehippo.cm.engine.Constants.YAML_PROPERTY;
 
 public class ConfigurationServiceImpl implements ConfigurationService {
@@ -221,30 +242,55 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
 
         // create descriptor node, if necessary
-        Node descriptorNode = createNodeIfNecessary(moduleNode, MODULE_DESCRIPTOR_PROPERTY, MODULE_DESCRIPTOR_TYPE, false);
+        Node descriptorNode = createNodeIfNecessary(moduleNode, MODULE_DESCRIPTOR_NODE, MODULE_DESCRIPTOR_TYPE, false);
 
         // AFAIK, a module MUST have a descriptor, but check here for a malformed package or special case
-        if (rip.hasResource(null, "/"+REPO_CONFIG_YAML)) {
+        // TODO the "/../" is an ugly hack because RIP actually treats absolute paths as relative to config base, not module base
+        if (rip.hasResource(null, "/../"+REPO_CONFIG_YAML)) {
             // open descriptor InputStream
-            InputStream is = rip.getResourceInputStream(null, "/"+REPO_CONFIG_YAML);
+            InputStream is = rip.getResourceInputStream(null, "/../"+REPO_CONFIG_YAML);
 
             // store yaml and digest (this call will close the input stream)
             storeStringAndDigest(is, descriptorNode, YAML_PROPERTY);
         }
         else {
-            // if descriptor doesn't exist, set the descriptor property and digest to empty strings
+            // if descriptor doesn't exist,
             // TODO: throw an appropriate exception if this is to be forbidden, once demo config is reorganized
-            descriptorNode.setProperty(YAML_PROPERTY, "");
-            descriptorNode.setProperty(DIGEST_PROPERTY, "");
+//            // set the descriptor property and digest to empty strings
+//            descriptorNode.setProperty(YAML_PROPERTY, "");
+//            descriptorNode.setProperty(DIGEST_PROPERTY, "");
+
+            // serialize a dummy module descriptor for this module
+            final RepoConfigSerializer repoConfigSerializer = new RepoConfigSerializer(DEFAULT_EXPLICIT_SEQUENCING);
+
+            // create a dummy group->project->module setup with just the data relevant to this Module
+            ConfigurationImpl group = new ConfigurationImpl(module.getProject().getConfiguration().getName());
+            group.addAfter(module.getProject().getConfiguration().getAfter());
+            ProjectImpl project = group.addProject(module.getProject().getName());
+            project.addAfter(module.getProject().getAfter());
+            ModuleImpl dummyModule = project.addModule(module.getName());
+            dummyModule.addAfter(module.getAfter());
+
+            HashMap<String, ConfigurationImpl> groups = new HashMap<>();
+            groups.put(group.getName(), group);
+
+            // serialize that dummy group
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            repoConfigSerializer.serialize(baos, groups);
+            String dummyDescriptor = baos.toString(StandardCharsets.UTF_8.name());
+
+            // write that back to the YAML property and digest it
+            storeStringAndDigest(IOUtils.toInputStream(dummyDescriptor, StandardCharsets.UTF_8), descriptorNode, YAML_PROPERTY);
         }
 
         // if this Module has an actions file...
-        if (rip.hasResource(null, "/"+ACTIONS_YAML)) {
+        // TODO the "/../" is an ugly hack because RIP actually treats absolute paths as relative to config base, not module base
+        if (rip.hasResource(null, "/../"+ACTIONS_YAML)) {
             // create actions node, if necessary
-            Node actionsNode = createNodeIfNecessary(moduleNode, ACTIONS_PROPERTY, ACTIONS_TYPE, false);
+            Node actionsNode = createNodeIfNecessary(moduleNode, ACTIONS_NODE, ACTIONS_TYPE, false);
 
             // open actions InputStream
-            InputStream is = rip.getResourceInputStream(null, "/"+ACTIONS_YAML);
+            InputStream is = rip.getResourceInputStream(null, "/../"+ACTIONS_YAML);
 
             // store yaml and digest (this call will close the input stream)
             storeStringAndDigest(is, actionsNode, YAML_PROPERTY);
@@ -252,8 +298,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         // foreach content source
         for (Source source : module.getContentSources()) {
+            // TODO this is an ugly hack because source.getPath() is actually relative to content root, not module root
+            // create the content root node, if necessary
+            Node contentRootNode = createNodeIfNecessary(moduleNode, REPO_CONTENT_FOLDER, CONTENT_FOLDER_TYPE, false);
+
             // create folder nodes, if necessary
-            Node sourceNode = createNodeAndParentsIfNecessary(source.getPath(), moduleNode,
+            Node sourceNode = createNodeAndParentsIfNecessary(source.getPath(), contentRootNode,
                     CONTENT_FOLDER_TYPE, CONTENT_TYPE);
 
             // assume that there is exactly one content definition here, as required
@@ -265,8 +315,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         // foreach config source
         for (Source source : module.getConfigSources()) {
+            // TODO this is an ugly hack because source.getPath() is actually relative to config root, not module root
+            // create the config root node, if necessary
+            Node configRootNode = createNodeIfNecessary(moduleNode, REPO_CONFIG_FOLDER, CONFIG_FOLDER_TYPE, false);
+
             // process in detail ...
-            storeBaselineConfigSource(source, moduleNode, rip);
+            storeBaselineConfigSource(source, configRootNode, rip);
         }
     }
 
@@ -274,15 +328,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      * Store a single config definition Source into the baseline. This method assumes the locking and session context
      * managed in storeBaseline().
      * @param source the Source to store
-     * @param moduleNode the JCR node destination for the module as a whole
+     * @param configRootNode the JCR node destination for the config Sources and resources
      * @param rip provides access to raw data streams
      * @see #storeBaseline(MergedModel)
      */
-    protected void storeBaselineConfigSource(final Source source, final Node moduleNode, final ResourceInputProvider rip)
+    protected void storeBaselineConfigSource(final Source source, final Node configRootNode, final ResourceInputProvider rip)
             throws RepositoryException, IOException {
+
         // create folder nodes, if necessary
         String sourcePath = source.getPath();
-        Node sourceNode = createNodeAndParentsIfNecessary(sourcePath, moduleNode,
+        Node sourceNode = createNodeAndParentsIfNecessary(sourcePath, configRootNode,
                 CONFIG_FOLDER_TYPE, DEFINITIONS_TYPE);
 
         // open source yaml InputStream
@@ -310,7 +365,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                         String cndPath = ntd.getValue();
 
                         // create folder nodes, if necessary
-                        Node cndNode = createNodeAndParentsIfNecessary(cndPath, baseForPath(cndPath, sourceNode, moduleNode),
+                        Node cndNode = createNodeAndParentsIfNecessary(cndPath, baseForPath(cndPath, sourceNode, configRootNode),
                                 CONFIG_FOLDER_TYPE, CND_TYPE);
 
                         // open cnd resource InputStream
@@ -324,7 +379,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     ConfigDefinition configDef = (ConfigDefinition) def;
 
                     // recursively find all resources, make nodes, store binary and digest
-                    storeResourcesForNode(configDef.getNode(), source, sourceNode, moduleNode, rip);
+                    storeResourcesForNode(configDef.getNode(), source, sourceNode, configRootNode, rip);
                     break;
             }
         }
@@ -336,20 +391,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      * @param defNode a DefinitionNode to search for resource references
      * @param source the Source to which the DefinitionNode belongs
      * @param sourceNode the JCR Node where source is stored in the baseline
+     * @param configRootNode the JCR node destination for the config Sources and resources
      * @param rip provides access to raw data streams
      */
-    protected void storeResourcesForNode(DefinitionNode defNode, Source source, Node sourceNode, Node moduleNode, ResourceInputProvider rip)
+    protected void storeResourcesForNode(DefinitionNode defNode, Source source, Node sourceNode, Node configRootNode, ResourceInputProvider rip)
             throws RepositoryException, IOException {
 
         // find resource values
         for (DefinitionProperty dp : defNode.getProperties().values()) {
             switch (dp.getType()) {
                 case SINGLE:
-                    storeBinaryResourceIfNecessary(dp.getValue(), source, sourceNode, moduleNode, rip);
+                    storeBinaryResourceIfNecessary(dp.getValue(), source, sourceNode, configRootNode, rip);
                     break;
                 case SET: case LIST:
                     for (Value value : dp.getValues()) {
-                        storeBinaryResourceIfNecessary(value, source, sourceNode, moduleNode, rip);
+                        storeBinaryResourceIfNecessary(value, source, sourceNode, configRootNode, rip);
                     }
                     break;
             }
@@ -357,7 +413,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         // recursively visit child definition nodes
         for (DefinitionNode dn : defNode.getNodes().values()) {
-            storeResourcesForNode(dn, source, sourceNode, moduleNode, rip);
+            storeResourcesForNode(dn, source, sourceNode, configRootNode, rip);
         }
     }
 
@@ -367,14 +423,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      * @param value the Value to check for a resource reference
      * @param source the Source to which this Value belongs
      * @param sourceNode the JCR Node where source is stored in the baseline
+     * @param configRootNode the JCR node destination for the config Sources and resources
      * @param rip provides access to raw data streams
      */
-    protected void storeBinaryResourceIfNecessary(Value value, Source source, Node sourceNode, Node moduleNode, ResourceInputProvider rip)
+    protected void storeBinaryResourceIfNecessary(Value value, Source source, Node sourceNode, Node configRootNode, ResourceInputProvider rip)
             throws RepositoryException, IOException {
         if (value.isResource()) {
             // create nodes, if necessary
             String path = value.getString();
-            Node resourceNode = createNodeAndParentsIfNecessary(path, baseForPath(path, sourceNode, moduleNode),
+            Node resourceNode = createNodeAndParentsIfNecessary(path, baseForPath(path, sourceNode, configRootNode),
                     CONFIG_FOLDER_TYPE, BINARY_TYPE);
 
             // open cnd resource InputStream
@@ -389,12 +446,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      * Determine if this is a module or source-relative path (check leading / or not).
      * @param path the path to check
      * @param sourceNode base node for source
-     * @param moduleNode base node for module
+     * @param configRootNode the JCR node destination for the config Sources and resources
      * @return either moduleNode iff path has a leading /, else sourceNode.getParent()
      */
-    private Node baseForPath(String path, Node sourceNode, Node moduleNode) throws RepositoryException {
+    private Node baseForPath(String path, Node sourceNode, Node configRootNode) throws RepositoryException {
         if (path.startsWith("/")) {
-            return moduleNode;
+            return configRootNode;
         }
         else {
             return sourceNode.getParent();
@@ -538,7 +595,218 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     @Override
     public MergedModel loadBaseline() throws Exception {
-        return null;
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
+        final Node rootNode = session.getRootNode();
+        MergedModel result;
+
+        // if the baseline node doesn't exist yet...
+        if (!rootNode.hasNode(BASELINE_PATH)) {
+            // ... there's nothing to load
+            result = null;
+        }
+        else {
+            // otherwise, if the baseline node DOES exist...
+            final Node baselineNode = rootNode.getNode(BASELINE_PATH);
+            final MergedModelBuilder builder = new MergedModelBuilder();
+            final Map<Module, ResourceInputProvider> rips = new HashMap<>();
+            final List<ConfigurationImpl> groups = new ArrayList<>();
+
+            // First phase: load and parse module descriptors
+            parseDescriptors(baselineNode, rips, groups);
+
+            // Second phase: load and parse config Sources, load and mockup content Sources
+            parseSources(rips, groups);
+
+            // build the final merged model
+            for (ConfigurationImpl group : groups) {
+                builder.push(group);
+            }
+            builder.pushResourceInputProviders(rips);
+            result = builder.build();
+        }
+
+        stopWatch.stop();
+        log.info("MergedModel loaded from baseline configuration in {}", stopWatch.toString());
+
+        return result;
+    }
+
+    /**
+     * First phase of loading a baseline: loading and parsing module descriptors. Accumulates results in rips and groups.
+     * @param baselineNode the base node for the entire stored configuration baseline
+     * @param rips accumulator object for ResourceInputProviders
+     * @param groups accumulator object for Configuration groups
+     * @throws RepositoryException
+     * @throws ParserException
+     */
+    protected void parseDescriptors(final Node baselineNode, final Map<Module, ResourceInputProvider> rips,
+                                    final List<ConfigurationImpl> groups) throws RepositoryException, ParserException {
+        // for each module node under this baseline
+        for (Node moduleNode : findModuleNodes(baselineNode)) {
+            Map<String, ConfigurationImpl> moduleGroups;
+            Module module;
+
+            Node descriptorNode = moduleNode.getNode(MODULE_DESCRIPTOR_NODE);
+
+            // if descriptor exists
+            // TODO when demo project is restructured, we should assume this exists
+            final String descriptor = descriptorNode.getProperty(YAML_PROPERTY).getString();
+            if (StringUtils.isNotEmpty(descriptor)) {
+                // parse descriptor with RepoConfigParser
+                InputStream is = IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8);
+                moduleGroups = new RepoConfigParser(DEFAULT_EXPLICIT_SEQUENCING)
+                        .parse(is, moduleNode.getPath());
+
+                // This should always produce exactly one module!
+                module = moduleGroups.values().stream()
+                        .flatMap(g -> g.getProjects().stream())
+                        .flatMap(p -> p.getModules().stream())
+                        .findFirst().get();
+
+                log.debug("Building module from descriptor: {}/{}/{}",
+                        module.getProject().getConfiguration().getName(), module.getProject().getName(), module.getName());
+            }
+            else {
+                // otherwise, create "raw" group/project/module as necessary
+                // TODO remove this when demo project is restructured
+                Node projectNode = moduleNode.getParent();
+                Node groupNode = projectNode.getParent();
+                final String groupName = Text.unescapeIllegalJcrChars(groupNode.getName());
+                ConfigurationImpl group =
+                        new ConfigurationImpl(groupName);
+                ProjectImpl project =
+                        group.addProject(Text.unescapeIllegalJcrChars(projectNode.getName()));
+                module =
+                        project.addModule(Text.unescapeIllegalJcrChars(moduleNode.getName()));
+
+                log.warn("Building module from nodes without dependencies! {}/{}/{}",
+                        group.getName(), project.getName(), module.getName());
+
+                moduleGroups = new HashMap<>();
+                moduleGroups.put(groupName, group);
+            }
+
+            // store RIP for later use
+            ResourceInputProvider rip = new BaselineResourceInputProvider(moduleNode.getNode(REPO_CONFIG_FOLDER));
+            rips.put(module, rip);
+
+            // accumulate all groups
+            groups.addAll(moduleGroups.values());
+        }
+
+        log.debug("After parsing descriptors, we have {} groups and {} modules", groups.size(),
+                groups.stream().flatMap(g -> g.getProjects().stream()).flatMap(p -> p.getModules().stream()).count());
+    }
+
+    /**
+     * Second phase of loading a baseline: loading and parsing config Sources and reconstructing minimal content
+     * Source mockups (containing only the root definition path).
+     * @param rips accumulator object from first phase
+     * @param groups accumulator object from first phase
+     * @throws RepositoryException
+     * @throws IOException
+     * @throws ParserException
+     */
+    protected void parseSources(final Map<Module, ResourceInputProvider> rips, final List<ConfigurationImpl> groups)
+            throws RepositoryException, IOException, ParserException {
+        // for each group
+        for (Configuration group : groups) {
+            // for each project
+            for (Project project : group.getProjects()) {
+                // for each module
+                for (Module module : project.getModules()) {
+                    log.debug("Parsing sources from baseline for {}/{}/{}",
+                            group.getName(), project.getName(), module.getName());
+
+                    BaselineResourceInputProvider rip = (BaselineResourceInputProvider) rips.get(module);
+                    ConfigSourceParser parser = new ConfigSourceParser(rip, true, DEFAULT_EXPLICIT_SEQUENCING);
+                    Node moduleNode = rip.getBaseNode();
+
+                    // for each config source
+                    final List<Node> configSourceNodes = rip.getConfigSourceNodes();
+                    log.debug("Found {} config sources in {}/{}/{}", configSourceNodes.size(),
+                            group.getName(), project.getName(), module.getName());
+
+                    for (Node configNode : configSourceNodes) {
+                        // compute config-root-relative path
+                        String sourcePath = StringUtils.removeStart(configNode.getPath(), moduleNode.getPath()+"/");
+                        log.debug("Loading config from {} in {}/{}/{}", sourcePath,
+                                group.getName(), project.getName(), module.getName());
+
+                        // get InputStream
+                        InputStream is = rip.getResourceInputStream(null, "/"+sourcePath);
+
+                        // parse config source
+                        parser.parse(is, sourcePath, configNode.getPath(),
+                                // TODO why is this cast necessary?
+                                (ModuleImpl) module);
+                    }
+
+                    // for each content source
+                    final List<Node> contentSourceNodes = rip.getContentSourceNodes();
+                    log.debug("Found {} content sources in {}/{}/{}", contentSourceNodes.size(),
+                            group.getName(), project.getName(), module.getName());
+
+                    for (Node contentNode : contentSourceNodes) {
+                        // compute config-root-relative path
+                        String sourcePath = StringUtils.removeStart(contentNode.getPath(), moduleNode.getPath()+"/");
+
+                        log.debug("Building content def from {} in {}/{}/{}", sourcePath,
+                                group.getName(), project.getName(), module.getName());
+
+                        // create Source
+                        SourceImpl source = new ContentSourceImpl(sourcePath, (ModuleImpl) module);
+
+                        // get content path from JCR Node
+                        String contentPath = contentNode.getProperty(CONTENT_PATH_PROPERTY).getString();
+
+                        // create ContentDefinition with a single definition node and just the node path
+                        ContentDefinitionImpl cd = source.addContentDefinition();
+                        final String name = StringUtils.substringAfterLast(contentPath, "/");
+                        DefinitionNodeImpl defNode = new DefinitionNodeImpl(contentPath, name, cd);
+                        cd.setNode(defNode);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Helper method to find all hcm:module nodes under a hcm:baseline node.
+     * @param baselineNode the base under which to search
+     * @return a List of Nodes of hcm:module type
+     * @throws RepositoryException
+     */
+    protected List<Node> findModuleNodes(Node baselineNode) throws RepositoryException {
+        List<Node> moduleNodes = new ArrayList<>();
+
+        // TODO create utility for NodeIterator => Stream<Node>
+        for (NodeIterator gni = baselineNode.getNodes(); gni.hasNext();) {
+            Node possibleGroup = gni.nextNode();
+
+            // TODO does this need to be expanded with namespace URL?
+            if (possibleGroup.getPrimaryNodeType().isNodeType(GROUP_TYPE)) {
+                // for each project node
+                for (NodeIterator pni = possibleGroup.getNodes(); pni.hasNext(); ) {
+                    Node possibleProject = pni.nextNode();
+                    if (possibleProject.getPrimaryNodeType().isNodeType(PROJECT_TYPE)) {
+                        // for each module node
+                        for (NodeIterator mni = possibleProject.getNodes(); mni.hasNext(); ) {
+                            Node possibleModule = mni.nextNode();
+                            if (possibleModule.getPrimaryNodeType().isNodeType(MODULE_TYPE)) {
+                                // accumulate
+                                moduleNodes.add(possibleModule);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        log.debug("Found {} modules in baseline", moduleNodes.size());
+        return moduleNodes;
     }
 
     /**

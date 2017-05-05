@@ -77,7 +77,7 @@ public class MergedModelBuilder {
         return mergedModel;
     }
 
-    public MergedModelBuilder push(final Map<String, Configuration> configurations, final Map<Module, ResourceInputProvider> resourceInputProviders) {
+    public MergedModelBuilder push(final Map<String, ConfigurationImpl> configurations, final Map<Module, ResourceInputProvider> resourceInputProviders) {
         for (Configuration config : configurations.values()) {
             // TODO: awful needed casting
             push((ConfigurationImpl)config);

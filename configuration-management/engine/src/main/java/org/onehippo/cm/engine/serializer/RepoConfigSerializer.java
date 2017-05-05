@@ -27,6 +27,7 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -48,12 +49,12 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
         super(explicitSequencing);
     }
 
-    public void serialize(final OutputStream outputStream, final Map<String, Configuration> configurations) throws IOException {
+    public void serialize(final OutputStream outputStream, final Map<String, ConfigurationImpl> configurations) throws IOException {
         final Node node = representRepoConfig(configurations);
         serializeNode(outputStream, node);
     }
 
-    private Node representRepoConfig(final Map<String, Configuration> configurations) {
+    private Node representRepoConfig(final Map<String, ConfigurationImpl> configurations) {
         final List<NodeTuple> rootTuples = new ArrayList<>();
 
         final List<Node> configurationNodes = configurations.values().stream().map(this::representConfiguration)

@@ -16,6 +16,7 @@
 package org.onehippo.cm.engine;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -34,6 +35,7 @@ import org.onehippo.cm.engine.parser.ContentSourceParser;
 import org.onehippo.cm.engine.parser.ParserException;
 import org.onehippo.cm.engine.parser.RepoConfigParser;
 import org.onehippo.cm.engine.parser.SourceParser;
+import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
@@ -44,15 +46,15 @@ public class PathConfigurationReader {
     private final boolean explicitSequencing;
 
     public static class ReadResult {
-        private final Map<String, Configuration> configurations;
+        private final Map<String, ConfigurationImpl> configurations;
         private final Map<Module, ModuleContext> moduleContexts;
 
-        public ReadResult(Map<String, Configuration> configurations, Map<Module, ModuleContext> moduleContexts) {
+        public ReadResult(Map<String, ConfigurationImpl> configurations, Map<Module, ModuleContext> moduleContexts) {
             this.configurations = configurations;
             this.moduleContexts = moduleContexts;
         }
 
-        public Map<String, Configuration> getConfigurations() {
+        public Map<String, ConfigurationImpl> getConfigurations() {
             return configurations;
         }
 
@@ -83,9 +85,12 @@ public class PathConfigurationReader {
      * @throws ParserException
      */
     public ReadResult read(final Path repoConfigPath, final boolean verifyOnly) throws IOException, ParserException {
+        final InputStream repoConfigStream = repoConfigPath.toUri().toURL().openStream();
+
         final RepoConfigParser repoConfigParser = new RepoConfigParser(explicitSequencing);
-        final Map<String, Configuration> configurations =
-                repoConfigParser.parse(repoConfigPath.toUri().toURL().openStream(), repoConfigPath.toAbsolutePath().toString());
+        final Map<String, ConfigurationImpl> configurations =
+                repoConfigParser.parse(repoConfigStream, repoConfigPath.toAbsolutePath().toString());
+
         final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(configurations);
         final Map<Module, ModuleContext> moduleContexts = new HashMap<>();
 
