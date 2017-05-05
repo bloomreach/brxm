@@ -16,7 +16,7 @@
 
 class DomService {
 
-  constructor($q, $rootScope, $document, BrowserService, ConfigService) {
+  constructor($q, $rootScope, $document, BrowserService) {
     'ngInject';
 
     this.$q = $q;
@@ -24,7 +24,6 @@ class DomService {
     this.$document = $document;
     this._scrollBarWidth = 0;
     this.BrowserService = BrowserService;
-    this.ConfigService = ConfigService;
   }
 
   getAppRootUrl() {
