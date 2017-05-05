@@ -90,8 +90,8 @@ class HippoIframeCtrl {
       'iframe.showComponentsOverlay',
       'iframe.showContentOverlay',
     ], () => {
-      this._setComponentsOverlay(this.showComponentsOverlay);
-      this._setContentOverlay(this.showContentOverlay);
+      this.OverlayService.showComponentsOverlay(this.showComponentsOverlay);
+      this.OverlayService.showContentOverlay(this.showContentOverlay);
       this._updateDragDrop();
     });
   }
@@ -145,14 +145,6 @@ class HippoIframeCtrl {
       .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
-  }
-
-  _setComponentsOverlay(state) {
-    this.OverlayService.setComponentsOverlay(state);
-  }
-
-  _setContentOverlay(state) {
-    this.OverlayService.setContentOverlay(state);
   }
 
   _updateDragDrop() {

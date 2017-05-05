@@ -158,27 +158,27 @@ describe('OverlayService', () => {
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
     loadIframeFixture(() => {
       // Components overlay
-      OverlayService.setComponentsOverlay(true);
+      OverlayService.showComponentsOverlay(true);
       expect(iframe('html')).toHaveClass('hippo-show-components');
 
-      OverlayService.setComponentsOverlay(false);
+      OverlayService.showComponentsOverlay(false);
       expect(iframe('html')).not.toHaveClass('hippo-show-components');
 
       // Content overlay
-      OverlayService.setContentOverlay(true);
+      OverlayService.showContentOverlay(true);
       expect(iframe('html')).toHaveClass('hippo-show-content');
 
-      OverlayService.setContentOverlay(false);
+      OverlayService.showContentOverlay(false);
       expect(iframe('html')).not.toHaveClass('hippo-show-content');
 
       // Combined
-      OverlayService.setComponentsOverlay(true);
-      OverlayService.setContentOverlay(true);
+      OverlayService.showComponentsOverlay(true);
+      OverlayService.showContentOverlay(true);
       expect(iframe('html')).toHaveClass('hippo-show-components');
       expect(iframe('html')).toHaveClass('hippo-show-content');
 
-      OverlayService.setComponentsOverlay(false);
-      OverlayService.setContentOverlay(false);
+      OverlayService.showComponentsOverlay(false);
+      OverlayService.showContentOverlay(false);
       expect(iframe('html')).not.toHaveClass('hippo-show-components');
       expect(iframe('html')).not.toHaveClass('hippo-show-content');
 
@@ -374,7 +374,7 @@ describe('OverlayService', () => {
   });
 
   it('syncs the position of overlay elements when content overlay is active', (done) => {
-    OverlayService.setContentOverlay(true);
+    OverlayService.showContentOverlay(true);
     loadIframeFixture(() => {
       const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
 
@@ -401,7 +401,7 @@ describe('OverlayService', () => {
   });
 
   it('syncs the position of overlay elements in edit mode', (done) => {
-    OverlayService.setComponentsOverlay(true);
+    OverlayService.showComponentsOverlay(true);
     loadIframeFixture(() => {
       const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
 
@@ -437,7 +437,7 @@ describe('OverlayService', () => {
   });
 
   it('takes the scroll position of the iframe into account when positioning overlay elements', (done) => {
-    OverlayService.setContentOverlay(true);
+    OverlayService.showContentOverlay(true);
     loadIframeFixture(() => {
       // enlarge body so the iframe can scroll
       const body = iframe('body');
@@ -542,7 +542,7 @@ describe('OverlayService', () => {
     const editMenuHandler = jasmine.createSpy('editMenuHandler');
 
     OverlayService.onEditMenu(editMenuHandler);
-    OverlayService.setComponentsOverlay(true);
+    OverlayService.showComponentsOverlay(true);
     loadIframeFixture(() => {
       const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
 
@@ -556,7 +556,7 @@ describe('OverlayService', () => {
   });
 
   it('removes overlay elements when they are no longer part of the page structure', (done) => {
-    OverlayService.setComponentsOverlay(true);
+    OverlayService.showComponentsOverlay(true);
 
     loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(10);

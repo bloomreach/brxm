@@ -132,13 +132,13 @@ class OverlayService {
     this.overlay.off('click');
   }
 
-  setComponentsOverlay(state) {
-    this.isComponentsOverlayDisplayed = state;
+  showComponentsOverlay(isDisplayed) {
+    this.isComponentsOverlayDisplayed = isDisplayed;
     this._updateOverlayClasses();
   }
 
-  setContentOverlay(state) {
-    this.isContentOverlayDisplayed = state;
+  showContentOverlay(isDisplayed) {
+    this.isContentOverlayDisplayed = isDisplayed;
     this._updateOverlayClasses();
   }
 
