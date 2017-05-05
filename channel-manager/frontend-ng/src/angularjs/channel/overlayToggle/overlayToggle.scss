@@ -12,19 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.btn-overlay-toggle {
-  $color-blue: #1684e5;
-  $color-dark: #4f4f4f;
+@import 'variables';
 
+.btn-overlay-toggle {
   margin: 0;
   min-width: 1%;
 
   md-icon {
-    color: $color-dark !important;
+    color: $grey-700 !important;
     user-select: none;
 
     &.active {
-      color: $color-blue !important;
+      color: $blue-400 !important;
     }
 
     &:focus {
