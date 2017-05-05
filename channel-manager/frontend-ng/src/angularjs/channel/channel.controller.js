@@ -49,14 +49,11 @@ class ChannelCtrl {
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
 
-    // editToggleState is only used as a 'fake' model for the toggle; isEditable is updated in the onChange callback,
-    // which may happen asynchronously if preview configuration needs to be created.
     CmsService.subscribe('clear-channel', () => this._clear());
   }
 
   $onInit() {
     this.hasPreviewConfiguration = false;
-    this.editToggleState = false;
 
     if (!this.ChannelService.hasPreviewConfiguration()) {
       this._createPreviewConfiguration();
