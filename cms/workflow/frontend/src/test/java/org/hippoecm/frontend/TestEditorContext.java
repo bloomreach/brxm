@@ -36,59 +36,54 @@ public class TestEditorContext implements IEditorContext {
     public static final String[] CONTENT_1 = {
             "/test", "nt:unstructured",
             "/test/content", "nt:unstructured",
-            "jcr:mixinTypes", "mix:referenceable"
+                "jcr:mixinTypes", "mix:referenceable"
     };
     public static final String[] CONTENT_2 = {
             "/test/facetsearch", "hippo:facetsearch",
-            "hippo:docbase", "/test/content",
-            "hippo:queryname", "state",
-            "hippo:facets", HippoStdNodeType.HIPPOSTD_STATE,
+                "hippo:docbase", "/test/content",
+                "hippo:queryname", "state",
+                "hippo:facets", HippoStdNodeType.HIPPOSTD_STATE,
             "/test/mirror", "hippo:mirror",
-            "hippo:docbase", "/test/content",
+                "hippo:docbase", "/test/content",
             "/config/test-app/cms-editor", "frontend:plugincluster",
-            "frontend:references", "wicket.model",
-            "frontend:services", "wicket.id",
+                "frontend:references", "wicket.model",
+                "frontend:services", "wicket.id",
             "/config/test-app/cms-editor/plugin", "frontend:plugin",
-            "plugin.class", Editor.class.getName(),
+                "plugin.class", Editor.class.getName(),
             "/config/test-app/cms-preview", "frontend:plugincluster",
-            "frontend:references", "wicket.model",
-            "frontend:references", "model.compareTo",
-            "frontend:references", "editor.id",
-            "frontend:services", "wicket.id",
+                "frontend:references", "wicket.model",
+                "frontend:references", "model.compareTo",
+                "frontend:references", "editor.id",
+                "frontend:services", "wicket.id",
             "/config/test-app/cms-preview/plugin", "frontend:plugin",
-            "plugin.class", Preview.class.getName(),
+                "plugin.class", Preview.class.getName(),
             "/config/test-app/cms-preview/filter", "frontend:plugin",
-            "plugin.class", CloseFilter.class.getName(),
+                "plugin.class", CloseFilter.class.getName(),
     };
 
     public static final String[] CMS_TEST_DOCUMENT = {
             "/${name}", "hippo:handle",
-            "jcr:mixinTypes", "mix:referenceable",
+                "jcr:mixinTypes", "mix:referenceable",
             "/${name}/${name}", "cmstest:document",
-            "jcr:mixinTypes", "mix:versionable",
-            "jcr:mixinTypes", "hippostdpubwf:document",
-            "jcr:mixinTypes", "hippostd:publishableSummary",
-            HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED,
-            HippoStdNodeType.HIPPOSTD_STATESUMMARY, HippoStdNodeType.NEW,
-            "hippostdpubwf:createdBy", "admin",
-            "hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00",
-            "hippostdpubwf:lastModifiedBy", "admin",
-            "hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00"
+                "jcr:mixinTypes", "mix:versionable",
+                "jcr:mixinTypes", "hippostdpubwf:document",
+                "jcr:mixinTypes", "hippostd:publishableSummary",
+                HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED,
+                HippoStdNodeType.HIPPOSTD_STATESUMMARY, HippoStdNodeType.NEW,
+                "hippostdpubwf:createdBy", "admin",
+                "hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00",
+                "hippostdpubwf:lastModifiedBy", "admin",
+                "hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00"
     };
 
     public IEditorManager getEditorManager() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public void onClose() {
-        // TODO Auto-generated method stub
-
     }
 
     public void onFocus() {
-        // TODO Auto-generated method stub
-
     }
 
     public static class Editor extends RenderPlugin {
