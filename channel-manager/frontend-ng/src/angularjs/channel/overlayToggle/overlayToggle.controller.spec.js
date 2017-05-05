@@ -29,6 +29,7 @@ describe('overlayToggle component', () => {
       $ctrl = $componentController('overlayToggle', {}, {
         state: false,
         icon: 'md-icon-name',
+        tooltip: 'Test tooltip',
       });
     });
   });
@@ -36,6 +37,7 @@ describe('overlayToggle component', () => {
   it('should initialize component controller', () => {
     expect($ctrl.state).toEqual(false);
     expect($ctrl.icon).toEqual('md-icon-name');
+    expect($ctrl.tooltip).toEqual('Test tooltip');
   });
 
   it('should toggle overlay state', () => {
