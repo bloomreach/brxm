@@ -86,13 +86,12 @@ class HippoIframeCtrl {
   }
 
   $onInit() {
-    this.$scope.$watchGroup([
-      'iframe.showComponentsOverlay',
-      'iframe.showContentOverlay',
-    ], () => {
-      this.OverlayService.showComponentsOverlay(this.showComponentsOverlay);
-      this.OverlayService.showContentOverlay(this.showContentOverlay);
+    this.$scope.$watch('iframe.showComponentsOverlay', (value) => {
+      this.OverlayService.showComponentsOverlay(value);
       this._updateDragDrop();
+    });
+    this.$scope.$watch('iframe.showContentOverlay', (value) => {
+      this.OverlayService.showContentOverlay(value);
     });
   }
 
