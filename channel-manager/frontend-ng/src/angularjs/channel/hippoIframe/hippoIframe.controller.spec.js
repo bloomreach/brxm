@@ -191,7 +191,7 @@ describe('hippoIframeCtrl', () => {
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
-  it('enables/disables drag-drop when edit-mode is toggled', () => {
+  it('enables/disables drag-drop when the components overlay is toggled', () => {
     const enableSpy = spyOn(DragDropService, 'enable').and.returnValue($q.resolve());
     const disableSpy = spyOn(DragDropService, 'disable');
 
@@ -209,7 +209,7 @@ describe('hippoIframeCtrl', () => {
     expect(disableSpy).toHaveBeenCalled();
   });
 
-  it('attaches/detaches component mousedown handler when edit-mode is toggled', () => {
+  it('attaches/detaches component mousedown handler when the components overlay is toggled', () => {
     spyOn(DragDropService, 'enable').and.returnValue($q.resolve());
     spyOn(DragDropService, 'disable');
     const attachSpy = spyOn(OverlayService, 'attachComponentMouseDown');
