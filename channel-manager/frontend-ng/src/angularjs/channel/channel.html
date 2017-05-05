@@ -39,7 +39,7 @@
 
         <overlay-toggle state="channelCtrl.isComponentsOverlayDisplayed"
                         icon="view_quilt"
-                        tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'Hide' : 'Show' }} components"
+                        tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
                         class="qa-toggle-components"
                         ng-if="channelCtrl.isEditable()">
         </overlay-toggle>
@@ -47,7 +47,7 @@
         <overlay-toggle state="channelCtrl.isContentOverlayDisplayed"
                         icon="description"
                         class="qa-toggle-content"
-                        tooltip="{{ channelCtrl.isContentOverlayDisplayed ? 'Hide' : 'Show' }} content">
+                        tooltip="{{ channelCtrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}">
         </overlay-toggle>
       </div>
     </div>
