@@ -26,7 +26,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class SnsUtils {
 
-    private static Pattern pattern = Pattern.compile("^([^/\\[\\]]*)(\\[([1-9][0-9]*)])?$");
+    private static Pattern pattern = Pattern.compile("^([^\\[\\]]+)(\\[([1-9][0-9]*)])?$");
 
     public static Pair<String, Integer> splitIndexedName(final String name) {
         final Matcher matcher = pattern.matcher(name);

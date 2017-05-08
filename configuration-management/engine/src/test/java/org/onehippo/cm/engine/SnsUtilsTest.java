@@ -54,7 +54,7 @@ public class SnsUtilsTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_without_name() {
-        SnsUtils.splitIndexedName("[0]");
+        SnsUtils.splitIndexedName("[1]");
     }
 
 }
