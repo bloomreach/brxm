@@ -44,6 +44,7 @@ class CKEditorController {
       this.editor.on('focus', () => this.onEditorFocus());
       this.editor.on('blur', () => this.onEditorBlur());
       this.editor.on('openLinkPicker', event => this._openLinkPicker(event.data));
+      this.editor.on('openImagePicker', event => this._openImagePicker(event.data));
     });
   }
 
@@ -83,15 +84,23 @@ class CKEditorController {
   }
 
   _openLinkPicker(selectedLink) {
-    this.CmsService.publish('show-link-picker', this.id, this._linkPickerConfig(), selectedLink, this._onLinkPicked.bind(this));
+    const linkPickerConfig = this.config.hippopicker.internalLink;
+    this.CmsService.publish('show-link-picker', this.id, linkPickerConfig, selectedLink, (link) => {
+      this.editor.execCommand('insertInternalLink', link);
+    });
   }
 
-  _linkPickerConfig() {
-    return this.config.hippopicker.internalLink;
-  }
+  _openImagePicker(selectedImage) {
+    const imagePickerConfig = this.config.hippopicker.image;
+    this.CmsService.publish('show-image-picker', this.id, imagePickerConfig, selectedImage, (image) => {
 
-  _onLinkPicked(link) {
-    this.editor.execCommand('insertInternalLink', link);
+      // Images are rendered with a relative path, pointing to the binaries servlet. The binaries servlet always
+      // runs at the same level; two directories up from the angular app. Because of this we need to prepend
+      // all internal images with a prefix as shown below.
+      image.f_url = `../../${image.f_url}`;
+
+      this.editor.execCommand('insertImage', image);
+    });
   }
 }
 

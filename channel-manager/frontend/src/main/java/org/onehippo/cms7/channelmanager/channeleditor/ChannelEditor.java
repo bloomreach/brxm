@@ -110,6 +110,7 @@ public class ChannelEditor extends ExtPanel {
 
     private ExtStoreFuture<Object> channelStoreFuture;
     private final LinkPickerManager linkPickerManager;
+    private final ImagePickerManager imagePickerManager;
     private final EditorOpenListener EDITOR_OPEN_LISTENER = new EditorOpenListener();
 
     public ChannelEditor(final IPluginContext context, final IPluginConfig config, final String apiUrlPrefix,
@@ -141,6 +142,9 @@ public class ChannelEditor extends ExtPanel {
 
         linkPickerManager = new LinkPickerManager(context, getMarkupId());
         add(linkPickerManager.getBehavior());
+
+        imagePickerManager = new ImagePickerManager(context, getMarkupId());
+        add(imagePickerManager.getBehavior());
     }
 
     @Override
@@ -168,6 +172,7 @@ public class ChannelEditor extends ExtPanel {
         super.onRenderProperties(properties);
         properties.put("channelStoreFuture", new JSONIdentifier(this.channelStoreFuture.getJsObjectId()));
         properties.put("linkPickerWicketUrl", this.linkPickerManager.getBehavior().getCallbackUrl().toString());
+        properties.put("imagePickerWicketUrl", this.imagePickerManager.getBehavior().getCallbackUrl().toString());
     }
 
     @Override

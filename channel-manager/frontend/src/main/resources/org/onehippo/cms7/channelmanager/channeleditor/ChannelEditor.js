@@ -50,6 +50,7 @@
       this.iframeToHost.subscribe('destroy-component-properties-window', this._destroyComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-path-picker', this._showPathPicker, this);
       this.iframeToHost.subscribe('show-link-picker', this._showLinkPicker, this);
+      this.iframeToHost.subscribe('show-image-picker', this._showImagePicker, this);
       this.iframeToHost.subscribe('open-content', this._openContent, this);
       this.iframeToHost.subscribe('close-content', this._closeContent, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
@@ -241,21 +242,35 @@
 
     _showLinkPicker: function(fieldId, dialogConfig, selectedLink, callback) {
       this.linkPickerCallback = callback;
+      this._showPicker(fieldId, dialogConfig, selectedLink, this.initialConfig.linkPickerWicketUrl);
+    },
 
-      Ext.apply(selectedLink, {
+    _showImagePicker: function(fieldId, dialogConfig, selectedLink, callback) {
+      this.imagePickerCallback = callback;
+      this._showPicker(fieldId, dialogConfig, selectedLink, this.initialConfig.imagePickerWicketUrl);
+    },
+
+    _showPicker: function(fieldId, dialogConfig, selection, wicketUrl) {
+      Ext.apply(selection, {
         'fieldId': fieldId,
         'dialogConfig': JSON.stringify(dialogConfig)
       });
 
       Wicket.Ajax.post({
-        u: this.initialConfig.linkPickerWicketUrl,
-        ep: selectedLink
+        u: wicketUrl,
+        ep: selection
       });
     },
 
     onLinkPicked: function(link) {
       if (this.linkPickerCallback) {
         this.linkPickerCallback(link);
+      }
+    },
+
+    onImagePicked: function(image) {
+      if (this.imagePickerCallback) {
+        this.imagePickerCallback(image);
       }
     },
 
