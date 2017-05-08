@@ -174,7 +174,7 @@ public abstract class AbstractBaseParser {
             throw new ParserException("Path must not end with a slash", node);
         }
 
-        if (path.equals("/")) {
+        if (path.equals("/") || path.equals("")) {
             return path;
         }
 
