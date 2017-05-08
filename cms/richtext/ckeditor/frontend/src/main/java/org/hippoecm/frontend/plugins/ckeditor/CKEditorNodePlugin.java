@@ -154,7 +154,8 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
     }
 
     protected RichTextLinkFactory createLinkFactory() {
-        return new RichTextLinkFactoryImpl(() -> getNodeModel().getObject().getIdentifier(), WicketNodeFactory.INSTANCE);
+        final Model<Node> nodeModel = WicketModel.of(getNodeModel());
+        return new RichTextLinkFactoryImpl(nodeModel, WicketNodeFactory.INSTANCE);
     }
 
     @Override
