@@ -14,9 +14,19 @@
 
 @import 'variables';
 
-.right-side-panel form {
-  padding-right: $form-dense-distance;
-  padding-top: $form-dense-distance;
+right-side-panel {
+  width: 440px;
+  max-width: 440px;
+}
+
+.right-side-panel {
+  max-width: 100%;
+  width: 100%;
+
+  form {
+    padding-right: $form-dense-distance;
+    padding-top: $form-dense-distance;
+  }
 }
 
 primitive-field,
@@ -107,4 +117,3 @@ md-input-container:not(:last-child) .md-errors-spacer {
     opacity: 1;
   }
 }
-

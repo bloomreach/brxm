@@ -1,0 +1,18 @@
+resize-handle {
+  $handle-width: 14px;
+  $handle-height: 80px;
+
+  background-color: #666;
+  border-radius: 10px;
+  height: $handle-height;
+  left: -5px;
+  position: absolute;
+  top: 50vh;
+  width: $handle-width;
+  z-index: 20000;
+
+
+  &:hover {
+    cursor: col-resize;
+  }
+}
