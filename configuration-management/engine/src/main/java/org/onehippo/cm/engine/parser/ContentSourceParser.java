@@ -67,7 +67,7 @@ public class ContentSourceParser extends SourceParser {
     private void constructContentDefinitions(final Node src, final SourceImpl parent) throws ParserException {
         for (NodeTuple nodeTuple : asTuples(src)) {
             final ContentDefinitionImpl definition = parent.addContentDefinition();
-            final String key = asPathScalar(nodeTuple.getKeyNode(), true);
+            final String key = asPathScalar(nodeTuple.getKeyNode(), true, false);
             constructDefinitionNode(key, nodeTuple.getValueNode(), definition);
         }
     }

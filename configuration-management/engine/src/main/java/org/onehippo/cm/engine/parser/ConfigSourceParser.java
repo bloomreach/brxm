@@ -15,6 +15,10 @@
  */
 package org.onehippo.cm.engine.parser;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionType;
@@ -27,10 +31,6 @@ import org.onehippo.cm.impl.model.WebFileBundleDefinitionImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
 
 import static org.onehippo.cm.engine.Constants.DEFINITIONS;
 import static org.onehippo.cm.engine.Constants.META_DELETE_KEY;
@@ -111,7 +111,7 @@ public class ConfigSourceParser extends SourceParser {
     private void constructConfigDefinitions(final Node src, final SourceImpl parent) throws ParserException {
         for (NodeTuple nodeTuple : asTuples(src)) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
-            final String key = asPathScalar(nodeTuple.getKeyNode(), true);
+            final String key = asPathScalar(nodeTuple.getKeyNode(), true, false);
             constructDefinitionNode(key, nodeTuple.getValueNode(), definition);
         }
     }

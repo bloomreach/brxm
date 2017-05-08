@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;
@@ -269,6 +270,17 @@ class ConfigurationTreeBuilder {
             logger.warn(msg);
             if (definitionNode.isDeleted()) {
                 return null;
+            }
+        }
+
+        final Pair<String, Integer> parsedName = SnsUtils.splitIndexedName(name);
+        if (parsedName.getRight() > 1) {
+            final String expectedSibling = SnsUtils.createIndexedName(parsedName.getLeft(), parsedName.getRight() - 1);
+            if (!parent.getNodes().containsKey(expectedSibling)) {
+                final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+                final String msg = String.format("%s defines node '%s', but no sibling named '%s' was found",
+                        culprit, definitionNode.getPath(), expectedSibling);
+                throw new IllegalStateException(msg);
             }
         }
 

@@ -15,6 +15,15 @@
  */
 package org.onehippo.cm.engine.parser;
 
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.text.MessageFormat;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.ResourceInputProvider;
@@ -33,15 +42,6 @@ import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
-
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.text.MessageFormat;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -475,7 +475,7 @@ public abstract class SourceParser extends AbstractBaseParser {
     }
 
     private ValueImpl constructPathValueFromScalar(final Node node, final ValueType valueType) throws ParserException {
-        final String path = asPathScalar(node, false);
+        final String path = asPathScalar(node, false, true);
         return new ValueImpl(path, valueType, false, true);
     }
 

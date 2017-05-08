@@ -19,15 +19,14 @@ import java.util.Map;
 
 public interface ConfigurationNode extends ConfigurationItem {
     /**
-     * @return The <strong>ordered</strong> map of child {@link ConfigurationNode}s by name for this {@link ConfigurationNode} as an immutable map
-     * and empty immutable map if none present. Note the ordering is according to serialized yaml format and not in
-     * model processing order.
+     * @return The <strong>ordered</strong> map of child {@link ConfigurationNode}s by name for this
+     * {@link ConfigurationNode} as an immutable map and empty immutable map if none present.
+     * Nodes names are always indexed names, e.g. <code>node[1]</code>.
      */
     Map<String, ConfigurationNode> getNodes();
     /**
-     * @return The <strong>ordered</strong> map of {@link ConfigurationProperty}s by name for this {@link ConfigurationNode} as an immutable map
-     * and empty immutable map if none present. Note the ordering is according to serialized yaml format and not in
-     * model processing order.
+     * @return The <strong>ordered</strong> map of {@link ConfigurationProperty}s by name for this
+     * {@link ConfigurationNode} as an immutable map and empty immutable map if none present.
      */
     Map<String, ConfigurationProperty> getProperties();
 

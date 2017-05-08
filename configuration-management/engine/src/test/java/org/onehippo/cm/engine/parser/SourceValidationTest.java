@@ -1126,6 +1126,18 @@ public class SourceValidationTest extends AbstractBaseTest {
         assertParserException(root, name, "Duplicate web file bundle name 'name'");
     }
 
+    @Test
+    public void snsNotAllowedInRootPath() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to[1]/node:\n"
+                + "      property: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+
+        assertParserException(root, firstConfigTuple(root).getKeyNode(), "Path must not contain name indices");
+    }
+
     // start set for "explicit sequencing"
 
     @Test

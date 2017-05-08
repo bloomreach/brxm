@@ -26,7 +26,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class SnsUtils {
 
-    private static Pattern pattern = Pattern.compile("^([^/\\[\\]]*)(\\[(\\+)?([1-9][0-9]*)])?$");
+    private static Pattern pattern = Pattern.compile("^([^/\\[\\]]*)(\\[([1-9][0-9]*)])?$");
 
     public static Pair<String, Integer> splitIndexedName(final String name) {
         final Matcher matcher = pattern.matcher(name);
@@ -37,9 +37,8 @@ public class SnsUtils {
             if (matcher.group(2) == null) {
                 return Pair.of(matcher.group(1), 0);
             }
-            final boolean hasPlus = matcher.group(3) != null;
-            final int index = Integer.parseInt(matcher.group(4));
-            return Pair.of(matcher.group(1), hasPlus ? -index : index);
+            final int index = Integer.parseInt(matcher.group(3));
+            return Pair.of(matcher.group(1), index);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Name '" + name + "' is not a valid indexed name");
         }

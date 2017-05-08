@@ -31,8 +31,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.engine.SnsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -157,7 +159,7 @@ public abstract class AbstractBaseParser {
         return sequenceNode.getValue();
     }
 
-    protected String asPathScalar(final Node node, final boolean requireAbsolutePath) throws ParserException {
+    protected String asPathScalar(final Node node, final boolean requireAbsolutePath, final boolean allowSnsIndices) throws ParserException {
         final String path = asStringScalar(node);
 
         if (requireAbsolutePath && !path.startsWith("/")) {
@@ -170,6 +172,28 @@ public abstract class AbstractBaseParser {
 
         if (path.endsWith("/") && !isRootNodePath(path)) {
             throw new ParserException("Path must not end with a slash", node);
+        }
+
+        if (path.equals("/")) {
+            return path;
+        }
+
+        final String[] pathSegments;
+        if (path.startsWith("/")) {
+            pathSegments = path.substring(1).split("/");
+        } else {
+            pathSegments = path.split("/");
+        }
+
+        for (String segment: pathSegments) {
+            try {
+                final Pair<String, Integer> parsedName = SnsUtils.splitIndexedName(segment);
+                if (!allowSnsIndices && parsedName.getRight() != 0) {
+                    throw new ParserException("Path must not contain name indices", node);
+                }
+            } catch (IllegalArgumentException e) {
+                throw new ParserException("Illegal path segment: " + segment, node);
+            }
         }
 
         return path;

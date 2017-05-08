@@ -1752,4 +1752,23 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         assertEquals("[jcr:primaryType, property3]", sortedCollectionToString(a.getNodes().get("sns[3]").getProperties()));
     }
 
+    @Test
+    public void reject_sns_if_lower_index_is_missing() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /sns[2]:\n"
+                + "        jcr:primaryType: foo\n";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        try {
+            builder.push((ContentDefinitionImpl) definitions.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalStateException e) {
+            assertEquals("test-configuration/test-project/test-module [string] defines node '/a/sns[2]', but no sibling named 'sns[1]' was found", e.getMessage());
+        }
+    }
+
 }

@@ -28,11 +28,6 @@ public class SnsUtilsTest {
     }
 
     @Test
-    public void test_sns_with_relative_index() {
-        assertEquals(Pair.of("sns", -1), SnsUtils.splitIndexedName("sns[+1]"));
-    }
-
-    @Test
     public void test_sns_without_index() {
         assertEquals(Pair.of("sns", 0), SnsUtils.splitIndexedName("sns"));
     }
