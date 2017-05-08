@@ -31,25 +31,4 @@ public interface ConfigurationService {
      */
     void apply(final MergedModel mergedModel, final EnumSet<DefinitionType> includeDefinitionTypes) throws Exception;
 
-    /**
-     * Store a merged configuration model as a baseline configuration in the JCR.
-     * The provided MergedModel is assumed to be fully formed and validated.
-     * @param model the configuration model to store as the new baseline
-     */
-    void storeBaseline(final MergedModel model) throws Exception;
-
-    /**
-     * Load a (partial) MergedModel from the stored configuration baseline in the JCR. This model will not contain
-     * content definitions, which are not stored in the baseline.
-     * @throws Exception
-     */
-    MergedModel loadBaseline() throws Exception;
-
-    /**
-     * Compare a MergedModel against the baseline by comparing manifests produced by model.compileManifest()
-     * @param model the model to compare against the baseline
-     * @return true iff the manifest compiled by model matches the manifest of the stored configuration baseline
-     */
-    boolean matchesBaselineManifest(MergedModel model) throws Exception;
-
 }

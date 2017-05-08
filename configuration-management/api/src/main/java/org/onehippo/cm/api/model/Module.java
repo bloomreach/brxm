@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.api.model;
 
+import java.io.IOException;
 import java.util.Set;
 
 public interface Module extends Orderable {
@@ -34,5 +35,14 @@ public interface Module extends Orderable {
      *         relative to the module's base resource path.
      */
     Set<Source> getConfigSources();
+
+
+    /**
+     * Compile a dummy YAML descriptor file to stand in for special case where demo project uses an aggregated
+     * descriptor for a set of modules.
+     * @return a YAML string representing the group->project->module hierarchy and known dependencies for this Module
+     * @throws IOException
+     */
+    String compileDummyDescriptor();
 
 }

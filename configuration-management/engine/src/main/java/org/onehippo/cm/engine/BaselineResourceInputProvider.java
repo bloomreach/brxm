@@ -24,14 +24,12 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.util.Text;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Source;
 import org.slf4j.Logger;
@@ -94,30 +92,38 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
      * @return a path String normalized to be relative to the baseNode
      */
     protected static String makeBaseRelativePath(final Source source, final String resourcePath) {
-        // TODO handle JCR name encoding / unencoding!!!!!
-
+        String result = resourcePath;
         if (resourcePath.startsWith("/")) {
             // TODO this is an ugly hack in part because RIP uses config root instead of module root
             // special case handling for descriptor and actions
             if (resourcePath.equals("/../"+REPO_CONFIG_YAML)) {
+                // short-circuit here, because we want to skip JCR name escaping
                 return "../"+MODULE_DESCRIPTOR_NODE;
             }
             if (resourcePath.equals("/../"+ACTIONS_YAML)) {
+                // short-circuit here, because we want to skip JCR name escaping
                 return "../"+ ACTIONS_NODE;
             }
 
-            return StringUtils.stripStart(resourcePath, "/");
+            result = StringUtils.stripStart(result, "/");
         }
         else {
             final String sourcePath = source.getPath();
             int lastSlash = sourcePath.lastIndexOf('/');
             if (lastSlash < 0) {
-                return resourcePath;
+                result = resourcePath;
             }
             else {
-                return sourcePath.substring(0, lastSlash+1) + resourcePath;
+                result = sourcePath.substring(0, lastSlash+1) + resourcePath;
             }
         }
+
+        // escape JCR-illegal chars here, since resource paths are intended to be filesystem paths, not JCR paths
+        String[] pathSegments = result.split("/");
+        for (int i = 0; i < pathSegments.length; i++) {
+            pathSegments[i] = Text.escapeIllegalJcrChars(pathSegments[i]);
+        }
+        return String.join("/", pathSegments);
     }
 
     /**
@@ -169,19 +175,32 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
     }
 
     /**
-     * Helper to search for nodes by type using xpath queries.
+     * Helper to search for nodes by type using recursive search.
      */
     private List<Node> searchByType(final String type, final Node searchBase) throws RepositoryException {
-        QueryManager qm = searchBase.getSession().getWorkspace().getQueryManager();
-        final String queryString = "/jcr:root" + Text.encodeIllegalXMLCharacters(searchBase.getPath()) + "//element(*," + type + ")";
-
-        log.debug("Searching for sources with query: {}", queryString);
 
         // accumulate results into a List, since we expect them to be few and NodeIterator is annoying
         List<Node> result = new ArrayList<>();
-        for (NodeIterator ni = qm.createQuery(queryString, Query.XPATH).execute().getNodes(); ni.hasNext();) {
-            result.add(ni.nextNode());
-        }
+
+        // recursive search
+        findDescendantsByType(type, searchBase, result);
+
         return result;
+    }
+
+    /**
+     * Helper for recursive search by node type.
+     * @param type the primary node type string that we want
+     * @param searchBase the current node to search
+     * @param result accumulator for matching Nodes
+     * @throws RepositoryException
+     */
+    private void findDescendantsByType(final String type, final Node searchBase, List<Node> result) throws RepositoryException {
+        for (Node childNode : new NodeIterable(searchBase.getNodes())) {
+            if (childNode.isNodeType(type)) {
+                result.add(childNode);
+            }
+            findDescendantsByType(type, childNode, result);
+        }
     }
 }

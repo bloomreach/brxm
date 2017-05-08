@@ -18,6 +18,7 @@ package org.onehippo.cm.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -180,65 +181,18 @@ public class MergedModelImpl implements MergedModel {
         // for each module, accumulate manifest items
         TreeMap<Module,TreeMap<String,String>> manifest = new TreeMap<>();
         for (Module module : modules) {
-            TreeMap<String,String> items = new TreeMap<>();
-
-            // get the resource input provider, which provides access to raw data for module content
-            ResourceInputProvider rip = getResourceInputProviders().get(module);
-            if (rip == null) {
-                log.warn("Cannot find ResourceInputProvider for module {}", module.getName());
-            }
-
-            // digest the descriptor
-            digestResource(null, "/../"+REPO_CONFIG_YAML, rip, items);
-
-            // digest the actions file
-            digestResource(null, "/../"+ACTIONS_YAML, rip, items);
-
-            // for each content source
-            for (Source source : module.getContentSources()) {
-                // assume that there is exactly one content definition here, as required
-                ContentDefinition firstDef = (ContentDefinition) source.getDefinitions().get(0);
-
-                // add the first definition path to manifest
-                items.put("/"+REPO_CONTENT_FOLDER+"/"+source.getPath(), firstDef.getNode().getPath());
-            }
-
-            // for each config source
-            for (Source source : module.getConfigSources()) {
-                // digest the source
-                digestResource(source, "/"+source.getPath(), rip, items);
-
-                // for each definition
-                for (Definition def : source.getDefinitions()) {
-                    switch (def.getType()) {
-                        case NAMESPACE:
-                        case WEBFILEBUNDLE:
-                            // no special processing required
-                            break;
-                        case CONTENT:
-                            // this shouldn't exist here anymore, but we'll let the verifier handle it
-                            break;
-                        case CND:
-                            // digest cnd, if stored in a resource
-                            NodeTypeDefinition ntd = (NodeTypeDefinition) def;
-                            if (ntd.isResource()) {
-                                String cndPath = ntd.getValue();
-                                digestResource(source, cndPath, rip, items);
-                            }
-                            break;
-                        case CONFIG:
-                            // recursively find all config resources and digest them
-                            ConfigDefinition configDef = (ConfigDefinition) def;
-                            digestResourcesForNode(configDef.getNode(), source, rip, items);
-                            break;
-                    }
-                }
-            }
-
-            // add items to manifest
-            manifest.put(module, items);
+            ((ModuleImpl)module).compileManifest(this, manifest);
         }
 
+        return manifestToString(manifest);
+    }
+
+    /**
+     * Helper for compileManifest()
+     * @param manifest
+     * @return
+     */
+    protected static String manifestToString(final TreeMap<Module, TreeMap<String, String>> manifest) {
         // print to final manifest String (with ~10k initial buffer size)
         StringBuilder sb = new StringBuilder(10000);
 
@@ -255,95 +209,6 @@ public class MergedModelImpl implements MergedModel {
         });
 
         return sb.toString();
-    }
-
-    /**
-     * Recursively accumulate digests for resources referenced from the given DefinitionNode or its descendants.
-     * @param defNode the DefinitionNode to scan for resource references
-     * @param source the Source within which the defNode is defined
-     * @param rip provides access to raw data streams
-     * @param items accumulator of [path,digest] Strings
-     */
-    protected void digestResourcesForNode(DefinitionNode defNode, Source source, ResourceInputProvider rip,
-                                          TreeMap<String,String> items) {
-        // find resource values
-        for (DefinitionProperty dp : defNode.getProperties().values()) {
-            // if value is a resource, digest it
-            Consumer<Value> digester = v -> {
-                if (v.isResource()) {
-                    digestResource(source, v.getString(), rip, items);
-                }
-            };
-
-            switch (dp.getType()) {
-                case SINGLE:
-                    digester.accept(dp.getValue());
-                    break;
-                case SET: case LIST:
-                    for (Value value : dp.getValues()) {
-                        digester.accept(value);
-                    }
-                    break;
-            }
-        }
-
-        // recursively visit child definition nodes
-        for (DefinitionNode dn : defNode.getNodes().values()) {
-            digestResourcesForNode(dn, source, rip, items);
-        }
-    }
-
-    /**
-     * Compute and accumulate a crypto digest for the resource referenced by source at path.
-     * @param source the Source from which path might be a relative reference
-     * @param path iff starts with '/', a module-relative path, else a path relative to source
-     * @param rip provides access to raw data streams
-     * @param items accumulator of [path,digest] Strings
-     */
-    protected void digestResource(Source source, String path, ResourceInputProvider rip, TreeMap<String,String> items) {
-        // if path starts with /, this is already relative to the config root, otherwise we must adjust it
-        if (!path.startsWith("/")) {
-            String sourcePath = source.getPath();
-
-            if (sourcePath.contains("/")) {
-                String sourceParent = sourcePath.substring(0, sourcePath.lastIndexOf('/'));
-                path = "/" + sourceParent + "/" + path;
-            }
-            else {
-                // TODO: this is a source at the module root -- only happens in temporary aggregate form of config
-                path = "/" + path;
-            }
-        }
-
-        // if the RIP cannot provide an InputStream, short-circuit here
-        if (!rip.hasResource(null, path)) {
-            return;
-        }
-
-        try {
-            // use MD5 because it's fast and guaranteed to be supported, and crypto attacks are not a concern here
-            MessageDigest md = MessageDigest.getInstance(DEFAULT_DIGEST);
-
-            // digest the InputStream by copying it and discarding the output
-            InputStream is = new DigestInputStream(rip.getResourceInputStream(null, path), md);
-            IOUtils.copyLarge(is, new NullOutputStream());
-
-            // prepend algorithm using same style as used in Hippo CMS password hashing
-            String digestString = "$"+DEFAULT_DIGEST+"$"+ DatatypeConverter.printHexBinary(md.digest());
-
-            // TODO dirty hack because RIP uses paths relative to content root instead of module root
-            if (path.startsWith("/../")) {
-                path = StringUtils.removeStart(path, "/..");
-            }
-            else {
-                path = "/"+REPO_CONFIG_FOLDER+path;
-            }
-
-            items.put(path, digestString);
-        }
-        catch (IOException|NoSuchAlgorithmException e) {
-            throw new RuntimeException("Exception while computing resource digest", e);
-        }
     }
 
     /**

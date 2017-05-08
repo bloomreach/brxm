@@ -15,24 +15,58 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.apache.jackrabbit.util.Text;
+import javax.xml.bind.DatatypeConverter;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.api.ConfigurationBaselineService;
 import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.ConfigDefinition;
+import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
+import org.onehippo.cm.api.model.DefinitionNode;
+import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cm.engine.Constants.ACTIONS_YAML;
+import static org.onehippo.cm.engine.Constants.DEFAULT_DIGEST;
+import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.engine.Constants.REPO_CONFIG_FOLDER;
+import static org.onehippo.cm.engine.Constants.REPO_CONFIG_YAML;
+import static org.onehippo.cm.engine.Constants.REPO_CONTENT_FOLDER;
 
 public class ModuleImpl implements Module, Comparable<Module> {
+
+    private static final Logger log = LoggerFactory.getLogger(ModuleImpl.class);
 
     private final String name;
     private final Project project;
@@ -197,6 +231,228 @@ public class ModuleImpl implements Module, Comparable<Module> {
                     ModelUtils.formatDefinition(nodeTypeDefinition),
                     ModelUtils.formatDefinition(nodeTypeDefinitions.get(0)));
             throw new IllegalStateException(msg);
+        }
+    }
+
+    public void compileManifest(MergedModel model, TreeMap<Module,TreeMap<String,String>> manifest) {
+        TreeMap<String,String> items = new TreeMap<>();
+
+        // get the resource input provider, which provides access to raw data for module content
+        ResourceInputProvider rip = model.getResourceInputProviders().get(this);
+        if (rip == null) {
+            log.warn("Cannot find ResourceInputProvider for module {}", this.getName());
+        }
+
+        // digest the descriptor
+        // TODO this is an ugly hack in part because RIP uses config root instead of module root
+        boolean hasDescriptor = digestResource(null, "/../"+REPO_CONFIG_YAML, rip, items);
+
+        // special-case handle a missing descriptor by generating a dummy one, for demo case
+        // TODO remove when demo is restructured to use module-specific descriptors
+        if (!hasDescriptor) {
+            // create a manifest item for a dummy descriptor
+            String descriptor = this.compileDummyDescriptor();
+            String digest = digestFromStream(IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8));
+            items.put("/"+REPO_CONFIG_YAML, digest);
+        }
+
+        // digest the actions file
+        digestResource(null, "/../"+ACTIONS_YAML, rip, items);
+
+        // for each content source
+        for (Source source : this.getContentSources()) {
+            // assume that there is exactly one content definition here, as required
+            ContentDefinition firstDef = (ContentDefinition) source.getDefinitions().get(0);
+
+            // add the first definition path to manifest
+            items.put("/"+REPO_CONTENT_FOLDER+"/"+source.getPath(), firstDef.getNode().getPath());
+        }
+
+        // for each config source
+        for (Source source : this.getConfigSources()) {
+            // digest the source
+            digestResource(source, "/"+source.getPath(), rip, items);
+
+            // for each definition
+            for (Definition def : source.getDefinitions()) {
+                switch (def.getType()) {
+                    case NAMESPACE:
+                    case WEBFILEBUNDLE:
+                        // no special processing required
+                        break;
+                    case CONTENT:
+                        // this shouldn't exist here anymore, but we'll let the verifier handle it
+                        break;
+                    case CND:
+                        // digest cnd, if stored in a resource
+                        NodeTypeDefinition ntd = (NodeTypeDefinition) def;
+                        if (ntd.isResource()) {
+                            String cndPath = ntd.getValue();
+                            digestResource(source, cndPath, rip, items);
+                        }
+                        break;
+                    case CONFIG:
+                        // recursively find all config resources and digest them
+                        ConfigDefinition configDef = (ConfigDefinition) def;
+                        digestResourcesForNode(configDef.getNode(), source, rip, items);
+                        break;
+                }
+            }
+        }
+
+        // add items to manifest
+        manifest.put(this, items);
+    }
+
+    /**
+     * Recursively accumulate digests for resources referenced from the given DefinitionNode or its descendants.
+     * @param defNode the DefinitionNode to scan for resource references
+     * @param source the Source within which the defNode is defined
+     * @param rip provides access to raw data streams
+     * @param items accumulator of [path,digest] Strings
+     */
+    protected void digestResourcesForNode(DefinitionNode defNode, Source source, ResourceInputProvider rip,
+                                          TreeMap<String,String> items) {
+        // find resource values
+        for (DefinitionProperty dp : defNode.getProperties().values()) {
+            // if value is a resource, digest it
+            Consumer<Value> digester = v -> {
+                if (v.isResource()) {
+                    digestResource(source, v.getString(), rip, items);
+                }
+            };
+
+            switch (dp.getType()) {
+                case SINGLE:
+                    digester.accept(dp.getValue());
+                    break;
+                case SET: case LIST:
+                    for (Value value : dp.getValues()) {
+                        digester.accept(value);
+                    }
+                    break;
+            }
+        }
+
+        // recursively visit child definition nodes
+        for (DefinitionNode dn : defNode.getNodes().values()) {
+            digestResourcesForNode(dn, source, rip, items);
+        }
+    }
+
+    /**
+     * Compute and accumulate a crypto digest for the resource referenced by source at path.
+     * @param source the Source from which path might be a relative reference
+     * @param path iff starts with '/', a module-relative path, else a path relative to source
+     * @param rip provides access to raw data streams
+     * @param items accumulator of [path,digest] Strings
+     */
+    protected boolean digestResource(Source source, String path, ResourceInputProvider rip, TreeMap<String,String> items) {
+        // if path starts with /, this is already relative to the config root, otherwise we must adjust it
+        if (!path.startsWith("/")) {
+            String sourcePath = source.getPath();
+
+            if (sourcePath.contains("/")) {
+                String sourceParent = sourcePath.substring(0, sourcePath.lastIndexOf('/'));
+                path = "/" + sourceParent + "/" + path;
+            }
+            else {
+                path = "/" + path;
+            }
+        }
+
+        // if the RIP cannot provide an InputStream, short-circuit here
+        if (!rip.hasResource(null, path)) {
+            return false;
+        }
+
+        try {
+            final InputStream is = rip.getResourceInputStream(null, path);
+            String digestString = digestFromStream(is);
+
+            // TODO dirty hack because RIP uses paths relative to content root instead of module root
+            if (path.startsWith("/../")) {
+                path = StringUtils.removeStart(path, "/..");
+            }
+            else {
+                path = "/"+REPO_CONFIG_FOLDER+path;
+            }
+
+            items.put(path, digestString);
+            return true;
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Exception while computing resource digest", e);
+        }
+    }
+
+    /**
+     * Helper to compute a digest string from an InputStream. This method ensures that the stream is closed.
+     * @param is the InputStream to digest
+     * @return a digest string suitable for use in a module manifest
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     */
+    private String digestFromStream(final InputStream is) {
+        try {
+            // use MD5 because it's fast and guaranteed to be supported, and crypto attacks are not a concern here
+            MessageDigest md = MessageDigest.getInstance(DEFAULT_DIGEST);
+
+            // digest the InputStream by copying it and discarding the output
+            try (InputStream dis = new DigestInputStream(is, md)) {
+                IOUtils.copyLarge(dis, new NullOutputStream());
+            }
+
+            // prepend algorithm using same style as used in Hippo CMS password hashing
+            return toDigestHexString(md.digest());
+        }
+        catch (IOException|NoSuchAlgorithmException e) {
+            throw new RuntimeException("Exception while computing resource digest", e);
+        }
+    }
+
+    /**
+     * Helper method to convert a byte[] produced by MessageDigest into a hex string marked with the digest algorithm.
+     * @param digest the raw digest byte[]
+     * @return a String suitable for long-term storage and eventual comparisons
+     */
+    public static String toDigestHexString(final byte[] digest) {
+        // prepend algorithm using same style as used in Hippo CMS password hashing
+        return "$"+DEFAULT_DIGEST+"$"+ DatatypeConverter.printHexBinary(digest);
+    }
+
+    /**
+     * Compile a dummy YAML descriptor file to stand in for special case where demo project uses an aggregated
+     * descriptor for a set of modules.
+     * @return a YAML string representing the group->project->module hierarchy and known dependencies for this Module
+     * @throws IOException
+     */
+    public String compileDummyDescriptor() {
+        // serialize a dummy module descriptor for this module
+        final RepoConfigSerializer repoConfigSerializer = new RepoConfigSerializer(DEFAULT_EXPLICIT_SEQUENCING);
+
+        // create a dummy group->project->module setup with just the data relevant to this Module
+        ConfigurationImpl group = new ConfigurationImpl(getProject().getConfiguration().getName());
+        group.addAfter(getProject().getConfiguration().getAfter());
+        ProjectImpl project = group.addProject(getProject().getName());
+        project.addAfter(getProject().getAfter());
+        ModuleImpl dummyModule = project.addModule(getName());
+        dummyModule.addAfter(getAfter());
+
+        log.debug("Creating dummy module descriptor for {}/{}/{}",
+                group.getName(), project.getName(), getName());
+
+        HashMap<String, ConfigurationImpl> groups = new HashMap<>();
+        groups.put(group.getName(), group);
+
+        // serialize that dummy group
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            repoConfigSerializer.serialize(baos, groups);
+            return baos.toString(StandardCharsets.UTF_8.name());
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Problem compiling dummy descriptor", e);
         }
     }
 

@@ -15,73 +15,69 @@
  */
 
 <'hcm'='http://www.onehippo.org/jcr/hcm/1.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
 <'jcr'='http://www.jcp.org/jcr/1.0'>
 <'mix'='http://www.jcp.org/jcr/mix/1.0'>
 <'nt'='http://www.jcp.org/jcr/nt/1.0'>
 
 // Provides cryptographic digest of primary node content
 [hcm:digested] mixin
-  - hcm:digest (string) mandatory
+  - hcm:digest (string)
 
 // Stores the root definition path for a content source file
-[hcm:content] > nt:base
+[hcm:content] > nt:base, hippo:skipindex
   - hcm:contentpath (string) primary mandatory
 
 // Used for storing content in a hierarchy
-[hcm:contentfolder] > nt:base
+[hcm:contentfolder] > nt:base, hippo:skipindex
   + * (hcm:contentfolder)
   + * (hcm:content)
 
 // Stores an actions file with content processing directives
-[hcm:actions] > nt:base, hcm:digested
+[hcm:actions] > nt:base, hippo:skipindex, hcm:digested
   - hcm:yaml (string) primary mandatory
 
 // Stores a module descriptor file with name, project, group, and dependencies
-[hcm:descriptor] > nt:base, hcm:digested
+[hcm:descriptor] > nt:base, hippo:skipindex, hcm:digested
   - hcm:yaml (string) primary mandatory
 
 // Stores a config definitions file
-[hcm:definitions] > nt:base, hcm:digested
+[hcm:definitions] > nt:base, hippo:skipindex, hcm:digested
   - hcm:yaml (string) primary mandatory
 
 // Stores a CND resource file as referenced from a node type definition
-[hcm:cnd] > nt:base, hcm:digested
+[hcm:cnd] > nt:base, hippo:skipindex, hcm:digested
   - hcm:cnd (string) primary mandatory
 
 // Stores a binary resource file as referenced from a config or content definition
-[hcm:binary] > nt:base, hcm:digested
+[hcm:binary] > nt:base, hippo:skipindex, hcm:digested
   - jcr:data (binary) primary mandatory
 
 // Used for storing config sources in a hierarchy
-[hcm:configfolder] > nt:base
+[hcm:configfolder] > nt:base, hippo:skipindex
   + * (hcm:configfolder)
   + * (hcm:definitions)
   + * (hcm:cnd)
   + * (hcm:binary)
 
 // Stores a module, including descriptor, actions, and definition sources
-[hcm:module] > nt:base
+[hcm:module] > nt:base, hcm:digested, hippo:skipindex
   + hcm:descriptor (hcm:descriptor) primary mandatory
   - hcm:lastexecutedaction (string)
   + hcm:actions (hcm:actions)
   + * (hcm:configfolder)
   + * (hcm:contentfolder)
-  // TODO Child node definitions below here should be removed when demo config is reorganized!
-  + * (hcm:definitions)
-  + * (hcm:cnd)
-  + * (hcm:binary)
-  + * (hcm:content)
 
 // Stores a project
-[hcm:project] > nt:base
+[hcm:project] > nt:base, hippo:skipindex
   + * (hcm:module)
 
 // Stores a configuration group
-[hcm:group] > nt:base
+[hcm:group] > nt:base, hippo:skipindex
   + * (hcm:project)
 
 // Stores an entire configuration baseline with multiple groups, projects, and modules
-[hcm:baseline] > nt:base, mix:lockable, hcm:digested
-  - hcm:manifest (string) primary mandatory
+[hcm:baseline] > nt:base, mix:lockable, hcm:digested, hippo:skipindex
+  - hcm:manifest (string)
   - hcm:lastupdated (date)
   + * (hcm:group)
