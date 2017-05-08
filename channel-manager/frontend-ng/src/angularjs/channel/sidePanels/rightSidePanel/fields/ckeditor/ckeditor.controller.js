@@ -93,7 +93,6 @@ class CKEditorController {
   _openImagePicker(selectedImage) {
     const imagePickerConfig = this.config.hippopicker.image;
     this.CmsService.publish('show-image-picker', this.id, imagePickerConfig, selectedImage, (image) => {
-
       // Images are rendered with a relative path, pointing to the binaries servlet. The binaries servlet always
       // runs at the same level; two directories up from the angular app. Because of this we need to prepend
       // all internal images with a prefix as shown below.
