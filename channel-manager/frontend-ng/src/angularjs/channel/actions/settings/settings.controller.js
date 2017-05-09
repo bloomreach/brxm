@@ -57,8 +57,13 @@ class ChannelSettingsCtrl {
   isLockedByOther() {
     return this.channelInfoDescription.lockedBy && this.channelInfoDescription.lockedBy !== this.ConfigService.cmsUser;
   }
+
   isEditable() {
     return this.channelInfoDescription.editable;
+  }
+
+  isReadOnly() {
+    return this.isLockedByOther();
   }
 
   isSaveDisabled() {

@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-import template from './property.html';
+import template from './propertyField.html';
+import controller from './propertyField.controller';
 
-function channelPropertyDirective() {
-  'ngInject';
+const propertyField = {
+  bindings: {
+    error: '<',
+    field: '<',
+    info: '<',
+    readOnly: '<',
+    value: '<',
+  },
+  template,
+  controller,
+};
 
-  return {
-    restrict: 'A',
-    bindToController: {
-      field: '@channelProperty',
-      value: '=channelPropertyValue',
-      error: '=channelPropertiesError',
-      data: '=channelPropertiesData',
-    },
-    template,
-    controller: 'ChannelPropertyCtrl',
-    controllerAs: 'channelProperty',
-  };
-}
-
-export default channelPropertyDirective;
+export default propertyField;
