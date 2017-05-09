@@ -37,6 +37,9 @@ public class JcrStringReader implements JcrPropertyReader<String> {
         return INSTANCE;
     }
 
+    private JcrStringReader() {
+    }
+
     @Override
     public Optional<String> read(final Node node, final String name) {
         try {

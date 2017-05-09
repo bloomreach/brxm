@@ -37,6 +37,9 @@ public class JcrMultipleStringReader implements JcrPropertyReader<String[]> {
         return INSTANCE;
     }
 
+    private JcrMultipleStringReader() {
+    }
+
     @Override
     public Optional<String[]> read(final Node node, final String name) {
         try {

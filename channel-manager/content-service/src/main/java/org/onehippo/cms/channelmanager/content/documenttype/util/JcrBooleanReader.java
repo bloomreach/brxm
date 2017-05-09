@@ -37,6 +37,9 @@ public class JcrBooleanReader implements JcrPropertyReader<Boolean> {
         return INSTANCE;
     }
 
+    private JcrBooleanReader() {
+    }
+
     @Override
     public Optional<Boolean> read(final Node node, final String name) {
         try {
