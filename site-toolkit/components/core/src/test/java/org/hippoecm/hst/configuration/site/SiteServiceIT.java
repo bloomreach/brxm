@@ -49,7 +49,8 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 
-import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCHOF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT;
@@ -418,7 +419,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         Session session = createSession();
         try {
             createHstConfigBackup(session);
-            createBranch(session, "unittestproject-branchid-000");
+            createBranch(session, "unittestproject-branchid-000", "branchid-000");
             Channel branchChannel = hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000");
             assertNotNull(branchChannel);
             assertEquals("branchid-000", branchChannel.getBranchId());
@@ -441,11 +442,12 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         }
     }
 
-    private void createBranch(final Session session, final String name) throws RepositoryException {
+    private void createBranch(final Session session, final String name, final String branchId) throws RepositoryException {
         Node branchNode = session.getNode("/hst:hst/hst:configurations").addNode(name);
         branchNode.addNode(NODENAME_HST_WORKSPACE, NODETYPE_HST_WORKSPACE);
         branchNode.addMixin(MIXINTYPE_HST_BRANCH);
-        branchNode.setProperty(BRANCH_PROPERTY_BRANCHOF, "unittestproject");
+        branchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, "unittestproject");
+        branchNode.setProperty(BRANCH_PROPERTY_BRANCH_ID, branchId);
         branchNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[] {"../unittestproject"});
         session.save();
     }
@@ -455,9 +457,9 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         Session session = createSession();
         try {
             createHstConfigBackup(session);
-            createBranch(session, "unittestproject-branchid-000");
+            createBranch(session, "unittestproject-branchid-000", "branchid-000");
             Node branchNode = session.getNode("/hst:hst/hst:configurations/unittestproject-branchid-000");
-            branchNode.setProperty(BRANCH_PROPERTY_BRANCHOF, "nonexisting");
+            branchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, "nonexisting");
             session.save();
             assertNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000"));
         } finally {
@@ -467,19 +469,22 @@ public class SiteServiceIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void incorrect_configured_branch_is_not_loaded() throws Exception {
-        incorrectNameAssertions("incorrectname-branchid-000");
+    public void branch_can_start_with_other_name_than_master() throws Exception {
+        assertions("othername-branchid-000", "branchid-000");
     }
 
-    private void incorrectNameAssertions(final String name) throws RepositoryException, ContainerException {
+    private void assertions(final String name, final String branchId) throws RepositoryException, ContainerException {
         Session session = createSession();
         try {
             createHstConfigBackup(session);
             // since the branch is a branchof 'unittestproject', it should start with the name 'unittestproject-' and is
             // thus incorrect like this and hence won't be loaded
-            createBranch(session, name);
+            createBranch(session, name, branchId);
             session.save();
-            assertNull(hstManager.getVirtualHosts().getChannels("dev-localhost").get(name));
+            Channel branch = hstManager.getVirtualHosts().getChannels("dev-localhost").get(name);
+            assertEquals("unittestproject", branch.getBranchOf());
+            assertEquals(branchId, branch.getBranchId());
+            assertNotNull(branch);
         } finally {
             restoreHstConfigBackup(session);
             session.logout();
@@ -487,8 +492,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void subtle_incorrect_configured_branch_is_not_loaded() throws Exception {
-        incorrectNameAssertions("unittestprojectbranchid-000");
+    public void no_dash_after_master_name_is_not_a_problem() throws Exception {
+        assertions("unittestprojectbranchid-000", "branchid-000");
     }
 
     @Test
@@ -496,7 +501,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         Session session = createSession();
         try {
             createHstConfigBackup(session);
-            createBranch(session, "unittestproject-branchid-000");
+            createBranch(session, "unittestproject-branchid-000", "branchid-000");
             // add a hst:site node
             session.getNode("/hst:hst/hst:sites").addNode("unittestproject-branchid-000");
             JcrUtils.copy(session, "/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite",
@@ -520,7 +525,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         Session session = createSession();
         try {
             createHstConfigBackup(session);
-            createBranch(session, "unittestproject-branchid-000");
+            createBranch(session, "unittestproject-branchid-000", "branchid-000");
             JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject",
                     "/hst:hst/hst:configurations/unittestproject-preview");
             session.save();
@@ -537,7 +542,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         Session session = createSession();
         try {
             createHstConfigBackup(session);
-            createBranch(session, "unittestproject-branchid-000");
+            createBranch(session, "unittestproject-branchid-000", "branchid-000");
             JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject-branchid-000",
                     "/hst:hst/hst:configurations/unittestproject-branchid-000-preview");
             // preview branch extends from the live branch
@@ -556,7 +561,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         Session session = createSession();
         try {
             createHstConfigBackup(session);
-            createBranch(session, "unittestproject-branchid-000");
+            createBranch(session, "unittestproject-branchid-000", "branchid-000");
             session.save();
 
             Node mountNode = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
@@ -599,7 +604,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
                     .setWebsiteHstSiteProvider((compositeHstSite, requestContext) -> compositeHstSite.getBranches().get("branchid-000"));
 
             createHstConfigBackup(session);
-            createBranch(session, "unittestproject-branchid-000");
+            createBranch(session, "unittestproject-branchid-000", "branchid-000");
             session.save();
 
             Node mountNode = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");

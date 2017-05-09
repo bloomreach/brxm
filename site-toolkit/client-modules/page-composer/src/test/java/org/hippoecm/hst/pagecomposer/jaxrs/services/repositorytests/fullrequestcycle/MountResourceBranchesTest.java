@@ -34,7 +34,7 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 
-import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCHOF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
@@ -42,7 +42,6 @@ import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class MountResourceBranchesTest extends MountResourceTest {
@@ -138,7 +137,7 @@ public class MountResourceBranchesTest extends MountResourceTest {
         assertArrayEquals(new String[]{"../unittestproject"}, getMultipleStringProperty(branchHstConfigNode, GENERAL_PROPERTY_INHERITS_FROM, null));
         assertTrue(branchHstConfigNode.isNodeType(MIXINTYPE_HST_BRANCH));
 
-        assertEquals("unittestproject", branchHstConfigNode.getProperty(BRANCH_PROPERTY_BRANCHOF).getString());
+        assertEquals("unittestproject", branchHstConfigNode.getProperty(BRANCH_PROPERTY_BRANCH_OF).getString());
 
         // assert that the branch preview is also directly created (since directly required for MountResource#selectBranch
         assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"-preview/hst:workspace"));
@@ -148,7 +147,7 @@ public class MountResourceBranchesTest extends MountResourceTest {
         Node previewBranchHstConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject-" + branchName + "-preview");
         assertArrayEquals(new String[]{"../unittestproject-" +branchName}, getMultipleStringProperty(previewBranchHstConfigNode, GENERAL_PROPERTY_INHERITS_FROM, null));
         assertTrue(previewBranchHstConfigNode.isNodeType(MIXINTYPE_HST_BRANCH));
-        assertEquals("unittestproject-preview", previewBranchHstConfigNode.getProperty(BRANCH_PROPERTY_BRANCHOF).getString());
+        assertEquals("unittestproject-preview", previewBranchHstConfigNode.getProperty(BRANCH_PROPERTY_BRANCH_OF).getString());
         session.logout();
     }
 

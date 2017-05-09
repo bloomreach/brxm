@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCHOF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 
 public class HstSiteFactory {
 
@@ -65,21 +65,21 @@ public class HstSiteFactory {
         final String masterConfigPath = master.getConfigurationPath();
         final String masterName = StringUtils.substringAfterLast(masterConfigPath, "/");
         HstNode masterConfiguration = hstNodeLoadingCache.getNode(masterConfigPath);
-        if (masterConfiguration.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCHOF)) {
+        if (masterConfiguration.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_OF)) {
             throw new ModelLoadingException(String.format("Invalid HST configuration for '%s' : It should be a master " +
                     "branch because directly referenced by an hst:site but '%s' does have the property '%s' which is " +
-                    "only alowed on branches. Correct the configuration.", masterConfigPath, masterConfigPath, BRANCH_PROPERTY_BRANCHOF));
+                    "only alowed on branches. Correct the configuration.", masterConfigPath, masterConfigPath, BRANCH_PROPERTY_BRANCH_OF));
         }
 
         HstNode configurationsNode = masterConfiguration.getParent();
 
         Map<String, HstSite> branches = new HashMap<>();
         for (HstNode branchNode : configurationsNode.getNodes()) {
-            if (!branchNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCHOF)) {
+            if (!branchNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_OF)) {
                 log.debug("Skipping config '{}' which is not a branch.", branchNode.getName());
                 continue;
             }
-            final String branchOf = branchNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCHOF);
+            final String branchOf = branchNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_OF);
 
             if (!masterName.equals(branchOf)) {
                 log.debug("Skipping branch '{}' because not a branch of '{}'.", branchNode.getName(), masterName);

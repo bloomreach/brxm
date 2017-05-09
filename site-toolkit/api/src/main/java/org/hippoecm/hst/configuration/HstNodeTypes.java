@@ -61,7 +61,8 @@ public interface HstNodeTypes {
     String EDITABLE_PROPERTY_STATE = "hst:state";
 
     String MIXINTYPE_HST_BRANCH = "hst:branch";
-    String BRANCH_PROPERTY_BRANCHOF = "hst:branchof";
+    String BRANCH_PROPERTY_BRANCH_OF = "hst:branchof";
+    String BRANCH_PROPERTY_BRANCH_ID = "hst:branchid";
 
     String MIXINTYPE_HST_PROTOTYPE_META = "hst:prototypemeta";
     String PROTOTYPE_META_PROPERTY_DISPLAY_NAME = "hst:displayname";

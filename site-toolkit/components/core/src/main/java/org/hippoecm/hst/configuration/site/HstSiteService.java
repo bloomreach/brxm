@@ -48,8 +48,8 @@ import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.substringBefore;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONFIGURATIONS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITE_CONFIGURATIONPATH;
 
@@ -135,17 +135,16 @@ public class HstSiteService implements HstSite {
             ch = configLoadingCache.loadChannel(configurationPath, isPreviewSite,  mount.getIdentifier());
         }
         if (ch != null) {
+            final HstNode rootConfigNode = hstNodeLoadingCache.getNode(configurationPath);
             if (master != null) {
-                ch.setBranchOf(master.getId());
-                // TODO improve clumsy logic below
-                if (master.getId().endsWith("-preview")) {
-                    ch.setBranchId(substringAfter(ch.getId(), substringBefore(master.getId(), "preview")));
-                } else {
-                    ch.setBranchId(substringAfter(ch.getId(), master.getId()+"-"));
+                if (!rootConfigNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_OF) || !rootConfigNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_ID)) {
+                    throw new ModelLoadingException(String.format("Cannot load branch '%s' since misses mandatory property '%s' or '%s'",
+                            configLoadingCache, BRANCH_PROPERTY_BRANCH_OF, BRANCH_PROPERTY_BRANCH_ID));
                 }
+                ch.setBranchOf(rootConfigNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_OF));
+                ch.setBranchId(rootConfigNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_ID));
             }
 
-            final HstNode rootConfigNode = hstNodeLoadingCache.getNode(configurationPath);
             if (rootConfigNode == null) {
                 throw new ModelLoadingException("No configuration node found at '"+configurationPath+"'. Cannot load model for it.");
             }

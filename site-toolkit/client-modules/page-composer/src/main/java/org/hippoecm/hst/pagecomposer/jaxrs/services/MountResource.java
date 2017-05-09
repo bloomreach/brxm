@@ -83,7 +83,8 @@ import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCHOF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
@@ -287,7 +288,8 @@ public class MountResource extends AbstractConfigResource {
         }
         Node liveBranchConfigNode = liveMasterConfigurationNode.getParent().addNode(liveBranchName, NODETYPE_HST_CONFIGURATION);
         liveBranchConfigNode.addMixin(MIXINTYPE_HST_BRANCH);
-        liveBranchConfigNode.setProperty(BRANCH_PROPERTY_BRANCHOF, liveConfigName);
+        liveBranchConfigNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, liveConfigName);
+        liveBranchConfigNode.setProperty(BRANCH_PROPERTY_BRANCH_ID, branchId);
         liveBranchConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
         // TODO if 'master config node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
         // TODO as well to the preview config, see HSTTWO-3965
@@ -304,7 +306,7 @@ public class MountResource extends AbstractConfigResource {
         Node previewBranchNode = session.getNode(liveBranchConfigNode.getPath() + "-preview");
         previewBranchNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM,
                 new String[]{"../" + liveBranchConfigNode.getName()});
-        previewBranchNode.setProperty(BRANCH_PROPERTY_BRANCHOF, liveConfigName + "-preview");
+        previewBranchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, liveConfigName + "-preview");
 
         log.info("Branch '{}' created.", liveBranchConfigNode.getName());
         HstConfigurationUtils.persistChanges(session);
