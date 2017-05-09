@@ -222,6 +222,23 @@ public final class ComponentsUtils {
         return defaultValue;
     }
 
+
+    /**
+     * Returns an array of values for a public request parameter. For use of multiple checkboxes
+     *
+     * @param request
+     * @param paramName
+     * @return String[] value of the request parameter. null if the parameter does not exist or is empty.
+     * @deprecated please use HST native BaseHstComponent#getPublicRequestParameters()
+     */
+    @Deprecated
+    public String[] getPublicRequestParameters(final BaseHstComponent comp, final HstRequest request, final String paramName) {
+
+        final Map<String, String[]> namespaceLessParameters = request.getParameterMap("");
+        return namespaceLessParameters.get(paramName);
+    }
+
+
     private ComponentsUtils() {
         // prevent instantiation
     }
