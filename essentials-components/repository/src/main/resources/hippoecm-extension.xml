@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,16 +16,22 @@
   -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:ae="http://www.onehippo.org/jcr/autoexport/1.0" sv:name="hippo:initialize" ae:id="essentials-module">
 
-<sv:node sv:name="hippo-plugins-components-hst-translations">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippo:initializeitem</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:sequence" sv:type="Double">
-    <sv:value>1000</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:resourcebundles" sv:type="String">
-    <sv:value>componentparameters-translations.json</sv:value>
-  </sv:property>
-</sv:node>
+  <sv:node sv:name="hippo-plugins-components-hst-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>1000</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:resourcebundles" sv:type="String">
+      <sv:value>componentparameters-translations.json</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>4.0.0</sv:value>
+    </sv:property>
+  </sv:node>
 
 </sv:node>
