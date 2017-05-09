@@ -107,7 +107,8 @@ public class MountResource extends AbstractConfigResource {
     private SiteMenuHelper siteMenuHelper;
     private PagesHelper pagesHelper;
     private LockHelper lockHelper = new LockHelper();
-    private Supplier<Boolean> isError = () -> new Random(5l).nextBoolean()==Boolean.FALSE;
+    private Random random = new Random(5);
+    private Supplier<Boolean> isError = () -> random.nextBoolean()==Boolean.FALSE;
 
     public void isError(Supplier isError){
         this.isError = isError;
