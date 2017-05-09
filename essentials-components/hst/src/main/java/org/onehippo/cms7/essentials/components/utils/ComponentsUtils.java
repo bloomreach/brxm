@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -231,6 +231,7 @@ public final class ComponentsUtils {
      * @return String[] value of the request parameter. null if the parameter does not exist or is empty.
      * @deprecated please use HST native BaseHstComponent#getPublicRequestParameters()
      */
+    @Deprecated
     public String[] getPublicRequestParameters(final BaseHstComponent comp, final HstRequest request, final String paramName) {
 
         final Map<String, String[]> namespaceLessParameters = request.getParameterMap("");
