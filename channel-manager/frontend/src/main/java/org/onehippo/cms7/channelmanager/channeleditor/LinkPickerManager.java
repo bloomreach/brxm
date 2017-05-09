@@ -16,8 +16,10 @@
 
 package org.onehippo.cms7.channelmanager.channeleditor;
 
+import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialogConfig;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.ckeditor.CKEditorNodePlugin;
 import org.hippoecm.frontend.plugins.richtext.dialog.AbstractRichTextEditorDialog;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
@@ -59,6 +61,11 @@ class LinkPickerManager extends PickerManager {
         @Override
         protected AbstractRichTextEditorDialog<RichTextEditorDocumentLink> createDialog() {
             initPicker(getParameters());
+
+            final JavaPluginConfig pickerConfig = getPickerConfig();
+            final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(pickerConfig, LinkPickerManager.this::getFieldNode);
+            pickerConfig.putAll(dialogConfig);
+
             return super.createDialog();
         }
     }

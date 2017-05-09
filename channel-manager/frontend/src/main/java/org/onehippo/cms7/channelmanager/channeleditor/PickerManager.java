@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialogConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
@@ -48,21 +47,17 @@ class PickerManager implements IClusterable {
 
     private static final Logger log = LoggerFactory.getLogger(PickerManager.class);
 
-    private final IPluginConfig defaultPluginConfig;
+    private final IPluginConfig defaultPickerConfig;
     private final JavaPluginConfig pickerConfig;
     private String fieldId;
 
     PickerManager(final IPluginConfig defaultPickerConfig) {
-        this.defaultPluginConfig = defaultPickerConfig;
+        this.defaultPickerConfig = defaultPickerConfig;
         pickerConfig = new JavaPluginConfig();
     }
 
     JavaPluginConfig getPickerConfig() {
         return pickerConfig;
-    }
-
-    String getFieldId() {
-        return fieldId;
     }
 
     Node getFieldNode() {
@@ -102,7 +97,7 @@ class PickerManager implements IClusterable {
 
     private void setPickerConfig(final Map<String, String> parameters) {
         pickerConfig.clear();
-        pickerConfig.putAll(defaultPluginConfig);
+        pickerConfig.putAll(defaultPickerConfig);
 
         final String dialogConfigJson = parameters.get("dialogConfig");
         try {
@@ -112,9 +107,6 @@ class PickerManager implements IClusterable {
             log.warn("Could not parse picker dialog configuration for field '{}': '{}'. Using default configuration.",
                     fieldId, dialogConfigJson, e);
         }
-
-        final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(pickerConfig, this::getFieldNode);
-        pickerConfig.putAll(dialogConfig);
     }
 
     private void addJsonToConfig(final ObjectNode json, final JavaPluginConfig config) {
