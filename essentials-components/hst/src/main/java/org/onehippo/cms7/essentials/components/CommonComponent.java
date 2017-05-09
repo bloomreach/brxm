@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -223,8 +223,31 @@ public abstract class CommonComponent extends BaseHstComponent {
      *
      * @param path document (or folder) path relative to site-root
      * @return bean identified by path. Site root bean if path empty or no corresponding bean.
+     * @deprecated use the non-static {@code doGetScopeBean()} instead.
      */
     public static HippoBean getScopeBean(final String path) {
+        final HstRequestContext context = RequestContextProvider.get();
+        final HippoBean siteBean = context.getSiteContentBaseBean();
+
+        if (!Strings.isNullOrEmpty(path)) {
+            final String myPath = PathUtils.normalizePath(path);
+            log.debug("Looking for bean {}", myPath);
+            HippoBean scope = siteBean.getBean(myPath);
+            if (scope != null) {
+                return scope;
+            }
+            log.warn("Bean was null for selected path:  {}", myPath);
+        }
+        return siteBean;
+    }
+
+    /**
+     * Find HippoBean for given path. If path is null or empty, site root bean will be returned.
+     *
+     * @param path document (or folder) path relative to site-root.
+     * @return bean identified by path. Site root bean if path empty or no corresponding bean.
+     */
+    public HippoBean doGetScopeBean(final String path) {
         final HstRequestContext context = RequestContextProvider.get();
         final HippoBean siteBean = context.getSiteContentBaseBean();
 

@@ -120,7 +120,7 @@ public class EssentialsListComponent extends CommonComponent {
         }
 
         if (scope == null) {
-            scope = getScopeBean(path);
+            scope = doGetScopeBean(path);
         }
         return scope;
     }
