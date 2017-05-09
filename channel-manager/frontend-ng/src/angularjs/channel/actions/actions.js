@@ -20,7 +20,7 @@ import channelActionsDirective from './channelActions.directive';
 import ChannelActionsCtrl from './channelActions.controller';
 import channelSettingsDirective from './settings/settings.directive';
 import ChannelSettingsCtrl from './settings/settings.controller';
-import propertyField from './settings/property/property.component';
+import propertyField from './settings/propertyField/propertyField.component';
 import helpIconDirective from './settings/helpIcon/helpIcon.directive';
 
 const channelActionsModule = angular

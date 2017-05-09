@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import template from './property.html';
-import controller from './property.controller';
+import template from './propertyField.html';
+import controller from './propertyField.controller';
 
 const propertyField = {
   bindToController: {
