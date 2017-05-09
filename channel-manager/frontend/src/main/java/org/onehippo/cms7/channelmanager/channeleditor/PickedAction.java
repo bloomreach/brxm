@@ -31,7 +31,7 @@ class PickedAction<Item extends RichTextEditorLink> implements RichTextEditorAct
 
     @Override
     public String getJavaScript(final Item pickedItem) {
-        return "Ext.getCmp('" + channelEditorId + "')." + method + "(" + pickedItem.toJsString() + ");";
+        return String.format("Ext.getCmp('%s').%s(%s);", channelEditorId, method, pickedItem.toJsString());
     }
 }
 
