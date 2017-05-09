@@ -49,6 +49,17 @@ import org.onehippo.cms7.services.processor.richtext.visit.ImageVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A document field of type hippostd:html.
+ *
+ * <smell>
+ * The configuration of the link- and image pickers is looked up in the _default_ plugin cluster of hippostd:html
+ * instead of in the 'root/linkpicker' and 'root/imagepicker' child nodes. The only difference is that the names in the
+ * latter don't start with 'linkpicker.' and 'imagepicker.', respectively. To fix this, these prefixes are removed for
+ * the keys of the JSON configuration of this field so the resulting configuration matches the properties expected by
+ * the link- and image picker code.
+ * </smell>
+ */
 public class RichTextFieldType extends FormattedTextFieldType implements NodeFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(RichTextFieldType.class);
