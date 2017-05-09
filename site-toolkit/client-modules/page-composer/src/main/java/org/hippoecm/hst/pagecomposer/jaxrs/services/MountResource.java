@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.security.RolesAllowed;
 import javax.jcr.LoginException;
@@ -105,6 +107,11 @@ public class MountResource extends AbstractConfigResource {
     private SiteMenuHelper siteMenuHelper;
     private PagesHelper pagesHelper;
     private LockHelper lockHelper = new LockHelper();
+    private Supplier<Boolean> isError = () -> new Random(5l).nextBoolean()==Boolean.FALSE;
+
+    public void isError(Supplier isError){
+        this.isError = isError;
+    }
 
     public void setSiteMapHelper(final SiteMapHelper siteMapHelper) {
         this.siteMapHelper = siteMapHelper;
@@ -248,6 +255,29 @@ public class MountResource extends AbstractConfigResource {
             return logAndReturnClientError(e);
         }
     }
+
+    @PUT
+    @Path("/dryrunmerge/{branchId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response dryRunMerge(@Context HttpServletRequest servletRequest, @PathParam("branchId") final String branchId){
+        final Mount editingMount = getPageComposerContextService().getEditingMount();
+        log.debug("Dry-run merge requested for branch:{} for channel:{}", branchId, editingMount.getChannel());
+        return getMergeResponse();
+    }
+
+    @PUT
+    @Path("/merge/{branchId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response merge(@Context HttpServletRequest servletRequest, @PathParam("branchId") final String branchId){
+        final Mount editingMount = getPageComposerContextService().getEditingMount();
+        log.debug("Merge requested for branch:{} for channel:{}", branchId, editingMount.getChannel());
+        return getMergeResponse();
+    }
+
+    Response getMergeResponse() {
+        return isError.get()?error("Dry-run merge failed"):ok("dry-run merge successful");
+    }
+
 
     private void setMountToPreviewBranchId(final HttpServletRequest servletRequest, String branchId, final Mount mount) {
         HttpSession session = servletRequest.getSession();
