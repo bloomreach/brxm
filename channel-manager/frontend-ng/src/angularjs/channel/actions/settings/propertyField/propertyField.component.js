@@ -18,7 +18,7 @@ import template from './propertyField.html';
 import controller from './propertyField.controller';
 
 const propertyField = {
-  bindToController: {
+  bindings: {
     error: '<',
     field: '<',
     info: '<',
