@@ -71,8 +71,8 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     }
 
     @Override
-    public Optional<String> getOrderBefore() {
-        return Optional.ofNullable(orderBefore);
+    public String getOrderBefore() {
+        return orderBefore;
     }
 
     public void setOrderBefore(final String orderBefore) {

@@ -140,8 +140,8 @@ public class SourceSerializer extends AbstractBaseSerializer {
         if (node.isDelete()) {
             children.add(representNodeDelete());
         }
-        if (node.getOrderBefore().isPresent()) {
-            children.add(representNodeOrderBefore(node.getOrderBefore().get()));
+        if (node.getOrderBefore() != null) {
+            children.add(representNodeOrderBefore(node.getOrderBefore()));
         }
         if (node.getIgnoreReorderedChildren() != null) {
             children.add(representNodeIgnoreReorderedChildren(node.getIgnoreReorderedChildren()));

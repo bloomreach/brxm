@@ -46,6 +46,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.impl.model.ModelTestUtils.findByName;
@@ -202,9 +203,9 @@ public abstract class AbstractBaseTest {
         validateItem(node, path, name, parent, isRoot, definition);
         assertEquals(isDelete, node.isDelete());
         if (orderBefore == null) {
-            assertFalse(node.getOrderBefore().isPresent());
+            assertNull(node.getOrderBefore());
         } else {
-            assertEquals(orderBefore, node.getOrderBefore().get());
+            assertEquals(orderBefore, node.getOrderBefore());
         }
         assertEquals(nodeCount, node.getNodes().size());
         assertEquals(propertyCount, node.getProperties().size());

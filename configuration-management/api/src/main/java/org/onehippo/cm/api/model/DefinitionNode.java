@@ -34,7 +34,11 @@ public interface DefinitionNode extends DefinitionItem {
 
     boolean isDelete();
 
-    Optional<String> getOrderBefore();
+    /**
+     * @return The property string representing an ordering dependency constraint for this node, or null of no constraint
+     * has been defined.
+     */
+    String getOrderBefore();
 
     /**
      * @return Boolean.TRUE if for this node the order of its children can be ignored on detecting changes,

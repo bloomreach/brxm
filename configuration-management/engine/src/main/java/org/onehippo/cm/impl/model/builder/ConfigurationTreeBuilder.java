@@ -126,8 +126,8 @@ class ConfigurationTreeBuilder {
         }
 
         final ConfigurationNodeImpl parent = node.getModifiableParent();
-        if (parent != null && definitionNode.getOrderBefore().isPresent()) {
-            final String orderBefore = definitionNode.getOrderBefore().get();
+        if (parent != null && definitionNode.getOrderBefore() != null) {
+            final String orderBefore = definitionNode.getOrderBefore();
             if (parent.getIgnoreReorderedChildren() != null && parent.getIgnoreReorderedChildren()) {
                 final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
                 logger.warn("Potential unnecessary orderBefore: '{}' for node '{}' defined in '{}': parent '{}' already configured with '{}: true'",
