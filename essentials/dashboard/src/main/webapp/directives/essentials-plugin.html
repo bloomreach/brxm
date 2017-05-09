@@ -54,13 +54,27 @@
                     <p ng-bind-html="plugin.description"></p>
                 </div>
             </div>
-            <div class="panel panel-default" ng-show="showDescription && plugin.imageUrls.length" style="max-width: 720px">
+            <div class="panel panel-default" ng-show="showDescription && plugin.imageUrls.length">
                 <div class="panel-body">
-                    <uib-carousel interval="interval">
-                        <uib-slide ng-repeat="slide in slides" active="slide.active">
-                            <img ng-src="{{slide.image}}">
-                        </uib-slide>
-                    </uib-carousel>
+                    <!--
+                      the carousel indicators are white by default and most screenshots have a white
+                      background. This is a quick fix for that.
+                    -->
+                    <style>
+                      .carousel-indicators li {
+                        border-color: #39434C;
+                      }
+
+                      .carousel-indicators li.active {
+                        background-color: #39424C;
+                      }
+                    </style>
+                    <div uib-carousel interval="interval" active="active">
+                        <div uib-slide ng-repeat="slide in slides track by $index" index="$index">
+                          <img ng-src="{{slide.image}}">
+                          <div class="carousel-caption"></div>
+                        </div uib-slide>
+                    </div uib-carousel>
                 </div>
             </div>
         </div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,15 +23,11 @@ import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.repository.testutils.ExecuteOnLogLevel;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @version "$Id$"
- */
 public class NodeFolderInstructionTest extends BaseRepositoryTest {
-
 
     @Inject
     private NodeFolderInstruction instruction;
@@ -52,9 +48,9 @@ public class NodeFolderInstructionTest extends BaseRepositoryTest {
 
         // should fail,  wrong path
         instruction.setPath("foo/bar/foobar");
-        ExecuteOnLogLevel.fatal((Runnable) () -> {
+        Log4jInterceptor.onError().deny(NodeFolderInstruction.class).run(() -> {
             assertEquals(InstructionStatus.FAILED, executor.execute(instructionSet, getContext()));
-        }, NodeFolderInstruction.class.getName());
+        });
 
         // should skip,  folder exists
         instruction.setTemplate("no_template_my_folder_template.xml");
@@ -66,7 +62,5 @@ public class NodeFolderInstructionTest extends BaseRepositoryTest {
         instruction.setPath("/foo/bar/foobar/somepath");
         execute = executor.execute(instructionSet, getContext());
         assertEquals(InstructionStatus.FAILED, execute);
-
-
     }
 }

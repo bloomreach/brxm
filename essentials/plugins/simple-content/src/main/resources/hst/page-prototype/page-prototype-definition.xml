@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,10 +14,21 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-
 <sv:node sv:name="contentpage" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:containercomponentfolder</sv:value>
+    <sv:value>hst:component</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+    <sv:value>hst:prototypemeta</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:displayname" sv:type="String">
+    <sv:value>Simple Content Page</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:primarycontainer" sv:type="String">
+    <sv:value>main</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:referencecomponent" sv:type="String">
+    <sv:value>hst:abstractpages/base</sv:value>
   </sv:property>
   <sv:node sv:name="main">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -29,19 +40,5 @@
     <sv:property sv:name="hst:xtype" sv:type="String">
       <sv:value>hst.vbox</sv:value>
     </sv:property>
-    <sv:node sv:name="content">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containeritemcomponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.cms7.essentials.components.EssentialsContentComponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>contentpage-main{{templateExtension}}</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>hst.item</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
 </sv:node>

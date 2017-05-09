@@ -17,7 +17,7 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('documentWizardCtrl', function ($scope, $filter, $sce, $log, $modal, $rootScope, $http) {
+        .controller('documentWizardCtrl', function ($scope, $filter, $sce, $log, $rootScope, $http) {
             var endpoint = $rootScope.REST.dynamic + 'documentwizard/';
             var endpointQueries = $rootScope.REST.documents_template_queries;
             $scope.pluginId = "documentWizardPlugin";

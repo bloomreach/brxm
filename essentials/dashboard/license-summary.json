@@ -1,67 +1,68 @@
 {
-  "angular-animate@1.4.8": {
+  "angular-animate@1.5.11": {
     "licenses": "MIT",
-    "repository": "https://github.com/angular/angular.js"
+    "repository": "https://github.com/angular/angular.js",
+    "publisher": "Angular Core Team",
+    "email": "angular-core+npm@google.com",
+    "licenseFile": "node_modules/angular-animate/LICENSE.md"
   },
-  "angular-aria@1.4.8": {
+  "angular-aria@1.5.11": {
     "licenses": "MIT",
-    "repository": "https://github.com/angular/angular.js"
+    "repository": "https://github.com/angular/angular.js",
+    "publisher": "Angular Core Team",
+    "email": "angular-core+npm@google.com",
+    "licenseFile": "node_modules/angular-aria/LICENSE.md"
   },
-  "angular-chosen-localytics@1.4.0": {
+  "angular-chosen-localytics@1.6.0": {
     "licenses": "MIT",
     "repository": "https://github.com/leocaseiro/angular-chosen",
+    "publisher": "jr314159",
     "licenseFile": "node_modules/angular-chosen-localytics/LICENSE"
   },
-  "angular-sanitize@1.4.8": {
+  "angular-sanitize@1.5.11": {
     "licenses": "MIT",
-    "repository": "https://github.com/angular/angular.js"
+    "repository": "https://github.com/angular/angular.js",
+    "publisher": "Angular Core Team",
+    "email": "angular-core+npm@google.com",
+    "licenseFile": "node_modules/angular-sanitize/LICENSE.md"
   },
-  "angular-tablesort@1.1.1": {
+  "angular-ui-bootstrap@2.5.0": {
     "licenses": "MIT",
-    "repository": "https://github.com/mattiash/angular-tablesort",
-    "licenseFile": "node_modules/angular-tablesort/LICENSE"
+    "repository": "https://github.com/angular-ui/bootstrap",
+    "publisher": "https://github.com/angular-ui/bootstrap/graphs/contributors",
+    "licenseFile": "node_modules/angular-ui-bootstrap/LICENSE"
   },
-  "angular-ui-bootstrap@0.14.3": {
-    "licenses": "MIT",
-    "repository": "https://github.com/angular-ui/bootstrap"
-  },
-  "angular-ui-router@0.2.15": {
+  "angular-ui-router@0.4.2": {
     "licenses": "MIT",
     "repository": "https://github.com/angular-ui/ui-router",
     "licenseFile": "node_modules/angular-ui-router/LICENSE"
   },
-  "angular-ui-tree@2.11.0": {
+  "angular-ui-tree@2.22.5": {
     "licenses": "MIT",
     "repository": "https://github.com/angular-ui-tree/angular-ui-tree",
     "licenseFile": "node_modules/angular-ui-tree/LICENSE"
   },
-  "angular@1.4.8": {
-    "licenses": "MIT",
-    "repository": "https://github.com/angular/angular.js"
-  },
-  "angular@1.5.7": {
+  "angular@1.5.11": {
     "licenses": "MIT",
     "repository": "https://github.com/angular/angular.js",
-    "licenseFile": "node_modules/angular-chosen-localytics/node_modules/angular/LICENSE.md"
+    "publisher": "Angular Core Team",
+    "email": "angular-core+npm@google.com",
+    "licenseFile": "node_modules/angular/LICENSE.md"
   },
-  "chosen-npm@1.4.2": {
+  "chosen-js@1.7.0": {
     "licenses": "MIT",
-    "repository": "https://github.com/harvesthq/chosen",
-    "licenseFile": "node_modules/chosen-npm/LICENSE.md"
+    "repository": "https://github.com/harvesthq/chosen"
   },
-  "google-code-prettify@1.0.1": {
-    "licenses": "UNKNOWN"
+  "hippo-theme@3.2.0-SNAPSHOT": {
+    "licenses": "Apache-2.0",
+    "licenseFile": "node_modules/hippo-theme/LICENSE",
+    "noticeFile": "node_modules/hippo-theme/NOTICE"
   },
-  "hippo-essentials@": {
-    "licenses": "Apache-2.0"
-  },
-  "hippo-theme@3.1.0-SNAPSHOT": {
-    "licenses": "MIT*",
-    "licenseFile": "node_modules/hippo-theme/LICENSE"
-  },
-  "jquery@2.1.4": {
+  "jquery@3.2.1": {
     "licenses": "MIT",
     "repository": "https://github.com/jquery/jquery",
-    "licenseFile": "node_modules/jquery/MIT-LICENSE.txt"
+    "publisher": "JS Foundation and other contributors",
+    "url": "https://github.com/jquery/jquery/blob/3.2.1/AUTHORS.txt",
+    "licenseFile": "node_modules/jquery/LICENSE.txt"
   }
 }
