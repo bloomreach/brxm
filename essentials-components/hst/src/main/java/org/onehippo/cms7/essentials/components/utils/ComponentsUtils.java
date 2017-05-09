@@ -231,6 +231,7 @@ public final class ComponentsUtils {
      * @return String[] value of the request parameter. null if the parameter does not exist or is empty.
      * @deprecated please use HST native BaseHstComponent#getPublicRequestParameters()
      */
+    @Deprecated
     public String[] getPublicRequestParameters(final BaseHstComponent comp, final HstRequest request, final String paramName) {
 
         final Map<String, String[]> namespaceLessParameters = request.getParameterMap("");
