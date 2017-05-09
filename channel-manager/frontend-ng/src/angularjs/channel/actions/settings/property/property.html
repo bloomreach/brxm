@@ -14,107 +14,107 @@
   limitations under the License.
   -->
 
-<div ng-switch="channelProperty.type">
-  <md-input-container ng-switch-when="CheckBox" class="{{channelProperty.qaClass}}" layout="row">
+<div ng-switch="$ctrl.type">
+  <md-input-container ng-switch-when="CheckBox" class="{{$ctrl.qaClass}}" layout="row">
     <md-checkbox flex
-                 ng-model="channelProperty.value"
-                 ng-disabled="channelProperty.readOnly"
-                 aria-label="channelProperty.label">
-      {{ channelProperty.label }}
+                 ng-model="$ctrl.value"
+                 ng-disabled="$ctrl.readOnly"
+                 aria-label="$ctrl.label">
+      {{ $ctrl.label }}
     </md-checkbox>
-    <help-icon text="{{ channelProperty.help }}"></help-icon>
+    <help-icon text="{{ $ctrl.help }}"></help-icon>
   </md-input-container>
 
-  <md-input-container ng-switch-when="DropDownList" class="md-block {{channelProperty.qaClass}}" flex>
-    <label ng-class="{ 'md-required': channelProperty.required }">{{ channelProperty.label }}</label>
-    <md-select name="{{channelProperty.field}}"
-               ng-required="channelProperty.required"
-               ng-model="channelProperty.value"
-               ng-disabled="channelProperty.readOnly">
-      <md-option ng-repeat="choice in channelProperty.getDropDownListValues()" value="{{choice}}">
+  <md-input-container ng-switch-when="DropDownList" class="md-block {{$ctrl.qaClass}}" flex>
+    <label ng-class="{ 'md-required': $ctrl.required }">{{ $ctrl.label }}</label>
+    <md-select name="{{$ctrl.field}}"
+               ng-required="$ctrl.required"
+               ng-model="$ctrl.value"
+               ng-disabled="$ctrl.readOnly">
+      <md-option ng-repeat="choice in $ctrl.getDropDownListValues()" value="{{choice}}">
         {{choice}}
       </md-option>
     </md-select>
-    <div ng-messages="channelProperty.error">
+    <div ng-messages="$ctrl.error">
       <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
     </div>
-    <help-icon text="{{ channelProperty.help }}"></help-icon>
+    <help-icon text="{{ $ctrl.help }}"></help-icon>
   </md-input-container>
 
-  <md-input-container ng-switch-when="ImageSetPath" class="md-block input-container-picker {{channelProperty.qaClass}}">
-    <label ng-class="{ 'md-required': channelProperty.required }">{{ channelSettings.getLabel(field) }}</label>
+  <md-input-container ng-switch-when="ImageSetPath" class="md-block input-container-picker {{$ctrl.qaClass}}">
+    <label ng-class="{ 'md-required': $ctrl.required }">{{ channelSettings.getLabel(field) }}</label>
     <div layout="row">
       <div flex>
         <input type="text"
                readonly="readonly"
-               name="{{channelProperty.field}}"
-               ng-required="channelProperty.required"
-               ng-model="channelProperty.value"
-               ng-hide="channelProperty.value"
-               ng-click="channelProperty.showPicker()"
-               ng-disabled="channelProperty.readOnly">
-        <img ng-class="{ 'readonly': channelProperty.readOnly }"
-             ng-if="channelProperty.value"
-             ng-src="{{ channelProperty.getImageVariantPath() }}"
-             ng-click="channelProperty.readOnly || channelProperty.showPicker()">
+               name="{{$ctrl.field}}"
+               ng-required="$ctrl.required"
+               ng-model="$ctrl.value"
+               ng-hide="$ctrl.value"
+               ng-click="$ctrl.showPicker()"
+               ng-disabled="$ctrl.readOnly">
+        <img ng-class="{ 'readonly': $ctrl.readOnly }"
+             ng-if="$ctrl.value"
+             ng-src="{{ $ctrl.getImageVariantPath() }}"
+             ng-click="$ctrl.readOnly || $ctrl.showPicker()">
       </div>
       <md-button class="md-icon-button"
-                 ng-if="channelProperty.value"
-                 ng-click="channelProperty.value = ''"
-                 ng-disabled="channelProperty.readOnly">
+                 ng-if="$ctrl.value"
+                 ng-click="$ctrl.value = ''"
+                 ng-disabled="$ctrl.readOnly">
         <md-icon class="material-icons">clear</md-icon>
       </md-button>
       <md-button class="md-icon-button"
-                 ng-click="channelProperty.showPicker()"
-                 ng-disabled="channelProperty.readOnly">
+                 ng-click="$ctrl.showPicker()"
+                 ng-disabled="$ctrl.readOnly">
         <md-icon class="material-icons">search</md-icon>
       </md-button>
     </div>
-    <div ng-messages="channelProperty.error">
+    <div ng-messages="$ctrl.error">
       <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
     </div>
-    <help-icon text="{{ channelProperty.help }}"></help-icon>
+    <help-icon text="{{ $ctrl.help }}"></help-icon>
   </md-input-container>
 
-  <md-input-container ng-switch-when="JcrPath" class="md-block input-container-picker {{channelProperty.qaClass}}">
-    <label ng-class="{ 'md-required': channelProperty.required }">{{ channelSettings.getLabel(field) }}</label>
+  <md-input-container ng-switch-when="JcrPath" class="md-block input-container-picker {{$ctrl.qaClass}}">
+    <label ng-class="{ 'md-required': $ctrl.required }">{{ channelSettings.getLabel(field) }}</label>
     <div layout="row">
       <input type="text"
-             name="{{channelProperty.field}}"
+             name="{{$ctrl.field}}"
              readonly="readonly"
              flex
-             ng-required="channelProperty.required"
-             ng-disabled="channelProperty.readOnly"
-             ng-model="channelProperty.getSetPath"
+             ng-required="$ctrl.required"
+             ng-disabled="$ctrl.readOnly"
+             ng-model="$ctrl.getSetPath"
              ng-model-options="{ getterSetter: true }"
-             ng-click="channelProperty.showPicker()">
+             ng-click="$ctrl.showPicker()">
       <md-button class="md-icon-button"
-                 ng-if="channelProperty.value"
-                 ng-click="channelProperty.value = ''"
-                 ng-disabled="channelProperty.readOnly">
+                 ng-if="$ctrl.value"
+                 ng-click="$ctrl.value = ''"
+                 ng-disabled="$ctrl.readOnly">
         <md-icon class="material-icons">clear</md-icon>
       </md-button>
       <md-button class="md-icon-button"
-                 ng-click="channelProperty.showPicker()"
-                 ng-disabled="channelProperty.readOnly">
+                 ng-click="$ctrl.showPicker()"
+                 ng-disabled="$ctrl.readOnly">
         <md-icon class="material-icons">search</md-icon>
       </md-button>
     </div>
-    <div ng-messages="channelProperty.error">
+    <div ng-messages="$ctrl.error">
       <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
     </div>
-    <help-icon text="{{ channelProperty.help }}"></help-icon>
+    <help-icon text="{{ $ctrl.help }}"></help-icon>
   </md-input-container>
 
-  <md-input-container ng-switch-default class="md-block {{channelProperty.qaClass}}" flex>
-    <label ng-class="{ 'md-required': channelProperty.required }">{{ channelProperty.label }}</label>
-    <input type="text" name="{{channelProperty.field}}"
-           ng-required="channelProperty.required"
-           ng-model="channelProperty.value"
-           ng-disabled="channelProperty.readOnly">
-    <div ng-messages="channelProperty.error">
+  <md-input-container ng-switch-default class="md-block {{$ctrl.qaClass}}" flex>
+    <label ng-class="{ 'md-required': $ctrl.required }">{{ $ctrl.label }}</label>
+    <input type="text" name="{{$ctrl.field}}"
+           ng-required="$ctrl.required"
+           ng-model="$ctrl.value"
+           ng-disabled="$ctrl.readOnly">
+    <div ng-messages="$ctrl.error">
       <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
     </div>
-    <help-icon text="{{ channelProperty.help }}"></help-icon>
+    <help-icon text="{{ $ctrl.help }}"></help-icon>
   </md-input-container>
 </div>

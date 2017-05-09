@@ -22,10 +22,7 @@ const WIDGET_TYPES = {
   InputBox: 'InputBox',
 };
 
-const BINARIES_PATH = 'binaries';
-const DEFAULT_IMAGE_VARIANT = 'hippogallery:thumbnail';
-
-class ChannelPropertyCtrl {
+class PropertyFieldCtrl {
   constructor($log, $scope, ChannelService, CmsService, ConfigService, PathService) {
     'ngInject';
 
@@ -35,24 +32,30 @@ class ChannelPropertyCtrl {
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.PathService = PathService;
+  }
 
-    this.label = this.data.i18nResources[this.field] || this.field;
-    this.help = this.data.i18nResources[`${this.field}.help`];
+  $onInit() {
+    this.label = this.info.i18nResources[this.field] || this.field;
+    this.help = this.info.i18nResources[`${this.field}.help`];
 
-    this.definition = this.data.propertyDefinitions[this.field];
+    this.definition = this.info.propertyDefinitions[this.field];
     if (!this.definition) {
-      $log.warn(`Property definition for field '${this.field}' not found. Please check your ChannelInfo class.`);
+      this.$log.warn(`Property definition for field '${this.field}' not found. Please check your ChannelInfo class.`);
     }
 
     this.annotation = this._getFirstFieldAnnotation();
     this.type = this._getType();
     this.qaClass = this._getQaClass();
-    this.readOnly = !this.data.editable || (this.data.lockedBy && this.data.lockedBy !== ConfigService.cmsUser);
     this.required = this.definition && this.definition.isRequired;
 
     if (this._isPickerField()) {
       this.CmsService.subscribe('picked', this._onPicked, this);
-      this.$scope.$on('$destroy', () => this.CmsService.unsubscribe('picked', this._onPicked, this));
+    }
+  }
+
+  $onDestroy() {
+    if (this._isPickerField()) {
+      this.CmsService.unsubscribe('picked', this._onPicked, this);
     }
   }
 
@@ -69,13 +72,12 @@ class ChannelPropertyCtrl {
   }
 
   getImageVariantPath() {
+    const imageName = this.PathService.baseName(this.value);
+    const cmsContextPath = this.ConfigService.cmsLocation.pathname;
+    const variantName = this.annotation.previewVariant || 'hippogallery:thumbnail';
+    const binaryPath = this.PathService.concatPaths(cmsContextPath, 'binaries', this.value, imageName, variantName);
     const cmsProtocol = this.ConfigService.cmsLocation.protocol;
     const cmsHost = this.ConfigService.cmsLocation.host;
-
-    const imageName = this.PathService.baseName(this.value);
-    const variantName = this.annotation.previewVariant || DEFAULT_IMAGE_VARIANT;
-    const cmsContextPath = this.ConfigService.cmsLocation.pathname;
-    const binaryPath = this.PathService.concatPaths(cmsContextPath, BINARIES_PATH, this.value, imageName, variantName);
 
     return `${cmsProtocol}//${cmsHost}${binaryPath}`;
   }
@@ -135,4 +137,4 @@ class ChannelPropertyCtrl {
   }
 }
 
-export default ChannelPropertyCtrl;
+export default PropertyFieldCtrl;

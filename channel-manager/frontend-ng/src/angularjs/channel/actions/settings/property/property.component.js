@@ -15,22 +15,18 @@
  */
 
 import template from './property.html';
+import controller from './property.controller';
 
-function channelPropertyDirective() {
-  'ngInject';
+const propertyField = {
+  bindToController: {
+    error: '<',
+    field: '<',
+    info: '<',
+    readOnly: '<',
+    value: '<',
+  },
+  template,
+  controller,
+};
 
-  return {
-    restrict: 'A',
-    bindToController: {
-      field: '@channelProperty',
-      value: '=channelPropertyValue',
-      error: '=channelPropertiesError',
-      data: '=channelPropertiesData',
-    },
-    template,
-    controller: 'ChannelPropertyCtrl',
-    controllerAs: 'channelProperty',
-  };
-}
-
-export default channelPropertyDirective;
+export default propertyField;

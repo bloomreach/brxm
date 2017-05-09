@@ -20,9 +20,8 @@ import channelActionsDirective from './channelActions.directive';
 import ChannelActionsCtrl from './channelActions.controller';
 import channelSettingsDirective from './settings/settings.directive';
 import ChannelSettingsCtrl from './settings/settings.controller';
-import channelPropertyDirective from './settings/property/property.directive';
-import ChannelPropertyCtrl from './settings/property/property.controller';
-import helpIconDirective from './settings/property/helpIcon/helpIcon.directive';
+import propertyField from './settings/property/property.component';
+import helpIconDirective from './settings/helpIcon/helpIcon.directive';
 
 const channelActionsModule = angular
   .module('hippo-cm.channel.actions', [
@@ -32,8 +31,7 @@ const channelActionsModule = angular
   .directive('channelActions', channelActionsDirective)
   .controller('ChannelSettingsCtrl', ChannelSettingsCtrl)
   .directive('channelSettings', channelSettingsDirective)
-  .controller('ChannelPropertyCtrl', ChannelPropertyCtrl)
-  .directive('channelProperty', channelPropertyDirective)
+  .component('propertyField', propertyField)
   .directive('helpIcon', helpIconDirective);
 
 export default channelActionsModule;
