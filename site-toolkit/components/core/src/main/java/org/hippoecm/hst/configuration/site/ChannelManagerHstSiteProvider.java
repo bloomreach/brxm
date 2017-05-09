@@ -17,10 +17,15 @@ package org.hippoecm.hst.configuration.site;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
 
 public class ChannelManagerHstSiteProvider implements HstSiteProvider {
 
@@ -28,9 +33,17 @@ public class ChannelManagerHstSiteProvider implements HstSiteProvider {
 
     @Override
     public HstSite getHstSite(final CompositeHstSite compositeHstSite, final HstRequestContext requestContext) {
+        HttpSession session = requestContext.getServletRequest().getSession();
         Map<String, String> mountToBranchIdMapping =
-                (Map<String, String>)requestContext.getServletRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
-        Mount mount = requestContext.getResolvedMount().getMount();
+                (Map<String, String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+
+        final String renderingMountId = (String)session.getAttribute(CMS_REQUEST_RENDERING_MOUNT_ID);
+        Mount mount;
+        if (renderingMountId == null) {
+            mount = requestContext.getResolvedMount().getMount();
+        } else {
+            mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(renderingMountId);
+        }
         if (mountToBranchIdMapping == null) {
             log.debug("No branch selected for mount '{}'. Return master", mount);
             return compositeHstSite.getMaster();
