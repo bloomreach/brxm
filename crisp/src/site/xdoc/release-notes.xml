@@ -26,6 +26,13 @@
       </table>
     </section>
     <section name="Release Notes of 0.9.x">
+      <subsection name="0.9.1">
+        <ul>
+          <li>
+            Deploy demo project source packaging zip artifact onto Hippo Maven 2 Enterprise Repository.
+          </li>
+        </ul>
+      </subsection>
       <subsection name="0.9.0">
         <ul>
           <li>
