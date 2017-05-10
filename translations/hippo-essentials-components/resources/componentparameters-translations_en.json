@@ -27,7 +27,7 @@
     "documentDateField": "Field that contains document date (for hiding)",
     "documentTypes": "Events document types (comma separated)"
   }},
-  "EssentialsFacetsComponentInfo": {"en": {"facetPath": "Facet path"}},
+  "EssentialsFacetsComponentInfo": {"en": {"facetPath": "Facet path (optional: content path can be used also)"}},
   "EssentialsGoogleMapsComponentInfo": {"en":   {
     "mapType#TERRAIN": "Terrain information",
     "mapType.help": "The type of map to show",

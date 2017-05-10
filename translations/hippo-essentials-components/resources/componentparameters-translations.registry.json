@@ -90,8 +90,14 @@
       "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsFacetsComponentInfo/facetPath" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/mapType#TERRAIN" : {
       "status" : "CLEAN",
