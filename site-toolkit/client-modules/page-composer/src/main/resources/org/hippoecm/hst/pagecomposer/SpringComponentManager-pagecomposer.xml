@@ -77,6 +77,10 @@
 
   <bean id="templateHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.TemplateHelper" parent="abstractHelper"/>
 
+  <bean id="branchHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.BranchHelper">
+    <property name="pageComposerContextService" ref="pageComposerContextService"/>
+  </bean>
+
   <bean id="containerComponentService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentServiceImpl">
     <constructor-arg ref="pageComposerContextService"/>
     <constructor-arg ref="containerHelper"/>
@@ -202,6 +206,7 @@
               <property name="siteMapHelper" ref="siteMapHelper"/>
               <property name="siteMenuHelper" ref="siteMenuHelper"/>
               <property name="pagesHelper" ref="pagesHelper"/>
+              <property name="branchHelper" ref="branchHelper"/>
             </bean>
           </constructor-arg>
         </bean>

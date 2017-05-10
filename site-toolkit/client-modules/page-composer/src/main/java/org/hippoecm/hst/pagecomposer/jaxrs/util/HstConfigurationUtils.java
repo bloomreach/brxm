@@ -24,13 +24,20 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.JcrSessionUtils;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
 
 
 public class HstConfigurationUtils {
@@ -116,5 +123,45 @@ public class HstConfigurationUtils {
             eventBus.post(event);
         }
     }
+
+    /**
+     * Creates preview configuration as well as mandatory workspace nodes (hst:pages and hst:sitemap) in the live configuration
+     * if they are not yet present. This method does <strong>not</strong> persist the changes
+     */
+    public static void createPreviewConfiguration(final String liveConfigurationPath, final Session session) throws RepositoryException, ClientException {
+        HstConfigurationUtils.createMandatoryWorkspaceNodesIfMissing(liveConfigurationPath, session);
+        String liveConfigName = StringUtils.substringAfterLast(liveConfigurationPath, "/");
+        Node previewConfigNode = session.getNode(liveConfigurationPath).getParent().addNode(liveConfigName + "-preview", NODETYPE_HST_CONFIGURATION);
+        previewConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
+        // TODO if 'liveconfig node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
+        // TODO as well to the preview config, see HSTTWO-3965
+        JcrUtils.copy(session, liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE, previewConfigNode.getPath() + "/" + NODENAME_HST_WORKSPACE);
+    }
+
+    /**
+     * Creates hst:pages and hst:sitemap in workspace if they are not yet present.
+     * This method does <strong>not</strong> persist the changes
+     */
+    public static void createMandatoryWorkspaceNodesIfMissing(final String configPath, final Session session) throws RepositoryException {
+        if (!session.nodeExists(configPath)) {
+            String msg = String.format("Expected configuration node at '%s'", configPath);
+            throw new ClientException(msg, ClientError.ITEM_NOT_FOUND);
+        }
+        Node configNode = session.getNode(configPath);
+        if (configNode.hasNode(HstNodeTypes.NODENAME_HST_WORKSPACE)) {
+            Node workspace = configNode.getNode(HstNodeTypes.NODENAME_HST_WORKSPACE);
+            if (!workspace.hasNode(HstNodeTypes.NODENAME_HST_PAGES)) {
+                workspace.addNode(HstNodeTypes.NODENAME_HST_PAGES);
+            }
+            if (!workspace.hasNode(HstNodeTypes.NODENAME_HST_SITEMAP)) {
+                workspace.addNode(HstNodeTypes.NODENAME_HST_SITEMAP);
+            }
+        } else {
+            Node workspace = configNode.addNode(HstNodeTypes.NODENAME_HST_WORKSPACE);
+            workspace.addNode(HstNodeTypes.NODENAME_HST_PAGES);
+            workspace.addNode(HstNodeTypes.NODENAME_HST_SITEMAP);
+        }
+    }
+
 
 }
