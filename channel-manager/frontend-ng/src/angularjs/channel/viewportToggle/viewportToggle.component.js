@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import './viewportToggle.scss';
 import template from './viewportToggle.html';
 import ViewportToggleCtrl from './viewportToggle.controller';
 

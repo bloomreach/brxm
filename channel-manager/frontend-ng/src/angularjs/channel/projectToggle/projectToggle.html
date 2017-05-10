@@ -21,6 +21,7 @@
   </label>
 
   <md-select aria-label="{{ 'TOOLBAR_PROJECT_LABEL' | translate }}"
+             class="md-no-underline"
              ng-model="$ctrl.selectedProject"
              ng-change="$ctrl.projectChanged()">
     <md-option ng-repeat="project in $ctrl.getWithBranch() | orderBy: 'name'"
