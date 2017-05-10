@@ -92,6 +92,8 @@ public enum ClientError {
      */
     CHILD_MOUNT_EXISTS,
 
+    BRANCHING_NOT_ALLOWED,
+
     UNKNOWN
 
 }

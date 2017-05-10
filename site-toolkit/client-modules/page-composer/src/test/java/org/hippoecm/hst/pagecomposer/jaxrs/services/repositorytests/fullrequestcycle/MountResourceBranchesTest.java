@@ -109,7 +109,7 @@ public class MountResourceBranchesTest extends MountResourceTest {
         if (response.getStatus() == 200) {
             HttpSession session = requestResponse.getRequest().getSession();
             Map<String, String> mountToBranchIdMap = (Map<String, String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
-            assertEquals(branchName + "-preview", mountToBranchIdMap.get(mountId));
+            assertEquals(branchName, mountToBranchIdMap.get(mountId));
         }
 
         final String restResponse = response.getContentAsString();
@@ -197,7 +197,7 @@ public class MountResourceBranchesTest extends MountResourceTest {
 
         final Map<String, String> mountToBranchMap = (Map<String, String>)requestResponse.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
         assertTrue(mountToBranchMap.containsKey(mountId));
-        assertEquals("foo-preview", mountToBranchMap.get(mountId));
+        assertEquals("foo", mountToBranchMap.get(mountId));
 
         final RequestResponseMock requestResponse2 = mockGetRequestResponse(
                 "http", "localhost", "/_rp/"+ mountId + "./selectmaster", null, "PUT");
@@ -218,6 +218,26 @@ public class MountResourceBranchesTest extends MountResourceTest {
         Map<String, Object> responseMap = render(ADMIN_CREDENTIALS, mountId, requestResponse);
         assertEquals(Boolean.TRUE, responseMap.get("success"));
         assertFalse(((Map)requestResponse.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY)).isEmpty());
+    }
+
+    @Test
+    public void branching_when_a_branch_is_active_is_not_supported() throws Exception {
+        createBranch(ADMIN_CREDENTIALS, "foo");
+        Thread.sleep(100);
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/"+ mountId + "./selectbranch/foo", null, "PUT");
+        render(ADMIN_CREDENTIALS, mountId, requestResponse);
+
+        final Map<String, String> mountToBranchMap = (Map<String, String>)requestResponse.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        final RequestResponseMock requestResponse2 = mockGetRequestResponse(
+                "http", "localhost", "/_rp/"+ mountId + "./createbranch/bar", null, "PUT");
+
+        // set session from first request on second to make sure the 'selected' branch is retained
+        requestResponse2.getRequest().setSession(requestResponse.getRequest().getSession());
+        Map<String, Object> responseMap = render(ADMIN_CREDENTIALS, mountId, requestResponse2);
+        assertEquals(Boolean.FALSE, responseMap.get("success"));
+        assertTrue(((String)responseMap.get("message")).contains("Only branching from master is currently supported"));
     }
 
     private Map<String, Object> render(final Credentials creds, final String mountId, final RequestResponseMock requestResponse)

@@ -215,7 +215,7 @@ public class MountResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response selectBranch(@Context HttpServletRequest servletRequest, @PathParam("branchId") final String branchId) {
         final Mount editingMount = getPageComposerContextService().getEditingMount();
-        setMountToPreviewBranchId(servletRequest, branchId, editingMount);
+        setMountToBranchId(servletRequest, branchId, editingMount);
         log.debug("Selected branch:{} of channel:{}", branchId, editingMount.getChannel());
         return ok("Branch selected successfully");
     }
@@ -279,22 +279,24 @@ public class MountResource extends AbstractConfigResource {
         return isError.get()?error("Dry-run merge failed"):ok("dry-run merge successful");
     }
 
-
-    private void setMountToPreviewBranchId(final HttpServletRequest servletRequest, String branchId, final Mount mount) {
+    private void setMountToBranchId(final HttpServletRequest servletRequest, String branchId, final Mount mount) {
         HttpSession session = servletRequest.getSession();
         Map<String,String> mountToBranchIdMap = (Map<String,String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
         if (mountToBranchIdMap == null) {
             mountToBranchIdMap = new HashMap<>();
             session.setAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY, mountToBranchIdMap);
         }
-        if (branchId.endsWith("-preview")) {
-            mountToBranchIdMap.put(mount.getIdentifier(), branchId);
-        } else {
-            mountToBranchIdMap.put(mount.getIdentifier(), branchId + "-preview");
-        }
+        mountToBranchIdMap.put(mount.getIdentifier(), branchId);
     }
 
     private void doCreateBranch(final String branchId) throws RepositoryException, ClientException {
+        final Mount editingMount = getPageComposerContextService().getEditingMount();
+        Channel channel = editingMount.getChannel();
+        if (channel.getBranchId() != null) {
+            throw new ClientException(String.format("Only branching from master is currently supported. Cannot branch " +
+                            "from '%s' which is currently rendered. First select master before branching",
+                    channel.getHstConfigPath()), ClientError.BRANCHING_NOT_ALLOWED);
+        }
         assertValidName(branchId);
 
         final HstSite editingPreviewSite = getPageComposerContextService().getEditingPreviewSite();
@@ -303,10 +305,6 @@ public class MountResource extends AbstractConfigResource {
             createPreviewConfiguration();
         }
 
-        // TODO if the liveConfigurationPath points to a branch, below goes wrong since we need the master (at least, as
-        // TODO long as we do not want to branch of a branch). Perhaps we initially just only support branching of
-        // TODO master, but later on, we could extend this to branching of branching : Then the code below is right!
-        // TODO perhaps best to initially only allow branching when 'master' is selected in the Channel Mngr
         String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
         Session session = getPageComposerContextService().getRequestContext().getSession();
 
