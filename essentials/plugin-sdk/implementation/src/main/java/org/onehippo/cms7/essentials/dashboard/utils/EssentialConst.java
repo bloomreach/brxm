@@ -21,14 +21,14 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
-/**
- * @version "$Id$"
- */
 public final class EssentialConst {
 
     public static final String PATH_REL_RESOURCES = "src" + File.separator + "main" + File.separator + "resources";
     public static final String PATH_REL_WEB_ROOT = "src" + File.separator + "main" + File.separator + "webapp";
     public static final String PATH_REL_WEB_INF = PATH_REL_WEB_ROOT + File.separator + "WEB-INF";
+    public static final String WEB_INF_LIB = "/WEB-INF/lib/";
+    public static final String WEB_INF_CLASSES = "/WEB-INF/classes";
+    public static final String JAR_EXT = ".jar";
 
 
     public static final String PATH_REL_OVERRIDE = "META-INF" + File.separator + "hst-assembly" + File.separator + "overrides";

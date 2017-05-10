@@ -1,0 +1,52 @@
+{
+  "@type": "plugin",
+  "id": "robotsPlugin",
+  "name": "Robots.txt",
+  "icon": "/essentials/images/icons/robotstxt.png",
+  "introduction": "With the Robots.txt feature, you can control the content of your robots.txt file. The feature installs a special document type that can be used to read and write robots.txt.",
+  "description": "This feature adds the 'Robots.txt' Standard Plugin. Also the robots.txt sitemap item is added and an example document.",
+  "imageUrls": [
+    "/essentials/images/screenshots/robots01.png",
+    "/essentials/images/screenshots/robots02.png"
+  ],
+  "documentationLink": "http://www.onehippo.org/library/concepts/plugins/robots.txt/about.html",
+  "restClasses": [],
+  "packageFile": "/META-INF/robots_plugin_instructions.xml",
+  "type": "feature",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "libraries": [
+  ],
+  "categories": {
+    "application": [
+      "search",
+      "SEO",
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "dependencies": [
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-plugin-robotstxt-addon-repository",
+      "scope": "compile",
+      "targetPom": "cms"
+    },
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-plugin-robotstxt-hst-client",
+      "scope": "compile",
+      "targetPom": "site"
+    }
+  ]
+}

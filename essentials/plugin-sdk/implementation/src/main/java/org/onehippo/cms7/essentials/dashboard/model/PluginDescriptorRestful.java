@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,27 +19,35 @@ package org.onehippo.cms7.essentials.dashboard.model;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
+
 
 import com.google.common.base.Strings;
 
-/**
- * @version "$Id$"
- */
+
 @XmlRootElement(name = "plugin")
 public class PluginDescriptorRestful implements PluginDescriptor, Restful {
 
     private static final long serialVersionUID = 1L;
 
     private List<String> restClasses;
+
+    @JsonDeserialize(as = VendorRestful.class)
+    @JsonSerialize(as = VendorRestful.class)
     private Vendor vendor;
+    @JsonDeserialize(contentAs = DependencyRestful.class)
     private List<EssentialsDependency> dependencies;
+    @JsonDeserialize(contentAs = RepositoryRestful.class)
     private List<Repository> repositories;
     private String name;
     private String introduction;
@@ -53,9 +61,23 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
     private String type;
     private String installState;
     private String icon;
+
     private Calendar dateInstalled;
     private String documentationLink;
     private List<PluginModuleRestful.PrefixedLibrary> libraries = new ArrayList<>();
+
+    private Map<String, Set<String>> categories;
+
+
+    @Override
+    public Map<String, Set<String>> getCategories() {
+        return categories;
+    }
+
+    @Override
+    public void setCategories(final Map<String, Set<String>> categories) {
+        this.categories = categories;
+    }
 
 
     public void addLibrary(final PluginModuleRestful.PrefixedLibrary library) {
@@ -171,14 +193,13 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
     public boolean getHasConfiguration() {
         return hasConfiguration;
     }
-
+    
     @Override
     @XmlElementRef(type = VendorRestful.class)
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @JsonSubTypes({@JsonSubTypes.Type(value = VendorRestful.class, name = "vendor")})
     public Vendor getVendor() {
         return vendor;
     }
+
 
 
     @Override
@@ -300,7 +321,7 @@ public class PluginDescriptorRestful implements PluginDescriptor, Restful {
 
     @Override
     public String getIcon() {
-        if(Strings.isNullOrEmpty(icon)){
+        if (Strings.isNullOrEmpty(icon)) {
             return "/essentials/images/icons/missing-icon.png";
         }
         return icon;

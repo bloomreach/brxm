@@ -1,0 +1,58 @@
+{
+  "@type": "plugin",
+  "id": "taggingPlugin",
+  "name": "Tagging",
+  "icon": "/essentials/images/icons/tagging.png",
+  "introduction": "With the Tagging feature, you can assign tags to your content.",
+  "description": "This feature wraps the 'Content Tagging' Standard Plugin.",
+  "imageUrls": [
+    "/essentials/images/screenshots/tagging01.png",
+    "/essentials/images/screenshots/tagging02.png"
+  ],
+  "documentationLink": "http://www.onehippo.org/library/concepts/plugins/tagging/about.html",
+  "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.tagging.TaggingParameterService",
+  "packageClass": "org.onehippo.cms7.essentials.plugins.tagging.TaggingInstructionPackage",
+  "restClasses": [
+    "org.onehippo.cms7.essentials.plugins.tagging.TaggingResource"
+  ],
+  "type": "feature",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "search",
+      "meta-data",
+      "navigation",
+      "content",
+      "tagging"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [
+    {
+      "items": [
+        {
+          "component": "taggingPlugin",
+          "file": "taggingPlugin.js"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-plugin-content-tagging",
+      "scope": "compile",
+      "targetPom": "cms"
+    }
+  ]
+}

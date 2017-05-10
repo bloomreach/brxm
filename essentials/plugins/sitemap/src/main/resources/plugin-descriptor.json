@@ -1,0 +1,52 @@
+{
+  "@type": "plugin",
+  "id": "sitemapPlugin",
+  "name": "Sitemap",
+  "icon": "/essentials/images/icons/sitemap.png",
+  "introduction": "With the Sitemap feature, you can generate an XML feed based on the sitemap protocol. This protocol is used by search engines for indexing your website.",
+  "description": "This feature wraps the 'Sitemap' Standard Plugin.",
+  "documentationLink": "http://www.onehippo.org/library/concepts/plugins/sitemap/about.html",
+  "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.sitemap.SitemapParameterService",
+  "restClasses": [],
+  "type": "feature",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "search",
+      "meta-data",
+      "SEO"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [
+    {
+      "items": [
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-plugin-sitemap-content",
+      "scope": "compile",
+      "targetPom": "cms"
+    },
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-plugin-sitemap-component",
+      "scope": "compile",
+      "targetPom": "site"
+    }
+  ]
+}

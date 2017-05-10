@@ -1,0 +1,40 @@
+{
+  "@type": "plugin",
+  "id": "galleryPlugin",
+  "name": "Gallery Manager",
+  "icon": "/essentials/images/icons/gallery-manager.png",
+  "introduction": "Manage your project's Image Set definitions.",
+  "restClasses": [
+    "org.onehippo.cms7.essentials.plugins.gallery.GalleryPluginResource"
+  ],
+  "type": "tool",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "media",
+      "images",
+      "productivity",
+      "content"
+    ],
+    "type": [
+      "tool"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [
+    {
+      "items": [
+        {
+          "component": "galleryPlugin",
+          "file": "galleryPlugin.js"
+        }
+      ]
+    }
+  ]
+}

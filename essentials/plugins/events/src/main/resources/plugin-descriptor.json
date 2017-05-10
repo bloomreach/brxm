@@ -1,0 +1,40 @@
+{
+  "@type": "plugin",
+  "id": "eventsPlugin",
+  "name": "Events",
+  "icon": "/essentials/images/icons/events.png",
+  "introduction": "With Events, you add events functionality to the project. This feature will be installed as a drag-and-drop component in the component library of the Channel Manager.",
+  "description": "<ul><li>This feature installs a new document type 'Event' in the CMS, containing fields for Title, Introduction, Content, Event date (start), End date, Location and Event Image.</li><li>A structured document tree is created in the project: events/&lt;year&gt;/&lt;month&gt;/&lt;eventsdocument&gt;</li><li>A configurable drag-and-drop component 'Event List' is added to the Channel Manager component library.</li><li>Some sample event articles are installed and a page (with corresponding menu entry) with an example event list is created.</li></ul>",
+  "documentationLink": "http://www.onehippo.org/library/setup/hst-components/events-component.html",
+  "imageUrls": [
+    "/essentials/images/screenshots/events01.png",
+    "/essentials/images/screenshots/events02.png",
+    "/essentials/images/screenshots/events03.png"
+  ],
+  "packageFile": "/META-INF/events_package_instructions.xml",
+  "restClasses": [],
+  "type": "feature",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "list",
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [
+    {
+      "items": [
+      ]
+    }
+  ]
+}

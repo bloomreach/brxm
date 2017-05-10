@@ -16,14 +16,16 @@
 
 package org.onehippo.cms7.essentials.dashboard.rest;
 
+
 import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version "$Id$"
- */
+
+import static org.junit.Assert.assertNotNull;
+
 public class QueryRestfulTest {
 
     private static Logger log = LoggerFactory.getLogger(QueryRestfulTest.class);
@@ -34,7 +36,7 @@ public class QueryRestfulTest {
         ObjectMapper mapper = new ObjectMapper();
         final QueryRestful q = new QueryRestful();
         final String result = mapper.writeValueAsString(q);
-        log.error("result {}", result);
+        assertNotNull(result);
 
     }
 }

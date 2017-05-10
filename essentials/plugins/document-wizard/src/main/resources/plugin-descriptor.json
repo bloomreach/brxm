@@ -1,0 +1,54 @@
+{
+  "@type": "plugin",
+  "id": "documentWizardPlugin",
+  "name": "Documents wizard",
+  "icon": "/essentials/images/icons/documents-wizard.png",
+  "introduction": "The Documents Wizard is a convenience feature to easily create new documents in the right folders in the Hippo CMS while working in another part of the CMS.",
+  "description": "It provides a link that opens a dialog window where information for the document to be created can be entered. After clicking OK, the document will be created in the right folder. This feature wraps the certified Hippo Dashboard Document Wizard.",
+  "imageUrls": [
+    "/essentials/images/screenshots/documentwizard01.png",
+    "/essentials/images/screenshots/documentwizard02.png"
+  ],
+  "documentationLink": "http://www.onehippo.org/library/concepts/plugins/dashboard-document-wizard/about.html",
+  "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardParameterService",
+  "restClasses": [
+    "org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardResource"
+  ],
+  "type": "feature",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "productivity",
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [
+    {
+      "items": [
+        {
+          "component": "documentWizardPlugin",
+          "file": "documentWizardPlugin.js"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-plugin-dashboard-document-wizard",
+      "scope": "compile",
+      "targetPom": "cms"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "@type": "plugin",
+  "id": "seoPlugin",
+  "name": "Search engine optimization",
+  "icon": "/essentials/images/icons/seo.png",
+  "introduction": "<p>Search engine optimization adds SEO support to your Hippo project. You can easily add head elements contributions in your HTML, that can improve search results and help users find relevant documents.</p><p>This feature wraps the Hippo HST SEO Support Components.</p>",
+  "imageUrls": [
+    "/essentials/images/screenshots/seo01.png"
+  ],
+  "documentationLink": "http://www.onehippo.org/library/concepts/plugins/seo-support/about.html",
+  "packageFile": "/META-INF/seoPlugin_instructions.xml",
+  "restClasses": [],
+  "type": "feature",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "search",
+      "meta-data",
+      "content",
+      "SEO"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [],
+  "dependencies": [
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-plugin-seo-support",
+      "scope": "compile",
+      "targetPom": "site"
+    },
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-plugin-seo-support-repository",
+      "scope": "compile",
+      "targetPom": "cms"
+    }
+  ]
+}

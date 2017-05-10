@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,19 @@ package org.onehippo.cms7.essentials.dashboard.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
 
-/**
- * @version "$Id$"
- */
 @XmlTransient
 public interface PluginDescriptor extends Serializable {
 
+
+    Map<String, Set<String>> getCategories();
+
+    void setCategories(Map<String, Set<String>> categories);
 
     List<String> getRestClasses();
 
@@ -39,7 +42,7 @@ public interface PluginDescriptor extends Serializable {
 
     String getIcon();
 
-    void  setIcon(String icon);
+    void setIcon(String icon);
 
     List<String> getImageUrls();
 
@@ -95,5 +98,6 @@ public interface PluginDescriptor extends Serializable {
     void setRepositories(List<Repository> repositories);
 
     void setHasConfiguration(boolean hasConfiguration);
+
     boolean getHasConfiguration();
 }

@@ -1,0 +1,41 @@
+{
+  "@type": "plugin",
+  "id": "bannerPlugin",
+  "name": "Banners",
+  "icon": "/essentials/images/icons/bundle.png",
+  "introduction": "With Banners, you add banners and carousels to your project. Two drag-and-drop components will be added to the component library in the Channel Manager: a Banner component and a Carousel component. Furthermore, a 'Banner' document type and some sample banner documents and images will be installed.",
+  "documentationLink": "http://www.onehippo.org/library/setup/hst-components/document-component.html",
+  "imageUrls": [
+    "/essentials/images/screenshots/banner01.png",
+    "/essentials/images/screenshots/banner02.png",
+    "/essentials/images/screenshots/banner03.png",
+    "/essentials/images/screenshots/banner04.png"
+  ],
+  "packageFile": "/META-INF/banner_instructions.xml",
+  "restClasses": [],
+  "type": "feature",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "media",
+      "video",
+      "images",
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [
+    {
+      "items": []
+    }
+  ]
+}
