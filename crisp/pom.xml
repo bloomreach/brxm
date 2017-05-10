@@ -398,6 +398,7 @@
     <module>core</module>
     <module>repository</module>
     <module>hst</module>
+    <module>demopkg</module>
   </modules>
 
 </project>
