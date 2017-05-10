@@ -256,8 +256,13 @@
 + hst:channel (hst:channel) = hst:channel
 
 [hst:branch] mixin
- - hst:branchof (string) mandatory
- - hst:branchid (string) mandatory
+- hst:branchof (string) mandatory
+- hst:branchid (string) mandatory
++ hst:upstream (hst:workspace) = hst:workspace
+
+[hst:hashable] mixin
+- hst:hash (string) mandatory
+- hst:upstreamhash (string)
 
 [hst:configuration] > nt:base, mix:referenceable, mix:versionable
 - hst:inheritsfrom (string) multiple

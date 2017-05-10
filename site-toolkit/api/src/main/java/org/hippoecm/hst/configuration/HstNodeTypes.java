@@ -64,10 +64,13 @@ public interface HstNodeTypes {
     String BRANCH_PROPERTY_BRANCH_OF = "hst:branchof";
     String BRANCH_PROPERTY_BRANCH_ID = "hst:branchid";
 
+    String MIXINTYPE_HST_HASHABLE = "hst:hashable";
+    String HASHABLE_PROPERTY_HASH = "hst:hash";
+    String HASHABLE_PROPERTY_UPSTREAM_HASH = "hst:upstreamhash";
+
     String MIXINTYPE_HST_PROTOTYPE_META = "hst:prototypemeta";
     String PROTOTYPE_META_PROPERTY_DISPLAY_NAME = "hst:displayname";
     String PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER = "hst:primarycontainer";
-
 
     String GENERAL_PROPERTY_INHERITS_FROM = "hst:inheritsfrom";
     String GENERAL_PROPERTY_LOCKED_BY = "hst:lockedby";
@@ -266,6 +269,7 @@ public interface HstNodeTypes {
     String NODENAME_HST_CHANNELS = "hst:channels";
     String NODENAME_HST_WORKSPACE = "hst:workspace";
     String NODENAME_HST_CONTAINERS = "hst:containers";
+    String NODENAME_HST_UPSTREAM = "hst:upstream";
 
     String RELPATH_HST_WORKSPACE_CONTAINERS = "hst:workspace/hst:containers";
 

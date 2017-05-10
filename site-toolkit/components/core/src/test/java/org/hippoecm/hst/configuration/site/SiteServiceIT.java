@@ -406,14 +406,6 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
-    protected void createHstConfigBackup(Session session) throws RepositoryException {
-        if (!session.nodeExists("/hst-backup")) {
-            JcrUtils.copy(session, "/hst:hst", "/hst-backup");
-            session.save();
-        }
-    }
-
-
     @Test
     public void channels_for_branches_get_loaded_as_well() throws Exception {
         Session session = createSession();
