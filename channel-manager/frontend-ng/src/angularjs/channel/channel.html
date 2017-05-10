@@ -22,7 +22,7 @@
 
         <channel-actions ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded()" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
 
-        <page-actions ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded()" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
+        <page-actions ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded() && channelCtrl.hasPreviewConfiguration" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
       </div>
 
       <div flex="40" layout layout-align="center center">
@@ -41,7 +41,7 @@
                         icon="view_quilt"
                         tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
                         class="qa-toggle-components"
-                        ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded()">
+                        ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded() && channelCtrl.hasPreviewConfiguration">
         </overlay-toggle>
 
         <overlay-toggle state="channelCtrl.isContentOverlayDisplayed"
