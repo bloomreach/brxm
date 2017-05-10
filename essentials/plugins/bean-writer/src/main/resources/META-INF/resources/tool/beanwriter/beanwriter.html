@@ -27,14 +27,18 @@
             </p>
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="image in imageSets | orderBy:identity" ng-switch="image==selectedImageSet">
-                    <input type="radio" name="selectedImage" ng-model="$parent.selectedImageSet" ng-value="image"/>
-                    <strong ng-switch-when="true">{{image}}</strong>
-                    <span ng-switch-default>{{image}}</span>
+                    <label>
+                        <input type="radio" name="selectedImage" ng-model="$parent.selectedImageSet" ng-value="image"/>
+                        <strong ng-switch-when="true">{{image}}</strong>
+                        <span ng-switch-default>{{image}}</span>
+                    </label>
                 </li>
             </ul>
             <p>
-                <input type="checkbox" ng-model="updateImageMethods"/>
-                Update <strong>existing</strong> methods so they will use the selected imageset too.
+                <label>
+                    <input type="checkbox" ng-model="updateImageMethods"/>
+                    Update <span class="alert-info">existing</span> methods so they will use the selected imageset too.
+                </label>
             </p>
         </div>
     </div>
