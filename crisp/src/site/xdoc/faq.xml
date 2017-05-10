@@ -12,6 +12,15 @@
 
     <section name="FAQ">
 
+      <subsection name="Q: How to Override Default CRISP Beans?">
+        <p>
+          All the internal <strong>CRISP</strong> beans are defined in <code>hippo-addon-crisp-core-x.x.x.jar!META-INF/spring-assembly/addon/crisp/crisp*.xml</code> resources.
+          If you want to override any bean, you can redefine a bean in <code>site/src/resources/META-INF/hst-assembly/addon/crisp/overrides/*.xml</code> file.
+          For example, you can override <code>org.springframework.http.client.ClientHttpRequestFactory</code> bean
+          for more advanced HTTP Client Connection handlings.
+        </p>
+      </subsection>
+
       <subsection name="Q: Can I use CRISP in non-CMS delivery / authoring tier applciations?">
         <p>
           Yes, <code>CRISP</code> API and CORE is basically independent from CMS specific APIs.

@@ -38,45 +38,94 @@ import org.springframework.security.util.InMemoryResource;
 import com.onehippo.cms7.crisp.api.CrispConstants;
 import com.onehippo.cms7.crisp.api.resource.ResourceResolver;
 
+/**
+ * Extending {@link MapResourceResolverProvider} to filling in the internal <code>Map</code> of pairs of <strong>resource space</strong>
+ * name and {@link ResourceResolver} instance by reading configurations in the repository.
+ */
 public class RepositoryMapResourceResolverProvider extends MapResourceResolverProvider
         implements InitializingBean, DisposableBean, ApplicationContextAware {
 
     static Logger log = LoggerFactory.getLogger(RepositoryMapResourceResolverProvider.class);
 
+    /**
+     * Spring ApplicationContext which instantiates this bean.
+     */
     private ApplicationContext applicationContext;
 
+    /**
+     * Repository storing configurations.
+     */
     private Repository repository;
+
+    /**
+     * Credentials to log in the {@link #repository}.
+     */
     private Credentials credentials;
+
+    /**
+     * Flag whether or not this bean was initialized successfully.
+     */
     private boolean initialized;
 
+    /**
+     * {@link HippoEventBus} event listener instance to subscribe configuration changes in the repository.
+     */
     private ConfigurationChangeEventListener configurationChangeEventListener;
 
+    /**
+     * Map of pairs of <strong>resource space</strong> name and {@link AbstractApplicationContext} instance.
+     */
     private Map<String, AbstractApplicationContext> childAppContexts = new LinkedHashMap<>();
 
+    /**
+     * Default constructor.
+     */
     public RepositoryMapResourceResolverProvider() {
     }
 
+    /**
+     * Return the repository storing configurations.
+     * @return the repository storing configurations
+     */
     public Repository getRepository() {
         return repository;
     }
 
+    /**
+     * Sets the repository storing configurations.
+     * @param repository the repository storing configurations
+     */
     public void setRepository(Repository repository) {
         this.repository = repository;
     }
 
+    /**
+     * Returns the credentials to log in the {@link #repository}.
+     * @return the credentials to log in the {@link #repository}
+     */
     public Credentials getCredentials() {
         return credentials;
     }
 
+    /**
+     * Sets the credentials to log in the {@link #repository}.
+     * @param credentials the credentials to log in the {@link #repository}
+     */
     public void setCredentials(Credentials credentials) {
         this.credentials = credentials;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void afterPropertiesSet() throws Exception {
         new ResourceResolversInitializingThread().start();
@@ -84,11 +133,18 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         HippoServiceRegistry.registerService(configurationChangeEventListener, HippoEventBus.class);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void destroy() {
         HippoServiceRegistry.unregisterService(configurationChangeEventListener, HippoEventBus.class);
     }
 
+    /**
+     * {@link HippoEventBus} event listener to subscribe configuration changes in the repository and initialize
+     * the {@link ResourceResolver}s for each <strong>resource space</strong>s.
+     */
     public class ConfigurationChangeEventListener {
         @Subscribe
         public void handleEvent(HippoEvent event) {
@@ -100,6 +156,12 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         }
     }
 
+    /**
+     * Initializes the internal map of {@link ResourceResolver}s for each <strong>resource space</strong>, and
+     * returns true if the initialization was successful.
+     * @return initializes the internal map of {@link ResourceResolver}s for each <strong>resource space</strong>, and
+     * returns true if the initialization was successful.
+     */
     private boolean initializeResourceResolvers() {
         boolean inited = false;
         Session session = null;
@@ -193,6 +255,13 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         return inited;
     }
 
+    /**
+     * Creates a child {@link ApplicationContext} for a <strong>resource space</strong>.
+     * @param beanDefs bean definitions in XML
+     * @param propNames variable property names
+     * @param propValues variable property values.
+     * @return
+     */
     private AbstractApplicationContext createChildApplicationContext(final String beanDefs, String[] propNames,
             String[] propValues) {
         GenericApplicationContext childContext = new GenericApplicationContext(applicationContext);
@@ -220,6 +289,10 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         return childContext;
     }
 
+    /**
+     * Thread to initialize the internal map of {@link ResourceResolver}s for each <strong>resource space</strong>
+     * asynchronously.
+     */
     private class ResourceResolversInitializingThread extends Thread {
 
         ResourceResolversInitializingThread() {

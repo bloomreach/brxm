@@ -28,7 +28,7 @@
       <subsection name="Why CRISP?">
 
         <p>
-          Let's think about a typical integration scenario with an external (REST, Web Services, API, etc) services
+          Let's think about a typical integration scenario with an external (REST, Web Services, API, etc) service
           in an application:
         </p>
 
@@ -68,7 +68,7 @@
             Suppose you want to integrate with SalesForce backend REST services as an example. You want to be able
             to change the connection configuration sometimes at runtime without having to redeploy or restart the server.
             How can we achieve that kind of runtime configurabililty without compromising any other quality attributes?
-            How can we maximize manageability to avoid unnecessary redeployment or restarts?
+            How can we maximize manageability to avoid unnecessary redeployments or restarts?
           </li>
           <li>
             <strong>Modifiability</strong>:
@@ -155,6 +155,27 @@
             API support to allow to implement a web-hook (in order to invalidate cache for instance) easily.
           </li>
         </ul>
+
+        <p>
+          The following features are considered to be shipped in the <strong>future</strong>, too.
+        </p>
+
+        <ul>
+          <li>
+            Default implementation support for XML based <code>Resource</code> representations such as RSS Feeds.
+          </li>
+          <li>
+            Example <code>ResourceResolver</code> and <code>Resource</code> implementations for custom Java API
+            calls on the backends instead of JSON/XML in the demo project. For example, if a backend media server
+            supports a full Java API encapsulating REST API payloads for developers, then the example can show
+            how to implement a custom <code>ResourceResolver</code> and <code>Resource</code> for the backend.
+          </li>
+          <li>
+            More <code>ResourceResolver</code> Spring bean configuration examples for different backends to be copied
+            and pasted right away. Please let us know if you want to contribute some from your experiences! :-)
+          </li>
+        </ul>
+
       </subsection>
 
       <subsection name="Architectural Views">
@@ -205,7 +226,7 @@
             time interval (N minute for instance) for best performance under the hood.
             Application code may simply invoke <code>ResourceServiceBroker</code> API operations transparently
             without having to consider the details such as caching and invalidation by itself. <strong>CRISP</strong>
-            will take care of the details for best performance for applciation developers.
+            will take care of the details for best performance for application developers.
             Also, applications can implement a "Web-Hook" very easily through transparent API to invalidate caches.
             In addition, <strong>CRISP</strong> provides clear API interfaces to serve backend services, generate
             links for the external resources, cache or invalidate cache the resources, and so on.
@@ -224,7 +245,7 @@
             <strong>Configurability / Manageability</strong>:
             <strong>CRISP</strong> provides all the configuration in the repository. So, administrator may update
             the configuration stored in the repository and all the changes will be reflected at runtime on the fly
-            without having to worry about redeployment or restarts at all.
+            without having to worry about redeployments or restarts at all.
           </li>
           <li>
             <strong>Modifiability</strong>:
@@ -238,7 +259,7 @@
             <strong>Cost-effectiveness</strong>:
             <strong>CRISP</strong> already solves all the backend integration requirements in a generic way.
             So, enterprise-ready, high-quality integration module can be simply done through simple configurations
-            and minimal code / template implentations in most use cases.
+            and minimal code / template implementations in most use cases.
           </li>
         </ul>
 

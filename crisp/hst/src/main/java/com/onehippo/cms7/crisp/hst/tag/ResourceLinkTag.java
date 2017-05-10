@@ -22,9 +22,8 @@ import com.onehippo.cms7.crisp.api.resource.ResourceLink;
 import com.onehippo.cms7.crisp.hst.module.CrispHstServices;
 
 /**
- * Abstract supporting class for Hst Link tags
+ * JSTL Tag library generating a URI link for a {@link Resource} object in a specific <strong>resource space</strong>.
  */
-
 public class ResourceLinkTag extends VariableContainerTag {
 
     private static final long serialVersionUID = 1L;
@@ -41,8 +40,8 @@ public class ResourceLinkTag extends VariableContainerTag {
 
     private Boolean escapeXml = true;
 
-    /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int doStartTag() throws JspException {
@@ -53,8 +52,8 @@ public class ResourceLinkTag extends VariableContainerTag {
         return EVAL_BODY_INCLUDE;
     }
 
-    /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.TagSupport#doEndTag()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int doEndTag() throws JspException {
@@ -127,7 +126,6 @@ public class ResourceLinkTag extends VariableContainerTag {
     /**
      * Sets the var property.
      * @param var The var to set
-     * @return void
      */
     public void setVar(String var) {
         this.var = var;
@@ -147,8 +145,7 @@ public class ResourceLinkTag extends VariableContainerTag {
 
     /**
      * Sets the escapeXml property.
-     * @param escapeXml
-     * @return void
+     * @param escapeXml whether or not escape generated markup string
      */
     public void setEscapeXml(Boolean escapeXml) {
         this.escapeXml = escapeXml;

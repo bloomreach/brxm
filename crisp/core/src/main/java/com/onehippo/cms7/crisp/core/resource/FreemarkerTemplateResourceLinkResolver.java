@@ -19,41 +19,81 @@ import com.onehippo.cms7.crisp.api.resource.AbstractResourceLinkResolver;
 import com.onehippo.cms7.crisp.api.resource.Resource;
 import com.onehippo.cms7.crisp.api.resource.ResourceException;
 import com.onehippo.cms7.crisp.api.resource.ResourceLink;
+import com.onehippo.cms7.crisp.api.resource.ResourceLinkResolver;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
+/**
+ * {@link ResourceLinkResolver} implementation enabling Freemarker templating in resource link generations.
+ */
 public class FreemarkerTemplateResourceLinkResolver extends AbstractResourceLinkResolver {
 
     private static Logger log = LoggerFactory.getLogger(FreemarkerTemplateResourceLinkResolver.class);
 
+    /**
+     * Freemarker configuration.
+     */
     private Configuration configuration;
+
+    /**
+     * Link generating Freemarker template source in string.
+     */
     private String templateSource;
+
+    /**
+     * Link generating Freemarker template instance.
+     */
     private Template template;
 
+    /**
+     * Freemarker settings properties.
+     */
     private Properties properties;
 
+    /**
+     * Default constructor.
+     */
     public FreemarkerTemplateResourceLinkResolver() {
     }
 
+    /**
+     * Returns Freemarker settings properties.
+     * @return
+     */
     public Properties getProperties() {
         return properties;
     }
 
+    /**
+     * Sets Freemarker settings properties.
+     * @param properties
+     */
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
 
+    /**
+     * Returns the link generating Freemarker template source in string.
+     * @return the link generating Freemarker template source in string
+     */
     public String getTemplateSource() {
         return templateSource;
     }
 
+    /**
+     * Sets the link generating Freemarker template source in string.
+     * @param templateSource the link generating Freemarker template source in string
+     */
     public void setTemplateSource(String templateSource) {
         this.templateSource = templateSource;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResourceLink resolve(Resource resource, Map<String, Object> variables) throws ResourceException {
         Map<String, Object> context = new HashMap<String, Object>();
@@ -77,6 +117,10 @@ public class FreemarkerTemplateResourceLinkResolver extends AbstractResourceLink
         }
     }
 
+    /**
+     * Returns the link generating Freemarker template.
+     * @return the link generating Freemarker template
+     */
     protected Template getTemplate() {
         if (template == null) {
             template = createTemplate();
@@ -85,6 +129,10 @@ public class FreemarkerTemplateResourceLinkResolver extends AbstractResourceLink
         return template;
     }
 
+    /**
+     * Creates the link generating Freemarker template.
+     * @return the link generating Freemarker template
+     */
     protected Template createTemplate() {
         try {
             return new Template(FreemarkerTemplateResourceLinkResolver.class.getSimpleName() + "-main",
@@ -94,6 +142,12 @@ public class FreemarkerTemplateResourceLinkResolver extends AbstractResourceLink
         }
     }
 
+    /**
+     * Returns the Freemarker configuration used in template executions in this <code>ResourceLinkResolver</code>
+     * implementation.
+     * @return the Freemarker configuration used in template executions in this <code>ResourceLinkResolver</code>
+     *         implementation
+     */
     protected Configuration getConfiguration() {
         if (configuration == null) {
             configuration = createConfiguration();
@@ -102,6 +156,13 @@ public class FreemarkerTemplateResourceLinkResolver extends AbstractResourceLink
         return configuration;
     }
 
+    /**
+     * Creates the Freemarker configuration to be used in template executions in this <code>ResourceLinkResolver</code>
+     * implementation.
+     * @return the Freemarker configuration to be used in template executions in this <code>ResourceLinkResolver</code>
+     *         implementation
+     * @return
+     */
     protected Configuration createConfiguration() {
         Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         cfg.setObjectWrapper(new DefaultObjectWrapper(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS));

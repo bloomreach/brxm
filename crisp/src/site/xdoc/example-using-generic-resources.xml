@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Example Using Generic Resource Objects</title>
+  </properties>
+  <body>
+
+    <section name="Example Using Generic Resource Objects">
+
+      <subsection name="Introduction">
+
+        <p>
+          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> is the primary object
+          representation to solve all the complex integration problems in a generic way.
+          So, the interface was designed to support all the different domain object representations from heterogeneous
+          backends easily by providing generic APIs to retrieve properties and child objects of domain objects.
+        </p>
+
+        <p>
+          One typical <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> implementation
+          nowadays is probably in JSON data format. <strong>CRISP</strong> provides a default implementation of
+          <code>Resource</code> interface for JSON data with
+          <a href="apidocs/com/onehippo/cms7/crisp/core/resource/jackson/JacksonResource.html">JacksonResource</a>
+          which uses Jackson library to parse JSON data.
+        </p>
+
+      </subsection>
+
+      <subsection name="Single Resource Object from a JSON Object">
+
+        <p>
+          Let's see a simple JSON data representing a product data from a backend system:
+        </p>
+
+        <div class="brush: javascript">
+          <source><![CDATA[
+{
+  "SKU": "12345678901",
+  "description": "MultiSync X123BT - 109.22 cm (43 \") , 1920 x 480, 16:4, 500 cd\/m\u00b2, 3000:1, 8 ms",
+  "name": "CBA MultiSync X123BT",
+  "extendedData": {
+    "title": "CBA MultiSync X123BT",
+    "type": "Link",
+    "uri": "Awesome-HIC-Site\/-\/products\/12345678901",
+    "description": "MultiSync X123BT - 109.22 cm (43 \") , 1920 x 480, 16:4, 500 cd\/m\u00b2, 3000:1, 8 ms"
+  }
+}
+          ]]></source>
+        </div>
+
+        <p>
+          The example JSON data shown above can be mapped to a
+          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object. For more details,
+        </p>
+
+        <ul>
+          <li>
+            The top level JSON object is mapped to a <code>Resource</code> object.
+          </li>
+          <li>
+            Properties such as "SKU", "description" and "name" are treated as primitive properties of <code>Resource</code> object.
+            And, <code>JacksonResource</code> will convert each value to a properly typed value (e.g, String, Number, etc.)
+            automatically by using Jackson library.
+          </li>
+          <li>
+            Child JSON object such as "extendedData" is treated as a child <code>Resource</code> object property.
+          </li>
+          <li>
+            Both primitive properties and nested <code>Resource</code> object properties can be accessed through
+            <code>Resource#getValueMap().get(String name)</code>.
+          </li>
+        </ul>
+
+        <p>
+          Suppose you retrieved single <code>Resource</code> object through <code>ResourceServiceBroker#resolve(...)</code> method.
+          Then you can easily access the properties and nested child resoruces like the following example:
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
+    Resource product = resourceServiceBroker.resolve("demoProductCatalogs", "/products/sku/12345678901");
+
+    String name = (String) product.getValueMap().get("name");
+    String sku = (String) product.getValueMap().get("SKU");
+    String description = (String) product.getValueMap().get("description");
+
+    Resource extendedData = (Resource) product.getValueMap().get("extendedData");
+    String title = extendedData.getValueMap().get("title");
+    String type = extendedData.getValueMap().get("type");
+    String uri = extendedData.getValueMap().get("uri");
+    String description = extendedData.getValueMap().get("description");
+          ]]></source>
+        </div>
+
+        <p>
+          The example code snippet shown above retrieved <code>extendedData</code> nested property first to retrieve
+          properties of <code>extendedData</code>.
+          Sometimes, you don't want to retrieve all the nested descendant <code>Resource</code> objects, especially
+          if you have deeper descendant <code>Resource</code> properties.
+          In that case, you can simply use <code>Resource#getValue(String relPath)</code> by passing a relative
+          property path like the following example:
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
+    Resource product = resourceServiceBroker.resolve("demoProductCatalogs", "/products/sku/12345678901");
+
+    // You can directly access "title" property of "extendedData" child resource object like this:
+    String title = product.getValue("extendedData/title");
+    // ...
+          ]]></source>
+        </div>
+
+        <p>
+          Please see the JavaDoc for detail: <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a>.
+        </p>
+
+      </subsection>
+
+      <subsection name="Multiple Resource Collection from a JSON Array">
+
+        <p>
+          Let's see a simple JSON data representing a collection of product data from a backend system:
+        </p>
+
+        <div class="brush: javascript">
+          <source><![CDATA[
+[
+  {
+    "SKU": "12345678901",
+    "description": "MultiSync X123BT - 109.22 cm (43 \") , 1920 x 480, 16:4, 500 cd\/m\u00b2, 3000:1, 8 ms",
+    "name": "CBA MultiSync X123BT",
+    "extendedData": {
+      "title": "CBA MultiSync X123BT",
+      "type": "Link",
+      "uri": "Awesome-HIC-Site\/-\/products\/12345678901",
+      "description": "MultiSync X123BT - 109.22 cm (43 \") , 1920 x 480, 16:4, 500 cd\/m\u00b2, 3000:1, 8 ms"
+    }
+  },
+  {
+    "SKU": "12345678902",
+    "description": "PA123W, 68.58 cm (27 \") LCD, 2560 x 1440, 6ms, 1000:1, 300cd\/m2, 1.073B",
+    "name": "CBA PA123W",
+    "extendedData": {
+      "title": "CBA PA123W",
+      "type": "Link",
+      "uri": "Awesome-HIC-Site\/-\/products\/12345678902",
+      "description": "PA123W, 68.58 cm (27 \") LCD, 2560 x 1440, 6ms, 1000:1, 300cd\/m2, 1.073B"
+    }
+  },
+  //...
+]
+          ]]></source>
+        </div>
+
+        <p>
+          The example JSON data shown above can be mapped to a
+          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object as well, but
+          the <code>Resource</code> object represents a collection (mapped to the root JSON Array object) instead.
+        </p>
+
+        <ul>
+          <li>
+            The top level JSON Array is mapped to a <code>Resource</code> object. 
+            In this case, <code>Resource#isArray()</code> will return true.
+          </li>
+          <li>
+            <code>Resource#getChildren()</code> will return an iterable collection.
+          </li>
+        </ul>
+
+        <p>
+          Suppose you retrieved a <code>Resource</code> object representing product collection data
+          through <code>ResourceServiceBroker#findResources(...)</code> method.
+          Then you can easily iterate resoruces like the following example:
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
+    Resource products = resourceServiceBroker.findResources("demoProductCatalogs", "/products/");
+
+    for (Resource product : products.getChildren()) {
+        String name = (String) product.getValueMap().get("name");
+        String sku = (String) product.getValueMap().get("SKU");
+        String description = (String) product.getValueMap().get("description");
+        // ...
+    }
+          ]]></source>
+        </div>
+
+      </subsection>
+
+      <subsection name="What if Multiple Resource Collection is embedded in a JSON Object, not as top-level JSON Array?">
+
+        <p>
+          Let's see a JSON data example representing a JSON Object that embeds a collection of item data from a backend system.
+          The following example returned from SalesForce REST API contains a JSON Object as top level object,
+          and it contains JSON Array in the "records" property instead.
+        </p>
+
+        <div class="brush: javascript">
+          <source><![CDATA[
+{
+  "totalSize":27,
+  "done":true,
+  "records":[
+    {
+      "attributes":{
+        "type":"Lead",
+        "url":"/services/data/v20.0/sobjects/Lead/00Q460000020SQ7EAM"
+      },
+      "FirstName":"John",
+      "LastName":"Doe",
+      "Status":"Working - Contacted",
+      "Title":"Director of Vendor Relations",
+      "Industry":"Agriculture",
+      "State":"FL",
+      "Country":"USA",
+      "City":"Tallahassee",
+      "PostalCode":"32306",
+      "Email":"john.doe@example.com",
+      "Rating":"Hot"
+    },
+    {
+      "attributes":{
+        "type":"Lead",
+        "url":"/services/data/v20.0/sobjects/Lead/00Q460000020SQ8EAM"
+      },
+      "FirstName":"Jane",
+      "LastName":"Doe",
+      "Status":"Open - Not Contacted",
+      "Title":"CFO",
+      "Industry":null,
+      "State":"VA",
+      "Country":"USA",
+      "City":null,
+      "PostalCode":null,
+      "Email":"jane.doe@example.com",
+      "Rating":null
+    },
+    // ...
+  ]
+}
+          ]]></source>
+        </div>
+
+        <p>
+          The example JSON data shown above can be mapped to a
+          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object too, but
+          you need to retrieve the "records" <code>Resource</code> object property first and get
+          a collection (mapped to the root JSON Array object) from there in this case.
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    final String SOQL_ALL_LEADS = "SELECT FirstName, LastName, Status, Title, Industry, Company, NumberOfEmployees, State, Country, City, "
+            + "PostalCode, Email, IsDeleted, IsConverted, ConvertedAccountId, ConvertedContactId, Rating "
+            + "FROM Lead";
+
+    ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
+    final Map<String, Object> pathVars = new HashMap<>();
+    pathVars.put("soql", SOQL_ALL_LEADS);
+    Resource result = broker.findResources("demoSalesForce", "/query/?q={soql}", pathVars);
+    Resource records = (Resource) result.getValueMap().get("records");
+
+    for (Resource lead : records.getChildren()) {
+        String firstName = (String) lead.getValueMap().get("FirstName");
+        String lastName = (String) lead.getValueMap().get("LastName");
+        String email = (String) lead.getValueMap().get("Email");
+        // ...
+    }
+          ]]></source>
+        </div>
+
+      </subsection>
+
+      <subsection name="Pagination with Resource Object">
+
+        <p>
+          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object supports paginating
+          methods. For example, you can pass <code>offset</code> index and <code>limit</code> count of the paginated
+          result on <code>Resource#getChildren(long offset, long limit)</code>
+          like the following example to retrieve only specific set of the page:
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    // ...
+    Resource records = (Resource) result.getValueMap().get("records");
+
+    // The following will retrieve only the first page of the result when the page size is 10.
+    for (Resource lead : records.getChildren(0, 10)) {
+        String firstName = (String) lead.getValueMap().get("FirstName");
+        String lastName = (String) lead.getValueMap().get("LastName");
+        String email = (String) lead.getValueMap().get("Email");
+        // ...
+    }
+          ]]></source>
+        </div>
+
+        <p>
+          Please see the JavaDoc for detail: <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a>.
+        </p>
+
+      </subsection>
+
+    </section>
+
+  </body>
+</document>

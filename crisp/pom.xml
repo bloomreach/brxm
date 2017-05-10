@@ -14,7 +14,7 @@
   <name>Hippo Addon CRISP</name>
   <description>Hippo Addon CRISP</description>
   <artifactId>hippo-addon-crisp</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1</version>
   <packaging>pom</packaging>
   <url>http://www.onehippo.com/</url>
   <inceptionYear>2017</inceptionYear>
@@ -372,7 +372,6 @@
         <configuration>
           <skip>false</skip>
           <aggregate>true</aggregate>
-          <sourcepath>${basedir}/api/src/main/java</sourcepath>
         </configuration>
         <reportSets>
           <reportSet>
@@ -399,6 +398,7 @@
     <module>core</module>
     <module>repository</module>
     <module>hst</module>
+    <module>demopkg</module>
   </modules>
 
 </project>

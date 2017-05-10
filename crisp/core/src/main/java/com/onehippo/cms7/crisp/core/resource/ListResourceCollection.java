@@ -13,13 +13,23 @@ import com.onehippo.cms7.crisp.api.resource.ResourceCollection;
  */
 public class ListResourceCollection implements ResourceCollection {
 
+    /**
+     * Unmodifiable view of the internal resource list.
+     */
     private final List<Resource> unmodifiableList;
 
+    /**
+     * Constructs with a internal resource list.
+     * @param list internal resource list
+     */
     public ListResourceCollection(final List<Resource> list) {
         super();
         unmodifiableList = Collections.unmodifiableList(list);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Iterator<Resource> iterator() {
         return unmodifiableList.iterator();
