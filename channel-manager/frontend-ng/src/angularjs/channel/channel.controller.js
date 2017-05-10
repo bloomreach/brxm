@@ -82,7 +82,7 @@ class ChannelCtrl {
   }
 
   isEditable() {
-    return this.SessionService.hasWriteAccess();
+    return this.SessionService.hasWriteAccess() && this.hasPreviewConfiguration;
   }
 
   editMenu(menuUuid) {
