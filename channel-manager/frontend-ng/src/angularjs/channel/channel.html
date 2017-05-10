@@ -35,13 +35,17 @@
            layout
            layout-align="center center">
         <relevance-view-as ng-show="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded()"
-                           render-variant="channelCtrl.getRenderVariant()">
+                           render-variant="channelCtrl.getRenderVariant()"
+                           flex="none">
         </relevance-view-as>
 
-        <viewport-toggle disabled="channelCtrl.isControlsDisabled()"></viewport-toggle>
+        <viewport-toggle disabled="channelCtrl.isControlsDisabled()"
+                         flex="none">
+        </viewport-toggle>
 
         <project-toggle ng-if="channelCtrl.projectsEnabled"
-                        disabled="channelCtrl.isControlsDisabled()">
+                        disabled="channelCtrl.isControlsDisabled()"
+                        flex>
         </project-toggle>
       </div>
 
