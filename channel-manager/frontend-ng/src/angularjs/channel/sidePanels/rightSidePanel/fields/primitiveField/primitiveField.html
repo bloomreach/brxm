@@ -16,25 +16,25 @@
 <div class="field" layout="column">
   <md-input-container class="qa-field"
                       md-no-float
-                      ng-repeat="fieldValue in $ctrl.fieldValues"
+                      ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
                       ng-switch="$ctrl.fieldType.type"
                       ng-class="{ 'has-focused-field': $ctrl.hasFocus }" >
 
-    <label ng-if="$first"
+    <label ng-if="::$first"
            layout
            layout-align="start center"
            class="field-title">
       <span>
-        {{ $ctrl.fieldType.displayName }}
+        {{ ::$ctrl.fieldType.displayName }}
 
-        <span ng-if="$ctrl.fieldType.required">*</span>
+        <span ng-if="::$ctrl.fieldType.required">*</span>
       </span>
 
-      <md-icon ng-if="$ctrl.fieldType.hint">
+      <md-icon ng-if="::$ctrl.fieldType.hint">
         info_outline
 
         <md-tooltip>
-          {{ $ctrl.fieldType.hint }}
+          {{ ::$ctrl.fieldType.hint }}
         </md-tooltip>
       </md-icon>
     </label>
@@ -42,20 +42,20 @@
     <!-- editors per field type -->
     <input ng-switch-when="STRING"
            ng-model="fieldValue.value"
-           name="{{ ::$ctrl.getFieldName($index) }}"
+           name="::$ctrl.getFieldName($index)"
            placeholder=""
-           ng-attr-maxlength="{{::$ctrl.fieldType.maxLength}}"
-           aria-label="{{::$ctrl.fieldType.displayName}}"
-           ng-required="{{::$ctrl.fieldType.required}}"
+           ng-attr-maxlength="::$ctrl.fieldType.maxLength"
+           aria-label="::$ctrl.fieldType.displayName"
+           ng-required="::$ctrl.fieldType.required"
            ng-focus="$ctrl.focusPrimitive()"
            ng-blur="$ctrl.blurPrimitive()">
 
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
-              name="{{ ::$ctrl.getFieldName($index) }}"
+              name="::$ctrl.getFieldName($index)"
               placeholder=""
-              aria-label="{{::$ctrl.fieldType.displayName}}"
-              ng-required="{{::$ctrl.fieldType.required}}"
+              aria-label="::$ctrl.fieldType.displayName"
+              ng-required="::$ctrl.fieldType.required"
               md-no-resize
               ng-focus="$ctrl.onFieldFocus()"
               ng-blur="$ctrl.onFieldBlur()">
@@ -63,15 +63,15 @@
 
     <ckeditor ng-switch-when="HTML"
               ng-model="fieldValue.value"
-              name="$ctrl.getFieldName($index)"
-              aria-label="$ctrl.fieldType.displayName"
-              config="$ctrl.fieldType.config"
-              is-required="$ctrl.fieldType.required"
+              name="::$ctrl.getFieldName($index)"
+              aria-label="::$ctrl.fieldType.displayName"
+              config="::$ctrl.fieldType.config"
+              is-required="::$ctrl.fieldType.required"
               on-focus="$ctrl.focusPrimitive()"
               on-blur="$ctrl.blurPrimitive()">
     </ckeditor>
 
-    <div ng-if="$last"
+    <div ng-if="::$last"
          ng-messages="$ctrl.getFieldError()">
       <div ng-message="required">{{ 'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>
     </div>

@@ -14,12 +14,12 @@
   limitations under the License.
   -->
 <div class="field-wrapper"
-     ng-repeat="fieldType in $ctrl.fieldTypes"
+     ng-repeat="fieldType in $ctrl.fieldTypes track by fieldType.id"
      ng-switch="fieldType.type">
 
   <compound-field ng-switch-when="COMPOUND"
                   ng-if="$ctrl.hasValue(fieldType)"
-                  ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
+                  ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id] track by $index"
                   name="$ctrl.getFieldName(fieldType, $index)"
                   field-type="fieldType"
                   field-values="fieldValue.fields"
