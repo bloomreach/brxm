@@ -20,7 +20,7 @@ import java.io.StringReader;
 
 import org.junit.Test;
 import org.onehippo.cm.engine.AbstractBaseTest;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 import org.yaml.snakeyaml.Yaml;
@@ -37,7 +37,7 @@ import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 public class SourceValidationTest extends AbstractBaseTest {
 
     final Yaml yamlParser = new Yaml();
-    final ConfigurationImpl configuration = new ConfigurationImpl("configuration");
+    final GroupImpl configuration = new GroupImpl("configuration");
     final ProjectImpl project = new ProjectImpl("project", configuration);
     final ModuleImpl module = new ModuleImpl("module", project);
 

@@ -17,7 +17,7 @@ package org.onehippo.cm.api.model;
 
 import java.util.List;
 
-public interface Configuration extends Orderable {
+public interface Group extends Orderable {
     /**
      * @return The immutable list of {@link Project}s currently in this Configuration.
      */

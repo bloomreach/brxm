@@ -16,12 +16,12 @@
 package org.onehippo.cm.backend;
 
 import org.junit.Test;
-import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModelTestUtils;
 import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -103,14 +103,14 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
             final List<Definition> definitions = parseNoSort(sources[i], "test-module-" + i, ContentDefinition.class);
             assertTrue(definitions.size() == 1);
             final Module module = definitions.get(0).getSource().getModule();
-            final ConfigurationImpl configuration = (ConfigurationImpl) module.getProject().getConfiguration();
+            final GroupImpl configuration = (GroupImpl) module.getProject().getGroup();
             mergedModelBuilder.push(configuration);
             resourceInputProviders.put(module, ModelTestUtils.getTestResourceInputProvider());
         }
-        final MergedModel mergedModel = mergedModelBuilder.build();
+        final ConfigurationModel configurationModel = mergedModelBuilder.build();
 
         final ContentProcessingService processingService = new JcrContentProcessingService(session, resourceInputProviders);
-        processingService.apply(null, mergedModel.getContentDefinitions());
+        processingService.apply(null, configurationModel.getContentDefinitions());
 
         session.save();
     }

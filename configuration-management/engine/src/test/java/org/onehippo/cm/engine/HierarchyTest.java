@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.Module;
@@ -31,7 +31,7 @@ import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.engine.parser.ParserException;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -42,10 +42,10 @@ public class HierarchyTest extends AbstractBaseTest {
     @Test
     public void expect_hierarchy_test_loads() throws IOException, ParserException {
         final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/hierarchy_test/"+Constants.REPO_CONFIG_YAML);
-        final Map<String, ConfigurationImpl> configurations = result.getConfigurations();
+        final Map<String, GroupImpl> configurations = result.getConfigurations();
         assertEquals(2, configurations.size());
 
-        final Configuration base = assertConfiguration(configurations, "base", new String[0], 1);
+        final Group base = assertConfiguration(configurations, "base", new String[0], 1);
         final Project project1 = assertProject(base, "project1", new String[0], 1);
         final Module module1 = assertModule(project1, "module1", new String[0], 3);
         final Source source1 = assertSource(module1, "config.yaml", 8);
@@ -138,7 +138,7 @@ public class HierarchyTest extends AbstractBaseTest {
 //        final ConfigDefinition source2definition2 = assertDefinition(source2, 1, ConfigDefinition.class);
 //        assertNode(source2definition2, "/hippo:configuration/hippo:queries/hippo:templates/new-image", "new-image", source2definition2, 1, 2);
 
-        final Configuration myhippoproject = assertConfiguration(configurations, "myhippoproject", new String[]{"base"}, 1);
+        final Group myhippoproject = assertConfiguration(configurations, "myhippoproject", new String[]{"base"}, 1);
         final Project project2 = assertProject(myhippoproject, "project2", new String[]{"project1", "foo/bar"}, 1);
         final Module module2 = assertModule(project2, "module2", new String[0], 1);
         final Source baseSource = assertSource(module2, "config.yaml", 1);

@@ -18,7 +18,7 @@ package org.onehippo.cm.impl.model;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.ContentDefinition;
@@ -70,7 +70,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
     private final Project project;
 
     /**
-     * Warning! not preserved in final MergedModel!
+     * Warning! not preserved in final ConfigurationModel!
      */
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
@@ -164,7 +164,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
 
     /**
      * @return a sorted list of namespace definitions in insertion order.
-     * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
+     * Note that these definitions are only populated for Modules that are part of the {@link ConfigurationModel}.
      */
     public List<NamespaceDefinitionImpl> getNamespaceDefinitions() {
         return namespaceDefinitions;
@@ -172,7 +172,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
 
     /**
      * @return a sorted list of node type definitions in insertion order.
-     * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
+     * Note that these definitions are only populated for Modules that are part of the {@link ConfigurationModel}.
      */
     public List<NodeTypeDefinitionImpl> getNodeTypeDefinitions() {
         return nodeTypeDefinitions;
@@ -181,7 +181,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
 
     /**
      * @return a sorted list of config definitions.
-     * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
+     * Note that these definitions are only populated for Modules that are part of the {@link ConfigurationModel}.
      */
     public List<ConfigDefinitionImpl> getConfigDefinitions() {
         return configDefinitions;
@@ -189,7 +189,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
 
     /**
      * @return a sorted list of content definitions.
-     * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
+     * Note that these definitions are only populated for Modules that are part of the {@link ConfigurationModel}.
      */
     public List<ContentDefinitionImpl> getContentDefinitions() {
         return contentDefinitions;
@@ -197,7 +197,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
 
     /**
      * @return a sorted list of web file bundle definitions in insertion order.
-     * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
+     * Note that these definitions are only populated for Modules that are part of the {@link ConfigurationModel}.
      */
     public List<WebFileBundleDefinitionImpl> getWebFileBundleDefinitions() {
         return webFileBundleDefinitions;
@@ -242,7 +242,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
         }
     }
 
-    public void compileManifest(MergedModel model, TreeMap<Module,TreeMap<String,String>> manifest) {
+    public void compileManifest(ConfigurationModel model, TreeMap<Module,TreeMap<String,String>> manifest) {
         TreeMap<String,String> items = new TreeMap<>();
 
         // get the resource input provider, which provides access to raw data for module content
@@ -440,8 +440,8 @@ public class ModuleImpl implements Module, Comparable<Module> {
         final RepoConfigSerializer repoConfigSerializer = new RepoConfigSerializer(DEFAULT_EXPLICIT_SEQUENCING);
 
         // create a dummy group->project->module setup with just the data relevant to this Module
-        ConfigurationImpl group = new ConfigurationImpl(getProject().getConfiguration().getName());
-        group.addAfter(getProject().getConfiguration().getAfter());
+        GroupImpl group = new GroupImpl(getProject().getGroup().getName());
+        group.addAfter(getProject().getGroup().getAfter());
         ProjectImpl project = group.addProject(getProject().getName());
         project.addAfter(getProject().getAfter());
         ModuleImpl dummyModule = project.addModule(getName());
@@ -450,7 +450,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
         log.debug("Creating dummy module descriptor for {}/{}/{}",
                 group.getName(), project.getName(), getName());
 
-        HashMap<String, ConfigurationImpl> groups = new HashMap<>();
+        HashMap<String, GroupImpl> groups = new HashMap<>();
         groups.put(group.getName(), group);
 
         // serialize that dummy group
@@ -521,7 +521,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
      */
     public static String buildFullName(Module m) {
         return String.join("/",
-                m.getProject().getConfiguration().getName(),
+                m.getProject().getGroup().getName(),
                 m.getProject().getName(),
                 m.getName());
     }

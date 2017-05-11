@@ -15,8 +15,8 @@
  */
 package org.onehippo.cm.backend;
 
+import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ContentService;
-import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionType;
@@ -50,15 +50,15 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public void apply(final MergedModel mergedModel, final EnumSet<DefinitionType> includeDefinitionTypes)
+    public void apply(final ConfigurationModel model, final EnumSet<DefinitionType> includeDefinitionTypes)
             throws Exception {
         try {
-            final Collection<ContentDefinition> contentDefinitions = mergedModel.getContentDefinitions();
+            final Collection<ContentDefinition> contentDefinitions = model.getContentDefinitions();
             final Map<Source, List<ContentDefinition>> contentMap = contentDefinitions.stream()
                     .collect(Collectors.groupingBy(Definition::getSource, toSortedList(comparing(e -> e.getNode().getPath()))));
             for (Source source : contentMap.keySet()) {
 
-                final ContentProcessingService contentProcessingService = new JcrContentProcessingService(session, mergedModel.getResourceInputProviders());
+                final ContentProcessingService contentProcessingService = new JcrContentProcessingService(session, model.getResourceInputProviders());
                 contentProcessingService.apply(source, contentMap.get(source));
 
                 session.save();

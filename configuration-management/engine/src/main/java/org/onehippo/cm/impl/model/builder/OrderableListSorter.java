@@ -49,9 +49,9 @@ import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
  * <p>
  * Usage:
  * <pre>
- *   private static final OrderableListSorter<ConfigurationImpl> configurationSorter = new OrderableListSorter<>(Configuration.class.getSimpleName());
+ *   private static final OrderableListSorter<GroupImpl> configurationSorter = new OrderableListSorter<>(Configuration.class.getSimpleName());
  *   ...
- *   private List&lt;ConfigurationImpl&gt; configurations = new ArrayList&lt;&gt;();
+ *   private List&lt;GroupImpl&gt; configurations = new ArrayList&lt;&gt;();
  *   ...
  *   configurationSorter.sort(configurations);
  * </pre>

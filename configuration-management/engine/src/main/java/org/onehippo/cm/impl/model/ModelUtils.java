@@ -18,7 +18,7 @@ package org.onehippo.cm.impl.model;
 
 import java.util.stream.Collectors;
 
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.ConfigurationItem;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionItem;
@@ -29,9 +29,9 @@ import org.onehippo.cm.api.model.Source;
 public class ModelUtils {
     public static String formatModule(final Module module) {
         final Project project = module.getProject();
-        final Configuration configuration = project.getConfiguration();
+        final Group group = project.getGroup();
 
-        return String.format("%s/%s/%s", configuration.getName(), project.getName(), module.getName());
+        return String.format("%s/%s/%s", group.getName(), project.getName(), module.getName());
     }
 
     public static String formatDefinition(final Definition definition) {

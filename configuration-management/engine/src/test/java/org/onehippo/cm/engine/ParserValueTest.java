@@ -29,7 +29,7 @@ import java.util.UUID;
 
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.Module;
@@ -40,7 +40,7 @@ import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.engine.parser.ConfigSourceParser;
 import org.onehippo.cm.engine.parser.ParserException;
 import org.onehippo.cm.engine.parser.SourceParser;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 
@@ -51,11 +51,11 @@ public class ParserValueTest extends AbstractBaseTest {
     @Test
     public void expect_value_test_loads() throws IOException, ParserException, URISyntaxException {
         final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/value_test/"+Constants.REPO_CONFIG_YAML);
-        final Map<String, ConfigurationImpl> configurations = result.getConfigurations();
+        final Map<String, GroupImpl> configurations = result.getConfigurations();
 
         assertEquals(1, configurations.size());
 
-        final Configuration base = assertConfiguration(configurations, "base", new String[0], 1);
+        final Group base = assertConfiguration(configurations, "base", new String[0], 1);
         final Project project = assertProject(base, "project1", new String[0], 1);
         final Module module = assertModule(project, "module1", new String[0], 2);
         final Source source = assertSource(module, "base.yaml", 4);
@@ -151,7 +151,7 @@ public class ParserValueTest extends AbstractBaseTest {
     @Test
     public void expect_property_value_map_without_type_to_yield_string() throws ParserException {
         final SourceParser sourceParser = new ConfigSourceParser(DUMMY_RESOURCE_INPUT_PROVIDER);
-        final ConfigurationImpl configuration = new ConfigurationImpl("configuration");
+        final GroupImpl configuration = new GroupImpl("configuration");
         final ProjectImpl project = new ProjectImpl("project", configuration);
         final ModuleImpl module = new ModuleImpl("module", project);
 
@@ -174,7 +174,7 @@ public class ParserValueTest extends AbstractBaseTest {
     @Test
     public void expect_date_without_time_to_yield_non_lenient_UTC_date() throws ParserException {
         final SourceParser sourceParser = new ConfigSourceParser(DUMMY_RESOURCE_INPUT_PROVIDER);
-        final ConfigurationImpl configuration = new ConfigurationImpl("configuration");
+        final GroupImpl configuration = new GroupImpl("configuration");
         final ProjectImpl project = new ProjectImpl("project", configuration);
         final ModuleImpl module = new ModuleImpl("module", project);
 

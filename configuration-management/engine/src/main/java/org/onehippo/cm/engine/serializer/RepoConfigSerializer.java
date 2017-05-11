@@ -23,11 +23,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -49,12 +49,12 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
         super(explicitSequencing);
     }
 
-    public void serialize(final OutputStream outputStream, final Map<String, ConfigurationImpl> configurations) throws IOException {
+    public void serialize(final OutputStream outputStream, final Map<String, GroupImpl> configurations) throws IOException {
         final Node node = representRepoConfig(configurations);
         serializeNode(outputStream, node);
     }
 
-    private Node representRepoConfig(final Map<String, ConfigurationImpl> configurations) {
+    private Node representRepoConfig(final Map<String, GroupImpl> configurations) {
         final List<NodeTuple> rootTuples = new ArrayList<>();
 
         final List<Node> configurationNodes = configurations.values().stream().map(this::representConfiguration)
@@ -64,11 +64,11 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
         return new MappingNode(Tag.MAP, rootTuples, false);
     }
 
-    private Node representConfiguration(final Configuration configuration) {
+    private Node representConfiguration(final Group group) {
         final List<NodeTuple> tuples = new ArrayList<>();
-        tuples.addAll(representOrderable(configuration, CONFIGURATION_KEY));
+        tuples.addAll(representOrderable(group, CONFIGURATION_KEY));
 
-        final List<Node> projectNodes = configuration.getProjects().stream().map(this::representProject)
+        final List<Node> projectNodes = group.getProjects().stream().map(this::representProject)
                 .collect(Collectors.toList());
         tuples.add(createStrSeqTuple(PROJECTS_KEY, projectNodes));
 

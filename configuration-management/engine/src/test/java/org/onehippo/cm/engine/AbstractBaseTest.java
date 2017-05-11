@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionItem;
@@ -40,7 +40,7 @@ import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueFormatException;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.engine.parser.ParserException;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -98,21 +98,21 @@ public abstract class AbstractBaseTest {
         return find(moduleConfigResourceName).getParent();
     }
 
-    Configuration assertConfiguration(final Map<String, ConfigurationImpl> parent, final String name, final String[] after, final int projectCount) {
-        final Configuration configuration = parent.get(name);
-        assertNotNull(configuration);
-        assertEquals(name, configuration.getName());
-        assertArrayEquals(after, configuration.getAfter().toArray());
-        assertEquals(projectCount, configuration.getProjects().size());
-        return configuration;
+    Group assertConfiguration(final Map<String, GroupImpl> parent, final String name, final String[] after, final int projectCount) {
+        final Group group = parent.get(name);
+        assertNotNull(group);
+        assertEquals(name, group.getName());
+        assertArrayEquals(after, group.getAfter().toArray());
+        assertEquals(projectCount, group.getProjects().size());
+        return group;
     }
 
-    Project assertProject(final Configuration parent, final String name, final String[] after, final int moduleCount) {
+    Project assertProject(final Group parent, final String name, final String[] after, final int moduleCount) {
         final Project project = findByName(name, parent.getProjects());
         assertNotNull(project);
         assertEquals(name, project.getName());
         assertArrayEquals(after, project.getAfter().toArray());
-        assertEquals(parent, project.getConfiguration());
+        assertEquals(parent, project.getGroup());
         assertEquals(moduleCount, project.getModules().size());
         return project;
     }

@@ -19,13 +19,13 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModelTestUtils;
 import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -1021,16 +1021,16 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
             final List<Definition> definitions = parseNoSort(sources[i], "test-module-" + i, ConfigDefinition.class);
             assertTrue(definitions.size() > 0);
             final Module module = definitions.get(0).getSource().getModule();
-            final ConfigurationImpl configuration = (ConfigurationImpl) module.getProject().getConfiguration();
+            final GroupImpl configuration = (GroupImpl) module.getProject().getGroup();
             mergedModelBuilder.push(configuration);
             resourceInputProviders.put(module, ModelTestUtils.getTestResourceInputProvider());
         }
-        final MergedModel mergedModel = mergedModelBuilder.build();
+        final ConfigurationModel configurationModel = mergedModelBuilder.build();
 
         final ConfigurationPersistenceService helper = new ConfigurationPersistenceService(session, resourceInputProviders);
         final EnumSet allExceptWebFileBundles = EnumSet.allOf(DefinitionType.class);
         allExceptWebFileBundles.remove(DefinitionType.WEBFILEBUNDLE);
-        helper.apply(mergedModel, allExceptWebFileBundles);
+        helper.apply(configurationModel, allExceptWebFileBundles);
 
         session.save();
 

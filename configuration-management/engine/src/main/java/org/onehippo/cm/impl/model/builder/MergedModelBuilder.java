@@ -16,13 +16,13 @@
 
 package org.onehippo.cm.impl.model.builder;
 
-import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.impl.MergedModelImpl;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.ConfigurationModelImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
 import org.slf4j.Logger;
@@ -38,26 +38,26 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * MergedModelBuilder accumulates {@link ConfigurationImpl}s into a map of configurations and, when building
+ * MergedModelBuilder accumulates {@link GroupImpl}s into a map of configurations and, when building
  * the model, sorts the involved objects into processing order (based on "after" dependencies) to construct
  * the tree of {@link ConfigurationNodeImpl}s.
  */
 public class MergedModelBuilder {
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationTreeBuilder.class);
-    private static final OrderableListSorter<ConfigurationImpl> configurationSorter = new OrderableListSorter<>(Configuration.class.getSimpleName());
+    private static final OrderableListSorter<GroupImpl> configurationSorter = new OrderableListSorter<>(Group.class.getSimpleName());
 
-    private final List<ConfigurationImpl> configurations = new ArrayList<>();
-    private final Map<String, ConfigurationImpl> configurationMap = new HashMap<>();
+    private final List<GroupImpl> configurations = new ArrayList<>();
+    private final Map<String, GroupImpl> configurationMap = new HashMap<>();
     private final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
 
-    // Used for cleanup when done with this MergedModel
+    // Used for cleanup when done with this ConfigurationModel
     private final Set<FileSystem> filesystems = new HashSet<>();
 
-    public MergedModel build() {
+    public ConfigurationModel build() {
         sort();
 
-        final MergedModelImpl mergedModel = new MergedModelImpl();
-        mergedModel.setSortedConfigurations(configurations);
+        final ConfigurationModelImpl mergedModel = new ConfigurationModelImpl();
+        mergedModel.setSortedGroups(configurations);
 
         final ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
         configurations.forEach(configuration ->
@@ -80,18 +80,18 @@ public class MergedModelBuilder {
         return mergedModel;
     }
 
-    public MergedModelBuilder push(final Map<String, ConfigurationImpl> configurations, final Map<Module, ResourceInputProvider> resourceInputProviders) {
-        for (Configuration config : configurations.values()) {
+    public MergedModelBuilder push(final Map<String, GroupImpl> configurations, final Map<Module, ResourceInputProvider> resourceInputProviders) {
+        for (Group config : configurations.values()) {
             // TODO: awful needed casting
-            push((ConfigurationImpl)config);
+            push((GroupImpl)config);
         }
         pushResourceInputProviders(resourceInputProviders);
         return this;
     }
 
-    public MergedModelBuilder push(final ConfigurationImpl configuration) {
+    public MergedModelBuilder push(final GroupImpl configuration) {
         final String name = configuration.getName();
-        final ConfigurationImpl consolidated = configurationMap.containsKey(name)
+        final GroupImpl consolidated = configurationMap.containsKey(name)
                 ? configurationMap.get(name) : createConfiguration(name);
 
         consolidated.addAfter(configuration.getAfter());
@@ -112,8 +112,8 @@ public class MergedModelBuilder {
         }
     }
 
-    private ConfigurationImpl createConfiguration(final String name) {
-        final ConfigurationImpl configuration = new ConfigurationImpl(name);
+    private GroupImpl createConfiguration(final String name) {
+        final GroupImpl configuration = new GroupImpl(name);
 
         configurationMap.put(name, configuration);
         configurations.add(configuration);
@@ -123,13 +123,13 @@ public class MergedModelBuilder {
 
     private void sort() {
         configurationSorter.sort(configurations);
-        configurations.forEach(ConfigurationImpl::sortProjects);
+        configurations.forEach(GroupImpl::sortProjects);
     }
 
     /**
-     * Track a FileSystem for later cleanup in MergedModel#close().
+     * Track a FileSystem for later cleanup in ConfigurationModel#close().
      * @param fs
-     * @see MergedModel#close()
+     * @see ConfigurationModel#close()
      */
     public void addFileSystem(FileSystem fs) {
         filesystems.add(fs);

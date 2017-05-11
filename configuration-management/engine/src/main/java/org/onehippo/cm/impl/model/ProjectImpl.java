@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.impl.model.builder.OrderableListSorter;
@@ -34,7 +34,7 @@ public class ProjectImpl implements Project {
     private static final OrderableListSorter<ModuleImpl> modulesSorter = new OrderableListSorter<>(Module.class.getSimpleName());
 
     private final String name;
-    private final ConfigurationImpl configuration;
+    private final GroupImpl configuration;
 
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
@@ -43,7 +43,7 @@ public class ProjectImpl implements Project {
     private final List<Module> modules = Collections.unmodifiableList(modifiableModules);
     private final Map<String, ModuleImpl> moduleMap = new HashMap<>();
 
-    public ProjectImpl(final String name, final ConfigurationImpl configuration) {
+    public ProjectImpl(final String name, final GroupImpl configuration) {
         if (name == null) {
             throw new IllegalArgumentException("Parameter 'name' cannot be null");
         }
@@ -61,7 +61,7 @@ public class ProjectImpl implements Project {
     }
 
     @Override
-    public Configuration getConfiguration() {
+    public Group getGroup() {
         return configuration;
     }
 
@@ -114,7 +114,7 @@ public class ProjectImpl implements Project {
         if (other instanceof Project) {
             Project otherProject = (Project)other;
             return getName().equals(otherProject.getName()) &&
-                    getConfiguration().equals(((Project)other).getConfiguration());
+                    getGroup().equals(((Project)other).getGroup());
         }
         return false;
     }

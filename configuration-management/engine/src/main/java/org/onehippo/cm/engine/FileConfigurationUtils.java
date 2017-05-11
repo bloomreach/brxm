@@ -20,11 +20,11 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 
 import static org.onehippo.cm.engine.Constants.REPO_CONFIG_FOLDER;
 import static org.onehippo.cm.engine.Constants.REPO_CONTENT_FOLDER;
@@ -33,17 +33,17 @@ public class FileConfigurationUtils {
 
     public static Path getModuleBasePath(final Path repoConfigFilePath, final Module module, final boolean configHasMultipleModules) {
         final Project project = module.getProject();
-        final Configuration configuration = project.getConfiguration();
+        final Group group = project.getGroup();
         //TODO SS: review this if it still needed for initial esv conversion
         if (Files.isDirectory(repoConfigFilePath)) {
             if (configHasMultipleModules) {
-                return repoConfigFilePath.resolve(REPO_CONFIG_FOLDER).resolve(configuration.getName()).resolve(project.getName()).resolve(module.getName());
+                return repoConfigFilePath.resolve(REPO_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
             } else {
                 return repoConfigFilePath.resolve(REPO_CONFIG_FOLDER);
             }
         }
         if (configHasMultipleModules) {
-            return repoConfigFilePath.resolveSibling(REPO_CONFIG_FOLDER).resolve(configuration.getName()).resolve(project.getName()).resolve(module.getName());
+            return repoConfigFilePath.resolveSibling(REPO_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
         } else {
             return repoConfigFilePath.resolveSibling(REPO_CONFIG_FOLDER);
         }
@@ -51,16 +51,16 @@ public class FileConfigurationUtils {
 
     public static Path getModuleContentBasePath(final Path repoConfigPath, final Module module, final boolean configHasMultipleModules) {
         final Project project = module.getProject();
-        final Configuration configuration = project.getConfiguration();
+        final Group group = project.getGroup();
         if (Files.isDirectory(repoConfigPath)) {
             if (configHasMultipleModules) {
-                return repoConfigPath.resolve(REPO_CONTENT_FOLDER).resolve(configuration.getName()).resolve(project.getName()).resolve(module.getName());
+                return repoConfigPath.resolve(REPO_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
             } else {
                 return repoConfigPath.resolve(REPO_CONTENT_FOLDER);
             }
         }
         if (configHasMultipleModules) {
-            return repoConfigPath.resolveSibling(REPO_CONTENT_FOLDER).resolve(configuration.getName()).resolve(project.getName()).resolve(module.getName());
+            return repoConfigPath.resolveSibling(REPO_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
         } else {
             return repoConfigPath.resolveSibling(REPO_CONTENT_FOLDER);
         }
@@ -74,7 +74,7 @@ public class FileConfigurationUtils {
         }
     }
 
-    public static boolean hasMultipleModules(Map<String, ConfigurationImpl> configurations) {
+    public static boolean hasMultipleModules(Map<String, GroupImpl> configurations) {
         return configurations.values().stream().flatMap(p -> p.getProjects().stream()).mapToInt(p -> p.getModules().size()).sum() > 1;
     }
 }

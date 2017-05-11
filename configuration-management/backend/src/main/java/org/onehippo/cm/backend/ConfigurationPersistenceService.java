@@ -54,7 +54,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
@@ -104,7 +104,7 @@ public class ConfigurationPersistenceService {
         this.resourceInputProviders = resourceInputProviders;
     }
 
-    public synchronized void apply(final MergedModel model, EnumSet<DefinitionType> includeDefinitionTypes) throws Exception {
+    public synchronized void apply(final ConfigurationModel model, EnumSet<DefinitionType> includeDefinitionTypes) throws Exception {
         unprocessedReferences.clear();
 
         if (includeDefinitionTypes.contains(DefinitionType.NAMESPACE)) {

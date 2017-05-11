@@ -15,7 +15,7 @@
  */
 package org.onehippo.cm.api;
 
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Module;
@@ -32,12 +32,12 @@ import java.util.Map;
 /**
  * Represents a combined representation of configuration from multiple groups, projects, modules, and sources.
  */
-public interface MergedModel extends Closeable {
+public interface ConfigurationModel extends Closeable {
 
     /**
      * @return a List of top-level configuration groups, pre-sorted in processing order
      */
-    List<Configuration> getSortedConfigurations();
+    List<Group> getSortedGroups();
 
     /**
      * @return a List of all namespace definitions found anywhere in the merged configuration

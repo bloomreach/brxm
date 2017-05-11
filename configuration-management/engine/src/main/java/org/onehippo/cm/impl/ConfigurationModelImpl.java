@@ -16,16 +16,16 @@
 
 package org.onehippo.cm.impl;
 
-import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.WebFileBundleDefinition;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.NamespaceDefinitionImpl;
@@ -46,11 +46,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class MergedModelImpl implements MergedModel {
+public class ConfigurationModelImpl implements ConfigurationModel {
 
-    private static final Logger log = LoggerFactory.getLogger(MergedModelImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ConfigurationModelImpl.class);
 
-    private List<Configuration> sortedConfigurations;
+    private List<Group> sortedGroups;
     private final List<NamespaceDefinition> namespaceDefinitions = new ArrayList<>();
     private final List<NodeTypeDefinition> nodeTypeDefinitions = new ArrayList<>();
 
@@ -60,12 +60,12 @@ public class MergedModelImpl implements MergedModel {
     private final List<ContentDefinition> contentDefinitions = new ArrayList<>();
     private final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
 
-    // Used for cleanup when done with this MergedModel
+    // Used for cleanup when done with this ConfigurationModel
     private Set<FileSystem> filesystems = new HashSet<>();
 
     @Override
-    public List<Configuration> getSortedConfigurations() {
-        return sortedConfigurations;
+    public List<Group> getSortedGroups() {
+        return sortedGroups;
     }
 
     @Override
@@ -108,8 +108,8 @@ public class MergedModelImpl implements MergedModel {
         return resourceInputProviders;
     }
 
-    public void setSortedConfigurations(final List<ConfigurationImpl> sortedConfigurations) {
-        this.sortedConfigurations = new ArrayList<>(sortedConfigurations);
+    public void setSortedGroups(final List<GroupImpl> sortedGroups) {
+        this.sortedGroups = new ArrayList<>(sortedGroups);
     }
 
     public void addNamespaceDefinitions(final List<NamespaceDefinitionImpl> definitions) {
@@ -172,7 +172,7 @@ public class MergedModelImpl implements MergedModel {
     public String compileManifest() {
         // accumulate modules in sorted order
         TreeSet<Module> modules = new TreeSet<>();
-        getSortedConfigurations().forEach(g -> g.getProjects().forEach(p -> p.getModules().forEach(m -> modules.add(m))));
+        getSortedGroups().forEach(g -> g.getProjects().forEach(p -> p.getModules().forEach(m -> modules.add(m))));
 
         // for each module, accumulate manifest items
         TreeMap<Module,TreeMap<String,String>> manifest = new TreeMap<>();

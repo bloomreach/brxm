@@ -19,8 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import org.onehippo.cm.api.model.Configuration;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
 
 public class ConfigurationVerifier {
@@ -34,9 +33,9 @@ public class ConfigurationVerifier {
         }
         final Path repoConfig = Paths.get(args[0]);
         final PathConfigurationReader.ReadResult result = new PathConfigurationReader().read(repoConfig, true);
-        final Map<String, ConfigurationImpl> configurations = result.getConfigurations();
+        final Map<String, GroupImpl> configurations = result.getConfigurations();
         MergedModelBuilder builder = new MergedModelBuilder();
-        for (ConfigurationImpl config : configurations.values()) {
+        for (GroupImpl config : configurations.values()) {
             builder.push(config);
         }
         builder.build();

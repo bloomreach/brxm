@@ -29,7 +29,7 @@ import org.onehippo.cm.engine.FileConfigurationWriter;
 import org.onehippo.cm.engine.ModuleContext;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.ConfigSourceImpl;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
@@ -153,7 +153,7 @@ public class Esv2Yaml {
             }
         }
         esvParser = new EsvParser(src);
-        module = new ConfigurationImpl("dummy").addProject("dummy").addModule("dummy");
+        module = new GroupImpl("dummy").addProject("dummy").addModule("dummy");
     }
 
     public void convert() throws IOException, EsvParseException {
@@ -330,7 +330,7 @@ public class Esv2Yaml {
             }
         }
 
-        boolean multiModule = module.getProject().getConfiguration().getProjects().stream().mapToInt(p -> p.getModules().size()).sum() > 1;
+        boolean multiModule = module.getProject().getGroup().getProjects().stream().mapToInt(p -> p.getModules().size()).sum() > 1;
         ModuleContext moduleContext = aggregate ? new AggregatedModuleContext(module, src.toPath(), multiModule) :
                 new LegacyModuleContext(module, src.toPath(), multiModule);
         moduleContext.createOutputProviders(target.toPath());

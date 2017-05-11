@@ -15,7 +15,7 @@
  */
 package org.onehippo.cm.impl.model;
 
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.impl.model.builder.OrderableListSorter;
 
@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class ConfigurationImpl implements Configuration {
+public class GroupImpl implements Group {
 
     private static final OrderableListSorter<ProjectImpl> projectsSorter = new OrderableListSorter<>(Project.class.getSimpleName());
 
@@ -41,7 +41,7 @@ public class ConfigurationImpl implements Configuration {
     private final List<Project> projects = Collections.unmodifiableList(modifiableProjects);
     private final Map<String, ProjectImpl> projectMap = new HashMap<>();
 
-    public ConfigurationImpl(final String name) {
+    public GroupImpl(final String name) {
         if (name == null) {
             throw new IllegalArgumentException("Parameter 'name' cannot be null");
         }
@@ -58,7 +58,7 @@ public class ConfigurationImpl implements Configuration {
         return after;
     }
 
-    public ConfigurationImpl addAfter(final Set<String> after) {
+    public GroupImpl addAfter(final Set<String> after) {
         modifiableAfter.addAll(after);
         return this;
     }
@@ -96,8 +96,8 @@ public class ConfigurationImpl implements Configuration {
         if (this == other) {
             return true;
         }
-        if (other instanceof Configuration) {
-            return this.getName().equals(((Configuration)other).getName());
+        if (other instanceof Group) {
+            return this.getName().equals(((Group)other).getName());
         }
         return false;
     }
@@ -110,7 +110,7 @@ public class ConfigurationImpl implements Configuration {
 
     @Override
     public String toString() {
-        return "ConfigurationImpl{" +
+        return "GroupImpl{" +
                 "name='" + name + '\'' +
                 '}';
     }

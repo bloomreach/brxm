@@ -22,21 +22,21 @@ public interface ConfigurationBaselineService {
 
     /**
      * Store a merged configuration model as a baseline configuration in the JCR.
-     * The provided MergedModel is assumed to be fully formed and validated.
+     * The provided ConfigurationModel is assumed to be fully formed and validated.
      * @param model the configuration model to store as the new baseline
      */
-    void storeBaseline(final MergedModel model) throws Exception;
+    void storeBaseline(final ConfigurationModel model) throws Exception;
 
     /**
-     * Load a (partial) MergedModel from the stored configuration baseline in the JCR. This model will not contain
+     * Load a (partial) ConfigurationModel from the stored configuration baseline in the JCR. This model will not contain
      * content definitions, which are not stored in the baseline.
      * @throws Exception
      */
-    MergedModel loadBaseline() throws Exception;
+    ConfigurationModel loadBaseline() throws Exception;
 
     /**
-     * Compare a MergedModel against the baseline by comparing manifests produced by model.compileManifest()
+     * Compare a ConfigurationModel against the baseline by comparing manifests produced by model.compileManifest()
      */
-    public boolean matchesBaselineManifest(MergedModel model) throws Exception;
+    public boolean matchesBaselineManifest(ConfigurationModel model) throws Exception;
 
 }

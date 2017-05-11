@@ -19,7 +19,7 @@ package org.onehippo.cm.impl.model;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
@@ -52,8 +52,8 @@ public class ModelTestUtils {
         public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
             final Module module = source.getModule();
             final Project project = module.getProject();
-            final Configuration configuration = project.getConfiguration();
-            final String content = configuration.getName() + "/" + project.getName() + "/" + module.getName() + "/"
+            final Group group = project.getGroup();
+            final String content = group.getName() + "/" + project.getName() + "/" + module.getName() + "/"
                     + source.getPath() + "/" + resourcePath;
             return IOUtils.toInputStream(content, StandardCharsets.UTF_8);
         }
@@ -81,7 +81,7 @@ public class ModelTestUtils {
     }
 
     private static ModuleImpl makeModule(final String moduleName) {
-        return new ConfigurationImpl("test-configuration").addProject("test-project").addModule(moduleName);
+        return new GroupImpl("test-configuration").addProject("test-project").addModule(moduleName);
     }
 
     public static List<Definition> parseNoSort(final String yaml) throws Exception {

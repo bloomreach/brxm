@@ -16,7 +16,7 @@
 package org.onehippo.cm.engine;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.engine.parser.ParserException;
@@ -42,15 +42,15 @@ public class ClasspathMergedModelReader {
 
     /**
      * Searches the classpath for module manifest files and uses these as entry points for loading HCM module
-     * configuration and content into a MergedModel.
+     * configuration and content into a ConfigurationModel.
      *
      * @param classLoader the ClassLoader which will be searched for HCM modules
      * @param verifyOnly TODO explain this
-     * @return a MergedModel of configuration and content definitions
+     * @return a ConfigurationModel of configuration and content definitions
      * @throws IOException
      * @throws ParserException
      */
-    public MergedModel read(final ClassLoader classLoader, final boolean verifyOnly)
+    public ConfigurationModel read(final ClassLoader classLoader, final boolean verifyOnly)
             throws IOException, ParserException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -63,8 +63,8 @@ public class ClasspathMergedModelReader {
             // using a non-exploded war based classloader might fail here, but that is (currently) not supported anyway
             Path jarPath = Paths.get(resource.getFile().substring("file:".length(), resource.getFile().lastIndexOf("!/")));
 
-            // FileSystems must remain open for the life of a MergedModel, and must be closed when processing is complete
-            // via MergedModel.close()!
+            // FileSystems must remain open for the life of a ConfigurationModel, and must be closed when processing is complete
+            // via ConfigurationModel.close()!
             FileSystem fs = FileSystems.newFileSystem(jarPath, null);
             builder.addFileSystem(fs);
 
@@ -81,10 +81,10 @@ public class ClasspathMergedModelReader {
 
             builder.push(result.getConfigurations(), configInputProviders);
         }
-        MergedModel model = builder.build();
+        ConfigurationModel model = builder.build();
 
         stopWatch.stop();
-        log.info("MergedModel loaded in {}", stopWatch.toString());
+        log.info("ConfigurationModel loaded in {}", stopWatch.toString());
 
         return model;
     }

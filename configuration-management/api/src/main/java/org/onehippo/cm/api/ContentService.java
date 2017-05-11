@@ -24,10 +24,11 @@ import java.util.EnumSet;
 public interface ContentService {
 
     /**
+     * TODO: This API signature and comment doesn't make sense in the context of applying only Content
      * Apply the whole or a part of a merged configuration model to the JCR as the new active configuration.
-     * @param mergedModel the configuration model to apply
+     * @param model the configuration model to apply
      * @param includeDefinitionTypes the set of definition types to apply -- may be a subset
      */
-    void apply(final MergedModel mergedModel, final EnumSet<DefinitionType> includeDefinitionTypes) throws Exception;
+    void apply(final ConfigurationModel model, final EnumSet<DefinitionType> includeDefinitionTypes) throws Exception;
 
 }

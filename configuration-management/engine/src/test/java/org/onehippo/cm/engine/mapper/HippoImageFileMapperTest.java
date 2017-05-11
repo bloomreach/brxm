@@ -23,7 +23,7 @@ import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.ConfigSourceImpl;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
@@ -81,7 +81,7 @@ public class HippoImageFileMapperTest {
     }
 
     private void setupNodesWithProperties() {
-        ConfigurationImpl configuration = new ConfigurationImpl("dummyConfiguration");
+        GroupImpl configuration = new GroupImpl("dummyConfiguration");
         ProjectImpl project = new ProjectImpl("dummyProject", configuration);
         ModuleImpl module = new ModuleImpl("dummyModule", project);
         SourceImpl source = new ConfigSourceImpl("somePath", module);

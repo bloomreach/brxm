@@ -19,8 +19,7 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.onehippo.cm.api.model.Configuration;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 import org.yaml.snakeyaml.nodes.Node;
@@ -39,10 +38,10 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         super(explicitSequencing);
     }
 
-    public Map<String, ConfigurationImpl> parse(final InputStream inputStream, final String location) throws ParserException {
+    public Map<String, GroupImpl> parse(final InputStream inputStream, final String location) throws ParserException {
         final Node node = composeYamlNode(inputStream, location);
 
-        final Map<String, ConfigurationImpl> result = new LinkedHashMap<>();
+        final Map<String, GroupImpl> result = new LinkedHashMap<>();
         final Map<String, Node> sourceMap = asMapping(node, new String[]{CONFIGURATIONS_KEY}, null);
 
         for (Node configurationNode : asSequence(sourceMap.get(CONFIGURATIONS_KEY))) {
@@ -52,10 +51,10 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         return result;
     }
 
-    private void constructConfiguration(final Node src, final Map<String, ConfigurationImpl> parent) throws ParserException {
+    private void constructConfiguration(final Node src, final Map<String, GroupImpl> parent) throws ParserException {
         final Map<String, Node> configurationMap = asMapping(src, new String[]{CONFIGURATION_KEY, PROJECTS_KEY}, new String[]{AFTER_KEY});
         final String name = asStringScalar(configurationMap.get(CONFIGURATION_KEY));
-        final ConfigurationImpl configuration = new ConfigurationImpl(name);
+        final GroupImpl configuration = new GroupImpl(name);
         configuration.addAfter(asSingleOrSetOfStrScalars(configurationMap.get(AFTER_KEY)));
         parent.put(name, configuration);
 
@@ -64,7 +63,7 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         }
     }
 
-    private void constructProject(final Node src, final ConfigurationImpl parent) throws ParserException {
+    private void constructProject(final Node src, final GroupImpl parent) throws ParserException {
         final Map<String, Node> sourceMap = asMapping(src, new String[]{PROJECT_KEY, MODULES_KEY}, new String[]{AFTER_KEY});
         final String name = asStringScalar(sourceMap.get(PROJECT_KEY));
         final ProjectImpl project = parent.addProject(name);

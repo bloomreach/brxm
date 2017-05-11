@@ -20,10 +20,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.jackrabbit.util.Text;
 import org.onehippo.cm.api.ConfigurationBaselineService;
-import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
@@ -37,7 +37,7 @@ import org.onehippo.cm.engine.BaselineResourceInputProvider;
 import org.onehippo.cm.engine.parser.ConfigSourceParser;
 import org.onehippo.cm.engine.parser.ParserException;
 import org.onehippo.cm.engine.parser.ModuleDescriptorParser;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 import org.onehippo.cm.impl.model.ContentSourceImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
@@ -108,10 +108,10 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
 
     /**
      * Store a merged configuration model as a baseline configuration in the JCR.
-     * The provided MergedModel is assumed to be fully formed and validated.
+     * The provided ConfigurationModel is assumed to be fully formed and validated.
      * @param model the configuration model to store as the new baseline
      */
-    public void storeBaseline(final MergedModel model) throws Exception {
+    public void storeBaseline(final ConfigurationModel model) throws Exception {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         try {
@@ -158,7 +158,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
 
                 // create group, project, and module nodes, if necessary
                 // foreach group
-                for (Configuration cfg : model.getSortedConfigurations()) {
+                for (Group cfg : model.getSortedGroups()) {
                     Node cfgNode = createNodeIfNecessary(baseline, cfg.getName(), GROUP_TYPE, true);
 
                     // foreach project
@@ -185,7 +185,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
                 session.save();
 
                 stopWatch.stop();
-                log.info("MergedModel stored as baseline configuration in {}", stopWatch.toString());
+                log.info("ConfigurationModel stored as baseline configuration in {}", stopWatch.toString());
             }
         }
         catch (Exception e) {
@@ -199,10 +199,10 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
      * managed in storeBaseline().
      * @param module the module to store
      * @param moduleNode the JCR node destination for the module
-     * @param model the full MergedModel of which the Module is a part
-     * @see #storeBaseline(MergedModel)
+     * @param model the full ConfigurationModel of which the Module is a part
+     * @see #storeBaseline(ConfigurationModel)
      */
-    protected void storeBaselineModule(Module module, Node moduleNode, MergedModel model) throws RepositoryException, IOException {
+    protected void storeBaselineModule(Module module, Node moduleNode, ConfigurationModel model) throws RepositoryException, IOException {
 
         // get the resource input provider, which provides access to raw data for module content
         ResourceInputProvider rip = model.getResourceInputProviders().get(module);
@@ -278,7 +278,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
      * @param source the Source to store
      * @param configRootNode the JCR node destination for the config Sources and resources
      * @param rip provides access to raw data streams
-     * @see #storeBaseline(MergedModel)
+     * @see #storeBaseline(ConfigurationModel)
      */
     protected void storeBaselineConfigSource(final Source source, final Node configRootNode, final ResourceInputProvider rip)
             throws RepositoryException, IOException {
@@ -524,16 +524,16 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
     }
 
     /**
-     * Load a (partial) MergedModel from the stored configuration baseline in the JCR. This model will not contain
+     * Load a (partial) ConfigurationModel from the stored configuration baseline in the JCR. This model will not contain
      * content definitions, which are not stored in the baseline.
      * @throws Exception
      */
-    public MergedModel loadBaseline() throws Exception {
+    public ConfigurationModel loadBaseline() throws Exception {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
         final Node rootNode = session.getRootNode();
-        MergedModel result;
+        ConfigurationModel result;
 
         // if the baseline node doesn't exist yet...
         if (!rootNode.hasNode(BASELINE_PATH)) {
@@ -545,7 +545,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
             final Node baselineNode = rootNode.getNode(BASELINE_PATH);
             final MergedModelBuilder builder = new MergedModelBuilder();
             final Map<Module, ResourceInputProvider> rips = new HashMap<>();
-            final List<ConfigurationImpl> groups = new ArrayList<>();
+            final List<GroupImpl> groups = new ArrayList<>();
 
             // First phase: load and parse module descriptors
             parseDescriptors(baselineNode, rips, groups);
@@ -554,7 +554,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
             parseSources(rips, groups);
 
             // build the final merged model
-            for (ConfigurationImpl group : groups) {
+            for (GroupImpl group : groups) {
                 builder.push(group);
             }
             builder.pushResourceInputProviders(rips);
@@ -562,7 +562,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
         }
 
         stopWatch.stop();
-        log.info("MergedModel loaded from baseline configuration in {}", stopWatch.toString());
+        log.info("ConfigurationModel loaded from baseline configuration in {}", stopWatch.toString());
 
         return result;
     }
@@ -576,10 +576,10 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
      * @throws ParserException
      */
     protected void parseDescriptors(final Node baselineNode, final Map<Module, ResourceInputProvider> rips,
-                                    final List<ConfigurationImpl> groups) throws RepositoryException, ParserException {
+                                    final List<GroupImpl> groups) throws RepositoryException, ParserException {
         // for each module node under this baseline
         for (Node moduleNode : findModuleNodes(baselineNode)) {
-            Map<String, ConfigurationImpl> moduleGroups;
+            Map<String, GroupImpl> moduleGroups;
             Module module;
 
             Node descriptorNode = moduleNode.getNode(MODULE_DESCRIPTOR_NODE);
@@ -600,7 +600,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
                         .findFirst().get();
 
                 log.debug("Building module from descriptor: {}/{}/{}",
-                        module.getProject().getConfiguration().getName(), module.getProject().getName(), module.getName());
+                        module.getProject().getGroup().getName(), module.getProject().getName(), module.getName());
             }
             else {
                 // otherwise, create "raw" group/project/module as necessary
@@ -608,8 +608,8 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
                 Node projectNode = moduleNode.getParent();
                 Node groupNode = projectNode.getParent();
                 final String groupName = Text.unescapeIllegalJcrChars(groupNode.getName());
-                ConfigurationImpl group =
-                        new ConfigurationImpl(groupName);
+                GroupImpl group =
+                        new GroupImpl(groupName);
                 ProjectImpl project =
                         group.addProject(Text.unescapeIllegalJcrChars(projectNode.getName()));
                 module =
@@ -645,10 +645,10 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
      * @throws IOException
      * @throws ParserException
      */
-    protected void parseSources(final Map<Module, ResourceInputProvider> rips, final List<ConfigurationImpl> groups)
+    protected void parseSources(final Map<Module, ResourceInputProvider> rips, final List<GroupImpl> groups)
             throws RepositoryException, IOException, ParserException {
         // for each group
-        for (Configuration group : groups) {
+        for (Group group : groups) {
             // for each project
             for (Project project : group.getProjects()) {
                 // for each module
@@ -752,9 +752,9 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
     }
 
     /**
-     * Compare a MergedModel against the baseline by comparing manifests produced by model.compileManifest()
+     * Compare a ConfigurationModel against the baseline by comparing manifests produced by model.compileManifest()
      */
-    public boolean matchesBaselineManifest(MergedModel model) throws Exception {
+    public boolean matchesBaselineManifest(ConfigurationModel model) throws Exception {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
@@ -782,13 +782,13 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
         }
 
         stopWatch.stop();
-        log.info("MergedModel compared against baseline configuration in {}", stopWatch.toString());
+        log.info("ConfigurationModel compared against baseline configuration in {}", stopWatch.toString());
 
         return result;
     }
 
     /**
-     * Helper method to compute a digest string from a MergedModel manifest.
+     * Helper method to compute a digest string from a ConfigurationModel manifest.
      * @param modelManifest the manifest whose digest we want to compute
      * @return a digest string comparable to the baseline digest string, or "" if none can be computed
      */

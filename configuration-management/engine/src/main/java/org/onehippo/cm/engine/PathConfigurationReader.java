@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.function.BiPredicate;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.engine.parser.ConfigSourceParser;
@@ -35,7 +35,7 @@ import org.onehippo.cm.engine.parser.ContentSourceParser;
 import org.onehippo.cm.engine.parser.ModuleDescriptorParser;
 import org.onehippo.cm.engine.parser.ParserException;
 import org.onehippo.cm.engine.parser.SourceParser;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
@@ -46,15 +46,15 @@ public class PathConfigurationReader {
     private final boolean explicitSequencing;
 
     public static class ReadResult {
-        private final Map<String, ConfigurationImpl> configurations;
+        private final Map<String, GroupImpl> configurations;
         private final Map<Module, ModuleContext> moduleContexts;
 
-        public ReadResult(Map<String, ConfigurationImpl> configurations, Map<Module, ModuleContext> moduleContexts) {
+        public ReadResult(Map<String, GroupImpl> configurations, Map<Module, ModuleContext> moduleContexts) {
             this.configurations = configurations;
             this.moduleContexts = moduleContexts;
         }
 
-        public Map<String, ConfigurationImpl> getConfigurations() {
+        public Map<String, GroupImpl> getConfigurations() {
             return configurations;
         }
 
@@ -77,7 +77,7 @@ public class PathConfigurationReader {
 
     /**
      * Read the module dependency data to extract the raw components of a configuration model.
-     * These raw portions of config will be assembled into a MergedModel later.
+     * These raw portions of config will be assembled into a ConfigurationModel later.
      * @param repoConfigPath
      * @param verifyOnly
      * @return
@@ -88,14 +88,14 @@ public class PathConfigurationReader {
         final InputStream repoConfigStream = repoConfigPath.toUri().toURL().openStream();
 
         final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
-        final Map<String, ConfigurationImpl> configurations =
+        final Map<String, GroupImpl> configurations =
                 moduleDescriptorParser.parse(repoConfigStream, repoConfigPath.toAbsolutePath().toString());
 
         final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(configurations);
         final Map<Module, ModuleContext> moduleContexts = new HashMap<>();
 
-        for (Configuration configuration : configurations.values()) {
-            for (Project project : configuration.getProjects()) {
+        for (Group group : configurations.values()) {
+            for (Project project : group.getProjects()) {
                 for (Module module : project.getModules()) {
 
                     final ModuleContext moduleContext = new ModuleContext(module, repoConfigPath, hasMultipleModules);

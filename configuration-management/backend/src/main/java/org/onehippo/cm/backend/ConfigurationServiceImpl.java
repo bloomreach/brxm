@@ -21,8 +21,8 @@ import java.util.EnumSet;
 import javax.jcr.Session;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ConfigurationService;
-import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.model.DefinitionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,19 +38,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public void apply(final MergedModel mergedModel, final EnumSet<DefinitionType> includeDefinitionTypes)
+    public void apply(final ConfigurationModel model, final EnumSet<DefinitionType> includeDefinitionTypes)
             throws Exception {
         try {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
 
             final ConfigurationPersistenceService service =
-                    new ConfigurationPersistenceService(session, mergedModel.getResourceInputProviders());
-            service.apply(mergedModel, includeDefinitionTypes);
+                    new ConfigurationPersistenceService(session, model.getResourceInputProviders());
+            service.apply(model, includeDefinitionTypes);
             session.save();
 
             stopWatch.stop();
-            log.info("MergedModel applied in {} for definitionTypes: {}", stopWatch.toString(), includeDefinitionTypes);
+            log.info("ConfigurationModel applied in {} for definitionTypes: {}", stopWatch.toString(), includeDefinitionTypes);
         }
         catch (Exception e) {
             log.warn("Failed to apply configuration", e);
