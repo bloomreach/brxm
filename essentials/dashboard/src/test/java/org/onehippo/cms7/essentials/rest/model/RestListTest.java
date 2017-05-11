@@ -16,9 +16,8 @@
 
 package org.onehippo.cms7.essentials.rest.model;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.junit.Test;
+import org.onehippo.cms7.essentials.WebUtils;
 import org.onehippo.cms7.essentials.dashboard.rest.KeyValueRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PostPayloadRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
@@ -27,9 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @version "$Id$"
- */
+
 public class RestListTest {
 
     private static Logger log = LoggerFactory.getLogger(RestListTest.class);
@@ -37,25 +34,21 @@ public class RestListTest {
     @Test
     public void testList() throws Exception {
 
-        final ObjectMapper mapper = new ObjectMapper();
 
         final RestfulList<KeyValueRestful> keyValue = new RestfulList<>();
         keyValue.add(new KeyValueRestful("test", "test"));
         keyValue.add(new KeyValueRestful("test1", "test1"));
-        String result = mapper.writeValueAsString(keyValue);
+        String result = WebUtils.toJson(keyValue);
         log.info("{}", result);
-        @SuppressWarnings("unchecked")
-        final RestfulList<KeyValueRestful> myList = mapper.readValue(result, new TypeReference<RestfulList<KeyValueRestful>>() {
-        });
+        @SuppressWarnings("unchecked") final RestfulList<KeyValueRestful> myList = WebUtils.fromJson(result, RestfulList.class);
         assertEquals(2, myList.getItems().size());
         //mix of implementations:
         final RestList<KeyValueRestful> listKeyValue = new RestList<>();
         listKeyValue.add(new KeyValueRestful("test", "test"));
         listKeyValue.add(new KeyValueRestful("test2", "test2"));
-        result = mapper.writeValueAsString(keyValue);
+        result = WebUtils.toJson(keyValue);
         log.info("{}", result);
-        final RestfulList<KeyValueRestful> List = mapper.readValue(result, new TypeReference<RestfulList<KeyValueRestful>>() {
-        });
+        final RestfulList<KeyValueRestful> List = WebUtils.fromJson(result, RestfulList.class);
         assertEquals(2, List.getItems().size());
         // payload
         RestfulList<PostPayloadRestful> payloadList = new RestfulList<>();
@@ -63,10 +56,9 @@ public class RestListTest {
         payloadList.add(resource);
         resource.add("test", "test");
         resource.add("test1", "test1");
-        result = mapper.writeValueAsString(payloadList);
+        result = WebUtils.toJson(payloadList);
         log.info("result {}", result);
-        payloadList = mapper.readValue(result, new TypeReference<RestfulList<PostPayloadRestful>>() {
-        });
+        payloadList = WebUtils.fromJson(result, RestfulList.class);
 
         assertEquals(1, payloadList.getItems().size());
         PostPayloadRestful postPayloadRestful = payloadList.getItems().get(0);
@@ -75,15 +67,14 @@ public class RestListTest {
                 "\"@type\":\"payload\"," +
                 "\"values\":{" +
                 "\"path\":\"/hippo:namespaces/hippostd/html/editor:templates/_default_/root\",\"property\":\"Xinha.config.toolbar\"}}]}";
-        payloadList = mapper.readValue(result, new TypeReference<RestfulList<PostPayloadRestful>>() {
-        });
+        payloadList = WebUtils.fromJson(result, RestfulList.class);
         assertEquals(1, payloadList.getItems().size());
         postPayloadRestful = payloadList.getItems().get(0);
         assertEquals(2, postPayloadRestful.getValues().size());
         // test payload:
         postPayloadRestful = new PostPayloadRestful();
         postPayloadRestful.add("testKey", "testValue");
-        result = mapper.writeValueAsString(postPayloadRestful);
+        result = WebUtils.toJson(postPayloadRestful);
         log.info("postPayloadRestful {}", result);
     }
 

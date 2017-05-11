@@ -18,15 +18,11 @@ package org.onehippo.cms7.essentials.plugin;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
@@ -34,20 +30,12 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.servlet.ServletContext;
 import javax.ws.rs.ext.RuntimeDelegate;
-
-
-import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-
-import org.codehaus.jackson.map.ObjectMapper;
+import org.onehippo.cms7.essentials.WebUtils;
 import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
@@ -57,7 +45,6 @@ import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptor;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
 import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
@@ -71,9 +58,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.ContextLoader;
 
+import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 /**
-* Created by tjeger on 10/11/14.
-*/
+ * Created by tjeger on 10/11/14.
+ */
 @Component
 @Singleton
 public class PluginStore {
@@ -81,7 +73,8 @@ public class PluginStore {
     private static Logger log = LoggerFactory.getLogger(PluginStore.class);
     private DynamicRestPointsApplication application = new DynamicRestPointsApplication();
 
-    @Inject private RebuildProjectEventListener rebuildListener;
+    @Inject
+    private RebuildProjectEventListener rebuildListener;
 
     /**
      * Plugin cache to avoid remote calls, loads from following protocols:
@@ -245,13 +238,11 @@ public class PluginStore {
         return parsePlugins(json).getItems();
     }
 
+    @SuppressWarnings("unchecked")
     private RestfulList<PluginDescriptorRestful> parsePlugins(final String jsonString) {
         if (!Strings.isNullOrEmpty(jsonString)) {
-            final ObjectMapper mapper = new ObjectMapper();
             try {
-                @SuppressWarnings("unchecked")
-                final RestfulList<PluginDescriptorRestful> restfulList = mapper.readValue(jsonString, RestfulList.class);
-                return restfulList;
+                return WebUtils.fromJson(jsonString, RestfulList.class);
             } catch (Exception e) {
                 log.error("Error parsing plugins", e);
             }
@@ -267,9 +258,8 @@ public class PluginStore {
 
             final InstallState state = plugin.getInstallState();
             if (state == InstallState.ONBOARD
-             || state == InstallState.INSTALLING
-             || state == InstallState.INSTALLED)
-            {
+                    || state == InstallState.INSTALLING
+                    || state == InstallState.INSTALLED) {
                 final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
                 descriptor.setHasConfiguration(params.hasConfiguration());
             }

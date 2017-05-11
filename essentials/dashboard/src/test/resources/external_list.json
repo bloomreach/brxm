@@ -1,0 +1,128 @@
+{
+  "items": [
+    {
+      "@type": "plugin",
+      "id": "testWebDevelopmentPlugin",
+      "name": "test: 2 - Web Development Module",
+      "icon": "http://www.onehippo.org/binaries/content/gallery/test/test-feature.png",
+      "introduction": "Test of the Module \"Web Development\" will install this feature. Example artifacts are installed in the project that are necessary to do the exercises.",
+      "packageFile": "/META-INF/test_web_development_instructions.xml",
+      "parameterServiceClass": "org.onehippo.cms7.test.essentials.webdevelopment.WebdevelopmentParameterService",
+      "restClasses": [],
+      "type": "feature",
+      "vendor": {
+        "@type": "vendor",
+        "name": "Hippo",
+        "url": "http://www.onehippo.com"
+      },
+      "libraries": [
+        {
+          "items": []
+        }
+      ],
+      "dependencies": [
+        {
+          "@type": "dependency",
+          "groupId": "org.onehippo.cms7.test.essentials",
+          "artifactId": "webdevelopment-feature",
+          "scope": "compile",
+          "targetPom": "essentials",
+          "version": "3.0.5"
+        }
+      ]
+    },
+    {
+      "@type": "plugin",
+      "id": "testNewContentSectionPlugin",
+      "name": "test: 4 - Add a new Content Section Module",
+      "icon": "http://www.onehippo.org/binaries/content/gallery/test/test-feature.png",
+      "introduction": "Test of the Module \"Add a new Content Section\" will install this feature during the test.",
+      "packageFile": "/META-INF/test_new_content_section_instructions.xml",
+      "parameterServiceClass": "org.onehippo.cms7.test.essentials.addNewContentFeature.NewContentSectionParameterService",
+      "restClasses": [],
+      "type": "feature",
+      "vendor": {
+        "@type": "vendor",
+        "name": "Hippo",
+        "url": "http://www.onehippo.com"
+      },
+      "libraries": [
+        {
+          "items": []
+        }
+      ],
+      "dependencies": [
+        {
+          "@type": "dependency",
+          "groupId": "org.onehippo.cms7.test.essentials",
+          "artifactId": "new-content-section-feature",
+          "scope": "compile",
+          "targetPom": "essentials",
+          "version": "3.0.5"
+        }
+      ]
+    },
+    {
+      "@type": "plugin",
+      "id": "testHstJavaComponentsPlugin",
+      "name": "test: 5 - HST Java Components Module",
+      "icon": "http://www.onehippo.org/binaries/content/gallery/test/test-feature.png",
+      "introduction": "Test of the Module \"HST Java Components\" will install this feature. Example content and artifacts are installed in the project that are necessary to do the exercises.",
+      "packageFile": "/META-INF/test_hst_java_components_instructions.xml",
+      "parameterServiceClass": "org.onehippo.cms7.test.essentials.hstJavaComponentsFeature.HstJavaComponentsParameterService",
+      "restClasses": [],
+      "type": "feature",
+      "vendor": {
+        "@type": "vendor",
+        "name": "Hippo",
+        "url": "http://www.onehippo.com"
+      },
+      "libraries": [
+        {
+          "items": []
+        }
+      ],
+      "dependencies": [
+        {
+          "@type": "dependency",
+          "groupId": "org.onehippo.cms7.test.essentials",
+          "artifactId": "hst-javacomponents-feature",
+          "scope": "compile",
+          "targetPom": "essentials",
+          "version": "3.0.5"
+        }
+      ]
+    },
+    {
+      "@type": "plugin",
+      "id": "testNewChannelContentPlugin",
+      "name": "test: 6 - Add a new Channel Module",
+      "icon": "http://www.onehippo.org/binaries/content/gallery/test/test-feature.png",
+      "introduction": "Test of the Module \"Develop Standard Features\" will install this feature during the test.",
+      "packageFile": "/META-INF/test_new_channel_content_instructions.xml",
+      "parameterServiceClass": "org.onehippo.cms7.test.essentials.newchannelcontent.NewChannelContentParameterService",
+      "restClasses": [],
+      "type": "feature",
+      "vendor": {
+        "@type": "vendor",
+        "name": "Hippo",
+        "url": "http://www.onehippo.com"
+      },
+      "libraries": [
+        {
+          "items": []
+        }
+      ],
+      "dependencies": [
+        {
+          "@type": "dependency",
+          "groupId": "org.onehippo.cms7.test.essentials",
+          "artifactId": "new-channel-content-feature",
+          "scope": "compile",
+          "targetPom": "essentials",
+          "version": "3.0.5"
+        }
+      ]
+    }
+  ]
+}

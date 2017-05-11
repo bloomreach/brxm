@@ -15,13 +15,17 @@
  */
 package org.onehippo.cms7.essentials;
 
+import java.io.InputStream;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
+import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 public class WebUtilsTest {
     private static final Logger log = LoggerFactory.getLogger(WebUtilsTest.class);
     public static final String PLUGIN = "{\n" +
@@ -66,10 +70,11 @@ public class WebUtilsTest {
             "    }\n" +
             "  ]\n" +
             "}\n";
+
     @Test
     public void jsonTest() throws Exception {
-         PluginDescriptorRestful descriptorRestful = WebUtils.fromJson(PLUGIN, PluginDescriptorRestful.class);
-        assertNotNull("Expected object but found null",descriptorRestful);
+        PluginDescriptorRestful descriptorRestful = WebUtils.fromJson(PLUGIN, PluginDescriptorRestful.class);
+        assertNotNull("Expected object but found null", descriptorRestful);
         assertEquals("documentWizardPlugin", descriptorRestful.getId());
         final String result = WebUtils.toJson(descriptorRestful);
         descriptorRestful = WebUtils.fromJson(result, PluginDescriptorRestful.class);
@@ -77,6 +82,19 @@ public class WebUtilsTest {
         assertEquals("documentWizardPlugin", descriptorRestful.getId());
     }
 
-  
+    @Test
+    public void externalListLoading() throws Exception {
+        final InputStream stream = getClass().getResourceAsStream("/external_list.json");
+        final String jsonString = GlobalUtils.readStreamAsText(stream);
+
+        try {
+            @SuppressWarnings("unchecked") final RestfulList<PluginDescriptorRestful> restfulList = WebUtils.fromJson(jsonString, RestfulList.class);
+            assertNotNull(restfulList);
+            assertEquals(restfulList.getItems().size(), 4);
+        } catch (Exception e) {
+            log.error("Error parsing plugins", e);
+        }
+    }
+
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,16 @@ package org.onehippo.cms7.essentials.rest.model;
 
 import java.util.Calendar;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
-import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicy;
-import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicyRestful;
-import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
+import org.onehippo.cms7.essentials.WebUtils;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
+import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicy;
+import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicyRestful;
 import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Snapshot;
 import org.onehippo.cms7.essentials.dashboard.model.SnapshotRestful;
+import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
 import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
 import org.onehippo.cms7.essentials.dashboard.rest.PluginModuleRestful;
@@ -36,9 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @version "$Id$"
- */
 public class PluginDescriptorRestfulTest {
 
     private static Logger log = LoggerFactory.getLogger(PluginDescriptorRestfulTest.class);
@@ -74,11 +71,11 @@ public class PluginDescriptorRestfulTest {
         value.addRepository(repository);
 
         // test json:
-        final ObjectMapper mapper = new ObjectMapper();
-        final String json = mapper.writeValueAsString(value);
+
+        final String json = WebUtils.toJson(value);
         log.info("value {}", value);
         log.info("json {}", json);
-        final PluginDescriptorRestful fromJson = value = mapper.readValue(json, PluginDescriptorRestful.class);
+        final PluginDescriptorRestful fromJson = value = WebUtils.fromJson(json, PluginDescriptorRestful.class);
         log.info("fromJson {}", fromJson);
         assertEquals(2, fromJson.getRestClasses().size());
         assertEquals(today.getTime(), fromJson.getDateInstalled().getTime());
