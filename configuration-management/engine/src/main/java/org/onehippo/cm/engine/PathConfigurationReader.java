@@ -71,25 +71,25 @@ public class PathConfigurationReader {
         this.explicitSequencing = explicitSequencing;
     }
 
-    public ReadResult read(final Path repoConfigPath) throws IOException, ParserException {
-        return read(repoConfigPath, false);
+    public ReadResult read(final Path moduleDescriptorPath) throws IOException, ParserException {
+        return read(moduleDescriptorPath, false);
     }
 
     /**
      * Read the module dependency data to extract the raw components of a configuration model.
      * These raw portions of config will be assembled into a ConfigurationModel later.
-     * @param repoConfigPath
+     * @param moduleDescriptorPath
      * @param verifyOnly
      * @return
      * @throws IOException
      * @throws ParserException
      */
-    public ReadResult read(final Path repoConfigPath, final boolean verifyOnly) throws IOException, ParserException {
-        final InputStream repoConfigStream = repoConfigPath.toUri().toURL().openStream();
+    public ReadResult read(final Path moduleDescriptorPath, final boolean verifyOnly) throws IOException, ParserException {
+        final InputStream moduleDescriptorInputStream = moduleDescriptorPath.toUri().toURL().openStream();
 
         final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
         final Map<String, GroupImpl> configurations =
-                moduleDescriptorParser.parse(repoConfigStream, repoConfigPath.toAbsolutePath().toString());
+                moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
 
         final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(configurations);
         final Map<Module, ModuleContext> moduleContexts = new HashMap<>();
@@ -98,7 +98,7 @@ public class PathConfigurationReader {
             for (Project project : group.getProjects()) {
                 for (Module module : project.getModules()) {
 
-                    final ModuleContext moduleContext = new ModuleContext(module, repoConfigPath, hasMultipleModules);
+                    final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath, hasMultipleModules);
                     moduleContexts.put(module, moduleContext);
 
                     final Path configRootPath = moduleContext.getConfigRoot();

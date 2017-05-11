@@ -40,7 +40,7 @@ public class ModuleContext {
 
     protected final Module module;
     protected final boolean multiModule;
-    private final Path repoConfigPath;
+    private final Path moduleDescriptorPath;
 
     private Path moduleConfigRootPath;
     private Path moduleContentRootPath;
@@ -49,22 +49,22 @@ public class ModuleContext {
     private ResourceNameResolver contentNameResolver = new ResourceNameResolverImpl();
 
 
-    public ModuleContext(Module module, Path repoConfigPath, boolean multiModule) throws IOException {
+    public ModuleContext(Module module, Path moduleDescriptorPath, boolean multiModule) throws IOException {
         this.module = module;
-        this.repoConfigPath = repoConfigPath;
+        this.moduleDescriptorPath = moduleDescriptorPath;
         this.multiModule = multiModule;
     }
 
     public Path getConfigRoot() {
         if (moduleConfigRootPath == null) {
-            moduleConfigRootPath = FileConfigurationUtils.getModuleBasePath(repoConfigPath, module, multiModule);
+            moduleConfigRootPath = FileConfigurationUtils.getModuleBasePath(moduleDescriptorPath, module, multiModule);
         }
         return moduleConfigRootPath;
     }
 
     public Path getContentRoot() {
         if (moduleContentRootPath == null) {
-            moduleContentRootPath = FileConfigurationUtils.getModuleContentBasePath(repoConfigPath, module, multiModule);
+            moduleContentRootPath = FileConfigurationUtils.getModuleContentBasePath(moduleDescriptorPath, module, multiModule);
         }
         return moduleContentRootPath;
     }

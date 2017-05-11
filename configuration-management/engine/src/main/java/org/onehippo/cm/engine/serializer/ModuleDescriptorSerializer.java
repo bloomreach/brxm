@@ -43,28 +43,28 @@ import static org.onehippo.cm.engine.Constants.PROJECTS_KEY;
 import static org.onehippo.cm.engine.Constants.PROJECT_KEY;
 
 
-public class RepoConfigSerializer extends AbstractBaseSerializer {
+public class ModuleDescriptorSerializer extends AbstractBaseSerializer {
 
-    public RepoConfigSerializer(final boolean explicitSequencing) {
+    public ModuleDescriptorSerializer(final boolean explicitSequencing) {
         super(explicitSequencing);
     }
 
-    public void serialize(final OutputStream outputStream, final Map<String, GroupImpl> configurations) throws IOException {
-        final Node node = representRepoConfig(configurations);
+    public void serialize(final OutputStream outputStream, final Map<String, GroupImpl> groups) throws IOException {
+        final Node node = representGroups(groups);
         serializeNode(outputStream, node);
     }
 
-    private Node representRepoConfig(final Map<String, GroupImpl> configurations) {
+    private Node representGroups(final Map<String, GroupImpl> groups) {
         final List<NodeTuple> rootTuples = new ArrayList<>();
 
-        final List<Node> configurationNodes = configurations.values().stream().map(this::representConfiguration)
+        final List<Node> configurationNodes = groups.values().stream().map(this::representGroup)
                 .collect(Collectors.toList());
         rootTuples.add(createStrSeqTuple(GROUPS_KEY, configurationNodes));
 
         return new MappingNode(Tag.MAP, rootTuples, false);
     }
 
-    private Node representConfiguration(final Group group) {
+    private Node representGroup(final Group group) {
         final List<NodeTuple> tuples = new ArrayList<>();
         tuples.addAll(representOrderable(group, GROUP_KEY));
 

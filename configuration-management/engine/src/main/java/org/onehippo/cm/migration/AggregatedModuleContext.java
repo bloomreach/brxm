@@ -25,8 +25,8 @@ import org.onehippo.cm.engine.FileResourceOutputProvider;
  * Aggregated modules support
  */
 public class AggregatedModuleContext extends LegacyModuleContext {
-    public AggregatedModuleContext(Module module, Path repoConfigPath, boolean multiModule) throws IOException {
-        super(module, repoConfigPath, multiModule);
+    public AggregatedModuleContext(Module module, Path moduleDescriptorPath, boolean multiModule) throws IOException {
+        super(module, moduleDescriptorPath, multiModule);
     }
 
     @Override

@@ -29,10 +29,10 @@ import org.onehippo.cm.engine.ModuleContext;
  */
 public class LegacyModuleContext extends ModuleContext {
 
-    LegacyModuleContext(Module module, Path repoConfigPath, boolean multiModule) throws IOException {
+    LegacyModuleContext(Module module, Path moduleDescriptorPath, boolean multiModule) throws IOException {
 
-        super(module, repoConfigPath, multiModule);
-        this.configInputProvider = this.contentInputProvider = new FileResourceInputProvider(repoConfigPath);
+        super(module, moduleDescriptorPath, multiModule);
+        this.configInputProvider = this.contentInputProvider = new FileResourceInputProvider(moduleDescriptorPath);
     }
 
     @Override

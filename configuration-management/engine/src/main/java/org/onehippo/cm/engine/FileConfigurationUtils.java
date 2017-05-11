@@ -31,38 +31,38 @@ import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
 
 public class FileConfigurationUtils {
 
-    public static Path getModuleBasePath(final Path repoConfigFilePath, final Module module, final boolean configHasMultipleModules) {
+    public static Path getModuleBasePath(final Path moduleDescriptorPath, final Module module, final boolean configHasMultipleModules) {
         final Project project = module.getProject();
         final Group group = project.getGroup();
         //TODO SS: review this if it still needed for initial esv conversion
-        if (Files.isDirectory(repoConfigFilePath)) {
+        if (Files.isDirectory(moduleDescriptorPath)) {
             if (configHasMultipleModules) {
-                return repoConfigFilePath.resolve(HCM_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
+                return moduleDescriptorPath.resolve(HCM_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
             } else {
-                return repoConfigFilePath.resolve(HCM_CONFIG_FOLDER);
+                return moduleDescriptorPath.resolve(HCM_CONFIG_FOLDER);
             }
         }
         if (configHasMultipleModules) {
-            return repoConfigFilePath.resolveSibling(HCM_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
+            return moduleDescriptorPath.resolveSibling(HCM_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
         } else {
-            return repoConfigFilePath.resolveSibling(HCM_CONFIG_FOLDER);
+            return moduleDescriptorPath.resolveSibling(HCM_CONFIG_FOLDER);
         }
     }
 
-    public static Path getModuleContentBasePath(final Path repoConfigPath, final Module module, final boolean configHasMultipleModules) {
+    public static Path getModuleContentBasePath(final Path moduleDescriptorPath, final Module module, final boolean configHasMultipleModules) {
         final Project project = module.getProject();
         final Group group = project.getGroup();
-        if (Files.isDirectory(repoConfigPath)) {
+        if (Files.isDirectory(moduleDescriptorPath)) {
             if (configHasMultipleModules) {
-                return repoConfigPath.resolve(HCM_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
+                return moduleDescriptorPath.resolve(HCM_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
             } else {
-                return repoConfigPath.resolve(HCM_CONTENT_FOLDER);
+                return moduleDescriptorPath.resolve(HCM_CONTENT_FOLDER);
             }
         }
         if (configHasMultipleModules) {
-            return repoConfigPath.resolveSibling(HCM_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
+            return moduleDescriptorPath.resolveSibling(HCM_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
         } else {
-            return repoConfigPath.resolveSibling(HCM_CONTENT_FOLDER);
+            return moduleDescriptorPath.resolveSibling(HCM_CONTENT_FOLDER);
         }
     }
 

@@ -31,7 +31,7 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.engine.serializer.ContentSourceSerializer;
-import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
+import org.onehippo.cm.engine.serializer.ModuleDescriptorSerializer;
 import org.onehippo.cm.engine.serializer.SourceSerializer;
 import org.onehippo.cm.impl.model.ConfigSourceImpl;
 import org.onehippo.cm.impl.model.GroupImpl;
@@ -43,18 +43,18 @@ public class FileConfigurationWriter {
                final Map<String, GroupImpl> configurations,
                final Map<Module, ModuleContext> moduleContextMap,
                final boolean explicitSequencing) throws IOException {
-        final RepoConfigSerializer repoConfigSerializer = new RepoConfigSerializer(explicitSequencing);
-        final Path repoConfigPath = destination.resolve(Constants.HCM_MODULE_YAML);
+        final ModuleDescriptorSerializer moduleDescriptorSerializer = new ModuleDescriptorSerializer(explicitSequencing);
+        final Path moduleDescriptorPath = destination.resolve(Constants.HCM_MODULE_YAML);
 
-        try (final OutputStream repoConfigOutputStream = new FileOutputStream(repoConfigPath.toFile())) {
-            repoConfigSerializer.serialize(repoConfigOutputStream, configurations);
+        try (final OutputStream moduleDescriptorOutputStream = new FileOutputStream(moduleDescriptorPath.toFile())) {
+            moduleDescriptorSerializer.serialize(moduleDescriptorOutputStream, configurations);
         }
 
         for (GroupImpl configuration : configurations.values()) {
             for (Project project : configuration.getProjects()) {
                 for (Module module : project.getModules()) {
                     final ModuleContext moduleContext = moduleContextMap.get(module);
-                    moduleContext.createOutputProviders(repoConfigPath);
+                    moduleContext.createOutputProviders(moduleDescriptorPath);
                     writeModule(module, explicitSequencing, moduleContext);
                 }
             }

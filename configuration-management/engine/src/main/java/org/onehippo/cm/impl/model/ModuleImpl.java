@@ -52,7 +52,7 @@ import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
+import org.onehippo.cm.engine.serializer.ModuleDescriptorSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -438,7 +438,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
      */
     public String compileDummyDescriptor() {
         // serialize a dummy module descriptor for this module
-        final RepoConfigSerializer repoConfigSerializer = new RepoConfigSerializer(DEFAULT_EXPLICIT_SEQUENCING);
+        final ModuleDescriptorSerializer moduleDescriptorSerializer = new ModuleDescriptorSerializer(DEFAULT_EXPLICIT_SEQUENCING);
 
         // create a dummy group->project->module setup with just the data relevant to this Module
         GroupImpl group = new GroupImpl(getProject().getGroup().getName());
@@ -457,7 +457,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
         // serialize that dummy group
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            repoConfigSerializer.serialize(baos, groups);
+            moduleDescriptorSerializer.serialize(baos, groups);
             return baos.toString(StandardCharsets.UTF_8.name());
         }
         catch (IOException e) {

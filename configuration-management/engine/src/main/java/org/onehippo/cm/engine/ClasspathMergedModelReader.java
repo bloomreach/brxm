@@ -68,9 +68,9 @@ public class ClasspathMergedModelReader {
             FileSystem fs = FileSystems.newFileSystem(jarPath, null);
             builder.addFileSystem(fs);
 
-            final Path repoConfig = fs.getPath(HCM_MODULE_YAML);
+            final Path moduleDescriptorPath = fs.getPath(HCM_MODULE_YAML);
             final PathConfigurationReader.ReadResult result =
-                    new PathConfigurationReader().read(repoConfig, verifyOnly);
+                    new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
             Map<Module, ModuleContext> moduleContexts = result.getModuleContexts();
             Map<Module, ResourceInputProvider> configInputProviders = moduleContexts.entrySet().stream() //TODO SS: review this transformation
                     .collect(toMap(Map.Entry::getKey, v -> v.getValue().getConfigInputProvider()));

@@ -31,8 +31,8 @@ public class ConfigurationVerifier {
                     "<hcm-module.yaml>: hcm-module.yaml location");
             return;
         }
-        final Path repoConfig = Paths.get(args[0]);
-        final PathConfigurationReader.ReadResult result = new PathConfigurationReader().read(repoConfig, true);
+        final Path moduleDescriptorPath = Paths.get(args[0]);
+        final PathConfigurationReader.ReadResult result = new PathConfigurationReader().read(moduleDescriptorPath, true);
         final Map<String, GroupImpl> configurations = result.getConfigurations();
         MergedModelBuilder builder = new MergedModelBuilder();
         for (GroupImpl config : configurations.values()) {
