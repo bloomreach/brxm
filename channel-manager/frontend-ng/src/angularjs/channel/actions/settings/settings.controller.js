@@ -63,7 +63,7 @@ class ChannelSettingsCtrl {
   }
 
   isReadOnly() {
-    return this.isLockedByOther();
+    return this.isLockedByOther() || !this.isEditable();
   }
 
   isSaveDisabled() {
