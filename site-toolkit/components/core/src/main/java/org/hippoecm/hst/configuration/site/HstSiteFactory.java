@@ -96,7 +96,7 @@ public class HstSiteFactory {
             log.info("Found branch '{}' for configuration '{}'. Loading branch.", branchNode.getName(), branchOf);
             try {
                 final HstSite branch = new HstSiteService(site, mount, mountSiteMapConfiguration,
-                        hstNodeLoadingCache, branchNode.getValueProvider().getPath(), master.getChannel());
+                        hstNodeLoadingCache, branchNode.getValueProvider().getPath(), isPreviewSite,  master.getChannel());
                 branches.put(branch.getChannel().getBranchId(), branch);
             } catch (ModelLoadingException e) {
                 log.error("Could not load branch '{}'. Skip that branch.", branchNode.getName(), e);

@@ -88,6 +88,7 @@ public class HstSiteService implements HstSite {
     public HstSiteService(final HstNode site, final Mount mount, final MountSiteMapConfiguration mountSiteMapConfiguration,
                           final HstNodeLoadingCache hstNodeLoadingCache,
                           final String configurationPath,
+                          final boolean isPreviewSite,
                           final Channel master) {
         hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
         configLoadingCache = HstServices.getComponentManager().getComponent(HstConfigurationLoadingCache.class.getName());
@@ -97,10 +98,9 @@ public class HstSiteService implements HstSite {
         this.configurationPath = configurationPath;
         if (configurationPath.endsWith("-preview")) {
             hasPreviewConfiguration = true;
-            init(site, mount, true, hstNodeLoadingCache, master);
-        } else {
-            init(site, mount, false, hstNodeLoadingCache, master);
         }
+
+        init(site, mount, isPreviewSite, hstNodeLoadingCache, master);
     }
 
     private void findAndSetConfigurationPath(final HstNode site,
@@ -201,8 +201,8 @@ public class HstSiteService implements HstSite {
             }
             ch.setUrl(url.toString());
 
-
             if (isPreviewSite) {
+                ch.setPreview(true);
                 ch.setChangedBySet(new ChannelLazyLoadingChangedBySet(site, this, ch, hstNodeLoadingCache));
             }
         }
