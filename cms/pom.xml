@@ -112,7 +112,7 @@
     <jetty.version>6.1.22</jetty.version>
 
     <xerces.version>2.8.1</xerces.version>
-    <wicket.version>6.19.0</wicket.version>
+    <wicket.version>6.26.0</wicket.version>
     <wicket-extjs.version>0.25.3</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <httpclient.version>4.5.2</httpclient.version>
@@ -241,6 +241,12 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-engine</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-modules</artifactId>
         <version>${hippo.repository.version}</version>
         <scope>test</scope>
@@ -248,12 +254,6 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-config</artifactId>
-        <version>${hippo.repository.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-engine</artifactId>
         <version>${hippo.repository.version}</version>
         <scope>test</scope>
       </dependency>
