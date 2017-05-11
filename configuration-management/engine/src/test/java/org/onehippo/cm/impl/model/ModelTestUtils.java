@@ -81,7 +81,7 @@ public class ModelTestUtils {
     }
 
     private static ModuleImpl makeModule(final String moduleName) {
-        return new GroupImpl("test-configuration").addProject("test-project").addModule(moduleName);
+        return new GroupImpl("test-group").addProject("test-project").addModule(moduleName);
     }
 
     public static List<Definition> parseNoSort(final String yaml) throws Exception {

@@ -34,7 +34,7 @@ public class ProjectImpl implements Project {
     private static final OrderableListSorter<ModuleImpl> modulesSorter = new OrderableListSorter<>(Module.class.getSimpleName());
 
     private final String name;
-    private final GroupImpl configuration;
+    private final GroupImpl group;
 
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
@@ -43,16 +43,16 @@ public class ProjectImpl implements Project {
     private final List<Module> modules = Collections.unmodifiableList(modifiableModules);
     private final Map<String, ModuleImpl> moduleMap = new HashMap<>();
 
-    public ProjectImpl(final String name, final GroupImpl configuration) {
+    public ProjectImpl(final String name, final GroupImpl group) {
         if (name == null) {
             throw new IllegalArgumentException("Parameter 'name' cannot be null");
         }
         this.name = name;
 
-        if (configuration == null) {
-            throw new IllegalArgumentException("Parameter 'configuration' cannot be null");
+        if (group == null) {
+            throw new IllegalArgumentException("Parameter 'group' cannot be null");
         }
-        this.configuration = configuration;
+        this.group = group;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ProjectImpl implements Project {
 
     @Override
     public Group getGroup() {
-        return configuration;
+        return group;
     }
 
     @Override
@@ -125,6 +125,6 @@ public class ProjectImpl implements Project {
     // hashCode() and equals() should be consistent!
     @Override
     public int hashCode() {
-        return Objects.hash(name, configuration);
+        return Objects.hash(name, group);
     }
 }

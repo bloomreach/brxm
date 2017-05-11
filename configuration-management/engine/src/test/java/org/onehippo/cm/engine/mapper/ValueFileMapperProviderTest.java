@@ -45,8 +45,8 @@ public class ValueFileMapperProviderTest {
         assertTrue(list.stream().anyMatch(x -> x.getClass().equals(DummyValueFileMapper.class)));
         assertTrue(list.stream().anyMatch(x -> x.getClass().equals(OtherValueFileMapper.class)));
 
-        GroupImpl configuration = new GroupImpl("dummyConfiguration");
-        ProjectImpl project = new ProjectImpl("dummyProject", configuration);
+        GroupImpl group = new GroupImpl("dummyGroup");
+        ProjectImpl project = new ProjectImpl("dummyProject", group);
         ModuleImpl module = new ModuleImpl("dummyModule", project);
         SourceImpl source = new ConfigSourceImpl("somePath", module);
         Definition definition = new ConfigDefinitionImpl(source);

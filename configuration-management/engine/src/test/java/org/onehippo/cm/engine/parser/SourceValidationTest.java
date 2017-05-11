@@ -37,8 +37,8 @@ import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 public class SourceValidationTest extends AbstractBaseTest {
 
     final Yaml yamlParser = new Yaml();
-    final GroupImpl configuration = new GroupImpl("configuration");
-    final ProjectImpl project = new ProjectImpl("project", configuration);
+    final GroupImpl group = new GroupImpl("group");
+    final ProjectImpl project = new ProjectImpl("project", group);
     final ModuleImpl module = new ModuleImpl("module", project);
 
     @Test

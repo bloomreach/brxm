@@ -111,7 +111,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push(definition);
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertEquals("test-configuration/test-project/test-module [string] contains definition rooted at unreachable node '/a/b'. Closest ancestor is at '/'.", e.getMessage());
+            assertEquals("test-group/test-project/test-module [string] contains definition rooted at unreachable node '/a/b'. Closest ancestor is at '/'.", e.getMessage());
         }
     }
 
@@ -637,7 +637,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.")));
+                    .anyMatch(m->m.equals("test-group/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.")));
         }
 
         final ConfigurationNodeImpl root = builder.build();
@@ -665,7 +665,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to merge delete node /a/b/c that does not exist.")));
+                    .anyMatch(m->m.equals("test-group/test-project/test-module [string]: Trying to merge delete node /a/b/c that does not exist.")));
         }
 
         final ConfigurationNodeImpl root = builder.build();
@@ -694,7 +694,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.")));
+                    .anyMatch(m->m.equals("test-group/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.")));
         }
 
         final ConfigurationNodeImpl root = builder.build();
@@ -724,7 +724,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to merge delete node /a/b/c that does not exist.")));
+                    .anyMatch(m->m.equals("test-group/test-project/test-module [string]: Trying to merge delete node /a/b/c that does not exist.")));
         }
 
         final ConfigurationNodeImpl root = builder.build();
@@ -757,7 +757,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions2.get(0));
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("test-configuration/test-project/test-module [string]: Trying to delete AND merge node /a/b defined before by [test-configuration/test-project/test-module [string]].", e.getMessage());
+            assertEquals("test-group/test-project/test-module [string]: Trying to delete AND merge node /a/b defined before by [test-group/test-project/test-module [string]].", e.getMessage());
         }
     }
 
@@ -784,7 +784,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions2.get(0));
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("test-configuration/test-project/test-module [string]: Trying to delete AND merge node /a/b defined before by [test-configuration/test-project/test-module [string]].", e.getMessage());
+            assertEquals("test-group/test-project/test-module [string]: Trying to delete AND merge node /a/b defined before by [test-group/test-project/test-module [string]].", e.getMessage());
         }
     }
 
@@ -902,7 +902,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-configuration/test-project/test-module [string]' specifies value equivalent to existing property.")));
+                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [string]' specifies value equivalent to existing property.")));
         }
 
         final ConfigurationNodeImpl root = builder.build();
@@ -937,7 +937,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl)definitions2.get(0));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-configuration/test-project/test-module [string]' specifies value equivalent to existing property.")));
+                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [string]' specifies value equivalent to existing property.")));
         }
 
         final ConfigurationNodeImpl root = builder.build();
@@ -971,7 +971,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-configuration/test-project/test-module [string]' specifies value equivalent to existing property.")));
+                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [string]' specifies value equivalent to existing property.")));
         }
 
         final ConfigurationNodeImpl root = builder.build();
@@ -1146,7 +1146,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertEquals("Property /a/b/property2 already exists with type 'single', as determined by [test-configuration/test-project/test-module [string]], but type 'list' is requested in test-configuration/test-project/test-module [string].", e.getMessage());
+            assertEquals("Property /a/b/property2 already exists with type 'single', as determined by [test-group/test-project/test-module [string]], but type 'list' is requested in test-group/test-project/test-module [string].", e.getMessage());
         }
     }
 
@@ -1197,7 +1197,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertEquals("Property /a/b/property2 already exists with value type 'string', as determined by [test-configuration/test-project/test-module [string]], but value type 'long' is requested in test-configuration/test-project/test-module [string].", e.getMessage());
+            assertEquals("Property /a/b/property2 already exists with value type 'string', as determined by [test-group/test-project/test-module [string]], but value type 'long' is requested in test-group/test-project/test-module [string].", e.getMessage());
         }
     }
 
@@ -1246,7 +1246,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertEquals("Property jcr:primaryType is already defined on node /a/b as determined by [test-configuration/test-project/test-module [string]], but change is requested in test-configuration/test-project/test-module [string]. Use 'operation: override' if you really intend to change the value of this property.", e.getMessage());
+            assertEquals("Property jcr:primaryType is already defined on node /a/b as determined by [test-group/test-project/test-module [string]], but change is requested in test-group/test-project/test-module [string]. Use 'operation: override' if you really intend to change the value of this property.", e.getMessage());
         }
     }
 
@@ -1364,7 +1364,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertEquals("Property jcr:mixinTypes is already defined on node /a/b, and replace operation of test-configuration/test-project/test-module [string] would remove values [bla2]. Use 'operation: override' if you really intend to remove these values.", e.getMessage());
+            assertEquals("Property jcr:mixinTypes is already defined on node /a/b, and replace operation of test-group/test-project/test-module [string] would remove values [bla2]. Use 'operation: override' if you really intend to remove these values.", e.getMessage());
         }
     }
 
@@ -1431,7 +1431,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl) definitions.get(0));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to delete property /a/property1 that does not exist.")));
+                    .anyMatch(m->m.equals("test-group/test-project/test-module [string]: Trying to delete property /a/property1 that does not exist.")));
         }
     }
 
@@ -1577,7 +1577,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.equals("Potential unnecessary orderBefore: 'c' for node '/a/b' defined in " +
-                            "'test-configuration/test-project/test-module [string]': " +
+                            "'test-group/test-project/test-module [string]': " +
                             "parent '/a' already configured with '.meta:ignore-reordered-children: true'")));
         }
         final ConfigurationNodeImpl root = builder.build();
@@ -1767,7 +1767,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(0));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertEquals("test-configuration/test-project/test-module [string] defines node '/a/sns[2]', but no sibling named 'sns[1]' was found", e.getMessage());
+            assertEquals("test-group/test-project/test-module [string] defines node '/a/sns[2]', but no sibling named 'sns[1]' was found", e.getMessage());
         }
     }
 

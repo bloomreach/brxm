@@ -65,7 +65,7 @@ public class SerializerTest extends AbstractBaseTest {
         final PathConfigurationReader.ReadResult result = readFromResource(moduleConfig, explicitSequencing);
 
         final FileConfigurationWriter writer = new FileConfigurationWriter();
-        writer.write(folder.getRoot().toPath(), result.getConfigurations(), result.getModuleContexts(), explicitSequencing);
+        writer.write(folder.getRoot().toPath(), result.getGroups(), result.getModuleContexts(), explicitSequencing);
 
         final Path expectedRoot = findBase(moduleConfig);
         final Path actualRoot = folder.getRoot().toPath();

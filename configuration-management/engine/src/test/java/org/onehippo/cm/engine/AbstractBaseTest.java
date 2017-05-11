@@ -97,7 +97,7 @@ public abstract class AbstractBaseTest {
         return find(moduleConfigResourceName).getParent();
     }
 
-    Group assertConfiguration(final Map<String, GroupImpl> parent, final String name, final String[] after, final int projectCount) {
+    Group assertGroup(final Map<String, GroupImpl> parent, final String name, final String[] after, final int projectCount) {
         final Group group = parent.get(name);
         assertNotNull(group);
         assertEquals(name, group.getName());

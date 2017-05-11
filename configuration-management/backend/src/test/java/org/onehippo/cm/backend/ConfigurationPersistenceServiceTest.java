@@ -141,7 +141,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         } catch (Exception e) {
             assertEquals(
                     "Failed to process property '/test/node/test:property' defined in"
-                    + " [test-configuration/test-project/test-module-0 [string]]: no matching property definition"
+                    + " [test-group/test-project/test-module-0 [string]]: no matching property definition"
                     + " found for {http://www.onehippo.org/test/nt/1.0}property",
                     e.getMessage());
         }
@@ -189,7 +189,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
             applyDefinitions(source);
             fail("an exception should have occurred");
         } catch (RepositoryException e) {
-            assertTrue(e.getMessage().contains("Failed to parse cnd test-configuration/test-project/test-module-0 [string]"));
+            assertTrue(e.getMessage().contains("Failed to parse cnd test-group/test-project/test-module-0 [string]"));
         }
     }
 
@@ -437,9 +437,9 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         applyDefinitions(definition, expectedEvents);
 
         expectProp("/test/string", PropertyType.STRING,
-                "test-configuration/test-project/test-module-0/string/folder/string.txt");
+                "test-group/test-project/test-module-0/string/folder/string.txt");
         expectProp("/test/binary", PropertyType.BINARY,
-                "test-configuration/test-project/test-module-0/string/folder/binary.bin");
+                "test-group/test-project/test-module-0/string/folder/binary.bin");
 
         // when applying the same definition again, expect no events
         expectedEvents = new ExpectedEvents();
@@ -472,8 +472,8 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         applyDefinitions(new String[]{definition1,definition2}, expectedEvents);
 
         expectProp("/test/string", PropertyType.STRING,
-                "[test-configuration/test-project/test-module-0/string/folder/string1.txt, " +
-                "test-configuration/test-project/test-module-1/string/folder/string1.txt]");
+                "[test-group/test-project/test-module-0/string/folder/string1.txt, " +
+                "test-group/test-project/test-module-1/string/folder/string1.txt]");
 
         // when applying the same definition again, expect no events
         expectedEvents = new ExpectedEvents();
@@ -566,13 +566,13 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
             assertFalse(testNode.hasProperty("foo/bar/path-reference"));
             assertTrue(interceptor.messages().anyMatch(m->m.equals("Reference e4ecf93e-2708-40b4-b091-51d84169a174 " +
                     "for property '/test/foo/bar/uuid-reference' defined in " +
-                    "[test-configuration/test-project/test-module-0 [string]] not found: skipping.")));
+                    "[test-group/test-project/test-module-0 [string]] not found: skipping.")));
             assertTrue(interceptor.messages().anyMatch(m->m.equals("Reference e4ecf93e-2708-40b4-b091-51d84169a174 " +
                     "for property '/test/foo/bar/uuid-references' defined in " +
-                    "[test-configuration/test-project/test-module-0 [string]] not found: skipping.")));
+                    "[test-group/test-project/test-module-0 [string]] not found: skipping.")));
             assertTrue(interceptor.messages().anyMatch(m->m.equals("Path reference '/undefined' for property " +
                     "'/test/foo/bar/path-reference' defined in " +
-                    "[test-configuration/test-project/test-module-0 [string]] not found: skipping.")));
+                    "[test-group/test-project/test-module-0 [string]] not found: skipping.")));
         }
     }
 
@@ -614,7 +614,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
             assertEquals(uuid, testNode.getNode("child").getIdentifier());
             assertNotEquals(uuid, testNode.getNode("child2").getIdentifier());
             assertTrue(interceptor.messages().anyMatch(m->m.equals("Specified jcr:uuid " + uuid +
-                    " for node '/test/child2' defined in [test-configuration/test-project/test-module-0 [string]]" +
+                    " for node '/test/child2' defined in [test-group/test-project/test-module-0 [string]]" +
                     " already in use: a new jcr:uuid will be generated instead.")));
         }
     }

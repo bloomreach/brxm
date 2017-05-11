@@ -49,11 +49,11 @@ import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
  * <p>
  * Usage:
  * <pre>
- *   private static final OrderableListSorter<GroupImpl> configurationSorter = new OrderableListSorter<>(Configuration.class.getSimpleName());
+ *   private static final OrderableListSorter<GroupImpl> groupSorter = new OrderableListSorter<>(Group.class.getSimpleName());
  *   ...
- *   private List&lt;GroupImpl&gt; configurations = new ArrayList&lt;&gt;();
+ *   private List&lt;GroupImpl&gt; groups = new ArrayList&lt;&gt;();
  *   ...
- *   configurationSorter.sort(configurations);
+ *   groupSorter.sort(groups);
  * </pre>
  * </p>
  * <p>

@@ -33,10 +33,10 @@ public class ConfigurationVerifier {
         }
         final Path moduleDescriptorPath = Paths.get(args[0]);
         final PathConfigurationReader.ReadResult result = new PathConfigurationReader().read(moduleDescriptorPath, true);
-        final Map<String, GroupImpl> configurations = result.getConfigurations();
+        final Map<String, GroupImpl> groups = result.getGroups();
         ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
-        for (GroupImpl config : configurations.values()) {
-            builder.push(config);
+        for (GroupImpl group : groups.values()) {
+            builder.push(group);
         }
         builder.build();
     }

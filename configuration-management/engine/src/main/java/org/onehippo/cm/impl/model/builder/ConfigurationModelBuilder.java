@@ -26,8 +26,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.onehippo.cm.api.ConfigurationModel;
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Group;
+import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.impl.ConfigurationModelImpl;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.GroupImpl;
@@ -94,12 +96,12 @@ public class ConfigurationModelBuilder {
     }
 
     private GroupImpl createGroup(final String name) {
-        final GroupImpl configuration = new GroupImpl(name);
+        final GroupImpl group = new GroupImpl(name);
 
-        groupMap.put(name, configuration);
-        groups.add(configuration);
+        groupMap.put(name, group);
+        groups.add(group);
 
-        return configuration;
+        return group;
     }
 
     private void sort() {

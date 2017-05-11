@@ -51,11 +51,11 @@ public class ParserValueTest extends AbstractBaseTest {
     @Test
     public void expect_value_test_loads() throws IOException, ParserException, URISyntaxException {
         final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/value_test/"+Constants.HCM_MODULE_YAML);
-        final Map<String, GroupImpl> configurations = result.getConfigurations();
+        final Map<String, GroupImpl> groups = result.getGroups();
 
-        assertEquals(1, configurations.size());
+        assertEquals(1, groups.size());
 
-        final Group base = assertConfiguration(configurations, "base", new String[0], 1);
+        final Group base = assertGroup(groups, "base", new String[0], 1);
         final Project project = assertProject(base, "project1", new String[0], 1);
         final Module module = assertModule(project, "module1", new String[0], 2);
         final Source source = assertSource(module, "base.yaml", 4);
@@ -151,8 +151,8 @@ public class ParserValueTest extends AbstractBaseTest {
     @Test
     public void expect_property_value_map_without_type_to_yield_string() throws ParserException {
         final SourceParser sourceParser = new ConfigSourceParser(DUMMY_RESOURCE_INPUT_PROVIDER);
-        final GroupImpl configuration = new GroupImpl("configuration");
-        final ProjectImpl project = new ProjectImpl("project", configuration);
+        final GroupImpl group = new GroupImpl("group");
+        final ProjectImpl project = new ProjectImpl("project", group);
         final ModuleImpl module = new ModuleImpl("module", project);
 
         final String yaml =
@@ -174,8 +174,8 @@ public class ParserValueTest extends AbstractBaseTest {
     @Test
     public void expect_date_without_time_to_yield_non_lenient_UTC_date() throws ParserException {
         final SourceParser sourceParser = new ConfigSourceParser(DUMMY_RESOURCE_INPUT_PROVIDER);
-        final GroupImpl configuration = new GroupImpl("configuration");
-        final ProjectImpl project = new ProjectImpl("project", configuration);
+        final GroupImpl group = new GroupImpl("group");
+        final ProjectImpl project = new ProjectImpl("project", group);
         final ModuleImpl module = new ModuleImpl("module", project);
 
         final String yaml =

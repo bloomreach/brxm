@@ -72,7 +72,7 @@ public class ClasspathConfigurationModelReader {
             final PathConfigurationReader.ReadResult result =
                     new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
 
-            builder.push(result.getConfigurations());
+            builder.push(result.getGroups());
         }
         ConfigurationModel model = builder.build();
 

@@ -46,16 +46,16 @@ public class PathConfigurationReader {
     private final boolean explicitSequencing;
 
     public static class ReadResult {
-        private final Map<String, GroupImpl> configurations;
+        private final Map<String, GroupImpl> groups;
         private final Map<Module, ModuleContext> moduleContexts;
 
-        public ReadResult(Map<String, GroupImpl> configurations, Map<Module, ModuleContext> moduleContexts) {
-            this.configurations = configurations;
+        public ReadResult(Map<String, GroupImpl> groups, Map<Module, ModuleContext> moduleContexts) {
+            this.groups = groups;
             this.moduleContexts = moduleContexts;
         }
 
-        public Map<String, GroupImpl> getConfigurations() {
-            return configurations;
+        public Map<String, GroupImpl> getGroups() {
+            return groups;
         }
 
         public Map<Module, ModuleContext> getModuleContexts() {
@@ -88,13 +88,13 @@ public class PathConfigurationReader {
         final InputStream moduleDescriptorInputStream = moduleDescriptorPath.toUri().toURL().openStream();
 
         final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
-        final Map<String, GroupImpl> configurations =
+        final Map<String, GroupImpl> groups =
                 moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
 
-        final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(configurations);
+        final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(groups);
         final Map<Module, ModuleContext> moduleContexts = new HashMap<>();
 
-        for (Group group : configurations.values()) {
+        for (Group group : groups.values()) {
             for (Project project : group.getProjects()) {
                 for (Module module : project.getModules()) {
 
@@ -121,7 +121,7 @@ public class PathConfigurationReader {
             }
         }
 
-        return new ReadResult(configurations, moduleContexts);
+        return new ReadResult(groups, moduleContexts);
     }
 
     private void parseSources(ModuleImpl module, Path rootPath, SourceParser sourceParser) throws IOException, ParserException {
