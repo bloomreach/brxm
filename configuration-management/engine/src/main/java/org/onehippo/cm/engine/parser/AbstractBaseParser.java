@@ -15,21 +15,6 @@
  */
 package org.onehippo.cm.engine.parser;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.api.ResourceInputProvider;
@@ -45,6 +30,21 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 import org.yaml.snakeyaml.nodes.Tag;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class AbstractBaseParser {
 
@@ -199,11 +199,28 @@ public abstract class AbstractBaseParser {
         return path;
     }
 
+    protected String validatePath(final String path, final boolean requireAbsolutePath) throws ParserException {
+
+        if (requireAbsolutePath && !path.startsWith("/")) {
+            throw new ParserException("Path must start with a slash");
+        }
+
+        if (path.contains("//")) {
+            throw new ParserException("Path must not contain double slashes");
+        }
+
+        if (path.endsWith("/") && !isRootNodePath(path)) {
+            throw new ParserException("Path must not end with a slash");
+        }
+
+        return path;
+    }
+
     private boolean isRootNodePath(final String nodePath) {
         return "/".equals(nodePath);
     }
 
-    protected String asResourcePathScalar(final Node node, final Source source, final ResourceInputProvider resourceInputProvider) throws ParserException {
+    String asResourcePathScalar(final Node node, final Source source, final ResourceInputProvider resourceInputProvider) throws ParserException {
         final String resourcePath = asStringScalar(node);
 
         if (containsParentSegment(resourcePath)) {

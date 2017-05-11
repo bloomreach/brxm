@@ -16,12 +16,7 @@
 
 package org.onehippo.cm.impl.model.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.ImmutableSet;
-
 import org.junit.Test;
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.model.Configuration;
@@ -35,6 +30,10 @@ import org.onehippo.cm.api.model.WebFileBundleDefinition;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -342,7 +341,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
 
     private List<ContentDefinition> getContentDefinitionsFromFirstModule(final MergedModel mergedModel) {
         final Module module = mergedModel.getSortedConfigurations().get(0).getProjects().get(0).getModules().get(0);
-        return new ArrayList<>(((ModuleImpl) module).getContentDefinitions());
+        return new ArrayList<>(((ModuleImpl) module).getConfigDefinitions());
     }
 
     @Test

@@ -16,42 +16,14 @@
 
 package org.onehippo.cm.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.function.Consumer;
-
-import javax.xml.bind.DatatypeConverter;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.NullOutputStream;
-import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.WebFileBundleDefinition;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
@@ -62,11 +34,17 @@ import org.onehippo.cm.impl.model.WebFileBundleDefinitionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cm.engine.Constants.ACTIONS_YAML;
-import static org.onehippo.cm.engine.Constants.DEFAULT_DIGEST;
-import static org.onehippo.cm.engine.Constants.REPO_CONFIG_FOLDER;
-import static org.onehippo.cm.engine.Constants.REPO_CONFIG_YAML;
-import static org.onehippo.cm.engine.Constants.REPO_CONTENT_FOLDER;
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class MergedModelImpl implements MergedModel {
 
@@ -75,8 +53,11 @@ public class MergedModelImpl implements MergedModel {
     private List<Configuration> sortedConfigurations;
     private final List<NamespaceDefinition> namespaceDefinitions = new ArrayList<>();
     private final List<NodeTypeDefinition> nodeTypeDefinitions = new ArrayList<>();
+
     private ConfigurationNode configurationRootNode;
+
     private final List<WebFileBundleDefinition> webFileBundleDefinitions = new ArrayList<>();
+    private final List<ContentDefinition> contentDefinitions = new ArrayList<>();
     private final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
 
     // Used for cleanup when done with this MergedModel
@@ -105,6 +86,21 @@ public class MergedModelImpl implements MergedModel {
     @Override
     public List<WebFileBundleDefinition> getWebFileBundleDefinitions() {
         return webFileBundleDefinitions;
+    }
+
+    @Override
+    public List<ContentDefinition> getContentDefinitions() {
+        return contentDefinitions;
+    }
+
+    @Override
+    public void addContentDefinition(final ContentDefinition definition) {
+        contentDefinitions.add(definition);
+    }
+
+    @Override
+    public void addContentDefinitions(final Collection<ContentDefinition> definitions) {
+        contentDefinitions.addAll(definitions);
     }
 
     @Override

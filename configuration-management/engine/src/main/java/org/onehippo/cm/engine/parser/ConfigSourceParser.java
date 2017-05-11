@@ -15,15 +15,12 @@
  */
 package org.onehippo.cm.engine.parser;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
+import org.onehippo.cm.impl.model.ConfigSourceImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
@@ -31,6 +28,10 @@ import org.onehippo.cm.impl.model.WebFileBundleDefinitionImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
+
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 import static org.onehippo.cm.engine.Constants.DEFINITIONS;
 import static org.onehippo.cm.engine.Constants.META_DELETE_KEY;
@@ -57,7 +58,7 @@ public class ConfigSourceParser extends SourceParser {
     @Override
     protected void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException {
         final Map<String, Node> sourceMap = asMapping(src, new String[]{DEFINITIONS}, null);
-        final SourceImpl source = parent.addConfigSource(path);
+        final ConfigSourceImpl source = (ConfigSourceImpl)parent.addConfigSource(path);
 
         final Map<String, Node> definitionsMap = asMapping(sourceMap.get(DEFINITIONS), null,
                 DefinitionType.CONFIG_NAMES);
@@ -81,7 +82,7 @@ public class ConfigSourceParser extends SourceParser {
         }
     }
 
-    private void constructNamespaceDefinitions(final Node src, final SourceImpl parent) throws ParserException {
+    private void constructNamespaceDefinitions(final Node src, final ConfigSourceImpl parent) throws ParserException {
         for (Node node : asSequence(src)) {
             final Map<String, Node> namespaceMap = asMapping(node, new String[]{PREFIX_KEY, URI_KEY}, null);
             final String prefix = asStringScalar(namespaceMap.get(PREFIX_KEY));
@@ -90,7 +91,7 @@ public class ConfigSourceParser extends SourceParser {
         }
     }
 
-    private void constructNodeTypeDefinitions(final Node src, final SourceImpl parent) throws ParserException {
+    private void constructNodeTypeDefinitions(final Node src, final ConfigSourceImpl parent) throws ParserException {
         for (Node node : asSequence(src)) {
             switch (node.getNodeId()) {
                 case scalar:
@@ -108,7 +109,7 @@ public class ConfigSourceParser extends SourceParser {
         }
     }
 
-    private void constructConfigDefinitions(final Node src, final SourceImpl parent) throws ParserException {
+    private void constructConfigDefinitions(final Node src, final ConfigSourceImpl parent) throws ParserException {
         for (NodeTuple nodeTuple : asTuples(src)) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
             final String key = asPathScalar(nodeTuple.getKeyNode(), true, false);

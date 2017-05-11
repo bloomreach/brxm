@@ -15,8 +15,27 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.net.URI;
+
 public class ConfigSourceImpl extends SourceImpl {
     public ConfigSourceImpl(String path, ModuleImpl module) {
         super(path, module);
     }
+
+    public void addNamespaceDefinition(final String prefix, final URI uri) {
+        final NamespaceDefinitionImpl definition = new NamespaceDefinitionImpl(this, prefix, uri);
+        modifiableDefinitions.add(definition);
+    }
+
+    public void addNodeTypeDefinition(final String value, final boolean isResource) {
+        final NodeTypeDefinitionImpl definition = new NodeTypeDefinitionImpl(this, value, isResource);
+        modifiableDefinitions.add(definition);
+    }
+
+    public ConfigDefinitionImpl addConfigDefinition() {
+        final ConfigDefinitionImpl definition = new ConfigDefinitionImpl(this);
+        modifiableDefinitions.add(definition);
+        return definition;
+    }
+
 }

@@ -15,21 +15,19 @@
  */
 package org.onehippo.cm.engine.parser;
 
-import java.util.List;
-import java.util.Map;
-
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
+import org.onehippo.cm.impl.model.ContentSourceImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.SourceImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 
-import static org.onehippo.cm.api.model.DefinitionType.CONTENT;
-import static org.onehippo.cm.engine.Constants.DEFINITIONS;
+import java.util.List;
+import java.util.Map;
+
 import static org.onehippo.cm.engine.Constants.META_KEY_PREFIX;
 import static org.onehippo.cm.engine.Constants.OPERATION_KEY;
 import static org.onehippo.cm.engine.Constants.PATH_KEY;
@@ -53,18 +51,15 @@ public class ContentSourceParser extends SourceParser {
     @Override
     protected void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException {
 
-        //TODO process content yaml
-        final Map<String, Node> sourceMap = asMapping(src, new String[]{DEFINITIONS}, null);
-        final SourceImpl source = parent.addContentSource(path);
+        final ContentSourceImpl source = (ContentSourceImpl) parent.addContentSource(path);
+        final Map<String, Node> contentNode = asMapping(src, null, null);
 
-        final Map<String, Node> definitionsMap = asMapping(sourceMap.get(DEFINITIONS), new String[]{CONTENT.toString()}, null);
-
-        for (Node definitionNode : definitionsMap.values()) {
-            constructContentDefinitions(definitionNode, source);
-        }
+        final ContentDefinitionImpl definition = source.addContentDefinition();
+        final String key = validatePath(contentNode.keySet().iterator().next(), true);
+        constructDefinitionNode(key, contentNode.values().iterator().next(), definition);
     }
 
-    private void constructContentDefinitions(final Node src, final SourceImpl parent) throws ParserException {
+    private void constructContentDefinitions(final Node src, final ContentSourceImpl parent) throws ParserException {
         for (NodeTuple nodeTuple : asTuples(src)) {
             final ContentDefinitionImpl definition = parent.addContentDefinition();
             final String key = asPathScalar(nodeTuple.getKeyNode(), true, false);

@@ -15,6 +15,10 @@
  */
 package org.onehippo.cm.impl.model;
 
+import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.impl.model.builder.OrderableListSorter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,10 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
-import org.onehippo.cm.api.model.Configuration;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.impl.model.builder.OrderableListSorter;
 
 public class ConfigurationImpl implements Configuration {
 
@@ -106,5 +106,12 @@ public class ConfigurationImpl implements Configuration {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return "ConfigurationImpl{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

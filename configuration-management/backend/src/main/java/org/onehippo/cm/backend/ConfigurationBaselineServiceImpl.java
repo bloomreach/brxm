@@ -15,27 +15,6 @@
  */
 package org.onehippo.cm.backend;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.jcr.Binary;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -64,11 +43,30 @@ import org.onehippo.cm.impl.model.ContentSourceImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
-import org.onehippo.cm.impl.model.SourceImpl;
 import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Binary;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.onehippo.cm.engine.Constants.ACTIONS_NODE;
 import static org.onehippo.cm.engine.Constants.ACTIONS_TYPE;
@@ -700,7 +698,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
                                 group.getName(), project.getName(), module.getName());
 
                         // create Source
-                        SourceImpl source = new ContentSourceImpl(sourcePath, (ModuleImpl) module);
+                        ContentSourceImpl source = new ContentSourceImpl(sourcePath, (ModuleImpl) module);
 
                         // get content path from JCR Node
                         String contentPath = contentNode.getProperty(CONTENT_PATH_PROPERTY).getString();

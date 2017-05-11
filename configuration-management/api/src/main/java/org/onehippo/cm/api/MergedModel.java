@@ -15,17 +15,19 @@
  */
 package org.onehippo.cm.api;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ConfigurationNode;
+import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.WebFileBundleDefinition;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a combined representation of configuration from multiple groups, projects, modules, and sources.
@@ -52,6 +54,12 @@ public interface MergedModel extends Closeable {
      * @return
      */
     ConfigurationNode getConfigurationRootNode();
+
+    List<ContentDefinition> getContentDefinitions();
+
+    void addContentDefinitions(Collection<ContentDefinition> definitions);
+
+    void addContentDefinition(ContentDefinition definition);
 
     /**
      * @return a List of all webfile bundle definitions found anywhere in the merged configuration

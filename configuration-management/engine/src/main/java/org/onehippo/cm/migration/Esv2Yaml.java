@@ -15,6 +15,28 @@
  */
 package org.onehippo.cm.migration;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.onehippo.cm.api.model.DefinitionNode;
+import org.onehippo.cm.engine.Constants;
+import org.onehippo.cm.engine.FileConfigurationWriter;
+import org.onehippo.cm.engine.ModuleContext;
+import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
+import org.onehippo.cm.impl.model.ConfigSourceImpl;
+import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.DefinitionNodeImpl;
+import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.impl.model.SourceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.jcr.PropertyType;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,28 +53,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.jcr.PropertyType;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.engine.Constants;
-import org.onehippo.cm.engine.FileConfigurationWriter;
-import org.onehippo.cm.engine.ModuleContext;
-import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.SourceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Esv2Yaml {
 
@@ -202,7 +202,7 @@ public class Esv2Yaml {
                 }
 
                 // generate unique 'main.yaml' source, optionally using 'root.yaml', 'base.yaml' or 'index.yaml' as fallback
-                final SourceImpl mainSource = module.addConfigSource(createSourcePath(MAIN_YAML_NAMES, sourcePaths, 0));  //TODO SS: review this. how to distinguish content from config definitions
+                final ConfigSourceImpl mainSource = (ConfigSourceImpl)module.addConfigSource(createSourcePath(MAIN_YAML_NAMES, sourcePaths, 0));  //TODO SS: review this. how to distinguish content from config definitions
 
                 processInitializeInstructions(mainSource, instructions);
                 serializeModule();
@@ -269,7 +269,7 @@ public class Esv2Yaml {
     }
 
     // generate and merge instruction definitions which already have been sorted in processing order
-    protected void processInitializeInstructions(final SourceImpl mainSource, final List<InitializeInstruction> instructions)
+    protected void processInitializeInstructions(final ConfigSourceImpl mainSource, final List<InitializeInstruction> instructions)
             throws IOException, EsvParseException {
 
         Set<String> resourceBundles = new HashSet<>();
@@ -313,8 +313,9 @@ public class Esv2Yaml {
             }
         }
         if (resourceBundleParents.getNode() != null && !resourceBundleParents.getNode().getNodes().isEmpty()) {
+            System.out.println("resourceBundleParents = " + resourceBundleParents);
             // add resourcebundles translations root definition parents
-            mainSource.addContentDefinition(resourceBundleParents);
+            mainSource.addDefinition(resourceBundleParents);
         }
     }
 

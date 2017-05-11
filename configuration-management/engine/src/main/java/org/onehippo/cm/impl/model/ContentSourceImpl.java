@@ -19,4 +19,13 @@ public class ContentSourceImpl extends SourceImpl {
     public ContentSourceImpl(String path, ModuleImpl module) {
         super(path, module);
     }
+
+    public ContentDefinitionImpl addContentDefinition() {
+        if (modifiableDefinitions.size() > 0) {
+            throw new IllegalStateException(String.format("Content source('%s') can contain only one root node", this));
+        }
+        final ContentDefinitionImpl definition = new ContentDefinitionImpl(this);
+        modifiableDefinitions.add(definition);
+        return definition;
+    }
 }

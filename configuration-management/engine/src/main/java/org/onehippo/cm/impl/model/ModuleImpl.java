@@ -15,6 +15,26 @@
  */
 package org.onehippo.cm.impl.model;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.ConfigDefinition;
+import org.onehippo.cm.api.model.ContentDefinition;
+import org.onehippo.cm.api.model.Definition;
+import org.onehippo.cm.api.model.DefinitionNode;
+import org.onehippo.cm.api.model.DefinitionProperty;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.NodeTypeDefinition;
+import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,28 +54,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import javax.xml.bind.DatatypeConverter;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.NullOutputStream;
-import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.ConfigurationBaselineService;
-import org.onehippo.cm.api.MergedModel;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.NodeTypeDefinition;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.engine.Constants.DEFAULT_DIGEST;
@@ -82,8 +80,13 @@ public class ModuleImpl implements Module, Comparable<Module> {
     private final Set<Source> sources = Collections.unmodifiableSet(sortedSources);
 
     private final List<NamespaceDefinitionImpl> namespaceDefinitions = new ArrayList<>();
+
     private final List<NodeTypeDefinitionImpl> nodeTypeDefinitions = new ArrayList<>();
+
     private final List<ContentDefinitionImpl> contentDefinitions = new ArrayList<>();
+
+    private final List<ConfigDefinitionImpl> configDefinitions = new ArrayList<>();
+
     private final List<WebFileBundleDefinitionImpl> webFileBundleDefinitions = new ArrayList<>();
 
     public ModuleImpl(final String name, final ProjectImpl project) {
@@ -133,12 +136,6 @@ public class ModuleImpl implements Module, Comparable<Module> {
         return sources.stream().filter(x -> x instanceof ConfigSourceImpl).collect(Collectors.toSet());
     }
 
-    @Deprecated
-    private SourceImpl addSource(final String path) {
-        final SourceImpl source = new ConfigSourceImpl(path, this);
-        return addSource(source);
-    }
-
     public SourceImpl addContentSource(final String path) {
         final SourceImpl source = new ContentSourceImpl(path, this);
         return addSource(source);
@@ -181,8 +178,17 @@ public class ModuleImpl implements Module, Comparable<Module> {
         return nodeTypeDefinitions;
     }
 
+
     /**
-     * @return a sorted list of content (or config) definitions.
+     * @return a sorted list of config definitions.
+     * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
+     */
+    public List<ConfigDefinitionImpl> getConfigDefinitions() {
+        return configDefinitions;
+    }
+
+    /**
+     * @return a sorted list of content definitions.
      * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
      */
     public List<ContentDefinitionImpl> getContentDefinitions() {
@@ -208,6 +214,8 @@ public class ModuleImpl implements Module, Comparable<Module> {
                     } else if (definition instanceof NodeTypeDefinitionImpl) {
                         ensureSingleSourceForNodeTypes(definition);
                         nodeTypeDefinitions.add((NodeTypeDefinitionImpl) definition);
+                    } else if (definition instanceof ConfigDefinitionImpl) {
+                        configDefinitions.add((ConfigDefinitionImpl) definition);
                     } else if (definition instanceof ContentDefinitionImpl) {
                         contentDefinitions.add((ContentDefinitionImpl) definition);
                     } else if (definition instanceof WebFileBundleDefinitionImpl) {
@@ -220,7 +228,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
         );
 
         // sort the content/config definitions, all other remain in insertion order
-        contentDefinitions.sort(new ContentDefinitionComparator());
+        configDefinitions.sort(new ContentDefinitionComparator());
     }
 
     private void ensureSingleSourceForNodeTypes(final Definition nodeTypeDefinition) {

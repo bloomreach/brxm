@@ -15,21 +15,20 @@
  */
 package org.onehippo.cm.impl.model;
 
-import java.net.URI;
+import org.onehippo.cm.api.model.Definition;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.Source;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Source;
-
 public abstract class SourceImpl implements Source {
 
     private String path;
     private Module module;
-    private List<Definition> modifiableDefinitions = new ArrayList<>();
+    List<Definition> modifiableDefinitions = new ArrayList<>();
     private List<Definition> definitions = Collections.unmodifiableList(modifiableDefinitions);
 
     public SourceImpl(final String path, final ModuleImpl module) {
@@ -63,29 +62,12 @@ public abstract class SourceImpl implements Source {
         return modifiableDefinitions;
     }
 
-    public void addNamespaceDefinition(final String prefix, final URI uri) {
-        final NamespaceDefinitionImpl definition = new NamespaceDefinitionImpl(this, prefix, uri);
+    public void addWebFileBundleDefinition(final String name) {
+        final WebFileBundleDefinitionImpl definition = new WebFileBundleDefinitionImpl(this, name);
         modifiableDefinitions.add(definition);
     }
 
-    public void addNodeTypeDefinition(final String value, final boolean isResource) {
-        final NodeTypeDefinitionImpl definition = new NodeTypeDefinitionImpl(this, value, isResource);
-        modifiableDefinitions.add(definition);
-    }
-
-    public ConfigDefinitionImpl addConfigDefinition() {
-        final ConfigDefinitionImpl definition = new ConfigDefinitionImpl(this);
-        modifiableDefinitions.add(definition);
-        return definition;
-    }
-
-    public ContentDefinitionImpl addContentDefinition() {
-        final ContentDefinitionImpl definition = new ContentDefinitionImpl(this);
-        modifiableDefinitions.add(definition);
-        return definition;
-    }
-
-    public void addContentDefinition(final ContentDefinitionImpl definition) {
+    public void addDefinition(final ContentDefinitionImpl definition) {
         if (definition.getSource() != this) {
             throw new IllegalArgumentException("Definition does for this source");
         }
@@ -97,9 +79,9 @@ public abstract class SourceImpl implements Source {
         modifiableDefinitions.add(definition);
     }
 
-    public void addWebFileBundleDefinition(final String name) {
-        final WebFileBundleDefinitionImpl definition = new WebFileBundleDefinitionImpl(this, name);
-        modifiableDefinitions.add(definition);
+    @Override
+    public String toString() {
+        return "SourceImpl{" + "path='" + path + '\'' + ", module=" + module + '}';
     }
 
     @Override

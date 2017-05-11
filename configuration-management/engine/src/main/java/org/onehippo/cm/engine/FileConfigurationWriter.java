@@ -15,6 +15,17 @@
  */
 package org.onehippo.cm.engine;
 
+import org.apache.commons.io.IOUtils;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.engine.serializer.ContentSourceSerializer;
+import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
+import org.onehippo.cm.engine.serializer.SourceSerializer;
+import org.onehippo.cm.impl.model.ConfigSourceImpl;
+import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.yaml.snakeyaml.nodes.Node;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,24 +34,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
-import org.onehippo.cm.api.model.Configuration;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
-import org.onehippo.cm.engine.serializer.SourceSerializer;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.ProjectImpl;
-import org.yaml.snakeyaml.nodes.Node;
-
-import static org.onehippo.cm.engine.Constants.REPO_CONFIG_FOLDER;
-import static org.onehippo.cm.engine.Constants.REPO_CONFIG_YAML;
 
 public class FileConfigurationWriter {
 
@@ -73,7 +68,13 @@ public class FileConfigurationWriter {
 
         for (final Source source : module.getSources()) {
 
-            final SourceSerializer sourceSerializer = new SourceSerializer(moduleContext, source, explicitSequencing);
+            final SourceSerializer sourceSerializer;
+
+            if (source instanceof ConfigSourceImpl) {
+                sourceSerializer = new SourceSerializer(moduleContext, source, explicitSequencing);
+            } else {
+                sourceSerializer = new ContentSourceSerializer(moduleContext, source, explicitSequencing);
+            }
 
             final List<PostProcessItem> resources = new ArrayList<>();
             final Node node = sourceSerializer.representSource(resources::add);

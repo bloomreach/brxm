@@ -15,11 +15,6 @@
  */
 package org.onehippo.cm.engine.serializer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
-
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
@@ -46,6 +41,11 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.reader.StreamReader;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.Constants.DEFINITIONS;
@@ -65,7 +65,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
     private final static YamlRepresenter representer = new YamlRepresenter();
 
     private final ModuleContext moduleContext;
-    private final Source source;
+    protected final Source source;
     private final ValueFileMapperProvider mapperProvider = ValueFileMapperProvider.getInstance();
 
 
@@ -130,7 +130,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return representDefinitionNode(definition.getNode(), resourceConsumer);
     }
 
-    private NodeTuple representContentDefinition(final ContentDefinition definition, final Consumer<PostProcessItem> resourceConsumer) {
+    protected NodeTuple representContentDefinition(final ContentDefinition definition, final Consumer<PostProcessItem> resourceConsumer) {
         return representDefinitionNode(definition.getNode(), resourceConsumer);
     }
 

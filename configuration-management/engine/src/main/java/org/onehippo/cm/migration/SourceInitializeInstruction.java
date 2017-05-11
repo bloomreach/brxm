@@ -15,16 +15,6 @@
  */
 package org.onehippo.cm.migration;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.jcr.PropertyType;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.model.DefinitionNode;
@@ -32,10 +22,20 @@ import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
+import org.onehippo.cm.impl.model.ConfigSourceImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
+
+import javax.jcr.PropertyType;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -120,7 +120,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
             if (parentNode != null) {
                 defNode = parentNode.addNode(node.getName());
             } else {
-                ConfigDefinitionImpl def = source.addConfigDefinition();
+                ConfigDefinitionImpl def = ((ConfigSourceImpl)source).addConfigDefinition();
                 defNode = new DefinitionNodeImpl(path, node.getName(), def);
                 def.setNode(defNode);
             }

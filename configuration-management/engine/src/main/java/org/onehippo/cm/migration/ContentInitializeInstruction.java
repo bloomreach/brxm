@@ -15,12 +15,6 @@
  */
 package org.onehippo.cm.migration;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
@@ -29,10 +23,17 @@ import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
+import org.onehippo.cm.impl.model.ConfigSourceImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
 import org.onehippo.cm.impl.model.ValueImpl;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import static org.onehippo.cm.api.model.PropertyType.SINGLE;
 
@@ -113,7 +114,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                     log.info("Adding hippo:contentdelete for " + nodePath + " defined at " + getInstructionNode().getSourceLocation());
                 }
                 if (node == null) {
-                    ConfigDefinitionImpl def = source.addConfigDefinition();
+                    ConfigDefinitionImpl def = ((ConfigSourceImpl)source).addConfigDefinition();
                     node = new DefinitionNodeImpl(nodePath, name, def);
                     def.setNode(node);
                     node.setDelete(true);
@@ -326,7 +327,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
     protected DefinitionNodeImpl addDeltaRootNode(final SourceImpl source, final String nodePath, final String name,
                                                 final Map<String, DefinitionNodeImpl> nodeDefinitions,
                                                 final Set<DefinitionNode> deltaNodes) {
-        ConfigDefinitionImpl def = source.addConfigDefinition();
+        ConfigDefinitionImpl def = ((ConfigSourceImpl)source).addConfigDefinition();
         DefinitionNodeImpl node = new DefinitionNodeImpl(nodePath, name, def);
         def.setNode(node);
         deltaNodes.add(node);

@@ -15,36 +15,36 @@
  */
 package org.onehippo.cm.backend;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.api.model.Module;
-import org.onehippo.testutils.jcr.event.EventCollector;
-import org.onehippo.testutils.jcr.event.EventPojo;
-import org.onehippo.testutils.jcr.event.ExpectedEvents;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModelTestUtils;
 import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.testutils.jcr.event.EventCollector;
+import org.onehippo.testutils.jcr.event.EventPojo;
+import org.onehippo.testutils.jcr.event.ExpectedEvents;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.junit.Assert.assertEquals;
@@ -1018,7 +1018,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
         final MergedModelBuilder mergedModelBuilder = new MergedModelBuilder();
         for (int i = 0; i < sources.length; i++) {
-            final List<Definition> definitions = parseNoSort(sources[i], "test-module-" + i);
+            final List<Definition> definitions = parseNoSort(sources[i], "test-module-" + i, ConfigDefinition.class);
             assertTrue(definitions.size() > 0);
             final Module module = definitions.get(0).getSource().getModule();
             final ConfigurationImpl configuration = (ConfigurationImpl) module.getProject().getConfiguration();

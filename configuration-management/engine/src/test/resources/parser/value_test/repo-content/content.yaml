@@ -1,9 +1,7 @@
-definitions:
-  content:
-    /node:
-      boolean: true
-      date: 2015-10-21T07:28:00+08:00
-      double: 3.1415
-      longAsInt: 42
-      longAsLong: 4200000000
-      string: hello world
+/node:
+  boolean: true
+  date: 2015-10-21T07:28:00+08:00
+  double: 3.1415
+  longAsInt: 42
+  longAsLong: 4200000000
+  string: hello world

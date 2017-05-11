@@ -16,8 +16,6 @@
 
 package org.onehippo.cm.impl.model.builder;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
@@ -27,6 +25,8 @@ import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

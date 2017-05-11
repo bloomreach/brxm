@@ -16,17 +16,10 @@
 
 package org.onehippo.cm.impl.model.builder;
 
-import java.nio.file.FileSystem;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.impl.MergedModelImpl;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
@@ -34,6 +27,15 @@ import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.FileSystem;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * MergedModelBuilder accumulates {@link ConfigurationImpl}s into a map of configurations and, when building
@@ -64,7 +66,8 @@ public class MergedModelBuilder {
                             logger.info("Merging module {}", ModelUtils.formatModule(module));
                             mergedModel.addNamespaceDefinitions(module.getNamespaceDefinitions());
                             mergedModel.addNodeTypeDefinitions(module.getNodeTypeDefinitions());
-                            module.getContentDefinitions().forEach(configurationTreeBuilder::push);
+                            module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
+                            mergedModel.addContentDefinitions(module.getContentDefinitions().stream().map(x -> (ContentDefinition)x).collect(Collectors.toSet()));
                             mergedModel.addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
                         })
                 )
