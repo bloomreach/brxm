@@ -80,13 +80,13 @@ public class PluginInstructions implements Instructions {
         if (instructionSets == null) {
             instructionSets = new LinkedHashSet<>();
         }
-        if (instructionSets.size() ==0) {
+        if (instructionSets.size() == 0) {
             final PluginInstructionSet set = new PluginInstructionSet();
             set.setGroup(EssentialConst.INSTRUCTION_GROUP_DEFAULT);
             set.addInstruction(instruction);
             instructionSets.add(set);
 
-        }else{
+        } else {
             // check if we have default instruction set:
             for (InstructionSet instructionSet : instructionSets) {
                 final Set<String> groups = instructionSet.getGroups();
