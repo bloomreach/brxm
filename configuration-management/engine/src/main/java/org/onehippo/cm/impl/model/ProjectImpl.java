@@ -28,8 +28,12 @@ import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.impl.model.builder.OrderableListSorter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProjectImpl implements Project {
+
+    private static final Logger log = LoggerFactory.getLogger(ProjectImpl.class);
 
     private static final OrderableListSorter<ModuleImpl> modulesSorter = new OrderableListSorter<>(Module.class.getSimpleName());
 
@@ -101,13 +105,15 @@ public class ProjectImpl implements Project {
         if (moduleMap.containsKey(name)) {
             final String msg = String.format("Module %s already exists while merging projects. Merging of modules is not supported.",
                     ModelUtils.formatModule(module));
-            throw new IllegalStateException(msg);
+            log.warn(msg);
+//            throw new IllegalStateException(msg);
         }
-
-        addModule(name).addAfter(module.getAfter())
-                .setConfigResourceInputProvider(module.getConfigResourceInputProvider())
-                .setContentResourceInputProvider(module.getContentResourceInputProvider())
-                .pushDefinitions(module);
+        else {
+            addModule(name).addAfter(module.getAfter())
+                    .setConfigResourceInputProvider(module.getConfigResourceInputProvider())
+                    .setContentResourceInputProvider(module.getContentResourceInputProvider())
+                    .pushDefinitions(module);
+        }
     }
 
     public boolean equals(Object other) {

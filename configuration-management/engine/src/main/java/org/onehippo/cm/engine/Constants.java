@@ -84,4 +84,7 @@ public final class Constants {
     // This should be one of the required digest algorithms (MD5, SHA-1, or SHA-256)
     public static final String DIGEST_PROPERTY = "hcm:digest";
     public static final String DEFAULT_DIGEST = "MD5";
+
+    // Path within a Maven module where we expect the module descriptor to be
+    public static final String MAVEN_MODULE_DESCRIPTOR = "src/main/resources/" + HCM_MODULE_YAML;
 }

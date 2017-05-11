@@ -22,19 +22,17 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
-import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.api.ConfigurationModel;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.engine.parser.ParserException;
 import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.stream.Collectors.toMap;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
+import static org.onehippo.cm.engine.Constants.MAVEN_MODULE_DESCRIPTOR;
 
 public class ClasspathConfigurationModelReader {
 
@@ -55,8 +53,33 @@ public class ClasspathConfigurationModelReader {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        final Enumeration<URL> resources = classLoader.getResources(HCM_MODULE_YAML);
         final ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
+
+        // if repo.bootstrap.modules and project.basedir are defined, load modules from the filesystem before loading
+        // additional modules from the classpath
+        final String projectDir = System.getProperty("project.basedir");
+        final String fileModules = System.getProperty("repo.bootstrap.modules");
+        if (StringUtils.isNotBlank(projectDir) && StringUtils.isNotBlank(fileModules)) {
+
+            // convert the project basedir to a Path, so we can resolve modules against it
+            Path projectPath = Paths.get(projectDir);
+
+            // for each module in repo.bootstrap.modules
+            String[] moduleNames = fileModules.split(";");
+            for (String moduleName : moduleNames) {
+                // use maven conventions to find a module descriptor, then parse it
+                final Path moduleDescriptorPath = projectPath.resolve(moduleName).resolve(MAVEN_MODULE_DESCRIPTOR);
+
+                log.debug("Loading module descriptor from filesystem here: {}", moduleDescriptorPath.toString());
+
+                final PathConfigurationReader.ReadResult result =
+                        new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
+                builder.push(result.getGroups());
+            }
+
+        }
+
+        final Enumeration<URL> resources = classLoader.getResources(HCM_MODULE_YAML);
         while (resources.hasMoreElements()) {
             final URL resource = resources.nextElement();
             // note: the below mapping of resource url to path assumes the jar physically exists on the filesystem,
