@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
 Licensed under the Apache License, Version 2.0 (the  "License");
 you may not use this file except in compliance with the License.
@@ -259,7 +259,7 @@ limitations under the License.
             <sv:value>Alfred Anonymous</sv:value>
           </sv:property>
           <sv:property sv:name="myhippoproject:date" sv:type="Date">
-            <sv:value>2015-12-15T14:13:00.000+01:00</sv:value>
+            <sv:value>2015-12-14T14:13:00.000+01:00</sv:value>
           </sv:property>
           <sv:property sv:name="myhippoproject:documenttype" sv:type="String">
             <sv:value>news</sv:value>

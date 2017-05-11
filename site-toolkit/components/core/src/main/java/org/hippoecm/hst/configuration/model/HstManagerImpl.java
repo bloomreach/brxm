@@ -207,7 +207,7 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     }
 
     public void setStaleConfigurationSupported(boolean staleConfigurationSupported) {
-        log.info("Is stale configuraion for HST model supported : '{}'", staleConfigurationSupported);
+        log.info("Is stale configuration for HST model supported: '{}'", staleConfigurationSupported);
         this.staleConfigurationSupported = staleConfigurationSupported;
     }
 

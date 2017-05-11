@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -189,6 +189,26 @@ public interface VirtualHosts {
      * to determine whether or not the diagnostics is enabled.
      */
     boolean isDiagnosticsEnabled(String ip);
+
+    /**
+     * If {@link #isDiagnosticsEnabled(String)} returns {@code true}, only until {@link #getDiagnosticsDepth()} the
+     * call hierarchy timings will be logged. Default value returned is {@code -1} meaning no limit
+     * @return the depth until where to log and -1 if not limit
+     */
+    int getDiagnosticsDepth();
+
+    /**
+     * If {@link #isDiagnosticsEnabled(String)} returns {@code true}, only log if the {@link org.hippoecm.hst.diagnosis.Task}
+     * took longer than or equal to {@link #getDiagnosticsThresholdMillis()}. Default threshold of {@code -1} meaning no threshold
+     * @return the threshold value configured and {@code -1} if not configured meaning no threshold.
+     */
+    long getDiagnosticsThresholdMillis();
+
+    /**
+     * @return the threshold value for a task to get logged separately. If not configured {@code -1} is returned meaning
+     * no threshold for subtask diagnostics
+     */
+    long getDiagnosticsUnitThresholdMillis();
 
     /**
      * @deprecated Use {@link #getDefaultResourceBundleIds()} instead.

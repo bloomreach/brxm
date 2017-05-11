@@ -50,12 +50,6 @@ import static org.junit.Assert.fail;
 
 public class TestHstQueryBuilder extends AbstractHstQueryTest {
 
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        ModifiableRequestContextProvider.clear();
-    }
-
     @Test
     public void basic_query_without_constraints() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);

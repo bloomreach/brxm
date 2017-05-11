@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.container;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.diagnosis.TaskLogFormatUtils;
 import org.slf4j.Logger;
@@ -30,23 +29,20 @@ public class DiagnosticReportingValve extends AbstractDiagnosticReportingValve {
         if (log.isInfoEnabled()) {
 
             final VirtualHosts virtualHosts = context.getRequestContext().getResolvedMount().getMount().getVirtualHost().getVirtualHosts();
-            if (virtualHosts instanceof VirtualHostsService) {
-                final VirtualHostsService virtualHostsService = (VirtualHostsService) virtualHosts;
-                final long threshold = virtualHostsService.getDiagnosticsThresholdMillis();
-                if (threshold > -1) {
-                    // only log when threshold exceeded
-                    if (rootTask.getDurationTimeMillis() < threshold) {
-                        log.debug("Skipping task '{}' because took only '{}' ms.", rootTask.getName(), rootTask.getDurationTimeMillis());
-                        return;
-                    }
-                }
 
-                final int diagnosticsDepth = virtualHostsService.getDiagnosticsDepth();
-                final long unitThreshold = virtualHostsService.getDiagnosticsUnitThresholdMillis();
-                log.info("Diagnostic Summary:\n{}", TaskLogFormatUtils.getTaskLog(rootTask, diagnosticsDepth, unitThreshold));
-            } else {
-                log.info("Diagnostic Summary:\n{}", TaskLogFormatUtils.getTaskLog(rootTask));
+            final long threshold = virtualHosts.getDiagnosticsThresholdMillis();
+            if (threshold > -1) {
+                // only log when threshold exceeded
+                if (rootTask.getDurationTimeMillis() < threshold) {
+                    log.debug("Skipping task '{}' because took only '{}' ms.", rootTask.getName(), rootTask.getDurationTimeMillis());
+                    return;
+                }
             }
+
+            final int diagnosticsDepth = virtualHosts.getDiagnosticsDepth();
+            final long unitThreshold = virtualHosts.getDiagnosticsUnitThresholdMillis();
+            log.info("Diagnostic Summary:\n{}", TaskLogFormatUtils.getTaskLog(rootTask, diagnosticsDepth, unitThreshold));
+
         }
     }
 
