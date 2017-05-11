@@ -79,7 +79,6 @@ public class JcrContentProcessingService implements ContentProcessingService {
     private static final Logger logger = LoggerFactory.getLogger(JcrContentProcessingService.class);
 
     private final Session session;
-    private final Map<Module, ResourceInputProvider> resourceInputProviders;
     private final List<Pair<DefinitionProperty, Node>> unprocessedReferences = new ArrayList<>();
 
     private static final String[] knownDerivedPropertyNames = new String[] {
@@ -88,9 +87,8 @@ public class JcrContentProcessingService implements ContentProcessingService {
             HIPPOSTD_STATESUMMARY
     };
 
-    public JcrContentProcessingService(Session session, Map<Module, ResourceInputProvider> resourceInputProviders) {
+    public JcrContentProcessingService(Session session) {
         this.session = session;
-        this.resourceInputProviders = resourceInputProviders;
     }
 
     @Override
@@ -488,7 +486,7 @@ public class JcrContentProcessingService implements ContentProcessingService {
 
 
     private InputStream getResourceInputStream(final Source source, final String resourceName) throws IOException {
-        return resourceInputProviders.get(source.getModule()).getResourceInputStream(source, resourceName);
+        return source.getModule().getConfigResourceInputProvider().getResourceInputStream(source, resourceName);
     }
 
     private InputStream getResourceInputStream(final Value modelValue) throws IOException {

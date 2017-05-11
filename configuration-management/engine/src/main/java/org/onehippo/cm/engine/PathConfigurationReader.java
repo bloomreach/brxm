@@ -99,6 +99,11 @@ public class PathConfigurationReader {
                 for (Module module : project.getModules()) {
 
                     final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath, hasMultipleModules);
+
+                    // Set the input providers on the Module directly, so it doesn't need to be held in a Map on ConfigurationModel
+                    ((ModuleImpl)module).setConfigResourceInputProvider(moduleContext.getConfigInputProvider());
+                    ((ModuleImpl)module).setContentResourceInputProvider(moduleContext.getContentInputProvider());
+
                     moduleContexts.put(module, moduleContext);
 
                     final Path configRootPath = moduleContext.getConfigRoot();

@@ -29,7 +29,8 @@ import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModelTestUtils;
-import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
+import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
@@ -99,18 +100,18 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
     private void applyAndSaveDefinitions(final String[] sources) throws Exception {
 
         final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
-        final MergedModelBuilder mergedModelBuilder = new MergedModelBuilder();
+        final ConfigurationModelBuilder configurationModelBuilder = new ConfigurationModelBuilder();
         for (int i = 0; i < sources.length; i++) {
             final List<Definition> definitions = parseNoSort(sources[i], "test-module-" + i, ContentDefinition.class);
             assertTrue(definitions.size() == 1);
-            final Module module = definitions.get(0).getSource().getModule();
+            final ModuleImpl module = (ModuleImpl) definitions.get(0).getSource().getModule();
+            module.setConfigResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
             final GroupImpl configuration = (GroupImpl) module.getProject().getGroup();
-            mergedModelBuilder.push(configuration);
-            resourceInputProviders.put(module, ModelTestUtils.getTestResourceInputProvider());
+            configurationModelBuilder.push(configuration);
         }
-        final ConfigurationModel configurationModel = mergedModelBuilder.build();
+        final ConfigurationModel configurationModel = configurationModelBuilder.build();
 
-        final ContentProcessingService processingService = new JcrContentProcessingService(session, resourceInputProviders);
+        final ContentProcessingService processingService = new JcrContentProcessingService(session);
         processingService.apply(null, configurationModel.getContentDefinitions());
 
         session.save();

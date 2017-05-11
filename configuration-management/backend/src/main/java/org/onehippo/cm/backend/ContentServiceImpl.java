@@ -59,7 +59,7 @@ public class ContentServiceImpl implements ContentService {
                     .collect(Collectors.groupingBy(Definition::getSource, toSortedList(comparing(e -> e.getNode().getPath()))));
             for (Source source : contentMap.keySet()) {
 
-                final ContentProcessingService contentProcessingService = new JcrContentProcessingService(session, model.getResourceInputProviders());
+                final ContentProcessingService contentProcessingService = new JcrContentProcessingService(session);
                 contentProcessingService.apply(source, contentMap.get(source));
 
                 session.save();

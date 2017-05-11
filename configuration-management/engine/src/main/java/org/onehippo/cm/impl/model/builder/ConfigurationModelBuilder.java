@@ -26,10 +26,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.onehippo.cm.api.ConfigurationModel;
-import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.impl.ConfigurationModelImpl;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.GroupImpl;
@@ -38,17 +36,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * MergedModelBuilder accumulates {@link GroupImpl}s into a map of configurations and, when building
+ * ConfigurationModelBuilder accumulates {@link GroupImpl}s into a map of groups and, when building
  * the model, sorts the involved objects into processing order (based on "after" dependencies) to construct
  * the tree of {@link ConfigurationNodeImpl}s.
  */
-public class MergedModelBuilder {
+public class ConfigurationModelBuilder {
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationTreeBuilder.class);
-    private static final OrderableListSorter<GroupImpl> configurationSorter = new OrderableListSorter<>(Group.class.getSimpleName());
+    private static final OrderableListSorter<GroupImpl> groupSorter = new OrderableListSorter<>(Group.class.getSimpleName());
 
-    private final List<GroupImpl> configurations = new ArrayList<>();
-    private final Map<String, GroupImpl> configurationMap = new HashMap<>();
-    private final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
+    private final List<GroupImpl> groups = new ArrayList<>();
+    private final Map<String, GroupImpl> groupMap = new HashMap<>();
 
     // Used for cleanup when done with this ConfigurationModel
     private final Set<FileSystem> filesystems = new HashSet<>();
@@ -57,11 +54,11 @@ public class MergedModelBuilder {
         sort();
 
         final ConfigurationModelImpl mergedModel = new ConfigurationModelImpl();
-        mergedModel.setSortedGroups(configurations);
+        mergedModel.setSortedGroups(groups);
 
         final ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
-        configurations.forEach(configuration ->
-                configuration.getModifiableProjects().forEach(project ->
+        groups.forEach(group ->
+                group.getModifiableProjects().forEach(project ->
                         project.getModifiableModules().forEach(module -> {
                             logger.info("Merging module {}", ModelUtils.formatModule(module));
                             mergedModel.addNamespaceDefinitions(module.getNamespaceDefinitions());
@@ -73,57 +70,41 @@ public class MergedModelBuilder {
                 )
         );
         mergedModel.setConfigurationRootNode(configurationTreeBuilder.build());
-        mergedModel.addResourceInputProviders(resourceInputProviders);
 
         mergedModel.setFileSystems(filesystems);
 
         return mergedModel;
     }
 
-    public MergedModelBuilder push(final Map<String, GroupImpl> configurations, final Map<Module, ResourceInputProvider> resourceInputProviders) {
-        for (Group config : configurations.values()) {
-            // TODO: awful needed casting
-            push((GroupImpl)config);
+    public ConfigurationModelBuilder push(final Map<String, GroupImpl> groups) {
+        for (GroupImpl group : groups.values()) {
+            push(group);
         }
-        pushResourceInputProviders(resourceInputProviders);
         return this;
     }
 
-    public MergedModelBuilder push(final GroupImpl configuration) {
-        final String name = configuration.getName();
-        final GroupImpl consolidated = configurationMap.containsKey(name)
-                ? configurationMap.get(name) : createConfiguration(name);
+    public ConfigurationModelBuilder push(final GroupImpl group) {
+        final String name = group.getName();
+        final GroupImpl consolidated = groupMap.containsKey(name)
+                ? groupMap.get(name) : createGroup(name);
 
-        consolidated.addAfter(configuration.getAfter());
-        configuration.getModifiableProjects().forEach(consolidated::pushProject);
+        consolidated.addAfter(group.getAfter());
+        group.getModifiableProjects().forEach(consolidated::pushProject);
         return this;
     }
 
-    public void pushResourceInputProviders(Map<Module, ResourceInputProvider> resourceInputProviders) {
-        for (Module module : resourceInputProviders.keySet()) {
-            if (this.resourceInputProviders.containsKey(module)) {
-                final String msg = String.format(
-                        "ResourceInputProviders for module '%s' already pushed before.",
-                        ModelUtils.formatModule(module)
-                );
-                throw new IllegalArgumentException(msg);
-            }
-            this.resourceInputProviders.put(module, resourceInputProviders.get(module));
-        }
-    }
-
-    private GroupImpl createConfiguration(final String name) {
+    private GroupImpl createGroup(final String name) {
         final GroupImpl configuration = new GroupImpl(name);
 
-        configurationMap.put(name, configuration);
-        configurations.add(configuration);
+        groupMap.put(name, configuration);
+        groups.add(configuration);
 
         return configuration;
     }
 
     private void sort() {
-        configurationSorter.sort(configurations);
-        configurations.forEach(GroupImpl::sortProjects);
+        groupSorter.sort(groups);
+        groups.forEach(GroupImpl::sortProjects);
     }
 
     /**

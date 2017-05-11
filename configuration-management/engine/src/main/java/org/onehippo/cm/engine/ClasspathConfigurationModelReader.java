@@ -29,16 +29,16 @@ import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.engine.parser.ParserException;
-import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
+import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toMap;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
 
-public class ClasspathMergedModelReader {
+public class ClasspathConfigurationModelReader {
 
-    private static final Logger log = LoggerFactory.getLogger(ClasspathMergedModelReader.class);
+    private static final Logger log = LoggerFactory.getLogger(ClasspathConfigurationModelReader.class);
 
     /**
      * Searches the classpath for module manifest files and uses these as entry points for loading HCM module
@@ -56,7 +56,7 @@ public class ClasspathMergedModelReader {
         stopWatch.start();
 
         final Enumeration<URL> resources = classLoader.getResources(HCM_MODULE_YAML);
-        final MergedModelBuilder builder = new MergedModelBuilder();
+        final ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
         while (resources.hasMoreElements()) {
             final URL resource = resources.nextElement();
             // note: the below mapping of resource url to path assumes the jar physically exists on the filesystem,
@@ -71,15 +71,8 @@ public class ClasspathMergedModelReader {
             final Path moduleDescriptorPath = fs.getPath(HCM_MODULE_YAML);
             final PathConfigurationReader.ReadResult result =
                     new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
-            Map<Module, ModuleContext> moduleContexts = result.getModuleContexts();
-            Map<Module, ResourceInputProvider> configInputProviders = moduleContexts.entrySet().stream() //TODO SS: review this transformation
-                    .collect(toMap(Map.Entry::getKey, v -> v.getValue().getConfigInputProvider()));
 
-            //TODO SS: decide whether it is worth of passing module contexts to merged model
-            Map<Module, ResourceInputProvider> contentInputProviders = moduleContexts.entrySet().stream()
-                    .collect(toMap(Map.Entry::getKey, v -> v.getValue().getContentInputProvider()));
-
-            builder.push(result.getConfigurations(), configInputProviders);
+            builder.push(result.getConfigurations());
         }
         ConfigurationModel model = builder.build();
 

@@ -104,7 +104,10 @@ public class ProjectImpl implements Project {
             throw new IllegalStateException(msg);
         }
 
-        addModule(name).addAfter(module.getAfter()).pushDefinitions(module);
+        addModule(name).addAfter(module.getAfter())
+                .setConfigResourceInputProvider(module.getConfigResourceInputProvider())
+                .setContentResourceInputProvider(module.getContentResourceInputProvider())
+                .pushDefinitions(module);
     }
 
     public boolean equals(Object other) {

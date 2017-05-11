@@ -58,7 +58,6 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     private final List<WebFileBundleDefinition> webFileBundleDefinitions = new ArrayList<>();
     private final List<ContentDefinition> contentDefinitions = new ArrayList<>();
-    private final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
 
     // Used for cleanup when done with this ConfigurationModel
     private Set<FileSystem> filesystems = new HashSet<>();
@@ -103,11 +102,6 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         contentDefinitions.addAll(definitions);
     }
 
-    @Override
-    public Map<Module, ResourceInputProvider> getResourceInputProviders() {
-        return resourceInputProviders;
-    }
-
     public void setSortedGroups(final List<GroupImpl> sortedGroups) {
         this.sortedGroups = new ArrayList<>(sortedGroups);
     }
@@ -129,19 +123,6 @@ public class ConfigurationModelImpl implements ConfigurationModel {
             ensureUniqueBundleName(definition);
         }
         webFileBundleDefinitions.addAll(definitions);
-    }
-
-    public void addResourceInputProviders(Map<Module, ResourceInputProvider> resourceInputProviders) {
-        for (Module module : resourceInputProviders.keySet()) {
-            if (this.resourceInputProviders.containsKey(module)) {
-                final String msg = String.format(
-                        "ResourceInputProviders for module '%s' already added before.",
-                        ModelUtils.formatModule(module)
-                );
-                throw new IllegalArgumentException(msg);
-            }
-            this.resourceInputProviders.put(module, resourceInputProviders.get(module));
-        }
     }
 
     /**

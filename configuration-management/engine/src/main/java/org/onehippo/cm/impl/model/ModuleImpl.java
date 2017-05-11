@@ -90,6 +90,10 @@ public class ModuleImpl implements Module, Comparable<Module> {
 
     private final List<WebFileBundleDefinitionImpl> webFileBundleDefinitions = new ArrayList<>();
 
+    private ResourceInputProvider configResourceInputProvider;
+
+    private ResourceInputProvider contentResourceInputProvider;
+
     public ModuleImpl(final String name, final ProjectImpl project) {
         if (name == null) {
             throw new IllegalArgumentException("Parameter 'name' cannot be null");
@@ -204,6 +208,26 @@ public class ModuleImpl implements Module, Comparable<Module> {
         return webFileBundleDefinitions;
     }
 
+    @Override
+    public ResourceInputProvider getConfigResourceInputProvider() {
+        return configResourceInputProvider;
+    }
+
+    public ModuleImpl setConfigResourceInputProvider(final ResourceInputProvider configResourceInputProvider) {
+        this.configResourceInputProvider = configResourceInputProvider;
+        return this;
+    }
+
+    @Override
+    public ResourceInputProvider getContentResourceInputProvider() {
+        return contentResourceInputProvider;
+    }
+
+    public ModuleImpl setContentResourceInputProvider(final ResourceInputProvider contentResourceInputProvider) {
+        this.contentResourceInputProvider = contentResourceInputProvider;
+        return this;
+    }
+
     void pushDefinitions(final ModuleImpl module) {
         this.sortedSources.addAll(module.sortedSources);
 
@@ -247,10 +271,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
         TreeMap<String,String> items = new TreeMap<>();
 
         // get the resource input provider, which provides access to raw data for module content
-        ResourceInputProvider rip = model.getResourceInputProviders().get(this);
-        if (rip == null) {
-            log.warn("Cannot find ResourceInputProvider for module {}", this.getName());
-        }
+        ResourceInputProvider rip = configResourceInputProvider;
 
         // digest the descriptor
         // TODO this is an ugly hack in part because RIP uses config root instead of module root

@@ -20,7 +20,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
+import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
 
 public class ConfigurationVerifier {
 
@@ -34,7 +34,7 @@ public class ConfigurationVerifier {
         final Path moduleDescriptorPath = Paths.get(args[0]);
         final PathConfigurationReader.ReadResult result = new PathConfigurationReader().read(moduleDescriptorPath, true);
         final Map<String, GroupImpl> configurations = result.getConfigurations();
-        MergedModelBuilder builder = new MergedModelBuilder();
+        ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
         for (GroupImpl config : configurations.values()) {
             builder.push(config);
         }

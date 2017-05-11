@@ -40,7 +40,8 @@ import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModelTestUtils;
-import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
+import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.testutils.jcr.event.EventCollector;
 import org.onehippo.testutils.jcr.event.EventPojo;
@@ -1016,19 +1017,18 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         final EventCollector eventCollector = new EventCollector(session, testNode);
         eventCollector.start();
 
-        final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
-        final MergedModelBuilder mergedModelBuilder = new MergedModelBuilder();
+        final ConfigurationModelBuilder configurationModelBuilder = new ConfigurationModelBuilder();
         for (int i = 0; i < sources.length; i++) {
             final List<Definition> definitions = parseNoSort(sources[i], "test-module-" + i, ConfigDefinition.class);
             assertTrue(definitions.size() > 0);
-            final Module module = definitions.get(0).getSource().getModule();
+            final ModuleImpl module = (ModuleImpl) definitions.get(0).getSource().getModule();
+            module.setConfigResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
             final GroupImpl configuration = (GroupImpl) module.getProject().getGroup();
-            mergedModelBuilder.push(configuration);
-            resourceInputProviders.put(module, ModelTestUtils.getTestResourceInputProvider());
+            configurationModelBuilder.push(configuration);
         }
-        final ConfigurationModel configurationModel = mergedModelBuilder.build();
+        final ConfigurationModel configurationModel = configurationModelBuilder.build();
 
-        final ConfigurationPersistenceService helper = new ConfigurationPersistenceService(session, resourceInputProviders);
+        final ConfigurationPersistenceService helper = new ConfigurationPersistenceService(session);
         final EnumSet allExceptWebFileBundles = EnumSet.allOf(DefinitionType.class);
         allExceptWebFileBundles.remove(DefinitionType.WEBFILEBUNDLE);
         helper.apply(configurationModel, allExceptWebFileBundles);

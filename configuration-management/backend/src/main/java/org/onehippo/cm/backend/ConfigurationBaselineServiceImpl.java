@@ -64,7 +64,7 @@ import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
-import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
+import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -206,10 +206,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
     protected void storeBaselineModule(Module module, Node moduleNode, ConfigurationModel model) throws RepositoryException, IOException {
 
         // get the resource input provider, which provides access to raw data for module content
-        ResourceInputProvider rip = model.getResourceInputProviders().get(module);
-        if (rip == null) {
-            log.warn("Cannot find ResourceInputProvider for module {}", module.getName());
-        }
+        ResourceInputProvider rip = module.getConfigResourceInputProvider();
 
         // create descriptor node, if necessary
         Node descriptorNode = createNodeIfNecessary(moduleNode, MODULE_DESCRIPTOR_NODE, MODULE_DESCRIPTOR_TYPE, false);
@@ -544,21 +541,19 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
         else {
             // otherwise, if the baseline node DOES exist...
             final Node baselineNode = rootNode.getNode(BASELINE_PATH);
-            final MergedModelBuilder builder = new MergedModelBuilder();
-            final Map<Module, ResourceInputProvider> rips = new HashMap<>();
+            final ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
             final List<GroupImpl> groups = new ArrayList<>();
 
             // First phase: load and parse module descriptors
-            parseDescriptors(baselineNode, rips, groups);
+            parseDescriptors(baselineNode, groups);
 
             // Second phase: load and parse config Sources, load and mockup content Sources
-            parseSources(rips, groups);
+            parseSources(groups);
 
             // build the final merged model
             for (GroupImpl group : groups) {
                 builder.push(group);
             }
-            builder.pushResourceInputProviders(rips);
             result = builder.build();
         }
 
@@ -571,17 +566,16 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
     /**
      * First phase of loading a baseline: loading and parsing module descriptors. Accumulates results in rips and groups.
      * @param baselineNode the base node for the entire stored configuration baseline
-     * @param rips accumulator object for ResourceInputProviders
      * @param groups accumulator object for Configuration groups
      * @throws RepositoryException
      * @throws ParserException
      */
-    protected void parseDescriptors(final Node baselineNode, final Map<Module, ResourceInputProvider> rips,
-                                    final List<GroupImpl> groups) throws RepositoryException, ParserException {
+    protected void parseDescriptors(final Node baselineNode, final List<GroupImpl> groups)
+            throws RepositoryException, ParserException {
         // for each module node under this baseline
         for (Node moduleNode : findModuleNodes(baselineNode)) {
             Map<String, GroupImpl> moduleGroups;
-            Module module;
+            ModuleImpl module;
 
             Node descriptorNode = moduleNode.getNode(MODULE_DESCRIPTOR_NODE);
 
@@ -595,7 +589,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
                         .parse(is, moduleNode.getPath());
 
                 // This should always produce exactly one module!
-                module = moduleGroups.values().stream()
+                module = (ModuleImpl) moduleGroups.values().stream()
                         .flatMap(g -> g.getProjects().stream())
                         .flatMap(p -> p.getModules().stream())
                         .findFirst().get();
@@ -626,8 +620,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
             // store RIP for later use
             // TODO this implies that it should be impossible to have a module with no config sources!!!!
             // TODO in fact, we will want to allow modules with only content
-            ResourceInputProvider rip = new BaselineResourceInputProvider(moduleNode.getNode(HCM_CONFIG_FOLDER));
-            rips.put(module, rip);
+            module.setConfigResourceInputProvider(new BaselineResourceInputProvider(moduleNode.getNode(HCM_CONFIG_FOLDER)));
 
             // accumulate all groups
             groups.addAll(moduleGroups.values());
@@ -640,14 +633,12 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
     /**
      * Second phase of loading a baseline: loading and parsing config Sources and reconstructing minimal content
      * Source mockups (containing only the root definition path).
-     * @param rips accumulator object from first phase
      * @param groups accumulator object from first phase
      * @throws RepositoryException
      * @throws IOException
      * @throws ParserException
      */
-    protected void parseSources(final Map<Module, ResourceInputProvider> rips, final List<GroupImpl> groups)
-            throws RepositoryException, IOException, ParserException {
+    protected void parseSources(final List<GroupImpl> groups) throws RepositoryException, IOException, ParserException {
         // for each group
         for (Group group : groups) {
             // for each project
@@ -657,7 +648,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
                     log.debug("Parsing sources from baseline for {}/{}/{}",
                             group.getName(), project.getName(), module.getName());
 
-                    BaselineResourceInputProvider rip = (BaselineResourceInputProvider) rips.get(module);
+                    BaselineResourceInputProvider rip = (BaselineResourceInputProvider) module.getConfigResourceInputProvider();
                     ConfigSourceParser parser = new ConfigSourceParser(rip, true, DEFAULT_EXPLICIT_SEQUENCING);
                     Node moduleNode = rip.getBaseNode();
 

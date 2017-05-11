@@ -96,12 +96,10 @@ public class ConfigurationPersistenceService {
     };
 
     private final Session session;
-    private final Map<Module, ResourceInputProvider> resourceInputProviders;
     private final List<Pair<ConfigurationProperty, Node>> unprocessedReferences = new ArrayList<>();
 
-    public ConfigurationPersistenceService(final Session session, final Map<Module, ResourceInputProvider> resourceInputProviders) {
+    public ConfigurationPersistenceService(final Session session) {
         this.session = session;
-        this.resourceInputProviders = resourceInputProviders;
     }
 
     public synchronized void apply(final ConfigurationModel model, EnumSet<DefinitionType> includeDefinitionTypes) throws Exception {
@@ -529,7 +527,7 @@ public class ConfigurationPersistenceService {
     }
 
     private InputStream getResourceInputStream(final Source source, final String resourceName) throws IOException {
-        return resourceInputProviders.get(source.getModule()).getResourceInputStream(source, resourceName);
+        return source.getModule().getConfigResourceInputProvider().getResourceInputStream(source, resourceName);
     }
 
     private InputStream getResourceInputStream(final Value modelValue) throws IOException {
@@ -644,7 +642,7 @@ public class ConfigurationPersistenceService {
                     ModelUtils.formatDefinition(webFileBundleDefinition)));
 
             final ResourceInputProvider resourceInputProvider =
-                    resourceInputProviders.get(webFileBundleDefinition.getSource().getModule());
+                    webFileBundleDefinition.getSource().getModule().getConfigResourceInputProvider();
             final URL baseURL = resourceInputProvider.getBaseURL();
             if (baseURL.toString().contains("jar!")) {
                 final PartialZipFile bundleZipFile =

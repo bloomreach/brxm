@@ -18,8 +18,14 @@ package org.onehippo.cm.api.model;
 import java.io.IOException;
 import java.util.Set;
 
+import org.onehippo.cm.api.ResourceInputProvider;
+
 public interface Module extends Orderable {
 
+    /**
+     * Modules are composed into Projects and Groups for purposes of expressing dependencies.
+     * @return the Project of which this Module is a part
+     */
     Project getProject();
 
     Set<Source> getSources();
@@ -36,6 +42,15 @@ public interface Module extends Orderable {
      */
     Set<Source> getConfigSources();
 
+    /**
+     * @return A helper object to access raw streams for configuration files.
+     */
+    ResourceInputProvider getConfigResourceInputProvider();
+
+    /**
+     * @return A helper object to access raw streams for content files.
+     */
+    ResourceInputProvider getContentResourceInputProvider();
 
     /**
      * Compile a dummy YAML descriptor file to stand in for special case where demo project uses an aggregated

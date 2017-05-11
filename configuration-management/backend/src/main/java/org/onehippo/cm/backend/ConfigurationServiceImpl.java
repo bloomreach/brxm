@@ -45,7 +45,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             stopWatch.start();
 
             final ConfigurationPersistenceService service =
-                    new ConfigurationPersistenceService(session, model.getResourceInputProviders());
+                    new ConfigurationPersistenceService(session);
             service.apply(model, includeDefinitionTypes);
             session.save();
 

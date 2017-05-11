@@ -67,12 +67,6 @@ public interface ConfigurationModel extends Closeable {
     List<WebFileBundleDefinition> getWebFileBundleDefinitions();
 
     /**
-     * @return a Map of ResourceInputProviders by Module to provide access to raw source data streams
-     * TODO these use the config folder as base, not the module root! there's no way to access content source streams!
-     */
-    Map<Module, ResourceInputProvider> getResourceInputProviders();
-
-    /**
      * Compile a manifest of contents including all referenced Modules, Sources, and resource files.
      * A cryptographic digest of this manifest should be sufficient to detect changes in any config definitions,
      * actions, or the root definition paths for content definitions, at minimum.
