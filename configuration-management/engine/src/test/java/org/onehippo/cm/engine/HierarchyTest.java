@@ -41,7 +41,7 @@ public class HierarchyTest extends AbstractBaseTest {
 
     @Test
     public void expect_hierarchy_test_loads() throws IOException, ParserException {
-        final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/hierarchy_test/repo-config.yaml");
+        final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/hierarchy_test/"+Constants.REPO_CONFIG_YAML);
         final Map<String, ConfigurationImpl> configurations = result.getConfigurations();
         assertEquals(2, configurations.size());
 

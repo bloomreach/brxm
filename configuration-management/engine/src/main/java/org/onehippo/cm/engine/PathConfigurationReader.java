@@ -32,8 +32,8 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.engine.parser.ConfigSourceParser;
 import org.onehippo.cm.engine.parser.ContentSourceParser;
+import org.onehippo.cm.engine.parser.ModuleDescriptorParser;
 import org.onehippo.cm.engine.parser.ParserException;
-import org.onehippo.cm.engine.parser.RepoConfigParser;
 import org.onehippo.cm.engine.parser.SourceParser;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
@@ -87,9 +87,9 @@ public class PathConfigurationReader {
     public ReadResult read(final Path repoConfigPath, final boolean verifyOnly) throws IOException, ParserException {
         final InputStream repoConfigStream = repoConfigPath.toUri().toURL().openStream();
 
-        final RepoConfigParser repoConfigParser = new RepoConfigParser(explicitSequencing);
+        final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
         final Map<String, ConfigurationImpl> configurations =
-                repoConfigParser.parse(repoConfigStream, repoConfigPath.toAbsolutePath().toString());
+                moduleDescriptorParser.parse(repoConfigStream, repoConfigPath.toAbsolutePath().toString());
 
         final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(configurations);
         final Map<Module, ModuleContext> moduleContexts = new HashMap<>();

@@ -33,9 +33,9 @@ import static org.onehippo.cm.engine.Constants.AFTER_KEY;
 import static org.onehippo.cm.engine.Constants.MODULES_KEY;
 import static org.onehippo.cm.engine.Constants.MODULE_KEY;
 
-public class RepoConfigParser extends AbstractBaseParser {
+public class ModuleDescriptorParser extends AbstractBaseParser {
 
-    public RepoConfigParser(final boolean explicitSequencing) {
+    public ModuleDescriptorParser(final boolean explicitSequencing) {
         super(explicitSequencing);
     }
 

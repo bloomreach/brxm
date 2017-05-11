@@ -62,11 +62,11 @@
 
 // Stores a module, including descriptor, actions, and definition sources
 [hcm:module] > nt:base, hcm:digested, hippo:skipindex
-  + hcm:descriptor (hcm:descriptor) primary mandatory
+  + 'hcm-module.yaml' (hcm:descriptor) primary mandatory
   - hcm:lastexecutedaction (string)
-  + hcm:actions (hcm:actions)
-  + * (hcm:configfolder)
-  + * (hcm:contentfolder)
+  + 'hcm-actions.yaml' (hcm:actions)
+  + 'hcm-config' (hcm:configfolder)
+  + 'hcm-content' (hcm:contentfolder)
 
 // Stores a project
 [hcm:project] > nt:base, hippo:skipindex

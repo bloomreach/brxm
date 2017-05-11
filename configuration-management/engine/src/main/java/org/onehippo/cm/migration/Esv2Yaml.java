@@ -113,7 +113,7 @@ public class Esv2Yaml {
         Options options = new Options();
         options.addOption(ECM_LOCATION, "init", true, "(optional) location of hippoecm-extension.xml file, if not within <src> folder");
         options.addOption(SOURCE_FOLDER, "src", true, "bootstrap initialization resources folder");
-        options.addOption(TARGET_FOLDER, "target", true, "directory for writing the repo-config (will be emptied first)");
+        options.addOption(TARGET_FOLDER, "target", true, "directory for writing the output yaml (will be emptied first)");
         options.addOption(AGGREGATE, "aggregate", false, "Aggregate module");
         return options;
     }

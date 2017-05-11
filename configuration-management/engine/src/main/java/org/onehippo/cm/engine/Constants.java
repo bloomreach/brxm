@@ -22,18 +22,18 @@ public final class Constants {
 
     // Constants used by engine to locate config files
 
-    public static final String REPO_CONTENT_FOLDER = "repo-content";
-    public static final String REPO_CONFIG_FOLDER = "repo-config";
+    public static final String REPO_CONTENT_FOLDER = "hcm-content";
+    public static final String REPO_CONFIG_FOLDER = "hcm-config";
 
     public static final String YAML_EXT =".yaml";
-    public static final String REPO_CONFIG_YAML = "repo-config" + YAML_EXT;
-    public static final String ACTIONS_YAML = "hcm-actions.yaml";
+    public static final String REPO_CONFIG_YAML = "hcm-module" + YAML_EXT;
+    public static final String ACTIONS_YAML = "hcm-actions" + YAML_EXT;
 
-    // Following keys used in repo-config.yaml
-    public static final String CONFIGURATIONS_KEY = "configurations";
+    // Following keys used in hcm-module.yaml
+    public static final String CONFIGURATIONS_KEY = "groups";
     public static final String PROJECTS_KEY = "projects";
     public static final String MODULES_KEY = "modules";
-    public static final String CONFIGURATION_KEY = "configuration";
+    public static final String CONFIGURATION_KEY = "group";
     public static final String PROJECT_KEY = "project";
     public static final String MODULE_KEY = "module";
     public static final String AFTER_KEY = "after";
@@ -64,10 +64,10 @@ public final class Constants {
     public static final String LAST_UPDATED_PROPERTY = "hcm:lastupdated";
     public static final String MANIFEST_PROPERTY = "hcm:manifest";
 
-    public static final String MODULE_DESCRIPTOR_NODE = "hcm:descriptor";
+    public static final String MODULE_DESCRIPTOR_NODE = REPO_CONFIG_YAML;
     public static final String MODULE_DESCRIPTOR_TYPE = "hcm:descriptor";
     public static final String ACTIONS_TYPE = "hcm:actions";
-    public static final String ACTIONS_NODE = "hcm:actions";
+    public static final String ACTIONS_NODE = ACTIONS_YAML;
     public static final String CONTENT_TYPE = "hcm:content";
 
     public static final String CONTENT_FOLDER_TYPE = "hcm:contentfolder";

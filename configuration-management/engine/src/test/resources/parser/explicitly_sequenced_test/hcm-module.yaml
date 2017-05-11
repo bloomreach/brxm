@@ -1,5 +1,5 @@
-configurations:
-  - configuration: base
+groups:
+  - group: base
     projects:
       - project: project1
         modules:

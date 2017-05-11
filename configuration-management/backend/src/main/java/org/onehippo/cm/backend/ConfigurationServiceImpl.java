@@ -16,15 +16,16 @@
 
 package org.onehippo.cm.backend;
 
+import java.util.EnumSet;
+
+import javax.jcr.Session;
+
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.api.ConfigurationService;
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.model.DefinitionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Session;
-import java.util.EnumSet;
 
 public class ConfigurationServiceImpl implements ConfigurationService {
 

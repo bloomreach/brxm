@@ -28,8 +28,8 @@ public class ConfigurationVerifier {
     public static void main(String[] args) throws Exception {
 
         if (args.length != 1) {
-            System.out.println("usage: <repo-config.yaml>\n" +
-                    "<repo-config.yaml>: repo-config.yaml location");
+            System.out.println("usage: <hcm-module.yaml>\n" +
+                    "<hcm-module.yaml>: hcm-module.yaml location");
             return;
         }
         final Path repoConfig = Paths.get(args[0]);

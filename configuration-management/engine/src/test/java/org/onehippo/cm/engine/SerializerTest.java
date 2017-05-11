@@ -39,35 +39,35 @@ public class SerializerTest extends AbstractBaseTest {
 
     @Test
     public void read_write_hierarchy_test() throws IOException, ParserException {
-        readAndWrite("/parser/hierarchy_test/repo-config.yaml");
+        readAndWrite("/parser/hierarchy_test/"+Constants.REPO_CONFIG_YAML);
     }
 
     @Test
     public void read_write_value_test() throws IOException, ParserException {
-        readAndWrite("/parser/value_test/repo-config.yaml");
+        readAndWrite("/parser/value_test/"+Constants.REPO_CONFIG_YAML);
     }
 
     @Test
     public void read_write_explicitly_sequenced() throws IOException, ParserException {
-        readAndWrite("/parser/explicitly_sequenced_test/repo-config.yaml", true);
+        readAndWrite("/parser/explicitly_sequenced_test/"+Constants.REPO_CONFIG_YAML, true);
     }
 
     @Test
     public void read_write_not_explicitly_sequenced_test() throws IOException, ParserException {
-        readAndWrite("/parser/not_explicitly_sequenced_test/repo-config.yaml", false);
+        readAndWrite("/parser/not_explicitly_sequenced_test/"+Constants.REPO_CONFIG_YAML, false);
     }
 
-    private void readAndWrite(final String repoConfig) throws IOException, ParserException {
-        readAndWrite(repoConfig, DEFAULT_EXPLICIT_SEQUENCING);
+    private void readAndWrite(final String moduleConfig) throws IOException, ParserException {
+        readAndWrite(moduleConfig, DEFAULT_EXPLICIT_SEQUENCING);
     }
 
-    private void readAndWrite(final String repoConfig, final boolean explicitSequencing) throws IOException, ParserException {
-        final PathConfigurationReader.ReadResult result = readFromResource(repoConfig, explicitSequencing);
+    private void readAndWrite(final String moduleConfig, final boolean explicitSequencing) throws IOException, ParserException {
+        final PathConfigurationReader.ReadResult result = readFromResource(moduleConfig, explicitSequencing);
 
         final FileConfigurationWriter writer = new FileConfigurationWriter();
         writer.write(folder.getRoot().toPath(), result.getConfigurations(), result.getModuleContexts(), explicitSequencing);
 
-        final Path expectedRoot = findBase(repoConfig);
+        final Path expectedRoot = findBase(moduleConfig);
         final Path actualRoot = folder.getRoot().toPath();
         final List<Path> expected = findFiles(expectedRoot);
         final List<Path> actual = findFiles(actualRoot);

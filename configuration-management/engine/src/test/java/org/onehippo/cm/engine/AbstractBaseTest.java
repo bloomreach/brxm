@@ -74,28 +74,28 @@ public abstract class AbstractBaseTest {
     }
 
     protected PathConfigurationReader.ReadResult readFromResource(final String resourceName, final boolean explicitSequencing) throws IOException, ParserException {
-        final Path repoConfig = find(resourceName);
-        return new PathConfigurationReader(explicitSequencing).read(repoConfig);
+        final Path moduleConfig = find(resourceName);
+        return new PathConfigurationReader(explicitSequencing).read(moduleConfig);
     }
 
     protected PathConfigurationReader.ReadResult readFromTestJar(final String resourceName) throws IOException, ParserException {
         final Path jarPath = new File("target/test-classes.jar").toPath();
         try (FileSystem fs = FileSystems.newFileSystem(jarPath, null)) {
-            final Path repoConfig = fs.getPath(resourceName);
-            return new PathConfigurationReader(DEFAULT_EXPLICIT_SEQUENCING).read(repoConfig);
+            final Path moduleConfig = fs.getPath(resourceName);
+            return new PathConfigurationReader(DEFAULT_EXPLICIT_SEQUENCING).read(moduleConfig);
         }
     }
 
-    Path find(final String repoConfigResourceName) throws IOException {
-        final URL url = AbstractBaseTest.class.getResource(repoConfigResourceName);
+    Path find(final String moduleConfigResourceName) throws IOException {
+        final URL url = AbstractBaseTest.class.getResource(moduleConfigResourceName);
         if (url == null) {
-            fail("cannot find resource " + repoConfigResourceName);
+            fail("cannot find resource " + moduleConfigResourceName);
         }
         return Paths.get(url.getFile());
     }
 
-    Path findBase(final String repoConfigResourceName) throws IOException {
-        return find(repoConfigResourceName).getParent();
+    Path findBase(final String moduleConfigResourceName) throws IOException {
+        return find(moduleConfigResourceName).getParent();
     }
 
     Configuration assertConfiguration(final Map<String, ConfigurationImpl> parent, final String name, final String[] after, final int projectCount) {

@@ -1,10 +1,10 @@
-configurations:
-- configuration: base
+groups:
+- group: base
   projects:
   - project: project1
     modules:
     - module: module1
-- configuration: myhippoproject
+- group: myhippoproject
   after: base
   projects:
   - project: project2

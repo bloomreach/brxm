@@ -50,7 +50,7 @@ public class ParserValueTest extends AbstractBaseTest {
 
     @Test
     public void expect_value_test_loads() throws IOException, ParserException, URISyntaxException {
-        final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/value_test/repo-config.yaml");
+        final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/value_test/"+Constants.REPO_CONFIG_YAML);
         final Map<String, ConfigurationImpl> configurations = result.getConfigurations();
 
         assertEquals(1, configurations.size());

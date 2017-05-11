@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * Support for esv2yaml tool. Input provider relies onto the root of module instead of module/repo-config folder
+ * Support for esv2yaml tool. Input provider relies onto the root of module instead of module/hcm-config folder
  */
 public class LegacyModuleContext extends ModuleContext {
 

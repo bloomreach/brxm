@@ -36,7 +36,7 @@ import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.engine.BaselineResourceInputProvider;
 import org.onehippo.cm.engine.parser.ConfigSourceParser;
 import org.onehippo.cm.engine.parser.ParserException;
-import org.onehippo.cm.engine.parser.RepoConfigParser;
+import org.onehippo.cm.engine.parser.ModuleDescriptorParser;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 import org.onehippo.cm.impl.model.ContentSourceImpl;
@@ -588,9 +588,9 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
             // TODO when demo project is restructured, we should assume this exists
             final String descriptor = descriptorNode.getProperty(YAML_PROPERTY).getString();
             if (StringUtils.isNotEmpty(descriptor)) {
-                // parse descriptor with RepoConfigParser
+                // parse descriptor with ModuleDescriptorParser
                 InputStream is = IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8);
-                moduleGroups = new RepoConfigParser(DEFAULT_EXPLICIT_SEQUENCING)
+                moduleGroups = new ModuleDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
                         .parse(is, moduleNode.getPath());
 
                 // This should always produce exactly one module!
@@ -623,6 +623,8 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
             }
 
             // store RIP for later use
+            // TODO this implies that it should be impossible to have a module with no config sources!!!!
+            // TODO in fact, we will want to allow modules with only content
             ResourceInputProvider rip = new BaselineResourceInputProvider(moduleNode.getNode(REPO_CONFIG_FOLDER));
             rips.put(module, rip);
 
