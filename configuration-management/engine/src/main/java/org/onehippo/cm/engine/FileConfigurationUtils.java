@@ -26,8 +26,8 @@ import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.impl.model.GroupImpl;
 
-import static org.onehippo.cm.engine.Constants.REPO_CONFIG_FOLDER;
-import static org.onehippo.cm.engine.Constants.REPO_CONTENT_FOLDER;
+import static org.onehippo.cm.engine.Constants.HCM_CONFIG_FOLDER;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
 
 public class FileConfigurationUtils {
 
@@ -37,15 +37,15 @@ public class FileConfigurationUtils {
         //TODO SS: review this if it still needed for initial esv conversion
         if (Files.isDirectory(repoConfigFilePath)) {
             if (configHasMultipleModules) {
-                return repoConfigFilePath.resolve(REPO_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
+                return repoConfigFilePath.resolve(HCM_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
             } else {
-                return repoConfigFilePath.resolve(REPO_CONFIG_FOLDER);
+                return repoConfigFilePath.resolve(HCM_CONFIG_FOLDER);
             }
         }
         if (configHasMultipleModules) {
-            return repoConfigFilePath.resolveSibling(REPO_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
+            return repoConfigFilePath.resolveSibling(HCM_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
         } else {
-            return repoConfigFilePath.resolveSibling(REPO_CONFIG_FOLDER);
+            return repoConfigFilePath.resolveSibling(HCM_CONFIG_FOLDER);
         }
     }
 
@@ -54,15 +54,15 @@ public class FileConfigurationUtils {
         final Group group = project.getGroup();
         if (Files.isDirectory(repoConfigPath)) {
             if (configHasMultipleModules) {
-                return repoConfigPath.resolve(REPO_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
+                return repoConfigPath.resolve(HCM_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
             } else {
-                return repoConfigPath.resolve(REPO_CONTENT_FOLDER);
+                return repoConfigPath.resolve(HCM_CONTENT_FOLDER);
             }
         }
         if (configHasMultipleModules) {
-            return repoConfigPath.resolveSibling(REPO_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
+            return repoConfigPath.resolveSibling(HCM_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
         } else {
-            return repoConfigPath.resolveSibling(REPO_CONTENT_FOLDER);
+            return repoConfigPath.resolveSibling(HCM_CONTENT_FOLDER);
         }
     }
 

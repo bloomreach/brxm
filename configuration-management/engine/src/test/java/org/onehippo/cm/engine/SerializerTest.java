@@ -39,22 +39,22 @@ public class SerializerTest extends AbstractBaseTest {
 
     @Test
     public void read_write_hierarchy_test() throws IOException, ParserException {
-        readAndWrite("/parser/hierarchy_test/"+Constants.REPO_CONFIG_YAML);
+        readAndWrite("/parser/hierarchy_test/"+Constants.HCM_MODULE_YAML);
     }
 
     @Test
     public void read_write_value_test() throws IOException, ParserException {
-        readAndWrite("/parser/value_test/"+Constants.REPO_CONFIG_YAML);
+        readAndWrite("/parser/value_test/"+Constants.HCM_MODULE_YAML);
     }
 
     @Test
     public void read_write_explicitly_sequenced() throws IOException, ParserException {
-        readAndWrite("/parser/explicitly_sequenced_test/"+Constants.REPO_CONFIG_YAML, true);
+        readAndWrite("/parser/explicitly_sequenced_test/"+Constants.HCM_MODULE_YAML, true);
     }
 
     @Test
     public void read_write_not_explicitly_sequenced_test() throws IOException, ParserException {
-        readAndWrite("/parser/not_explicitly_sequenced_test/"+Constants.REPO_CONFIG_YAML, false);
+        readAndWrite("/parser/not_explicitly_sequenced_test/"+Constants.HCM_MODULE_YAML, false);
     }
 
     private void readAndWrite(final String moduleConfig) throws IOException, ParserException {

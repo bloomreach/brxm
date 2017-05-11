@@ -58,9 +58,9 @@ import java.util.stream.Collectors;
 import static org.onehippo.cm.engine.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.engine.Constants.DEFAULT_DIGEST;
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
-import static org.onehippo.cm.engine.Constants.REPO_CONFIG_FOLDER;
-import static org.onehippo.cm.engine.Constants.REPO_CONFIG_YAML;
-import static org.onehippo.cm.engine.Constants.REPO_CONTENT_FOLDER;
+import static org.onehippo.cm.engine.Constants.HCM_CONFIG_FOLDER;
+import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
 
 public class ModuleImpl implements Module, Comparable<Module> {
 
@@ -253,7 +253,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
 
         // digest the descriptor
         // TODO this is an ugly hack in part because RIP uses config root instead of module root
-        boolean hasDescriptor = digestResource(null, "/../"+REPO_CONFIG_YAML, rip, items);
+        boolean hasDescriptor = digestResource(null, "/../"+ HCM_MODULE_YAML, rip, items);
 
         // special-case handle a missing descriptor by generating a dummy one, for demo case
         // TODO remove when demo is restructured to use module-specific descriptors
@@ -261,7 +261,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
             // create a manifest item for a dummy descriptor
             String descriptor = this.compileDummyDescriptor();
             String digest = digestFromStream(IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8));
-            items.put("/"+REPO_CONFIG_YAML, digest);
+            items.put("/"+ HCM_MODULE_YAML, digest);
         }
 
         // digest the actions file
@@ -273,7 +273,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
             ContentDefinition firstDef = (ContentDefinition) source.getDefinitions().get(0);
 
             // add the first definition path to manifest
-            items.put("/"+REPO_CONTENT_FOLDER+"/"+source.getPath(), firstDef.getNode().getPath());
+            items.put("/"+ HCM_CONTENT_FOLDER +"/"+source.getPath(), firstDef.getNode().getPath());
         }
 
         // for each config source
@@ -383,7 +383,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
                 path = StringUtils.removeStart(path, "/..");
             }
             else {
-                path = "/"+REPO_CONFIG_FOLDER+path;
+                path = "/"+ HCM_CONFIG_FOLDER +path;
             }
 
             items.put(path, digestString);

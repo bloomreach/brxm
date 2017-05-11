@@ -35,8 +35,8 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
 import static org.onehippo.cm.engine.Constants.AFTER_KEY;
-import static org.onehippo.cm.engine.Constants.CONFIGURATIONS_KEY;
-import static org.onehippo.cm.engine.Constants.CONFIGURATION_KEY;
+import static org.onehippo.cm.engine.Constants.GROUPS_KEY;
+import static org.onehippo.cm.engine.Constants.GROUP_KEY;
 import static org.onehippo.cm.engine.Constants.MODULES_KEY;
 import static org.onehippo.cm.engine.Constants.MODULE_KEY;
 import static org.onehippo.cm.engine.Constants.PROJECTS_KEY;
@@ -59,14 +59,14 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
 
         final List<Node> configurationNodes = configurations.values().stream().map(this::representConfiguration)
                 .collect(Collectors.toList());
-        rootTuples.add(createStrSeqTuple(CONFIGURATIONS_KEY, configurationNodes));
+        rootTuples.add(createStrSeqTuple(GROUPS_KEY, configurationNodes));
 
         return new MappingNode(Tag.MAP, rootTuples, false);
     }
 
     private Node representConfiguration(final Group group) {
         final List<NodeTuple> tuples = new ArrayList<>();
-        tuples.addAll(representOrderable(group, CONFIGURATION_KEY));
+        tuples.addAll(representOrderable(group, GROUP_KEY));
 
         final List<Node> projectNodes = group.getProjects().stream().map(this::representProject)
                 .collect(Collectors.toList());

@@ -91,9 +91,9 @@ import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_NODE;
 import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_TYPE;
 import static org.onehippo.cm.engine.Constants.MODULE_TYPE;
 import static org.onehippo.cm.engine.Constants.PROJECT_TYPE;
-import static org.onehippo.cm.engine.Constants.REPO_CONFIG_FOLDER;
-import static org.onehippo.cm.engine.Constants.REPO_CONFIG_YAML;
-import static org.onehippo.cm.engine.Constants.REPO_CONTENT_FOLDER;
+import static org.onehippo.cm.engine.Constants.HCM_CONFIG_FOLDER;
+import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.engine.Constants.YAML_PROPERTY;
 
 public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineService {
@@ -215,9 +215,9 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
 
         // AFAIK, a module MUST have a descriptor, but check here for a malformed package or special case
         // TODO the "/../" is an ugly hack because RIP actually treats absolute paths as relative to config base, not module base
-        if (rip.hasResource(null, "/../"+REPO_CONFIG_YAML)) {
+        if (rip.hasResource(null, "/../"+ HCM_MODULE_YAML)) {
             // open descriptor InputStream
-            InputStream is = rip.getResourceInputStream(null, "/../"+REPO_CONFIG_YAML);
+            InputStream is = rip.getResourceInputStream(null, "/../"+ HCM_MODULE_YAML);
 
             // store yaml and digest (this call will close the input stream)
             storeStringAndDigest(is, descriptorNode, YAML_PROPERTY);
@@ -248,7 +248,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
         for (Source source : module.getContentSources()) {
             // TODO this is an ugly hack because source.getPath() is actually relative to content root, not module root
             // create the content root node, if necessary
-            Node contentRootNode = createNodeIfNecessary(moduleNode, REPO_CONTENT_FOLDER, CONTENT_FOLDER_TYPE, false);
+            Node contentRootNode = createNodeIfNecessary(moduleNode, HCM_CONTENT_FOLDER, CONTENT_FOLDER_TYPE, false);
 
             // create folder nodes, if necessary
             Node sourceNode = createNodeAndParentsIfNecessary(source.getPath(), contentRootNode,
@@ -265,7 +265,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
         for (Source source : module.getConfigSources()) {
             // TODO this is an ugly hack because source.getPath() is actually relative to config root, not module root
             // create the config root node, if necessary
-            Node configRootNode = createNodeIfNecessary(moduleNode, REPO_CONFIG_FOLDER, CONFIG_FOLDER_TYPE, false);
+            Node configRootNode = createNodeIfNecessary(moduleNode, HCM_CONFIG_FOLDER, CONFIG_FOLDER_TYPE, false);
 
             // process in detail ...
             storeBaselineConfigSource(source, configRootNode, rip);
@@ -625,7 +625,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
             // store RIP for later use
             // TODO this implies that it should be impossible to have a module with no config sources!!!!
             // TODO in fact, we will want to allow modules with only content
-            ResourceInputProvider rip = new BaselineResourceInputProvider(moduleNode.getNode(REPO_CONFIG_FOLDER));
+            ResourceInputProvider rip = new BaselineResourceInputProvider(moduleNode.getNode(HCM_CONFIG_FOLDER));
             rips.put(module, rip);
 
             // accumulate all groups

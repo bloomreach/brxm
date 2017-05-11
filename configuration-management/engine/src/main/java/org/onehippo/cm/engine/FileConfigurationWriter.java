@@ -44,7 +44,7 @@ public class FileConfigurationWriter {
                final Map<Module, ModuleContext> moduleContextMap,
                final boolean explicitSequencing) throws IOException {
         final RepoConfigSerializer repoConfigSerializer = new RepoConfigSerializer(explicitSequencing);
-        final Path repoConfigPath = destination.resolve(Constants.REPO_CONFIG_YAML);
+        final Path repoConfigPath = destination.resolve(Constants.HCM_MODULE_YAML);
 
         try (final OutputStream repoConfigOutputStream = new FileOutputStream(repoConfigPath.toFile())) {
             repoConfigSerializer.serialize(repoConfigOutputStream, configurations);

@@ -140,8 +140,8 @@ public class Esv2Yaml {
             if (target.isFile()) {
                 throw new IllegalArgumentException("Target is not a directory");
             } else {
-                final Path configFolder = Paths.get(target.toURI()).resolve(Constants.REPO_CONFIG_FOLDER);
-                final Path contentFolder = Paths.get(target.toURI()).resolve(Constants.REPO_CONTENT_FOLDER);
+                final Path configFolder = Paths.get(target.toURI()).resolve(Constants.HCM_CONFIG_FOLDER);
+                final Path contentFolder = Paths.get(target.toURI()).resolve(Constants.HCM_CONTENT_FOLDER);
 
                 if (Files.exists(configFolder) && Files.isDirectory(configFolder)) {
                     FileUtils.forceDelete(configFolder.toFile());

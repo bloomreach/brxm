@@ -34,7 +34,7 @@ import java.util.Enumeration;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
-import static org.onehippo.cm.engine.Constants.REPO_CONFIG_YAML;
+import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
 
 public class ClasspathMergedModelReader {
 
@@ -55,7 +55,7 @@ public class ClasspathMergedModelReader {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        final Enumeration<URL> resources = classLoader.getResources(REPO_CONFIG_YAML);
+        final Enumeration<URL> resources = classLoader.getResources(HCM_MODULE_YAML);
         final MergedModelBuilder builder = new MergedModelBuilder();
         while (resources.hasMoreElements()) {
             final URL resource = resources.nextElement();
@@ -68,7 +68,7 @@ public class ClasspathMergedModelReader {
             FileSystem fs = FileSystems.newFileSystem(jarPath, null);
             builder.addFileSystem(fs);
 
-            final Path repoConfig = fs.getPath(REPO_CONFIG_YAML);
+            final Path repoConfig = fs.getPath(HCM_MODULE_YAML);
             final PathConfigurationReader.ReadResult result =
                     new PathConfigurationReader().read(repoConfig, verifyOnly);
             Map<Module, ModuleContext> moduleContexts = result.getModuleContexts();

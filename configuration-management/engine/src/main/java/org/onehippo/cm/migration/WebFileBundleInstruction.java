@@ -37,7 +37,7 @@ public class WebFileBundleInstruction extends InitializeInstruction {
         log.info("Processing " + getType().getPropertyName() + " named '" + bundleName + "'");
         source.addWebFileBundleDefinition(getResourcePath());
 
-        final Path dirPath = Paths.get(moduleRoot.toString(), Constants.REPO_CONFIG_FOLDER, bundleName);
+        final Path dirPath = Paths.get(moduleRoot.toString(), Constants.HCM_CONFIG_FOLDER, bundleName);
         final File bundleDirectory = dirPath.toFile();
         try {
             FileUtils.copyDirectory(getResource(), bundleDirectory);

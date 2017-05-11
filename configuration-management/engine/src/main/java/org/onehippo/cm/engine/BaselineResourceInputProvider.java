@@ -40,8 +40,8 @@ import static org.onehippo.cm.engine.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
 import static org.onehippo.cm.engine.Constants.DEFINITIONS_TYPE;
 import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_NODE;
-import static org.onehippo.cm.engine.Constants.REPO_CONFIG_YAML;
-import static org.onehippo.cm.engine.Constants.REPO_CONTENT_FOLDER;
+import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
 
 /**
  * Provides access to InputStreams based on JCR Nodes stored in the configuration baseline.
@@ -51,7 +51,7 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
     private static final Logger log = LoggerFactory.getLogger(BaselineResourceInputProvider.class);
 
     /**
-     * Base Node from which path references are relative. Typically the REPO_CONTENT_FOLDER child of a module.
+     * Base Node from which path references are relative. Typically the HCM_CONTENT_FOLDER child of a module.
      */
     private Node baseNode;
 
@@ -96,7 +96,7 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
         if (resourcePath.startsWith("/")) {
             // TODO this is an ugly hack in part because RIP uses config root instead of module root
             // special case handling for descriptor and actions
-            if (resourcePath.equals("/../"+REPO_CONFIG_YAML)) {
+            if (resourcePath.equals("/../"+ HCM_MODULE_YAML)) {
                 // short-circuit here, because we want to skip JCR name escaping
                 return "../"+MODULE_DESCRIPTOR_NODE;
             }
@@ -153,7 +153,7 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
      * @throws RepositoryException
      */
     public List<Node> getConfigSourceNodes() throws RepositoryException {
-        // we expect baseNode to be REPO_CONFIG_FOLDER for this module
+        // we expect baseNode to be HCM_CONFIG_FOLDER for this module
         // search for definitions nodes by type
         return searchByType(DEFINITIONS_TYPE, baseNode);
     }
@@ -163,14 +163,14 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
      * @throws RepositoryException
      */
     public List<Node> getContentSourceNodes() throws RepositoryException {
-        // we expect baseNode to be REPO_CONFIG_FOLDER for this module
-        // if no REPO_CONTENT_FOLDER node exists for this module, return a trivial empty result
-        if (!baseNode.getParent().hasNode(REPO_CONTENT_FOLDER)) {
+        // we expect baseNode to be HCM_CONFIG_FOLDER for this module
+        // if no HCM_CONTENT_FOLDER node exists for this module, return a trivial empty result
+        if (!baseNode.getParent().hasNode(HCM_CONTENT_FOLDER)) {
             return Collections.emptyList();
         }
 
         // otherwise, search for content nodes by type
-        final Node searchBase = baseNode.getParent().getNode(REPO_CONTENT_FOLDER);
+        final Node searchBase = baseNode.getParent().getNode(HCM_CONTENT_FOLDER);
         return searchByType(CONTENT_TYPE, baseNode);
     }
 
