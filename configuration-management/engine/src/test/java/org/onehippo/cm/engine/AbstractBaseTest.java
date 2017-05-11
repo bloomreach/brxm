@@ -26,12 +26,12 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionItem;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.PropertyOperation;
@@ -44,7 +44,6 @@ import org.onehippo.cm.impl.model.GroupImpl;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;

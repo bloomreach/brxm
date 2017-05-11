@@ -15,6 +15,12 @@
  */
 package org.onehippo.cm.migration;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Stack;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.json.JSONObject;
@@ -25,12 +31,6 @@ import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
 import org.onehippo.cm.impl.model.ValueImpl;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.Stack;
 
 public class ResourcebundlesInitializeInstruction extends InitializeInstruction {
 

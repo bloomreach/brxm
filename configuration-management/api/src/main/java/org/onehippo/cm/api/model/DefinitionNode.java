@@ -16,7 +16,6 @@
 package org.onehippo.cm.api.model;
 
 import java.util.Map;
-import java.util.Optional;
 
 public interface DefinitionNode extends DefinitionItem {
     /**

@@ -15,10 +15,10 @@
  */
 package org.onehippo.cm.api;
 
+import java.util.EnumSet;
+
 import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cms7.services.SingletonService;
-
-import java.util.EnumSet;
 
 @SingletonService
 public interface ContentService {

@@ -18,7 +18,6 @@ package org.onehippo.cm.impl.model;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;

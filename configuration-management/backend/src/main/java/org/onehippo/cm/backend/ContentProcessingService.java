@@ -15,10 +15,10 @@
  */
 package org.onehippo.cm.backend;
 
+import java.util.List;
+
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Source;
-
-import java.util.List;
 
 /**
  * Applies content definitions

@@ -15,15 +15,14 @@
  */
 package org.onehippo.cm.migration;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.engine.FileConfigurationUtils;
 import org.onehippo.cm.engine.FileResourceInputProvider;
 import org.onehippo.cm.engine.FileResourceOutputProvider;
 import org.onehippo.cm.engine.ModuleContext;
-import org.onehippo.cm.engine.ResourceOutputProvider;
-
-import java.io.IOException;
-import java.nio.file.Path;
 
 /**
  * Support for esv2yaml tool. Input provider relies onto the root of module instead of module/hcm-config folder

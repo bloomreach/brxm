@@ -15,6 +15,10 @@
  */
 package org.onehippo.cm.engine.parser;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionType;
@@ -28,10 +32,6 @@ import org.onehippo.cm.impl.model.WebFileBundleDefinitionImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
 
 import static org.onehippo.cm.engine.Constants.DEFINITIONS;
 import static org.onehippo.cm.engine.Constants.META_DELETE_KEY;

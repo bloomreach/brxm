@@ -39,9 +39,9 @@ import static org.onehippo.cm.engine.Constants.ACTIONS_NODE;
 import static org.onehippo.cm.engine.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
 import static org.onehippo.cm.engine.Constants.DEFINITIONS_TYPE;
-import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_NODE;
-import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
+import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
+import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_NODE;
 
 /**
  * Provides access to InputStreams based on JCR Nodes stored in the configuration baseline.

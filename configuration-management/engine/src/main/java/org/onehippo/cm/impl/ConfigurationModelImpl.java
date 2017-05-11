@@ -16,11 +16,23 @@
 
 package org.onehippo.cm.impl;
 
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ContentDefinition;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
@@ -33,18 +45,6 @@ import org.onehippo.cm.impl.model.NodeTypeDefinitionImpl;
 import org.onehippo.cm.impl.model.WebFileBundleDefinitionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class ConfigurationModelImpl implements ConfigurationModel {
 

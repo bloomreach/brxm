@@ -15,11 +15,11 @@
  */
 package org.onehippo.cm.migration;
 
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.engine.FileResourceOutputProvider;
-
 import java.io.IOException;
 import java.nio.file.Path;
+
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.engine.FileResourceOutputProvider;
 
 /**
  * Aggregated modules support

@@ -20,9 +20,9 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.DefinitionNode;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;

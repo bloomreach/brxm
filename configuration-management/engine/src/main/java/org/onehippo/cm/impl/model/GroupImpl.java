@@ -15,10 +15,6 @@
  */
 package org.onehippo.cm.impl.model;
 
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.impl.model.builder.OrderableListSorter;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import org.onehippo.cm.api.model.Group;
+import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.impl.model.builder.OrderableListSorter;
 
 public class GroupImpl implements Group {
 

@@ -15,6 +15,10 @@
  */
 package org.onehippo.cm.engine;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Set;
+
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Source;
@@ -22,10 +26,6 @@ import org.onehippo.cm.engine.parser.SourceResourceCrawler;
 import org.onehippo.cm.engine.serializer.ResourceNameResolver;
 import org.onehippo.cm.engine.serializer.ResourceNameResolverImpl;
 import org.onehippo.cm.impl.model.ConfigSourceImpl;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Set;
 
 /**
  * Incapsulates module's input/output providers and unique name resolver

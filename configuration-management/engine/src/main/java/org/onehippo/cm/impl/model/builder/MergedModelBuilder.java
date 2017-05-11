@@ -16,18 +16,6 @@
 
 package org.onehippo.cm.impl.model.builder;
 
-import org.onehippo.cm.api.ConfigurationModel;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.impl.ConfigurationModelImpl;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
-import org.onehippo.cm.impl.model.ModelUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.nio.file.FileSystem;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +24,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.onehippo.cm.api.ConfigurationModel;
+import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.ContentDefinition;
+import org.onehippo.cm.api.model.Group;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.impl.ConfigurationModelImpl;
+import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
+import org.onehippo.cm.impl.model.ModelUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * MergedModelBuilder accumulates {@link GroupImpl}s into a map of configurations and, when building

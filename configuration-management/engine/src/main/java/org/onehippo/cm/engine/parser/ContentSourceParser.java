@@ -15,6 +15,9 @@
  */
 package org.onehippo.cm.engine.parser;
 
+import java.util.List;
+import java.util.Map;
+
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
@@ -24,9 +27,6 @@ import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
-
-import java.util.List;
-import java.util.Map;
 
 import static org.onehippo.cm.engine.Constants.META_KEY_PREFIX;
 import static org.onehippo.cm.engine.Constants.OPERATION_KEY;

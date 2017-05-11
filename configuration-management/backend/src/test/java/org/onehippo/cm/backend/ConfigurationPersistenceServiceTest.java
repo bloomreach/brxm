@@ -15,6 +15,19 @@
  */
 package org.onehippo.cm.backend;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Before;
@@ -33,18 +46,6 @@ import org.onehippo.testutils.jcr.event.EventCollector;
 import org.onehippo.testutils.jcr.event.EventPojo;
 import org.onehippo.testutils.jcr.event.ExpectedEvents;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.junit.Assert.assertEquals;

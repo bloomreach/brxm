@@ -16,12 +16,15 @@
 
 package org.onehippo.cm.impl.model.builder;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 import org.onehippo.cm.api.ConfigurationModel;
-import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ContentDefinition;
+import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
@@ -31,9 +34,7 @@ import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.google.common.collect.ImmutableSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

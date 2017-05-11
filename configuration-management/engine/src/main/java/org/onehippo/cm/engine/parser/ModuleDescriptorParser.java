@@ -24,13 +24,13 @@ import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 import org.yaml.snakeyaml.nodes.Node;
 
+import static org.onehippo.cm.engine.Constants.AFTER_KEY;
 import static org.onehippo.cm.engine.Constants.GROUPS_KEY;
 import static org.onehippo.cm.engine.Constants.GROUP_KEY;
-import static org.onehippo.cm.engine.Constants.PROJECTS_KEY;
-import static org.onehippo.cm.engine.Constants.PROJECT_KEY;
-import static org.onehippo.cm.engine.Constants.AFTER_KEY;
 import static org.onehippo.cm.engine.Constants.MODULES_KEY;
 import static org.onehippo.cm.engine.Constants.MODULE_KEY;
+import static org.onehippo.cm.engine.Constants.PROJECTS_KEY;
+import static org.onehippo.cm.engine.Constants.PROJECT_KEY;
 
 public class ModuleDescriptorParser extends AbstractBaseParser {
 

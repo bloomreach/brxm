@@ -15,14 +15,14 @@
  */
 package org.onehippo.cm.impl.model;
 
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Source;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import org.onehippo.cm.api.model.Definition;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.Source;
 
 public abstract class SourceImpl implements Source {
 

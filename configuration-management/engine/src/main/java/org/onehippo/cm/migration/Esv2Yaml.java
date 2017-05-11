@@ -15,28 +15,6 @@
  */
 package org.onehippo.cm.migration;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.engine.Constants;
-import org.onehippo.cm.engine.FileConfigurationWriter;
-import org.onehippo.cm.engine.ModuleContext;
-import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
-import org.onehippo.cm.impl.model.ConfigSourceImpl;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.SourceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.jcr.PropertyType;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -53,6 +31,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.jcr.PropertyType;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.onehippo.cm.api.model.DefinitionNode;
+import org.onehippo.cm.engine.Constants;
+import org.onehippo.cm.engine.FileConfigurationWriter;
+import org.onehippo.cm.engine.ModuleContext;
+import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
+import org.onehippo.cm.impl.model.ConfigSourceImpl;
+import org.onehippo.cm.impl.model.DefinitionNodeImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
+import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.impl.model.SourceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Esv2Yaml {
 

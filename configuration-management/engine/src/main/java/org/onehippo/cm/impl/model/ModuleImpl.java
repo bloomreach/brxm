@@ -15,26 +15,6 @@
  */
 package org.onehippo.cm.impl.model;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.NullOutputStream;
-import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.ConfigurationModel;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.NodeTypeDefinition;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,12 +35,33 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import javax.xml.bind.DatatypeConverter;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.api.ConfigurationModel;
+import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.ConfigDefinition;
+import org.onehippo.cm.api.model.ContentDefinition;
+import org.onehippo.cm.api.model.Definition;
+import org.onehippo.cm.api.model.DefinitionNode;
+import org.onehippo.cm.api.model.DefinitionProperty;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.NodeTypeDefinition;
+import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.onehippo.cm.engine.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.engine.Constants.DEFAULT_DIGEST;
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.engine.Constants.HCM_CONFIG_FOLDER;
-import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
+import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
 
 public class ModuleImpl implements Module, Comparable<Module> {
 

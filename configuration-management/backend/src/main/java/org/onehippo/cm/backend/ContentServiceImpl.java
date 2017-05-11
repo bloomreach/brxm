@@ -15,16 +15,6 @@
  */
 package org.onehippo.cm.backend;
 
-import org.onehippo.cm.api.ConfigurationModel;
-import org.onehippo.cm.api.ContentService;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionType;
-import org.onehippo.cm.api.model.Source;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.jcr.Session;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -33,6 +23,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+import javax.jcr.Session;
+
+import org.onehippo.cm.api.ConfigurationModel;
+import org.onehippo.cm.api.ContentService;
+import org.onehippo.cm.api.model.ContentDefinition;
+import org.onehippo.cm.api.model.Definition;
+import org.onehippo.cm.api.model.DefinitionType;
+import org.onehippo.cm.api.model.Source;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Comparator.comparing;
 

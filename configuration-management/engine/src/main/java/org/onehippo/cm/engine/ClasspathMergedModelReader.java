@@ -15,15 +15,6 @@
  */
 package org.onehippo.cm.engine;
 
-import org.apache.commons.lang3.time.StopWatch;
-import org.onehippo.cm.api.ConfigurationModel;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.engine.parser.ParserException;
-import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystem;
@@ -32,6 +23,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Map;
+
+import org.apache.commons.lang3.time.StopWatch;
+import org.onehippo.cm.api.ConfigurationModel;
+import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.engine.parser.ParserException;
+import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toMap;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;

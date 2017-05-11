@@ -15,6 +15,12 @@
  */
 package org.onehippo.cm.backend;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.jcr.Node;
+
 import org.junit.Test;
 import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
@@ -25,11 +31,6 @@ import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModelTestUtils;
 import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
 import org.onehippo.repository.testutils.RepositoryTestCase;
-
-import javax.jcr.Node;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

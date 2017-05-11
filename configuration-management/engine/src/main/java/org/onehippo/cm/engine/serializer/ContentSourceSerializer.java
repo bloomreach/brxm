@@ -15,6 +15,10 @@
  */
 package org.onehippo.cm.engine.serializer;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.engine.ModuleContext;
@@ -23,10 +27,6 @@ import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 
 public class ContentSourceSerializer extends SourceSerializer {
     public ContentSourceSerializer(ModuleContext moduleContext, Source source, boolean explicitSequencing) {

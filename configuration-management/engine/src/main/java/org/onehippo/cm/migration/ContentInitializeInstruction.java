@@ -15,6 +15,12 @@
  */
 package org.onehippo.cm.migration;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
@@ -28,12 +34,6 @@ import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
 import org.onehippo.cm.impl.model.ValueImpl;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import static org.onehippo.cm.api.model.PropertyType.SINGLE;
 

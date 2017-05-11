@@ -15,17 +15,6 @@
  */
 package org.onehippo.cm.engine;
 
-import org.apache.commons.io.IOUtils;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.engine.serializer.ContentSourceSerializer;
-import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
-import org.onehippo.cm.engine.serializer.SourceSerializer;
-import org.onehippo.cm.impl.model.ConfigSourceImpl;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.yaml.snakeyaml.nodes.Node;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,6 +25,17 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.io.IOUtils;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.engine.serializer.ContentSourceSerializer;
+import org.onehippo.cm.engine.serializer.RepoConfigSerializer;
+import org.onehippo.cm.engine.serializer.SourceSerializer;
+import org.onehippo.cm.impl.model.ConfigSourceImpl;
+import org.onehippo.cm.impl.model.GroupImpl;
+import org.yaml.snakeyaml.nodes.Node;
 
 public class FileConfigurationWriter {
 
