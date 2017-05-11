@@ -435,7 +435,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public VirtualHost getVirtualHost() {
         checkStateValidity();
-        checkMatchingPhaseFinished("getVirtualHost");
         return resolvedMount.getMount().getVirtualHost();
     }
 
