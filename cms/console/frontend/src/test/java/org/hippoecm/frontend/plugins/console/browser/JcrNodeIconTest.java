@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.frontend.plugins.console.icons.JcrNodeIcon;
 import org.hippoecm.repository.api.WorkflowException;
 import org.junit.Test;
+import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
@@ -78,4 +79,20 @@ public class JcrNodeIconTest extends RepositoryTestCase {
     public void testNodeIsNull() {
         assertEquals(JcrNodeIcon.getIconCssClass(null), "fa fa-exclamation-circle jcrnode-default");
     }
+
+    @Test
+    public void testHstPreview() throws RepositoryException {
+        MockNode hstHst = MockNode.root().addNode("hst:hst", "hst:hst");
+        assertEquals(JcrNodeIcon.getIconCssClass(hstHst), "fa fa-cloud jcrnode-hst");
+
+        MockNode hstConfigurations = hstHst.addNode("hst:configurations", "hst:configurations");
+        assertEquals(JcrNodeIcon.getIconCssClass(hstConfigurations), "fa fa-cogs jcrnode-hst");
+
+        MockNode hstConfigurationPreview = hstConfigurations.addNode("myhippoproject-preview", "hst:configuration");
+        assertEquals(JcrNodeIcon.getIconCssClass(hstConfigurationPreview), "fa fa-cog jcrnode-hst-preview");
+
+        MockNode hstConfiguration = hstConfigurations.addNode("myhippoproject", "hst:configuration");
+        assertEquals(JcrNodeIcon.getIconCssClass(hstConfiguration), "fa fa-cog jcrnode-hst");
+    }
+
 }
