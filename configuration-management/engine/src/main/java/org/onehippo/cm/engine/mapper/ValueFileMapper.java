@@ -15,8 +15,6 @@
  */
 package org.onehippo.cm.engine.mapper;
 
-import java.util.Optional;
-
 import org.onehippo.cm.api.model.Value;
 
 /**
@@ -27,7 +25,8 @@ public interface ValueFileMapper {
     /**
      * Generates filename and path relative to the module root
      * @param value Property's value
-     * @return Path with filename
+     * @return Path with filename, or null if the mapper rejects the supplied value
      */
-    Optional<String> apply(Value value);
+    // TODO: add appropriate annotation to indicate potential null return value
+    String apply(Value value);
 }

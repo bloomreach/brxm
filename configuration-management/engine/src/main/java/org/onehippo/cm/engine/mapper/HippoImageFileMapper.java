@@ -42,13 +42,13 @@ public class HippoImageFileMapper extends AbstractFileMapper {
     private static final String GALLERY_IMAGE_NAME_PATTERN = "%s_" + IMAGE_NAME_PATTERN;
 
     @Override
-    public Optional<String> apply(Value value) {
+    public String apply(Value value) {
 
         final DefinitionProperty property = value.getParent();
         final DefinitionNode imageNode = property.getParent();
 
         if (!isType(imageNode, HIPPOGALLERY_IMAGE)) {
-            return Optional.empty();
+            return null;
         }
 
         final Optional<Integer> arrayIndex = calculateArrayIndex(property, value);
@@ -62,16 +62,14 @@ public class HippoImageFileMapper extends AbstractFileMapper {
             final String extension = fileName.contains(DOT_SEPARATOR) ? StringUtils.substringAfterLast(fileName, DOT_SEPARATOR) : getFileExtension(imageNode);
             final String finalName = arrayIndex.map(integer -> String.format(GALLERY_IMAGE_ARRAY_NAME_PATTERN, baseName, suffix, integer, extension))
                     .orElseGet(() -> String.format(GALLERY_IMAGE_NAME_PATTERN, baseName, suffix, extension));
-            final String fullName = String.format("%s/%s", constructFilePathFromJcrPath(imageSetNode.getParent().getPath()), finalName);
-            return Optional.of(fullName);
+            return String.format("%s/%s", constructFilePathFromJcrPath(imageSetNode.getParent().getPath()), finalName);
         } else {
             final String folderPath = constructFilePathFromJcrPath(imageNode.getPath());
             final String name = mapNodeNameToFileName(imageNode.getName());
             final String extension = getFileExtension(imageNode);
             final String finalName = arrayIndex.map(integer -> String.format(IMAGE_NAME_ARRAY_PATTERN, name, integer, extension))
                     .orElseGet(() -> String.format(IMAGE_NAME_PATTERN, name, extension));
-            final String fullName = String.format("%s/%s", folderPath, finalName);
-            return Optional.of(fullName);
+            return String.format("%s/%s", folderPath, finalName);
         }
     }
 

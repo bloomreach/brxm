@@ -16,7 +16,6 @@
 package org.onehippo.cm.engine.mapper;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Test;
 import org.onehippo.cm.api.model.Definition;
@@ -64,15 +63,15 @@ public class ValueFileMapperProviderTest {
 class DummyValueFileMapper implements ValueFileMapper{
 
     @Override
-    public Optional<String> apply(Value value) {
-        return Optional.of(value.getString());
+    public String apply(Value value) {
+        return value.getString();
     }
 }
 
 class OtherValueFileMapper implements ValueFileMapper{
 
     @Override
-    public Optional<String> apply(Value value) {
-        return Optional.empty();
+    public String apply(Value value) {
+        return null;
     }
 }

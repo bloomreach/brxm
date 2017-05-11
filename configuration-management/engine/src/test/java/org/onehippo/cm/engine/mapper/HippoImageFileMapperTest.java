@@ -15,8 +15,6 @@
  */
 package org.onehippo.cm.engine.mapper;
 
-import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.api.model.Definition;
@@ -31,7 +29,7 @@ import org.onehippo.cm.impl.model.SourceImpl;
 import org.onehippo.cm.impl.model.ValueImpl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 public class HippoImageFileMapperTest {
 
@@ -54,30 +52,30 @@ public class HippoImageFileMapperTest {
 
     @Test
     public void testApply() {
-        Optional<String> result = testedClass.apply(value);
-        assertTrue(result.isPresent());
-        assertEquals(PATH_TO_IMAGE_NODE_IMAGE_NODE_PNG, result.get());
+        String result = testedClass.apply(value);
+        assertNotNull(result);
+        assertEquals(PATH_TO_IMAGE_NODE_IMAGE_NODE_PNG, result);
     }
 
     @Test
     public void testApplyArrayValue() {
-        Optional<String> arrayValueName = testedClass.apply(arrValue2);
-        assertTrue(arrayValueName.isPresent());
-        assertEquals(PATH_TO_JPG_ARR_VALUE_2, arrayValueName.get());
+        String arrayValueName = testedClass.apply(arrValue2);
+        assertNotNull(arrayValueName);
+        assertEquals(PATH_TO_JPG_ARR_VALUE_2, arrayValueName);
     }
 
     @Test
     public void testApplyImageSetValue() {
-        Optional<String> imageSetResult = testedClass.apply(giValue);
-        assertTrue(imageSetResult.isPresent());
-        assertEquals(PATH_TO_GIF_GALLERY_IMAGE, imageSetResult.get());
+        String imageSetResult = testedClass.apply(giValue);
+        assertNotNull(imageSetResult);
+        assertEquals(PATH_TO_GIF_GALLERY_IMAGE, imageSetResult);
     }
 
     @Test
     public void testApplyImageSetArrayValue() {
-        Optional<String> imageSetArrayResult = testedClass.apply(garrValue0);
-        assertTrue(imageSetArrayResult.isPresent());
-        assertEquals(PATH_TO_GIF_GALLERY_IMAGE_ARR, imageSetArrayResult.get());
+        String imageSetArrayResult = testedClass.apply(garrValue0);
+        assertNotNull(imageSetArrayResult);
+        assertEquals(PATH_TO_GIF_GALLERY_IMAGE_ARR, imageSetArrayResult);
     }
 
     private void setupNodesWithProperties() {

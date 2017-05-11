@@ -15,8 +15,6 @@
  */
 package org.onehippo.cm.engine.mapper;
 
-import java.util.Optional;
-
 import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Value;
 
@@ -26,11 +24,10 @@ import org.onehippo.cm.api.model.Value;
 public class DefaultFileMapper extends AbstractFileMapper {
 
     @Override
-    public Optional<String> apply(Value value) {
+    public String apply(Value value) {
         final DefinitionProperty property = value.getParent();
         final String propertyPath = property.getPath();
         final String filePath = constructFilePathFromJcrPath(propertyPath);
-        final String finalName = String.format("%s.%s", filePath, getFileExtension(property.getParent()));
-        return Optional.of(finalName);
+        return String.format("%s.%s", filePath, getFileExtension(property.getParent()));
     }
 }

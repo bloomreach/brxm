@@ -19,7 +19,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 
 import org.onehippo.cm.api.model.Value;
@@ -61,11 +61,10 @@ public class ValueFileMapperProvider {
     public String generateName(Value value) {
 
         return valueFileMappers.stream().map(x -> x.apply(value))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .filter(Objects::nonNull)
                 .sorted(getShortestString())
                 .findFirst()
-                .orElse(defaultMapper.apply(value).get());
+                .orElse(defaultMapper.apply(value));
     }
 
     private Comparator<String> getShortestString() {
