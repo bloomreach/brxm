@@ -99,7 +99,6 @@ public class RootResourceTest extends AbstractResourceTest {
                 .createMock();
 
         rootResource.setChannelService(channelService);
-        rootResource.setRootPath("/hst:hst");
 
         Config config = createDefaultConfig(JsonPojoMapperProvider.class)
                 .addServerSingleton(rootResource)
