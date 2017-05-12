@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.ehcache.constructs.web.GenericResponseWrapper;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.james.mime4j.util.MimeUtil;
@@ -53,6 +51,8 @@ import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sf.ehcache.constructs.web.GenericResponseWrapper;
 
 /**
  * ESIPageRenderer
@@ -265,8 +265,9 @@ public class ESIPageRenderer implements ComponentManagerAware {
                     requestPathFromURL = StringUtils.substringAfter(uri.getPath(), curContextPath);
                 }
 
-                Map<String, String[]> queryParams = HstRequestUtils.parseQueryString(uri, StringUtils.defaultIfEmpty(curBaseURL.getCharacterEncoding(), "UTF-8"));
-                localContainerURL = requestContext.getContainerURLProvider().parseURL(curResolvedMount, curContextPath, requestPathFromURL, queryParams, curBaseURL.getCharacterEncoding());
+                Map<String, String[]> queryParams = HstRequestUtils.parseQueryString(uri, curBaseURL.getURIEncoding());
+                localContainerURL = requestContext.getContainerURLProvider().parseURL(curResolvedMount, curContextPath,
+                        requestPathFromURL, queryParams, curBaseURL.getCharacterEncoding(), curBaseURL.getURIEncoding());
             } catch (MatchException e) {
                 log.debug("The host is not matched by local HST virtual hosts configuration. It might be a remote URL: '{}'.", uri);
             } catch (Exception e) {

@@ -19,6 +19,7 @@ package org.hippoecm.hst.restapi.content;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -29,6 +30,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.InvalidQueryException;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -36,6 +38,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.restapi.AbstractResource;
 import org.hippoecm.hst.restapi.NodeVisitor;
@@ -43,8 +46,10 @@ import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.hst.restapi.content.search.SearchResult;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
+import org.onehippo.cms7.services.search.query.AndClause;
 import org.onehippo.cms7.services.search.query.Query;
 import org.onehippo.cms7.services.search.query.QueryUtils;
+import org.onehippo.cms7.services.search.query.constraint.ExistsConstraint;
 import org.onehippo.cms7.services.search.result.QueryResult;
 import org.onehippo.cms7.services.search.service.SearchService;
 import org.onehippo.cms7.services.search.service.SearchServiceException;
@@ -63,6 +68,8 @@ public class DocumentsResource extends AbstractResource {
 
     private static final int DEFAULT_MAX_SEARCH_RESULT_ITEMS = 100;
     private int maxSearchResultItems = DEFAULT_MAX_SEARCH_RESULT_ITEMS;
+
+    public enum SortOrder { ASCENDING, ASC, DESCENDING, DESC }
 
     @Override
     public Logger getLogger() {
@@ -143,12 +150,37 @@ public class DocumentsResource extends AbstractResource {
         return Arrays.asList(attributeString.split(","));
     }
 
+    private List<String> parseOrderBy(final String orderBy) {
+        return Arrays.asList(StringUtils.split(orderBy, ','));
+    }
+
+    private List<SortOrder> parseSortOrder(final String sortOrder) {
+        final List<SortOrder> sortOrders = new LinkedList<>();
+        try {
+            final String[] sortOrderArray = StringUtils.split(sortOrder, ',');
+            for (String sort : sortOrderArray) {
+                sortOrders.add(SortOrder.valueOf(sort.toUpperCase()));
+            }
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("_sortOrder value must be one of: " + StringUtils.join(SortOrder.values(), ", ").toLowerCase());
+        }
+        return sortOrders;
+    }
+
+    private void checkOrderParameters(final List<String> orderBys, final List<SortOrder> parsedSortOrders) {
+        if (orderBys.size() != parsedSortOrders.size()) {
+            throw new IllegalArgumentException("Number of values for _orderBy and _sortOrder must be equal.");
+        }
+    }
+
     @GET
     @Path("/documents")
     public Response getDocuments(@QueryParam("_offset") final String offsetString,
                                  @QueryParam("_max") final String maxString,
                                  @QueryParam("_query") final String queryString,
                                  @QueryParam("_nodetype") final String nodeTypeString,
+                                 @QueryParam("_orderBy") @DefaultValue(HIPPOSTDPUBWF_PUBLICATION_DATE) final String orderBy,
+                                 @QueryParam("_sortOrder") @DefaultValue("descending") final String sortOrder,
                                  @QueryParam("_attributes") final String attributeString) {
         try {
             final List<String> includedAttributes = parseAttributes(attributeString);
@@ -157,6 +189,9 @@ public class DocumentsResource extends AbstractResource {
             final int max = parseMax(maxString);
             final String parsedQuery = parseQuery(queryString);
             final String parsedNodeType = parseNodeType(context, nodeTypeString);
+            final List<String> parsedOrderBys = parseOrderBy(orderBy);
+            final List<SortOrder> parsedSortOrders = parseSortOrder(sortOrder);
+            checkOrderParameters(parsedOrderBys, parsedSortOrders);
 
             final String availability;
             if (RequestContextProvider.get().isPreview() ) {
@@ -165,20 +200,23 @@ public class DocumentsResource extends AbstractResource {
                 availability = "live";
             }
             final SearchService searchService = getSearchService(context);
-            final Query query = searchService.createQuery()
+            AndClause andClause = searchService.createQuery()
                     .from(RequestContextProvider.get()
                             .getResolvedMount()
                             .getMount()
                             .getContentPath())
                     .ofType(parsedNodeType)
-                    .where(QueryUtils.text()
-                            .contains(parsedQuery == null ? "" : parsedQuery))
-                    .and(QueryUtils.text(HIPPO_AVAILABILITY)
-                            .isEqualTo(availability))
-                    .orderBy(HIPPOSTDPUBWF_PUBLICATION_DATE)
-                    .descending()
-                    .offsetBy(offset)
-                    .limitTo(max);
+                    .where(QueryUtils.text().contains(parsedQuery == null ? "" : parsedQuery))
+                    .and(QueryUtils.text(HIPPO_AVAILABILITY).isEqualTo(availability));
+
+            for (String ob : parsedOrderBys) {
+                andClause = andClause.and(new ExistsConstraint(ob));
+            }
+
+            final Query query = addOrdering(andClause, parsedOrderBys, parsedSortOrders);
+            query.offsetBy(offset)
+                 .limitTo(max);
+
             final QueryResult queryResult = searchService.search(query);
             final SearchResult result = new SearchResult();
             result.populateFromDocument(offset, max, queryResult, context);
@@ -198,6 +236,23 @@ public class DocumentsResource extends AbstractResource {
             logException("Exception while fetching documents", e);
             return buildErrorResponse(500, e);
         }
+    }
+
+    private Query addOrdering(final AndClause andClause, final List<String> orderBys, final List<SortOrder> sortOrders) {
+        Query query = andClause;
+        for (int i = 0; i < orderBys.size(); i++) {
+            final String orderBy = orderBys.get(i);
+            final SortOrder sortOrder = sortOrders.get(i);
+            switch (sortOrder) {
+                case DESCENDING:
+                case DESC:
+                    query = query.orderBy(orderBy).descending();
+                    break;
+                default:
+                    query = query.orderBy(orderBy);
+            }
+        }
+        return query;
     }
 
     @GET

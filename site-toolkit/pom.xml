@@ -68,7 +68,7 @@
     <xalan.version>2.4.1</xalan.version>
 
     <commons-lang.version>2.6</commons-lang.version>
-    <commons-collections.version>3.2.1</commons-collections.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
     <commons-codec.version>1.4</commons-codec.version>
     <commons-pool.version>1.5.4</commons-pool.version>
     <commons-beanutils.version>1.8.0</commons-beanutils.version>
@@ -82,6 +82,7 @@
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
+    <hippo.jackrabbit.version>2.14.0-h1-SNAPSHOT</hippo.jackrabbit.version>
     <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>5.0.0-SNAPSHOT</hippo.cms.version>
@@ -90,6 +91,7 @@
     <hippo.services.eventbus.version>4.0.0-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.services.search.version>4.0.0-SNAPSHOT</hippo.services.search.version>
     <hippo.services.contenttype.version>4.0.0-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.testutils.version>1.0.0-SNAPSHOT</hippo.testutils.version>
 
     <sf.htmlcleaner.version>2.12</sf.htmlcleaner.version>
 
@@ -492,7 +494,7 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
 
       <!-- Jackrabbit ocm -->

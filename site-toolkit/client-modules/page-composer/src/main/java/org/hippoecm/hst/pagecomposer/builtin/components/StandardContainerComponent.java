@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,9 +27,7 @@ public class StandardContainerComponent extends GenericHstComponent {
         if(getComponentConfiguration().getRenderPath() == null || "".equals(getComponentConfiguration().getRenderPath())) {
             // set default builtin template. This is hardcoded. The freemarker templates are relative to the current package name
             String xtype = getComponentConfiguration().getXType();
-            if ("HST.Table".equalsIgnoreCase(xtype)) {
-                response.setRenderPath("classpath:table.ftl");
-            } else if ("HST.UnorderedList".equalsIgnoreCase(xtype)) {
+            if ("HST.UnorderedList".equalsIgnoreCase(xtype)) {
                 response.setRenderPath("classpath:ul.ftl");
             } else if ("HST.OrderedList".equalsIgnoreCase(xtype)) {
                 response.setRenderPath("classpath:ol.ftl");

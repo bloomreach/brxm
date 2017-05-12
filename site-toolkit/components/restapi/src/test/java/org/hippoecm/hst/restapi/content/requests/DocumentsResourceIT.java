@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
@@ -44,6 +46,8 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
     private static final Logger log = LoggerFactory.getLogger(DocumentsResourceIT.class);
 
     private static ObjectMapper mapper = new ObjectMapper();
+    private static String PROPERTY_TITLE = "myhippoproject:title";
+    private static String PROPERTY_DATE = "myhippoproject:date";
 
     @Test
     public void test_about_us_document() throws Exception {
@@ -159,6 +163,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
 
+            int processed = 0;
             Calendar prev = null;
             for (Map<String, Object> item : itemsList) {
                 final Node handleNode = liveUser.getNodeByIdentifier((String)item.get("id"));
@@ -171,7 +176,134 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
                     assertTrue(prev.after(date) || prev.equals(date));
                 }
                 prev = date;
+                processed++;
             }
+
+            assertTrue("There must be at least two results to be able to compare sort order.", processed > 1);
+
+        } finally {
+            if (liveUser != null) {
+                liveUser.logout();
+            }
+        }
+    }
+
+    @Test
+    public void test_search_result_is_ordered_by_one_sort_parameter_default_sortorder() throws Exception {
+        Session liveUser = createLiveUserSession();
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "onehippo.io", "/myhippoproject/documents/", "_orderBy=" + PROPERTY_TITLE);
+
+            final MockHttpServletResponse response = render(requestResponse);
+            final String restResponse = response.getContentAsString();
+
+            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+
+            final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
+
+            int processed = 0;
+            String previous = null;
+            for (Map<String, Object> item : itemsList) {
+                final Node handleNode = liveUser.getNodeByIdentifier((String) item.get("id"));
+                final Node node = handleNode.getNode(handleNode.getName());
+                if (!node.hasProperty(PROPERTY_TITLE) && !node.hasProperty(PROPERTY_DATE)) {
+                    continue;
+                }
+                String current = node.getProperty(PROPERTY_TITLE).getString();
+                if (previous != null) {
+                    assertTrue(previous.compareTo(current) > 0); // default order is descending
+                }
+                previous = current;
+                processed++;
+            }
+
+            assertTrue("There must be at least two results to be able to compare sort order.", processed > 1);
+
+        } finally {
+            if (liveUser != null) {
+                liveUser.logout();
+            }
+        }
+    }
+
+    @Test
+    public void test_search_result_is_ordered_by_one_sort_parameter_ascending_sortorder() throws Exception {
+        Session liveUser = createLiveUserSession();
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "onehippo.io", "/myhippoproject/documents/", "_orderBy=" + PROPERTY_TITLE + "&_sortOrder=ascending");
+
+            final MockHttpServletResponse response = render(requestResponse);
+            final String restResponse = response.getContentAsString();
+
+            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+
+            final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
+
+            int processed = 0;
+            String previous = null;
+            for (Map<String, Object> item : itemsList) {
+                final Node handleNode = liveUser.getNodeByIdentifier((String) item.get("id"));
+                final Node node = handleNode.getNode(handleNode.getName());
+                if (!node.hasProperty(PROPERTY_TITLE)) {
+                    continue;
+                }
+                String current = node.getProperty(PROPERTY_TITLE).getString();
+                if (previous != null) {
+                    assertTrue(previous.compareTo(current) < 0);
+                }
+                processed++;
+                previous = current;
+            }
+
+            assertTrue("There must be at least two results to be able to compare sort order.", processed > 1);
+
+        } finally {
+            if (liveUser != null) {
+                liveUser.logout();
+            }
+        }
+    }
+
+    @Test
+    public void test_search_result_is_ordered_by_two_sort_parameters_with_different_sortorders() throws Exception {
+        Session liveUser = createLiveUserSession();
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "onehippo.io", "/myhippoproject/documents/", "_orderBy=" + PROPERTY_DATE + "," + PROPERTY_TITLE + "&_sortOrder=ascending,descending");
+
+            final MockHttpServletResponse response = render(requestResponse);
+            final String restResponse = response.getContentAsString();
+
+            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+
+            final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
+
+            int processed = 0;
+            String previousTitle = null;
+            Calendar previousDate = null;
+            for (Map<String, Object> item : itemsList) {
+                final Node handleNode = liveUser.getNodeByIdentifier((String) item.get("id"));
+                final Node node = handleNode.getNode(handleNode.getName());
+                if (!node.hasProperty(PROPERTY_TITLE) && !node.hasProperty(PROPERTY_DATE)) {
+                    continue;
+                }
+                final String currentTitle = node.getProperty(PROPERTY_TITLE).getString();
+                final Calendar currentDate = node.getProperty(PROPERTY_DATE).getDate();
+
+                if (previousDate != null && previousTitle != null) {
+                    if(previousDate.equals(currentDate)) {
+                        assertTrue(previousTitle.compareTo(currentTitle) > 0);
+                        processed++;
+                    }
+                }
+                previousDate = currentDate;
+                previousTitle = currentTitle;
+            }
+
+            assertTrue("At least one comparison must have been made on the second property.", processed > 0);
+
         } finally {
             if (liveUser != null) {
                 liveUser.logout();

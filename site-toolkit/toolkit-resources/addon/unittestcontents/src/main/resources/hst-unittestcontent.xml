@@ -250,6 +250,9 @@
               <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
                 <sv:value>admin</sv:value>
               </sv:property>
+              <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+                <sv:value>2013-11-12T12:16:00.000+01:00</sv:value>
+              </sv:property>
               <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
                 <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
               </sv:property>
@@ -325,6 +328,9 @@
               <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
                 <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
               </sv:property>
+              <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+                <sv:value>2013-11-12T12:16:00.000+01:00</sv:value>
+              </sv:property>
               <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
                 <sv:value>admin</sv:value>
               </sv:property>
@@ -397,6 +403,9 @@
               </sv:property>
               <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
                 <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+                <sv:value>2013-11-12T12:16:00.000+01:00</sv:value>
               </sv:property>
               <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
                 <sv:value>admin</sv:value>
@@ -488,6 +497,9 @@
                 <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
                   <sv:value>admin</sv:value>
                 </sv:property>
+                <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+                  <sv:value>2013-11-12T12:16:00.000+01:00</sv:value>
+                </sv:property>
                 <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
                   <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
                 </sv:property>
@@ -563,6 +575,9 @@
                 </sv:property>
                 <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
                   <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+                  <sv:value>2013-11-12T12:16:00.000+01:00</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
                   <sv:value>admin</sv:value>
@@ -1094,6 +1109,9 @@
             </sv:property>
             <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
               <sv:value>admin</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+              <sv:value>2013-11-12T12:16:00.000+01:00</sv:value>
             </sv:property>
             <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
               <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,9 @@ import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.site.HstServices;
+
+import static org.hippoecm.hst.site.HstServices.getComponentManager;
 
 /**
  * HST Request Utils
@@ -47,6 +50,11 @@ public class HstRequestUtils {
     public static final Pattern MATRIX_PARAMS_PATTERN = Pattern.compile(";[^\\/]*");
 
     public static final String HTTP_METHOD_POST = "POST";
+
+    public static String URI_ENCODING_DEFAULT_CHARSET_KEY = "uriencoding.default.charset";
+    public static String URI_ENCODING_DEFAULT_CHARSET_VALUE = "UTF-8";
+    public static String URI_ENCODING_USE_BODY_CHARSET_KEY = "uriencoding.use.body.charset";
+    public static boolean URI_ENCODING_USE_BODY_CHARSET_VALUE = false;
 
     /**
      * Default HTTP Forwarded-For header name. <code>X-Forwarded-For</code> by default.
@@ -127,35 +135,29 @@ public class HstRequestUtils {
      * @param request
      * @return the decoded getRequestURI after the context path but before the matrix parameters or the query string in the request URL
      */
-    public static String getRequestPath(HttpServletRequest request) {
-        return getDecodedPath(request, null);
+    public static String getRequestPath(HttpServletRequest request)  {
+        return getDecodedPath(request, getURIEncoding(request));
     }
 
     /**
      * @param request
-     * @param characterEncoding
+     * @param encoding
      * @return the decoded getRequestURI after the context path but before the matrix parameters or the query string in the request URL
+     * @deprecated since CMS 12.0, not used in the Hippo stack, use {@link #getRequestPath(HttpServletRequest)}
      */
-    public static String getRequestPath(HttpServletRequest request, String characterEncoding) {
-        return getDecodedPath(request, characterEncoding);
+    @Deprecated
+    public static String getRequestPath(HttpServletRequest request, String encoding) {
+        return getDecodedPath(request, encoding);
     }
 
-    private static String getDecodedPath(HttpServletRequest request, String characterEncoding) {
+    private static String getDecodedPath(HttpServletRequest request, String encoding) {
         String requestURI = getRequestURI(request, true);
         String encodePathInfo = requestURI.substring(request.getContextPath().length());
 
-        if (characterEncoding == null) {
-            characterEncoding = request.getCharacterEncoding();
-
-            if (characterEncoding == null) {
-                characterEncoding = "ISO-8859-1";
-            }
-        }
-
         try {
-            return URLDecoder.decode(encodePathInfo, characterEncoding);
+            return URLDecoder.decode(encodePathInfo, encoding);
         } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("Invalid character encoding: " + characterEncoding, e);
+            throw new IllegalArgumentException("Invalid character encoding: " + encoding, e);
         }
 
     }
@@ -445,69 +447,78 @@ public class HstRequestUtils {
         return defaultEncoding;
     }
 
-    public static Map<String, String []> parseQueryString(HttpServletRequest request) {
-        Map<String, String []> queryParamMap = null;
+    /**
+     * Returns the name of the character encoding used for encoding the requests URI.
+     * This method uses the hst configuration parameters {@link #URI_ENCODING_DEFAULT_CHARSET_KEY} and
+     * {@link #URI_ENCODING_USE_BODY_CHARSET_KEY} to resolve the character encoding with the following logic:
+     * <ul>
+     *     <li>if URI_ENCODING_USE_BODY_CHARSET_KEY == false, return URI_ENCODING_DEFAULT_CHARSET_KEY</li>
+     *     <li>else, if the request specifies a character encoding, return that character encoding</li>
+     *     <li>else, return URI_ENCODING_DEFAULT_CHARSET_KEY</li>
+     * </ul>
+     * @param request
+     * @return
+     */
+    public static String getURIEncoding(final HttpServletRequest request) {
+        final String defaultEncoding;
+        final boolean useBodyCharset;
 
-        String queryString = request.getQueryString();
-
-        if (queryString == null) {
-            queryParamMap = Collections.emptyMap();
+        if (!HstServices.isAvailable()) {
+            // we're running in a (simple) test setup
+            defaultEncoding = URI_ENCODING_DEFAULT_CHARSET_VALUE;
+            useBodyCharset = URI_ENCODING_USE_BODY_CHARSET_VALUE;
         } else {
-            // keep insertion ordered map to maintain the order of the querystring when re-constructing it from a map
-            queryParamMap = new LinkedHashMap<String, String []>();
-
-            String[] paramPairs = queryString.split("&");
-
-            for (String paramPair : paramPairs) {
-                String[] paramNameAndValue = paramPair.split("=");
-
-                if (paramNameAndValue.length > 0) {
-                    queryParamMap.put(paramNameAndValue[0], null);
-                }
-            }
-
-            for (Map.Entry<String, String []> entry : queryParamMap.entrySet()) {
-                entry.setValue(request.getParameterValues(entry.getKey()));
-            }
+            defaultEncoding = getComponentManager().getContainerConfiguration().getString(
+                    URI_ENCODING_DEFAULT_CHARSET_KEY, URI_ENCODING_DEFAULT_CHARSET_VALUE);
+            useBodyCharset = getComponentManager().getContainerConfiguration().getBoolean(
+                    URI_ENCODING_USE_BODY_CHARSET_KEY, URI_ENCODING_USE_BODY_CHARSET_VALUE);
         }
 
-        return queryParamMap;
+        if (useBodyCharset) {
+            return getCharacterEncoding(request, defaultEncoding);
+        } else {
+            return defaultEncoding;
+        }
+    }
+
+    public static Map<String, String []> parseQueryString(HttpServletRequest request) throws UnsupportedEncodingException {
+        return parseQueryString(request.getQueryString(), getURIEncoding(request));
     }
 
     public static Map<String, String []> parseQueryString(URI uri, String encoding) throws UnsupportedEncodingException {
-        Map<String, String []> queryParamMap = null;
+        return parseQueryString(uri.getRawQuery(), encoding);
+    }
 
-        String queryString = uri.getQuery();
-
+    private static Map<String, String []> parseQueryString(String queryString, String encoding) throws UnsupportedEncodingException {
         if (queryString == null) {
-            queryParamMap = Collections.emptyMap();
-        } else {
-            // keep insertion ordered map to maintain the order of the querystring when re-constructing it from a map
-            queryParamMap = new LinkedHashMap<String, String []>();
+            return Collections.emptyMap();
+        }
 
-            String[] paramPairs = queryString.split("&");
-            String paramName;
-            String paramValue;
-            String [] paramValues;
-            String [] tempValues;
+        // keep insertion ordered map to maintain the order of the querystring when re-constructing it from a map
+        Map<String, String []> queryParamMap = new LinkedHashMap<>();
 
-            for (String paramPair : paramPairs) {
-                String[] paramNameAndValue = paramPair.split("=");
+        String[] paramPairs = queryString.split("&");
+        String paramName;
+        String paramValue;
+        String [] paramValues;
+        String [] tempValues;
 
-                if (paramNameAndValue.length > 1) {
-                    paramName = paramNameAndValue[0];
-                    paramValue = URLDecoder.decode(paramNameAndValue[1], encoding);
+        for (String paramPair : paramPairs) {
+            String[] paramNameAndValue = paramPair.split("=");
 
-                    paramValues = queryParamMap.get(paramName);
+            if (paramNameAndValue.length > 1) {
+                paramName = URLDecoder.decode(paramNameAndValue[0], encoding);
+                paramValue = URLDecoder.decode(paramNameAndValue[1], encoding);
 
-                    if (paramValues == null) {
-                        queryParamMap.put(paramName, new String[] { paramValue });
-                    } else {
-                        tempValues = new String[paramValues.length + 1];
-                        System.arraycopy(paramValues, 0, tempValues, 0, paramValues.length);
-                        tempValues[paramValues.length] = paramValue;
-                        queryParamMap.put(paramName, tempValues);
-                    }
+                paramValues = queryParamMap.get(paramName);
+
+                if (paramValues == null) {
+                    queryParamMap.put(paramName, new String[] { paramValue });
+                } else {
+                    tempValues = new String[paramValues.length + 1];
+                    System.arraycopy(paramValues, 0, tempValues, 0, paramValues.length);
+                    tempValues[paramValues.length] = paramValue;
+                    queryParamMap.put(paramName, tempValues);
                 }
             }
         }
@@ -692,4 +703,5 @@ public class HstRequestUtils {
 
         return forwardedForHeader;
     }
+
 }

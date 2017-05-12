@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import org.junit.Test;
 import org.onehippo.jaxrs.cxf.CXFTest;
 
 import static com.jayway.restassured.http.ContentType.JSON;
-import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -243,10 +242,9 @@ public class ContainerItemComponentResourceTest extends CXFTest {
         params.put("key1", Arrays.asList("value1"));
         params.put("key2", Arrays.asList("value2"));
 
-        final Exception mockException = createNiceMock(Exception.class);
         containerItemComponentService.moveAndUpdateVariant("foo-variant", "bah-variant", 1234, params);
-        EasyMock.expectLastCall().andThrow(new RepositoryException("something wrong at server", mockException));
-        EasyMock.replay(containerItemComponentService, mockException);
+        EasyMock.expectLastCall().andThrow(new RepositoryException("something wrong at server"));
+        EasyMock.replay(containerItemComponentService);
 
         given()
             .contentType(JSON)
@@ -318,10 +316,9 @@ public class ContainerItemComponentResourceTest extends CXFTest {
 
     @Test
     public void cannot_create_a_new_variant_when_sever_has_error() throws RepositoryException, ServerErrorException {
-        final Exception mockException = createNiceMock(Exception.class);
         containerItemComponentService.createVariant("foo-variant", 1234);
-        EasyMock.expectLastCall().andThrow(new ServerErrorException("something wrong at server", mockException));
-        EasyMock.replay(containerItemComponentService, mockException);
+        EasyMock.expectLastCall().andThrow(new ServerErrorException("something wrong at server"));
+        EasyMock.replay(containerItemComponentService);
 
         given()
             .header("lastModifiedTimestamp", 1234)
@@ -373,10 +370,9 @@ public class ContainerItemComponentResourceTest extends CXFTest {
 
     @Test
     public void cannot_delete_a_variant_when_server_has_error() throws RepositoryException, ServerErrorException {
-        final Exception mockException = createNiceMock(Exception.class);
         containerItemComponentService.deleteVariant("foo-variant", 1234);
-        EasyMock.expectLastCall().andThrow(new RepositoryException("something wrong at server", mockException));
-        EasyMock.replay(containerItemComponentService, mockException);
+        EasyMock.expectLastCall().andThrow(new RepositoryException("something wrong at server"));
+        EasyMock.replay(containerItemComponentService);
 
         given()
             .header("lastModifiedTimestamp", 1234)

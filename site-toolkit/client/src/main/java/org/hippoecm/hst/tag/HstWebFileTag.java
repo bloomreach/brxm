@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -164,7 +164,7 @@ public class HstWebFileTag extends ParamContainerTag {
 
             try {
                 if (!parametersMap.isEmpty()) {
-                    String queryString = getQueryString(reqContext.getBaseURL().getCharacterEncoding(), parametersMap, removedParametersList);
+                    String queryString = getQueryString(reqContext.getBaseURL().getURIEncoding(), parametersMap, removedParametersList);
                     urlString += queryString;
                 }
             } catch (UnsupportedEncodingException e) {

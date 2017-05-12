@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
 import org.hippoecm.hst.core.container.ModuleNotFoundException;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.junit.Test;
-import org.onehippo.repository.testutils.ExecuteOnLogLevel;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpSession;
@@ -317,15 +317,11 @@ public class TestSpringComponentManagerWithAddonModules {
         /*
          * Since we are now testing a failing module instance, this will result in SpringComponentManager
          * logging warnings. Since we do not want these expected warnings in the unit test output, we wrap the
-         * componentManager.start(); in a callback through ExecuteOnLogLevel.error which will only for
-         * componentManager.start(); temporarily bump the log-level to ERROR
+         * componentManager.start(); in Log4jInterceptor to deny those warnings from being logged.
          */
-        ExecuteOnLogLevel.error(new Runnable() {
-            @Override
-            public void run() {
-                componentManager.start();
-            }
-        }, SpringComponentManager.class.getName());
+        Log4jInterceptor.onWarn().deny(SpringComponentManager.class).run(() -> {
+            componentManager.start();
+        });
 
         // due to the failure of 'alwaysFailingOnStartBean', the module shouldn't exist at all; 
         // it should have been removed during starting.
