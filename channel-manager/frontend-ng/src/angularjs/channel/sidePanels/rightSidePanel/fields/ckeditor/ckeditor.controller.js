@@ -37,9 +37,19 @@ class CKEditorController {
       this._applyEditorCSS(editorConfig);
 
       this.editor = CKEDITOR.replace(this.textAreaElement[0], editorConfig);
-      this.editor.setData(this.ngModel.$viewValue);
 
-      this.editor.on('change', () => this.onEditorChange());
+      this.ngModel.$render = () => {
+        this.processingModelUpdate = true;
+        this.editor.setData(this.ngModel.$viewValue);
+        this.processingModelUpdate = false;
+      };
+
+      this.editor.on('change', () => {
+        if (!this.processingModelUpdate) {
+          this.onEditorChange();
+        }
+      });
+
       this.editor.on('focus', () => this.onEditorFocus());
       this.editor.on('blur', () => this.onEditorBlur());
     });

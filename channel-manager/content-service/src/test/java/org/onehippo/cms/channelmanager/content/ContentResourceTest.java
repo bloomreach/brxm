@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 
 import javax.jcr.Session;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,12 +46,12 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -166,6 +168,27 @@ public class ContentResourceTest extends CXFTest {
                 .post("/documents/" + requestedUuid + "/draft")
         .then()
                 .statusCode(404);
+    }
+
+    @Test
+    public void updateDraft() throws Exception {
+        final String requestedUuid = "requested-uuid";
+        final String uuid = "returned-uuid";
+        final Document testDocument = createDocument(uuid);
+
+        expect(documentsService.updateDraft(eq(requestedUuid), isA(Document.class), eq(userSession), eq(locale))).andReturn(testDocument);
+        replay(documentsService);
+
+        final String expectedBody = normalizeJsonResource("/empty-document.json");
+
+        given()
+                .body(expectedBody)
+                .contentType("application/json")
+        .when()
+                .put("/documents/" + requestedUuid + "/draft")
+        .then()
+                .statusCode(200)
+                .body(equalTo(expectedBody));
     }
 
     @Test

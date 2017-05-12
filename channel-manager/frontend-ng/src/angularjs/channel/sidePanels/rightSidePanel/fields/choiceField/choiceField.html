@@ -43,7 +43,7 @@
   </h5>
 
   <div class="collapse-element">
-    <div ng-repeat="fieldValue in $ctrl.fieldValues"
+    <div ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
         ng-switch="$ctrl.fieldType.choices[fieldValue.chosenId].type">
 
       <compound-field ng-switch-when="COMPOUND"

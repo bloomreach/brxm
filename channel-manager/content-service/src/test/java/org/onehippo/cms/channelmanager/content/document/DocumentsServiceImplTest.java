@@ -743,6 +743,10 @@ public class DocumentsServiceImplTest {
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
 
+        expect(docType.getFields()).andReturn(Collections.emptyList());
+        FieldTypeUtils.readFieldValues(draft, Collections.emptyList(), document.getFields());
+        expectLastCall();
+
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
         session.save();
@@ -751,8 +755,9 @@ public class DocumentsServiceImplTest {
         PowerMock.replayAll();
         replay(docType, session);
 
-        documentsService.updateDraft(uuid, document, session, locale);
+        Document persistedDocument = documentsService.updateDraft(uuid, document, session, locale);
 
+        assertThat(persistedDocument, equalTo(document));
         verify(docType, session);
         PowerMock.verifyAll();
     }

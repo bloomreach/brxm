@@ -84,7 +84,7 @@ class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public void updateDraft(final String uuid, final Document document, final Session session, final Locale locale)
+    public Document updateDraft(final String uuid, final Document document, final Session session, final Locale locale)
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getWorkflow(handle);
@@ -117,6 +117,10 @@ class DocumentsServiceImpl implements DocumentsService {
 
         EditingUtils.copyToPreviewAndKeepEditing(workflow, session)
                 .orElseThrow(() -> new InternalServerErrorException(errorInfoFromHintsOrNoHolder(workflow, session)));
+
+        FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
+
+        return document;
     }
 
     @Override
