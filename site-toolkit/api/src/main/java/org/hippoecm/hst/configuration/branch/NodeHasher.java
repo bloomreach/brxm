@@ -17,9 +17,26 @@ package org.hippoecm.hst.configuration.branch;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
+
 
 public interface NodeHasher {
 
-    void hash(final Node node) throws BranchException;
+    /**
+     * <p>
+     *  The {@code node} that will get hashed : The {@code node} and all its descendants will get
+     *  <ul>
+     *      <li>The property {@link HstNodeTypes#HASHABLE_PROPERTY_HASH} property set</li>
+     *      <li>The property {@link HstNodeTypes#HASHABLE_PROPERTY_UPSTREAM_HASH} property set if {@code upstreamHash}
+     *      is {@code true}</li>
+     *  </ul>
+     *  The changes <strong>won't</strong> be persisted
+     * </p>
+     * @param node the {@code node} that will get hashed including all its descendants
+     * @param setUpstreamHash If {@code upstreamHash} is {@code true}, next to {@link HstNodeTypes#HASHABLE_PROPERTY_HASH}
+     *                     also {@link HstNodeTypes#HASHABLE_PROPERTY_UPSTREAM_HASH} will be set
+     * @throws BranchException in case a repository or some other exception happens
+     */
+    void hash(final Node node, final boolean setUpstreamHash) throws BranchException;
 
 }

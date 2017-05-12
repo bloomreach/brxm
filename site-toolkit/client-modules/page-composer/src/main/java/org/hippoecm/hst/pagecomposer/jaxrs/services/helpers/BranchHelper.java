@@ -21,13 +21,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.branch.WorkspaceHasher;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
@@ -37,6 +37,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_UPSTREAM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils.createMandatoryWorkspaceNodesIfMissing;
@@ -47,9 +48,14 @@ public class BranchHelper {
     private static final Logger log = LoggerFactory.getLogger(BranchHelper.class);
 
     private PageComposerContextService pageComposerContextService;
+    private WorkspaceHasher workspaceHasher;
 
     public void setPageComposerContextService(PageComposerContextService pageComposerContextService) {
         this.pageComposerContextService = pageComposerContextService;
+    }
+
+    public void setWorkspaceHasher(final WorkspaceHasher workspaceHasher) {
+        this.workspaceHasher = workspaceHasher;
     }
 
     /**
@@ -74,6 +80,9 @@ public class BranchHelper {
         final Node liveBranchConfigurationNode = createLiveBranchConfiguration(branchId, liveMasterConfigurationNode);
 
         createPreviewBranchConfiguration(liveBranchConfigurationNode, liveMasterConfigurationNode.getName());
+
+        // to the live configuration add hst:upstream with hashes which is required for later merging
+        createLiveBranchUpstreamWorkspace(liveBranchConfigurationNode);
 
         log.info("Branch '{}' created.", liveBranchConfigurationNode.getName());
     }
@@ -115,6 +124,14 @@ public class BranchHelper {
         previewBranchNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM,
                 new String[]{"../" + liveBranchConfigurationNode.getName()});
         previewBranchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, liveMasterConfigurationName + "-preview");
+    }
+
+    private void createLiveBranchUpstreamWorkspace(final Node liveBranchConfigurationNode) throws RepositoryException {
+        final Session session = liveBranchConfigurationNode.getSession();
+        JcrUtils.copy(session, liveBranchConfigurationNode.getPath() + "/" + NODENAME_HST_WORKSPACE,
+                liveBranchConfigurationNode.getPath() + "/" + NODENAME_HST_UPSTREAM);
+        Node upstream = session.getNode(liveBranchConfigurationNode.getPath() + "/" + NODENAME_HST_UPSTREAM);
+        workspaceHasher.hash(upstream, true);
     }
 
     private void assertBranchDoesNotExist(final String liveConfigurationPath, final Node liveMasterConfigurationNode, final String liveBranchName) throws RepositoryException {

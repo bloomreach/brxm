@@ -29,10 +29,17 @@ import javax.jcr.Value;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
+import org.hippoecm.hst.statistics.Counter;
+import org.hippoecm.hst.statistics.DefaultCounter;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.HASHABLE_PROPERTY_HASH;
+import static org.hippoecm.hst.configuration.HstNodeTypes.HASHABLE_PROPERTY_UPSTREAM_HASH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_HASHABLE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
 
@@ -58,6 +65,8 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE
  */
 public class WorkspaceHasher implements NodeHasher {
 
+    private static final Logger log = LoggerFactory.getLogger(WorkspaceHasher.class);
+
     private static final String JCR_PREFIX = "jcr:";
 
     private Set<String> excludeProperties;
@@ -72,23 +81,45 @@ public class WorkspaceHasher implements NodeHasher {
      * @throws BranchException If {@code node} is not of type hst:workspace or MD5 MessageDigest is not supported or
      * some repository exception occurs
      */
-    public void hash(final Node node) throws BranchException {
+    public void hash(final Node node, final boolean setUpstreamHash) throws BranchException {
+
+        final Counter counter = new DefaultCounter();
+        Task hashTask = null;
         try {
+            if (HDC.isStarted()) {
+                hashTask = HDC.getCurrentTask().startSubtask("HashTask Node");
+                hashTask.setAttribute("Node path", node.getPath());
+            }
             if (!node.isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
                 throw new BranchException(String.format("Cannot not hash the node '%s' because not of type %s", node.getPath(), NODETYPE_HST_WORKSPACE));
             }
-            doHash(node, true);
+
+            startHashing(node, setUpstreamHash, counter);
+
         } catch (RepositoryException | NoSuchAlgorithmException e) {
             try {
                 throw new BranchException(String.format("Could not hash the node '%s'", node.getPath()), e);
             } catch (RepositoryException e1) {
                 throw new BranchException("Could not hash the node", e1);
             }
+        } finally {
+            if (hashTask != null) {
+                hashTask.setAttribute("Number of hashed nodes", counter.getValue());
+                hashTask.stop();
+            }
         }
     }
 
-    private byte[] doHash(final Node node, final boolean isRoot) throws RepositoryException, NoSuchAlgorithmException {
+    private void startHashing(final Node node, final boolean setUpstreamHash, final Counter counter) throws NoSuchAlgorithmException, RepositoryException {
+        long start = System.currentTimeMillis();
+        doHash(node, true, setUpstreamHash, counter);
+        log.info("Hashing '{}' containing '{}' nodes took '{}' ms", node.getPath(), counter.getValue(), (System.currentTimeMillis() - start));
+    }
 
+    private byte[] doHash(final Node node, final boolean isRoot, final boolean setUpstreamHash, final Counter counter)
+            throws RepositoryException, NoSuchAlgorithmException {
+
+        counter.increment();
         final MessageDigest md5 = MessageDigest.getInstance("MD5");
         if (!node.isNodeType(MIXINTYPE_HST_HASHABLE)) {
             node.addMixin(MIXINTYPE_HST_HASHABLE);
@@ -111,12 +142,15 @@ public class WorkspaceHasher implements NodeHasher {
         }
 
         for (Node child : new NodeIterable(node.getNodes())) {
-            byte[] hash = doHash(child, false);
+            byte[] hash = doHash(child, false, setUpstreamHash, counter);
             md5.update(hash);
         }
         byte[] digest = md5.digest();
         String hex = hexBinaryAdapter.marshal(digest);
         node.setProperty(HASHABLE_PROPERTY_HASH, hex);
+        if (setUpstreamHash) {
+            node.setProperty(HASHABLE_PROPERTY_UPSTREAM_HASH, hex);
+        }
         return digest;
 
     }

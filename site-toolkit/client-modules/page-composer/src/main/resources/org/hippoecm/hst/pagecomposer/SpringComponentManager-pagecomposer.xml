@@ -79,6 +79,7 @@
 
   <bean id="branchHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.BranchHelper">
     <property name="pageComposerContextService" ref="pageComposerContextService"/>
+    <property name="workspaceHasher" ref="org.hippoecm.hst.configuration.branch.WorkspaceHasher"/>
   </bean>
 
   <bean id="containerComponentService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentServiceImpl">

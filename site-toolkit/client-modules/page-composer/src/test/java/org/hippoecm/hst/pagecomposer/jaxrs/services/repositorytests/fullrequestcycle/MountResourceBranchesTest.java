@@ -26,17 +26,25 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.configuration.branch.NodeHasher;
+import org.hippoecm.hst.configuration.branch.WorkspaceHasher;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.HASHABLE_PROPERTY_HASH;
+import static org.hippoecm.hst.configuration.HstNodeTypes.HASHABLE_PROPERTY_UPSTREAM_HASH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_HASHABLE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID;
 import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.junit.Assert.assertArrayEquals;
@@ -57,6 +65,108 @@ public class MountResourceBranchesTest extends MountResourceTest {
     @Test
     public void create_branch_as_webmaster() throws Exception {
         createBranchAssertions(EDITOR_CREDENTIALS, "foo");
+    }
+
+    private void createBranchAssertions(final Credentials creds, final String branchName) throws RepositoryException, IOException, ServletException {
+        final Map<String, Object> responseMap = createBranch(creds, branchName);
+        assertEquals(Boolean.TRUE, responseMap.get("success"));
+        assertEquals("Branch created successfully", responseMap.get("message"));
+
+        Session session = createSession("admin", "admin");
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace"));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap"));
+        // hst:pages are being added to the master as well by branching!
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages"));
+
+        // the created branch *does* have pages as well in the workspace because always automatically added to a branch
+
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"/hst:workspace"));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"/hst:workspace/hst:sitemap"));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"/hst:workspace/hst:pages"));
+
+        Node branchHstConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject-" + branchName);
+        assertArrayEquals(new String[]{"../unittestproject"}, getMultipleStringProperty(branchHstConfigNode, GENERAL_PROPERTY_INHERITS_FROM, null));
+        assertTrue(branchHstConfigNode.isNodeType(MIXINTYPE_HST_BRANCH));
+
+        assertEquals("unittestproject", branchHstConfigNode.getProperty(BRANCH_PROPERTY_BRANCH_OF).getString());
+
+        // assert that the branch preview is also directly created (since directly required for MountResource#selectBranch
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"-preview/hst:workspace"));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"-preview/hst:workspace/hst:sitemap"));
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"-preview/hst:workspace/hst:pages"));
+
+        Node previewBranchHstConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject-" + branchName + "-preview");
+        assertArrayEquals(new String[]{"../unittestproject-" +branchName}, getMultipleStringProperty(previewBranchHstConfigNode, GENERAL_PROPERTY_INHERITS_FROM, null));
+        assertTrue(previewBranchHstConfigNode.isNodeType(MIXINTYPE_HST_BRANCH));
+        assertEquals("unittestproject-preview", previewBranchHstConfigNode.getProperty(BRANCH_PROPERTY_BRANCH_OF).getString());
+
+        // below are hst:upstream and hash assertions since when a branch is created, as a sibling in the created
+        // configuration we expect a copy of the hst:workspace --> hst:upstream with present hashed
+
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"/hst:upstream"));
+        assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"-preview/hst:upstream"));
+
+        assertFalse(session.getNode("/hst:hst/hst:configurations/unittestproject-"+branchName).isNodeType(MIXINTYPE_HST_HASHABLE));
+        assertFalse(session.getNode("/hst:hst/hst:configurations/unittestproject-"+branchName+"-preview").isNodeType(MIXINTYPE_HST_HASHABLE));
+
+        Node upstream = session.getNode("/hst:hst/hst:configurations/unittestproject-" + branchName + "/hst:upstream");
+        assertTrue(upstream.isNodeType(MIXINTYPE_HST_HASHABLE));
+
+        // assert that the hashed live master workspace results in exactly the same hashes and that the upstream hashes
+        // are also set on the 'upstream' node
+        NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
+
+        Node masterLiveWorkspace = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace");
+
+        hasher.hash(masterLiveWorkspace, true);
+        recursiveAssertHashEquals(upstream, masterLiveWorkspace);
+
+        Node masterPreviewWorkspace = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace");
+
+        hasher.hash(masterPreviewWorkspace, true);
+        recursiveAssertHashEquals(upstream, masterPreviewWorkspace);
+
+        // assert that the hashed live branch workspace results in exactly the same hashes and that the upstream hashes
+        // are also set on the 'upstream' node
+        Node branchLiveWorkspace = session.getNode("/hst:hst/hst:configurations/unittestproject-" + branchName + "/hst:workspace");
+
+        hasher.hash(branchLiveWorkspace, true);
+        recursiveAssertHashEquals(upstream, branchLiveWorkspace);
+
+        // assert that the hashed preview branch workspace results in exactly the same hashes and that the upstream hashes
+        // are also set on the 'upstream' node
+        Node branchPreviewWorkspace = session.getNode("/hst:hst/hst:configurations/unittestproject-" + branchName + "-preview/hst:workspace");
+
+        hasher.hash(branchPreviewWorkspace, true);
+        recursiveAssertHashEquals(upstream, branchPreviewWorkspace);
+
+        //assert that a lock does not change the hash
+        branchPreviewWorkspace.getNode("hst:pages").setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
+
+        // rehash
+        hasher.hash(branchPreviewWorkspace, true);
+        recursiveAssertHashEquals(upstream, branchPreviewWorkspace);
+
+        // now change a child node of the branch preview workspace and assert that the hash of the branch preview workspace
+        // is different
+        branchPreviewWorkspace.getNode("hst:sitemap/home").setProperty(SITEMAPITEM_PROPERTY_REF_ID, "foo");
+        // rehash
+        hasher.hash(branchPreviewWorkspace, true);
+
+        assertFalse("Because the preview workspace has changed, we expect a different hash for the hst:workspace as well " +
+                "because 'hash-changes' bubble up",
+                upstream.getProperty(HASHABLE_PROPERTY_HASH).getString().equals(branchPreviewWorkspace.getProperty(HASHABLE_PROPERTY_HASH).getString()));
+
+        session.logout();
+    }
+
+    private void recursiveAssertHashEquals(final Node source, final Node copy) throws RepositoryException {
+        assertEquals(source.getProperty(HASHABLE_PROPERTY_HASH).getString(), copy.getProperty(HASHABLE_PROPERTY_HASH).getString());
+        assertEquals(source.getProperty(HASHABLE_PROPERTY_UPSTREAM_HASH).getString(), copy.getProperty(HASHABLE_PROPERTY_UPSTREAM_HASH).getString());
+        for (Node child : new NodeIterable(source.getNodes())) {
+            Node copyChild = copy.getNode(child.getName());
+            recursiveAssertHashEquals(child, copyChild);
+        }
     }
 
     @Test
@@ -114,41 +224,6 @@ public class MountResourceBranchesTest extends MountResourceTest {
 
         final String restResponse = response.getContentAsString();
         return mapper.reader(Map.class).readValue(restResponse);
-    }
-
-    private void createBranchAssertions(final Credentials creds, final String branchName) throws RepositoryException, IOException, ServletException {
-        final Map<String, Object> responseMap = createBranch(creds, branchName);
-        assertEquals(Boolean.TRUE, responseMap.get("success"));
-        assertEquals("Branch created successfully", responseMap.get("message"));
-
-        Session session = createSession("admin", "admin");
-        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace"));
-        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap"));
-        // hst:pages are being added to the master as well by branching!
-        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages"));
-
-        // the created branch *does* have pages as well in the workspace because always automatically added to a branch
-
-        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"/hst:workspace"));
-        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"/hst:workspace/hst:sitemap"));
-        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"/hst:workspace/hst:pages"));
-
-        Node branchHstConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject-" + branchName);
-        assertArrayEquals(new String[]{"../unittestproject"}, getMultipleStringProperty(branchHstConfigNode, GENERAL_PROPERTY_INHERITS_FROM, null));
-        assertTrue(branchHstConfigNode.isNodeType(MIXINTYPE_HST_BRANCH));
-
-        assertEquals("unittestproject", branchHstConfigNode.getProperty(BRANCH_PROPERTY_BRANCH_OF).getString());
-
-        // assert that the branch preview is also directly created (since directly required for MountResource#selectBranch
-        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"-preview/hst:workspace"));
-        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"-preview/hst:workspace/hst:sitemap"));
-        assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-"+branchName+"-preview/hst:workspace/hst:pages"));
-
-        Node previewBranchHstConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject-" + branchName + "-preview");
-        assertArrayEquals(new String[]{"../unittestproject-" +branchName}, getMultipleStringProperty(previewBranchHstConfigNode, GENERAL_PROPERTY_INHERITS_FROM, null));
-        assertTrue(previewBranchHstConfigNode.isNodeType(MIXINTYPE_HST_BRANCH));
-        assertEquals("unittestproject-preview", previewBranchHstConfigNode.getProperty(BRANCH_PROPERTY_BRANCH_OF).getString());
-        session.logout();
     }
 
     @Test
