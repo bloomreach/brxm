@@ -83,18 +83,18 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
             NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
             Node workspaceNode = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace");
             hasher.hash(workspaceNode);
-            recursiveAssertions(workspaceNode);
+            recursivelyAssertHashProperties(workspaceNode);
         } finally {
             session.logout();
         }
     }
 
-    private void recursiveAssertions(final Node node) throws RepositoryException {
+    private void recursivelyAssertHashProperties(final Node node) throws RepositoryException {
         assertTrue(node.isNodeType(HstNodeTypes.MIXINTYPE_HST_HASHABLE));
         assertTrue(node.hasProperty(HstNodeTypes.HASHABLE_PROPERTY_HASH));
         assertFalse(node.hasProperty(HASHABLE_PROPERTY_UPSTREAM_HASH));
         for (Node child : new NodeIterable(node.getNodes())) {
-            recursiveAssertions(child);
+            recursivelyAssertHashProperties(child);
         }
     }
 
@@ -247,7 +247,7 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
             String hash = workspace.getProperty(HASHABLE_PROPERTY_HASH).getString();
 
             session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/_default_")
-                    .setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo","bar","lux"});
+                    .setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo", "bar", "lux"});
 
             hasher.hash(workspace);
             String rehash = workspace.getProperty(HASHABLE_PROPERTY_HASH).getString();

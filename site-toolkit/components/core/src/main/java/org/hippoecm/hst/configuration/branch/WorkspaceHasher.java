@@ -34,6 +34,7 @@ import org.hippoecm.repository.util.PropertyIterable;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.HASHABLE_PROPERTY_HASH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_HASHABLE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
 
 /**
  * <p>
@@ -57,7 +58,10 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_HASHABLE
  */
 public class WorkspaceHasher implements NodeHasher {
 
+    private static final String JCR_PREFIX = "jcr:";
+
     private Set<String> excludeProperties;
+    private final HexBinaryAdapter hexBinaryAdapter = new HexBinaryAdapter();
 
     public void setExcludeProperties(final Set<String> excludeProperties) {
         this.excludeProperties = excludeProperties;
@@ -71,7 +75,7 @@ public class WorkspaceHasher implements NodeHasher {
     public void hash(final Node node) throws BranchException {
         try {
             if (!node.isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
-                throw new BranchException(String.format("Cannot not hash the node '%s' because not of type hst:workspace", node.getPath()));
+                throw new BranchException(String.format("Cannot not hash the node '%s' because not of type %s", node.getPath(), NODETYPE_HST_WORKSPACE));
             }
             doHash(node, true);
         } catch (RepositoryException | NoSuchAlgorithmException e) {
@@ -94,8 +98,8 @@ public class WorkspaceHasher implements NodeHasher {
             md5.update(node.getName().getBytes());
         }
 
-        SortedSet<String> sortedFilterProperties = getSortedFilterProperties(node);
-        for (String propertyName : sortedFilterProperties) {
+        SortedSet<String> sortedFilterPropertyNames = getSortedFilterPropertyNames(node);
+        for (String propertyName : sortedFilterPropertyNames) {
             Property property = node.getProperty(propertyName);
             if (property.isMultiple()) {
                 for (Value value : property.getValues()) {
@@ -111,7 +115,7 @@ public class WorkspaceHasher implements NodeHasher {
             md5.update(hash);
         }
         byte[] digest = md5.digest();
-        String hex = (new HexBinaryAdapter()).marshal(digest);
+        String hex = hexBinaryAdapter.marshal(digest);
         node.setProperty(HASHABLE_PROPERTY_HASH, hex);
         return digest;
 
@@ -119,10 +123,10 @@ public class WorkspaceHasher implements NodeHasher {
 
     // since the order in which node.getProperties returns the properties can change over time we need to return
     // a sorted (filtered) set of property names first
-    private SortedSet<String> getSortedFilterProperties(final Node node) throws RepositoryException {
+    private SortedSet<String> getSortedFilterPropertyNames(final Node node) throws RepositoryException {
         SortedSet<String> props = new TreeSet<>();
         for (Property property : new PropertyIterable(node.getProperties())) {
-            if (excludeProperties.contains(property.getName()) || property.getName().startsWith("jcr:")) {
+            if (excludeProperties.contains(property.getName()) || property.getName().startsWith(JCR_PREFIX)) {
                 continue;
             }
             props.add(property.getName());
@@ -131,17 +135,28 @@ public class WorkspaceHasher implements NodeHasher {
     }
 
     private void update(final MessageDigest md5, final Value value) throws RepositoryException {
+        md5.update(PropertyType.nameFromValue(value.getType()).getBytes());
         if (value.getType() == PropertyType.STRING) {
             md5.update(value.getString().getBytes());
-        } if (value.getType() == PropertyType.BOOLEAN) {
+            return;
+        }
+        if (value.getType() == PropertyType.BOOLEAN) {
             md5.update(String.valueOf(value.getBoolean()).getBytes());
-        } if (value.getType() == PropertyType.LONG) {
+            return;
+        }
+        if (value.getType() == PropertyType.LONG) {
             md5.update(String.valueOf(value.getLong()).getBytes());
-        } if (value.getType() == PropertyType.DOUBLE) {
+            return;
+        }
+        if (value.getType() == PropertyType.DOUBLE) {
             md5.update(String.valueOf(value.getDouble()).getBytes());
-        } if (value.getType() == PropertyType.DECIMAL) {
+            return;
+        }
+        if (value.getType() == PropertyType.DECIMAL) {
             md5.update(String.valueOf(value.getDecimal()).getBytes());
-        } if (value.getType() == PropertyType.DATE) {
+            return;
+        }
+        if (value.getType() == PropertyType.DATE) {
             md5.update(String.valueOf(value.getDate()).getBytes());
         }
     }
