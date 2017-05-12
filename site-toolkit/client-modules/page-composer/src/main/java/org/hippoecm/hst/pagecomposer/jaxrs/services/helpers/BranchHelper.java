@@ -39,6 +39,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHER
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils.createMandatoryWorkspaceNodesIfMissing;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils.createPreviewConfiguration;
 
 public class BranchHelper {
@@ -56,16 +57,11 @@ public class BranchHelper {
      */
     public void createBranch(final String branchId, final Session session) throws RepositoryException, ClientException {
         final Mount editingMount = pageComposerContextService.getEditingMount();
-        Channel channel = editingMount.getChannel();
-        if (channel.getBranchId() != null) {
-            throw new ClientException(String.format("Only branching from master is currently supported. Cannot branch " +
-                            "from '%s' which is currently rendered. First select master before branching",
-                    channel.getHstConfigPath()), ClientError.BRANCHING_NOT_ALLOWED);
-        }
+
+        assertChannelIsMaster(editingMount);
         assertValidBranchName(branchId);
 
         final HstSite editingPreviewSite = pageComposerContextService.getEditingPreviewSite();
-
         final String liveConfigurationPath = pageComposerContextService.getEditingLiveConfigurationPath();
 
         if (!editingPreviewSite.hasPreviewConfiguration()) {
@@ -76,33 +72,32 @@ public class BranchHelper {
         Node liveMasterConfigurationNode = session.getNode(liveConfigurationPath);
         String liveConfigName = StringUtils.substringAfterLast(liveConfigurationPath, "/");
         String liveBranchName = liveConfigName + "-" + branchId;
+
+        assertBranchDoesNotExist(liveConfigurationPath, liveMasterConfigurationNode, liveBranchName);
+
+        Node liveBranchConfigurationNode = createLiveBranchConfiguration(branchId, session, liveConfigurationPath, liveMasterConfigurationNode, liveConfigName, liveBranchName);
+
+        createPreviewBranchConfiguration(session, liveConfigName, liveBranchConfigurationNode);
+
+        log.info("Branch '{}' created.", liveBranchConfigurationNode.getName());
+    }
+
+
+    private void assertBranchDoesNotExist(final String liveConfigurationPath, final Node liveMasterConfigurationNode, final String liveBranchName) throws RepositoryException {
         if (liveMasterConfigurationNode.getParent().hasNode(liveBranchName)) {
             throw new ClientException(String.format("Branch '%s' cannot be created or '%s' because it exists already",
                     liveBranchName, liveConfigurationPath), ClientError.ITEM_EXISTS);
         }
-        Node liveBranchConfigNode = liveMasterConfigurationNode.getParent().addNode(liveBranchName, NODETYPE_HST_CONFIGURATION);
-        liveBranchConfigNode.addMixin(MIXINTYPE_HST_BRANCH);
-        liveBranchConfigNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, liveConfigName);
-        liveBranchConfigNode.setProperty(BRANCH_PROPERTY_BRANCH_ID, branchId);
-        liveBranchConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
-        // TODO if 'master config node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
-        // TODO as well to the preview config, see HSTTWO-3965
-        if (session.nodeExists(liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE)) {
-            JcrUtils.copy(session, liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE, liveBranchConfigNode.getPath() + "/" + NODENAME_HST_WORKSPACE);
+    }
+
+
+    private void assertChannelIsMaster(final Mount editingMount) {
+        Channel channel = editingMount.getChannel();
+        if (channel.getBranchId() != null) {
+            throw new ClientException(String.format("Only branching from master is currently supported. Cannot branch " +
+                            "from '%s' which is currently rendered. First select master before branching",
+                    channel.getHstConfigPath()), ClientError.BRANCHING_NOT_ALLOWED);
         }
-        HstConfigurationUtils.createMandatoryWorkspaceNodesIfMissing(liveBranchConfigNode.getPath(), session);
-
-        // we need for branches directly a preview as well otherwise we can't select this branch via #selectBranch : That is
-        // because the 'editingMount' is decorated to preview and hence will return only the preview channels
-        JcrUtils.copy(session, liveBranchConfigNode.getPath(), liveBranchConfigNode.getPath() + "-preview");
-        // TODO if 'master config node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
-        // TODO as well to the preview config, see HSTTWO-3965
-        Node previewBranchNode = session.getNode(liveBranchConfigNode.getPath() + "-preview");
-        previewBranchNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM,
-                new String[]{"../" + liveBranchConfigNode.getName()});
-        previewBranchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, liveConfigName + "-preview");
-
-        log.info("Branch '{}' created.", liveBranchConfigNode.getName());
     }
 
     private void assertValidBranchName(final String branchId) {
@@ -113,5 +108,32 @@ public class BranchHelper {
         if (!branchId.equals(encoded)) {
             throw new ClientException(String.format("Invalid branchId '%s'", branchId), ClientError.INVALID_NAME);
         }
+    }
+
+    private Node createLiveBranchConfiguration(final String branchId, final Session session, final String liveConfigurationPath, final Node liveMasterConfigurationNode, final String liveConfigName, final String liveBranchName) throws RepositoryException {
+        Node liveBranchConfigNode = liveMasterConfigurationNode.getParent().addNode(liveBranchName, NODETYPE_HST_CONFIGURATION);
+        liveBranchConfigNode.addMixin(MIXINTYPE_HST_BRANCH);
+        liveBranchConfigNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, liveConfigName);
+        liveBranchConfigNode.setProperty(BRANCH_PROPERTY_BRANCH_ID, branchId);
+        liveBranchConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
+        // TODO if 'master config node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
+        // TODO as well to the preview config, see HSTTWO-3965
+        if (session.nodeExists(liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE)) {
+            JcrUtils.copy(session, liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE, liveBranchConfigNode.getPath() + "/" + NODENAME_HST_WORKSPACE);
+        }
+        createMandatoryWorkspaceNodesIfMissing(liveBranchConfigNode.getPath(), session);
+        return liveBranchConfigNode;
+    }
+
+    private void createPreviewBranchConfiguration(final Session session, final String liveConfigName, final Node liveBranchConfigurationNode) throws RepositoryException {
+        // we need for branches directly a preview as well otherwise we can't select this branch via #selectBranch : That is
+        // because the 'editingMount' is decorated to preview and hence will return only the preview channels
+        JcrUtils.copy(session, liveBranchConfigurationNode.getPath(), liveBranchConfigurationNode.getPath() + "-preview");
+        // TODO if 'master config node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
+        // TODO as well to the preview config, see HSTTWO-3965
+        Node previewBranchNode = session.getNode(liveBranchConfigurationNode.getPath() + "-preview");
+        previewBranchNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM,
+                new String[]{"../" + liveBranchConfigurationNode.getName()});
+        previewBranchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, liveConfigName + "-preview");
     }
 }
