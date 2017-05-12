@@ -26,7 +26,6 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +91,11 @@ public class HstEventsCollector {
         hstEvents = new HashSet<>();
         return events;
 
+    }
+
+    // meant for unit test only
+    synchronized Set<HstEvent> getHstEvents() {
+        return Collections.unmodifiableSet(hstEvents);
     }
 
     private void addEvent(final Event jcrEvent, final Map<String, Set<Integer>> movedNodeDetectionMap) throws RepositoryException {

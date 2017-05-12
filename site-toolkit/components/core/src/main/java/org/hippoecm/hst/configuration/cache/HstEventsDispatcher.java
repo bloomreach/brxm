@@ -37,6 +37,11 @@ public class HstEventsDispatcher {
         this.hstEventsCollector = hstEventsCollector;
     }
 
+    // meant for unit test only
+    HstEventsCollector getHstEventsCollector() {
+        return hstEventsCollector;
+    }
+
     public void dispatchHstEvents() {
         long start = System.currentTimeMillis();
         Set<HstEvent> events = hstEventsCollector.getAndClearEvents();

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,6 +43,14 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
 import static org.junit.Assert.fail;
 
 public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
@@ -177,11 +185,11 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
 
 
             final String schemeBefore = before1.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_SCHEME);
-            final String lockedBefore = before2.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
+            final String lockedBefore = before2.getValueProvider().getString(GENERAL_PROPERTY_LOCKED_BY);
 
             Session session = setup.session;
             session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost").setProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SCHEME, "XXX");
-            session.getNode("/hst:hst/hst:blueprints/testblueprint/hst:configuration/hst:sitemenus").setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "YYY");
+            session.getNode("/hst:hst/hst:blueprints/testblueprint/hst:configuration/hst:sitemenus").setProperty(GENERAL_PROPERTY_LOCKED_BY, "YYY");
             session.save();
             // sleep to make sure the asynchronous jcr events have arrived
             Thread.sleep(200);
@@ -199,7 +207,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
 
             assertFalse(schemeAfter.equals(schemeBefore));
 
-            final String lockedAfter = after2.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
+            final String lockedAfter = after2.getValueProvider().getString(GENERAL_PROPERTY_LOCKED_BY);
 
             assertFalse(lockedAfter.equals(lockedBefore));
         }
@@ -433,6 +441,91 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             while(iteratorBefore.hasNext()) {
                 assertEquals(iteratorBefore.next().getName(), iteratorAfter.next().getName());
             }
+        }
+    }
+
+    @Test
+    public void assert_hst_upstream_is_not_loading_into_the_hst_node_cache() throws Exception {
+        try (CommonHstConfigSetup setup = new CommonHstConfigSetup()) {
+
+            final Session session = setup.session;
+            final Node configuration = session.getNode("/hst:hst/hst:configurations/unittestproject");
+            final Node workspace = configuration.addNode(NODENAME_HST_WORKSPACE, NODETYPE_HST_WORKSPACE);
+            workspace.addNode(NODENAME_HST_PAGES);
+            workspace.addNode(NODENAME_HST_SITEMAP);
+
+            configuration.addMixin(MIXINTYPE_HST_BRANCH);
+            configuration.setProperty(BRANCH_PROPERTY_BRANCH_ID, "dummy");
+            configuration.setProperty(BRANCH_PROPERTY_BRANCH_OF, "dummy");
+            JcrUtils.copy(session, workspace.getPath(), "/hst:hst/hst:configurations/unittestproject/hst:upstream");
+
+            session.save();
+            Thread.sleep(200);
+
+            hstEventsDispatcher.dispatchHstEvents();
+
+            assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace"));
+            assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages"));
+            assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap"));
+
+            assertNull(hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject/hst:upstream"));
+
+        }
+    }
+
+    @Test
+    public void assert_hst_upstream_is_not_loading_into_the_hst_node_cache_aas_a_result_of_a_change() throws Exception {
+        try (CommonHstConfigSetup setup = new CommonHstConfigSetup()) {
+            // Trigger initial loading of all HstNode : after this make changes and make sure the hst:upstream is not
+            // added to the hst node model
+            hstNodeLoadingCache.getNode("/hst:hst");
+            final Session session = setup.session;
+
+            final Node configuration = session.getNode("/hst:hst/hst:configurations/unittestproject");
+            final Node workspace = configuration.addNode(NODENAME_HST_WORKSPACE, NODETYPE_HST_WORKSPACE);
+            workspace.addNode(NODENAME_HST_PAGES);
+            workspace.addNode(NODENAME_HST_SITEMAP);
+
+            configuration.addMixin(MIXINTYPE_HST_BRANCH);
+            configuration.setProperty(BRANCH_PROPERTY_BRANCH_ID, "dummy");
+            configuration.setProperty(BRANCH_PROPERTY_BRANCH_OF, "dummy");
+            JcrUtils.copy(session, workspace.getPath(), "/hst:hst/hst:configurations/unittestproject/hst:upstream");
+
+            session.save();
+            Thread.sleep(200);
+
+            hstEventsDispatcher.dispatchHstEvents();
+
+            assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace"));
+            assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages"));
+            assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap"));
+
+            assertNull("hst:upstream should not have been loaded",hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject/hst:upstream"));
+
+            // make sure that a change to hst:upstream does not result in loaded hst:upstream
+
+            session.getNode("/hst:hst/hst:configurations/unittestproject/hst:upstream/hst:sitemap").setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
+            session.save();
+            Thread.sleep(200);
+
+            // changes on or below hst:upstream should not result in a collected event
+            assertTrue("events below and on hst:upstream should be skipped",hstEventsDispatcher.getHstEventsCollector().getHstEvents().isEmpty());
+
+            hstEventsDispatcher.dispatchHstEvents();
+
+            assertNull("hst:upstream should not have been loaded", hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject/hst:upstream"));
+
+            // make sure that a change to the configuration just above hst:upstream does not result in hst:upstream to be loaded
+
+            configuration.setProperty(BRANCH_PROPERTY_BRANCH_ID, "dummy-again");
+
+            session.save();
+            Thread.sleep(200);
+
+            hstEventsDispatcher.dispatchHstEvents();
+
+            assertNull(hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject/hst:upstream"));
+
         }
     }
 
