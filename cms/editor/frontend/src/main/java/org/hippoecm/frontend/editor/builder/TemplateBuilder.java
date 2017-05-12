@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -1081,8 +1081,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             }
             pluginConfig.put("wicket.id", getSelectedExtensionPoint());
             pluginConfig.put("field", fieldDescriptor.getName());
-            int index = fieldType.getName().indexOf(":") != -1 ? fieldType.getName().indexOf(":") + 1 : fieldType.getName().indexOf("_") + 1;
-            pluginConfig.put("caption", fieldType.getName().substring(index));
+            pluginConfig.put("caption", fieldType.getName());
 
             getPlugins().add(pluginConfig);
 

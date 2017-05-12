@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,9 +48,7 @@ public class JavaFieldDescriptor implements IFieldDescriptor, IDetachable {
 
     public JavaFieldDescriptor(String prefix, ITypeDescriptor type) {
         this.type = type;
-        int index = type.getName().indexOf(":") != -1 ? type.getName().indexOf(":") + 1 : type.getName().indexOf("_") + 1;
-
-        this.path =  type.getName().substring(index);
+        this.path = prefix + ":" + type.getName().toLowerCase().replace(':', '_');
         this.excluded = null;
         this.name = type.getName().toLowerCase().replace(':', '_');
 
