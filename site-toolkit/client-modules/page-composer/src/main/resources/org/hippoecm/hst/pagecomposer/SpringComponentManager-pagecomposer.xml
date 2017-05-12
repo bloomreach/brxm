@@ -310,7 +310,7 @@
         </property>
         <property name="noLocal" value="false"/>
         <property name="eventListener">
-          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel$SecurityModelEventListener">
+          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModelImpl$SecurityModelEventListener">
             <property name="securityModel" ref="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel"/>
           </bean>
         </property>
@@ -318,7 +318,7 @@
     </property>
   </bean>
 
-  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel" class="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel">
+  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel" class="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModelImpl">
     <!-- Use the delegating repository here, because we want a non pooled session: When loading the configuration
         we do not need a session from the pool, but rather a fresh session that is logged out at the end -->
     <property name="repository" ref="javax.jcr.Repository.delegating"/>

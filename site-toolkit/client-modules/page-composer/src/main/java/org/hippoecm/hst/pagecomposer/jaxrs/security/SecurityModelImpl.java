@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,12 +36,10 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SecurityModel {
+public class SecurityModelImpl implements SecurityModel {
 
-    private static final Logger log = LoggerFactory.getLogger(SecurityModel.class);
+    private static final Logger log = LoggerFactory.getLogger(SecurityModelImpl.class);
 
-    // at this moment the only supported functional role
-    public static final String CHANNEL_MANAGER_ADMIN_ROLE = "ChannelManagerAdmin";
     public static final Set<String> SUPPORTED_ROLES = ImmutableSet.of(CHANNEL_MANAGER_ADMIN_ROLE);
 
     private Repository repository;
@@ -64,6 +62,7 @@ public class SecurityModel {
     }
 
 
+    @Override
     public Principal getUserPrincipal(final HstRequestContext context) {
         try {
             return context.getSession()::getUserID;
@@ -73,6 +72,7 @@ public class SecurityModel {
     }
 
 
+    @Override
     public boolean isUserInRule(final HstRequestContext context, final String functionalRole) {
         if (!SUPPORTED_ROLES.contains(functionalRole)) {
             throw new IllegalArgumentException(String.format("Unsupported Functional role '%s'." ,functionalRole));
@@ -134,11 +134,11 @@ public class SecurityModel {
     }
 
 
-    public void invalidate() {
+    private void invalidate() {
         mappingModel = null;
     }
 
-    public static class PrivilegePathMapping {
+    private static class PrivilegePathMapping {
 
         private final String privilege;
         private final String privilegePath;
@@ -152,9 +152,9 @@ public class SecurityModel {
 
     public static class SecurityModelEventListener extends GenericEventListener {
 
-        private SecurityModel securityModel;
+        private SecurityModelImpl securityModel;
 
-        public void setSecurityModel(final SecurityModel securityModel) {
+        public void setSecurityModel(final SecurityModelImpl securityModel) {
             this.securityModel = securityModel;
         }
 
