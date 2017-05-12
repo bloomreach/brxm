@@ -114,9 +114,7 @@ describe('CKEditor Component', () => {
     init();
 
     spyOn(DomService, 'addCssLinks');
-    const config = {
-      contentsCss: 'hippocontents.css',
-    };
+    config.contentsCss = 'hippocontents.css';
     $ctrl._applyEditorCSS(config);
     expect(DomService.addCssLinks).toHaveBeenCalled();
     expect(Array.isArray(config.contentsCss)).toBe(true);
