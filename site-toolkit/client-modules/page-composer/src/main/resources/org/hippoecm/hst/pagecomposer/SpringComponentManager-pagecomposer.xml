@@ -214,7 +214,6 @@
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.RootResource" parent="abstractConfigResource">
-              <property name="rootPath" value="${hst.configuration.rootPath}"/>
               <property name="channelService" ref="channelService"/>
               <property name="securityModel" ref="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel"/>
             </bean>
@@ -323,6 +322,7 @@
         we do not need a session from the pool, but rather a fresh session that is logged out at the end -->
     <property name="repository" ref="javax.jcr.Repository.delegating"/>
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
+    <property name="rootPath" value="${hst.configuration.rootPath}"/>
     <property name="jcrPathTemplateComposer" ref="jcrPathTemplateComposer"/>
   </bean>
 

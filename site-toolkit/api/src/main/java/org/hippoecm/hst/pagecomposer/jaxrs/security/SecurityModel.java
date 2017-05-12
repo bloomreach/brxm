@@ -17,6 +17,8 @@ package org.hippoecm.hst.pagecomposer.jaxrs.security;
 
 import java.security.Principal;
 
+import javax.jcr.Session;
+
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -32,11 +34,11 @@ public interface SecurityModel {
     /**
      * @return return user {@link Principal} of currently active user
      */
-    Principal getUserPrincipal(HstRequestContext context);
+    Principal getUserPrincipal(Session session);
 
     /**
      * @return {@code true} when the user for the current {@code context} is in role {@code functionalRole} where the
      * {@code functionalRole} can be either {@link #CHANNEL_MANAGER_ADMIN_ROLE} or {@link #CHANNEL_WEBMASTER_ROLE}
      */
-    boolean isUserInRule(HstRequestContext context, String functionalRole);
+    boolean isUserInRule(Session session, String functionalRole);
 }

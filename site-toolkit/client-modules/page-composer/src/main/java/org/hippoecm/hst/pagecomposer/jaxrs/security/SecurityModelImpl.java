@@ -19,7 +19,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.security;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -27,8 +26,6 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
-
-import com.google.common.collect.ImmutableSet;
 
 import org.hippoecm.hst.core.jcr.GenericEventListener;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -40,10 +37,9 @@ public class SecurityModelImpl implements SecurityModel {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityModelImpl.class);
 
-    public static final Set<String> SUPPORTED_ROLES = ImmutableSet.of(CHANNEL_MANAGER_ADMIN_ROLE);
-
     private Repository repository;
     private Credentials credentials;
+    private String rootPath;
     private String jcrPathTemplateComposer;
 
     // mapping for [ role --> jcr {privilege, privilegePath} mapping ]
@@ -57,38 +53,49 @@ public class SecurityModelImpl implements SecurityModel {
         this.credentials = credentials;
     }
 
+    public void setRootPath(final String rootPath) {
+        this.rootPath = rootPath;
+    }
+
     public void setJcrPathTemplateComposer(final String jcrPathTemplateComposer) {
         this.jcrPathTemplateComposer = jcrPathTemplateComposer;
     }
 
-
     @Override
-    public Principal getUserPrincipal(final HstRequestContext context) {
-        try {
-            return context.getSession()::getUserID;
-        } catch (RepositoryException e) {
-            throw new IllegalStateException("Exception while getting user principal.", e);
-        }
+    public Principal getUserPrincipal(final Session session) {
+        return session::getUserID;
     }
 
 
+    /**
+     * Below might be quite an odd implementation but this is because of legacy reasons how before it was found out
+     * whether a user was an admin or webmaster. Hence this kind of awkward looking implementation
+     */
     @Override
-    public boolean isUserInRule(final HstRequestContext context, final String functionalRole) {
-        if (!SUPPORTED_ROLES.contains(functionalRole)) {
-            throw new IllegalArgumentException(String.format("Unsupported Functional role '%s'." ,functionalRole));
+    public boolean isUserInRule(final Session session, final String functionalRole) {
+
+        if (CHANNEL_MANAGER_ADMIN_ROLE.equals(functionalRole)) {
+            final Map<String, PrivilegePathMapping> mapping = getMappingModel();
+            final PrivilegePathMapping privilegePathMappging = mapping.get(functionalRole);
+            if (privilegePathMappging == null) {
+                log.info("No PrivilegePathMapping for role '{}'.", functionalRole);
+                return false;
+            }
+            try {
+                return session.hasPermission(privilegePathMappging.privilegePath, privilegePathMappging.privilege);
+            } catch (RepositoryException e) {
+                throw new IllegalStateException("Exception while checking permissions.", e);
+            }
+        } else if (CHANNEL_WEBMASTER_ROLE.equals(functionalRole)) {
+            boolean canWrite;
+            try {
+                return session.hasPermission(rootPath + "/accesstest", Session.ACTION_SET_PROPERTY);
+            } catch (RepositoryException e) {
+                log.warn("Could not determine authorization", e);
+                throw new IllegalStateException("Exception while checking permissions.", e);
+            }
         }
-        final Map<String, PrivilegePathMapping> mapping = getMappingModel();
-        final PrivilegePathMapping privilegePathMappging = mapping.get(functionalRole);
-        if (privilegePathMappging == null) {
-            log.info("No PrivilegePathMapping for role '{}'.", functionalRole);
-            return false;
-        }
-        try {
-            final Session session = context.getSession();
-            return session.hasPermission(privilegePathMappging.privilegePath, privilegePathMappging.privilege);
-        } catch (RepositoryException e) {
-            throw new IllegalStateException("Exception while checking permissions.", e);
-        }
+        throw new IllegalArgumentException(String.format("Unsupported Functional role '%s'.", functionalRole));
     }
 
     private Map<String, PrivilegePathMapping> getMappingModel() {
@@ -99,7 +106,7 @@ public class SecurityModelImpl implements SecurityModel {
         synchronized (this) {
             mapping = mappingModel;
             if (mapping != null) {
-                 return mapping;
+                return mapping;
             }
 
             mapping = new HashMap<>();

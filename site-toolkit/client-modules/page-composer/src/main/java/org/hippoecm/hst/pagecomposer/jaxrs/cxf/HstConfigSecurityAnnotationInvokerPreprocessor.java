@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.cxf;
 
 import java.security.Principal;
 
+import javax.jcr.RepositoryException;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.cxf.message.Exchange;
@@ -38,12 +39,21 @@ public class HstConfigSecurityAnnotationInvokerPreprocessor extends SecurityAnno
         return new SecurityContext() {
             @Override
             public Principal getUserPrincipal() {
-                return securityModel.getUserPrincipal(RequestContextProvider.get());
+                try {
+                    return securityModel.getUserPrincipal(RequestContextProvider.get().getSession());
+                } catch (RepositoryException e) {
+                    throw new IllegalStateException("Exception while getting user principal.", e);
+                }
             }
 
             @Override
             public boolean isUserInRole(final String role) {
-                return securityModel.isUserInRule(RequestContextProvider.get(), role);
+                try {
+                    return securityModel.isUserInRule(RequestContextProvider.get().getSession(), role);
+                } catch (RepositoryException e) {
+                    throw new IllegalStateException("Exception while trying to find whether user is " +
+                            "in role.", e);
+                }
             }
 
             @Override
