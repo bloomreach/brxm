@@ -46,7 +46,7 @@ class CKEditorController {
 
       this.editor.on('change', () => {
         if (!this.processingModelUpdate) {
-          this.onEditorChange()
+          this.onEditorChange();
         }
       });
 
