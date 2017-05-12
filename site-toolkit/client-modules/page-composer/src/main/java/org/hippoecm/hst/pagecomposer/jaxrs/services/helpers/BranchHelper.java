@@ -73,7 +73,7 @@ public class BranchHelper {
 
         final Node liveBranchConfigurationNode = createLiveBranchConfiguration(branchId, liveMasterConfigurationNode);
 
-        createPreviewBranchConfiguration(liveBranchConfigurationNode);
+        createPreviewBranchConfiguration(liveBranchConfigurationNode, liveMasterConfigurationNode.getName());
 
         log.info("Branch '{}' created.", liveBranchConfigurationNode.getName());
     }
@@ -104,7 +104,7 @@ public class BranchHelper {
         return liveBranchConfigNode;
     }
 
-    private void createPreviewBranchConfiguration(final Node liveBranchConfigurationNode) throws RepositoryException {
+    private void createPreviewBranchConfiguration(final Node liveBranchConfigurationNode, final String liveMasterConfigurationName) throws RepositoryException {
         final Session session = liveBranchConfigurationNode.getSession();
         // we need for branches directly a preview as well otherwise we can't select this branch via #selectBranch : That is
         // because the 'editingMount' is decorated to preview and hence will return only the preview channels
@@ -114,7 +114,7 @@ public class BranchHelper {
         final Node previewBranchNode = session.getNode(liveBranchConfigurationNode.getPath() + "-preview");
         previewBranchNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM,
                 new String[]{"../" + liveBranchConfigurationNode.getName()});
-        previewBranchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, liveBranchConfigurationNode.getName() + "-preview");
+        previewBranchNode.setProperty(BRANCH_PROPERTY_BRANCH_OF, liveMasterConfigurationName + "-preview");
     }
 
     private void assertBranchDoesNotExist(final String liveConfigurationPath, final Node liveMasterConfigurationNode, final String liveBranchName) throws RepositoryException {
