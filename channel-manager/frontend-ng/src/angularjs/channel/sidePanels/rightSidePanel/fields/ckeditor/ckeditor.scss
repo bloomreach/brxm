@@ -48,8 +48,6 @@ $ckeditor-button-border-color:       #b8bcbf;
 
 ckeditor {
   textarea {
-    visibility: hidden !important;
-
     + .cke {
       border-bottom-width: 2px;
     }
