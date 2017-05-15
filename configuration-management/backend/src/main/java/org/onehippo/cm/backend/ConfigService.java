@@ -84,9 +84,9 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
 import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getBaseZipFileFromURL;
 
-public class ConfigurationPersistenceService {
+public class ConfigService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConfigurationPersistenceService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConfigService.class);
 
     private static final String[] knownDerivedPropertyNames = new String[] {
             HIPPO_RELATED,
@@ -97,7 +97,7 @@ public class ConfigurationPersistenceService {
     private final Session session;
     private final List<Pair<ConfigurationProperty, Node>> unprocessedReferences = new ArrayList<>();
 
-    public ConfigurationPersistenceService(final Session session) {
+    public ConfigService(final Session session) {
         this.session = session;
     }
 

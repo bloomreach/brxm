@@ -36,7 +36,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.onehippo.cm.api.ConfigurationBaselineService;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.ConfigurationModel;
@@ -90,13 +89,13 @@ import static org.onehippo.cm.engine.Constants.MODULE_TYPE;
 import static org.onehippo.cm.engine.Constants.PROJECT_TYPE;
 import static org.onehippo.cm.engine.Constants.YAML_PROPERTY;
 
-public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineService {
+public class ConfigBaselineService {
 
-    private static final Logger log = LoggerFactory.getLogger(ConfigurationBaselineServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ConfigBaselineService.class);
 
     private final Session session;
 
-    public ConfigurationBaselineServiceImpl(final Session session) {
+    public ConfigBaselineService(final Session session) {
         this.session = session;
     }
 
@@ -468,6 +467,22 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
     }
 
     /**
+     * Helper to check if the baseline node exists where we expect it.
+     * @param rootNode the JCR root node
+     */
+    protected boolean baselineExists(final Node rootNode) throws RepositoryException {
+        return rootNode.hasNode(HCM_ROOT_NODE) || !rootNode.getNode(HCM_ROOT_NODE).hasNode(BASELINE_NODE);
+    }
+
+    /**
+     * Helper to load the baseline node, if it exists.
+     * @param rootNode the JCR root node
+     */
+    protected Node getBaselineNode(final Node rootNode) throws RepositoryException {
+        return rootNode.getNode(HCM_ROOT_NODE).getNode(BASELINE_NODE);
+    }
+
+    /**
      * Load a (partial) ConfigurationModel from the stored configuration baseline in the JCR. This model will not contain
      * content definitions, which are not stored in the baseline.
      * @throws Exception
@@ -480,13 +495,13 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
         ConfigurationModel result;
 
         // if the baseline node doesn't exist yet...
-        if (!rootNode.hasNode(BASELINE_NODE)) {
+        if (!baselineExists(rootNode)) {
             // ... there's nothing to load
             result = null;
         }
         else {
             // otherwise, if the baseline node DOES exist...
-            final Node baselineNode = rootNode.getNode(BASELINE_NODE);
+            final Node baselineNode = getBaselineNode(rootNode);
             final ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
             final List<GroupImpl> groups = new ArrayList<>();
 
@@ -703,14 +718,14 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
         boolean result;
 
         // if the baseline node doesn't exist yet...
-        if (!rootNode.hasNode(BASELINE_NODE)) {
+        if (!baselineExists(rootNode)) {
             // ... there's a trivial mismatch, regardless of the model
             result = false;
         }
         else {
             // otherwise, if the baseline node DOES exist...
             // ... load the digest directly from the baseline JCR node
-            String baselineDigestString = rootNode.getNode(BASELINE_NODE).getProperty(DIGEST_PROPERTY).getString();
+            String baselineDigestString = getBaselineNode(rootNode).getProperty(DIGEST_PROPERTY).getString();
             log.debug("baseline digest:\n"+baselineDigestString);
 
             // compute a digest from the model manifest

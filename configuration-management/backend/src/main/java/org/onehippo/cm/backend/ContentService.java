@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import javax.jcr.Session;
 
 import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.ContentService;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionType;
@@ -40,17 +39,16 @@ import static java.util.Comparator.comparing;
 /**
  * Saves content definitions per source
  */
-public class ContentServiceImpl implements ContentService {
+public class ContentService {
 
-    private static final Logger log = LoggerFactory.getLogger(ContentServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ContentService.class);
 
     private final Session session;
 
-    public ContentServiceImpl(final Session session) {
+    public ContentService(final Session session) {
         this.session = session;
     }
 
-    @Override
     public void apply(final ConfigurationModel model, final EnumSet<DefinitionType> includeDefinitionTypes)
             throws Exception {
         try {

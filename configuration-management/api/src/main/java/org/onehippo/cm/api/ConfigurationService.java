@@ -17,13 +17,29 @@
 package org.onehippo.cm.api;
 
 import java.util.EnumSet;
+import java.util.List;
 
 import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cms7.services.SingletonService;
+import org.onehippo.repository.bootstrap.PostStartupTask;
 
+/**
+ * Operations related to repository configuration, including those related to bootstrap and the config baseline.
+ */
 @SingletonService
 public interface ConfigurationService {
+
+    /**
+     * Perform initial repository configuration, including first-start bootstrap or configuration updates as necessary.
+     */
+    void configureRepository();
+
+    /**
+     * Setup tasks for the post-startup bootstrap phase.
+     * @return a List of PostStartupTasks to be executed after normal repository startup has completed
+     */
+    List<PostStartupTask> contentBootstrap();
 
     /**
      * Apply the whole or a part of a merged configuration model to the JCR as the new active configuration.
@@ -32,4 +48,22 @@ public interface ConfigurationService {
      */
     void apply(final ConfigurationModel model, final EnumSet<DefinitionType> includeDefinitionTypes) throws Exception;
 
+    /**
+     * Store a merged configuration model as a baseline configuration in the JCR.
+     * The provided ConfigurationModel is assumed to be fully formed and validated.
+     * @param model the configuration model to store as the new baseline
+     */
+    void storeBaseline(final ConfigurationModel model) throws Exception;
+
+    /**
+     * Load a (partial) ConfigurationModel from the stored configuration baseline in the JCR. This model will not contain
+     * content definitions, which are not stored in the baseline.
+     * @throws Exception
+     */
+    ConfigurationModel loadBaseline() throws Exception;
+
+    /**
+     * Compare a ConfigurationModel against the baseline by comparing manifests produced by model.getDigest()
+     */
+    boolean matchesBaselineManifest(ConfigurationModel model) throws Exception;
 }

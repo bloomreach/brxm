@@ -52,7 +52,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
 
-public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
+public class ConfigServiceTest extends RepositoryTestCase {
 
     private Node testNode;
 
@@ -554,7 +554,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
                 + "            path: /undefined\n"
                 + "";
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationPersistenceService.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigService.class).build()) {
             applyDefinitions(definition);
             assertFalse(testNode.hasProperty("foo/bar/uuid-reference"));
             assertTrue(testNode.hasProperty("foo/bar/uuid-references"));
@@ -605,7 +605,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
                 + "        jcr:uuid: "+uuid+"\n"
                 + "";
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationPersistenceService.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigService.class).build()) {
             applyDefinitions(definition);
             assertEquals(uuid, testNode.getNode("child").getIdentifier());
             assertNotEquals(uuid, testNode.getNode("child2").getIdentifier());
@@ -1025,7 +1025,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         }
         final ConfigurationModel configurationModel = configurationModelBuilder.build();
 
-        final ConfigurationPersistenceService helper = new ConfigurationPersistenceService(session);
+        final ConfigService helper = new ConfigService(session);
         final EnumSet allExceptWebFileBundles = EnumSet.allOf(DefinitionType.class);
         allExceptWebFileBundles.remove(DefinitionType.WEBFILEBUNDLE);
         helper.apply(configurationModel, allExceptWebFileBundles);

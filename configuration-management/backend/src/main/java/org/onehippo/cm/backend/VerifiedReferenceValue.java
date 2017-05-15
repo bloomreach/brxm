@@ -22,7 +22,7 @@ import org.onehippo.cm.api.model.ValueType;
 /**
  * VerifiedReferenceValue is a placeholder implementation/decorator for resolved and validated {@link ValueType#REFERENCE}
  * and {@link ValueType#WEAKREFERENCE} {@link Value} instances to make it easier to compare and apply such properties
- * in the {@link ConfigurationPersistenceService}.
+ * in the {@link ConfigService}.
  */
 public final class VerifiedReferenceValue implements Value {
 
