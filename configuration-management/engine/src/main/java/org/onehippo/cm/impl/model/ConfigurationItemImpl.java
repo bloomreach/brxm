@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.model.ConfigurationItem;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.DefinitionItem;
+import org.onehippo.cm.engine.SnsUtils;
 
 public abstract class ConfigurationItemImpl implements ConfigurationItem {
 
@@ -45,11 +47,12 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
         if (isRoot()) {
             return "/";
         } else {
-            final String base = parent.getPath() + (parent.isRoot() ? "" : "/");
-            if (name.endsWith("[1]") && !parent.getNodes().containsKey(name.substring(0, name.length() - 3) + "[2]")) {
-                return base + name.substring(0, name.length() - 3);
+            final String base = StringUtils.appendIfMissing(parent.getPath(), "/");
+            if (SnsUtils.hasSns(name, parent.getNodes().keySet())) {
+                return base + name;
+            } else {
+                return base + SnsUtils.getUnindexedName(name);
             }
-            return base + name;
         }
     }
 
