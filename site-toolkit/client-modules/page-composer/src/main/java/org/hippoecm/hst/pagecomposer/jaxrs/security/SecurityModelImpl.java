@@ -33,7 +33,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SecurityModelImpl implements SecurityModel {
+public class SecurityModelImpl implements   SecurityModel {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityModelImpl.class);
 
@@ -87,7 +87,6 @@ public class SecurityModelImpl implements SecurityModel {
                 throw new IllegalStateException("Exception while checking permissions.", e);
             }
         } else if (CHANNEL_WEBMASTER_ROLE.equals(functionalRole)) {
-            boolean canWrite;
             try {
                 return session.hasPermission(rootPath + "/accesstest", Session.ACTION_SET_PROPERTY);
             } catch (RepositoryException e) {

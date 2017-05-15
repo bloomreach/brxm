@@ -218,7 +218,6 @@ public class RootResource extends AbstractConfigResource {
 
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
 
-        HandshakeResponse response = new HandshakeResponse();
 
         final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId);
         try {
@@ -227,18 +226,17 @@ public class RootResource extends AbstractConfigResource {
             final boolean canDeleteChannel = isChannelDeletionSupported && hasAdminRole;
             final boolean canManageChanges = hasAdminRole;
 
+            HandshakeResponse response = new HandshakeResponse();
             response.setCanWrite(isWebmaster);
             response.setCanManageChanges(canManageChanges);
             response.setCanDeleteChannel(canDeleteChannel);
-
+            response.setCrossChannelPageCopySupported(isCrossChannelPageCopySupported);
+            response.setSessionId(session.getId());
+            log.info("Composer-Mode successful");
+            return ok("Composer-Mode successful", response);
         } catch (IllegalStateException | RepositoryException e) {
             return error("Could not determine authorization or role", e);
         }
-
-        response.setCrossChannelPageCopySupported(isCrossChannelPageCopySupported);
-        response.setSessionId(session.getId());
-        log.info("Composer-Mode successful");
-        return ok("Composer-Mode successful", response);
     }
 
     private boolean isChannelDeletionSupported(final String mountId) {
