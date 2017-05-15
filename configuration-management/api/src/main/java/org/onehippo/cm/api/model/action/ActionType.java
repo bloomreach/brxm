@@ -13,20 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.backend;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.action.ActionType;
+package org.onehippo.cm.api.model.action;
 
 /**
- * Applies content definitions
+ * Action type
  */
-public interface ContentProcessingService {
-    void apply(DefinitionNode definition, ActionType actionType) throws RepositoryException;
-    void importNode(DefinitionNode definition, Node parentNode, ActionType actionType) throws Exception;
-    Module exportNode(Node node);
+public enum ActionType {
+
+    /**
+     * Append new nodes only
+     */
+    APPEND,
+
+    /**
+     * Delete existing nodes with children and append
+     */
+    RELOAD,
+
+    /**
+     * Delete nodes with children
+     */
+    DELETE
 }

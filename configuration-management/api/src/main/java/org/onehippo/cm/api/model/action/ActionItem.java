@@ -13,20 +13,34 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.backend;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.action.ActionType;
+package org.onehippo.cm.api.model.action;
 
 /**
- * Applies content definitions
+ * Represents action item
  */
-public interface ContentProcessingService {
-    void apply(DefinitionNode definition, ActionType actionType) throws RepositoryException;
-    void importNode(DefinitionNode definition, Node parentNode, ActionType actionType) throws Exception;
-    Module exportNode(Node node);
+public class ActionItem {
+
+    private String path;
+    private ActionType type;
+
+    public ActionItem(final String path, final ActionType type) {
+        this.path = path;
+        this.type = type;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(final String path) {
+        this.path = path;
+    }
+
+    public ActionType getType() {
+        return type;
+    }
+
+    public void setType(final ActionType type) {
+        this.type = type;
+    }
 }

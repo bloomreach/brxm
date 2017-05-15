@@ -63,7 +63,7 @@ public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
         try {
             // set system properties to trigger developer mode that loads config from source files
             System.setProperty("repo.bootstrap.modules", "TestModuleFileSource");
-            System.setProperty("project.basedir", System.getProperty("basedir") + "/src/test/resources");
+            System.setProperty("project.basedir", calculateBaseDir() + "/src/test/resources");
 
             Set<Module> classpathModules = loadModules();
 
@@ -87,6 +87,17 @@ public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
             System.setProperty("repo.bootstrap.modules", "");
             System.setProperty("project.basedir", "");
         }
+    }
+
+    /**
+     * Utility method to calculate correct path in case when run under Intellij IDEA (Working directory should be set to
+     * module's root, e.g. ../master/engine)
+     * @return base directory
+     */
+    private String calculateBaseDir() {
+        String basedir = System.getProperty("basedir");
+        basedir = basedir != null ? basedir: System.getProperty("user.dir");
+        return basedir;
     }
 
     /**

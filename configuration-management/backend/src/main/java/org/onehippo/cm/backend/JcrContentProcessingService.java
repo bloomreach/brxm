@@ -15,50 +15,35 @@
  */
 package org.onehippo.cm.backend;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.jcr.Binary;
+import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.ValueFactory;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.PropertyType;
-import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueType;
+import org.onehippo.cm.api.model.action.ActionType;
 import org.onehippo.cm.engine.SnsUtils;
 import org.onehippo.cm.impl.model.ModelUtils;
 import org.slf4j.Logger;
@@ -70,93 +55,138 @@ import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
+import static org.onehippo.cm.api.model.ValueType.REFERENCE;
+import static org.onehippo.cm.api.model.ValueType.WEAKREFERENCE;
+import static org.onehippo.cm.api.model.action.ActionType.APPEND;
+import static org.onehippo.cm.api.model.action.ActionType.DELETE;
 
 /**
- * Applies content definitions to JCR module
+ * Applies definition nodes to JCR
  */
 public class JcrContentProcessingService implements ContentProcessingService {
 
     private static final Logger logger = LoggerFactory.getLogger(JcrContentProcessingService.class);
 
     private final Session session;
-    private final List<Pair<DefinitionProperty, Node>> unprocessedReferences = new ArrayList<>();
+    private final ValueConverter valueConverter;
+    private final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences = new ArrayList<>();
 
-    private static final String[] knownDerivedPropertyNames = new String[] {
+    private static final String[] knownDerivedPropertyNames = new String[]{
             HIPPO_RELATED,
             HIPPO_PATHS,
             HIPPOSTD_STATESUMMARY
     };
 
-    public JcrContentProcessingService(Session session) {
+    public JcrContentProcessingService(final Session session, final ValueConverter valueConverter) {
         this.session = session;
+        this.valueConverter = valueConverter;
     }
 
-    @Override
-    public synchronized void apply(final Source source, final List<ContentDefinition> sourceDefinitions) {
-        for (ContentDefinition definition : sourceDefinitions) {
-            try {
-                processContentDefinition(definition.getNode());
-            } catch (Exception e) {
-                logger.error(String.format("Content definition processing failes: %s", definition.getNode().getName()), e);
+    /**
+     * Import definition under the rootNode
+     *
+     * @param modelNode
+     * @param parentNode
+     */
+    public synchronized void importNode(final DefinitionNode modelNode, final Node parentNode, final ActionType actionType) throws Exception {
+        if (actionType == DELETE) {
+            throw new IllegalArgumentException("DELETE action is not supported for import operation");
+        }
+        applyNode(modelNode, parentNode, actionType);
+    }
+
+    /**
+     * Export specified node
+     *
+     * @param node
+     * @return
+     */
+    public synchronized Module exportNode(final Node node) {
+        //TODO Placeholder for export node functionality
+        return null;
+    }
+
+    /**
+     * Apply definition node using APPEND strategy
+     * @param definitionNode
+     * @throws RepositoryException
+     */
+    public synchronized void apply(final DefinitionNode definitionNode) throws RepositoryException {
+        apply(definitionNode, APPEND);
+    }
+
+    /**
+     * Append definition node using specified action strategy
+     * @param definitionNode
+     * @param actionType
+     * @throws RepositoryException
+     */
+    public synchronized void apply(final DefinitionNode definitionNode, final ActionType actionType) throws RepositoryException {
+        try {
+            applyNode(definitionNode, actionType);
+            applyUnprocessedReferences();
+        }
+        catch (Exception e) {
+            logger.error(String.format("Content definition processing failes: %s", definitionNode.getName()), e);
+            if (e instanceof RepositoryException) {
+                throw (RepositoryException) e;
+            } else {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    private void processContentDefinition(DefinitionNode definitionNode) throws Exception {
-        applyNodes(definitionNode);
-        applyUnprocessedReferences();
+    private void applyNode(final DefinitionNode definitionNode, final ActionType actionType) throws Exception {
+        if (itemToDeleteDoesNotExist(definitionNode, actionType)) {
+            return;
+        }
+        final Node parentNode = calculateRootNode(definitionNode);
+        applyNode(definitionNode, parentNode, actionType);
     }
 
-    private void applyNodes(final DefinitionNode definitionNode) throws Exception {
-
-
-        final Node rootNode = calculateRootNode(definitionNode);
-
-        //todo SS: check if node we're going to create, actually exists
-
-        final Node node = addNode(rootNode, definitionNode);
-        applyProperties(definitionNode, node);
-        applyNodes(definitionNode, node);
+    private boolean itemToDeleteDoesNotExist(final DefinitionNode definitionNode, final ActionType actionType) throws RepositoryException {
+        return actionType == DELETE && !session.nodeExists(definitionNode.getPath());
     }
 
     private Node calculateRootNode(DefinitionNode definitionNode) throws RepositoryException {
-        ContentDefinition definition = (ContentDefinition)definitionNode.getDefinition();
-        String path = Paths.get(definition.getNode().getPath()).getParent().toString();
+        String path = Paths.get(definitionNode.getPath()).getParent().toString();
         return session.getNode(path);
     }
 
-    private void applyNodes(final DefinitionNode modelNode, final Node jcrNode) throws Exception {
-        logger.debug(String.format("processing node '%s' defined in %s.", modelNode.getPath(), ModelUtils.formatDefinition(modelNode.getDefinition())));
-        final Map<String, Node> retainedChildren = removeNonModelNodes(modelNode, jcrNode);
-        final NextChildNameProvider nextChildNameProvider = new NextChildNameProvider(retainedChildren);
-        String nextChildName = nextChildNameProvider.next();
+    private void applyNode(final DefinitionNode definitionNode, final Node parentNode, final ActionType actionType) throws Exception {
 
-        // iterate over desired list of nodes (in desired order)
-        for (String name : modelNode.getNodes().keySet()) {
-            final DefinitionNode modelChild = modelNode.getNodes().get(name);
+        if (actionType == null) {
+            throw new IllegalArgumentException("Action type cannot be null");
+        }
 
-            // create child if necessary
-            //todo SS: check if node we're going to create, actually exists
-            final Node jcrChild = retainedChildren.containsKey(name)
-                    ? retainedChildren.get(name)
-                    : addNode(jcrNode, modelChild);
+        final String nodePath = definitionNode.getPath();
+        final boolean nodeExists = session.nodeExists(nodePath);
 
-            nextChildNameProvider.ignore(name); // 'name' is consumed.
-
-            // ensure correct ordering
-            if (jcrNode.getPrimaryNodeType().hasOrderableChildNodes()) {
-                if (name.equals(nextChildName)) {
-                    // 'nextChildName' is processed, get new next
-                    nextChildName = nextChildNameProvider.next();
-                } else {
-                    // jcrChild is not at next child position, move it there
-                    jcrNode.orderBefore(SnsUtils.createIndexedName(jcrChild), nextChildName);
-                }
+        if (nodeExists) {
+            switch(actionType) {
+                case APPEND:
+                    throw new ItemExistsException(String.format("Node already exists at path %s", nodePath));
+                case RELOAD:
+                    session.getNode(nodePath).remove();
+                    break;
+                case DELETE:
+                    session.getNode(nodePath).remove();
+                    return;
+                default:
+                    throw new IllegalArgumentException(String.format("Action type '%s' is not supported", actionType));
             }
+        }
 
-            applyProperties(modelChild, jcrChild);
-            applyNodes(modelChild, jcrChild);
+        final Node jcrNode = addNode(parentNode, definitionNode);
+        applyProperties(definitionNode, jcrNode);
+        applyChildNodes(definitionNode, jcrNode, actionType);
+    }
+
+    private void applyChildNodes(final DefinitionNode modelNode, final Node jcrNode, final ActionType actionType) throws Exception {
+        logger.debug(String.format("processing node '%s' defined in %s.", modelNode.getPath(), ModelUtils.formatDefinition(modelNode.getDefinition())));
+        for (final String name : modelNode.getNodes().keySet()) {
+            final DefinitionNode modelChild = modelNode.getNodes().get(name);
+            applyNode(modelChild, jcrNode, actionType);
         }
     }
 
@@ -165,8 +195,9 @@ public class JcrContentProcessingService implements ContentProcessingService {
      * <p>
      * If a configured uuid already is in use, a warning will be logged and a new jcr:uuid will be generated instead.
      * </p>
+     *
      * @param parentNode the parent node for the child node
-     * @param modelNode the configuration for the child node
+     * @param modelNode  the configuration for the child node
      * @return the new JCR Node
      * @throws Exception
      */
@@ -209,44 +240,14 @@ public class JcrContentProcessingService implements ContentProcessingService {
         return modelNode.getProperties().get(JCR_PRIMARYTYPE).getValue().getString();
     }
 
-    private Map<String, Node> removeNonModelNodes(final DefinitionNode modelNode, final Node jcrNode)
-            throws RepositoryException {
-
-        //TODO SS: review if it is still needed
-        final Map<String, Node> retainedChildren = new LinkedHashMap<>();
-        final List<Node> nonModelNodes = new ArrayList<>();
-
-        final NodeIterator iterator = jcrNode.getNodes();
-        while (iterator.hasNext()) {
-            final Node jcrChild = iterator.nextNode();
-            final String indexedName = SnsUtils.createIndexedName(jcrChild);
-            if (modelNode.getNodes().containsKey(indexedName)) {
-                retainedChildren.put(indexedName, jcrChild);
-            } else {
-                nonModelNodes.add(jcrChild);
-            }
-        }
-
-        // remove nodes unknown to the model, except top-level nodes
-        if (jcrNode.getDepth() > 0) {
-            for (final Node nonModelNode : nonModelNodes) {
-                nonModelNode.remove();
-            }
-        }
-
-        return retainedChildren;
-    }
-
-    private void applyProperties(final DefinitionNode source, final Node target) throws Exception {
-//        removeNonModelProperties(source, target);
-
-        applyPrimaryAndMixinTypes(source, target);
+    private void applyProperties(final DefinitionNode source, final Node targetNode) throws Exception {
+        applyPrimaryAndMixinTypes(source, targetNode);
 
         for (DefinitionProperty modelProperty : source.getProperties().values()) {
             if (isReferenceTypeProperty(modelProperty)) {
-                unprocessedReferences.add(Pair.of(modelProperty, target));
+                unprocessedReferences.add(Pair.of(modelProperty, targetNode));
             } else {
-                applyProperty(modelProperty, target);
+                applyProperty(modelProperty, targetNode);
             }
         }
     }
@@ -283,18 +284,6 @@ public class JcrContentProcessingService implements ContentProcessingService {
         }
     }
 
-    private void removeNonModelProperties(final DefinitionNode source, final Node target) throws RepositoryException {
-        final PropertyIterator iterator = target.getProperties();
-        while (iterator.hasNext()) {
-            final Property property = iterator.nextProperty();
-            if (!property.getDefinition().isProtected() && !isKnownDerivedPropertyName(property.getName())) {
-                if (!source.getProperties().containsKey(property.getName())) {
-                    property.remove();
-                }
-            }
-        }
-    }
-
     private void applyProperty(final DefinitionProperty modelProperty, final Node jcrNode) throws Exception {
         final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, modelProperty.getName());
 
@@ -315,20 +304,13 @@ public class JcrContentProcessingService implements ContentProcessingService {
             }
         }
 
-        if (jcrProperty != null) {
-            if (isOverride(modelProperty, jcrProperty)) {
-                jcrProperty.remove();
-            } else if (valuesAreIdentical(modelProperty, modelValues, jcrProperty)) {
-                return;
-            }
-        }
         try {
-            if (modelProperty.getType() == PropertyType.SINGLE) {
-                if (modelValues.size() > 0) {
-                    jcrNode.setProperty(modelProperty.getName(), valueFrom(modelProperty, modelValues.get(0)));
+            if (modelValues.size() > 0) {
+                if (modelProperty.getType() == PropertyType.SINGLE) {
+                    jcrNode.setProperty(modelProperty.getName(), valueConverter.valueFrom(modelValues.get(0)));
+                } else {
+                    jcrNode.setProperty(modelProperty.getName(), valueConverter.valuesFrom(modelValues));
                 }
-            } else {
-                jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelProperty, modelValues));
             }
         } catch (RepositoryException e) {
             String msg = String.format(
@@ -359,7 +341,7 @@ public class JcrContentProcessingService implements ContentProcessingService {
                 // path reference is relative to content definition root path
                 final String rootPath = ((ContentDefinition) modelValue.getParent().getDefinition()).getNode().getPath();
                 final StringBuilder pathBuilder = new StringBuilder(rootPath);
-                if (!"".equals(nodePath)) {
+                if (!StringUtils.EMPTY.equals(nodePath)) {
                     if (!"/".equals(rootPath)) {
                         pathBuilder.append("/");
                     }
@@ -389,73 +371,11 @@ public class JcrContentProcessingService implements ContentProcessingService {
 
 
     private boolean isReferenceTypeProperty(final DefinitionProperty modelProperty) {
-        return (modelProperty.getValueType() == ValueType.REFERENCE ||
-                modelProperty.getValueType() == ValueType.WEAKREFERENCE);
+        return (modelProperty.getValueType() == REFERENCE || modelProperty.getValueType() == WEAKREFERENCE);
     }
 
     private boolean isKnownDerivedPropertyName(final String modelPropertyName) {
         return ArrayUtils.contains(knownDerivedPropertyNames, modelPropertyName);
-    }
-
-    private boolean isOverride(final DefinitionProperty modelProperty,
-                               final Property jcrProperty) throws RepositoryException {
-        if (modelProperty.getValueType().ordinal() != jcrProperty.getType()) {
-            return true;
-        }
-        if (modelProperty.getType() == PropertyType.SINGLE) {
-            return jcrProperty.isMultiple();
-        } else {
-            return !jcrProperty.isMultiple();
-        }
-    }
-
-    private javax.jcr.Value[] valuesFrom(final DefinitionProperty modelProperty,
-                                         final List<Value> modelValues) throws Exception {
-        final javax.jcr.Value[] jcrValues = new javax.jcr.Value[modelValues.size()];
-        for (int i = 0; i < jcrValues.length; i++) {
-            jcrValues[i] = valueFrom(modelProperty, modelValues.get(i));
-        }
-        return jcrValues;
-    }
-
-    private javax.jcr.Value valueFrom(final DefinitionProperty modelProperty,
-                                      final Value modelValue) throws Exception {
-        final ValueFactory factory = session.getValueFactory();
-        final ValueType type = modelValue.getType();
-
-        switch (type) {
-            case STRING:
-                return factory.createValue(getStringValue(modelValue));
-            case BINARY:
-                final Binary binary = factory.createBinary(getBinaryInputStream(modelValue));
-                try {
-                    return factory.createValue(binary);
-                } finally {
-                    binary.dispose();
-                }
-            case LONG:
-                return factory.createValue((Long)modelValue.getObject());
-            case DOUBLE:
-                return factory.createValue((Double)modelValue.getObject());
-            case DATE:
-                return factory.createValue((Calendar)modelValue.getObject());
-            case BOOLEAN:
-                return factory.createValue((Boolean)modelValue.getObject());
-            case URI:
-            case NAME:
-            case PATH:
-            case REFERENCE:
-            case WEAKREFERENCE:
-                // REFERENCE and WEAKREFERENCE type values already are resolved to hold a validated uuid
-                return factory.createValue(modelValue.getString(), type.ordinal());
-            case DECIMAL:
-                return factory.createValue((BigDecimal)modelValue.getObject());
-            default:
-                final String msg = String.format(
-                        "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
-                        modelProperty.getPath(), ModelUtils.formatDefinition(modelProperty.getDefinition()), type);
-                throw new RuntimeException(msg);
-        }
     }
 
     private void applyUnprocessedReferences() throws Exception {
@@ -465,128 +385,4 @@ public class JcrContentProcessingService implements ContentProcessingService {
             applyProperty(DefinitionProperty, jcrNode);
         }
     }
-
-    private String getStringValue(final Value modelValue) throws IOException {
-        if (modelValue.isResource()) {
-            try (final InputStream inputStream = getResourceInputStream(modelValue)) {
-                return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            }
-        } else {
-            return modelValue.getString();
-        }
-    }
-
-    private InputStream getBinaryInputStream(final Value modelValue) throws IOException {
-        if (modelValue.isResource()) {
-            return getResourceInputStream(modelValue);
-        } else {
-            return new ByteArrayInputStream((byte[]) modelValue.getObject());
-        }
-    }
-
-
-    private InputStream getResourceInputStream(final Source source, final String resourceName) throws IOException {
-        return source.getModule().getConfigResourceInputProvider().getResourceInputStream(source, resourceName);
-    }
-
-    private InputStream getResourceInputStream(final Value modelValue) throws IOException {
-        return getResourceInputStream(modelValue.getParent().getDefinition().getSource(), modelValue.getString());
-    }
-
-    private boolean valuesAreIdentical(final DefinitionProperty modelProperty, final List<Value> modelValues,
-                                       final Property jcrProperty) throws Exception {
-        if (modelProperty.getType() == PropertyType.SINGLE) {
-            if (modelValues.size() > 0) {
-                return valueIsIdentical(modelProperty, modelProperty.getValue(), jcrProperty.getValue());
-            } else {
-                // No modelValue indicates that a reference failed verification (of UUID or path).
-                // We leave the current reference (existing or not) unchanged and return true to
-                // short-circuit further processing of this modelProperty.
-                return true;
-            }
-        } else {
-            final javax.jcr.Value[] jcrValues = jcrProperty.getValues();
-            if (modelValues.size() != jcrValues.length) {
-                return false;
-            }
-            for (int i = 0; i < jcrValues.length; i++) {
-                if (!valueIsIdentical(modelProperty, modelValues.get(i), jcrValues[i])) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    private boolean valueIsIdentical(final DefinitionProperty modelProperty,
-                                     final Value modelValue,
-                                     final javax.jcr.Value jcrValue) throws Exception {
-        if (modelValue.getType().ordinal() != jcrValue.getType()) {
-            return false;
-        }
-
-        switch (modelValue.getType()) {
-            case STRING:
-                return getStringValue(modelValue).equals(jcrValue.getString());
-            case BINARY:
-                try (final InputStream modelInputStream = getBinaryInputStream(modelValue)) {
-                    final Binary jcrBinary = jcrValue.getBinary();
-                    try (final InputStream jcrInputStream = jcrBinary.getStream()) {
-                        return IOUtils.contentEquals(modelInputStream, jcrInputStream);
-                    } finally {
-                        jcrBinary.dispose();
-                    }
-                }
-            case LONG:
-                return modelValue.getObject().equals(jcrValue.getLong());
-            case DOUBLE:
-                return modelValue.getObject().equals(jcrValue.getDouble());
-            case DATE:
-                return modelValue.getObject().equals(jcrValue.getDate());
-            case BOOLEAN:
-                return modelValue.getObject().equals(jcrValue.getBoolean());
-            case URI:
-            case NAME:
-            case PATH:
-            case REFERENCE:
-            case WEAKREFERENCE:
-                // REFERENCE and WEAKREFERENCE type values already are resolved to hold a validated uuid
-                return modelValue.getString().equals(jcrValue.getString());
-            case DECIMAL:
-                return modelValue.getObject().equals(jcrValue.getDecimal());
-            default:
-                final String msg = String.format(
-                        "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
-                        modelProperty.getPath(), ModelUtils.formatDefinition(modelProperty.getDefinition()), modelValue.getType());
-                throw new RuntimeException(msg);
-        }
-    }
-
-    private static class NextChildNameProvider {
-        private final Iterator<String> iterator;
-        private final Set<String> toBeIgnoredNames = new HashSet<>();
-
-        NextChildNameProvider(final Map<String, Node> childMap) {
-            iterator = childMap.keySet().iterator();
-        }
-
-        /**
-         * @return next child node name
-         */
-        String next() {
-            while (iterator.hasNext()) {
-                final String next = iterator.next();
-                if (!toBeIgnoredNames.contains(next)) {
-                    return next;
-                }
-            }
-            return null;
-        }
-
-        void ignore(final String name) {
-            toBeIgnoredNames.add(name);
-        }
-    }
-
-
 }

@@ -95,7 +95,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 apply(configurationModel, EnumSet.of(DefinitionType.WEBFILEBUNDLE));
 
                 final ContentService contentService = new ContentService(session);
-                contentService.apply(configurationModel, null);
+                contentService.apply(configurationModel);
 
                 // update the stored baseline after fully applying the configurationModel
                 // this could result in the baseline becoming out of sync if the second phase of the apply fails
