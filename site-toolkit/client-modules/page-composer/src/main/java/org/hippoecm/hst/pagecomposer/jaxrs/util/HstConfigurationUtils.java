@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -35,9 +34,11 @@ import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Arrays.asList;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
+import static org.hippoecm.hst.util.JcrSessionUtils.getPendingChangePaths;
 
 
 public class HstConfigurationUtils {
@@ -58,10 +59,10 @@ public class HstConfigurationUtils {
             return;
         }
         // for logging use pruned paths because the non-pruned path changes can be very large
-        String[] prunedPathChanges = JcrSessionUtils.getPendingChangePaths(session, true);
+        String[] prunedPathChanges = filterOutUpstream(getPendingChangePaths(session, true));
 
         // never prune for getting changes since needed for hstNode model reloading
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
+        String[] pathsToBeChanged = filterOutUpstream(getPendingChangePaths(session, false));
 
         setLastModifiedTimeStamps(session, pathsToBeChanged);
 
@@ -73,6 +74,23 @@ public class HstConfigurationUtils {
         }
         //only log when the save is successful
         logEvent("write-changes",session.getUserID(),StringUtils.join(prunedPathChanges, ","));
+    }
+
+    // since the changes might be in the hashes in hst:upstream or below, and those changes are not interesting for
+    // model reloading *nor* for the model itself, we won't send them as event log either
+    static String[] filterOutUpstream(final String[] pendingChangePaths) {
+        String containsUpstream = "/" + HstNodeTypes.NODENAME_HST_UPSTREAM + "/";
+        String endsWithUpstream = "/" + HstNodeTypes.NODENAME_HST_UPSTREAM;
+        for (String pendingChangePath : pendingChangePaths) {
+            if (pendingChangePath.contains(containsUpstream) || pendingChangePath.endsWith(endsWithUpstream)) {
+
+            }
+        }
+
+        String[] filtered = asList(pendingChangePaths).stream()
+                .filter((path) -> (!path.contains(containsUpstream) && !path.endsWith(endsWithUpstream)))
+                .toArray(String[]::new);
+        return filtered;
     }
 
 

@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequest
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -26,10 +27,14 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.branch.NodeHasher;
 import org.hippoecm.hst.configuration.branch.WorkspaceHasher;
+import org.hippoecm.hst.configuration.cache.HstEvent;
+import org.hippoecm.hst.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.NodeIterable;
@@ -39,11 +44,14 @@ import org.springframework.mock.web.MockHttpSession;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.HASHABLE_PROPERTY_HASH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.HASHABLE_PROPERTY_UPSTREAM_HASH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_HASHABLE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_UPSTREAM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID;
 import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
@@ -206,6 +214,34 @@ public class MountResourceBranchesTest extends MountResourceTest {
 
         assertEquals(Boolean.FALSE, responseMap.get("success"));
         assertEquals("ITEM_EXISTS", responseMap.get("errorCode"));
+    }
+    
+    @Test
+    public void create_branch_does_not_result_in_pending_change_paths_for_hst_upstream_and_no_last_modified_on_hst_upstream_or_descendants() throws Exception {
+        createBranch(ADMIN_CREDENTIALS, "foo");
+        HstEventsCollector collector = HstServices.getComponentManager().getComponent(HstEventsCollector.class);
+        Set<HstEvent> events = collector.getAndClearEvents();
+        for (HstEvent event : events) {
+            assertFalse(event.getNodePath().contains("/" + NODENAME_HST_UPSTREAM));
+        }
+        Session session = null;
+        try {
+            session = createSession("admin", "admin");
+            final Node upstream = session.getNode("/hst:hst/hst:configurations/unittestproject-foo/hst:upstream");
+            // normally the HstConfigurationUtils.persistChanges() sets lastmodified timestamps on containers and some other
+            // nodes. This should never be needed on or below hst:upstream
+            recursiveAssertNoLastModifiedProperty(upstream);
+        } finally {
+            if (session != null) {
+                session.logout();
+            }
+        }
+
+    }
+
+    private void recursiveAssertNoLastModifiedProperty(final Node node) throws RepositoryException {
+        assertFalse(node.hasProperty(GENERAL_PROPERTY_LAST_MODIFIED));
+        assertFalse(node.isNodeType(MIXINTYPE_HST_EDITABLE));
     }
 
     private Map<String, Object> createBranch(final Credentials creds, final String branchName) throws RepositoryException, IOException, ServletException {
