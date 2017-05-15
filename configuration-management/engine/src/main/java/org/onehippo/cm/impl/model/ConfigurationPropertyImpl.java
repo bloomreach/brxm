@@ -39,6 +39,11 @@ public class ConfigurationPropertyImpl extends ConfigurationItemImpl implements 
     }
 
     @Override
+    public boolean isMultiple() {
+        return type != PropertyType.SINGLE;
+    }
+
+    @Override
     public ValueType getValueType() {
         return valueType;
     }

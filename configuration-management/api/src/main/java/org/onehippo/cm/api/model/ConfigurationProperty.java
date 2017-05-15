@@ -18,6 +18,8 @@ package org.onehippo.cm.api.model;
 public interface ConfigurationProperty extends ConfigurationItem {
     PropertyType getType();
 
+    boolean isMultiple();
+
     ValueType getValueType();
 
     /**
