@@ -42,8 +42,10 @@ import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cm.engine.Constants.BOOTSTRAP_MODULES_PROPERTY;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
 import static org.onehippo.cm.engine.Constants.MAVEN_MODULE_DESCRIPTOR;
+import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 
 public class ClasspathConfigurationModelReader {
 
@@ -61,15 +63,18 @@ public class ClasspathConfigurationModelReader {
      */
     public ConfigurationModel read(final ClassLoader classLoader, final boolean verifyOnly)
             throws IOException, ParserException, URISyntaxException {
-        StopWatch stopWatch = new StopWatch();
+        final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
         // load modules that are specified via repo.bootstrap.modules system property
-        List<Map<String, GroupImpl>> filesystemGroups = readModulesFromFilesystem(verifyOnly);
+        final List<Map<String, GroupImpl>> filesystemGroups = readModulesFromFilesystem(verifyOnly);
 
         // we expect each group above to hold exactly one module, and for modules to be uniquely named
-        Set<Module> filesystemModules = filesystemGroups.stream().flatMap(gm -> gm.values().stream())
-                .flatMap(g -> g.getProjects().stream()).flatMap(p -> p.getModules().stream()).collect(Collectors.toSet());
+        final Set<Module> filesystemModules = filesystemGroups.stream()
+                .flatMap(gm -> gm.values().stream())
+                .flatMap(g -> g.getProjects().stream())
+                .flatMap(p -> p.getModules().stream())
+                .collect(Collectors.toSet());
 
         // add all of the filesystem modules to the builder
         final ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
@@ -78,10 +83,13 @@ public class ClasspathConfigurationModelReader {
         }
 
         // load modules that are packaged on the classpath
-        Pair<List<FileSystem>, List<Map<String, GroupImpl>>> classpathGroups = readModulesFromClasspath(classLoader, verifyOnly);
+        final Pair<List<FileSystem>, List<Map<String, GroupImpl>>> classpathGroups =
+                readModulesFromClasspath(classLoader, verifyOnly);
 
         // we need to filter out modules that were already loaded via the filesystem
-        classpathGroups.getRight().stream().flatMap(gm -> gm.values().stream()).flatMap(g -> g.getModifiableProjects().stream())
+        classpathGroups.getRight().stream()
+                .flatMap(gm -> gm.values().stream())
+                .flatMap(g -> g.getModifiableProjects().stream())
                 .forEach(p -> {
             List<ModuleImpl> toRemove = new ArrayList<>();
             for (ModuleImpl m : p.getModifiableModules()) {
@@ -103,7 +111,7 @@ public class ClasspathConfigurationModelReader {
         });
 
         // build the merged ConfigurationModel
-        ConfigurationModel model = builder.build();
+        final ConfigurationModel model = builder.build();
 
         stopWatch.stop();
         log.info("ConfigurationModel loaded in {}", stopWatch.toString());
@@ -119,21 +127,26 @@ public class ClasspathConfigurationModelReader {
     protected List<Map<String, GroupImpl>> readModulesFromFilesystem(final boolean verifyOnly) throws IOException, ParserException {
         // if repo.bootstrap.modules and project.basedir are defined, load modules from the filesystem before loading
         // additional modules from the classpath
-        final String projectDir = System.getProperty("project.basedir");
-        final String fileModules = System.getProperty("repo.bootstrap.modules");
-        List<Map<String, GroupImpl>> filesystemGroups = new ArrayList<>();
+        final String projectDir = System.getProperty(PROJECT_BASEDIR_PROPERTY);
+        final String fileModules = System.getProperty(BOOTSTRAP_MODULES_PROPERTY);
+        final List<Map<String, GroupImpl>> filesystemGroups = new ArrayList<>();
         if (StringUtils.isNotBlank(projectDir) && StringUtils.isNotBlank(fileModules)) {
 
             // convert the project basedir to a Path, so we can resolve modules against it
-            Path projectPath = Paths.get(projectDir);
+            final Path projectPath = Paths.get(projectDir);
 
             // for each module in repo.bootstrap.modules
-            String[] moduleNames = fileModules.split(";");
+            final String[] moduleNames = fileModules.split(";");
             for (String moduleName : moduleNames) {
                 // use maven conventions to find a module descriptor, then parse it
                 final Path moduleDescriptorPath = projectPath.resolve(moduleName).resolve(MAVEN_MODULE_DESCRIPTOR);
 
-                log.debug("Loading module descriptor from filesystem here: {}", moduleDescriptorPath.toString());
+                if (!moduleDescriptorPath.toFile().exists()) {
+                    throw new IllegalStateException("Cannot find module descriptor for module in "
+                            + BOOTSTRAP_MODULES_PROPERTY + ", expected: " + moduleDescriptorPath);
+                }
+
+                log.debug("Loading module descriptor from filesystem here: {}", moduleDescriptorPath);
 
                 final PathConfigurationReader.ReadResult result =
                         new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
@@ -150,9 +163,9 @@ public class ClasspathConfigurationModelReader {
      * @param verifyOnly TODO
      * @return a Map of FileSystems that will need to be closed after processing the modules and the corresponding PathConfigurationReader result
      */
-    public Pair<List<FileSystem>, List<Map<String, GroupImpl>>> readModulesFromClasspath(final ClassLoader classLoader, final boolean verifyOnly)
+    protected Pair<List<FileSystem>, List<Map<String, GroupImpl>>> readModulesFromClasspath(final ClassLoader classLoader, final boolean verifyOnly)
             throws IOException, ParserException, URISyntaxException {
-        Pair<List<FileSystem>, List<Map<String, GroupImpl>>> groups = new MutablePair<>(new ArrayList<>(), new ArrayList<>());
+        final Pair<List<FileSystem>, List<Map<String, GroupImpl>>> groups = new MutablePair<>(new ArrayList<>(), new ArrayList<>());
 
         // find all the classpath resources with a filename that matches the expected module descriptor filename
         // and also located at the root of a classpath entry
@@ -166,11 +179,11 @@ public class ClasspathConfigurationModelReader {
             if (jarContentMarkerIdx > 0) {
                 // note: the below mapping of resource url to path assumes the jar physically exists on the filesystem,
                 // using a non-exploded war based classloader might fail here, but that is (currently) not supported anyway
-                Path jarPath = Paths.get(resource.getFile().substring("file:".length(), jarContentMarkerIdx));
+                final Path jarPath = Paths.get(resource.getFile().substring("file:".length(), jarContentMarkerIdx));
 
                 // Jar-based FileSystems must remain open for the life of a ConfigurationModel, and must be closed when
                 //  processing is complete via ConfigurationModel.close()!
-                FileSystem fs = FileSystems.newFileSystem(jarPath, null);
+                final FileSystem fs = FileSystems.newFileSystem(jarPath, null);
 
                 // since this FS represents a jar, we should look for the descriptor at the root of the FS
                 final Path moduleDescriptorPath = fs.getPath(HCM_MODULE_YAML);
