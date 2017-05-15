@@ -38,6 +38,7 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         super(explicitSequencing);
     }
 
+    // TODO: this return value is super annoying -- why not just return a List<GroupImpl>?
     public Map<String, GroupImpl> parse(final InputStream inputStream, final String location) throws ParserException {
         final Node node = composeYamlNode(inputStream, location);
 

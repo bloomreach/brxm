@@ -40,7 +40,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.ConfigurationModel;
+import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.ContentDefinition;
@@ -267,7 +267,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
         }
     }
 
-    public void compileManifest(ConfigurationModel model, TreeMap<Module,TreeMap<String,String>> manifest) {
+    protected void compileManifest(ConfigurationModel model, TreeMap<Module,TreeMap<String,String>> manifest) {
         TreeMap<String,String> items = new TreeMap<>();
 
         // get the resource input provider, which provides access to raw data for module content
@@ -454,8 +454,8 @@ public class ModuleImpl implements Module, Comparable<Module> {
     /**
      * Compile a dummy YAML descriptor file to stand in for special case where demo project uses an aggregated
      * descriptor for a set of modules.
+     * TODO remove when demo project is restructured to get rid of aggregated module structure
      * @return a YAML string representing the group->project->module hierarchy and known dependencies for this Module
-     * @throws IOException
      */
     public String compileDummyDescriptor() {
         // serialize a dummy module descriptor for this module

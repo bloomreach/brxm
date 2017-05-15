@@ -3,4 +3,4 @@ groups:
     projects:
       - project: hippo-configuration-management
         modules:
-          - module: hippo-configuration-management-engine
+          - module: hippo-configuration-management-backend

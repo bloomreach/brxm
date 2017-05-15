@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.impl;
+package org.onehippo.cm.impl.model;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.onehippo.cm.api.ConfigurationModel;
-import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Group;
@@ -37,14 +37,10 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.WebFileBundleDefinition;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModelUtils;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.NamespaceDefinitionImpl;
-import org.onehippo.cm.impl.model.NodeTypeDefinitionImpl;
-import org.onehippo.cm.impl.model.WebFileBundleDefinitionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cm.engine.Constants.DEFAULT_DIGEST;
 
 public class ConfigurationModelImpl implements ConfigurationModel {
 
@@ -150,7 +146,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @return String representation of complete manifest of contents
      */
     @Override
-    public String compileManifest() {
+    public String getDigest() {
         // accumulate modules in sorted order
         TreeSet<Module> modules = new TreeSet<>();
         getSortedGroups().forEach(g -> g.getProjects().forEach(p -> p.getModules().forEach(m -> modules.add(m))));
@@ -161,11 +157,35 @@ public class ConfigurationModelImpl implements ConfigurationModel {
             ((ModuleImpl)module).compileManifest(this, manifest);
         }
 
-        return manifestToString(manifest);
+        final String modelManifest = manifestToString(manifest);
+        log.debug("model manifest:\n"+modelManifest);
+
+        return computeManifestDigest(modelManifest);
     }
 
     /**
-     * Helper for compileManifest()
+     * Helper method to compute a digest string from a ConfigurationModel manifest.
+     * @param modelManifest the manifest whose digest we want to compute
+     * @return a digest string comparable to the baseline digest string, or "" if none can be computed
+     */
+    protected String computeManifestDigest(final String modelManifest) {
+        try {
+            MessageDigest md = MessageDigest.getInstance(DEFAULT_DIGEST);
+            byte[] digest = md.digest(StandardCharsets.UTF_8.encode(modelManifest).array());
+            String modelDigestString = ModuleImpl.toDigestHexString(digest);
+            log.debug("model digest:\n"+modelDigestString);
+
+            return modelDigestString;
+        }
+        catch (NoSuchAlgorithmException e) {
+            // NOTE: this should never happen, since the Java spec requires MD5 to be supported
+            log.error("{} algorithm not available for configuration baseline diff", DEFAULT_DIGEST, e);
+            return "";
+        }
+    }
+
+    /**
+     * Helper for getDigest()
      * @param manifest
      * @return
      */

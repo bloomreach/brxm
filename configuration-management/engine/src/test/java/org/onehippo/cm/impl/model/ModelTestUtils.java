@@ -80,7 +80,7 @@ public class ModelTestUtils {
         return resourceInputProvider;
     }
 
-    private static ModuleImpl makeModule(final String moduleName) {
+    public static ModuleImpl makeModule(final String moduleName) {
         return new GroupImpl("test-group").addProject("test-project").addModule(moduleName);
     }
 

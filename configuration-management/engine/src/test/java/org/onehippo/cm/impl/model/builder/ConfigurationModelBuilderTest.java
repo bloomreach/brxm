@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.onehippo.cm.api.ConfigurationModel;
+import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Group;

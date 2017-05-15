@@ -13,14 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.backend;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -28,7 +27,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.jackrabbit.util.Text;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Source;
@@ -39,7 +38,6 @@ import static org.onehippo.cm.engine.Constants.ACTIONS_NODE;
 import static org.onehippo.cm.engine.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
 import static org.onehippo.cm.engine.Constants.DEFINITIONS_TYPE;
-import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
 import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_NODE;
 
@@ -121,7 +119,7 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
         // escape JCR-illegal chars here, since resource paths are intended to be filesystem paths, not JCR paths
         String[] pathSegments = result.split("/");
         for (int i = 0; i < pathSegments.length; i++) {
-            pathSegments[i] = Text.escapeIllegalJcrChars(pathSegments[i]);
+            pathSegments[i] = NodeNameCodec.encode(pathSegments[i]);
         }
         return String.join("/", pathSegments);
     }
@@ -163,14 +161,8 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
      * @throws RepositoryException
      */
     public List<Node> getContentSourceNodes() throws RepositoryException {
-        // we expect baseNode to be HCM_CONFIG_FOLDER for this module
-        // if no HCM_CONTENT_FOLDER node exists for this module, return a trivial empty result
-        if (!baseNode.getParent().hasNode(HCM_CONTENT_FOLDER)) {
-            return Collections.emptyList();
-        }
-
-        // otherwise, search for content nodes by type
-        final Node searchBase = baseNode.getParent().getNode(HCM_CONTENT_FOLDER);
+        // we expect baseNode to be HCM_CONTENT_FOLDER for this module
+        // search for content nodes by type
         return searchByType(CONTENT_TYPE, baseNode);
     }
 
@@ -197,10 +189,13 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
      */
     private void findDescendantsByType(final String type, final Node searchBase, List<Node> result) throws RepositoryException {
         for (Node childNode : new NodeIterable(searchBase.getNodes())) {
+            // once we find an appropriate node, we don't want to descend into its children
             if (childNode.isNodeType(type)) {
                 result.add(childNode);
             }
-            findDescendantsByType(type, childNode, result);
+            else {
+                findDescendantsByType(type, childNode, result);
+            }
         }
     }
 }

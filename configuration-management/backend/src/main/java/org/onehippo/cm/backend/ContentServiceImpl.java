@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 import javax.jcr.Session;
 
-import org.onehippo.cm.api.ConfigurationModel;
+import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.ContentService;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;

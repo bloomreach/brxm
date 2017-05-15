@@ -18,9 +18,7 @@ package org.onehippo.cm.backend;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -32,12 +30,10 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cm.api.ConfigurationModel;
-import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionType;
-import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModelTestUtils;
 import org.onehippo.cm.impl.model.ModuleImpl;
@@ -1023,6 +1019,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
             assertTrue(definitions.size() > 0);
             final ModuleImpl module = (ModuleImpl) definitions.get(0).getSource().getModule();
             module.setConfigResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
+            module.setContentResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
             final GroupImpl configuration = (GroupImpl) module.getProject().getGroup();
             configurationModelBuilder.push(configuration);
         }

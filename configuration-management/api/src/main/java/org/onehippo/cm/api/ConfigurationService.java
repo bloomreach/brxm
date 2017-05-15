@@ -18,6 +18,7 @@ package org.onehippo.cm.api;
 
 import java.util.EnumSet;
 
+import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cms7.services.SingletonService;
 

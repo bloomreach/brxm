@@ -13,21 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cm.api;
+package org.onehippo.cm.api.model;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-
-import org.onehippo.cm.api.model.ConfigurationNode;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.NamespaceDefinition;
-import org.onehippo.cm.api.model.NodeTypeDefinition;
-import org.onehippo.cm.api.model.WebFileBundleDefinition;
 
 /**
  * Represents a combined representation of configuration from multiple groups, projects, modules, and sources.
@@ -67,12 +58,12 @@ public interface ConfigurationModel extends Closeable {
     List<WebFileBundleDefinition> getWebFileBundleDefinitions();
 
     /**
-     * Compile a manifest of contents including all referenced Modules, Sources, and resource files.
-     * A cryptographic digest of this manifest should be sufficient to detect changes in any config definitions,
+     * Compile cryptographic digest of contents including all referenced Modules, Sources, and resource files.
+     * A String.equals() comparison of this digest should be sufficient to detect changes in any config definitions,
      * actions, or the root definition paths for content definitions, at minimum.
-     * @return a String containing a manifest of model contents, in a format determined by the implementation
+     * @return a String containing a digest of model contents, in a format determined by the implementation
      */
-    String compileManifest();
+    String getDigest();
 
     /**
      * When processing of this model is complete, this method must be closed to free up resources used by

@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.jcr.Node;
 
 import org.junit.Test;
-import org.onehippo.cm.api.ConfigurationModel;
+import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
@@ -106,6 +106,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
             assertTrue(definitions.size() == 1);
             final ModuleImpl module = (ModuleImpl) definitions.get(0).getSource().getModule();
             module.setConfigResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
+            module.setContentResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
             final GroupImpl configuration = (GroupImpl) module.getProject().getGroup();
             configurationModelBuilder.push(configuration);
         }

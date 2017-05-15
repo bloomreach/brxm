@@ -21,7 +21,7 @@ import java.util.EnumSet;
 import javax.jcr.Session;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.onehippo.cm.api.ConfigurationModel;
+import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.ConfigurationService;
 import org.onehippo.cm.api.model.DefinitionType;
 import org.slf4j.Logger;

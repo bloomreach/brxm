@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.api;
 
+import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cms7.services.SingletonService;
 
 @SingletonService
@@ -35,7 +36,7 @@ public interface ConfigurationBaselineService {
     ConfigurationModel loadBaseline() throws Exception;
 
     /**
-     * Compare a ConfigurationModel against the baseline by comparing manifests produced by model.compileManifest()
+     * Compare a ConfigurationModel against the baseline by comparing manifests produced by model.getDigest()
      */
     public boolean matchesBaselineManifest(ConfigurationModel model) throws Exception;
 

@@ -21,12 +21,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,11 +35,11 @@ import javax.jcr.Session;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.jackrabbit.util.Text;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cm.api.ConfigurationBaselineService;
-import org.onehippo.cm.api.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigDefinition;
+import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
@@ -54,7 +50,6 @@ import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.engine.BaselineResourceInputProvider;
 import org.onehippo.cm.engine.parser.ConfigSourceParser;
 import org.onehippo.cm.engine.parser.ModuleDescriptorParser;
 import org.onehippo.cm.engine.parser.ParserException;
@@ -63,7 +58,6 @@ import org.onehippo.cm.impl.model.ContentSourceImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.ProjectImpl;
 import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -72,7 +66,7 @@ import org.slf4j.LoggerFactory;
 import static org.onehippo.cm.engine.Constants.ACTIONS_NODE;
 import static org.onehippo.cm.engine.Constants.ACTIONS_TYPE;
 import static org.onehippo.cm.engine.Constants.ACTIONS_YAML;
-import static org.onehippo.cm.engine.Constants.BASELINE_PATH;
+import static org.onehippo.cm.engine.Constants.BASELINE_NODE;
 import static org.onehippo.cm.engine.Constants.BASELINE_TYPE;
 import static org.onehippo.cm.engine.Constants.BINARY_TYPE;
 import static org.onehippo.cm.engine.Constants.CND_PROPERTY;
@@ -81,7 +75,6 @@ import static org.onehippo.cm.engine.Constants.CONFIG_FOLDER_TYPE;
 import static org.onehippo.cm.engine.Constants.CONTENT_FOLDER_TYPE;
 import static org.onehippo.cm.engine.Constants.CONTENT_PATH_PROPERTY;
 import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
-import static org.onehippo.cm.engine.Constants.DEFAULT_DIGEST;
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.engine.Constants.DEFINITIONS_TYPE;
 import static org.onehippo.cm.engine.Constants.DIGEST_PROPERTY;
@@ -89,8 +82,8 @@ import static org.onehippo.cm.engine.Constants.GROUP_TYPE;
 import static org.onehippo.cm.engine.Constants.HCM_CONFIG_FOLDER;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT_NODE;
 import static org.onehippo.cm.engine.Constants.LAST_UPDATED_PROPERTY;
-import static org.onehippo.cm.engine.Constants.MANIFEST_PROPERTY;
 import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_NODE;
 import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_TYPE;
 import static org.onehippo.cm.engine.Constants.MODULE_TYPE;
@@ -120,23 +113,25 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
 
             // find baseline root node, or create if necessary
             final Node rootNode = session.getRootNode();
-            boolean baselineNodeExisted = rootNode.hasNode(BASELINE_PATH);
-            Node baseline = createNodeIfNecessary(rootNode, BASELINE_PATH, BASELINE_TYPE, false);
+            boolean hcmNodeExisted = rootNode.hasNode(HCM_ROOT_NODE);
+            final Node hcmRootNode = createNodeIfNecessary(rootNode, HCM_ROOT_NODE, HCM_ROOT_NODE, false);
 
             // if the baseline node didn't exist before, save it before attempting to lock it
-            if (!baselineNodeExisted) {
+            if (!hcmNodeExisted) {
                 session.save();
             }
 
-            // lock baseline root
+            // lock hcm root
             session.getWorkspace().getLockManager()
-                    .lock(baseline.getPath(), false, true, Long.MAX_VALUE, "HCM baseline");
+                    .lock(hcmRootNode.getPath(), false, true, Long.MAX_VALUE, "HCM baseline");
             session.save();
 
             try {
+                Node baseline = createNodeIfNecessary(hcmRootNode, BASELINE_NODE, BASELINE_TYPE, false);
+
                 // TODO: implement a smarter partial-update process instead of brute-force removal
                 // clear existing group nodes before creating new ones
-                for (NodeIterator nodes = rootNode.getNode(BASELINE_PATH).getNodes(); nodes.hasNext();) {
+                for (NodeIterator nodes = baseline.getNodes(); nodes.hasNext();) {
                     Node groupNode = nodes.nextNode();
                     groupNode.remove();
                 }
@@ -144,17 +139,10 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
                 // set lastupdated date to now
                 baseline.setProperty(LAST_UPDATED_PROPERTY, Calendar.getInstance());
 
-                // compute model manifest
+                // compute and store digest from model manifest
                 // Note: we've decided not to worry about processing data twice, since we don't expect large files
                 //       in the config portion, and content is already optimized to use content path instead of digest
-                final String modelManifest = model.compileManifest();
-                log.debug("model manifest:\n"+modelManifest);
-                if (log.isDebugEnabled()) {
-                    baseline.setProperty(MANIFEST_PROPERTY, modelManifest);
-                }
-
-                // compute and store digest from model manifest
-                String modelDigestString = computeManifestDigest(modelManifest);
+                String modelDigestString = model.getDigest();
                 baseline.setProperty(DIGEST_PROPERTY, modelDigestString);
 
                 // create group, project, and module nodes, if necessary
@@ -182,7 +170,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
             finally {
                 // unlock baseline root
                 session.refresh(false);
-                session.getWorkspace().getLockManager().unlock(baseline.getPath());
+                session.getWorkspace().getLockManager().unlock(hcmRootNode.getPath());
                 session.save();
 
                 stopWatch.stop();
@@ -218,7 +206,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
             InputStream is = rip.getResourceInputStream(null, "/../"+ HCM_MODULE_YAML);
 
             // store yaml and digest (this call will close the input stream)
-            storeStringAndDigest(is, descriptorNode, YAML_PROPERTY);
+            storeString(is, descriptorNode, YAML_PROPERTY);
         }
         else {
             // if descriptor doesn't exist,
@@ -226,7 +214,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
             String dummyDescriptor = module.compileDummyDescriptor();
 
             // write that back to the YAML property and digest it
-            storeStringAndDigest(IOUtils.toInputStream(dummyDescriptor, StandardCharsets.UTF_8), descriptorNode, YAML_PROPERTY);
+            storeString(IOUtils.toInputStream(dummyDescriptor, StandardCharsets.UTF_8), descriptorNode, YAML_PROPERTY);
         }
 
         // if this Module has an actions file...
@@ -239,7 +227,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
             InputStream is = rip.getResourceInputStream(null, "/../"+ACTIONS_YAML);
 
             // store yaml and digest (this call will close the input stream)
-            storeStringAndDigest(is, actionsNode, YAML_PROPERTY);
+            storeString(is, actionsNode, YAML_PROPERTY);
         }
 
         // foreach content source
@@ -290,7 +278,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
         InputStream is = rip.getResourceInputStream(null, "/"+sourcePath);
 
         // store yaml and digest (this call will close the input stream)
-        storeStringAndDigest(is, sourceNode, YAML_PROPERTY);
+        storeString(is, sourceNode, YAML_PROPERTY);
 
         // foreach definition
         for (Definition def : source.getDefinitions()) {
@@ -318,7 +306,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
                         InputStream cndIS = rip.getResourceInputStream(source, cndPath);
 
                         // store cnd and digest (this call will close the input stream)
-                        storeStringAndDigest(cndIS, cndNode, CND_PROPERTY);
+                        storeString(cndIS, cndNode, CND_PROPERTY);
                     }
                     break;
                 case CONFIG:
@@ -349,7 +337,8 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
                 case SINGLE:
                     storeBinaryResourceIfNecessary(dp.getValue(), source, sourceNode, configRootNode, rip);
                     break;
-                case SET: case LIST:
+                case SET:
+                case LIST:
                     for (Value value : dp.getValues()) {
                         storeBinaryResourceIfNecessary(value, source, sourceNode, configRootNode, rip);
                     }
@@ -384,7 +373,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
             InputStream is = rip.getResourceInputStream(source, value.getString());
 
             // store binary and digest
-            storeBinaryAndDigest(is, resourceNode);
+            storeBinary(is, resourceNode);
         }
     }
 
@@ -415,7 +404,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
      */
     protected Node createNodeIfNecessary(Node parent, String name, String type, boolean encode) throws RepositoryException {
         if (encode) {
-            name = Text.escapeIllegalJcrChars(name);
+            name = NodeNameCodec.encode(name);
         }
         if (!parent.hasNode(name)) {
             parent.addNode(name, type);
@@ -454,8 +443,11 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
      * @param is the InputStream whose contents will be stored
      * @param resourceNode the JCR Node where the content will be stored
      */
-    protected void storeBinaryAndDigest(InputStream is, Node resourceNode) throws IOException, RepositoryException {
-        storeAndDigest(is, resourceNode, JcrConstants.JCR_DATA, true);
+    protected void storeBinary(InputStream is, Node resourceNode) throws IOException, RepositoryException {
+        // store content as Binary
+        BufferedInputStream bis = new BufferedInputStream(is);
+        Binary bin = session.getValueFactory().createBinary(bis);
+        resourceNode.setProperty(JcrConstants.JCR_DATA, bin);
     }
 
     /**
@@ -465,60 +457,14 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
      * @param resourceNode the JCR Node where the content will be stored
      * @param propName the property name where the content will be stored
      */
-    protected void storeStringAndDigest(InputStream is, Node resourceNode, String propName)
+    protected void storeString(InputStream is, Node resourceNode, String propName)
             throws IOException, RepositoryException {
-        storeAndDigest(is, resourceNode, propName, false);
-    }
-
-    /**
-     * Helper for storeXxxAndDigest() methods.
-     */
-    protected void storeAndDigest(InputStream is, Node resourceNode, String propName, boolean binary)
-            throws IOException, RepositoryException {
-        // decorate InputStream with MessageDigest and buffer
-        MessageDigest md = null;
-        try {
-            // use MD5 because it's fast and guaranteed to be supported, and crypto attacks are not a concern here
-            md = MessageDigest.getInstance(DEFAULT_DIGEST);
-            DigestInputStream dis = new DigestInputStream(is, md);
-
-            if (binary) {
-                // store content as Binary
-                BufferedInputStream bis = new BufferedInputStream(dis);
-                Binary bin = session.getValueFactory().createBinary(bis);
-                resourceNode.setProperty(propName, bin);
-            }
-            else {
-                // use try-with-resource to close the reader and therefore the input stream
-                try (Reader isr = new InputStreamReader(dis, StandardCharsets.UTF_8)) {
-                    // store content as String
-                    String txt = IOUtils.toString(isr);
-                    resourceNode.setProperty(propName, txt);
-                }
-            }
-
-            // set digest property
-            if (log.isDebugEnabled()) {
-                setDigestProperty(md, resourceNode);
-            }
+        // use try-with-resource to close the reader and therefore the input stream
+        try (Reader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+            // store content as String
+            String txt = IOUtils.toString(isr);
+            resourceNode.setProperty(propName, txt);
         }
-        catch (NoSuchAlgorithmException e) {
-            // NOTE: this should never happen, since the Java spec requires MD5 to be supported
-            log.error("{} algorithm not available for configuration baseline storage", DEFAULT_DIGEST, e);
-        }
-    }
-
-    /**
-     * Given a fully-updated MessageDigest, compute and write the appropriate digest property to resourceNode.
-     * @param md the MessageDigest instance with fully updated content, ready to digest
-     * @param resourceNode the JCR Node where the digest property will be written
-     */
-    private void setDigestProperty(final MessageDigest md, final Node resourceNode) throws RepositoryException {
-        // compute MD5 from stream
-        byte[] digest = md.digest();
-
-        // store digest property
-        resourceNode.setProperty(DIGEST_PROPERTY, ModuleImpl.toDigestHexString(digest));
     }
 
     /**
@@ -534,13 +480,13 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
         ConfigurationModel result;
 
         // if the baseline node doesn't exist yet...
-        if (!rootNode.hasNode(BASELINE_PATH)) {
+        if (!rootNode.hasNode(BASELINE_NODE)) {
             // ... there's nothing to load
             result = null;
         }
         else {
             // otherwise, if the baseline node DOES exist...
-            final Node baselineNode = rootNode.getNode(BASELINE_PATH);
+            final Node baselineNode = rootNode.getNode(BASELINE_NODE);
             final ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
             final List<GroupImpl> groups = new ArrayList<>();
 
@@ -598,29 +544,17 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
                         module.getProject().getGroup().getName(), module.getProject().getName(), module.getName());
             }
             else {
-                // otherwise, create "raw" group/project/module as necessary
-                // TODO remove this when demo project is restructured
-                Node projectNode = moduleNode.getParent();
-                Node groupNode = projectNode.getParent();
-                final String groupName = Text.unescapeIllegalJcrChars(groupNode.getName());
-                GroupImpl group =
-                        new GroupImpl(groupName);
-                ProjectImpl project =
-                        group.addProject(Text.unescapeIllegalJcrChars(projectNode.getName()));
-                module =
-                        project.addModule(Text.unescapeIllegalJcrChars(moduleNode.getName()));
-
-                log.warn("Building module from nodes without dependencies! {}/{}/{}",
-                        group.getName(), project.getName(), module.getName());
-
-                moduleGroups = new HashMap<>();
-                moduleGroups.put(groupName, group);
+                // this should no longer happen, since we generate dummy descriptors when saving the baseline
+                throw new RuntimeException("Module found in baseline with empty descriptor: " + moduleNode.getPath());
             }
 
-            // store RIP for later use
-            // TODO this implies that it should be impossible to have a module with no config sources!!!!
-            // TODO in fact, we will want to allow modules with only content
-            module.setConfigResourceInputProvider(new BaselineResourceInputProvider(moduleNode.getNode(HCM_CONFIG_FOLDER)));
+            // store RIPs for later use
+            if (moduleNode.hasNode(HCM_CONFIG_FOLDER)) {
+                module.setConfigResourceInputProvider(new BaselineResourceInputProvider(moduleNode.getNode(HCM_CONFIG_FOLDER)));
+            }
+            if (moduleNode.hasNode(HCM_CONTENT_FOLDER)) {
+                module.setContentResourceInputProvider(new BaselineResourceInputProvider(moduleNode.getNode(HCM_CONTENT_FOLDER)));
+            }
 
             // accumulate all groups
             groups.addAll(moduleGroups.values());
@@ -649,59 +583,74 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
                             group.getName(), project.getName(), module.getName());
 
                     BaselineResourceInputProvider rip = (BaselineResourceInputProvider) module.getConfigResourceInputProvider();
-                    ConfigSourceParser parser = new ConfigSourceParser(rip, true, DEFAULT_EXPLICIT_SEQUENCING);
-                    Node moduleNode = rip.getBaseNode();
+                    if (rip == null) {
+                        log.debug("No {} folder in {}/{}/{}", HCM_CONFIG_FOLDER,
+                                group.getName(), project.getName(), module.getName());
+                    }
+                    else {
+                        ConfigSourceParser parser = new ConfigSourceParser(rip, true, DEFAULT_EXPLICIT_SEQUENCING);
+                        Node configFolderNode = rip.getBaseNode();
 
-                    // for each config source
-                    final List<Node> configSourceNodes = rip.getConfigSourceNodes();
-                    log.debug("Found {} config sources in {}/{}/{}", configSourceNodes.size(),
-                            group.getName(), project.getName(), module.getName());
-
-                    for (Node configNode : configSourceNodes) {
-                        // compute config-root-relative path
-                        String sourcePath = StringUtils.removeStart(configNode.getPath(), moduleNode.getPath()+"/");
-
-                        // unescape JCR-illegal chars here, since resource paths are intended to be filesystem style paths
-                        sourcePath = Text.unescapeIllegalJcrChars(sourcePath);
-
-                        log.debug("Loading config from {} in {}/{}/{}", sourcePath,
+                        // for each config source
+                        final List<Node> configSourceNodes = rip.getConfigSourceNodes();
+                        log.debug("Found {} config sources in {}/{}/{}", configSourceNodes.size(),
                                 group.getName(), project.getName(), module.getName());
 
-                        // get InputStream
-                        InputStream is = rip.getResourceInputStream(null, "/"+sourcePath);
+                        for (Node configNode : configSourceNodes) {
+                            // compute config-root-relative path
+                            String sourcePath = StringUtils.removeStart(configNode.getPath(), configFolderNode.getPath() + "/");
 
-                        // parse config source
-                        parser.parse(is, sourcePath, configNode.getPath(),
-                                // TODO why is this cast necessary?
-                                (ModuleImpl) module);
+                            // unescape JCR-illegal chars here, since resource paths are intended to be filesystem style paths
+                            sourcePath = NodeNameCodec.decode(sourcePath);
+
+                            log.debug("Loading config from {} in {}/{}/{}", sourcePath,
+                                    group.getName(), project.getName(), module.getName());
+
+                            // get InputStream
+                            InputStream is = rip.getResourceInputStream(null, "/" + sourcePath);
+
+                            // parse config source
+                            parser.parse(is, sourcePath, configNode.getPath(),
+                                    // TODO why is this cast necessary?
+                                    (ModuleImpl) module);
+                        }
                     }
 
                     // for each content source
-                    final List<Node> contentSourceNodes = rip.getContentSourceNodes();
-                    log.debug("Found {} content sources in {}/{}/{}", contentSourceNodes.size(),
-                            group.getName(), project.getName(), module.getName());
+                    rip = (BaselineResourceInputProvider) module.getContentResourceInputProvider();
+                    if (rip == null) {
+                        log.debug("No {} folder in {}/{}/{}", HCM_CONTENT_FOLDER,
+                                group.getName(), project.getName(), module.getName());
+                    }
+                    else {
+                        Node contentFolderNode = rip.getBaseNode();
 
-                    for (Node contentNode : contentSourceNodes) {
-                        // compute config-root-relative path
-                        String sourcePath = StringUtils.removeStart(contentNode.getPath(), moduleNode.getPath()+"/");
-
-                        // unescape JCR-illegal chars here, since resource paths are intended to be filesystem style paths
-                        sourcePath = Text.unescapeIllegalJcrChars(sourcePath);
-
-                        log.debug("Building content def from {} in {}/{}/{}", sourcePath,
+                        final List<Node> contentSourceNodes = rip.getContentSourceNodes();
+                        log.debug("Found {} content sources in {}/{}/{}", contentSourceNodes.size(),
                                 group.getName(), project.getName(), module.getName());
 
-                        // create Source
-                        ContentSourceImpl source = new ContentSourceImpl(sourcePath, (ModuleImpl) module);
+                        for (Node contentNode : contentSourceNodes) {
+                            // compute content-root-relative path
+                            String sourcePath = StringUtils.removeStart(contentNode.getPath(), contentFolderNode.getPath() + "/");
 
-                        // get content path from JCR Node
-                        String contentPath = contentNode.getProperty(CONTENT_PATH_PROPERTY).getString();
+                            // unescape JCR-illegal chars here, since resource paths are intended to be filesystem style paths
+                            sourcePath = NodeNameCodec.decode(sourcePath);
 
-                        // create ContentDefinition with a single definition node and just the node path
-                        ContentDefinitionImpl cd = source.addContentDefinition();
-                        final String name = StringUtils.substringAfterLast(contentPath, "/");
-                        DefinitionNodeImpl defNode = new DefinitionNodeImpl(contentPath, name, cd);
-                        cd.setNode(defNode);
+                            log.debug("Building content def from {} in {}/{}/{}", sourcePath,
+                                    group.getName(), project.getName(), module.getName());
+
+                            // create Source
+                            ContentSourceImpl source = new ContentSourceImpl(sourcePath, (ModuleImpl) module);
+
+                            // get content path from JCR Node
+                            String contentPath = contentNode.getProperty(CONTENT_PATH_PROPERTY).getString();
+
+                            // create ContentDefinition with a single definition node and just the node path
+                            ContentDefinitionImpl cd = source.addContentDefinition();
+                            final String name = StringUtils.substringAfterLast(contentPath, "/");
+                            DefinitionNodeImpl defNode = new DefinitionNodeImpl(contentPath, name, cd);
+                            cd.setNode(defNode);
+                        }
                     }
                 }
             }
@@ -744,7 +693,7 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
     }
 
     /**
-     * Compare a ConfigurationModel against the baseline by comparing manifests produced by model.compileManifest()
+     * Compare a ConfigurationModel against the baseline by comparing manifests produced by model.getDigest()
      */
     public boolean matchesBaselineManifest(ConfigurationModel model) throws Exception {
         StopWatch stopWatch = new StopWatch();
@@ -754,20 +703,18 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
         boolean result;
 
         // if the baseline node doesn't exist yet...
-        if (!rootNode.hasNode(BASELINE_PATH)) {
+        if (!rootNode.hasNode(BASELINE_NODE)) {
             // ... there's a trivial mismatch, regardless of the model
             result = false;
         }
         else {
             // otherwise, if the baseline node DOES exist...
             // ... load the digest directly from the baseline JCR node
-            String baselineDigestString = rootNode.getNode(BASELINE_PATH).getProperty(DIGEST_PROPERTY).getString();
+            String baselineDigestString = rootNode.getNode(BASELINE_NODE).getProperty(DIGEST_PROPERTY).getString();
             log.debug("baseline digest:\n"+baselineDigestString);
 
             // compute a digest from the model manifest
-            String modelManifest = model.compileManifest();
-            log.debug("model manifest:\n"+modelManifest);
-            String modelDigestString = computeManifestDigest(modelManifest);
+            String modelDigestString = model.getDigest();
 
             // compare the baseline digest with the model manifest digest
             result = modelDigestString.equals(baselineDigestString);
@@ -777,26 +724,5 @@ public class ConfigurationBaselineServiceImpl implements ConfigurationBaselineSe
         log.info("ConfigurationModel compared against baseline configuration in {}", stopWatch.toString());
 
         return result;
-    }
-
-    /**
-     * Helper method to compute a digest string from a ConfigurationModel manifest.
-     * @param modelManifest the manifest whose digest we want to compute
-     * @return a digest string comparable to the baseline digest string, or "" if none can be computed
-     */
-    private String computeManifestDigest(final String modelManifest) {
-        try {
-            MessageDigest md = MessageDigest.getInstance(DEFAULT_DIGEST);
-            byte[] digest = md.digest(StandardCharsets.UTF_8.encode(modelManifest).array());
-            String modelDigestString = ModuleImpl.toDigestHexString(digest);
-            log.debug("model digest:\n"+modelDigestString);
-
-            return modelDigestString;
-        }
-        catch (NoSuchAlgorithmException e) {
-            // NOTE: this should never happen, since the Java spec requires MD5 to be supported
-            log.error("{} algorithm not available for configuration baseline diff", DEFAULT_DIGEST, e);
-            return "";
-        }
     }
 }

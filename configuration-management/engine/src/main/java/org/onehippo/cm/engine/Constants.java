@@ -54,15 +54,15 @@ public final class Constants {
 
     // JCR node where the HCM configuration baseline is stored
     // NOTE: currently this MUST only be a single new node with all required parents existing
-    // TODO: Move under hippo:configuration?
-    public static final String BASELINE_PATH = "hcm:baseline";
+    // TODO: Move under a new /hcm:hcm node at JCR root, and new node type hcm:hcm
+    public static final String HCM_ROOT_NODE = "hcm:hcm";
+    public static final String BASELINE_NODE = "hcm:baseline";
     public static final String BASELINE_TYPE = "hcm:baseline";
     public static final String GROUP_TYPE = "hcm:group";
     public static final String PROJECT_TYPE = "hcm:project";
     public static final String MODULE_TYPE = "hcm:module";
 
     public static final String LAST_UPDATED_PROPERTY = "hcm:lastupdated";
-    public static final String MANIFEST_PROPERTY = "hcm:manifest";
 
     public static final String MODULE_DESCRIPTOR_NODE = HCM_MODULE_YAML;
     public static final String MODULE_DESCRIPTOR_TYPE = "hcm:descriptor";

@@ -25,43 +25,43 @@
   - hcm:digest (string)
 
 // Stores the root definition path for a content source file
-[hcm:content] > nt:base, hippo:skipindex
+[hcm:content] > hippo:skipindex
   - hcm:contentpath (string) primary mandatory
 
 // Used for storing content in a hierarchy
-[hcm:contentfolder] > nt:base, hippo:skipindex
+[hcm:contentfolder] > hippo:skipindex
   + * (hcm:contentfolder)
   + * (hcm:content)
 
 // Stores an actions file with content processing directives
-[hcm:actions] > nt:base, hippo:skipindex, hcm:digested
+[hcm:actions] > hippo:skipindex
   - hcm:yaml (string) primary mandatory
 
 // Stores a module descriptor file with name, project, group, and dependencies
-[hcm:descriptor] > nt:base, hippo:skipindex, hcm:digested
+[hcm:descriptor] > hippo:skipindex
   - hcm:yaml (string) primary mandatory
 
 // Stores a config definitions file
-[hcm:definitions] > nt:base, hippo:skipindex, hcm:digested
+[hcm:definitions] > hippo:skipindex
   - hcm:yaml (string) primary mandatory
 
 // Stores a CND resource file as referenced from a node type definition
-[hcm:cnd] > nt:base, hippo:skipindex, hcm:digested
+[hcm:cnd] > hippo:skipindex
   - hcm:cnd (string) primary mandatory
 
 // Stores a binary resource file as referenced from a config or content definition
-[hcm:binary] > nt:base, hippo:skipindex, hcm:digested
+[hcm:binary] > hippo:skipindex
   - jcr:data (binary) primary mandatory
 
 // Used for storing config sources in a hierarchy
-[hcm:configfolder] > nt:base, hippo:skipindex
+[hcm:configfolder] > hippo:skipindex
   + * (hcm:configfolder)
   + * (hcm:definitions)
   + * (hcm:cnd)
   + * (hcm:binary)
 
 // Stores a module, including descriptor, actions, and definition sources
-[hcm:module] > nt:base, hcm:digested, hippo:skipindex
+[hcm:module] > hippo:skipindex
   + 'hcm-module.yaml' (hcm:descriptor) primary mandatory
   - hcm:lastexecutedaction (string)
   + 'hcm-actions.yaml' (hcm:actions)
@@ -69,15 +69,18 @@
   + 'hcm-content' (hcm:contentfolder)
 
 // Stores a project
-[hcm:project] > nt:base, hippo:skipindex
+[hcm:project] > hippo:skipindex
   + * (hcm:module)
 
 // Stores a configuration group
-[hcm:group] > nt:base, hippo:skipindex
+[hcm:group] > hippo:skipindex
   + * (hcm:project)
 
 // Stores an entire configuration baseline with multiple groups, projects, and modules
-[hcm:baseline] > nt:base, mix:lockable, hcm:digested, hippo:skipindex
-  - hcm:manifest (string)
+[hcm:baseline] > mix:lockable, hcm:digested, hippo:skipindex
   - hcm:lastupdated (date)
   + * (hcm:group)
+
+// Root node for baseline and locking etc.
+[hcm:hcm] > mix:lockable, hippo:skipindex
+  + hcm:baseline (hcm:baseline)

@@ -105,15 +105,13 @@ public class ProjectImpl implements Project {
         if (moduleMap.containsKey(name)) {
             final String msg = String.format("Module %s already exists while merging projects. Merging of modules is not supported.",
                     ModelUtils.formatModule(module));
-            log.warn(msg);
-//            throw new IllegalStateException(msg);
+            throw new IllegalStateException(msg);
         }
-        else {
-            addModule(name).addAfter(module.getAfter())
-                    .setConfigResourceInputProvider(module.getConfigResourceInputProvider())
-                    .setContentResourceInputProvider(module.getContentResourceInputProvider())
-                    .pushDefinitions(module);
-        }
+
+        addModule(name).addAfter(module.getAfter())
+                .setConfigResourceInputProvider(module.getConfigResourceInputProvider())
+                .setContentResourceInputProvider(module.getContentResourceInputProvider())
+                .pushDefinitions(module);
     }
 
     public boolean equals(Object other) {
