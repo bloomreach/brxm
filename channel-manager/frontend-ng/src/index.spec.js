@@ -119,7 +119,7 @@ function mockHost() {
 }
 
 function mockFallbackTranslations() {
-  angular.mock.module('hippo-cm', ($provide, $translateProvider) => {
+  angular.mock.module('hippo-cm', ($translateProvider) => {
     $translateProvider.translations('en', {});
   });
 }

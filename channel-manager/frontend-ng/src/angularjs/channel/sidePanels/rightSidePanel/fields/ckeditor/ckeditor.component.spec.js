@@ -31,7 +31,9 @@ describe('CKEditor Component', () => {
   const $element = angular.element('<div><textarea></textarea></div>');
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm', ($translateProvider) => {
+      $translateProvider.translations('fr', {});
+    });
 
     inject((_$componentController_,
             $rootScope,

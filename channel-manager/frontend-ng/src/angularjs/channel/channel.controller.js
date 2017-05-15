@@ -28,7 +28,6 @@ class ChannelCtrl {
     FeedbackService,
     HippoIframeService,
     PageMetaDataService,
-    SessionService,
     ) {
     'ngInject';
 
@@ -41,25 +40,13 @@ class ChannelCtrl {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
-    this.SessionService = SessionService;
 
-    this.isCreatingPreview = false;
     this.isContentOverlayDisplayed = true;
     this.isComponentsOverlayDisplayed = false;
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
 
     CmsService.subscribe('clear-channel', () => this._clear());
-  }
-
-  $onInit() {
-    this.hasPreviewConfiguration = false;
-
-    if (!this.ChannelService.hasPreviewConfiguration()) {
-      this._createPreviewConfiguration();
-    } else {
-      this.hasPreviewConfiguration = true;
-    }
   }
 
   _clear() {
@@ -70,7 +57,7 @@ class ChannelCtrl {
   }
 
   isControlsDisabled() {
-    return this.isCreatingPreview || !this.isChannelLoaded() || !this.isPageLoaded();
+    return !this.isChannelLoaded() || !this.isPageLoaded();
   }
 
   isChannelLoaded() {
@@ -82,7 +69,7 @@ class ChannelCtrl {
   }
 
   isEditable() {
-    return this.SessionService.hasWriteAccess() && this.hasPreviewConfiguration;
+    return this.ChannelService.isEditable();
   }
 
   editMenu(menuUuid) {
@@ -92,21 +79,6 @@ class ChannelCtrl {
 
   editContent(contentUuid) {
     this.SidePanelService.open('right', contentUuid);
-  }
-
-  _createPreviewConfiguration() {
-    this.isCreatingPreview = true;
-    this.ChannelService.createPreviewConfiguration().then(() => {
-      this.HippoIframeService.reload().then(() => {
-        this.hasPreviewConfiguration = true;
-      })
-      .finally(() => {
-        this.isCreatingPreview = false;
-      });
-    }).catch(() => {
-      this.isCreatingPreview = false;
-      this.FeedbackService.showError('ERROR_ENTER_EDIT');
-    });
   }
 
   getRenderVariant() {

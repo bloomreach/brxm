@@ -22,7 +22,7 @@
 
         <channel-actions ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded()" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
 
-        <page-actions ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded() && channelCtrl.hasPreviewConfiguration" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
+        <page-actions ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded()" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
       </div>
 
       <div flex="40" layout layout-align="center center">
@@ -41,7 +41,7 @@
                         icon="view_quilt"
                         tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
                         class="qa-toggle-components"
-                        ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded() && channelCtrl.hasPreviewConfiguration">
+                        ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded()">
         </overlay-toggle>
 
         <overlay-toggle state="channelCtrl.isContentOverlayDisplayed"
@@ -53,7 +53,7 @@
       </div>
     </div>
     <md-progress-linear md-mode="indeterminate"
-      ng-disabled="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded() && !channelCtrl.isCreatingPreview">
+      ng-disabled="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded()">
     </md-progress-linear>
   </md-toolbar>
 

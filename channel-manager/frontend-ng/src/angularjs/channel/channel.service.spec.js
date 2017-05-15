@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ describe('ChannelService', () => {
   let $q;
   let $log;
   let $rootScope;
+  let $timeout;
   let ChannelService;
   let FeedbackService;
   let SiteMapService;
@@ -40,6 +41,7 @@ describe('ChannelService', () => {
       hostname: 'test.host.name',
       mountId: 'mountId',
       id: 'channelId',
+      previewHstConfigExists: true,
       siteMapId: 'siteMapId',
       workspaceExists: true,
     };
@@ -57,12 +59,13 @@ describe('ChannelService', () => {
       $provide.value('ConfigService', ConfigServiceMock);
     });
 
-    inject((_$q_, _$log_, _$state_, _$rootScope_, _ChannelService_, _CatalogService_, _CmsService_, _FeedbackService_,
+    inject((_$q_, _$log_, _$rootScope_, _$state_, _$timeout_, _ChannelService_, _CatalogService_, _CmsService_, _FeedbackService_,
             _HstService_, _SessionService_, _SiteMapService_) => {
       $q = _$q_;
       $log = _$log_;
-      $state = _$state_;
       $rootScope = _$rootScope_;
+      $state = _$state_;
+      $timeout = _$timeout_;
       CatalogService = _CatalogService_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
@@ -92,7 +95,7 @@ describe('ChannelService', () => {
     $rootScope.$digest();
   }
 
-  it('should initialize the channel', () => {
+  it('should initialize a channel', () => {
     const testChannel = {
       id: 'testChannelId',
       hostname: 'www.example.com',
@@ -100,10 +103,11 @@ describe('ChannelService', () => {
       mountPath: '/testMount',
       siteMapId: 'testSiteMapId',
       contextPath: 'testContextPath',
+      previewHstConfigExists: true,
     };
 
     spyOn(CmsService, 'subscribe');
-    HstService.getChannel.and.returnValue($q.when(testChannel));
+    HstService.getChannel.and.returnValue($q.resolve(testChannel));
     spyOn($state, 'go');
 
     ChannelService.initialize();
@@ -128,6 +132,115 @@ describe('ChannelService', () => {
         reload: true,
       },
     );
+  });
+
+  it('should initialize a channel that is not editable yet', () => {
+    const testChannel = {
+      id: 'testChannelId',
+      hostname: 'www.example.com',
+      mountId: 'testMountId',
+      mountPath: '/testMount',
+      siteMapId: 'testSiteMapId',
+      contextPath: 'testContextPath',
+      previewHstConfigExists: false,
+    };
+    const editableTestChannel = {
+      id: 'testChannelId-preview',
+      hostname: 'www.example.com',
+      mountId: 'testMountIdChanged',
+      mountPath: '/testMount',
+      siteMapId: 'testSiteMapIdChanged',
+      contextPath: 'testContextPath',
+      previewHstConfigExists: true,
+    };
+
+    spyOn(CmsService, 'subscribe');
+    HstService.getChannel.and.returnValues($q.resolve(testChannel), $q.resolve(editableTestChannel));
+    HstService.doPost.and.returnValue($q.resolve());
+    spyOn($state, 'go');
+
+    ChannelService.initialize();
+    expect(CmsService.subscribe).toHaveBeenCalledWith('load-channel', jasmine.any(Function));
+
+    window.CMS_TO_APP.publish('load-channel', testChannel, '/testPath');
+
+    $rootScope.$digest();
+
+    expect(ConfigServiceMock.setContextPathForChannel).toHaveBeenCalledWith('testContextPath');
+    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
+    expect(SessionService.initialize).toHaveBeenCalledWith(testChannel.hostname, testChannel.mountId);
+    $rootScope.$digest();
+
+    expect($state.go).toHaveBeenCalledWith(
+      'hippo-cm.channel',
+      {
+        channelId: editableTestChannel.id,
+        initialRenderPath: '/testMount/testPath',
+      },
+      {
+        reload: true,
+      },
+    );
+  });
+
+  it('should fallback to the non-editable channel if creating preview configuration fails', () => {
+    const testChannel = {
+      id: 'testChannelId',
+      hostname: 'www.example.com',
+      mountId: 'testMountId',
+      mountPath: '/testMount',
+      siteMapId: 'testSiteMapId',
+      contextPath: 'testContextPath',
+      previewHstConfigExists: false,
+    };
+
+    spyOn(CmsService, 'subscribe');
+    HstService.getChannel.and.returnValues($q.resolve(testChannel));
+    HstService.doPost.and.returnValue($q.reject({ message: 'Failed to create preview configuration' }));
+    spyOn($log, 'error');
+    spyOn($state, 'go');
+
+    ChannelService.initialize();
+    expect(CmsService.subscribe).toHaveBeenCalledWith('load-channel', jasmine.any(Function));
+
+    window.CMS_TO_APP.publish('load-channel', testChannel, '/testPath');
+
+    $rootScope.$digest();
+
+    expect(ConfigServiceMock.setContextPathForChannel).toHaveBeenCalledWith('testContextPath');
+    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
+    expect(SessionService.initialize).toHaveBeenCalledWith(testChannel.hostname, testChannel.mountId);
+    $rootScope.$digest();
+
+    expect($log.error).toHaveBeenCalledWith('Failed to load channel \'testChannelId\'.', 'Failed to create preview configuration');
+    expect($state.go).toHaveBeenCalledWith(
+      'hippo-cm.channel',
+      {
+        channelId: testChannel.id,
+        initialRenderPath: '/testMount/testPath',
+      },
+      {
+        reload: true,
+      },
+    );
+    expect(ChannelService.isEditable()).toBe(false);
+
+    $timeout.flush();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ENTER_EDIT');
+  });
+
+  it('knows when the current channel is editable', () => {
+    expect(ChannelService.isEditable()).toBe(false);
+
+    loadChannel();
+    expect(ChannelService.isEditable()).toBe(true);
+
+    SessionService.hasWriteAccess.and.returnValue(false);
+    expect(ChannelService.isEditable()).toBe(false);
+
+    SessionService.hasWriteAccess.and.returnValue(true);
+    ChannelService.channel.previewHstConfigExists = false;
+    expect(ChannelService.isEditable()).toBe(false);
   });
 
   it('should not enter composer mode when retrieval of the channel fails', () => {
@@ -230,12 +343,25 @@ describe('ChannelService', () => {
     expect(ChannelService.getName()).toEqual('testName');
   });
 
+  it('should clear the current channel', () => {
+    loadChannel();
+    expect(ChannelService.hasChannel()).toBe(true);
+    expect(ChannelService.isEditable()).toBe(true);
+
+    ChannelService.clearChannel();
+
+    expect(ChannelService.hasChannel()).toBe(false);
+    expect(ChannelService.isEditable()).toBe(false);
+    expect(ChannelService.getChannel()).toEqual({});
+  });
+
   it('should switch to a new channel', () => {
     const channelB = {
       id: 'channelB',
       hostname: 'www.channelb.com',
       mountId: 'mountB',
       contextPath: '/b',
+      previewHstConfigExists: true,
     };
 
     loadChannel();
@@ -293,13 +419,20 @@ describe('ChannelService', () => {
 
   it('should use the specified users when publishing or discarding changes', () => {
     HstService.doPost.and.returnValue($q.when());
+    spyOn(ChannelService, 'reload');
     loadChannel();
 
     ChannelService.publishChangesOf(['tester']);
     expect(HstService.doPost).toHaveBeenCalledWith({ data: ['tester'] }, 'mountId', 'userswithchanges/publish');
 
+    $rootScope.$digest();
+    expect(ChannelService.reload).toHaveBeenCalled();
+
     ChannelService.discardChangesOf(['tester']);
     expect(HstService.doPost).toHaveBeenCalledWith({ data: ['tester'] }, 'mountId', 'userswithchanges/discard');
+
+    $rootScope.$digest();
+    expect(ChannelService.reload).toHaveBeenCalled();
   });
 
   it('records own changes', () => {
@@ -345,36 +478,6 @@ describe('ChannelService', () => {
     $rootScope.$digest();
 
     expect($log.error).toHaveBeenCalled();
-  });
-
-  it('should update the channel\'s preview config flag after successfully creating the preview config', () => {
-    channelMock.previewHstConfigExists = false;
-    loadChannel();
-
-    expect(ChannelService.hasPreviewConfiguration()).toBe(false);
-
-    HstService.doPost.calls.reset();
-    HstService.doPost.and.returnValue($q.when());
-
-    ChannelService.createPreviewConfiguration();
-    expect(HstService.doPost).toHaveBeenCalledWith(null, 'mountId', 'edit');
-    HstService.getChannel.and.returnValue($q.when(channelMock));
-
-    $rootScope.$digest();
-    expect(ChannelService.hasPreviewConfiguration()).toBe(true);
-    expect(HstService.getChannel).toHaveBeenCalledWith('channelId-preview');
-  });
-
-  it('should not update the channel\'s preview config flag if creating a preview config failed', () => {
-    channelMock.previewHstConfigExists = false;
-    loadChannel();
-
-    HstService.doPost.and.returnValue($q.reject());
-
-    ChannelService.createPreviewConfiguration();
-    $rootScope.$digest();
-
-    expect(ChannelService.hasPreviewConfiguration()).toBe(false);
   });
 
   it('should extract the renderPathInfo given a channel with non-empty preview prefix and mount path', () => {
