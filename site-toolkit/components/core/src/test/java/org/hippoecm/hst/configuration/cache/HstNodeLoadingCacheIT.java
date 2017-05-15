@@ -474,7 +474,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
     }
 
     @Test
-    public void assert_hst_upstream_is_not_loading_into_the_hst_node_cache_aas_a_result_of_a_change() throws Exception {
+    public void assert_hst_upstream_is_not_loading_into_the_hst_node_cache_as_a_result_of_a_change() throws Exception {
         try (CommonHstConfigSetup setup = new CommonHstConfigSetup()) {
             // Trigger initial loading of all HstNode : after this make changes and make sure the hst:upstream is not
             // added to the hst node model
