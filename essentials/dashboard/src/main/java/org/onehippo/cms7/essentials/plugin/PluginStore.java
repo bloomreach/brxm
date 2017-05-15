@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
@@ -31,15 +32,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.ext.RuntimeDelegate;
 
-import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.onehippo.cms7.essentials.WebUtils;
 import org.onehippo.cms7.essentials.dashboard.config.PluginParameterService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
@@ -51,6 +47,7 @@ import org.onehippo.cms7.essentials.dashboard.model.ProjectSettings;
 import org.onehippo.cms7.essentials.dashboard.rest.RestfulList;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.ApplicationModule;
+import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
 import org.onehippo.cms7.essentials.servlet.DynamicRestPointsApplication;
@@ -61,9 +58,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.ContextLoader;
 
+import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 /**
-* Created by tjeger on 10/11/14.
-*/
+ * Created by tjeger on 10/11/14.
+ */
 @Component
 @Singleton
 public class PluginStore {
@@ -71,7 +73,8 @@ public class PluginStore {
     private static Logger log = LoggerFactory.getLogger(PluginStore.class);
     private DynamicRestPointsApplication application = new DynamicRestPointsApplication();
 
-    @Inject private RebuildProjectEventListener rebuildListener;
+    @Inject
+    private RebuildProjectEventListener rebuildListener;
 
     /**
      * Plugin cache to avoid remote calls, loads from following protocols:
@@ -221,8 +224,8 @@ public class PluginStore {
 
     private List<PluginDescriptorRestful> getLocalDescriptors() {
         final List<PluginDescriptorRestful> descriptors = new ArrayList<>();
-
-        descriptors.addAll(loadPluginDescriptorsFromResource("/plugin_descriptor.json"));
+        final Collection<PluginDescriptorRestful> values = EssentialsContextListener.getPluginCache().asMap().values();
+        descriptors.addAll(values);
         descriptors.addAll(loadPluginDescriptorsFromResource("/project_plugin_descriptor.json"));
 
         return descriptors;
@@ -235,13 +238,11 @@ public class PluginStore {
         return parsePlugins(json).getItems();
     }
 
+    @SuppressWarnings("unchecked")
     private RestfulList<PluginDescriptorRestful> parsePlugins(final String jsonString) {
         if (!Strings.isNullOrEmpty(jsonString)) {
-            final ObjectMapper mapper = new ObjectMapper();
             try {
-                @SuppressWarnings("unchecked")
-                final RestfulList<PluginDescriptorRestful> restfulList = mapper.readValue(jsonString, RestfulList.class);
-                return restfulList;
+                return WebUtils.fromJson(jsonString, RestfulList.class);
             } catch (Exception e) {
                 log.error("Error parsing plugins", e);
             }
@@ -257,9 +258,8 @@ public class PluginStore {
 
             final InstallState state = plugin.getInstallState();
             if (state == InstallState.ONBOARD
-             || state == InstallState.INSTALLING
-             || state == InstallState.INSTALLED)
-            {
+                    || state == InstallState.INSTALLING
+                    || state == InstallState.INSTALLED) {
                 final PluginParameterService params = PluginParameterServiceFactory.getParameterService(plugin);
                 descriptor.setHasConfiguration(params.hasConfiguration());
             }

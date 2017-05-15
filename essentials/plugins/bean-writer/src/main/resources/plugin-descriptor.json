@@ -1,0 +1,38 @@
+{
+  "@type": "plugin",
+  "id": "beanwriter",
+  "name": "Beanwriter",
+  "icon": "/essentials/images/icons/bean-writer.png",
+  "introduction": "Generate HST Content beans.",
+  "restClasses": [
+    "org.onehippo.cms7.essentials.beanwriter.rest.BeanWriterResource"
+  ],
+  "categories": {
+    "application": [
+      "developer-tool",
+      "code generator"
+    ],
+    "type": [
+      "tool"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "type": "tool",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "libraries": [
+    {
+      "items": [
+        {
+          "component": "beanwriter",
+          "file": "beanwriter.js"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "@type": "plugin",
+  "id": "videoComponentPlugin",
+  "name": "Videos",
+  "icon": "/essentials/images/icons/videos.png",
+  "introduction": "The Video feature adds a new drag-and-drop component to the component library of the Channel Manager, enabling you to add video to your project.",
+  "description": "The feature adds the new document type 'Video' to the project. You can choose to install a sample video document. The feature is based on linking to external video, e.g. hosted on youtube, rather than serving the video itself by the CMS.",
+  "imageUrls": [
+    "/essentials/images/screenshots/video01.png",
+    "/essentials/images/screenshots/video02.png",
+    "/essentials/images/screenshots/video03.png"
+  ],
+  "documentationLink": "http://www.onehippo.org/library/setup/hst-components/video-component.html",
+  "packageFile": "/META-INF/videoComponentPlugin_instructions.xml",
+  "restClasses": [],
+  "type": "feature",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "media",
+      "video",
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [
+    {
+      "items": [
+      ]
+    }
+  ]
+}

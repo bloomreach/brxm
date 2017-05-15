@@ -206,7 +206,7 @@ public final class DependencyUtils {
             final String url = repository.getUrl();
             if (Strings.isNullOrEmpty(url)) {
                 log.warn("Invalid Repository defined {}", rep);
-                return true;
+                return false;
             }
             final String existingUrl = rep.getUrl();
             final boolean hasRepo = url.equals(existingUrl);

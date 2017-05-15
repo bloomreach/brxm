@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,6 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
-/**
- * @version "$Id$"
- */
 @XmlRootElement(name = "instructions", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class PluginInstructions implements Instructions {
 
@@ -76,5 +73,35 @@ public class PluginInstructions implements Instructions {
         sb.append("instructionSets=").append(instructionSets);
         sb.append('}');
         return sb.toString();
+    }
+
+    public void addDefaultInstruction(final Instruction instruction) {
+
+        if (instructionSets == null) {
+            instructionSets = new LinkedHashSet<>();
+        }
+        if (instructionSets.size() == 0) {
+            final PluginInstructionSet set = new PluginInstructionSet();
+            set.setGroup(EssentialConst.INSTRUCTION_GROUP_DEFAULT);
+            set.addInstruction(instruction);
+            instructionSets.add(set);
+
+        } else {
+            // check if we have default instruction set:
+            for (InstructionSet instructionSet : instructionSets) {
+                final Set<String> groups = instructionSet.getGroups();
+                if (groups.size() == 1 && groups.iterator().next().equals(EssentialConst.INSTRUCTION_GROUP_DEFAULT)) {
+                    instructionSet.addInstruction(instruction);
+                    return;
+                }
+            }
+            // add default instruction set:
+            final PluginInstructionSet set = new PluginInstructionSet();
+            set.setGroup(EssentialConst.INSTRUCTION_GROUP_DEFAULT);
+            set.addInstruction(instruction);
+            instructionSets.add(set);
+
+        }
+
     }
 }

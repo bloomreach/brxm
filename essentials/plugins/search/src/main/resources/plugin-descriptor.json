@@ -1,0 +1,38 @@
+{
+  "@type": "plugin",
+  "id": "searchPlugin",
+  "name": "Search",
+  "icon": "/essentials/images/icons/search.png",
+  "introduction": "This feature adds search functionality to your site by providing a search box in the form of a library component in the Channel Manager. That search component can be dragged-and-dropped into your project.",
+  "imageUrls": [
+    "/essentials/images/screenshots/search01.png",
+    "/essentials/images/screenshots/search02.png"
+  ],
+  "documentationLink": "http://www.onehippo.org/library/setup/hst-components/search-component.html",
+  "packageFile": "/META-INF/searchPlugin_instructions.xml",
+  "restClasses": [],
+  "type": "feature",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "search",
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [
+    {
+      "items": [
+      ]
+    }
+  ]
+}

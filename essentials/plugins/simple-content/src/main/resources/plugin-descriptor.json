@@ -1,0 +1,38 @@
+{
+  "@type": "plugin",
+  "id": "simpleContent",
+  "name": "Simple content",
+  "icon": "/essentials/images/icons/simple-content.png",
+  "introduction": "The Simple content feature installs a new document type 'Simple Document' and adds a new drag-and-drop component to the component library in the Channel Manager. In the CMS, you can configure this component to show a single document in your project.",
+  "imageUrls": [
+    "/essentials/images/screenshots/simplecontent01.png",
+    "/essentials/images/screenshots/simplecontent02.png",
+    "/essentials/images/screenshots/simplecontent03.png"
+  ],
+  "documentationLink": "http://www.onehippo.org/library/setup/hst-components/document-component.html",
+  "packageFile": "/META-INF/simpleContent_instructions.xml",
+  "restClasses": [],
+  "type": "feature",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [
+    {
+      "items": [
+      ]
+    }
+  ]
+}

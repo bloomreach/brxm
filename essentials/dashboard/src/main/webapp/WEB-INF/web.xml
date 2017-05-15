@@ -44,6 +44,9 @@
     <param-value>classpath:applicationContext.xml</param-value>
   </context-param>
   <listener>
+    <listener-class>org.onehippo.cms7.essentials.filters.EssentialsContextListener</listener-class>
+  </listener>
+  <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
   <servlet>

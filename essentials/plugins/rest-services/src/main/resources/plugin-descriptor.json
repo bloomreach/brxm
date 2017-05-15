@@ -1,0 +1,38 @@
+{
+  "@type": "plugin",
+  "id": "restServices",
+  "name": "Rest Services setup",
+  "icon": "/essentials/images/icons/rest-services.png",
+  "introduction": "Configure your project's site application to have REST endpoints.",
+  "restClasses": [
+    "org.onehippo.cms7.essentials.dashboard.restservices.RestPluginResource"
+  ],
+  "type": "tool",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "integration",
+      "content"
+    ],
+    "type": [
+      "tool"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [
+    {
+      "items": [
+        {
+          "component": "restServices",
+          "file": "restServices.js"
+        }
+      ]
+    }
+  ]
+}

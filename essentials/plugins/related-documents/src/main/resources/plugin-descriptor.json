@@ -1,0 +1,60 @@
+{
+  "@type": "plugin",
+  "id": "relatedDocumentsPlugin",
+  "name": "Related Documents",
+  "icon": "/essentials/images/icons/related-documents.png",
+  "introduction": "With the Related Documents feature, you can pick documents that are related to the currently edited document in the Hippo CMS.",
+  "description": "<p>The feature can also create a list of suggested documents that you might want to pick, based on a matching metadata search.</p><p>This feature wraps the 'Related Documents' Standard Plugin.</p>",
+  "imageUrls": [
+    "/essentials/images/screenshots/relateddocuments01.png",
+    "/essentials/images/screenshots/relateddocuments02.png"
+  ],
+  "documentationLink": "http://www.onehippo.org/library/concepts/plugins/related-documents/about.html",
+  "parameterServiceClass": "org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsParameterService",
+  "restClasses": [
+    "org.onehippo.cms7.essentials.plugins.relateddocuments.RelatedDocumentsResource"
+  ],
+  "type": "feature",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [
+    {
+      "items": [
+        {
+          "component": "relatedDocumentsPlugin",
+          "file": "relatedDocumentsPlugin.js"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-plugin-relateddocs",
+      "scope": "compile",
+      "targetPom": "cms"
+    },
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-plugin-relateddocs-hst-client",
+      "scope": "compile",
+      "targetPom": "site"
+    }
+  ]
+}

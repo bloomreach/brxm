@@ -1,0 +1,45 @@
+{
+  "@type": "plugin",
+  "id": "selectionPlugin",
+  "name": "Selections",
+  "icon": "/essentials/images/icons/selections.png",
+  "introduction": "With the Selections tool, you can add several kinds of dropdowns, checkboxes and radio groups to your document types.",
+  "description": "This tool helps you adding selection fields to your document types.",
+  "imageUrls": [
+    "/essentials/images/screenshots/selections01.png",
+    "/essentials/images/screenshots/selections02.png",
+    "/essentials/images/screenshots/selections03.png"
+  ],
+  "documentationLink": "http://www.onehippo.org/library/concepts/plugins/selections/about.html",
+  "restClasses": [
+    "org.onehippo.cms7.essentials.plugins.selection.SelectionResource"
+  ],
+  "type": "tool",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "productivity",
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "community"
+    ]
+  },
+  "libraries": [
+    {
+      "items": [
+        {
+          "component": "selectionPlugin",
+          "file": "selectionPlugin.js"
+        }
+      ]
+    }
+  ]
+}
