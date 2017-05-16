@@ -15,13 +15,14 @@
  */
 
 class CKEditorController {
-  constructor($scope, $element, $window, CKEditorService, ConfigService, DomService) {
+  constructor($scope, $element, $window, CKEditorService, CmsService, ConfigService, DomService) {
     'ngInject';
 
     this.$scope = $scope;
     this.$element = $element;
     this.$window = $window;
     this.CKEditorService = CKEditorService;
+    this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
   }
@@ -52,6 +53,8 @@ class CKEditorController {
 
       this.editor.on('focus', () => this.onEditorFocus());
       this.editor.on('blur', () => this.onEditorBlur());
+      this.editor.on('openLinkPicker', event => this._openLinkPicker(event.data));
+      this.editor.on('openImagePicker', event => this._openImagePicker(event.data));
     });
   }
 
@@ -87,6 +90,25 @@ class CKEditorController {
     this.$scope.$apply(() => {
       this.textAreaElement.removeClass('focussed');
       this.onBlur();
+    });
+  }
+
+  _openLinkPicker(selectedLink) {
+    const linkPickerConfig = this.config.hippopicker.internalLink;
+    this.CmsService.publish('show-link-picker', this.id, linkPickerConfig, selectedLink, (link) => {
+      this.editor.execCommand('insertInternalLink', link);
+    });
+  }
+
+  _openImagePicker(selectedImage) {
+    const imagePickerConfig = this.config.hippopicker.image;
+    this.CmsService.publish('show-image-picker', this.id, imagePickerConfig, selectedImage, (image) => {
+      // Images are rendered with a relative path, pointing to the binaries servlet. The binaries servlet always
+      // runs at the same level; two directories up from the angular app. Because of this we need to prepend
+      // all internal images with a prefix as shown below.
+      image.f_url = `../../${image.f_url}`;
+
+      this.editor.execCommand('insertImage', image);
     });
   }
 }

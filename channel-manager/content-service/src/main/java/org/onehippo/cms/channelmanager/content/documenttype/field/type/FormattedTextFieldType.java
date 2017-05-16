@@ -27,7 +27,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
 import org.onehippo.cms7.services.processor.html.model.HtmlProcessorModel;
 import org.onehippo.cms7.services.processor.html.model.Model;
@@ -63,8 +62,8 @@ public class FormattedTextFieldType extends StringFieldType {
     public void init(final FieldTypeContext fieldContext) {
         super.init(fieldContext);
 
-        final String overlayedJson = NamespaceUtils.getConfigProperty(fieldContext, CKEDITOR_CONFIG_OVERLAYED_JSON).orElse("");
-        final String appendedJson = NamespaceUtils.getConfigProperty(fieldContext, CKEDITOR_CONFIG_APPENDED_JSON).orElse("");
+        final String overlayedJson = fieldContext.getStringConfig(CKEDITOR_CONFIG_OVERLAYED_JSON).orElse("");
+        final String appendedJson = fieldContext.getStringConfig(CKEDITOR_CONFIG_APPENDED_JSON).orElse("");
 
         try {
             final ObjectNode combinedConfig = CKEditorConfig.combineConfig(defaultJson, overlayedJson, appendedJson);
@@ -74,7 +73,7 @@ public class FormattedTextFieldType extends StringFieldType {
             log.warn("Error while reading config of HTML field '{}'", getId(), e);
         }
 
-        final String processorId = NamespaceUtils.getConfigProperty(fieldContext, HTMLPROCESSOR_ID).orElse(defaultHtmlProcessorId);
+        final String processorId = fieldContext.getStringConfig(HTMLPROCESSOR_ID).orElse(defaultHtmlProcessorId);
         processorFactory = HtmlProcessorFactory.of(processorId);
     }
 

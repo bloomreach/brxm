@@ -17,7 +17,6 @@
 package org.onehippo.cms.channelmanager.content.documenttype.util;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -49,6 +48,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -82,21 +82,21 @@ public class NamespaceUtilsTest {
         assertThat(NamespaceUtils.getContentTypeRootNode("String", session).get(), equalTo(rootNode));
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void getRootNodeWithInvalidId() throws Exception {
         final Session session = createMock(Session.class);
 
-        NamespaceUtils.getContentTypeRootNode("bla:bla:bla", session).get();
+        assertFalse(NamespaceUtils.getContentTypeRootNode("bla:bla:bla", session).isPresent());
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void getRootNodeWithRepositoryException() throws Exception {
         final Session session = createMock(Session.class);
 
         expect(session.getNode("/hippo:namespaces/ns/testdocument")).andThrow(new RepositoryException());
         replay(session);
 
-        NamespaceUtils.getContentTypeRootNode("ns:testdocument", session).get();
+        assertFalse(NamespaceUtils.getContentTypeRootNode("ns:testdocument", session).isPresent());
     }
 
     @Test
@@ -106,8 +106,7 @@ public class NamespaceUtilsTest {
         expect(JcrUtils.getNodePathQuietly(contentTypeRootNode)).andReturn("/bla");
         expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andThrow(new RepositoryException());
 
-        PowerMock.replayAll();
-        replay(contentTypeRootNode);
+        replayAll(contentTypeRootNode);
 
         assertFalse(NamespaceUtils.getNodeTypeNode(contentTypeRootNode, false).isPresent());
 
@@ -182,7 +181,7 @@ public class NamespaceUtilsTest {
         expect(contentTypeRootNode.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(contentTypeRootNode)).andReturn("/bla");
 
-        PowerMock.replayAll();
+        replayAll();
         replay(contentTypeRootNode);
 
         assertTrue(NamespaceUtils.getEditorFieldConfigNodes(contentTypeRootNode).isEmpty());
@@ -228,7 +227,7 @@ public class NamespaceUtilsTest {
         expect(nodeTypeNode.hasNode("fieldName")).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(nodeTypeNode)).andReturn("/bla");
 
-        PowerMock.replayAll();
+        replayAll();
         replay(nodeTypeNode);
 
         assertFalse(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode, "fieldName").isPresent());
@@ -271,24 +270,12 @@ public class NamespaceUtilsTest {
 
     @Test
     public void getConfigPropertyFromClusterOptions() throws Exception {
-        final String propertyName = "maxlength";
-        final Node editorFieldConfigNode = createMock(Node.class);
-        final Node clusterOptionsNode = createMock(Node.class);
-        final Property property = createMock(Property.class);
+        final Node editorFieldConfigNode = MockNode.root();
+        final Node clusterOptionsNode = editorFieldConfigNode.addNode(NamespaceUtils.CLUSTER_OPTIONS, null);
+        clusterOptionsNode.setProperty("maxlength", "256");
         final FieldTypeContext fieldContext = new FieldTypeContext(null, null, editorFieldConfigNode);
 
-        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(true);
-        expect(editorFieldConfigNode.getNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(clusterOptionsNode);
-        expect(clusterOptionsNode.hasProperty(propertyName)).andReturn(true);
-        expect(clusterOptionsNode.getProperty(propertyName)).andReturn(property);
-        expect(property.getString()).andReturn("256");
-
-        replay(editorFieldConfigNode, clusterOptionsNode, property);
-
-        assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName).get(),
-                equalTo("256"));
-
-        verify(editorFieldConfigNode, clusterOptionsNode, property);
+        assertThat(NamespaceUtils.getConfigProperty(fieldContext, "maxlength", JcrStringReader.get()).get(), equalTo("256"));
     }
 
     @Test
@@ -319,7 +306,7 @@ public class NamespaceUtilsTest {
 
         replay(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
 
-        assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName).get(),
+        assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName, JcrStringReader.get()).get(),
                 equalTo("256"));
 
         verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
@@ -330,10 +317,10 @@ public class NamespaceUtilsTest {
         final String propertyName = "maxlength";
         final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final Node editorFieldConfigNode = createMock(Node.class);
-        final Node clusterOptionsNode = createMock(Node.class);
-        final Node contentTypeRootNode = createMock(Node.class);
-        final Node contentTypeEditorConfigNode = createMock(Node.class);
+        final Node editorFieldConfigNode = createMock("editorFieldConfigNode", Node.class);
+        final Node clusterOptionsNode = createMock("clusterOptionNode", Node.class);
+        final Node contentTypeRootNode = createMock("contentTypeRootNode", Node.class);
+        final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
         final Property property = createMock(Property.class);
         final Session session = createMock(Session.class);
         final FieldTypeContext fieldContext = new FieldTypeContext(contentTypeItem, parentContext, editorFieldConfigNode);
@@ -351,7 +338,7 @@ public class NamespaceUtilsTest {
 
         replay(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
 
-        assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName).get(),
+        assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName, JcrStringReader.get()).get(),
                 equalTo("256"));
 
         verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
@@ -362,10 +349,10 @@ public class NamespaceUtilsTest {
         final String propertyName = "maxlength";
         final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final Node editorFieldConfigNode = createMock(Node.class);
-        final Node clusterOptionsNode = createMock(Node.class);
-        final Node contentTypeRootNode = createMock(Node.class);
-        final Node contentTypeEditorConfigNode = createMock(Node.class);
+        final Node editorFieldConfigNode = createMock("editorFieldConfigNode", Node.class);
+        final Node clusterOptionsNode = createMock("clusterOptionNode", Node.class);
+        final Node contentTypeRootNode = createMock("contentTypeRootNode", Node.class);
+        final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
         final Property property = createMock(Property.class);
         final Session session = createMock(Session.class);
         final FieldTypeContext fieldContext = new FieldTypeContext(contentTypeItem, parentContext, editorFieldConfigNode);
@@ -381,7 +368,7 @@ public class NamespaceUtilsTest {
 
         replay(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
 
-        assertFalse(NamespaceUtils.getConfigProperty(fieldContext, propertyName).isPresent());
+        assertFalse(NamespaceUtils.getConfigProperty(fieldContext, propertyName, JcrStringReader.get()).isPresent());
 
         verify(contentTypeItem, parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
     }
@@ -410,16 +397,15 @@ public class NamespaceUtilsTest {
         assertFalse(NamespaceUtils.getPluginClassForField(editorFieldNode).isPresent());
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void getPluginClassWithRepositoryException() throws Exception {
         final Node editorFieldNode = createMock(Node.class);
 
         expect(editorFieldNode.hasProperty("plugin.class")).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(editorFieldNode)).andReturn("/bla");
-        replay(editorFieldNode);
-        PowerMock.replayAll();
+        replayAll(editorFieldNode);
 
-        NamespaceUtils.getPluginClassForField(editorFieldNode).get();
+        assertFalse(NamespaceUtils.getPluginClassForField(editorFieldNode).isPresent());
     }
 
     @Test
@@ -465,8 +451,7 @@ public class NamespaceUtilsTest {
         expect(editorNode.hasNode("root")).andReturn(true);
         expect(editorNode.getNode("root")).andReturn(layout);
         expect(NamespaceUtils.getPluginClassForField(layout)).andReturn(Optional.of("org.hippoecm.frontend.editor.layout.TwoColumn"));
-        replay(root, editorNode);
-        PowerMock.replayAll();
+        replayAll(root, editorNode);
 
         assertThat("2-col sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof TwoColumnFieldSorter);
     }
@@ -484,8 +469,7 @@ public class NamespaceUtilsTest {
         expect(editorNode.hasNode("root")).andReturn(true);
         expect(editorNode.getNode("root")).andReturn(layout);
         expect(NamespaceUtils.getPluginClassForField(layout)).andReturn(Optional.of("unknown"));
-        replay(root, editorNode);
-        PowerMock.replayAll();
+        replayAll(root, editorNode);
 
         assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof NodeOrderFieldSorter);
     }
@@ -503,8 +487,7 @@ public class NamespaceUtilsTest {
         expect(editorNode.hasNode("root")).andReturn(true);
         expect(editorNode.getNode("root")).andReturn(layout);
         expect(NamespaceUtils.getPluginClassForField(layout)).andReturn(Optional.empty());
-        replay(root, editorNode);
-        PowerMock.replayAll();
+        replayAll(root, editorNode);
 
         assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof NodeOrderFieldSorter);
     }
@@ -522,25 +505,24 @@ public class NamespaceUtilsTest {
         assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof NodeOrderFieldSorter);
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void retrieveFieldSorterNoEditorNode() throws Exception {
         final Node root = createMock(Node.class);
 
         expect(root.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(false);
         replay(root);
 
-        NamespaceUtils.retrieveFieldSorter(root).get();
+        assertFalse(NamespaceUtils.retrieveFieldSorter(root).isPresent());
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void retrieveFieldSorterRepositoryException() throws Exception {
         final Node root = createMock(Node.class);
 
         expect(root.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(root)).andReturn("/bla");
-        replay(root);
-        PowerMock.replayAll();
+        replayAll(root);
 
-        NamespaceUtils.retrieveFieldSorter(root).get();
+        assertFalse(NamespaceUtils.retrieveFieldSorter(root).isPresent());
     }
 }

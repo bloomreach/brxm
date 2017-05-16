@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-import './ckeditor.scss';
-import template from './ckeditor.html';
-import controller from './ckeditor.controller';
+package org.onehippo.cms.channelmanager.content.documenttype.util;
 
-const ckeditorComponent = {
-  template,
-  controller,
-  require: {
-    ngModel: 'ngModel',
-  },
-  bindings: {
-    ariaLabel: '<',
-    config: '<',
-    id: '<',
-    isRequired: '<',
-    name: '<',
-    onBlur: '&',
-    onFocus: '&',
-  },
-};
+import java.util.Optional;
 
-export default ckeditorComponent;
+import javax.jcr.Node;
+
+/**
+ * Reads JCR properties from a JCR node.
+ * @param <T> the type of the property to read.
+ */
+public interface JcrPropertyReader<T> {
+
+    Optional<T> read(final Node node, final String propertyName);
+
+}
