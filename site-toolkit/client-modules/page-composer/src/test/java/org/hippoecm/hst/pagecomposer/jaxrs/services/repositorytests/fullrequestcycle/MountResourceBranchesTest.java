@@ -126,40 +126,40 @@ public class MountResourceBranchesTest extends MountResourceTest {
 
         Node masterLiveWorkspace = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace");
 
-        hasher.hash(masterLiveWorkspace, true);
+        hasher.hash(masterLiveWorkspace, true, true);
         recursiveAssertHashEquals(upstream, masterLiveWorkspace);
 
         Node masterPreviewWorkspace = session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace");
 
-        hasher.hash(masterPreviewWorkspace, true);
+        hasher.hash(masterPreviewWorkspace, true, true);
         recursiveAssertHashEquals(upstream, masterPreviewWorkspace);
 
         // assert that the hashed live branch workspace results in exactly the same hashes and that the upstream hashes
         // are also set on the 'upstream' node
         Node branchLiveWorkspace = session.getNode("/hst:hst/hst:configurations/unittestproject-" + branchName + "/hst:workspace");
 
-        hasher.hash(branchLiveWorkspace, true);
+        hasher.hash(branchLiveWorkspace, true, true);
         recursiveAssertHashEquals(upstream, branchLiveWorkspace);
 
         // assert that the hashed preview branch workspace results in exactly the same hashes and that the upstream hashes
         // are also set on the 'upstream' node
         Node branchPreviewWorkspace = session.getNode("/hst:hst/hst:configurations/unittestproject-" + branchName + "-preview/hst:workspace");
 
-        hasher.hash(branchPreviewWorkspace, true);
+        hasher.hash(branchPreviewWorkspace, true, true);
         recursiveAssertHashEquals(upstream, branchPreviewWorkspace);
 
         //assert that a lock does not change the hash
         branchPreviewWorkspace.getNode("hst:pages").setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
 
         // rehash
-        hasher.hash(branchPreviewWorkspace, true);
+        hasher.hash(branchPreviewWorkspace, true, true);
         recursiveAssertHashEquals(upstream, branchPreviewWorkspace);
 
         // now change a child node of the branch preview workspace and assert that the hash of the branch preview workspace
         // is different
         branchPreviewWorkspace.getNode("hst:sitemap/home").setProperty(SITEMAPITEM_PROPERTY_REF_ID, "foo");
         // rehash
-        hasher.hash(branchPreviewWorkspace, true);
+        hasher.hash(branchPreviewWorkspace, true, true);
 
         assertFalse("Because the preview workspace has changed, we expect a different hash for the hst:workspace as well " +
                 "because 'hash-changes' bubble up",
