@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
-import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
+import org.onehippo.ckeditor.HippoPicker;
 import org.hippoecm.frontend.plugins.richtext.dialog.RichTextEditorAction;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorDocumentLink;
 

@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.editor.plugins.linkpicker;
 
+import java.util.function.Supplier;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -45,17 +47,21 @@ public class LinkPickerDialogConfig {
 
     private static final Logger log = LoggerFactory.getLogger(LinkPickerDialogConfig.class);
 
-    public static IPluginConfig fromPluginConfig(IPluginConfig config, JcrPropertyValueModel model) {
-        String baseUuid = getPickerBaseUuid(config, model);
+    public static IPluginConfig fromPluginConfig(final IPluginConfig config, final JcrPropertyValueModel model) {
+        return fromPluginConfig(config, () -> getCompoundNode(model));
+    }
+
+    public static IPluginConfig fromPluginConfig(final IPluginConfig config, final Supplier<Node> fieldNodeProvider) {
+        String baseUuid = getPickerBaseUuid(config, fieldNodeProvider);
         if (baseUuid != null) {
-            config = new JavaPluginConfig(config);
-            config.put(NodePickerControllerSettings.BASE_UUID, baseUuid);
+            final JavaPluginConfig result = new JavaPluginConfig(config);
+            result.put(NodePickerControllerSettings.BASE_UUID, baseUuid);
         }
 
         return config;
     }
 
-    private static String getPickerBaseUuid(IPluginConfig config, final JcrPropertyValueModel model) {
+    private static String getPickerBaseUuid(IPluginConfig config, final Supplier<Node> fieldNodeProvider) {
         String baseUuid = null;
 
         if (config.containsKey(NodePickerControllerSettings.BASE_UUID)) {
@@ -83,7 +89,7 @@ public class LinkPickerDialogConfig {
             return baseUuid;
         } else if (isLanguageContextAware(config)) {
             try {
-                return getTranslatedBaseUuid(model);
+                return getTranslatedBaseUuid(fieldNodeProvider);
             } catch (RepositoryException e) {
                 log.warn("Failed to get UUID of translated base folder, using default instead", e);
             }
@@ -95,9 +101,9 @@ public class LinkPickerDialogConfig {
         return config.getAsBoolean(CONFIG_LANGUAGE_CONTEXT_AWARE, DEFAULT_LANGUAGE_CONTEXT_AWARE);
     }
 
-    private static String getTranslatedBaseUuid(final JcrPropertyValueModel model) throws RepositoryException {
-        final Node compound = getCompoundNode(model);
-        final Node document = getDocumentNodeOrNull(compound);
+    private static String getTranslatedBaseUuid(final Supplier<Node> fieldNodeProvider) throws RepositoryException {
+        final Node field = fieldNodeProvider.get();
+        final Node document = getDocumentNodeOrNull(field);
         final String documentLocaleOrNull = getLocaleOrNull(document);
         if (documentLocaleOrNull != null) {
             final Node localizedRoot = getLocalizedAncestorClosestToRoot(document, documentLocaleOrNull);
@@ -115,9 +121,11 @@ public class LinkPickerDialogConfig {
     }
 
     private static Node getDocumentNodeOrNull(final Node compound) throws RepositoryException {
-        for (Node cursor = compound; cursor.getDepth() > 0; cursor = cursor.getParent()) {
-            if (isDocument(cursor)) {
-                return cursor;
+        if (compound != null) {
+            for (Node cursor = compound; cursor.getDepth() > 0; cursor = cursor.getParent()) {
+                if (isDocument(cursor)) {
+                    return cursor;
+                }
             }
         }
         return null;
