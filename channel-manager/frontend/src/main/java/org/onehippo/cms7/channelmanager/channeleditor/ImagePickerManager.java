@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.channelmanager.channeleditor;
 
+import javax.jcr.Node;
+
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.ckeditor.CKEditorNodePlugin;
@@ -25,6 +27,7 @@ import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageS
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
 import org.hippoecm.frontend.plugins.richtext.processor.WicketNodeFactory;
 import org.hippoecm.frontend.plugins.richtext.processor.WicketURLEncoder;
+import org.onehippo.cms7.services.processor.html.model.Model;
 import org.onehippo.cms7.services.processor.richtext.image.RichTextImageFactory;
 import org.onehippo.cms7.services.processor.richtext.image.RichTextImageFactoryImpl;
 
@@ -39,11 +42,12 @@ class ImagePickerManager extends PickerManager {
     ImagePickerManager(final IPluginContext context, final String channelEditorId) {
         super(CKEditorNodePlugin.DEFAULT_IMAGE_PICKER_CONFIG);
 
-        final RichTextImageFactory imageFactory = new RichTextImageFactoryImpl(getFieldNodeModel(),
+        final Model<Node> fieldNodeModel = getFieldNodeModel();
+        final RichTextImageFactory imageFactory = new RichTextImageFactoryImpl(fieldNodeModel,
                 WicketNodeFactory.INSTANCE, WicketURLEncoder.INSTANCE);
         final RichTextEditorImageService imageService = new RichTextEditorImageService(imageFactory);
         behavior = new StatelessImagePickerBehavior(context, getPickerConfig(), imageService);
-        behavior.setCloseAction(new PickedAction<>(channelEditorId, "onImagePicked"));
+        behavior.setCloseAction(new PickedAction<>(channelEditorId, "onImagePicked", fieldNodeModel));
     }
 
     ImagePickerBehavior getBehavior() {

@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.channelmanager.channeleditor;
 
+import javax.jcr.Node;
+
 import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialogConfig;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -26,6 +28,7 @@ import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextEditorLinkService;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorDocumentLink;
 import org.hippoecm.frontend.plugins.richtext.processor.WicketNodeFactory;
+import org.onehippo.cms7.services.processor.html.model.Model;
 import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactory;
 import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactoryImpl;
 
@@ -40,10 +43,11 @@ class LinkPickerManager extends PickerManager {
     LinkPickerManager(final IPluginContext context, final String channelEditorId) {
         super(CKEditorNodePlugin.DEFAULT_LINK_PICKER_CONFIG);
 
-        final RichTextLinkFactory linkFactory = new RichTextLinkFactoryImpl(this.getFieldNodeModel(), WicketNodeFactory.INSTANCE);
+        final Model<Node> fieldNodeModel = this.getFieldNodeModel();
+        final RichTextLinkFactory linkFactory = new RichTextLinkFactoryImpl(fieldNodeModel, WicketNodeFactory.INSTANCE);
         final RichTextEditorLinkService linkService = new RichTextEditorLinkService(linkFactory);
         behavior = new StatelessLinkPickerBehavior(context, getPickerConfig(), linkService);
-        behavior.setCloseAction(new PickedAction<>(channelEditorId, "onLinkPicked"));
+        behavior.setCloseAction(new PickedAction<>(channelEditorId, "onLinkPicked", fieldNodeModel));
     }
 
     LinkPickerBehavior getBehavior() {

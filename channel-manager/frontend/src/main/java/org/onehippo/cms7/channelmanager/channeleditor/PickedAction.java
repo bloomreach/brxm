@@ -16,22 +16,61 @@
 
 package org.onehippo.cms7.channelmanager.channeleditor;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.plugins.richtext.dialog.RichTextEditorAction;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorLink;
+import org.hippoecm.frontend.session.UserSession;
+import org.onehippo.cms7.services.processor.html.model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class PickedAction<Item extends RichTextEditorLink> implements RichTextEditorAction<Item> {
 
+    private static final Logger log = LoggerFactory.getLogger(PickedAction.class);
+
     private final String channelEditorId;
     private final String method;
+    private final Model<Node> fieldNodeModel;
 
-    PickedAction(final String channelEditorId, final String method) {
+    PickedAction(final String channelEditorId, final String method, final Model<Node> fieldNodeModel) {
         this.channelEditorId = channelEditorId;
         this.method = method;
+        this.fieldNodeModel = fieldNodeModel;
     }
 
     @Override
     public String getJavaScript(final Item pickedItem) {
-        return String.format("Ext.getCmp('%s').%s(%s);", channelEditorId, method, pickedItem.toJsString());
+        // The picker will have created a new facet node below the field node. Those changes should be saved,
+        // otherwise the Visual Editing backend will overwrite those changes again and the CMS will keep references
+        // to pending changes in deleted nodes.
+        if (savePendingChanges()) {
+            return String.format("Ext.getCmp('%s').%s(%s);", channelEditorId, method, pickedItem.toJsString());
+        }
+        return StringUtils.EMPTY;
+    }
+
+    private boolean savePendingChanges() {
+        final Session session = UserSession.get().getJcrSession();
+        try {
+            session.save();
+            return true;
+        } catch (RepositoryException e) {
+            final String user = session.getUserID();
+            log.warn("User '{}' failed to save session when closing picker, discarding changes. Cause:", user, e);
+            discardChangesInField();
+            return false;
+        }
+    }
+
+    private void discardChangesInField() {
+        try {
+            fieldNodeModel.get().refresh(false);
+        } catch (RepositoryException e) {
+            log.warn("Also failed to discard changes", e);
+        }
     }
 }
-
