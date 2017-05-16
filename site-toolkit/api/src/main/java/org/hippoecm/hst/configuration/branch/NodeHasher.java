@@ -36,8 +36,9 @@ public interface NodeHasher {
      * @param node the {@code node} that will get hashed including all its descendants
      * @param setHash If {@code setHash} is {@code true} {@link HstNodeTypes#HASHABLE_PROPERTY_HASH} will be set
      * @param setUpstreamHash If {@code setUpstreamHash} is {@code true} {@link HstNodeTypes#HASHABLE_PROPERTY_UPSTREAM_HASH} will be set
+     * @return The {@code String} representing the hash
      * @throws BranchException in case a repository or some other exception happens
      */
-    void hash(final Node node, final boolean setHash, final boolean setUpstreamHash) throws BranchException;
+    String hash(final Node node, final boolean setHash, final boolean setUpstreamHash) throws BranchException;
 
 }

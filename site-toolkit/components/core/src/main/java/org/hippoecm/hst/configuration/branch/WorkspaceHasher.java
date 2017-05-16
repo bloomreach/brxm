@@ -83,7 +83,7 @@ public class WorkspaceHasher implements NodeHasher {
      * @throws BranchException If {@code node} is not of type hst:workspace or MD5 MessageDigest is not supported or
      *                         some repository exception occurs
      */
-    public void hash(final Node node, final boolean setHash, final boolean setUpstreamHash) throws BranchException {
+    public String hash(final Node node, final boolean setHash, final boolean setUpstreamHash) throws BranchException {
 
         final Counter counter = new DefaultCounter();
         Task hashTask = null;
@@ -96,7 +96,7 @@ public class WorkspaceHasher implements NodeHasher {
                 throw new BranchException(String.format("Cannot not hash the node '%s' because not of type %s", node.getPath(), NODETYPE_HST_WORKSPACE));
             }
 
-            startHashing(node, setHash, setUpstreamHash, counter);
+            return startHashing(node, setHash, setUpstreamHash, counter);
 
         } catch (RepositoryException | NoSuchAlgorithmException e) {
             try {
@@ -112,11 +112,12 @@ public class WorkspaceHasher implements NodeHasher {
         }
     }
 
-    private void startHashing(final Node node, final boolean setHash,
+    private String startHashing(final Node node, final boolean setHash,
                               final boolean setUpstreamHash, final Counter counter) throws NoSuchAlgorithmException, RepositoryException {
         long start = System.currentTimeMillis();
-        doHash(node, true, setHash, setUpstreamHash, counter);
+        byte[] bytes = doHash(node, true, setHash, setUpstreamHash, counter);
         log.info("Hashing '{}' containing '{}' nodes took '{}' ms", node.getPath(), counter.getValue(), (System.currentTimeMillis() - start));
+        return hexBinaryAdapter.marshal(bytes);
     }
 
     private byte[] doHash(final Node node, final boolean isRoot, final boolean setHash,
