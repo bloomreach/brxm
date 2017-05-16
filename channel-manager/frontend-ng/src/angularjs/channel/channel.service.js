@@ -96,16 +96,13 @@ class ChannelService {
     this.ConfigService.setContextPathForChannel(contextPath);
 
     return this._initChannel(channelId)
-      .then(channel => this._setChannel(channel))
-      .then(channel => channel.id);
+      .then(channel => this._setChannel(channel));
   }
 
   _initChannel(channelId) {
     return this.HstService.getChannel(channelId)
       .then(channel => this.SessionService.initialize(channel.hostname, channel.mountId)
-        .then(() => this._ensurePreviewHstConfigExists(channel)
-          .then(editableChannel => this._setChannel(editableChannel)),
-        ),
+        .then(() => this._ensurePreviewHstConfigExists(channel)),
       )
       .catch((error) => {
         // TODO: improve error handling.
@@ -129,13 +126,13 @@ class ChannelService {
       this._augmentChannelWithPrototypeInfo();
     }
 
-    return channel;
+    return channel.id;
   }
 
   _ensurePreviewHstConfigExists(channel) {
     if (this.SessionService.hasWriteAccess() && !channel.previewHstConfigExists) {
       return this.HstService.doPost(null, channel.mountId, 'edit')
-        .then(() => this._initChannel(`${channel.id}-preview`))
+        .then(() => this.HstService.getChannel(`${channel.id}-preview`))
         .catch((error) => {
           this.$log.error(`Failed to load channel '${channel.id}'.`, error.message);
 
