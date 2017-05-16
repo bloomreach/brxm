@@ -21,7 +21,6 @@ describe('ChannelService', () => {
   let $q;
   let $log;
   let $rootScope;
-  let $timeout;
   let ChannelService;
   let FeedbackService;
   let SiteMapService;
@@ -59,13 +58,12 @@ describe('ChannelService', () => {
       $provide.value('ConfigService', ConfigServiceMock);
     });
 
-    inject((_$q_, _$log_, _$rootScope_, _$state_, _$timeout_, _ChannelService_, _CatalogService_, _CmsService_, _FeedbackService_,
+    inject((_$q_, _$log_, _$rootScope_, _$state_, _ChannelService_, _CatalogService_, _CmsService_, _FeedbackService_,
             _HstService_, _SessionService_, _SiteMapService_) => {
       $q = _$q_;
       $log = _$log_;
       $rootScope = _$rootScope_;
       $state = _$state_;
-      $timeout = _$timeout_;
       CatalogService = _CatalogService_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
@@ -224,8 +222,6 @@ describe('ChannelService', () => {
       },
     );
     expect(ChannelService.isEditable()).toBe(false);
-
-    $timeout.flush();
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ENTER_EDIT');
   });
 

@@ -21,7 +21,6 @@ class ChannelService {
     $rootScope,
     $http,
     $state,
-    $timeout,
     SessionService,
     CatalogService,
     FeedbackService,
@@ -37,7 +36,6 @@ class ChannelService {
     this.$q = $q;
     this.$http = $http;
     this.$state = $state;
-    this.$timeout = $timeout;
     this.SessionService = SessionService;
     this.CatalogService = CatalogService;
     this.FeedbackService = FeedbackService;
@@ -135,12 +133,7 @@ class ChannelService {
         .then(() => this.HstService.getChannel(`${channel.id}-preview`))
         .catch((error) => {
           this.$log.error(`Failed to load channel '${channel.id}'.`, error.message);
-
-          // use $timeout to ensure that the container element of the toast has been rendered,
-          // otherwise $mdToast will only show the toast once
-          this.$timeout(() => {
-            this.FeedbackService.showError('ERROR_ENTER_EDIT');
-          }, 1000);
+          this.FeedbackService.showError('ERROR_ENTER_EDIT');
 
           // initialize the app with the non-editable channel so it becomes read-only
           return this.$q.resolve(channel);
