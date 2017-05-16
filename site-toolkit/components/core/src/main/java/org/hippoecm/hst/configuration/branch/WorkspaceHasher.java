@@ -38,6 +38,7 @@ import org.hippoecm.repository.util.PropertyIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.HASHABLE_PROPERTY_DELETED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.HASHABLE_PROPERTY_HASH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.HASHABLE_PROPERTY_UPSTREAM_HASH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_HASHABLE;
@@ -45,22 +46,22 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE
 
 /**
  * <p>
- *   Given a jcr node, it will compute a hash (digest) for that node, and add the mixin 'hst:hashable' and property
- *   'hst:hash'. The hash will be computed through the jcr properties (that are not skipped by excludeProperties)
- *   and all the hashes of all children nodes. Note that all properties from the 'jcr:' namespace like uuid and such are
- *   skipped in this NodeHasher because not relevant for this Hasher.
- *   Note that the order of the children do impact the hash
+ * Given a jcr node, it will compute a hash (digest) for that node, and add the mixin 'hst:hashable' and property
+ * 'hst:hash'. The hash will be computed through the jcr properties (that are not skipped by excludeProperties)
+ * and all the hashes of all children nodes. Note that all properties from the 'jcr:' namespace like uuid and such are
+ * skipped in this NodeHasher because not relevant for this Hasher.
+ * Note that the order of the children do impact the hash
  * </p>
  * <p>
- *   The JCR property types that contribute are
- *   <ul>
- *       <li>String</li>
- *       <li>Boolean</li>
- *       <li>Double</li>
- *       <li>Long</li>
- *       <li>Decimal</li>
- *       <li>Date</li>
- *   </ul>
+ * The JCR property types that contribute are
+ * <ul>
+ * <li>String</li>
+ * <li>Boolean</li>
+ * <li>Double</li>
+ * <li>Long</li>
+ * <li>Decimal</li>
+ * <li>Date</li>
+ * </ul>
  * </p>
  */
 public class WorkspaceHasher implements NodeHasher {
@@ -78,10 +79,11 @@ public class WorkspaceHasher implements NodeHasher {
 
     /**
      * Computes and sets hashes for all nodes without persisting the changes
+     *
      * @throws BranchException If {@code node} is not of type hst:workspace or MD5 MessageDigest is not supported or
-     * some repository exception occurs
+     *                         some repository exception occurs
      */
-    public void hash(final Node node, final boolean setUpstreamHash) throws BranchException {
+    public void hash(final Node node, final boolean setHash, final boolean setUpstreamHash) throws BranchException {
 
         final Counter counter = new DefaultCounter();
         Task hashTask = null;
@@ -94,7 +96,7 @@ public class WorkspaceHasher implements NodeHasher {
                 throw new BranchException(String.format("Cannot not hash the node '%s' because not of type %s", node.getPath(), NODETYPE_HST_WORKSPACE));
             }
 
-            startHashing(node, setUpstreamHash, counter);
+            startHashing(node, setHash, setUpstreamHash, counter);
 
         } catch (RepositoryException | NoSuchAlgorithmException e) {
             try {
@@ -110,14 +112,16 @@ public class WorkspaceHasher implements NodeHasher {
         }
     }
 
-    private void startHashing(final Node node, final boolean setUpstreamHash, final Counter counter) throws NoSuchAlgorithmException, RepositoryException {
+    private void startHashing(final Node node, final boolean setHash,
+                              final boolean setUpstreamHash, final Counter counter) throws NoSuchAlgorithmException, RepositoryException {
         long start = System.currentTimeMillis();
-        doHash(node, true, setUpstreamHash, counter);
+        doHash(node, true, setHash, setUpstreamHash, counter);
         log.info("Hashing '{}' containing '{}' nodes took '{}' ms", node.getPath(), counter.getValue(), (System.currentTimeMillis() - start));
     }
 
-    private byte[] doHash(final Node node, final boolean isRoot, final boolean setUpstreamHash, final Counter counter)
-            throws RepositoryException, NoSuchAlgorithmException {
+    private byte[] doHash(final Node node, final boolean isRoot, final boolean setHash,
+                          final boolean setUpstreamHash, final Counter counter)
+            throws RepositoryException, NoSuchAlgorithmException, BranchException {
 
         counter.increment();
         final MessageDigest md5 = MessageDigest.getInstance("MD5");
@@ -142,17 +146,43 @@ public class WorkspaceHasher implements NodeHasher {
         }
 
         for (Node child : new NodeIterable(node.getNodes())) {
-            byte[] hash = doHash(child, false, setUpstreamHash, counter);
+            if (child.hasProperty(HASHABLE_PROPERTY_DELETED) && child.getProperty(HASHABLE_PROPERTY_DELETED).getBoolean() == true) {
+                log.debug("Node '{}' marked deleted hence skip for hashing and take the original hash/upstreamhash.", child.getPath());
+                confirmDeletedState(child);
+                continue;
+            }
+            byte[] hash = doHash(child, false, setHash, setUpstreamHash, counter);
             md5.update(hash);
         }
         byte[] digest = md5.digest();
         String hex = hexBinaryAdapter.marshal(digest);
-        node.setProperty(HASHABLE_PROPERTY_HASH, hex);
+        if (node.hasProperty(HASHABLE_PROPERTY_DELETED)) {
+            throw new BranchException(String.format("Node '%s' is marked deleted and should never be (re)hashed", node.getPath()));
+        }
+        if (setHash) {
+            node.setProperty(HASHABLE_PROPERTY_HASH, hex);
+        }
         if (setUpstreamHash) {
             node.setProperty(HASHABLE_PROPERTY_UPSTREAM_HASH, hex);
         }
         return digest;
 
+    }
+
+    private void confirmDeletedState(final Node node) throws RepositoryException {
+        if (!node.hasProperty(HASHABLE_PROPERTY_HASH)) {
+            throw new BranchException(String.format("Node '%s' has an illegal state: If marked as deleted, property '%s' must" +
+                    "be present and equal to '%s'.", node.getPath(), HASHABLE_PROPERTY_HASH, HASHABLE_PROPERTY_UPSTREAM_HASH));
+        }
+        if (!node.hasProperty(HASHABLE_PROPERTY_UPSTREAM_HASH)) {
+            throw new BranchException(String.format("Node '%s' has an illegal state: If marked as deleted, property '%s' must" +
+                    "be present and equal to '%s'.", node.getPath(), HASHABLE_PROPERTY_UPSTREAM_HASH, HASHABLE_PROPERTY_HASH));
+        }
+        if (!node.getProperty(HASHABLE_PROPERTY_HASH).getString().equals(node.getProperty(HASHABLE_PROPERTY_UPSTREAM_HASH).getString())) {
+            throw new BranchException(String.format("Node '%s' has an illegal state: If marked as deleted, the '%s' and '%s' should " +
+                    "be equal but they are not equal.", node.getPath(), HASHABLE_PROPERTY_HASH, HASHABLE_PROPERTY_UPSTREAM_HASH));
+        }
+        return;
     }
 
     // since the order in which node.getProperties returns the properties can change over time we need to return

@@ -67,6 +67,7 @@ public interface HstNodeTypes {
     String MIXINTYPE_HST_HASHABLE = "hst:hashable";
     String HASHABLE_PROPERTY_HASH = "hst:hash";
     String HASHABLE_PROPERTY_UPSTREAM_HASH = "hst:upstreamhash";
+    String HASHABLE_PROPERTY_DELETED = "hst:deleted";
 
     String MIXINTYPE_HST_PROTOTYPE_META = "hst:prototypemeta";
     String PROTOTYPE_META_PROPERTY_DISPLAY_NAME = "hst:displayname";

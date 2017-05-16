@@ -263,6 +263,7 @@
 [hst:hashable] mixin
 - hst:hash (string) mandatory
 - hst:upstreamhash (string)
+- hst:deleted (boolean)
 
 [hst:configuration] > nt:base, mix:referenceable, mix:versionable
 - hst:inheritsfrom (string) multiple

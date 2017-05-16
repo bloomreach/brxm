@@ -39,6 +39,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.HASHABLE_PROPERTY_DELETED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.HASHABLE_PROPERTY_HASH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.HASHABLE_PROPERTY_UPSTREAM_HASH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
@@ -49,6 +50,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class WorkspaceHasherIT extends AbstractTestConfigurations {
 
@@ -84,11 +86,11 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
             NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
             Node workspaceNode = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace");
             boolean setUpstreamHash = false;
-            hasher.hash(workspaceNode, setUpstreamHash);
+            hasher.hash(workspaceNode, true, setUpstreamHash);
             recursivelyAssertHashProperties(workspaceNode, setUpstreamHash);
 
             setUpstreamHash = true;
-            hasher.hash(workspaceNode, setUpstreamHash);
+            hasher.hash(workspaceNode, true, setUpstreamHash);
             recursivelyAssertHashProperties(workspaceNode, setUpstreamHash);
         } finally {
             session.logout();
@@ -108,6 +110,64 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
         }
     }
 
+    @Test
+    public void marked_deleted_nodes_contribute_to_hash_their_original_hash() throws Exception {
+        Session session = createSession();
+        try {
+            createWorkspaceNodes(session);
+            NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
+            Node workspaceNode = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace");
+            boolean setUpstreamHash = true;
+            hasher.hash(workspaceNode, true, setUpstreamHash);
+            String preHash = workspaceNode.getProperty(HASHABLE_PROPERTY_HASH).getString();
+
+            Node homeSiteMapItem = workspaceNode.getNode("hst:sitemap/home");
+            homeSiteMapItem.setProperty(HASHABLE_PROPERTY_DELETED, true);
+
+            hasher.hash(workspaceNode, true, setUpstreamHash);
+            String reHashAfterMarkedDelete = workspaceNode.getProperty(HASHABLE_PROPERTY_HASH).getString();
+
+            assertFalse("Since a descendant node is marked deleted, the hash should be different", reHashAfterMarkedDelete.equals(preHash));
+
+            homeSiteMapItem.remove();
+
+            hasher.hash(workspaceNode, true, setUpstreamHash);
+            String reHashAfterRemove = workspaceNode.getProperty(HASHABLE_PROPERTY_HASH).getString();
+
+            assertEquals("Since a node marked deleted should not impact the hash, removing that node should not impact " +
+                    "the hash either. ", reHashAfterMarkedDelete, reHashAfterRemove);
+
+        } finally {
+            session.logout();
+        }
+    }
+
+    @Test
+    public void marked_deleted_nodes_must_have_upstreamhash_equal_to_hash() throws Exception {
+        Session session = createSession();
+        try {
+            createWorkspaceNodes(session);
+            NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
+            Node workspaceNode = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace");
+            boolean setUpstreamHash = true;
+            hasher.hash(workspaceNode, true, setUpstreamHash);
+
+            Node homeSiteMapItem = workspaceNode.getNode("hst:sitemap/home");
+            homeSiteMapItem.setProperty(HASHABLE_PROPERTY_DELETED, true);
+            homeSiteMapItem.setProperty(HASHABLE_PROPERTY_UPSTREAM_HASH, "changed");
+            // change the upstreamhash to be different than hash which should not be allowed
+            // and which we should find out during a rehash
+            try {
+                hasher.hash(workspaceNode, true, setUpstreamHash);
+                fail("hashing should fail if a marked deleted node contains a different upstreamhash than hash");
+            } catch (BranchException e) {
+                // expected
+            }
+
+        } finally {
+            session.logout();
+        }
+    }
 
     @Test(expected = BranchException.class)
     public void none_hst_workspace_node_not_allowed() throws Exception {
@@ -115,7 +175,7 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
         try {
             NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
             Node configuration = session.getNode("/hst:hst/hst:configurations/unittestproject");
-            hasher.hash(configuration, false);
+            hasher.hash(configuration, true, false);
         } finally {
             session.logout();
         }
@@ -136,8 +196,8 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
 
             NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
 
-            hasher.hash(session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace"), false);
-            hasher.hash(session.getNode("/hst:hst/hst:configurations/unittestproject/hst:upstream"), false);
+            hasher.hash(session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace"), true, false);
+            hasher.hash(session.getNode("/hst:hst/hst:configurations/unittestproject/hst:upstream"), true, false);
 
             recursiveAssertHashEquals(session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace"),
                     session.getNode("/hst:hst/hst:configurations/unittestproject/hst:upstream"));
@@ -162,13 +222,13 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
             NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
 
             Node workspace = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace");
-            hasher.hash(workspace, false);
+            hasher.hash(workspace, true, false);
 
             String hash = workspace.getProperty(HASHABLE_PROPERTY_HASH).getString();
             workspace.setProperty(HASHABLE_PROPERTY_UPSTREAM_HASH, "dummy-hash");
 
             // a rehash should result in same hashed tree regardless extra hash properties
-            hasher.hash(workspace, false);
+            hasher.hash(workspace, true, false);
             String rehash = workspace.getProperty(HASHABLE_PROPERTY_HASH).getString();
 
             assertEquals("A rehash for a node tree should not change due to existing hashes or upstream hashes because these " +
@@ -187,7 +247,7 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
             NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
 
             Node workspace = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace");
-            hasher.hash(workspace, false);
+            hasher.hash(workspace, true, false);
             String hash = workspace.getProperty(HASHABLE_PROPERTY_HASH).getString();
 
             workspace.addMixin(MIXINTYPE_HST_EDITABLE);
@@ -202,7 +262,7 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
             sitemap.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, Calendar.getInstance());
 
             // a rehash should result in same hashed tree regardless extra properties
-            hasher.hash(workspace, false);
+            hasher.hash(workspace, true, false);
             String rehash = workspace.getProperty(HASHABLE_PROPERTY_HASH).getString();
 
             assertEquals("A rehash for a node tree should not change due to existing lockedby, lockedon or lastmodifiedby because these " +
@@ -225,13 +285,13 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
             NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
 
             Node workspace = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace");
-            hasher.hash(workspace, false);
+            hasher.hash(workspace, true, false);
             String hash = workspace.getProperty(HASHABLE_PROPERTY_HASH).getString();
 
             session.move("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:templates/webpage",
                     "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:templates/newnamedpage");
 
-            hasher.hash(workspace, false);
+            hasher.hash(workspace, true, false);
             String rehash = workspace.getProperty(HASHABLE_PROPERTY_HASH).getString();
 
             assertFalse("A renamed descendant node should result in a different hash", hash.equals(rehash));
@@ -252,14 +312,14 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
             NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
 
             Node workspace = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace");
-            hasher.hash(workspace, false);
+            hasher.hash(workspace, true, false);
 
             String hash = workspace.getProperty(HASHABLE_PROPERTY_HASH).getString();
 
             session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/_default_")
                     .setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo", "bar", "lux"});
 
-            hasher.hash(workspace, false);
+            hasher.hash(workspace, true, false);
             String rehash = workspace.getProperty(HASHABLE_PROPERTY_HASH).getString();
 
             assertFalse("A different descendant property should result in a different hash", hash.equals(rehash));
@@ -280,14 +340,14 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
             NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
 
             Node workspace = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace");
-            hasher.hash(workspace, false);
+            hasher.hash(workspace, true, false);
             String hash = workspace.getProperty(HASHABLE_PROPERTY_HASH).getString();
 
             Node templates = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:templates");
 
             templates.orderBefore("header", "webpage");
 
-            hasher.hash(workspace, false);
+            hasher.hash(workspace, true, false);
             String rehash = workspace.getProperty(HASHABLE_PROPERTY_HASH).getString();
 
             assertFalse("The hash for the node tree should change due to reordered child nodes", hash.equals(rehash));
