@@ -99,8 +99,8 @@ describe('ChannelSettings', () => {
     spyOn(ChannelService, 'reload').and.returnValue($q.when(channel));
     spyOn(ChannelService, 'getChannel').and.returnValue(channel);
     spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when(channelInfoDescription));
-    spyOn(FeedbackService, 'showErrorOnSubpage');
-    spyOn(FeedbackService, 'showErrorResponseOnSubpage');
+    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showErrorResponse');
   });
 
   function compileDirectiveAndGetController() {
@@ -186,7 +186,7 @@ describe('ChannelSettings', () => {
     $element.find('.qa-action').click();
 
     expect(ChannelService.saveChannel).toHaveBeenCalled();
-    expect(FeedbackService.showErrorResponseOnSubpage).toHaveBeenCalledWith(undefined, 'ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
+    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
   });
 
   it('applies a fall-back strategy when determining a field label', () => {
@@ -201,16 +201,16 @@ describe('ChannelSettings', () => {
     ConfigService.cmsUser = 'admin';
     channelInfoDescription.lockedBy = 'tester';
     compileDirectiveAndGetController();
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: 'tester' });
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: 'tester' });
 
-    FeedbackService.showErrorOnSubpage.calls.reset();
+    FeedbackService.showError.calls.reset();
     channelInfoDescription.lockedBy = 'admin';
     compileDirectiveAndGetController();
-    expect(FeedbackService.showErrorOnSubpage).not.toHaveBeenCalled();
+    expect(FeedbackService.showError).not.toHaveBeenCalled();
 
-    FeedbackService.showErrorOnSubpage.calls.reset();
+    FeedbackService.showError.calls.reset();
     delete channelInfoDescription.lockedBy;
     compileDirectiveAndGetController();
-    expect(FeedbackService.showErrorOnSubpage).not.toHaveBeenCalled();
+    expect(FeedbackService.showError).not.toHaveBeenCalled();
   });
 });

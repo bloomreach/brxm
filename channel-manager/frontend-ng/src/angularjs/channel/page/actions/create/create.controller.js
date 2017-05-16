@@ -52,7 +52,7 @@ class PageCreateCtrl {
         this.locations = data.locations;
         this.location = (data.locations.length > 0) ? data.locations[0] : undefined;
       })
-      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
+      .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
   }
 
   create() {
@@ -70,7 +70,7 @@ class PageCreateCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_CREATION_FAILED', this.errorMap));
+      .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_PAGE_CREATION_FAILED', this.errorMap));
   }
 
   disableAutomaticLastPathInfoElementUpdate() {

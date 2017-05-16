@@ -88,7 +88,7 @@ describe('PageActionEdit', () => {
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(ChannelService, 'recordOwnChange');
-    spyOn(FeedbackService, 'showErrorResponseOnSubpage');
+    spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HippoIframeService, 'reload');
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
@@ -149,7 +149,7 @@ describe('PageActionEdit', () => {
     $rootScope.$digest();
 
     expect(PageEditCtrl.prototypes).toEqual([]);
-    expect(FeedbackService.showErrorResponseOnSubpage).toHaveBeenCalledWith(undefined, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
+    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
   });
 
   it('calls the callback when navigating back', () => {
@@ -205,7 +205,7 @@ describe('PageActionEdit', () => {
     expect(SiteMapItemService.updateItem).toHaveBeenCalledWith(savedItem, 'siteMapId');
     $rootScope.$digest();
 
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(response, 'ERROR_PAGE_SAVE_FAILED', PageEditCtrl.errorMap);
     expect($scope.onDone).not.toHaveBeenCalled();
   });
@@ -230,7 +230,7 @@ describe('PageActionEdit', () => {
     expect(SiteMapItemService.updateItem).toHaveBeenCalledWith(savedItem, 'siteMapId');
     $rootScope.$digest();
 
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_SAVE_FAILED', PageEditCtrl.errorMap);
     expect($scope.onDone).not.toHaveBeenCalled();
   });

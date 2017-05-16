@@ -67,7 +67,7 @@ describe('PageActionCreate', () => {
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(ChannelService, 'recordOwnChange');
-    spyOn(FeedbackService, 'showErrorResponseOnSubpage');
+    spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HippoIframeService, 'load');
     spyOn(SiteMapService, 'create').and.returnValue($q.when({ renderPathInfo: 'renderPathInfo' }));
     spyOn(SiteMapService, 'load');
@@ -127,7 +127,7 @@ describe('PageActionCreate', () => {
     compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
   });
 
@@ -181,7 +181,7 @@ describe('PageActionCreate', () => {
     });
     $rootScope.$digest();
 
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_CREATION_FAILED', PageCreateCtrl.errorMap);
   });
 
@@ -193,7 +193,7 @@ describe('PageActionCreate', () => {
     SiteMapService.create.and.returnValue($q.reject(response));
     PageCreateCtrl.create();
     $rootScope.$digest();
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(response, 'ERROR_PAGE_CREATION_FAILED', PageCreateCtrl.errorMap);
   });
 });

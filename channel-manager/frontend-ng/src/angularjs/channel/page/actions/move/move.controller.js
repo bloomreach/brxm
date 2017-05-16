@@ -63,7 +63,7 @@ class PageMoveCtrl {
           this.locations = filteredLocations;
         }
       })
-      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
+      .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
   }
 
   move() {
@@ -80,7 +80,7 @@ class PageMoveCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MOVE_FAILED', this.errorMap));
+      .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_PAGE_MOVE_FAILED', this.errorMap));
   }
 }
 

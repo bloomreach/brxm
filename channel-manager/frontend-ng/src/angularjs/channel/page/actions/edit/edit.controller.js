@@ -53,7 +53,7 @@ class PageEditCtrl {
       .then((data) => {
         this.prototypes = data.prototypes;
       })
-      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
+      .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
   }
 
   save() {
@@ -77,7 +77,7 @@ class PageEditCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_SAVE_FAILED', this.errorMap));
+      .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_PAGE_SAVE_FAILED', this.errorMap));
   }
 
   hasPrototypes() {

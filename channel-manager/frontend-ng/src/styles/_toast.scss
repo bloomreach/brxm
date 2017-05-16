@@ -1,4 +1,4 @@
-// Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,19 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@import 'styles/variables';
-@import 'styles/button-toggle';
-@import 'styles/buttons';
-@import 'styles/iframe';
-@import 'styles/overlay';
-@import 'styles/lists';
-@import 'styles/mask';
-@import 'styles/side-panel';
-@import 'styles/subpage';
-@import 'styles/toast';
-@import 'styles/tree';
-@import 'styles/picker';
-@import 'styles/toolbar';
-@import 'styles/tooltips';
-@import 'styles/typography';
-@import 'styles/ie_hacks';
+// by default toasts are shown below the main toolbar
+body > md-toast {
+  margin-top: $toolbar-height;
+}

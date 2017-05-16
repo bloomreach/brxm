@@ -39,7 +39,7 @@ class MenuEditorCtrl {
     this._loadMenu()
       .then((menu) => {
         if (this.isLockedByOther()) {
-          this.FeedbackService.showErrorOnSubpage('ERROR_MENU_LOCKED_BY', { lockedBy: this.lockedBy });
+          this.FeedbackService.showError('ERROR_MENU_LOCKED_BY', { lockedBy: this.lockedBy });
         }
         // Currently, the SiteMenuService is loading and maintaining the menu structure.
         // Creation or deletion of a menu item trigger a full reload of the menu, and the
@@ -174,7 +174,7 @@ class MenuEditorCtrl {
   }
 
   _handleError(response, defaultKey) {
-    this.FeedbackService.showErrorResponseOnSubpage(response, defaultKey, this.errorMap);
+    this.FeedbackService.showErrorResponse(response, defaultKey, this.errorMap);
 
     if (response && response.errorCode === 'ITEM_ALREADY_LOCKED') {
       this._loadMenu();
