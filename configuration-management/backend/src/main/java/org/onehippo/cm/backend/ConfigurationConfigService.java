@@ -103,13 +103,17 @@ public class ConfigurationConfigService {
     }
 
     /**
+     * Compute the difference between the baseline configuration and the update configuration, and apply it to the
+     * repository.
+     *
      * @param baseline baseline configuration for computing the delta
      * @param update   updated configuration, potentially different from baseline
      * @param session  JCR session to write to the repository. The caller has to take care of #save-ing any changes.
-     * @throws Exception TODO: semantics
+     * @throws RepositoryException in case of failure reading from / writing to the repository
+     * @throws IOException in case of failure reading external resources
      */
     void computeAndWriteDelta(final ConfigurationModel baseline, final ConfigurationModel update, final Session session)
-            throws Exception {
+            throws RepositoryException, IOException {
 
         // Note: we do not yet worry about removing namespaces and node types if they are no longer present
         // in the "update". If we want to add support for this, this could best be done as a post-processing step,
@@ -123,12 +127,10 @@ public class ConfigurationConfigService {
 
         computeAndWriteNodeDelta(baselineRoot, update.getConfigurationRootNode(), targetNode, unprocessedReferences);
         postProcessReferences(unprocessedReferences);
-
-        // TODO webfiles
     }
 
     void addNewNamespaces(final ConfigurationModel baseline, final ConfigurationModel update, final Session session)
-            throws Exception {
+            throws RepositoryException {
         final List<NamespaceDefinition> baselineNamespaces = baseline.getNamespaceDefinitions();
 
         for (NamespaceDefinition updateNamespace : update.getNamespaceDefinitions()) {
@@ -139,42 +141,51 @@ public class ConfigurationConfigService {
                         isInBaseline = true;
                         break;
                     }
-                    throw new Exception("TODO make me more specific");
+                    applyNamespace(updateNamespace, baselineNamespace, session);
                 }
             }
             if (!isInBaseline) {
-                applyNamespace(updateNamespace, session);
+                applyNamespace(updateNamespace, null, session);
             }
         }
     }
 
-    private void applyNamespace(final NamespaceDefinition namespaceDefinition, final Session session)
-            throws RepositoryException, ConfigurationCollisionException {
+    private void applyNamespace(final NamespaceDefinition newDefinition, final NamespaceDefinition oldDefinition, final Session session)
+            throws RepositoryException {
         final Set<String> prefixes = new HashSet<>(Arrays.asList(session.getNamespacePrefixes()));
-        final String prefix = namespaceDefinition.getPrefix();
-        final String uriString = namespaceDefinition.getURI().toString();
+        final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
+        final String prefix = newDefinition.getPrefix();
+        final String newURIString = newDefinition.getURI().toString();
+        final String oldURIString = oldDefinition != null ? oldDefinition.getURI().toString() : "[new]";
 
         logger.debug(String.format("processing namespace prefix='%s' uri='%s' defined in %s.",
-                prefix, uriString, ModelUtils.formatDefinition(namespaceDefinition)));
+                prefix, newURIString, ModelUtils.formatDefinition(newDefinition)));
 
         if (prefixes.contains(prefix)) {
             final String repositoryURI = session.getNamespaceURI(prefix);
-            if (!uriString.equals(repositoryURI)) {
-                final String msg = String.format(
-                        "Failed to process namespace definition defined in %s: "
-                                + "namespace with prefix '%s' already exists in repository with different URI. "
-                                + "Existing: '%s', from model: '%s'; aborting",
-                        ModelUtils.formatDefinition(namespaceDefinition), prefix, repositoryURI, uriString);
-                throw new ConfigurationCollisionException(msg);
+            if (!repositoryURI.equals(oldURIString)) {
+                final String msg = String.format("[OVERRIDE] Namespace '%s' was changed from '%s' to '%s'." +
+                                "Overriding URI to '%s', defined in %s.", prefix, oldDefinition, repositoryURI,
+                        newURIString, ModelUtils.formatDefinition(newDefinition));
+                logger.info(msg);
+            }
+            if (!repositoryURI.equals(newURIString)) {
+                namespaceRegistry.unregisterNamespace(prefix);
+                namespaceRegistry.registerNamespace(prefix, newURIString);
             }
         } else {
-            final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
-            namespaceRegistry.registerNamespace(prefix, uriString);
+            if (oldDefinition != null) {
+                final String msg = String.format("[OVERRIDE] Namespace '%s' (URI '%s') has been deleted from the repository."
+                                + "Re-registering namespace with URI '%s', defined in %s.", prefix, oldDefinition,
+                        newURIString, ModelUtils.formatDefinition(newDefinition));
+                logger.info(msg);
+            }
+            namespaceRegistry.registerNamespace(prefix, newURIString);
         }
     }
 
     void addNewNodeTypes(final ConfigurationModel baseline, final ConfigurationModel update, final Session session)
-            throws Exception {
+            throws RepositoryException, IOException {
         final List<NodeTypeDefinition> baselineNodeTypes = baseline.getNodeTypeDefinitions();
 
         for (NodeTypeDefinition updateNodeType : update.getNodeTypeDefinitions()) {
@@ -192,7 +203,6 @@ public class ConfigurationConfigService {
                 logger.debug(String.format("processing %s defined in %s.", makeCNDLabel(updateNodeType),
                         ModelUtils.formatDefinition(updateNodeType)));
 
-                // TODO: add configuration persistence exception to improve feedback?
                 BootstrapUtils.initializeNodetypes(session, getCNDInputStream(updateNodeType),
                         ModelUtils.formatDefinition(updateNodeType));
             }
@@ -213,7 +223,7 @@ public class ConfigurationConfigService {
                                   final ConfigurationNode updateNode,
                                   final Node targetNode,
                                   final List<UnprocessedReference> unprocessedReferences)
-            throws RepositoryException, IOException, ConfigurationCollisionException {
+            throws RepositoryException, IOException {
 
         computeAndWritePrimaryTypeDelta(baselineNode, updateNode, targetNode);
         computeAndWriteMixinTypesDelta(baselineNode, updateNode, targetNode);
@@ -224,7 +234,7 @@ public class ConfigurationConfigService {
     private void computeAndWritePrimaryTypeDelta(final ConfigurationNode baselineNode,
                                                  final ConfigurationNode updateNode,
                                                  final Node targetNode)
-            throws RepositoryException, ConfigurationCollisionException {
+            throws RepositoryException {
 
         final Map<String, ConfigurationProperty> updateProperties = updateNode.getProperties();
         final Map<String, ConfigurationProperty> baselineProperties = baselineNode.getProperties();
@@ -235,13 +245,11 @@ public class ConfigurationConfigService {
         if (!updatePrimaryType.equals(baselinePrimaryType)) {
             final String jcrPrimaryType = targetNode.getPrimaryNodeType().getName();
             if (!jcrPrimaryType.equals(baselinePrimaryType)) {
-                final String msg = String.format("Primary type '%s' defined in %s conflicts"
-                                + " with current primary type '%s' of node %s.",
-                        updatePrimaryType,
-                        ModelUtils.formatDefinitions(updateProperties.get(JCR_PRIMARYTYPE)),
-                        jcrPrimaryType,
-                        updateNode.getPath());
-                throw new ConfigurationCollisionException(msg);
+                final String msg = String.format("[OVERRIDE] Primary type '%s' of node '%s' has been changed from '%s'."
+                                + "Overriding to type '%s', defined in %s.",
+                        jcrPrimaryType, updateNode.getPath(), baselinePrimaryType, updatePrimaryType,
+                        ModelUtils.formatDefinitions(updateProperties.get(JCR_PRIMARYTYPE)));
+                logger.info(msg);
             }
             targetNode.setPrimaryType(updatePrimaryType);
         }
@@ -302,7 +310,7 @@ public class ConfigurationConfigService {
                                                  final ConfigurationNode updateNode,
                                                  final Node targetNode,
                                                  final List<UnprocessedReference> unprocessedReferences)
-            throws RepositoryException, IOException, ConfigurationCollisionException {
+            throws RepositoryException, IOException {
 
         final Map<String, ConfigurationProperty> updateProperties = updateNode.getProperties();
         final Map<String, ConfigurationProperty> baselineProperties = baselineNode.getProperties();
@@ -313,22 +321,15 @@ public class ConfigurationConfigService {
             }
 
             final ConfigurationProperty updateProperty = updateProperties.get(propertyName);
-            if (baselineProperties.containsKey(propertyName)) {
-                final ConfigurationProperty baselineProperty = baselineProperties.get(propertyName);
-                if (propertyIsIdentical(updateProperty, baselineProperty)) {
+            final ConfigurationProperty baselineProperty = baselineProperties.getOrDefault(propertyName, null);
+
+            if (baselineProperty != null && propertyIsIdentical(updateProperty, baselineProperty)) {
                     // No action needed
-                } else {
-                    if (isReferenceTypeProperty(updateProperty)) {
-                        unprocessedReferences.add(new UnprocessedReference(updateProperty, baselineProperty, targetNode));
-                    } else {
-                        updateProperty(updateProperty, baselineProperty, targetNode);
-                    }
-                }
             } else {
                 if (isReferenceTypeProperty(updateProperty)) {
-                    unprocessedReferences.add(new UnprocessedReference(updateProperty, null, targetNode));
+                    unprocessedReferences.add(new UnprocessedReference(updateProperty, baselineProperty, targetNode));
                 } else {
-                    addProperty(updateProperty, targetNode);
+                    updateProperty(updateProperty, baselineProperty, targetNode);
                 }
             }
         }
@@ -349,7 +350,7 @@ public class ConfigurationConfigService {
                                                 final ConfigurationNode updateNode,
                                                 final Node targetNode,
                                                 final List<UnprocessedReference> unprocessedReferences)
-            throws RepositoryException, IOException, ConfigurationCollisionException {
+            throws RepositoryException, IOException {
 
         final Map<String, ConfigurationNode> updateChildren = updateNode.getNodes();
         final Map<String, ConfigurationNode> baselineChildren = baselineNode.getNodes();
@@ -361,29 +362,28 @@ public class ConfigurationConfigService {
             final Node existingChildNode = getChildWithIndex(targetNode, nameAndIndex.getLeft(), nameAndIndex.getRight());
             final Node childNode;
 
-            if (baselineChildren.containsKey(indexedChildName)) {
-                // update existing node
-                if (existingChildNode == null) {
-                    final String msg = String.format("Failed to update node '%s' defined in %s: "
-                                    + "node no longer exists in repository; aborting",
+            if (existingChildNode == null) {
+                // need to add node
+                if (baselineChildren.containsKey(indexedChildName)) {
+                    final String msg = String.format("[OVERRIDE] Node '%s' has been removed, " +
+                            "but will be re-added due to definition %s.",
                             updateChild.getPath(), ModelUtils.formatDefinitions(updateChild));
-                    throw new ConfigurationCollisionException(msg);
-                }
-                childNode = existingChildNode;
-                baselineChild = baselineChildren.get(indexedChildName);
-            } else {
-                // add new node
-                if (existingChildNode != null) {
-                    final String msg = String.format("Failed to add node '%s' defined in %s: "
-                                    + "node already exists in repository; aborting",
-                            updateChild.getPath(), ModelUtils.formatDefinitions(updateChild));
-                    throw new ConfigurationCollisionException(msg);
+                    logger.info(msg);
                 }
                 final String childPrimaryType = updateChild.getProperties().get(JCR_PRIMARYTYPE).getValue().getString();
                 final String childName = nameAndIndex.getLeft();
 
                 childNode = addNode(targetNode, childName, childPrimaryType, updateChild);
                 baselineChild = newChildOfType(childPrimaryType);
+            } else {
+                if (!baselineChildren.containsKey(indexedChildName)) {
+                    final String msg = String.format("[OVERRIDE] Node '%s' has been added, " +
+                                    "but will be overridden due to definition %s.",
+                            updateChild.getPath(), ModelUtils.formatDefinitions(updateChild));
+                    logger.info(msg);
+                }
+                childNode = existingChildNode;
+                baselineChild = baselineChildren.get(indexedChildName);
             }
 
             // recurse
@@ -409,8 +409,8 @@ public class ConfigurationConfigService {
                     // Successful "merge" between an incoming node removal and the fact that the node has already
                     // been removed in the repository.
                 } else {
-                    // TODO: we don't check if the removed node has changes compared to the baseline...
-                    //       Such a check would be rather invasive (potentially full sub-tree compare)
+                    // [OVERRIDE] We don't check if the removed node has changes compared to the baseline.
+                    //            Such a check would be rather invasive (potentially full sub-tree compare)
                     childNode.remove();
                 }
             }
@@ -510,88 +510,59 @@ public class ConfigurationConfigService {
         return sibling;
     }
 
-    private void addProperty(final ConfigurationProperty updateProperty, final Node jcrNode)
-            throws RepositoryException, IOException, ConfigurationCollisionException {
-
-        if (isKnownDerivedPropertyName(updateProperty.getName())) {
-            return; // TODO: should derived properties even be an allowed part of the configuration model?
-        }
-
-        // pre-process the values of the property to address reference type values
-        final Session session = jcrNode.getSession();
-        final List<Value> modelValues = new ArrayList<>();
-        if (updateProperty.getType() == PropertyType.SINGLE) {
-            collectVerifiedValue(updateProperty, updateProperty.getValue(), modelValues, session);
-        } else {
-            for (Value value : updateProperty.getValues()) {
-                collectVerifiedValue(updateProperty, value, modelValues, session);
-            }
-        }
-
-        // handle runtime/repository differences
-        final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, updateProperty.getName());
-        if (jcrProperty != null) {
-            if (propertyIsIdentical(jcrProperty, updateProperty, modelValues)) {
-                return; // Successful merge, no action needed.
-            }
-            final String msg = String.format("Failed to add property '%s' defined in %s: "
-                    + "property already exists with different value; aborting",
-                    updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty));
-            throw new ConfigurationCollisionException(msg);
-        }
-
-        try {
-            if (updateProperty.isMultiple()) {
-                jcrNode.setProperty(updateProperty.getName(), valuesFrom(updateProperty, modelValues, session));
-            } else {
-                if (modelValues.size() > 0) {
-                    jcrNode.setProperty(updateProperty.getName(), valueFrom(updateProperty, modelValues.get(0), session));
-                }
-            }
-        } catch (RepositoryException e) {
-            String msg = String.format(
-                    "Failed to process property '%s' defined in %s: %s",
-                    updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty), e.getMessage());
-            throw new RuntimeException(msg, e);
-        }
-    }
-
     private void updateProperty(final ConfigurationProperty updateProperty,
                                 final ConfigurationProperty baselineProperty,
                                 final Node jcrNode)
-            throws RepositoryException, IOException, ConfigurationCollisionException {
+            throws RepositoryException, IOException {
 
         if (isKnownDerivedPropertyName(updateProperty.getName())) {
             return; // TODO: should derived properties even be an allowed part of the configuration model?
         }
 
         final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, updateProperty.getName());
-        if (jcrProperty == null) {
-            final String msg = String.format("Failed to update property '%s' defined in %s: "
-                    + "property doesn't exist; aborting",
+        if (baselineProperty != null && jcrProperty == null) {
+            final String msg = String.format("[OVERRIDE] Property '%s' has been deleted from the repository, " +
+                            "and will be re-added due to definition %s.",
                     updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty));
-            throw new ConfigurationCollisionException(msg);
+            logger.info(msg);
         }
+
 
         // pre-process the values of the property to address reference type values
         final Session session = jcrNode.getSession();
         final List<Value> verifiedUpdateValues = determineVerifiedValues(updateProperty, session);
-        final List<Value> verifiedBaselineValues = determineVerifiedValues(baselineProperty, session);
 
-        if (!propertyIsIdentical(jcrProperty, baselineProperty, verifiedBaselineValues)) {
-            if (!propertyIsIdentical(jcrProperty, updateProperty, verifiedUpdateValues)) {
-                final String msg = String.format("Failed to update property '%s' defined in %s: "
-                        + "the runtime/repository value of this property differs from the old baseline; aborting",
-                        updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty));
-                throw new ConfigurationCollisionException(msg);
+        if (baselineProperty != null) {
+            final List<Value> verifiedBaselineValues = determineVerifiedValues(baselineProperty, session);
+
+            if (!propertyIsIdentical(jcrProperty, baselineProperty, verifiedBaselineValues)) {
+                if (!propertyIsIdentical(jcrProperty, updateProperty, verifiedUpdateValues)) {
+                    return; // Successful merge, no action needed.
+                } else {
+                    final String msg = String.format("[OVERRIDE] Property '%s' has been changed in the repository, " +
+                                    "and will be overridden due to definition %s.",
+                            updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty));
+                    logger.info(msg);
+                }
             }
-            return; // Successful merge, no action needed.
+        }
+
+        if (baselineProperty == null && jcrProperty != null) {
+            if (!propertyIsIdentical(jcrProperty, updateProperty, verifiedUpdateValues)) {
+                return; // Successful merge, no action needed.
+            } else {
+                final String msg = String.format("[OVERRIDE] Property '%s' has been created in the repository, " +
+                                "and will be overridden due to definition %s.",
+                        updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty));
+                logger.info(msg);
+            }
         }
 
         // Update the property to its new value
         // TODO: is this check adding sufficient value, or can/should we always remove the old property?
-        if (updateProperty.getValueType().ordinal() != jcrProperty.getType()
-                || updateProperty.isMultiple() != jcrProperty.isMultiple()) {
+        if (jcrProperty != null
+                && (updateProperty.getValueType().ordinal() != jcrProperty.getType()
+                 || updateProperty.isMultiple() != jcrProperty.isMultiple())) {
             jcrProperty.remove();
         }
 
@@ -612,7 +583,7 @@ public class ConfigurationConfigService {
     }
 
     private void removeProperty(final ConfigurationProperty baselineProperty, final Node jcrNode)
-            throws RepositoryException, IOException, ConfigurationCollisionException {
+            throws RepositoryException, IOException {
 
         final Session session = jcrNode.getSession();
         final List<Value> verifiedBaselineValues = determineVerifiedValues(baselineProperty, session);
@@ -623,10 +594,10 @@ public class ConfigurationConfigService {
         }
 
         if (!propertyIsIdentical(jcrProperty, baselineProperty, verifiedBaselineValues)) {
-            final String msg = String.format("Failed to delete property '%s' originally defined in %s: "
-                    + "the runtime/repository value of this property differs from the old baseline; aborting",
-                    baselineProperty.getPath(), ModelUtils.formatDefinitions(baselineProperty));
-            throw new ConfigurationCollisionException(msg);
+            final String msg = String.format("[OVERRIDE] Property '%s' originally defined in %s has been changed, " +
+                            "but will be deleted.",
+                            baselineProperty.getPath(), ModelUtils.formatDefinitions(baselineProperty));
+            logger.info(msg);
         }
 
         jcrProperty.remove();
@@ -904,13 +875,9 @@ public class ConfigurationConfigService {
     }
 
     private void postProcessReferences(final List<UnprocessedReference> references)
-            throws Exception {
+            throws RepositoryException, IOException {
         for (UnprocessedReference reference : references) {
-            if (reference.baselineProperty == null) {
-                addProperty(reference.updateProperty, reference.targetNode);
-            } else {
-                updateProperty(reference.updateProperty, reference.baselineProperty, reference.targetNode);
-            }
+            updateProperty(reference.updateProperty, reference.baselineProperty, reference.targetNode);
         }
     }
 }

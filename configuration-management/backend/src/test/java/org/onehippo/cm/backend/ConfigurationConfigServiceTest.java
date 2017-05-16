@@ -198,6 +198,15 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
 
     @Test
     public void expect_unchanged_existing_properties_to_be_untouched() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org\n"
+                + "      multiple: [org1, org2]";
+        final ConfigurationModel baseline = makeMergedModel(new String[]{baselineSource});
+
         setProperty("/test", "single", PropertyType.STRING, "org");
         setProperty("/test", "multiple", PropertyType.STRING, new String[]{"org1","org2"});
 
@@ -212,7 +221,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
 
         final ExpectedEvents expectedEvents = new ExpectedEvents(); // aka, expect to see no events
 
-        applyDefinitions(source, makeMergedModel(DEFAULT_BASELINE_SOURCES), expectedEvents);
+        applyDefinitions(source, baseline, expectedEvents);
 
         expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
         expectProp("/test/single", PropertyType.STRING, "org");
