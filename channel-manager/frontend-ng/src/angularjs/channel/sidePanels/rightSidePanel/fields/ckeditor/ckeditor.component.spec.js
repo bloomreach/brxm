@@ -110,17 +110,29 @@ describe('CKEditor Component', () => {
     expect($ctrl.textAreaElement).toBeDefined();
   });
 
-  it('should apply CSS to editor', () => {
+  it('should apply CSS specified as string to the editor', () => {
     init();
 
     spyOn(DomService, 'addCssLinks');
-    const config = {
-      contentsCss: 'hippocontents.css',
-    };
+    config.contentsCss = 'hippocontents.css';
     $ctrl._applyEditorCSS(config);
     expect(DomService.addCssLinks).toHaveBeenCalled();
     expect(Array.isArray(config.contentsCss)).toBe(true);
+    expect(config.contentsCss.length).toEqual(1);
     expect(config.contentsCss[0]).toEqual('../../hippocontents.css');
+  });
+
+  it('should apply CSS specified as an array to the editor', () => {
+    init();
+
+    spyOn(DomService, 'addCssLinks');
+    config.contentsCss = ['foo.css', 'bar.css'];
+    $ctrl._applyEditorCSS(config);
+    expect(DomService.addCssLinks).toHaveBeenCalled();
+    expect(Array.isArray(config.contentsCss)).toBe(true);
+    expect(config.contentsCss.length).toEqual(2);
+    expect(config.contentsCss[0]).toEqual('../../foo.css');
+    expect(config.contentsCss[1]).toEqual('../../bar.css');
   });
 
   it('uses the current language', () => {
@@ -131,7 +143,16 @@ describe('CKEditor Component', () => {
     });
   });
 
-  it('update ckeditor value on change', () => {
+  it('updates the editor data when the model changes', () => {
+    init();
+
+    ngModel.$viewValue = '<p>changed</p>';
+    ngModel.$render();
+
+    expect(editor.setData).toHaveBeenCalledWith('<p>changed</p>');
+  });
+
+  it('updates the model data when the editor changes', () => {
     init();
     const onChange = getEventListener('change');
     const newValue = '<p>changed</p>';
@@ -142,14 +163,26 @@ describe('CKEditor Component', () => {
     expect(ngModel.$viewValue).toBe(newValue);
   });
 
-  it('ckeditor is focused', () => {
+  it('does not update the model data while the component is processing a model change', () => {
+    init();
+
+    const onChange = getEventListener('change');
+    editor.setData.and.callFake(onChange);
+
+    ngModel.$viewValue = '<p>changed</p>';
+    ngModel.$render();
+
+    expect(ngModel.$setViewValue).not.toHaveBeenCalled();
+  });
+
+  it('calls the onFocus handler when focused', () => {
     init();
     const onEditorFocus = getEventListener('focus');
     onEditorFocus();
     expect($ctrl.onFocus).toHaveBeenCalled();
   });
 
-  it('ckeditor is blurred', () => {
+  it('calls the onBlur handler when blurred', () => {
     init();
     const onEditorBlur = getEventListener('blur');
     onEditorBlur();

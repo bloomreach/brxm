@@ -157,7 +157,6 @@ describe('ChannelCtrl', () => {
     $rootScope.$digest();
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(true);
   });
 
   it('shows an error when the creation of the preview configuration fails', () => {

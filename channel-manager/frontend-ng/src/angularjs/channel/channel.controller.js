@@ -99,7 +99,6 @@ class ChannelCtrl {
     this.ChannelService.createPreviewConfiguration().then(() => {
       this.HippoIframeService.reload().then(() => {
         this.hasPreviewConfiguration = true;
-        this.isComponentsOverlayDisplayed = true;
       })
       .finally(() => {
         this.isCreatingPreview = false;

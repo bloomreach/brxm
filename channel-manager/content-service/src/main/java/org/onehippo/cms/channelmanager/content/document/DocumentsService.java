@@ -48,14 +48,18 @@ public interface DocumentsService {
     /**
      * Update the draft version of a document, and keep it locked for further editing.
      *
+     * The persisted document may differ from the posted one (e.g. when fields are subject to additional processing
+     * before being persisted).
+     *
      * @param uuid     UUID of the document to be updated
      * @param document Document containing the to-be-persisted content
      * @param session  user-authenticated, invocation-scoped JCR session.
      *                 In case of a bad request, changes may be pending.
+     * @return         JSON-serializable representation of the persisted document
      * @throws ErrorWithPayloadException
      *                 If updating the draft failed
      */
-    void updateDraft(String uuid, Document document, Session session, Locale locale) throws ErrorWithPayloadException;
+    Document updateDraft(String uuid, Document document, Session session, Locale locale) throws ErrorWithPayloadException;
 
     /**
      * Delete the draft version of a document, such that it is available for others to edit.
