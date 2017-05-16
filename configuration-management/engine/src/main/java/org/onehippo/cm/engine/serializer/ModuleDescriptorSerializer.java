@@ -57,9 +57,9 @@ public class ModuleDescriptorSerializer extends AbstractBaseSerializer {
     private Node representGroups(final Map<String, GroupImpl> groups) {
         final List<NodeTuple> rootTuples = new ArrayList<>();
 
-        final List<Node> configurationNodes = groups.values().stream().map(this::representGroup)
+        final List<Node> groupNodes = groups.values().stream().map(this::representGroup)
                 .collect(Collectors.toList());
-        rootTuples.add(createStrSeqTuple(GROUPS_KEY, configurationNodes));
+        rootTuples.add(createStrSeqTuple(GROUPS_KEY, groupNodes));
 
         return new MappingNode(Tag.MAP, rootTuples, false);
     }

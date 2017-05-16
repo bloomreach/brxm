@@ -74,7 +74,7 @@ public class FileConfigurationUtils {
         }
     }
 
-    public static boolean hasMultipleModules(Map<String, GroupImpl> configurations) {
-        return configurations.values().stream().flatMap(p -> p.getProjects().stream()).mapToInt(p -> p.getModules().size()).sum() > 1;
+    public static boolean hasMultipleModules(Map<String, GroupImpl> groups) {
+        return groups.values().stream().flatMap(p -> p.getProjects().stream()).mapToInt(p -> p.getModules().size()).sum() > 1;
     }
 }

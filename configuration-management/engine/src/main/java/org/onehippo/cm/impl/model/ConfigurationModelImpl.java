@@ -158,7 +158,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         }
 
         final String modelManifest = manifestToString(manifest);
-        log.debug("model manifest:\n"+modelManifest);
+        log.debug("model manifest:\n{}", modelManifest);
 
         return computeManifestDigest(modelManifest);
     }
@@ -173,7 +173,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
             MessageDigest md = MessageDigest.getInstance(DEFAULT_DIGEST);
             byte[] digest = md.digest(StandardCharsets.UTF_8.encode(modelManifest).array());
             String modelDigestString = ModuleImpl.toDigestHexString(digest);
-            log.debug("model digest:\n"+modelDigestString);
+            log.debug("model digest:\n{}", modelDigestString);
 
             return modelDigestString;
         }

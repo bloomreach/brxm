@@ -45,22 +45,22 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         final Map<String, GroupImpl> result = new LinkedHashMap<>();
         final Map<String, Node> sourceMap = asMapping(node, new String[]{GROUPS_KEY}, null);
 
-        for (Node configurationNode : asSequence(sourceMap.get(GROUPS_KEY))) {
-            constructConfiguration(configurationNode, result);
+        for (Node groupNode : asSequence(sourceMap.get(GROUPS_KEY))) {
+            constructGroup(groupNode, result);
         }
 
         return result;
     }
 
-    private void constructConfiguration(final Node src, final Map<String, GroupImpl> parent) throws ParserException {
-        final Map<String, Node> configurationMap = asMapping(src, new String[]{GROUP_KEY, PROJECTS_KEY}, new String[]{AFTER_KEY});
-        final String name = asStringScalar(configurationMap.get(GROUP_KEY));
-        final GroupImpl configuration = new GroupImpl(name);
-        configuration.addAfter(asSingleOrSetOfStrScalars(configurationMap.get(AFTER_KEY)));
-        parent.put(name, configuration);
+    private void constructGroup(final Node src, final Map<String, GroupImpl> parent) throws ParserException {
+        final Map<String, Node> groupMap = asMapping(src, new String[]{GROUP_KEY, PROJECTS_KEY}, new String[]{AFTER_KEY});
+        final String name = asStringScalar(groupMap.get(GROUP_KEY));
+        final GroupImpl group = new GroupImpl(name);
+        group.addAfter(asSingleOrSetOfStrScalars(groupMap.get(AFTER_KEY)));
+        parent.put(name, group);
 
-        for (Node projectNode : asSequence(configurationMap.get(PROJECTS_KEY))) {
-            constructProject(projectNode, configuration);
+        for (Node projectNode : asSequence(groupMap.get(PROJECTS_KEY))) {
+            constructProject(projectNode, group);
         }
     }
 

@@ -19,7 +19,7 @@ import java.util.List;
 
 public interface Group extends Orderable {
     /**
-     * @return The immutable list of {@link Project}s currently in this Configuration.
+     * @return The immutable list of {@link Project}s currently in this Group.
      */
     List<Project> getProjects();
 }

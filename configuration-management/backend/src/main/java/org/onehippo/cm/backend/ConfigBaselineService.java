@@ -146,12 +146,12 @@ public class ConfigBaselineService {
 
                 // create group, project, and module nodes, if necessary
                 // foreach group
-                for (Group cfg : model.getSortedGroups()) {
-                    Node cfgNode = createNodeIfNecessary(baseline, cfg.getName(), GROUP_TYPE, true);
+                for (Group group : model.getSortedGroups()) {
+                    Node groupNode = createNodeIfNecessary(baseline, group.getName(), GROUP_TYPE, true);
 
                     // foreach project
-                    for (Project project : cfg.getProjects()) {
-                        Node projectNode = createNodeIfNecessary(cfgNode, project.getName(), PROJECT_TYPE, true);
+                    for (Project project : group.getProjects()) {
+                        Node projectNode = createNodeIfNecessary(groupNode, project.getName(), PROJECT_TYPE, true);
 
                         // foreach module
                         for (Module module : project.getModules()) {
@@ -200,9 +200,9 @@ public class ConfigBaselineService {
 
         // AFAIK, a module MUST have a descriptor, but check here for a malformed package or special case
         // TODO the "/../" is an ugly hack because RIP actually treats absolute paths as relative to config base, not module base
-        if (rip.hasResource(null, "/../"+ HCM_MODULE_YAML)) {
+        if (rip.hasResource(null, "/../" + HCM_MODULE_YAML)) {
             // open descriptor InputStream
-            InputStream is = rip.getResourceInputStream(null, "/../"+ HCM_MODULE_YAML);
+            InputStream is = rip.getResourceInputStream(null, "/../" + HCM_MODULE_YAML);
 
             // store yaml and digest (this call will close the input stream)
             storeString(is, descriptorNode, YAML_PROPERTY);
@@ -218,12 +218,12 @@ public class ConfigBaselineService {
 
         // if this Module has an actions file...
         // TODO the "/../" is an ugly hack because RIP actually treats absolute paths as relative to config base, not module base
-        if (rip.hasResource(null, "/../"+ACTIONS_YAML)) {
+        if (rip.hasResource(null, "/../" + ACTIONS_YAML)) {
             // create actions node, if necessary
             Node actionsNode = createNodeIfNecessary(moduleNode, ACTIONS_NODE, ACTIONS_TYPE, false);
 
             // open actions InputStream
-            InputStream is = rip.getResourceInputStream(null, "/../"+ACTIONS_YAML);
+            InputStream is = rip.getResourceInputStream(null, "/../" + ACTIONS_YAML);
 
             // store yaml and digest (this call will close the input stream)
             storeString(is, actionsNode, YAML_PROPERTY);
@@ -274,7 +274,7 @@ public class ConfigBaselineService {
                 CONFIG_FOLDER_TYPE, DEFINITIONS_TYPE);
 
         // open source yaml InputStream
-        InputStream is = rip.getResourceInputStream(null, "/"+sourcePath);
+        InputStream is = rip.getResourceInputStream(null, "/" + sourcePath);
 
         // store yaml and digest (this call will close the input stream)
         storeString(is, sourceNode, YAML_PROPERTY);
@@ -527,7 +527,7 @@ public class ConfigBaselineService {
     /**
      * First phase of loading a baseline: loading and parsing module descriptors. Accumulates results in rips and groups.
      * @param baselineNode the base node for the entire stored configuration baseline
-     * @param groups accumulator object for Configuration groups
+     * @param groups accumulator object for configuration Groups
      * @throws RepositoryException
      * @throws ParserException
      */
@@ -726,7 +726,7 @@ public class ConfigBaselineService {
             // otherwise, if the baseline node DOES exist...
             // ... load the digest directly from the baseline JCR node
             String baselineDigestString = getBaselineNode(rootNode).getProperty(DIGEST_PROPERTY).getString();
-            log.debug("baseline digest:\n"+baselineDigestString);
+            log.debug("baseline digest:\n" + baselineDigestString);
 
             // compute a digest from the model manifest
             String modelDigestString = model.getDigest();

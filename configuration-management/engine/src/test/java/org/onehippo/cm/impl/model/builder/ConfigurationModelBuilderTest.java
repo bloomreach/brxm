@@ -61,10 +61,10 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
     }
 
     @Test
-    public void new_configuration() {
-        final GroupImpl configuration = new GroupImpl("c1");
-        configuration.addProject("p1");
-        final ConfigurationModel model = new ConfigurationModelBuilder().push(configuration).build();
+    public void new_group() {
+        final GroupImpl group = new GroupImpl("c1");
+        group.addProject("p1");
+        final ConfigurationModel model = new ConfigurationModelBuilder().push(group).build();
 
         final Group consolidated = model.getSortedGroups().get(0);
         assertEquals("c1", consolidated.getName());
@@ -72,7 +72,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
     }
 
     @Test
-    public void separate_configurations() {
+    public void separate_groups() {
         final GroupImpl c1 = new GroupImpl("c1");
         final GroupImpl c2 = new GroupImpl("c2");
         c1.addProject("p1");
@@ -109,7 +109,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
     }
 
     @Test
-    public void merged_configurations() {
+    public void merged_groups() {
         final GroupImpl c1a = new GroupImpl("c1");
         final GroupImpl c1b = new GroupImpl("c1");
         c1a.addProject("p1");
@@ -138,7 +138,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
     }
 
     @Test
-    public void dependent_configurations() {
+    public void dependent_groups() {
         final GroupImpl c1 = new GroupImpl("c1").addAfter(ImmutableSet.of("c2"));
         final GroupImpl c2 = new GroupImpl("c2");
 
@@ -152,7 +152,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
     }
 
     @Test
-    public void merged_configuration_dependencies() {
+    public void merged_group_dependencies() {
         final GroupImpl ca1a = new GroupImpl("ca1").addAfter(ImmutableSet.of("cx1", "cx2"));
         final GroupImpl ca1b = new GroupImpl("ca1").addAfter(ImmutableSet.of("cx1", "cx3"));
         final GroupImpl cx1 = new GroupImpl("cx1");

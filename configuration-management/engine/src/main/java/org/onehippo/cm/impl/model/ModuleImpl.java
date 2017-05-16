@@ -275,7 +275,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
 
         // digest the descriptor
         // TODO this is an ugly hack in part because RIP uses config root instead of module root
-        boolean hasDescriptor = digestResource(null, "/../"+ HCM_MODULE_YAML, rip, items);
+        boolean hasDescriptor = digestResource(null, "/../" + HCM_MODULE_YAML, rip, items);
 
         // special-case handle a missing descriptor by generating a dummy one, for demo case
         // TODO remove when demo is restructured to use module-specific descriptors
@@ -283,11 +283,11 @@ public class ModuleImpl implements Module, Comparable<Module> {
             // create a manifest item for a dummy descriptor
             String descriptor = this.compileDummyDescriptor();
             String digest = digestFromStream(IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8));
-            items.put("/"+ HCM_MODULE_YAML, digest);
+            items.put("/" + HCM_MODULE_YAML, digest);
         }
 
         // digest the actions file
-        digestResource(null, "/../"+ACTIONS_YAML, rip, items);
+        digestResource(null, "/../" + ACTIONS_YAML, rip, items);
 
         // for each content source
         for (Source source : this.getContentSources()) {
@@ -295,13 +295,13 @@ public class ModuleImpl implements Module, Comparable<Module> {
             ContentDefinition firstDef = (ContentDefinition) source.getDefinitions().get(0);
 
             // add the first definition path to manifest
-            items.put("/"+ HCM_CONTENT_FOLDER +"/"+source.getPath(), firstDef.getNode().getPath());
+            items.put("/" + HCM_CONTENT_FOLDER + "/" + source.getPath(), firstDef.getNode().getPath());
         }
 
         // for each config source
         for (Source source : this.getConfigSources()) {
             // digest the source
-            digestResource(source, "/"+source.getPath(), rip, items);
+            digestResource(source, "/" + source.getPath(), rip, items);
 
             // for each definition
             for (Definition def : source.getDefinitions()) {
@@ -405,7 +405,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
                 path = StringUtils.removeStart(path, "/..");
             }
             else {
-                path = "/"+ HCM_CONFIG_FOLDER +path;
+                path = "/" + HCM_CONFIG_FOLDER + path;
             }
 
             items.put(path, digestString);
@@ -448,7 +448,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
      */
     public static String toDigestHexString(final byte[] digest) {
         // prepend algorithm using same style as used in Hippo CMS password hashing
-        return "$"+DEFAULT_DIGEST+"$"+ DatatypeConverter.printHexBinary(digest);
+        return "$" + DEFAULT_DIGEST + "$" + DatatypeConverter.printHexBinary(digest);
     }
 
     /**

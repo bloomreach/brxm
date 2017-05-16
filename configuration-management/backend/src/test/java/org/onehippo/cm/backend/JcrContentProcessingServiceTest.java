@@ -259,8 +259,8 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
             final ModuleImpl module = (ModuleImpl) definitions.get(0).getSource().getModule();
             module.setConfigResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
             module.setContentResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
-            final GroupImpl configuration = (GroupImpl) module.getProject().getGroup();
-            configurationModelBuilder.push(configuration);
+            final GroupImpl group = (GroupImpl) module.getProject().getGroup();
+            configurationModelBuilder.push(group);
         }
         return configurationModelBuilder.build();
     }

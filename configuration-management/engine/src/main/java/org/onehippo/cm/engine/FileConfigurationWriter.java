@@ -40,18 +40,18 @@ import org.yaml.snakeyaml.nodes.Node;
 public class FileConfigurationWriter {
 
     void write(final Path destination,
-               final Map<String, GroupImpl> configurations,
+               final Map<String, GroupImpl> groups,
                final Map<Module, ModuleContext> moduleContextMap,
                final boolean explicitSequencing) throws IOException {
         final ModuleDescriptorSerializer moduleDescriptorSerializer = new ModuleDescriptorSerializer(explicitSequencing);
         final Path moduleDescriptorPath = destination.resolve(Constants.HCM_MODULE_YAML);
 
         try (final OutputStream moduleDescriptorOutputStream = new FileOutputStream(moduleDescriptorPath.toFile())) {
-            moduleDescriptorSerializer.serialize(moduleDescriptorOutputStream, configurations);
+            moduleDescriptorSerializer.serialize(moduleDescriptorOutputStream, groups);
         }
 
-        for (GroupImpl configuration : configurations.values()) {
-            for (Project project : configuration.getProjects()) {
+        for (GroupImpl group : groups.values()) {
+            for (Project project : group.getProjects()) {
                 for (Module module : project.getModules()) {
                     final ModuleContext moduleContext = moduleContextMap.get(module);
                     moduleContext.createOutputProviders(moduleDescriptorPath);
