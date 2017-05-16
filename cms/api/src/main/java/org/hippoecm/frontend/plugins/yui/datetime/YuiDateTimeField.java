@@ -118,7 +118,7 @@ public class YuiDateTimeField extends DateTimeField {
 
         //Add change behavior to super fields
         for (final String name : new String[] { "date", "hours", "minutes", "amOrPmChoice" }) {
-            get(name).add(new AjaxFormComponentUpdatingBehavior("onChange") {
+            get(name).add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                 @Override
                 protected void onUpdate(final AjaxRequestTarget target) {

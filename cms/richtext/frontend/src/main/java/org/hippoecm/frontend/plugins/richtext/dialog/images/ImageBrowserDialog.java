@@ -100,7 +100,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
             }
 
         });
-        type.add(new AjaxFormComponentUpdatingBehavior("onChange") {
+        type.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
@@ -138,7 +138,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
             }
 
         });
-        align.add(new AjaxFormComponentUpdatingBehavior("onChange") {
+        align.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {

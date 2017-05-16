@@ -56,7 +56,7 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
         add(formComponent = component);
         component.setOutputMarkupId(true);
         if(throttleDelay == null) {
-            component.add(new AjaxFormComponentUpdatingBehavior("onChange") {
+            component.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                 @Override
                 protected void onUpdate(final AjaxRequestTarget target) {
