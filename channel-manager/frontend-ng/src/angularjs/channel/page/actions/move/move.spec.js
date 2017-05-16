@@ -75,7 +75,7 @@ describe('PageActionMove', () => {
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(ChannelService, 'recordOwnChange');
-    spyOn(FeedbackService, 'showErrorResponseOnSubpage');
+    spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HippoIframeService, 'load');
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
@@ -111,7 +111,7 @@ describe('PageActionMove', () => {
 
     expect(PageMoveCtrl.locations).toEqual([]);
     expect(PageMoveCtrl.location).toBeUndefined();
-    expect(FeedbackService.showErrorResponseOnSubpage).toHaveBeenCalledWith(undefined, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
+    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
   });
 
   it('filters out unavailable locations', () => {
@@ -193,7 +193,7 @@ describe('PageActionMove', () => {
     PageMoveCtrl.move();
     $rootScope.$digest();
 
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_MOVE_FAILED', PageMoveCtrl.errorMap);
     expect($scope.onDone).not.toHaveBeenCalled();
   });
@@ -206,7 +206,7 @@ describe('PageActionMove', () => {
     SiteMapItemService.updateItem.and.returnValue($q.reject(response));
     PageMoveCtrl.move();
     $rootScope.$digest();
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(response, 'ERROR_PAGE_MOVE_FAILED', PageMoveCtrl.errorMap);
   });
 });

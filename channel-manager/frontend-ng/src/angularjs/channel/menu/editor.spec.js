@@ -64,7 +64,7 @@ describe('MenuEditor', () => {
     spyOn(ChannelService, 'reload');
     spyOn(DialogService, 'confirm').and.returnValue(dialog);
     spyOn(DialogService, 'show').and.returnValue($q.when());
-    spyOn(FeedbackService, 'showErrorResponseOnSubpage');
+    spyOn(FeedbackService, 'showErrorResponse');
   });
 
   function compileDirectiveAndGetController() {
@@ -169,7 +169,7 @@ describe('MenuEditor', () => {
 
         MenuEditorCtrl.addItem();
         $rootScope.$apply();
-        expect(FeedbackService.showErrorResponseOnSubpage)
+        expect(FeedbackService.showErrorResponse)
           .toHaveBeenCalledWith(response, 'ERROR_MENU_CREATE_FAILED', MenuEditorCtrl.errorMap);
       });
 
@@ -178,7 +178,7 @@ describe('MenuEditor', () => {
 
         MenuEditorCtrl.addItem();
         $rootScope.$digest();
-        expect(FeedbackService.showErrorResponseOnSubpage)
+        expect(FeedbackService.showErrorResponse)
           .toHaveBeenCalledWith(undefined, 'ERROR_MENU_CREATE_FAILED', MenuEditorCtrl.errorMap);
       });
     });
@@ -257,7 +257,7 @@ describe('MenuEditor', () => {
         MenuEditorCtrl.saveItem();
         $rootScope.$digest();
 
-        expect(FeedbackService.showErrorResponseOnSubpage)
+        expect(FeedbackService.showErrorResponse)
           .toHaveBeenCalledWith(response, 'ERROR_MENU_ITEM_SAVE_FAILED', MenuEditorCtrl.errorMap);
         expect(MenuEditorCtrl.editingItem).not.toBeNull();
       });
@@ -273,7 +273,7 @@ describe('MenuEditor', () => {
         MenuEditorCtrl.saveItem();
         $rootScope.$digest();
 
-        expect(FeedbackService.showErrorResponseOnSubpage)
+        expect(FeedbackService.showErrorResponse)
           .toHaveBeenCalledWith(undefined, 'ERROR_MENU_ITEM_SAVE_FAILED', MenuEditorCtrl.errorMap);
       });
     });
@@ -331,7 +331,7 @@ describe('MenuEditor', () => {
 
         expect(SiteMenuService.loadMenu).toHaveBeenCalledWith('testUuid');
         expect(ChannelService.reload).toHaveBeenCalled();
-        expect(FeedbackService.showErrorResponseOnSubpage)
+        expect(FeedbackService.showErrorResponse)
           .toHaveBeenCalledWith(response, 'ERROR_MENU_ITEM_DELETE_FAILED', MenuEditorCtrl.errorMap);
       });
 
@@ -347,7 +347,7 @@ describe('MenuEditor', () => {
         MenuEditorCtrl.deleteItem();
         $rootScope.$digest();
 
-        expect(FeedbackService.showErrorResponseOnSubpage)
+        expect(FeedbackService.showErrorResponse)
           .toHaveBeenCalledWith(response, 'ERROR_MENU_ITEM_DELETE_FAILED', MenuEditorCtrl.errorMap);
       });
 
@@ -362,7 +362,7 @@ describe('MenuEditor', () => {
         MenuEditorCtrl.deleteItem();
         $rootScope.$digest();
 
-        expect(FeedbackService.showErrorResponseOnSubpage)
+        expect(FeedbackService.showErrorResponse)
           .toHaveBeenCalledWith(undefined, 'ERROR_MENU_ITEM_DELETE_FAILED', MenuEditorCtrl.errorMap);
       });
     });

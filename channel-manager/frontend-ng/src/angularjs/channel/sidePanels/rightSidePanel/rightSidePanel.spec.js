@@ -673,7 +673,7 @@ describe('RightSidePanel', () => {
 
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {}, $ctrl.$element);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {});
   });
 
   it('shows an error when document save fails due to other user now being the holder', () => {
@@ -693,7 +693,7 @@ describe('RightSidePanel', () => {
 
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_OTHER_HOLDER', { user: 'tester' }, $ctrl.$element);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_OTHER_HOLDER', { user: 'tester' });
   });
 
   it('shows an error when document save fails due to other *named* user now being the holder', () => {
@@ -714,7 +714,7 @@ describe('RightSidePanel', () => {
 
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_OTHER_HOLDER', { user: 'Joe Tester' }, $ctrl.$element);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_OTHER_HOLDER', { user: 'Joe Tester' });
   });
 
   describe('when document save fails because of an invalid field', () => {
@@ -746,7 +746,7 @@ describe('RightSidePanel', () => {
 
       $rootScope.$digest();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {}, $ctrl.$element);
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {});
       expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
       expect($ctrl.docType).toBe(reloadedDocumentType);
     });
@@ -760,7 +760,7 @@ describe('RightSidePanel', () => {
 
       $rootScope.$digest();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {}, $ctrl.$element);
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {});
       expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
       expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE', {});
       expect($ctrl.docType).toBe(testDocumentType);
@@ -778,7 +778,7 @@ describe('RightSidePanel', () => {
 
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UNABLE_TO_SAVE', {}, $ctrl.$element);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UNABLE_TO_SAVE', {});
   });
 
   it('directly opens the full content in a certain mode if the form is not dirty', () => {
