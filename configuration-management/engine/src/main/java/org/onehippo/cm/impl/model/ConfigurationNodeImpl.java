@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.onehippo.cm.api.model.ConfigurationItemCategory;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
 import org.onehippo.cm.engine.SnsUtils;
@@ -142,6 +143,16 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
 
     public void setIgnoreReorderedChildren(final boolean ignoreReorderedChildren) {
         this.ignoreReorderedChildren = ignoreReorderedChildren;
+    }
+
+    @Override
+    public ConfigurationItemCategory getChildCategory(final String childName) {
+        // mock the implementation for now ...
+        if (getPath().equals("/path/to/node/runtime-property")) return ConfigurationItemCategory.RUNTIME;
+        if (getPath().equals("/path/to/runtime-node")) return ConfigurationItemCategory.RUNTIME;
+        if (getPath().startsWith("/path/to/residual-child-nodes-runtime/")) return ConfigurationItemCategory.RUNTIME;
+
+        return ConfigurationItemCategory.CONFIGURATION;
     }
 
 }

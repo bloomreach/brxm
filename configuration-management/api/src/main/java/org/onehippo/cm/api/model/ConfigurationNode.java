@@ -18,12 +18,14 @@ package org.onehippo.cm.api.model;
 import java.util.Map;
 
 public interface ConfigurationNode extends ConfigurationItem {
+
     /**
      * @return The <strong>ordered</strong> map of child {@link ConfigurationNode}s by name for this
      * {@link ConfigurationNode} as an immutable map and empty immutable map if none present.
      * Nodes names are always indexed names, e.g. <code>node[1]</code>.
      */
     Map<String, ConfigurationNode> getNodes();
+
     /**
      * @return The <strong>ordered</strong> map of {@link ConfigurationProperty}s by name for this
      * {@link ConfigurationNode} as an immutable map and empty immutable map if none present.
@@ -35,4 +37,12 @@ public interface ConfigurationNode extends ConfigurationItem {
      * even if its primary node type indicates otherwise. Returns null if unspecified.
      */
     Boolean getIgnoreReorderedChildren();
+
+    /**
+     * Get the {@link ConfigurationItemCategory} of a child item by name.
+     * @param childName A child item (node or property) name
+     * @return The {@link ConfigurationItemCategory} of the child item, never returns null.
+     */
+    ConfigurationItemCategory getChildCategory(final String childName);
+
 }
