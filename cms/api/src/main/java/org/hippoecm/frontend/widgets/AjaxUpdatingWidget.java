@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
     private FormComponent<T> formComponent;
     private Duration throttleDelay;
 
-    public AjaxUpdatingWidget(String id, IModel<T> model) {
+    public AjaxUpdatingWidget(final String id, final IModel<T> model) {
         super(id, model);
     }
 
-    public AjaxUpdatingWidget(String id, IModel<T> model, Duration throttleDelay) {
+    public AjaxUpdatingWidget(final String id, final IModel<T> model, final Duration throttleDelay) {
         super(id, model);
         this.throttleDelay = throttleDelay;
     }
@@ -59,7 +59,7 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
             component.add(new AjaxFormComponentUpdatingBehavior("onChange") {
 
                 @Override
-                protected void onUpdate(AjaxRequestTarget target) {
+                protected void onUpdate(final AjaxRequestTarget target) {
                     AjaxUpdatingWidget.this.onUpdate(target);
                 }
             });
@@ -73,7 +73,7 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
                 }
 
                 @Override
-                protected void onUpdate(AjaxRequestTarget target) {
+                protected void onUpdate(final AjaxRequestTarget target) {
                     AjaxUpdatingWidget.this.onUpdate(target);
                 }
 
@@ -90,6 +90,6 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
     }
 
     // callback for subclasses
-    protected void onUpdate(AjaxRequestTarget target) {
+    protected void onUpdate(final AjaxRequestTarget target) {
     }
 }
