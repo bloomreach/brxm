@@ -23,7 +23,7 @@ const propertyField = {
     field: '<',
     info: '<',
     readOnly: '<',
-    value: '<',
+    value: '=',
   },
   template,
   controller,

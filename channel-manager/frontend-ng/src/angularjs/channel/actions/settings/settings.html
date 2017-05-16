@@ -32,21 +32,21 @@
       <h3 class="md-title qa-fieldgroup">{{ channelSettings.getLabel(fieldGroup.titleKey) }}</h3>
 
       <property-field ng-repeat="field in fieldGroup.value"
-                        field="field"
-                        value="channelSettings.values[field]"
-                        read-only="channelSettings.isReadOnly()"
-                        error="form[field].$error"
-                        info="channelSettings.channelInfoDescription">
-      </property-field>
-    </div>
-
-    <property-field ng-if="!channelSettings.getFieldGroups().length"
-                      ng-repeat="field in channelSettings.getUngroupedFields()"
                       field="field"
                       value="channelSettings.values[field]"
                       read-only="channelSettings.isReadOnly()"
                       error="form[field].$error"
                       info="channelSettings.channelInfoDescription">
+      </property-field>
+    </div>
+
+    <property-field ng-if="!channelSettings.getFieldGroups().length"
+                    ng-repeat="field in channelSettings.getUngroupedFields()"
+                    field="field"
+                    value="channelSettings.values[field]"
+                    read-only="channelSettings.isReadOnly()"
+                    error="form[field].$error"
+                    info="channelSettings.channelInfoDescription">
     </property-field>
 
     <div layout="row"
