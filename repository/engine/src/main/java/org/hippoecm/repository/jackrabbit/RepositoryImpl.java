@@ -229,7 +229,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
         return super.getConfig();
     }
 
-    protected NodeTypeRegistry getNodeTypeRegistry() {
+    public NodeTypeRegistry getNodeTypeRegistry() {
         return context.getNodeTypeRegistry();
     }
 
