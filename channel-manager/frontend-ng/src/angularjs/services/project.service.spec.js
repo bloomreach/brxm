@@ -20,6 +20,7 @@ import 'angular-mocks';
 describe('ProjectService', () => {
   let $httpBackend;
   let ProjectService;
+  let HstService;
 
   const mountId = '12';
 
@@ -40,10 +41,13 @@ describe('ProjectService', () => {
       $provide.value('ChannelService', channelServiceMock);
     });
 
-    inject((_$httpBackend_, _ProjectService_) => {
+    inject((_$httpBackend_, _ProjectService_, _HstService_) => {
       $httpBackend = _$httpBackend_;
       ProjectService = _ProjectService_;
+      HstService = _HstService_;
     });
+
+    spyOn(HstService, 'doPut');
   });
 
   afterEach(() => {
@@ -78,5 +82,62 @@ describe('ProjectService', () => {
     $httpBackend.flush();
 
     expect(actual).toEqual(returnFromRest);
+  });
+
+  it('selects master if the selectedProject changes to master', () => {
+    const master = {
+      id: 'master',
+      name: 'master',
+    };
+    ProjectService._master = master;
+    ProjectService._mountId = mountId;
+    ProjectService.projectChanged(master);
+    expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectmaster');
+  });
+
+  it('selects the branch associated with the selectedProject if the selectedProject has already been associated', () => {
+    const master = {
+      id: 'master',
+      name: 'master',
+    };
+    const test1 = {
+      id: 'test1',
+      name: 'test1',
+    };
+    const withBranch = [
+      test1,
+      {
+        id: 'test2',
+        name: 'test2',
+      }];
+    ProjectService.withBranch = withBranch;
+    ProjectService.withoutBranch = [];
+    ProjectService._master = master;
+    ProjectService._mountId = mountId;
+    ProjectService.projectChanged(test1);
+    expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectbranch', test1.id);
+  });
+
+  it('creates a branch based on the selectedProject if the selectedProject has not been yet associated', () => {
+    const master = {
+      id: 'master',
+      name: 'master',
+    };
+    const test1 = {
+      id: 'test1',
+      name: 'test1',
+    };
+    const withoutBranch = [
+      test1,
+      {
+        id: 'test2',
+        name: 'test2',
+      }];
+    ProjectService.withBranch = [];
+    ProjectService.withoutBranch = withoutBranch;
+    ProjectService._master = master;
+    ProjectService._mountId = mountId;
+    ProjectService.projectChanged(test1);
+    expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'createbranch', test1.id);
   });
 });
