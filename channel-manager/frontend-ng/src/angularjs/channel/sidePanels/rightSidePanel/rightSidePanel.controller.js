@@ -249,7 +249,7 @@ class RightSidePanelCtrl {
           this._reloadDocumentType();
         }
 
-        this.FeedbackService.showError(errorKey, params, this.$element);
+        this.FeedbackService.showError(errorKey, params);
 
         return this.$q.reject(); // tell the caller that saving has failed.
       });

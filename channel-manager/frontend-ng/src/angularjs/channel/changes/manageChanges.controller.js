@@ -52,14 +52,14 @@ class ChangeManagementCtrl {
   publishChanges(user) {
     this.ChannelService.publishChangesOf([user])
       .then(() => this._onSuccess())
-      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_CHANGE_PUBLICATION_FAILED'));
+      .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_CHANGE_PUBLICATION_FAILED'));
   }
 
   discardChanges(user) {
     this._confirmDiscard(user).then(() => {
       this.ChannelService.discardChangesOf([user])
         .then(() => this._onSuccess())
-        .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_CHANGE_DISCARD_FAILED'));
+        .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_CHANGE_DISCARD_FAILED'));
     });
   }
 
@@ -67,7 +67,7 @@ class ChangeManagementCtrl {
     this._confirmPublish().then(() => {
       this.ChannelService.publishChangesOf(this.usersWithChanges)
         .then(() => this._onSuccess())
-        .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_CHANGE_PUBLICATION_FAILED'));
+        .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_CHANGE_PUBLICATION_FAILED'));
     });
   }
 
@@ -75,7 +75,7 @@ class ChangeManagementCtrl {
     this._confirmDiscard().then(() => {
       this.ChannelService.discardChangesOf(this.usersWithChanges)
         .then(() => this._onSuccess())
-        .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_CHANGE_DISCARD_FAILED'));
+        .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_CHANGE_DISCARD_FAILED'));
     });
   }
 

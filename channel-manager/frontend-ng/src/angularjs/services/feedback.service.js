@@ -26,32 +26,18 @@ class FeedbackService {
     this.$mdToast = $mdToast;
   }
 
-  showError(key, params, parentJQueryElement) {
-    this._showErrorMessage(key, params, parentJQueryElement);
+  showError(key, params) {
+    this._showErrorMessage(key, params);
   }
 
-  showErrorOnSubpage(key, params) {
-    const target = this._getSubpageTarget();
-    this._showErrorMessage(key, params, target);
-  }
-
-  showErrorResponseOnSubpage(response, defaultKey, errorMap) {
-    const target = this._getSubpageTarget();
-    this.showErrorResponse(response, defaultKey, errorMap, target);
-  }
-
-  _getSubpageTarget() {
-    return $('.subpage-feedback-parent');
-  }
-
-  _showErrorMessage(key, params, target) {
+  _showErrorMessage(key, params) {
     const text = this.$translate.instant(key, params);
-    this._show(text, target);
+    this._show(text);
   }
 
-  showErrorResponse(response, defaultKey, errorMap = {}, target) {
+  showErrorResponse(response, defaultKey, errorMap = {}) {
     if (!response) {
-      this._showErrorMessage(defaultKey, undefined, target);
+      this._showErrorMessage(defaultKey, undefined);
       return;
     }
 
@@ -74,16 +60,14 @@ class FeedbackService {
       text = this.$translate.instant(key, responseParams);
     }
 
-    this._show(text, target);
+    this._show(text);
   }
 
-  _show(text, parentJQueryElement = $('hippo-iframe')) {
-    this.$mdToast.show(
-      this.$mdToast.simple()
-        .textContent(text)
-        .position('top right')
-        .hideDelay(HIDE_DELAY_IN_MS)
-        .parent(parentJQueryElement),
+  _show(text) {
+    this.$mdToast.show(this.$mdToast.simple()
+      .textContent(text)
+      .position('top right')
+      .hideDelay(HIDE_DELAY_IN_MS),
     );
   }
 }

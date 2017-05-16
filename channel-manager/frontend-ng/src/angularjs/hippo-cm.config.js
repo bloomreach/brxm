@@ -31,13 +31,10 @@ function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $transla
           prefix: 'i18n/',
           suffix: `.json?antiCache=${ConfigService.antiCache}`,
         });
-        return $translate.use(ConfigService.locale)
-          .catch(() => {
-            $translate.use($translate.fallbackLanguage());
-          });
+        return $translate.use(ConfigService.locale || $translate.fallbackLanguage())
+          .catch(() => $translate.use($translate.fallbackLanguage()));
       },
     },
-    abstract: true,
   });
 
   $translateProvider

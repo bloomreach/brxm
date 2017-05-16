@@ -70,7 +70,7 @@ describe('ChangeManagement', () => {
     spyOn(CmsService, 'publish');
     spyOn(DialogService, 'confirm').and.returnValue(dialog);
     spyOn(DialogService, 'show').and.returnValue($q.when());
-    spyOn(FeedbackService, 'showErrorResponseOnSubpage');
+    spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HippoIframeService, 'reload');
 
     ConfigService.cmsUser = 'testuser';
@@ -161,7 +161,7 @@ describe('ChangeManagement', () => {
     ChangeManagementCtrl.publishAllChanges();
     $rootScope.$apply();
 
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(response, 'ERROR_CHANGE_PUBLICATION_FAILED');
     expect($scope.onDone).not.toHaveBeenCalled();
 
@@ -170,7 +170,7 @@ describe('ChangeManagement', () => {
     ChangeManagementCtrl.publishChanges('testuser');
     $rootScope.$apply();
 
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(undefined, 'ERROR_CHANGE_PUBLICATION_FAILED');
   });
 
@@ -181,7 +181,7 @@ describe('ChangeManagement', () => {
     ChangeManagementCtrl.discardAllChanges();
     $rootScope.$apply();
 
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(response, 'ERROR_CHANGE_DISCARD_FAILED');
     expect($scope.onDone).not.toHaveBeenCalled();
 
@@ -190,7 +190,7 @@ describe('ChangeManagement', () => {
     ChangeManagementCtrl.discardChanges('testuser');
     $rootScope.$apply();
 
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(undefined, 'ERROR_CHANGE_DISCARD_FAILED');
   });
 
