@@ -245,9 +245,9 @@
       this._showPicker(fieldId, dialogConfig, selectedLink, this.initialConfig.linkPickerWicketUrl);
     },
 
-    _showImagePicker: function(fieldId, dialogConfig, selectedLink, callback) {
+    _showImagePicker: function(fieldId, dialogConfig, selectedImage, callback) {
       this.imagePickerCallback = callback;
-      this._showPicker(fieldId, dialogConfig, selectedLink, this.initialConfig.imagePickerWicketUrl);
+      this._showPicker(fieldId, dialogConfig, selectedImage, this.initialConfig.imagePickerWicketUrl);
     },
 
     _showPicker: function(fieldId, dialogConfig, selection, wicketUrl) {
