@@ -42,6 +42,7 @@ class ProjectService {
   }
 
   projects() {
+    console.log('projects');
     return this._getProjects(this._mountId)
       .then((result) => {
         this.currentBranch()
@@ -50,9 +51,12 @@ class ProjectService {
             this.withBranch = this.withBranch.concat(result.withBranch);
             this.withoutBranch = result.withoutBranch;
             this.selectedProject = this._master;
+            let disabled = false;
             if (branchId) {
+              disabled = true;
               this.selectedProject = this.withBranch.find(project => this._compareIgnorePreview(project.id, branchId));
             }
+            this.withoutBranch = this.withoutBranch.map(p => Object.create(p, { disabled: { value: disabled } }));
           });
       });
   }
@@ -100,8 +104,9 @@ class ProjectService {
   }
 
   selectMaster() {
-    this.HstService.doPut(null, this._mountId, 'selectmaster');
+    return this.HstService.doPut(null, this._mountId, 'selectmaster');
   }
+
 }
 
 export default ProjectService;

@@ -33,7 +33,7 @@
     <md-divider></md-divider>
 
     <md-option ng-repeat="project in $ctrl.getWithoutBranch() | orderBy: 'name'"
-               ng-value="project"
+               ng-value="project" ng-disabled="project.disabled"
                md-truncate>
       {{ project.name }}
     </md-option>
