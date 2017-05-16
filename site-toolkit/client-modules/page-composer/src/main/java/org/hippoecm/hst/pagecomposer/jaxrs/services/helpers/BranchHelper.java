@@ -131,7 +131,7 @@ public class BranchHelper {
         JcrUtils.copy(session, liveBranchConfigurationNode.getPath() + "/" + NODENAME_HST_WORKSPACE,
                 liveBranchConfigurationNode.getPath() + "/" + NODENAME_HST_UPSTREAM);
         Node upstream = session.getNode(liveBranchConfigurationNode.getPath() + "/" + NODENAME_HST_UPSTREAM);
-        workspaceHasher.hash(upstream, true);
+        workspaceHasher.hash(upstream, true, true);
     }
 
     private void assertBranchDoesNotExist(final String liveConfigurationPath, final Node liveMasterConfigurationNode, final String liveBranchName) throws RepositoryException {
