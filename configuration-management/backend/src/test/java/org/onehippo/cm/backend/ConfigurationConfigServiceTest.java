@@ -61,7 +61,6 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                     + "      jcr:primaryType: nt:unstructured"
     };
 
-
     @Before
     public void createTestNode() throws RepositoryException {
         testNode = session.getRootNode().addNode("test");
@@ -90,7 +89,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
         final ExpectedEvents expectedEvents = new ExpectedEvents()
                 .expectNodeAdded("/test/node", JCR_PRIMARYTYPE);
 
-        applyDefinitions(source, makeMergedModel(DEFAULT_BASELINE_SOURCES), expectedEvents);
+        applyDefinitions(source, expectedEvents);
 
         expectNode("/test/node", "[]", "[jcr:primaryType]");
         expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test:type");
@@ -122,7 +121,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "        jcr:primaryType: test:type\n"
                 + "";
 
-        ConfigurationModel baseline = applyDefinitions(startConfiguration, makeMergedModel(DEFAULT_BASELINE_SOURCES));
+        ConfigurationModel baseline = applyDefinitions(startConfiguration);
 
         expectNode("/test/node", "[]", "[jcr:primaryType]");
         expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test:type");
@@ -189,7 +188,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "";
 
         try {
-            applyDefinitions(source, makeMergedModel(DEFAULT_BASELINE_SOURCES));
+            applyDefinitions(source);
             fail("an exception should have occurred");
         } catch (RepositoryException e) {
             assertTrue(e.getMessage().contains("Failed to parse cnd test-group/test-project/test-module-0 [string]"));
@@ -205,10 +204,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "      jcr:primaryType: nt:unstructured\n"
                 + "      single: org\n"
                 + "      multiple: [org1, org2]";
-        final ConfigurationModel baseline = makeMergedModel(new String[]{baselineSource});
-
-        setProperty("/test", "single", PropertyType.STRING, "org");
-        setProperty("/test", "multiple", PropertyType.STRING, new String[]{"org1","org2"});
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
         final String source
                 = "definitions:\n"
@@ -245,7 +241,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 .expectPropertyAdded("/test/single")
                 .expectPropertyAdded("/test/multiple");
 
-        applyDefinitions(definition, makeMergedModel(DEFAULT_BASELINE_SOURCES), expectedEvents);
+        applyDefinitions(definition, expectedEvents);
 
         expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
         expectProp("/test/single", PropertyType.STRING, "new");
@@ -262,11 +258,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "      single: org\n"
                 + "      multiple: [org1, org2]\n"
                 + "      reordered: [new2, new1]";
-        final ConfigurationModel baseline = makeMergedModel(new String[]{baselineSource});
-
-        setProperty("/test", "single", PropertyType.STRING, "org");
-        setProperty("/test", "multiple", PropertyType.STRING, new String[]{"org1","org2"});
-        setProperty("/test", "reordered", PropertyType.STRING, new String[]{"new2","new1"});
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
         final String definition
                 = "definitions:\n"
@@ -299,10 +291,9 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
                 + "      explicitly-deleted: value";
-        final ConfigurationModel baseline = makeMergedModel(new String[]{baselineSource});
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
         setProperty("/test", "not-in-config", PropertyType.STRING, "value");
-        setProperty("/test", "explicitly-deleted", PropertyType.STRING, "value");
 
         final String definition1
                 = "definitions:\n"
@@ -341,12 +332,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "      incorrect-should-be-long: [org1, org2]\n"
                 + "      already-changed-to-single: new\n"
                 + "      already-changed-to-long: [42, 31415]";
-        final ConfigurationModel baseline = makeMergedModel(new String[]{baselineSource});
-
-        setProperty("/test", "incorrect-should-be-single", PropertyType.STRING, new String[]{"org1","org2"});
-        setProperty("/test", "incorrect-should-be-long", PropertyType.STRING, new String[]{"org1","org2"});
-        setProperty("/test", "already-changed-to-single", PropertyType.STRING, "new");
-        setProperty("/test", "already-changed-to-long", PropertyType.LONG, new String[]{"42","31415"});
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
         final String definition1
                 = "definitions:\n"
@@ -435,7 +421,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "          value: '31415926535897932384626433832795028841971'\n"
                 + "";
 
-        ConfigurationModel baseline = applyDefinitions(definition, makeMergedModel(DEFAULT_BASELINE_SOURCES)); // ignore all events
+        ConfigurationModel baseline = applyDefinitions(definition); // ignore all events
 
         expectProp("/test/string", PropertyType.STRING, "hello world");
         expectProp("/test/binary", PropertyType.BINARY, "hello world");
@@ -474,7 +460,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 .expectPropertyAdded("/test/string")
                 .expectPropertyAdded("/test/binary");
 
-        ConfigurationModel baseline = applyDefinitions(definition, makeMergedModel(DEFAULT_BASELINE_SOURCES), expectedEvents);
+        ConfigurationModel baseline = applyDefinitions(definition, expectedEvents);
 
         expectProp("/test/string", PropertyType.STRING,
                 "test-group/test-project/test-module-0/string/folder/string.txt");
@@ -509,7 +495,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
         ExpectedEvents expectedEvents = new ExpectedEvents()
                 .expectPropertyAdded("/test/string");
 
-        ConfigurationModel baseline = applyDefinitions(new String[]{definition1,definition2}, makeMergedModel(DEFAULT_BASELINE_SOURCES), expectedEvents);
+        ConfigurationModel baseline = applyDefinitions(new String[]{definition1,definition2}, expectedEvents);
 
         expectProp("/test/string", PropertyType.STRING,
                 "[test-group/test-project/test-module-0/string/folder/string1.txt, " +
@@ -543,7 +529,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "          jcr:mixinTypes: ['mix:referenceable']\n"
                 + "";
 
-        applyDefinitions(definition, makeMergedModel(DEFAULT_BASELINE_SOURCES));
+        applyDefinitions(definition);
 
         final Node bar = testNode.getNode("foo/bar");
         expectProp("/test/absolute", PropertyType.REFERENCE, bar.getIdentifier());
@@ -569,7 +555,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "            value: e4ecf93e-2708-40b4-b091-51d84169a174\n"
                 + "";
 
-        applyDefinitions(definition, makeMergedModel(DEFAULT_BASELINE_SOURCES));
+        applyDefinitions(definition);
         final Node foo = testNode.getNode("foo");
         expectProp("/test/foo/bar/uuid-reference", PropertyType.REFERENCE, foo.getIdentifier());
     }
@@ -599,7 +585,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "";
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationConfigService.class).build()) {
-            applyDefinitions(definition, makeMergedModel(DEFAULT_BASELINE_SOURCES));
+            applyDefinitions(definition);
             assertFalse(testNode.hasProperty("foo/bar/uuid-reference"));
             assertTrue(testNode.hasProperty("foo/bar/uuid-references"));
             assertEquals(1, testNode.getProperty("foo/bar/uuid-references").getValues().length);
@@ -629,7 +615,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "        jcr:uuid: "+uuid+"\n"
                 + "";
 
-        applyDefinitions(definition, makeMergedModel(DEFAULT_BASELINE_SOURCES));
+        applyDefinitions(definition);
         assertEquals(uuid, testNode.getNode("child").getIdentifier());
     }
 
@@ -650,7 +636,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "";
 
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationConfigService.class).build()) {
-            applyDefinitions(definition, makeMergedModel(DEFAULT_BASELINE_SOURCES));
+            applyDefinitions(definition);
             assertEquals(uuid, testNode.getNode("child").getIdentifier());
             assertNotEquals(uuid, testNode.getNode("child2").getIdentifier());
             assertTrue(interceptor.messages().anyMatch(m->m.equals("Specified jcr:uuid " + uuid +
@@ -669,7 +655,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "      jcr:mixinTypes: ['mix:created']\n" // will auto-created protected properties jcr:created and jcr:createdBy
                 + "";
 
-        ConfigurationModel baseline = applyDefinitions(definition, makeMergedModel(DEFAULT_BASELINE_SOURCES));
+        ConfigurationModel baseline = applyDefinitions(definition);
         expectProp("/test/jcr:createdBy", PropertyType.STRING, "admin");
 
         final ExpectedEvents expectedEvents = new ExpectedEvents(); // aka, expect to see no events
@@ -681,7 +667,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
 
     @Test
     public void expect_unchanged_existing_nodes_to_be_untouched() throws Exception {
-        final String baseineSource
+        final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
@@ -695,14 +681,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "      /b:\n"
                 + "        jcr:primaryType: nt:unstructured\n"
                 + "        property: b";
-        final ConfigurationModel baseline = makeMergedModel(new String[] {baseineSource});
-
-        addNode("/test", "a", "nt:unstructured");
-        addNode("/test/a", "z", "nt:unstructured");
-        addNode("/test", "b", "nt:unstructured");
-        setProperty("/test/a", "property", PropertyType.STRING, "a");
-        setProperty("/test/a/z", "property", PropertyType.STRING, "z");
-        setProperty("/test/b", "property", PropertyType.STRING, "b");
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
         final String source
                 = "definitions:\n"
@@ -735,7 +714,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
 
     @Test
     public void expect_nodes_to_be_merged() throws Exception {
-        final String baseineSource
+        final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
@@ -749,14 +728,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "      /b:\n"
                 + "        jcr:primaryType: nt:unstructured\n"
                 + "        property: b";
-        final ConfigurationModel baseline = makeMergedModel(new String[] {baseineSource});
-
-        addNode("/test", "a", "nt:unstructured");
-        addNode("/test/a", "z", "nt:unstructured");
-        addNode("/test", "b", "nt:unstructured");
-        setProperty("/test/a", "property", PropertyType.STRING, "a");
-        setProperty("/test/a/z", "property", PropertyType.STRING, "z");
-        setProperty("/test/b", "property", PropertyType.STRING, "b");
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
         final String source
                 = "definitions:\n"
@@ -811,7 +783,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
 
     @Test
     public void expect_deleted_nodes_to_be_deleted() throws Exception {
-        final String baseineSource
+        final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
@@ -825,14 +797,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "      /b:\n"
                 + "        jcr:primaryType: nt:unstructured\n"
                 + "        property: b";
-        final ConfigurationModel baseline = makeMergedModel(new String[] {baseineSource});
-
-        addNode("/test", "a", "nt:unstructured");
-        addNode("/test/a", "z", "nt:unstructured");
-        addNode("/test", "b", "nt:unstructured");
-        setProperty("/test/a", "property", PropertyType.STRING, "a");
-        setProperty("/test/a/z", "property", PropertyType.STRING, "z");
-        setProperty("/test/b", "property", PropertyType.STRING, "b");
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
         final String source
                 = "definitions:\n"
@@ -855,7 +820,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
 
     @Test
     public void expect_nodetype_overrides_to_be_applied_if_necessary() throws Exception {
-        final String baseineSource
+        final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
@@ -869,11 +834,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "      /change-type-and-mixin:\n"
                 + "        jcr:primaryType: nt:unstructured\n"
                 + "        jcr:mixinTypes: ['mix:language']";
-        final ConfigurationModel baseline = makeMergedModel(new String[] {baseineSource});
-
-        addNode("/test", "keep-as-is", "nt:unstructured", new String[]{"mix:language"});
-        addNode("/test", "remove-mixin", "nt:unstructured", new String[]{"mix:language"});
-        addNode("/test", "change-type-and-mixin", "nt:unstructured", new String[]{"mix:language"});
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
         // TODO: as part of HCM-24, expand this test
         // TODO: replace hippo types with custom test types
@@ -913,7 +874,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
 
     @Test
     public void expect_reorders_to_be_applied() throws Exception {
-        final String baseineSource
+        final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
@@ -924,11 +885,8 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "        jcr:primaryType: nt:unstructured\n"
                 + "      /c:\n"
                 + "        jcr:primaryType: nt:unstructured";
-        final ConfigurationModel baseline = makeMergedModel(new String[] {baseineSource});
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
-        addNode("/test", "a", "nt:unstructured");
-        addNode("/test", "b", "nt:unstructured");
-        addNode("/test", "c", "nt:unstructured");
         final String idA = session.getNode("/test/a").getIdentifier();
         final String idB = session.getNode("/test/b").getIdentifier();
         final String idC = session.getNode("/test/c").getIdentifier();
@@ -959,7 +917,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
 
     @Test
     public void expect_node_order_ignored_in_non_orderable_node() throws Exception {
-        final String baseineSource
+        final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
@@ -973,12 +931,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "          jcr:primaryType: nt:unstructured\n"
                 + "        /c:\n"
                 + "          jcr:primaryType: nt:unstructured";
-        final ConfigurationModel baseline = makeMergedModel(new String[] {baseineSource});
-
-        addNode("/test", "non-orderable", "hippostd:directory", new String[]{"hippostd:relaxed"});
-        addNode("/test/non-orderable", "a", "nt:unstructured");
-        addNode("/test/non-orderable", "b", "nt:unstructured");
-        addNode("/test/non-orderable", "c", "nt:unstructured");
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
         final String source
                 = "definitions:\n"
@@ -1024,7 +977,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 .expectNodeAdded("/test/sns[2]", JCR_PRIMARYTYPE)
                 .expectPropertyAdded("/test/sns[2]/property2");
 
-        applyDefinitions(source, makeMergedModel(DEFAULT_BASELINE_SOURCES), expectedEvents);
+        applyDefinitions(source, expectedEvents);
 
         expectNode("/test", "[sns, sns]", "[jcr:primaryType]");
         expectNode("/test/sns[1]", "[]", "[jcr:primaryType, property1]");
@@ -1033,7 +986,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
 
     @Test
     public void expect_sns_nodes_to_be_merged() throws Exception {
-        final String baseineSource
+        final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
@@ -1044,12 +997,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "      /sns[2]:\n"
                 + "        jcr:primaryType: nt:unstructured\n"
                 + "        property2: value2";
-        final ConfigurationModel baseline = makeMergedModel(new String[] {baseineSource});
-
-        addNode("/test", "sns", "nt:unstructured");
-        addNode("/test", "sns", "nt:unstructured");
-        setProperty("/test/sns[1]", "property1", PropertyType.STRING, "value1");
-        setProperty("/test/sns[2]", "property2", PropertyType.STRING, "value2");
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
         final String source
                 = "definitions:\n"
@@ -1079,7 +1027,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
 
     @Test
     public void expect_redundant_sns_node_to_be_removed() throws Exception {
-        final String baseineSource
+        final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
@@ -1088,10 +1036,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "        jcr:primaryType: nt:unstructured\n"
                 + "      /sns[2]:\n"
                 + "        jcr:primaryType: nt:unstructured";
-        final ConfigurationModel baseline = makeMergedModel(new String[] {baseineSource});
-
-        addNode("/test", "sns", "nt:unstructured");
-        addNode("/test", "sns", "nt:unstructured");
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
         final String source
                 = "definitions:\n"
@@ -1113,7 +1058,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
 
     @Test
     public void expect_no_fancy_sns_merging() throws Exception {
-        final String baseineSource
+        final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
@@ -1124,11 +1069,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 + "        jcr:primaryType: nt:unstructured\n"
                 + "        /foo:\n"
                 + "          jcr:primaryType: nt:unstructured";
-        final ConfigurationModel baseline = makeMergedModel(new String[] {baseineSource});
-
-        addNode("/test", "sns", "nt:unstructured");
-        addNode("/test", "sns", "nt:unstructured");
-        addNode("/test/sns[2]", "foo", "nt:unstructured");
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
         final String source
                 = "definitions:\n"
@@ -1175,12 +1116,24 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
         session.save();
     }
 
+    private ConfigurationModel applyDefinitions(final String source) throws Exception {
+        return applyDefinitions(new String[]{source}, makeMergedModel(DEFAULT_BASELINE_SOURCES), null);
+    }
+
     private ConfigurationModel applyDefinitions(final String source, final ConfigurationModel baseline) throws Exception {
         return applyDefinitions(new String[]{source}, baseline, null);
     }
 
+    private ConfigurationModel applyDefinitions(final String source, final ExpectedEvents expectedEvents) throws Exception {
+        return applyDefinitions(new String[]{source}, makeMergedModel(DEFAULT_BASELINE_SOURCES), expectedEvents);
+    }
+
     private ConfigurationModel applyDefinitions(final String source, final ConfigurationModel baseline, final ExpectedEvents expectedEvents) throws Exception {
         return applyDefinitions(new String[]{source}, baseline, expectedEvents);
+    }
+
+    private ConfigurationModel applyDefinitions(final String[] sources, final ExpectedEvents expectedEvents) throws Exception {
+        return applyDefinitions(sources, makeMergedModel(DEFAULT_BASELINE_SOURCES), expectedEvents);
     }
 
     private ConfigurationModel applyDefinitions(final String[] sources, final ConfigurationModel baseline, final ExpectedEvents expectedEvents) throws Exception {
