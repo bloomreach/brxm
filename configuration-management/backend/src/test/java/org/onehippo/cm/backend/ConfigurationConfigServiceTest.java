@@ -17,7 +17,6 @@ package org.onehippo.cm.backend;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
 
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigurationModel;
@@ -29,109 +28,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-public class ConfigurationConfigConfigServiceTest extends BaseConfigurationConfigServiceTest {
-
-    @Test
-    public void expect_cnd_reloads_to_work() throws Exception {
-        /* Test in three steps:
-         *  - step 1: load a basic cnd for a node type that does not allow sibling properties
-         *  - step 2: validate that it is not possible to create a sibling property
-         *  - step 3: reload the cnd, allowing a sibling property and test it is possible to load some content
-         */
-
-        // step 1
-        final String startConfiguration
-                = "definitions:\n"
-                + "  namespace:\n"
-                + "  - prefix: test\n"
-                + "    uri: http://www.onehippo.org/test/nt/1.0\n"
-                + "  cnd:\n"
-                + "  - |\n"
-                + "    <'nt'='http://www.jcp.org/jcr/nt/1.0'>\n"
-                + "    <'test'='http://www.onehippo.org/test/nt/1.0'>\n"
-                + "    [test:type] > nt:base\n"
-                + "  config:\n"
-                + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      /node:\n"
-                + "        jcr:primaryType: test:type\n"
-                + "";
-
-        ConfigurationModel baseline = applyDefinitions(startConfiguration);
-
-        expectNode("/test/node", "[]", "[jcr:primaryType]");
-        expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test:type");
-
-        // step 2
-        final String additionalPropertyConfiguration
-                = "definitions:\n"
-                + "  config:\n"
-                + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      /node:\n"
-                + "        jcr:primaryType: test:type\n"
-                + "        test:property: value\n"
-                + "";
-
-        try {
-            applyDefinitions(additionalPropertyConfiguration, baseline);
-            fail("an exception should have occurred");
-        } catch (Exception e) {
-            assertEquals(
-                    "Failed to process property '/test/node/test:property' defined in"
-                    + " [test-group/test-project/test-module-0 [string]]: no matching property definition"
-                    + " found for {http://www.onehippo.org/test/nt/1.0}property",
-                    e.getMessage());
-        }
-
-        // step 3
-        final String reregisterConfiguration
-                = "definitions:\n"
-                + "  cnd:\n"
-                + "  - |\n"
-                + "    <'nt'='http://www.jcp.org/jcr/nt/1.0'>\n"
-                + "    <'test'='http://www.onehippo.org/test/nt/1.0'>\n"
-                + "    [test:type] > nt:base\n"
-                + "     - test:property (string)\n"
-                + "  config:\n"
-                + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      /node:\n"
-                + "        jcr:primaryType: test:type\n"
-                + "        test:property: value\n"
-                + "";
-
-        applyDefinitions(reregisterConfiguration, baseline);
-
-        expectNode("/test/node", "[]", "[jcr:primaryType, test:property]");
-        expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test:type");
-        expectProp("/test/node/test:property", PropertyType.STRING, "value");
-    }
-
-    @Test
-    public void expect_parse_error_in_cnd() throws Exception {
-        final String source
-                = "definitions:\n"
-                + "  cnd:\n"
-                + "  - |\n"
-                + "    <'nt'='http://www.jcp.org/jcr/nt/1.0'>\n"
-                + "    [unknown:type] > nt:unstructured\n"
-                + "  config:\n"
-                + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      /node:\n"
-                + "        jcr:primaryType: test:type\n"
-                + "";
-
-        try {
-            applyDefinitions(source);
-            fail("an exception should have occurred");
-        } catch (RepositoryException e) {
-            assertTrue(e.getMessage().contains("Failed to parse cnd test-group/test-project/test-module-0 [string]"));
-        }
-    }
+public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServiceTest {
 
     @Test
     public void expect_unchanged_existing_properties_to_be_untouched() throws Exception {
