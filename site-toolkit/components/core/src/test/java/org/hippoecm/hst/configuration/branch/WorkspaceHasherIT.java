@@ -167,12 +167,25 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
     }
 
     @Test(expected = BranchException.class)
-    public void none_hst_workspace_node_not_allowed() throws Exception {
+    public void ancestor_of_hst_workspace_node_type_NOT_allowed() throws Exception {
         Session session = createSession();
         try {
             NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
             Node configuration = session.getNode("/hst:hst/hst:configurations/unittestproject");
             hasher.hash(configuration, true, false);
+        } finally {
+            session.logout();
+        }
+    }
+
+    @Test
+    public void descendant_of_hst_workspace_node_type_IS_allowed() throws Exception {
+        Session session = createSession();
+        try {
+            createWorkspaceNodes(session);
+            NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
+            Node pages = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages");
+            hasher.hash(pages, true, false);
         } finally {
             session.logout();
         }

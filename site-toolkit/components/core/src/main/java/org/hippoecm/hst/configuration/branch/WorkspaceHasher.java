@@ -80,8 +80,8 @@ public class WorkspaceHasher implements NodeHasher {
     /**
      * Computes and sets hashes for all nodes without persisting the changes
      *
-     * @throws BranchException If {@code node} is not of type hst:workspace or MD5 MessageDigest is not supported or
-     *                         some repository exception occurs
+     * @throws BranchException If {@code node} is not of type hst:workspace or a descendant of a node of type hst:workspace
+     *                         or MD5 MessageDigest is not supported or some repository exception occurs
      */
     public String hash(final Node node, final boolean setHash, final boolean setUpstreamHash) throws BranchException {
 
@@ -92,8 +92,19 @@ public class WorkspaceHasher implements NodeHasher {
                 hashTask = HDC.getCurrentTask().startSubtask("HashTask Node");
                 hashTask.setAttribute("Node path", node.getPath());
             }
-            if (!node.isNodeType(HstNodeTypes.NODETYPE_HST_WORKSPACE)) {
-                throw new BranchException(String.format("Cannot not hash the node '%s' because not of type %s", node.getPath(), NODETYPE_HST_WORKSPACE));
+            if (!node.isNodeType(NODETYPE_HST_WORKSPACE)) {
+                Node current = node;
+                final Node root = node.getSession().getRootNode();
+                while (!current.isSame(root)) {
+                    current = current.getParent();
+                    if (current.isNodeType(NODETYPE_HST_WORKSPACE)) {
+                        break;
+                    }
+                }
+                if (current.isSame(root)) {
+                    throw new BranchException(String.format("Cannot not hash the node '%s' because not of type '%s' or " +
+                            "not a descendant of a node of type '%s'.", node.getPath(), NODETYPE_HST_WORKSPACE, NODETYPE_HST_WORKSPACE));
+                }
             }
 
             return startHashing(node, setHash, setUpstreamHash, counter);
