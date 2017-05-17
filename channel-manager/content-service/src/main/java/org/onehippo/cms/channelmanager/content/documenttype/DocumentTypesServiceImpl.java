@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,8 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
         docType.setId(id);
         LocalizationUtils.determineDocumentDisplayName(id, context.getResourceBundle()).ifPresent(docType::setDisplayName);
 
-        FieldTypeUtils.populateFields(docType.getFields(), context);
+        final boolean allFieldsIncluded = FieldTypeUtils.populateFields(docType.getFields(), context);
+        docType.setAllFieldsIncluded(allFieldsIncluded);
 
         return docType;
     }
