@@ -32,7 +32,6 @@ import java.util.Set;
 
 import javax.jcr.Binary;
 import javax.jcr.ItemNotFoundException;
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -121,10 +120,11 @@ public class ConfigurationConfigService {
                               final Session session,
                               final boolean forceApply) throws RepositoryException, IOException {
 
-        // Note: we do not yet worry about removing namespaces and node types if they are no longer present
-        // in the "update". If we want to add support for this, this could best be done as a post-processing step,
-        // after any nodes using this node type and namespace have been removed.
-        addNewNamespaces(baseline, update, session, forceApply);
+        // Note: Namespaces, once they are in the repository, cannot be changed or removed.
+        //       Therefore, oth the baseline configuration and the forceApply flag are immaterial
+        //       to the handling of namespaces.
+        applyNamespaces(update.getNamespaceDefinitions(), session);
+
         addNewNodeTypes(baseline, update, session, forceApply);
 
         final ConfigurationNode baselineRoot = baseline.getConfigurationRootNode();
@@ -133,81 +133,32 @@ public class ConfigurationConfigService {
 
         computeAndWriteNodeDelta(baselineRoot, update.getConfigurationRootNode(), targetNode, forceApply, unprocessedReferences);
         postProcessReferences(unprocessedReferences);
-
-        if (forceApply) {
-            removeExcessNamespaces(update, session);
-        }
     }
 
-    private void addNewNamespaces(final ConfigurationModel baseline,
-                                  final ConfigurationModel update,
-                                  final Session session,
-                                  final boolean forceApply) throws RepositoryException {
-        for (NamespaceDefinition updateNamespace : update.getNamespaceDefinitions()) {
-            if (forceApply) {
-                applyNamespace(updateNamespace, null, session);
-            } else {
-                final NamespaceDefinition baselineNamespace = findNamespaceByPrefix(baseline.getNamespaceDefinitions(),
-                                                                                    updateNamespace.getPrefix());
-                if (baselineNamespace == null
-                        || !baselineNamespace.getURI().toString().equals(updateNamespace.getURI().toString())) {
-                    applyNamespace(updateNamespace, baselineNamespace, session);
-                }
-            }
-        }
-    }
-
-    private void applyNamespace(final NamespaceDefinition newDefinition, final NamespaceDefinition oldDefinition, final Session session)
+    private void applyNamespaces(final List<? extends NamespaceDefinition> namespaceDefinitions, final Session session)
             throws RepositoryException {
         final Set<String> prefixes = new HashSet<>(Arrays.asList(session.getNamespacePrefixes()));
-        final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
-        final String prefix = newDefinition.getPrefix();
-        final String newURIString = newDefinition.getURI().toString();
-        final String oldURIString = oldDefinition != null ? oldDefinition.getURI().toString() : "[new]";
 
-        logger.debug(String.format("processing namespace prefix='%s' uri='%s' defined in %s.",
-                prefix, newURIString, ModelUtils.formatDefinition(newDefinition)));
+        for (NamespaceDefinition namespaceDefinition : namespaceDefinitions) {
+            final String prefix = namespaceDefinition.getPrefix();
+            final String uriString = namespaceDefinition.getURI().toString();
 
-        if (prefixes.contains(prefix)) {
-            final String repositoryURI = session.getNamespaceURI(prefix);
-            if (!repositoryURI.equals(oldURIString)) {
-                final String msg = String.format("[OVERRIDE] Namespace '%s' was changed from '%s' to '%s'." +
-                                "Overriding URI to '%s', defined in %s.", prefix, oldDefinition, repositoryURI,
-                        newURIString, ModelUtils.formatDefinition(newDefinition));
-                logger.info(msg);
-            }
-            if (!repositoryURI.equals(newURIString)) {
-                namespaceRegistry.unregisterNamespace(prefix);
-                namespaceRegistry.registerNamespace(prefix, newURIString);
-            }
-        } else {
-            if (oldDefinition != null) {
-                final String msg = String.format("[OVERRIDE] Namespace '%s' (URI '%s') has been deleted from the repository."
-                                + "Re-registering namespace with URI '%s', defined in %s.", prefix, oldDefinition,
-                        newURIString, ModelUtils.formatDefinition(newDefinition));
-                logger.info(msg);
-            }
-            namespaceRegistry.registerNamespace(prefix, newURIString);
-        }
-    }
+            logger.debug(String.format("processing namespace prefix='%s' uri='%s' defined in %s.",
+                    prefix, uriString, ModelUtils.formatDefinition(namespaceDefinition)));
 
-    private void removeExcessNamespaces(final ConfigurationModel update, final Session session) throws RepositoryException {
-        final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
-        final Set<String> prefixes = new HashSet<>(Arrays.asList(session.getNamespacePrefixes()));
-        for (String prefix : prefixes) {
-            if (findNamespaceByPrefix(update.getNamespaceDefinitions(), prefix) == null) {
-                namespaceRegistry.unregisterNamespace(prefix);
+            if (prefixes.contains(prefix)) {
+                final String repositoryURI = session.getNamespaceURI(prefix);
+                if (!uriString.equals(repositoryURI)) {
+                    final String msg = String.format("Failed to process namespace definition defined in %s: " +
+                                    "namespace with prefix '%s' already exists in repository with different URI. " +
+                                    "Existing: '%s', target: '%s'. Changing existing namespaces is not supported. Aborting.",
+                            ModelUtils.formatDefinition(namespaceDefinition), prefix, repositoryURI, uriString);
+                    throw new RuntimeException(msg);
+                }
+            } else {
+                session.getWorkspace().getNamespaceRegistry().registerNamespace(prefix, uriString);
             }
         }
-    }
-
-    private NamespaceDefinition findNamespaceByPrefix(final List<NamespaceDefinition> namespaces, final String prefix) {
-        for (NamespaceDefinition namespace : namespaces) {
-            if (namespace.getPrefix().equals(prefix)) {
-                return namespace;
-            }
-        }
-        return null;
     }
 
     private void addNewNodeTypes(final ConfigurationModel baseline,
@@ -474,7 +425,6 @@ public class ConfigurationConfigService {
 
         final List<String> indexedNamesOfToBeRemovedChildren = new ArrayList<>();
         if (forceApply) {
-            // iterate over actual children of targetNode. if the node is not known among the updateChildren, it may have to be removed.
             for (Node childNode : new NodeIterable(targetNode.getNodes())) {
                 final String indexedChildName = SnsUtils.createIndexedName(childNode);
                 if (!updateChildren.containsKey(indexedChildName)) {

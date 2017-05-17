@@ -15,30 +15,12 @@
  */
 package org.onehippo.cm.backend;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 
-import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.PropertyIterable;
-import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModelTestUtils;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
-import org.onehippo.repository.testutils.RepositoryTestCase;
-import org.onehippo.testutils.jcr.event.EventCollector;
-import org.onehippo.testutils.jcr.event.EventPojo;
 import org.onehippo.testutils.jcr.event.ExpectedEvents;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
@@ -48,52 +30,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
 
-public class ConfigurationConfigServiceTest extends RepositoryTestCase {
-
-    private Node testNode;
-
-    private static final String[] DEFAULT_BASELINE_SOURCES = {
-                      "definitions:\n"
-                    + "  config:\n"
-                    + "    /test:\n"
-                    + "      jcr:primaryType: nt:unstructured"
-    };
-
-    @Before
-    public void createTestNode() throws RepositoryException {
-        testNode = session.getRootNode().addNode("test");
-        session.save();
-    }
-
-    @Test
-    public void expect_namespaces_and_cnds_to_be_registered() throws Exception {
-        final String source
-                = "definitions:\n"
-                + "  namespace:\n"
-                + "  - prefix: test\n"
-                + "    uri: http://www.onehippo.org/test/nt/1.0\n"
-                + "  cnd:\n"
-                + "  - |\n"
-                + "    <'nt'='http://www.jcp.org/jcr/nt/1.0'>\n"
-                + "    <'test'='http://www.onehippo.org/test/nt/1.0'>\n"
-                + "    [test:type] > nt:base\n"
-                + "  config:\n"
-                + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      /node:\n"
-                + "        jcr:primaryType: test:type\n"
-                + "";
-
-        final ExpectedEvents expectedEvents = new ExpectedEvents()
-                .expectNodeAdded("/test/node", JCR_PRIMARYTYPE);
-
-        applyDefinitions(source, expectedEvents);
-
-        expectNode("/test/node", "[]", "[jcr:primaryType]");
-        expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test:type");
-    }
+public class ConfigurationConfigConfigServiceTest extends BaseConfigurationConfigServiceTest {
 
     @Test
     public void expect_cnd_reloads_to_work() throws Exception {
@@ -316,7 +254,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
         final ExpectedEvents expectedEvents = new ExpectedEvents()
                 .expectPropertyRemoved("/test/explicitly-deleted");
 
-        applyDefinitions(new String[]{definition1,definition2}, baseline, expectedEvents);
+        applyDefinitions(new String[]{definition1,definition2}, baseline, false, expectedEvents);
 
         expectNode("/test", "[]", "[jcr:primaryType, not-in-config]");
     }
@@ -376,7 +314,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
                 .expectPropertyChanged("/test/incorrect-should-be-long")
                 .expectPropertyAdded("/test/not-yet-existing");
 
-        applyDefinitions(new String[]{definition1,definition2}, baseline, expectedEvents);
+        applyDefinitions(new String[]{definition1,definition2}, baseline, false, expectedEvents);
 
         expectNode("/test", "[]", "[already-changed-to-long, already-changed-to-single, incorrect-should-be-long, "
                 + "incorrect-should-be-single, jcr:primaryType, not-yet-existing]");
@@ -503,7 +441,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
 
         // when applying the same definition again, expect no events
         expectedEvents = new ExpectedEvents();
-        applyDefinitions(new String[]{definition1,definition2}, baseline, expectedEvents);
+        applyDefinitions(new String[]{definition1,definition2}, baseline, false, expectedEvents);
     }
 
     @Test
@@ -1092,125 +1030,4 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
         expectNode("/test", "[sns]", "[jcr:primaryType]");
         expectNode("/test/sns", "[foo]", "[jcr:primaryType]");
     }
-
-    private void setProperty(final String nodePath, final String name, final int valueType, final String value) throws RepositoryException {
-        session.getNode(nodePath).setProperty(name, value, valueType);
-        session.save();
-    }
-
-    private void setProperty(final String nodePath, final String name, final int valueType, final String[] values) throws RepositoryException {
-        session.getNode(nodePath).setProperty(name, values, valueType);
-        session.save();
-    }
-
-    private void addNode(final String parent, final String name, final String primaryType) throws RepositoryException {
-        session.getNode(parent).addNode(name, primaryType);
-        session.save();
-    }
-
-    private void addNode(final String parent, final String name, final String primaryType, final String[] mixinTypes) throws RepositoryException {
-        final Node node = session.getNode(parent).addNode(name, primaryType);
-        for (String mixinType : mixinTypes) {
-            node.addMixin(mixinType);
-        }
-        session.save();
-    }
-
-    private ConfigurationModel applyDefinitions(final String source) throws Exception {
-        return applyDefinitions(new String[]{source}, makeMergedModel(DEFAULT_BASELINE_SOURCES), null);
-    }
-
-    private ConfigurationModel applyDefinitions(final String source, final ConfigurationModel baseline) throws Exception {
-        return applyDefinitions(new String[]{source}, baseline, null);
-    }
-
-    private ConfigurationModel applyDefinitions(final String source, final ExpectedEvents expectedEvents) throws Exception {
-        return applyDefinitions(new String[]{source}, makeMergedModel(DEFAULT_BASELINE_SOURCES), expectedEvents);
-    }
-
-    private ConfigurationModel applyDefinitions(final String source, final ConfigurationModel baseline, final ExpectedEvents expectedEvents) throws Exception {
-        return applyDefinitions(new String[]{source}, baseline, expectedEvents);
-    }
-
-    private ConfigurationModel applyDefinitions(final String[] sources, final ExpectedEvents expectedEvents) throws Exception {
-        return applyDefinitions(sources, makeMergedModel(DEFAULT_BASELINE_SOURCES), expectedEvents);
-    }
-
-    private ConfigurationModel applyDefinitions(final String[] sources, final ConfigurationModel baseline, final ExpectedEvents expectedEvents) throws Exception {
-        final EventCollector eventCollector = new EventCollector(session, testNode);
-        eventCollector.start();
-
-        final ConfigurationModel configurationModel = makeMergedModel(sources);
-        final ConfigurationConfigService helper = new ConfigurationConfigService();
-        helper.computeAndWriteDelta(baseline, configurationModel, session, false);
-
-        session.save();
-
-        final List<EventPojo> events = eventCollector.stop();
-
-        if (expectedEvents != null) {
-            expectedEvents.check(events);
-        }
-
-        return configurationModel;
-    }
-
-    private ConfigurationModel makeMergedModel(final String[] sources) throws Exception {
-        final ConfigurationModelBuilder configurationModelBuilder = new ConfigurationModelBuilder();
-        for (int i = 0; i < sources.length; i++) {
-            final List<Definition> definitions = parseNoSort(sources[i], "test-module-" + i, ConfigDefinition.class);
-            assertTrue(definitions.size() > 0);
-            final ModuleImpl module = (ModuleImpl) definitions.get(0).getSource().getModule();
-            module.setConfigResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
-            module.setContentResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
-            final GroupImpl configuration = (GroupImpl) module.getProject().getGroup();
-            configurationModelBuilder.push(configuration);
-        }
-        return configurationModelBuilder.build();
-    }
-
-    private void expectNode(final String nodePath, final String childNodes, final String childProperties) throws RepositoryException {
-        final Node node = session.getNode(nodePath);
-        assertEquals(childNodes, createChildNodesString(node));
-        assertEquals(childProperties, createChildPropertiesString(node));
-    }
-
-    private void expectProp(final String path, final int expectedValueType, final String expectedValue) throws RepositoryException {
-        final Property property = session.getProperty(path);
-        assertEquals(expectedValueType, property.getType());
-
-        final String actualValue;
-        if (property.isMultiple()) {
-            final List<String> values = new ArrayList();
-            for (Value value : property.getValues()) {
-                values.add(value.getString());
-            }
-            actualValue = values.toString();
-        } else {
-            actualValue = property.getValue().getString();
-        }
-
-        assertEquals(expectedValue, actualValue);
-    }
-
-    String createChildNodesString(final Node node) throws RepositoryException {
-        final List<String> names = new ArrayList<>();
-        for (Node child : new NodeIterable(node.getNodes())) {
-            names.add(child.getName());
-        }
-        if (!node.getPrimaryNodeType().hasOrderableChildNodes()) {
-            Collections.sort(names);
-        }
-        return names.toString();
-    }
-
-    String createChildPropertiesString(final Node node) throws RepositoryException {
-        final List<String> names = new ArrayList<>();
-        for (Property property : new PropertyIterable(node.getProperties())) {
-            names.add(property.getName());
-        }
-        Collections.sort(names);
-        return names.toString();
-    }
-
 }
