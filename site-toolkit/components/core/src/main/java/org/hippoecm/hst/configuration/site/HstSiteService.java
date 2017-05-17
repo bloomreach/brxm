@@ -98,6 +98,8 @@ public class HstSiteService implements HstSite {
         this.configurationPath = configurationPath;
         if (configurationPath.endsWith("-preview")) {
             hasPreviewConfiguration = true;
+        } else {
+            hasPreviewConfiguration = hstNodeLoadingCache.getNode(configurationPath + "-preview") != null;
         }
 
         init(site, mount, isPreviewSite, hstNodeLoadingCache, master);

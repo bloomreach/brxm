@@ -417,10 +417,13 @@ public class VirtualHostsService implements MutableVirtualHosts {
                     }
 
                     hostGroupChannels.put(channel.getId(), channel);
-                    if (previewChannel.getId().equals(channel.getId())) {
-                        log.debug("For channel '{}' there is no explicit preview configuration (yet).", channel);
-                    } else {
-                        hostGroupChannels.put(previewChannel.getId(), previewChannel);
+
+                    if (previewChannel != null) {
+                        if (previewChannel.getId().equals(channel.getId())) {
+                            log.debug("For channel '{}' there is no explicit preview configuration (yet).", channel);
+                        } else {
+                            hostGroupChannels.put(previewChannel.getId(), previewChannel);
+                        }
                     }
 
                     for (HstSite s : new HstSite[]{hstSite, previewHstSite}) {
