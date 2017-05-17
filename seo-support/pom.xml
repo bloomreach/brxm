@@ -41,8 +41,8 @@
     <hippo.hst.version>5.0.0-SNAPSHOT</hippo.hst.version>
     <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
-    <lib.junit.version>4.8.2</lib.junit.version>
-    <lib.easymock.version>3.0</lib.easymock.version>
+    <junit.version>4.12</junit.version>
+    <easymock.version>3.4</easymock.version>
   </properties>
 
   <repositories>
