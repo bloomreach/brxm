@@ -15,8 +15,13 @@
  */
 package org.onehippo.cm.backend;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
+import javax.jcr.nodetype.NodeType;
 
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigurationModel;
@@ -29,10 +34,302 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Unit tests related to the handling of nodes and properties.
+ */
 public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServiceTest {
 
+    /**
+     * Primary type changes:
+     */
+
     @Test
-    public void expect_unchanged_existing_properties_to_be_untouched() throws Exception {
+    public void expect_primary_type_to_be_updated() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /keep-as-is:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "      /change-type:\n"
+                + "        jcr:primaryType: nt:unstructured";
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        final String source
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /keep-as-is:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "      /change-type:\n"
+                + "        jcr:primaryType: hippo:document";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectPropertyChanged("/test/change-type/jcr:primaryType")
+                .expectPropertyAdded("/test/change-type/hippo:paths");
+
+        applyDefinitions(source, baseline, expectedEvents);
+
+        expectNode("/test", "[keep-as-is, change-type]", "[jcr:primaryType]");
+        expectNode("/test/keep-as-is", "[]", "[jcr:primaryType]");
+        expectProp("/test/keep-as-is/jcr:primaryType", PropertyType.NAME, "nt:unstructured");
+        expectNode("/test/change-type", "[]", "[hippo:paths, jcr:primaryType]");
+        expectProp("/test/change-type/jcr:primaryType", PropertyType.NAME, "hippo:document");
+    }
+
+    @Test
+    public void expect_tweaked_primary_type_to_persist_across_non_forced_bootstrap() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /keep-as-is:\n"
+                + "        jcr:primaryType: nt:unstructured\n";
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        // tweak the primary type
+        testNode.getNode("keep-as-is").setPrimaryType("hippo:document");
+        session.save();
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents(); // no events expected
+
+        applyDefinitions(baselineSource, baseline, expectedEvents);
+
+        assertEquals(testNode.getNode("keep-as-is").getPrimaryNodeType().getName(), "hippo:document");
+    }
+
+    @Test
+    public void expect_tweaked_primary_type_to_be_reset_on_forced_bootstrap() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /keep-as-is:\n"
+                + "        jcr:primaryType: nt:unstructured\n";
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        // tweak the primary type
+        testNode.getNode("keep-as-is").setPrimaryType("hippo:document");
+        session.save();
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(baselineSource, baseline, true);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("[OVERRIDE] Primary type 'hippo:document' of node '/test/keep-as-is' is adjusted to 'nt:unstructured' as defined in [test-group/test-project/test-module-0 [string]].")));
+        }
+
+        assertEquals(testNode.getNode("keep-as-is").getPrimaryNodeType().getName(), "nt:unstructured");
+    }
+
+    @Test
+    public void expect_tweaked_primary_type_to_be_reset_by_baseline_change() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /change-type:\n"
+                + "        jcr:primaryType: nt:unstructured\n";
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        // tweak the primary type
+        testNode.getNode("change-type").setPrimaryType("hippo:handle");
+        session.save();
+
+        final String updateSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /change-type:\n"
+                + "        jcr:primaryType: hippo:document\n";
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(updateSource, baseline);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("[OVERRIDE] Primary type 'hippo:handle' of node '/test/change-type' has been changed from 'nt:unstructured'.Overriding to type 'hippo:document', defined in [test-group/test-project/test-module-0 [string]].")));
+        }
+
+        assertEquals("hippo:document", testNode.getNode("change-type").getPrimaryNodeType().getName());
+    }
+
+    /**
+     * Mixin changes:
+     */
+
+    @Test
+    public void expect_mixin_types_to_be_updated() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /keep-as-is:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:mixinTypes: ['mix:language']\n"
+                + "      /remove-mixin:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:mixinTypes: ['mix:language']\n"
+                + "      /change-mixin:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:mixinTypes: ['mix:language']\n"
+                + "      /add-mixin:\n"
+                + "        jcr:primaryType: nt:unstructured";
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        final String source
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /keep-as-is:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:mixinTypes: ['mix:language']\n"
+                + "      /remove-mixin:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "      /change-mixin:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:mixinTypes: ['hippostd:relaxed']\n"
+                + "      /add-mixin:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:mixinTypes: ['mix:language']\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectPropertyRemoved("/test/remove-mixin/jcr:mixinTypes")
+                .expectPropertyChanged("/test/change-mixin/jcr:mixinTypes")
+                .expectPropertyAdded("/test/add-mixin/jcr:mixinTypes");
+
+        applyDefinitions(source, baseline, expectedEvents);
+
+        expectNode("/test", "[keep-as-is, remove-mixin, change-mixin, add-mixin]", "[jcr:primaryType]");
+        expectNode("/test/keep-as-is", "[]", "[jcr:mixinTypes, jcr:primaryType]");
+        expectProp("/test/keep-as-is/jcr:mixinTypes", PropertyType.NAME, "[mix:language]");
+        expectNode("/test/remove-mixin", "[]", "[jcr:primaryType]");
+        expectNode("/test/change-mixin", "[]", "[jcr:mixinTypes, jcr:primaryType]");
+        expectProp("/test/change-mixin/jcr:mixinTypes", PropertyType.NAME, "[hippostd:relaxed]");
+        expectNode("/test/add-mixin", "[]", "[jcr:mixinTypes, jcr:primaryType]");
+        expectProp("/test/add-mixin/jcr:mixinTypes", PropertyType.NAME, "[mix:language]");
+    }
+
+    @Test
+    public void expect_tweaked_mixin_to_persist_across_non_forced_bootstrap() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /keep-as-is:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:mixinTypes: ['mix:language']";
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        // tweak the primary type
+        testNode.getNode("keep-as-is").addMixin("hippostd:relaxed");
+        session.save();
+
+        ExpectedEvents expectedEvents = new ExpectedEvents(); // no events expected
+        applyDefinitions(baselineSource, baseline, expectedEvents);
+
+        assertTrue(hasMixins(testNode.getNode("keep-as-is"), Arrays.asList("mix:language", "hippostd:relaxed")));
+
+        // tweak again
+        testNode.getNode("keep-as-is").removeMixin("mix:language");
+        session.save();
+
+        expectedEvents = new ExpectedEvents(); // no events expected
+        applyDefinitions(baselineSource, baseline, expectedEvents);
+
+        assertTrue(hasMixins(testNode.getNode("keep-as-is"), Collections.singletonList("hippostd:relaxed")));
+
+        // and again
+        testNode.getNode("keep-as-is").removeMixin("hippostd:relaxed");
+        session.save();
+
+        expectedEvents = new ExpectedEvents(); // no events expected
+        applyDefinitions(baselineSource, baseline, expectedEvents);
+
+        assertTrue(hasMixins(testNode.getNode("keep-as-is"), Collections.emptyList()));
+    }
+
+    @Test
+    public void expect_tweaked_mixin_to_be_reset_on_forced_bootstrap() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /tweak-mixins:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:mixinTypes: ['mix:language']";
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        // tweak the mixin
+        testNode.getNode("tweak-mixins").addMixin("hippostd:relaxed");
+        testNode.getNode("tweak-mixins").removeMixin("mix:language");
+        session.save();
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(baselineSource, baseline, true);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Mixin 'hippostd:relaxed' has been added to node '/test/tweak-mixins', " +
+                            "but is removed because it is not present in definition [test-group/test-project/test-module-0 [string]].")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Mixin 'mix:language' has been removed from node '/test/tweak-mixins', " +
+                            "but is re-added because it is defined at [test-group/test-project/test-module-0 [string]].")));
+        }
+
+        assertTrue(hasMixins(testNode.getNode("tweak-mixins"), Collections.singletonList("mix:language")));
+    }
+
+    @Test
+    public void expect_manually_removed_mixin_to_be_ignored_when_trying_to_delete_it() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /remove-mixin:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:mixinTypes: ['mix:language']";
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        // tweak the primary type
+        testNode.getNode("remove-mixin").removeMixin("mix:language");
+        session.save();
+
+        final String updateSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /remove-mixin:\n"
+                + "        jcr:primaryType: nt:unstructured";
+        applyDefinitions(updateSource, baseline);
+
+        assertTrue(hasMixins(testNode.getNode("remove-mixin"), Collections.emptyList()));
+    }
+
+    private boolean hasMixins(final Node node, final List<String> mixins) throws Exception {
+        NodeType[] mixinTypes = node.getMixinNodeTypes();
+        if (mixinTypes.length != mixins.size()) {
+            return false;
+        }
+        for (NodeType mixinType : mixinTypes) {
+            if (!mixins.contains(mixinType.getName())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Regular properties
+     */
+
+    @Test
+    public void expect_tweaked_properties_to_be_untouched() throws Exception {
         final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
@@ -51,13 +348,114 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
                 + "      multiple: [org1, org2]\n"
                 + "";
 
-        final ExpectedEvents expectedEvents = new ExpectedEvents(); // aka, expect to see no events
-
-        applyDefinitions(source, baseline, expectedEvents);
+        applyDefinitions(source, baseline, new ExpectedEvents());
 
         expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
         expectProp("/test/single", PropertyType.STRING, "org");
         expectProp("/test/multiple", PropertyType.STRING, "[org1, org2]");
+    }
+
+    @Test
+    public void expect_unchanged_existing_properties_to_persist_across_non_forced_bootstrap() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org\n"
+                + "      multiple: [org1, org2]";
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        // tweak the properties
+        testNode.setProperty("single", "new");
+        testNode.setProperty("multiple", new String[] {"new1"});
+        session.save();
+
+        final String source
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org\n"
+                + "      multiple: [org1, org2]\n"
+                + "";
+
+        applyDefinitions(source, baseline, new ExpectedEvents());
+
+        expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
+        expectProp("/test/single", PropertyType.STRING, "new");
+        expectProp("/test/multiple", PropertyType.STRING, "[new1]");
+    }
+
+    @Test
+    public void expect_forced_bootstrap_to_override_tweaked_properties() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org\n"
+                + "      multiple: [org1, org2]";
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        // tweak the properties
+        testNode.setProperty("single", "new");
+        testNode.setProperty("multiple", new String[] {"new1"});
+        session.save();
+
+        final String source
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org\n"
+                + "      multiple: [org1, org2]\n"
+                + "";
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(source, baseline, true);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Property '/test/single' has been changed in the repository, " +
+                            "and will be overridden due to definition [test-group/test-project/test-module-0 [string]].")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Property '/test/multiple' has been changed in the repository, " +
+                            "and will be overridden due to definition [test-group/test-project/test-module-0 [string]].")));
+        }
+
+        expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
+        expectProp("/test/single", PropertyType.STRING, "org");
+        expectProp("/test/multiple", PropertyType.STRING, "[org1, org2]");
+    }
+
+    @Test
+    public void expect_tweaked_property_to_stay_unchanged_if_it_already_has_the_new_value() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org\n"
+                + "      multiple: [org1, org2]";
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        // tweak the properties
+        testNode.setProperty("single", "new");
+        testNode.setProperty("multiple", new String[] {"new1"});
+        session.save();
+
+        final String source
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: new\n"
+                + "      multiple: [new1]";
+
+        applyDefinitions(source, baseline);
+
+        expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
+        expectProp("/test/single", PropertyType.STRING, "new");
+        expectProp("/test/multiple", PropertyType.STRING, "[new1]");
     }
 
     @Test
@@ -286,10 +684,10 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
                 + "      jcr:primaryType: nt:unstructured\n"
                 + "      string:\n"
                 + "        type: string\n"
-                + "        resource: folder/string.txt\n"
+                + "        resource: folder/string1.txt\n"
                 + "      binary:\n"
                 + "        type: binary\n"
-                + "        resource: folder/binary.bin\n"
+                + "        resource: folder/binary1.bin\n"
                 + "";
 
         ExpectedEvents expectedEvents = new ExpectedEvents()
@@ -298,10 +696,8 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
 
         ConfigurationModel baseline = applyDefinitions(definition, expectedEvents);
 
-        expectProp("/test/string", PropertyType.STRING,
-                "test-group/test-project/test-module-0/string/folder/string.txt");
-        expectProp("/test/binary", PropertyType.BINARY,
-                "test-group/test-project/test-module-0/string/folder/binary.bin");
+        expectProp("/test/string", PropertyType.STRING, "string1");
+        expectProp("/test/binary", PropertyType.BINARY, "binary1");
 
         // when applying the same definition again, expect no events
         expectedEvents = new ExpectedEvents();
@@ -333,9 +729,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
 
         ConfigurationModel baseline = applyDefinitions(new String[]{definition1,definition2}, expectedEvents);
 
-        expectProp("/test/string", PropertyType.STRING,
-                "[test-group/test-project/test-module-0/string/folder/string1.txt, " +
-                "test-group/test-project/test-module-1/string/folder/string1.txt]");
+        expectProp("/test/string", PropertyType.STRING,"[string1, string1]");
 
         // when applying the same definition again, expect no events
         expectedEvents = new ExpectedEvents();
@@ -652,60 +1046,6 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
         applyDefinitions(source, baseline, expectedEvents);
 
         expectNode("/test", "[a]", "[jcr:primaryType]");
-    }
-
-    @Test
-    public void expect_nodetype_overrides_to_be_applied_if_necessary() throws Exception {
-        final String baselineSource
-                = "definitions:\n"
-                + "  config:\n"
-                + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      /keep-as-is:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "        jcr:mixinTypes: ['mix:language']\n"
-                + "      /remove-mixin:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "        jcr:mixinTypes: ['mix:language']\n"
-                + "      /change-type-and-mixin:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "        jcr:mixinTypes: ['mix:language']";
-        final ConfigurationModel baseline = applyDefinitions(baselineSource);
-
-        // TODO: as part of HCM-24, expand this test
-        // TODO: replace hippo types with custom test types
-        final String source
-                = "definitions:\n"
-                + "  config:\n"
-                + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      /keep-as-is:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "        jcr:mixinTypes: ['mix:language']\n"
-                + "      /remove-mixin:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "      /change-type-and-mixin:\n"
-                + "        jcr:primaryType: hippo:document\n"
-                + "        jcr:mixinTypes: ['hippostd:relaxed']\n"
-                + "";
-
-        final ExpectedEvents expectedEvents = new ExpectedEvents()
-                .expectPropertyRemoved("/test/remove-mixin/jcr:mixinTypes")
-                .expectPropertyChanged("/test/change-type-and-mixin/jcr:primaryType")
-                .expectPropertyChanged("/test/change-type-and-mixin/jcr:mixinTypes")
-                .expectPropertyAdded("/test/change-type-and-mixin/hippo:paths");
-
-        applyDefinitions(source, baseline, expectedEvents);
-
-        expectNode("/test", "[keep-as-is, remove-mixin, change-type-and-mixin]", "[jcr:primaryType]");
-        expectNode("/test/keep-as-is", "[]", "[jcr:mixinTypes, jcr:primaryType]");
-        expectProp("/test/keep-as-is/jcr:primaryType", PropertyType.NAME, "nt:unstructured");
-        expectProp("/test/keep-as-is/jcr:mixinTypes", PropertyType.NAME, "[mix:language]");
-        expectNode("/test/remove-mixin", "[]", "[jcr:primaryType]");
-        expectProp("/test/remove-mixin/jcr:primaryType", PropertyType.NAME, "nt:unstructured");
-        expectNode("/test/change-type-and-mixin", "[]", "[hippo:paths, jcr:mixinTypes, jcr:primaryType]");
-        expectProp("/test/change-type-and-mixin/jcr:primaryType", PropertyType.NAME, "hippo:document");
-        expectProp("/test/change-type-and-mixin/jcr:mixinTypes", PropertyType.NAME, "[hippostd:relaxed]");
     }
 
     @Test

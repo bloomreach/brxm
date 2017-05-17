@@ -148,6 +148,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     @Override
     public ConfigurationItemCategory getChildCategory(final String childName) {
         // mock the implementation for now ...
+        if (getPath().equals("/")) return ConfigurationItemCategory.RUNTIME;
         if (getPath().equals("/path/to/node/runtime-property")) return ConfigurationItemCategory.RUNTIME;
         if (getPath().equals("/path/to/runtime-node")) return ConfigurationItemCategory.RUNTIME;
         if (getPath().startsWith("/path/to/residual-child-nodes-runtime/")) return ConfigurationItemCategory.RUNTIME;

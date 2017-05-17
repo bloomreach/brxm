@@ -205,6 +205,10 @@ public class ConfigurationConfigService {
 
         if (forceApply || !updatePrimaryType.equals(baselinePrimaryType)) {
             final String jcrPrimaryType = targetNode.getPrimaryNodeType().getName();
+            if (jcrPrimaryType.equals(updatePrimaryType)) {
+                return;
+            }
+
             if (!jcrPrimaryType.equals(baselinePrimaryType)) {
                 final String msg = forceApply
                         ? String.format("[OVERRIDE] Primary type '%s' of node '%s' is adjusted to '%s' as defined in %s.",
@@ -234,19 +238,39 @@ public class ConfigurationConfigService {
         final Value[] baselineMixinValues = baselineProperties.containsKey((JCR_MIXINTYPES))
                 ? baselineProperties.get(JCR_MIXINTYPES).getValues() : new Value[0];
 
-        // Add new mixin types
-        for (Value updateMixinValue : updateMixinValues) {
-            final String updateMixin = updateMixinValue.getString();
-            if (forceApply || !hasMixin(baselineMixinValues, updateMixin)) {
-                addMixin(targetNode, updateMixin);
+        // Add / restore mixin types
+        for (Value mixinValue : updateMixinValues) {
+            final String mixin = mixinValue.getString();
+            if (!hasMixin(targetNode, mixin)) {
+                if (forceApply) {
+                    if (hasMixin(baselineMixinValues, mixin)) {
+                        final String msg = String.format("[OVERRIDE] Mixin '%s' has been removed from node '%s', " +
+                                        "but is re-added because it is defined at %s.",
+                                mixin, updateNode.getPath(), ModelUtils.formatDefinitions(updateProperties.get(JCR_MIXINTYPES)));
+                        logger.info(msg);
+                    }
+                    targetNode.addMixin(mixin);
+                } else {
+                    // only add the mixin in case of a delta with the baseline
+                    if (!hasMixin(baselineMixinValues, mixin)) {
+                        targetNode.addMixin(mixin);
+                    }
+                }
             }
         }
 
-        // Remove old mixin types
+        // Remove / clean up mixin types
         if (forceApply) {
             for (NodeType mixinType : targetNode.getMixinNodeTypes()) {
                 final String jcrMixin = mixinType.getName();
                 if (!hasMixin(updateMixinValues, jcrMixin)) {
+                    if (!hasMixin(baselineMixinValues, jcrMixin)) {
+                        final String msg = String.format("[OVERRIDE] Mixin '%s' has been added to node '%s'," +
+                                        " but is removed because it is not present in definition %s.",
+                                jcrMixin, updateNode.getPath(), ModelUtils.formatDefinitions(updateNode));
+                        logger.info(msg);
+                    }
+
                     removeMixin(targetNode, jcrMixin);
                 }
             }
@@ -260,6 +284,15 @@ public class ConfigurationConfigService {
         }
     }
 
+    private boolean hasMixin(final Node node, final String mixin) throws RepositoryException {
+        for (NodeType mixinType : node.getMixinNodeTypes()) {
+            if (mixinType.getName().equals(mixin)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean hasMixin(final Value[] mixinValues, final String mixin) {
         for (Value mixinValue : mixinValues) {
             if (mixinValue.getString().equals(mixin)) {
@@ -267,15 +300,6 @@ public class ConfigurationConfigService {
             }
         }
         return false;
-    }
-
-    private void addMixin(final Node node, final String mixin) throws RepositoryException {
-        for (NodeType mixinType : node.getMixinNodeTypes()) {
-            if (mixinType.getName().equals(mixin)) {
-                return;
-            }
-        }
-        node.addMixin(mixin);
     }
 
     private void removeMixin(final Node node, final String mixin) throws RepositoryException {
@@ -337,13 +361,12 @@ public class ConfigurationConfigService {
         final List<String> names = new ArrayList<>();
         for (Property property : new PropertyIterable(node.getProperties())) {
             final String name = property.getName();
-            if (!name.equals(JCR_PRIMARYTYPE) && !name.equals(JCR_MIXINTYPES)) {
+            if (!property.getDefinition().isProtected() && !isKnownDerivedPropertyName(name)) {
                 names.add(property.getName());
             }
         }
         return names;
     }
-
 
     private void computeAndWriteChildNodesDelta(final ConfigurationNode baselineNode,
                                                 final ConfigurationNode updateNode,

@@ -105,6 +105,10 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
         return applyDefinitions(new String[]{source}, baseline, false);
     }
 
+    protected ConfigurationModel applyDefinitions(final String source, final ConfigurationModel baseline, final boolean forceApply) throws Exception {
+        return applyDefinitions(new String[]{source}, baseline, forceApply);
+    }
+
     protected ConfigurationModel applyDefinitions(final String source, final ExpectedEvents expectedEvents) throws Exception {
         return applyDefinitions(new String[]{source}, makeMergedModel(DEFAULT_BASELINE_SOURCES), false, expectedEvents);
     }
