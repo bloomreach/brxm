@@ -48,6 +48,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropertyIterable;
+import org.onehippo.cm.api.model.ConfigurationItemCategory;
 import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
@@ -262,7 +265,7 @@ public class ConfigurationConfigService {
 
         computeAndWritePrimaryTypeDelta(baselineNode, updateNode, targetNode, forceApply);
         computeAndWriteMixinTypesDelta(baselineNode, updateNode, targetNode, forceApply);
-        computeAndWritePropertiesDelta(baselineNode, updateNode, targetNode, unprocessedReferences);
+        computeAndWritePropertiesDelta(baselineNode, updateNode, targetNode, forceApply, unprocessedReferences);
         computeAndWriteChildNodesDelta(baselineNode, updateNode, targetNode, forceApply, unprocessedReferences);
     }
 
@@ -278,7 +281,7 @@ public class ConfigurationConfigService {
         final String updatePrimaryType = updateProperties.get(JCR_PRIMARYTYPE).getValue().getString();
         final String baselinePrimaryType = baselineProperties.get(JCR_PRIMARYTYPE).getValue().getString();
 
-        if (!updatePrimaryType.equals(baselinePrimaryType) || forceApply) {
+        if (forceApply || !updatePrimaryType.equals(baselinePrimaryType)) {
             final String jcrPrimaryType = targetNode.getPrimaryNodeType().getName();
             if (!jcrPrimaryType.equals(baselinePrimaryType)) {
                 final String msg = forceApply
@@ -365,6 +368,7 @@ public class ConfigurationConfigService {
     private void computeAndWritePropertiesDelta(final ConfigurationNode baselineNode,
                                                  final ConfigurationNode updateNode,
                                                  final Node targetNode,
+                                                 final boolean forceApply,
                                                  final List<UnprocessedReference> unprocessedReferences)
             throws RepositoryException, IOException {
 
@@ -377,9 +381,9 @@ public class ConfigurationConfigService {
             }
 
             final ConfigurationProperty updateProperty = updateProperties.get(propertyName);
-            final ConfigurationProperty baselineProperty = baselineProperties.getOrDefault(propertyName, null);
+            final ConfigurationProperty baselineProperty = baselineProperties.get(propertyName);
 
-            if (baselineProperty == null || !propertyIsIdentical(updateProperty, baselineProperty)) {
+            if (forceApply || baselineProperty == null || !propertyIsIdentical(updateProperty, baselineProperty)) {
                 if (isReferenceTypeProperty(updateProperty)) {
                     unprocessedReferences.add(new UnprocessedReference(updateProperty, baselineProperty, targetNode));
                 } else {
@@ -389,16 +393,35 @@ public class ConfigurationConfigService {
         }
 
         // Remove deleted properties
-        for (String propertyName : baselineProperties.keySet()) {
-            if (propertyName.equals(JCR_PRIMARYTYPE) || propertyName.equals(JCR_MIXINTYPES)) {
-                continue; // we have already addressed these properties
+        if (forceApply) {
+            for (String propertyName : getPropertyNames(targetNode)) {
+                if (!updateProperties.containsKey(propertyName)
+                        && updateNode.getChildCategory(propertyName) == ConfigurationItemCategory.CONFIGURATION) {
+                    removeProperty(propertyName, baselineProperties.get(propertyName), targetNode);
+                }
             }
-
-            if (!updateProperties.containsKey(propertyName)) {
-                removeProperty(baselineProperties.get(propertyName), targetNode);
+        } else {
+            for (String propertyName : baselineProperties.keySet()) {
+                if (!propertyName.equals(JCR_PRIMARYTYPE)
+                        && !propertyName.equals(JCR_MIXINTYPES)
+                        && !updateProperties.containsKey(propertyName)) {
+                    removeProperty(propertyName, baselineProperties.get(propertyName), targetNode);
+                }
             }
         }
     }
+
+    private List<String> getPropertyNames(final Node node) throws RepositoryException {
+        final List<String> names = new ArrayList<>();
+        for (Property property : new PropertyIterable(node.getProperties())) {
+            final String name = property.getName();
+            if (!name.equals(JCR_PRIMARYTYPE) && !name.equals(JCR_MIXINTYPES)) {
+                names.add(property.getName());
+            }
+        }
+        return names;
+    }
+
 
     private void computeAndWriteChildNodesDelta(final ConfigurationNode baselineNode,
                                                 final ConfigurationNode updateNode,
@@ -409,6 +432,8 @@ public class ConfigurationConfigService {
 
         final Map<String, ConfigurationNode> updateChildren = updateNode.getNodes();
         final Map<String, ConfigurationNode> baselineChildren = baselineNode.getNodes();
+
+        // Add or update child nodes
 
         for (String indexedChildName : updateChildren.keySet()) {
             final ConfigurationNode baselineChild;
@@ -445,26 +470,50 @@ public class ConfigurationConfigService {
             computeAndWriteNodeDelta(baselineChild, updateChild, childNode, forceApply, unprocessedReferences);
         }
 
-        // Remove child nodes that are no longer in the model.
+        // Remove child nodes that are not / no longer in the model.
 
-        // Note: SNS is supported because the node's name includes the index.
-        //       But it's brittle: basically, we can only correctly remove SNS children if we
-        //       remove the children with the highest index from the baseline configuration only,
-        //       while additional runtime/repository SNS nodes have not been added, or at the end only.
-        //       This is why we process the child nodes of the baseline model in *reverse* order.
-
-        final List<String> reversedIndexedBaselineChildNames = new ArrayList<>(baselineChildren.keySet());
-        Collections.reverse(reversedIndexedBaselineChildNames);
-
-        for (String indexedChildName : reversedIndexedBaselineChildNames) {
-            if (!updateChildren.containsKey(indexedChildName)) {
-                final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(indexedChildName);
-                final Node childNode = getChildWithIndex(targetNode, nameAndIndex.getLeft(), nameAndIndex.getRight());
-                if (childNode != null) {
-                    // [OVERRIDE] We don't check if the removed node has changes compared to the baseline.
-                    //            Such a check would be rather invasive (potentially full sub-tree compare)
-                    childNode.remove();
+        final List<String> indexedNamesOfToBeRemovedChildren = new ArrayList<>();
+        if (forceApply) {
+            // iterate over actual children of targetNode. if the node is not known among the updateChildren, it may have to be removed.
+            for (Node childNode : new NodeIterable(targetNode.getNodes())) {
+                final String indexedChildName = SnsUtils.createIndexedName(childNode);
+                if (!updateChildren.containsKey(indexedChildName)) {
+                    if (updateNode.getChildCategory(indexedChildName) == ConfigurationItemCategory.CONFIGURATION) {
+                        indexedNamesOfToBeRemovedChildren.add(indexedChildName);
+                    }
                 }
+            }
+        } else {
+            // Note: SNS is supported because the node's name includes the index.
+            //       But it's brittle: basically, we can only correctly remove SNS children if we
+            //       remove the children with the highest index from the baseline configuration only,
+            //       while additional runtime/repository SNS nodes have not been added, or at the end only.
+            //       This is why we process the child nodes of the baseline model in *reverse* order.
+
+            final List<String> reversedIndexedBaselineChildNames = new ArrayList<>(baselineChildren.keySet());
+            Collections.reverse(reversedIndexedBaselineChildNames);
+
+            for (String indexedChildName : reversedIndexedBaselineChildNames) {
+                if (!updateChildren.containsKey(indexedChildName)) {
+                    indexedNamesOfToBeRemovedChildren.add(indexedChildName);
+                }
+            }
+        }
+
+        for (String indexedChildName : indexedNamesOfToBeRemovedChildren) {
+            final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(indexedChildName);
+            final Node childNode = getChildWithIndex(targetNode, nameAndIndex.getLeft(), nameAndIndex.getRight());
+            if (childNode != null) {
+                if (!baselineChildren.containsKey(indexedChildName)) {
+                    final String msg = String.format("[OVERRIDE] Child node '%s' exists, " +
+                                    "but will be deleted while processing the children of node '%s' defined in %s.",
+                            indexedChildName, updateNode.getPath(), ModelUtils.formatDefinitions(updateNode));
+                    logger.info(msg);
+                } else {
+                    // [OVERRIDE] We don't currently check if the removed node has changes compared to the baseline.
+                    //            Such a check would be rather invasive (potentially full sub-tree compare)
+                }
+                childNode.remove();
             }
         }
 
@@ -571,51 +620,46 @@ public class ConfigurationConfigService {
             return; // TODO: should derived properties even be an allowed part of the configuration model?
         }
 
-        final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, updateProperty.getName());
-        if (baselineProperty != null && jcrProperty == null) {
-            final String msg = String.format("[OVERRIDE] Property '%s' has been deleted from the repository, " +
-                            "and will be re-added due to definition %s.",
-                    updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty));
-            logger.info(msg);
-        }
-
-
         // pre-process the values of the property to address reference type values
         final Session session = jcrNode.getSession();
         final List<Value> verifiedUpdateValues = determineVerifiedValues(updateProperty, session);
 
-        if (baselineProperty != null) {
-            final List<Value> verifiedBaselineValues = determineVerifiedValues(baselineProperty, session);
+        final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, updateProperty.getName());
+        if (jcrProperty != null) {
+            if (propertyIsIdentical(jcrProperty, updateProperty, verifiedUpdateValues)) {
+                return; // no update needed
+            }
 
-            if (!propertyIsIdentical(jcrProperty, baselineProperty, verifiedBaselineValues)) {
-                if (!propertyIsIdentical(jcrProperty, updateProperty, verifiedUpdateValues)) {
-                    return; // Successful merge, no action needed.
-                } else {
+            if (baselineProperty != null) {
+                // property should already exist, and so it does. But has it been changed?
+                final List<Value> verifiedBaselineValues = determineVerifiedValues(baselineProperty, session);
+                if (!propertyIsIdentical(jcrProperty, baselineProperty, verifiedBaselineValues)) {
                     final String msg = String.format("[OVERRIDE] Property '%s' has been changed in the repository, " +
                                     "and will be overridden due to definition %s.",
                             updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty));
                     logger.info(msg);
                 }
-            }
-        }
-
-        if (baselineProperty == null && jcrProperty != null) {
-            if (!propertyIsIdentical(jcrProperty, updateProperty, verifiedUpdateValues)) {
-                return; // Successful merge, no action needed.
             } else {
+                // property should not yet exist, but actually does
                 final String msg = String.format("[OVERRIDE] Property '%s' has been created in the repository, " +
                                 "and will be overridden due to definition %s.",
                         updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty));
                 logger.info(msg);
             }
-        }
 
-        // Update the property to its new value
-        // TODO: is this check adding sufficient value, or can/should we always remove the old property?
-        if (jcrProperty != null
-                && (updateProperty.getValueType().ordinal() != jcrProperty.getType()
-                 || updateProperty.isMultiple() != jcrProperty.isMultiple())) {
-            jcrProperty.remove();
+            // TODO: is this check adding sufficient value, or can/should we always remove the old property?
+            if (updateProperty.getValueType().ordinal() != jcrProperty.getType()
+                    || updateProperty.isMultiple() != jcrProperty.isMultiple()) {
+                jcrProperty.remove();
+            }
+        } else {
+            if (baselineProperty != null) {
+                // property should already exist, doesn't.
+                final String msg = String.format("[OVERRIDE] Property '%s' has been deleted from the repository, " +
+                                "and will be re-added due to definition %s.",
+                        updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty));
+                logger.info(msg);
+            }
         }
 
         try {
@@ -634,21 +678,27 @@ public class ConfigurationConfigService {
         }
     }
 
-    private void removeProperty(final ConfigurationProperty baselineProperty, final Node jcrNode)
-            throws RepositoryException, IOException {
-
-        final Session session = jcrNode.getSession();
-        final List<Value> verifiedBaselineValues = determineVerifiedValues(baselineProperty, session);
-
-        final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, baselineProperty.getName());
+    private void removeProperty(final String propertyName,
+                                final ConfigurationProperty baselineProperty,
+                                final Node jcrNode) throws RepositoryException, IOException {
+        final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, propertyName);
         if (jcrProperty == null) {
             return; // Successful merge, no action needed.
         }
 
-        if (!propertyIsIdentical(jcrProperty, baselineProperty, verifiedBaselineValues)) {
-            final String msg = String.format("[OVERRIDE] Property '%s' originally defined in %s has been changed, " +
-                            "but will be deleted.",
-                            baselineProperty.getPath(), ModelUtils.formatDefinitions(baselineProperty));
+        if (baselineProperty != null) {
+            final Session session = jcrNode.getSession();
+            final List<Value> verifiedBaselineValues = determineVerifiedValues(baselineProperty, session);
+            if (!propertyIsIdentical(jcrProperty, baselineProperty, verifiedBaselineValues)) {
+                final String msg = String.format("[OVERRIDE] Property '%s' originally defined in %s has been changed, " +
+                                "but will be deleted because it no longer is part of the configuration model.",
+                        baselineProperty.getPath(), ModelUtils.formatDefinitions(baselineProperty));
+                logger.info(msg);
+            }
+        } else {
+            final String msg = String.format("[OVERRIDE] Property '%s' of node '%s' exists in the repository, " +
+                            "but will be deleted because it is not part of the configuation model.",
+                    propertyName, jcrNode.getPath());
             logger.info(msg);
         }
 
