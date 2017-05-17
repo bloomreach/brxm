@@ -45,7 +45,7 @@
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
 
-    <commons-math.version>2.2</commons-math.version>
+    <commons-math3.version>3.6.1</commons-math3.version>
 
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
@@ -110,8 +110,8 @@
 
       <dependency>
         <groupId>org.apache.commons</groupId>
-        <artifactId>commons-math</artifactId>
-        <version>${commons-math.version}</version>
+        <artifactId>commons-math3</artifactId>
+        <version>${commons-math3.version}</version>
       </dependency>
 
       <dependency>
