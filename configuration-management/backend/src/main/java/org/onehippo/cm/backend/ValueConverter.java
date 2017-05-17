@@ -39,22 +39,16 @@ import org.onehippo.cm.impl.model.ModelUtils;
  */
 public class ValueConverter {
 
-    private final Session session;
-
-    public ValueConverter(final Session session) {
-        this.session = session;
-    }
-
     /**
      * Creates array of {@link javax.jcr.Value} based on {@link Value} list
      * @param modelValues - list of model values
      * @return
      * @throws Exception
      */
-    public javax.jcr.Value[] valuesFrom(final List<Value> modelValues) throws Exception {
+    public javax.jcr.Value[] valuesFrom(final List<Value> modelValues, final Session session) throws Exception {
         final javax.jcr.Value[] jcrValues = new javax.jcr.Value[modelValues.size()];
         for (int i = 0; i < jcrValues.length; i++) {
-            jcrValues[i] = valueFrom(modelValues.get(i));
+            jcrValues[i] = valueFrom(modelValues.get(i), session);
         }
         return jcrValues;
     }
@@ -65,7 +59,7 @@ public class ValueConverter {
      * @return {@link javax.jcr.Value}
      * @throws Exception
      */
-    public javax.jcr.Value valueFrom(final Value modelValue) throws Exception {
+    public javax.jcr.Value valueFrom(final Value modelValue, final Session session) throws Exception {
         final ValueFactory factory = session.getValueFactory();
         final ValueType type = modelValue.getType();
 

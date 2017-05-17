@@ -47,7 +47,7 @@ public class ContentService {
 
     public ContentService(final Session session) {
         this.session = session;
-        this.valueConverter = new ValueConverter(session);
+        this.valueConverter = new ValueConverter();
 
     }
 
@@ -58,8 +58,8 @@ public class ContentService {
             final Map<Source, List<ContentDefinition>> contentMap = contentDefinitions.stream()
                     .collect(Collectors.groupingBy(Definition::getSource, toSortedList(comparing(e -> e.getNode().getPath()))));
             for (final Source source : contentMap.keySet()) {
-                final ContentProcessingService contentProcessingService = new JcrContentProcessingService(session, valueConverter);
-                contentProcessingService.apply(contentMap.get(source).get(0).getNode(), ActionType.APPEND);
+                final ContentProcessingService contentProcessingService = new JcrContentProcessingService(valueConverter);
+                contentProcessingService.apply(contentMap.get(source).get(0).getNode(), ActionType.APPEND, session);
 
                 session.save();
             }

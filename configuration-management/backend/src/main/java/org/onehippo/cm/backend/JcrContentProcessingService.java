@@ -57,7 +57,6 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
 import static org.onehippo.cm.api.model.ValueType.REFERENCE;
 import static org.onehippo.cm.api.model.ValueType.WEAKREFERENCE;
-import static org.onehippo.cm.api.model.action.ActionType.APPEND;
 import static org.onehippo.cm.api.model.action.ActionType.DELETE;
 
 /**
@@ -67,7 +66,6 @@ public class JcrContentProcessingService implements ContentProcessingService {
 
     private static final Logger logger = LoggerFactory.getLogger(JcrContentProcessingService.class);
 
-    private final Session session;
     private final ValueConverter valueConverter;
     private final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences = new ArrayList<>();
 
@@ -77,8 +75,7 @@ public class JcrContentProcessingService implements ContentProcessingService {
             HIPPOSTD_STATESUMMARY
     };
 
-    public JcrContentProcessingService(final Session session, final ValueConverter valueConverter) {
-        this.session = session;
+    public JcrContentProcessingService(final ValueConverter valueConverter) {
         this.valueConverter = valueConverter;
     }
 
@@ -107,23 +104,14 @@ public class JcrContentProcessingService implements ContentProcessingService {
     }
 
     /**
-     * Apply definition node using APPEND strategy
-     * @param definitionNode
-     * @throws RepositoryException
-     */
-    public synchronized void apply(final DefinitionNode definitionNode) throws RepositoryException {
-        apply(definitionNode, APPEND);
-    }
-
-    /**
      * Append definition node using specified action strategy
      * @param definitionNode
      * @param actionType
      * @throws RepositoryException
      */
-    public synchronized void apply(final DefinitionNode definitionNode, final ActionType actionType) throws RepositoryException {
+    public synchronized void apply(final DefinitionNode definitionNode, final ActionType actionType, final Session session) throws RepositoryException {
         try {
-            applyNode(definitionNode, actionType);
+            applyNode(definitionNode, actionType, session);
             applyUnprocessedReferences();
         }
         catch (Exception e) {
@@ -136,25 +124,28 @@ public class JcrContentProcessingService implements ContentProcessingService {
         }
     }
 
-    private void applyNode(final DefinitionNode definitionNode, final ActionType actionType) throws Exception {
-        if (itemToDeleteDoesNotExist(definitionNode, actionType)) {
+    private void applyNode(final DefinitionNode definitionNode, final ActionType actionType, final Session session) throws Exception {
+        if (itemToDeleteDoesNotExist(definitionNode, actionType, session)) {
             return;
         }
-        final Node parentNode = calculateRootNode(definitionNode);
+        final Node parentNode = calculateRootNode(definitionNode, session);
         applyNode(definitionNode, parentNode, actionType);
     }
 
-    private boolean itemToDeleteDoesNotExist(final DefinitionNode definitionNode, final ActionType actionType) throws RepositoryException {
+    private boolean itemToDeleteDoesNotExist(final DefinitionNode definitionNode,
+                                             final ActionType actionType,
+                                             final Session session) throws RepositoryException {
         return actionType == DELETE && !session.nodeExists(definitionNode.getPath());
     }
 
-    private Node calculateRootNode(DefinitionNode definitionNode) throws RepositoryException {
+    private Node calculateRootNode(DefinitionNode definitionNode, final Session session) throws RepositoryException {
         String path = Paths.get(definitionNode.getPath()).getParent().toString();
         return session.getNode(path);
     }
 
     private void applyNode(final DefinitionNode definitionNode, final Node parentNode, final ActionType actionType) throws Exception {
 
+        final Session session = parentNode.getSession();
         if (actionType == null) {
             throw new IllegalArgumentException("Action type cannot be null");
         }
@@ -207,7 +198,7 @@ public class JcrContentProcessingService implements ContentProcessingService {
         final DefinitionProperty uuidProperty = modelNode.getProperties().get(JCR_UUID);
         if (uuidProperty != null) {
             final String uuid = uuidProperty.getValue().getString();
-            if (!isUuidInUse(uuid)) {
+            if (!isUuidInUse(uuid, parentNode.getSession())) {
                 // uuid not in use: create node with the requested uuid
                 final NodeImpl parentNodeImpl = (NodeImpl) NodeDecorator.unwrap(parentNode);
                 return parentNodeImpl.addNodeWithUuid(name, primaryType, uuid);
@@ -220,7 +211,7 @@ public class JcrContentProcessingService implements ContentProcessingService {
         return parentNode.addNode(name, primaryType);
     }
 
-    private boolean isUuidInUse(final String uuid) throws RepositoryException {
+    private boolean isUuidInUse(final String uuid, final Session session) throws RepositoryException {
         try {
             session.getNodeByIdentifier(uuid);
             return true;
@@ -297,19 +288,19 @@ public class JcrContentProcessingService implements ContentProcessingService {
 
         final List<Value> modelValues = new ArrayList<>();
         if (modelProperty.getType() == PropertyType.SINGLE) {
-            collectVerifiedValue(modelProperty, modelProperty.getValue(), modelValues);
+            collectVerifiedValue(modelProperty, modelProperty.getValue(), modelValues, jcrNode.getSession());
         } else {
             for (Value value : modelProperty.getValues()) {
-                collectVerifiedValue(modelProperty, value, modelValues);
+                collectVerifiedValue(modelProperty, value, modelValues, jcrNode.getSession());
             }
         }
 
         try {
             if (modelValues.size() > 0) {
                 if (modelProperty.getType() == PropertyType.SINGLE) {
-                    jcrNode.setProperty(modelProperty.getName(), valueConverter.valueFrom(modelValues.get(0)));
+                    jcrNode.setProperty(modelProperty.getName(), valueConverter.valueFrom(modelValues.get(0), jcrNode.getSession()));
                 } else {
-                    jcrNode.setProperty(modelProperty.getName(), valueConverter.valuesFrom(modelValues));
+                    jcrNode.setProperty(modelProperty.getName(), valueConverter.valuesFrom(modelValues, jcrNode.getSession()));
                 }
             }
         } catch (RepositoryException e) {
@@ -320,10 +311,11 @@ public class JcrContentProcessingService implements ContentProcessingService {
         }
     }
 
-    private void collectVerifiedValue(final DefinitionProperty modelProperty, final Value value, final List<Value> modelValues)
+    private void collectVerifiedValue(final DefinitionProperty modelProperty, final Value value, final List<Value> modelValues,
+                                      final Session session)
             throws RepositoryException {
         if (isReferenceTypeProperty(modelProperty)) {
-            final String uuid = getVerifiedReferenceIdentifier(modelProperty, value);
+            final String uuid = getVerifiedReferenceIdentifier(modelProperty, value, session);
             if (uuid != null) {
                 modelValues.add(new VerifiedReferenceValue(value, uuid));
             }
@@ -332,7 +324,9 @@ public class JcrContentProcessingService implements ContentProcessingService {
         }
     }
 
-    private String getVerifiedReferenceIdentifier(final DefinitionProperty modelProperty, final Value modelValue)
+    private String getVerifiedReferenceIdentifier(final DefinitionProperty modelProperty,
+                                                  final Value modelValue,
+                                                  final Session session)
             throws RepositoryException {
         String identifier = modelValue.getString();
         if (modelValue.isPath()) {

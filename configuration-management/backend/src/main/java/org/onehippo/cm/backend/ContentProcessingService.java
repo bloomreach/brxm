@@ -17,6 +17,7 @@ package org.onehippo.cm.backend;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.Module;
@@ -26,7 +27,7 @@ import org.onehippo.cm.api.model.action.ActionType;
  * Applies content definitions
  */
 public interface ContentProcessingService {
-    void apply(DefinitionNode definition, ActionType actionType) throws RepositoryException;
+    void apply(DefinitionNode definition, ActionType actionType, Session session) throws RepositoryException;
     void importNode(DefinitionNode definition, Node parentNode, ActionType actionType) throws Exception;
     Module exportNode(Node node);
 }

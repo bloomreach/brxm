@@ -47,6 +47,9 @@ import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
 
 public class JcrContentProcessingServiceTest extends RepositoryTestCase {
 
+    private final ValueConverter valueConverter = new ValueConverter();
+
+
     private final String source =
             "/test:\n" +
                     "   jcr:primaryType: nt:unstructured\n" +
@@ -162,8 +165,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
 
         final ConfigurationModel configModel2 = createConfigurationModel(new String[]{source2});
 
-        ValueConverter valueConverter = new ValueConverter(session);
-        final ContentProcessingService processingService = new JcrContentProcessingService(session, valueConverter);
+        final ContentProcessingService processingService = new JcrContentProcessingService(valueConverter);
 
         Node parentNode = session.getNode("/test/node1");
         processingService.importNode(configModel2.getContentDefinitions().get(0).getNode(), parentNode, ActionType.APPEND);
@@ -206,14 +208,13 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
     public void delete_content() throws Exception {
         append_content();
 
-        final ValueConverter valueConverter = new ValueConverter(session);
-        final ContentProcessingService processingService = new JcrContentProcessingService(session, valueConverter);
+        final ContentProcessingService processingService = new JcrContentProcessingService(valueConverter);
 
         final DefinitionNodeImpl deleteNode = new DefinitionNodeImpl("/test/node3", "node3", null);
-        processingService.apply(deleteNode, ActionType.DELETE);
+        processingService.apply(deleteNode, ActionType.DELETE, session);
 
         final DefinitionNodeImpl nonExistingNode = new DefinitionNodeImpl("/not_existing_path/node", "node", null);
-        processingService.apply(nonExistingNode, ActionType.DELETE);
+        processingService.apply(nonExistingNode, ActionType.DELETE, session);
 
     }
 
@@ -232,10 +233,9 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
     }
 
     private void saveContent(final ConfigurationModel configModel, final ActionType actionType) throws RepositoryException {
-        final ValueConverter valueConverter = new ValueConverter(session);
-        final ContentProcessingService processingService = new JcrContentProcessingService(session, valueConverter);
+        final ContentProcessingService processingService = new JcrContentProcessingService(valueConverter);
         for (final ContentDefinition contentDefinition : configModel.getContentDefinitions()) {
-            processingService.apply(contentDefinition.getNode(), actionType);
+            processingService.apply(contentDefinition.getNode(), actionType, session);
         }
     }
 

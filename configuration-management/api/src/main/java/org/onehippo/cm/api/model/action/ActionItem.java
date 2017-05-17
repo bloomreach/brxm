@@ -15,6 +15,8 @@
  */
 package org.onehippo.cm.api.model.action;
 
+import java.util.Objects;
+
 /**
  * Represents action item
  */
@@ -42,5 +44,30 @@ public class ActionItem {
 
     public void setType(final ActionType type) {
         this.type = type;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ActionItem)) {
+            return false;
+        }
+        final ActionItem that = (ActionItem) o;
+        return Objects.equals(path, that.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path);
+    }
+
+    @Override
+    public String toString() {
+        return "ActionItem{" +
+                "path='" + path + '\'' +
+                ", type=" + type +
+                '}';
     }
 }
