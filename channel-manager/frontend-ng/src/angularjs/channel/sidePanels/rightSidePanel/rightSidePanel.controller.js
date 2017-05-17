@@ -67,6 +67,7 @@ class RightSidePanelCtrl {
     DialogService,
     HippoIframeService,
     FeedbackService,
+    localStorageService,
     ) {
     'ngInject';
 
@@ -82,13 +83,17 @@ class RightSidePanelCtrl {
     this.DialogService = DialogService;
     this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
+    this.localStorageService = localStorageService;
 
     this.defaultTitle = $translate.instant('EDIT_CONTENT');
     this.closeLabel = $translate.instant('CLOSE');
     this.cancelLabel = $translate.instant('CANCEL');
 
+    this.lastSavedWidth = null;
+
     SidePanelService.initialize('right', $element.find('.right-side-panel'), (documentId) => {
       this.openDocument(documentId);
+      this._onOpen();
     });
 
     CmsService.subscribe('kill-editor', (documentId) => {
@@ -96,6 +101,10 @@ class RightSidePanelCtrl {
         this._closePanel();
       }
     });
+  }
+
+  $onInit() {
+    this.lastSavedWidth = this.localStorageService.get('rightSidePanelWidth') || '440px';
   }
 
   openDocument(documentId) {
@@ -344,11 +353,23 @@ class RightSidePanelCtrl {
     return this.form && this.form.$dirty;
   }
 
+  _onOpen() {
+    this.$element.addClass('sidepanel-open');
+    this.$element.css('max-width', this.lastSavedWidth);
+  }
+
   close() {
     this._confirmDiscardChanges().then(() => {
       this._deleteDraft();
       this._closePanel();
+      this.$element.removeClass('sidepanel-open');
+      this.$element.css('max-width', '0px');
     });
+  }
+
+  onResize(newWidth) {
+    this.lastSavedWidth = `${newWidth}px`;
+    this.localStorageService.set('rightSidePanelWidth', this.lastSavedWidth);
   }
 
   _confirmDiscardChanges() {

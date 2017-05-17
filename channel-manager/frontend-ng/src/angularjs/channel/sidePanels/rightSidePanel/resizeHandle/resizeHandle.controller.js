@@ -11,28 +11,28 @@ class resizeHandleController {
   }
 
   _registerEvents() {
-    this.handle.mousedown((e) => {
+    this.handle.mousedown((mouseDownEvent) => {
       const hippoIframe = $('hippo-iframe').find('iframe');
       const initialWidth = this.element.width();
-      const initialX = e.clientX;
-      console.log(`down. x: ${initialX}`);
+      const initialX = mouseDownEvent.clientX;
 
       hippoIframe.css('pointer-events', 'none');
 
-      this.$document.mousemove((e) => {
-        console.log(`up. x: ${e.pageX}`);
-        const diff = initialX - e.pageX;
-        console.log(diff);
+      let newWidth;
 
-        const newWidth = initialWidth + diff;
+      this.$document.mousemove((moveEvent) => {
+        const diff = initialX - moveEvent.pageX;
+
+        newWidth = initialWidth + diff;
 
         this.element.css('width', newWidth);
         this.element.css('max-width', newWidth);
+      });
 
-        this.$document.mouseup(() => {
-          this.$document.unbind('mousemove');
-          hippoIframe.css('pointer-events', 'auto');
-        });
+      this.$document.mouseup(() => {
+        this.$document.unbind('mousemove');
+        hippoIframe.css('pointer-events', 'auto');
+        this.onResize({ newWidth });
       });
     });
   }

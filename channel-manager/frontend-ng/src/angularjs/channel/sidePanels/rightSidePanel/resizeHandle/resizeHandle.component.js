@@ -8,6 +8,7 @@ const resizeHandleComponent = {
   controller,
   bindings: {
     element: '=',
+    onResize: '&',
   },
 };
 

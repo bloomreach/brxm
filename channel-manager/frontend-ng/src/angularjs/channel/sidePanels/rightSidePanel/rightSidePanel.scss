@@ -15,13 +15,15 @@
 @import 'variables';
 
 right-side-panel {
-  width: 440px;
-  max-width: 440px;
+  &.sidepanel-open {
+    md-sidenav {
+      width: 100%;
+    }
+  }
 }
 
 .right-side-panel {
   max-width: 100%;
-  width: 100%;
 
   form {
     padding-right: $form-dense-distance;

@@ -20,7 +20,7 @@
             md-component-id="right-side-panel"
             md-disable-backdrop>
 
-  <resize-handle element="$ctrl.$element"></resize-handle>
+  <resize-handle element="$ctrl.$element" on-resize="$ctrl.onResize(newWidth)"></resize-handle>
 
   <md-toolbar>
     <div class="md-toolbar-tools">
