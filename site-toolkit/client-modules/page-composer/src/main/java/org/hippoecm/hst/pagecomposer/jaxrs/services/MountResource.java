@@ -85,7 +85,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
-import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
+import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
 
 @Path("/hst:mount/")
 public class MountResource extends AbstractConfigResource {

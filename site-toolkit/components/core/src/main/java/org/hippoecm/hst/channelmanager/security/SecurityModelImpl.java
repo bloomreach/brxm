@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagecomposer.jaxrs.security;
+package org.hippoecm.hst.channelmanager.security;
 
 
 import java.security.Principal;
@@ -28,12 +28,11 @@ import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.core.jcr.GenericEventListener;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SecurityModelImpl implements   SecurityModel {
+public class SecurityModelImpl implements SecurityModel {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityModelImpl.class);
 
