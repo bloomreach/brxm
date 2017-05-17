@@ -57,6 +57,7 @@
       this.iframeToHost.subscribe('remove-mask', this._unmaskSurroundings, this);
       this.iframeToHost.subscribe('edit-alter-ego', this._showAlterEgoEditor, this);
       this.iframeToHost.subscribe('channel-deleted', this._onChannelDeleted, this);
+      this.iframeToHost.subscribe('close-channel', this._onCloseChannel, this);
 
       this.addEvents('show-channel-overview');
     },
@@ -312,6 +313,10 @@
         this.hostToIFrame.publish('channel-removed-from-overview');
         this.fireEvent('show-channel-overview');
       }.bind(this));
+    },
+
+    _onCloseChannel: function() {
+      this.fireEvent('show-channel-overview');
     },
 
     initComponent: function() {

@@ -26,7 +26,7 @@ function channelActionsDirective() {
     },
     template,
     controller: 'ChannelActionsCtrl',
-    controllerAs: 'channelActions',
+    controllerAs: '$ctrl',
   };
 }
 
