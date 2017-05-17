@@ -1142,7 +1142,7 @@ public class ConfigurationConfigServiceTest extends RepositoryTestCase {
 
         final ConfigurationModel configurationModel = makeMergedModel(sources);
         final ConfigurationConfigService helper = new ConfigurationConfigService();
-        helper.computeAndWriteDelta(baseline, configurationModel, session);
+        helper.computeAndWriteDelta(baseline, configurationModel, session, false);
 
         session.save();
 

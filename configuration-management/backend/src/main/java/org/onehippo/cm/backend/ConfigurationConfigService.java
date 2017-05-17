@@ -109,17 +109,20 @@ public class ConfigurationConfigService {
      * @param baseline baseline configuration for computing the delta
      * @param update   updated configuration, potentially different from baseline
      * @param session  JCR session to write to the repository. The caller has to take care of #save-ing any changes.
+     * @param forceApply flag indicating that runtime changes to configuration data should be reverted
      * @throws RepositoryException in case of failure reading from / writing to the repository
      * @throws IOException in case of failure reading external resources
      */
-    void computeAndWriteDelta(final ConfigurationModel baseline, final ConfigurationModel update, final Session session)
-            throws RepositoryException, IOException {
+    void computeAndWriteDelta(final ConfigurationModel baseline,
+                              final ConfigurationModel update,
+                              final Session session,
+                              final boolean forceApply) throws RepositoryException, IOException {
 
         // Note: we do not yet worry about removing namespaces and node types if they are no longer present
         // in the "update". If we want to add support for this, this could best be done as a post-processing step,
         // after any nodes using this node type and namespace have been removed.
-        addNewNamespaces(baseline, update, session);
-        addNewNodeTypes(baseline, update, session);
+        addNewNamespaces(baseline, update, session, forceApply);
+        addNewNodeTypes(baseline, update, session, forceApply);
 
         final ConfigurationNode baselineRoot = baseline.getConfigurationRootNode();
         final Node targetNode = session.getNode(baselineRoot.getPath());
@@ -127,25 +130,26 @@ public class ConfigurationConfigService {
 
         computeAndWriteNodeDelta(baselineRoot, update.getConfigurationRootNode(), targetNode, unprocessedReferences);
         postProcessReferences(unprocessedReferences);
+
+        if (forceApply) {
+            removeExcessNamespaces(update, session);
+        }
     }
 
-    void addNewNamespaces(final ConfigurationModel baseline, final ConfigurationModel update, final Session session)
-            throws RepositoryException {
-        final List<NamespaceDefinition> baselineNamespaces = baseline.getNamespaceDefinitions();
-
+    private void addNewNamespaces(final ConfigurationModel baseline,
+                                  final ConfigurationModel update,
+                                  final Session session,
+                                  final boolean forceApply) throws RepositoryException {
         for (NamespaceDefinition updateNamespace : update.getNamespaceDefinitions()) {
-            boolean isInBaseline = false;
-            for (NamespaceDefinition baselineNamespace : baselineNamespaces) {
-                if (baselineNamespace.getPrefix().equals(updateNamespace.getPrefix())) {
-                    if (baselineNamespace.getURI().equals(updateNamespace.getURI())) {
-                        isInBaseline = true;
-                        break;
-                    }
+            if (forceApply) {
+                applyNamespace(updateNamespace, null, session);
+            } else {
+                final NamespaceDefinition baselineNamespace = findNamespaceByPrefix(baseline.getNamespaceDefinitions(),
+                                                                                    updateNamespace.getPrefix());
+                if (baselineNamespace == null
+                        || !baselineNamespace.getURI().toString().equals(updateNamespace.getURI().toString())) {
                     applyNamespace(updateNamespace, baselineNamespace, session);
                 }
-            }
-            if (!isInBaseline) {
-                applyNamespace(updateNamespace, null, session);
             }
         }
     }
@@ -184,29 +188,63 @@ public class ConfigurationConfigService {
         }
     }
 
-    void addNewNodeTypes(final ConfigurationModel baseline, final ConfigurationModel update, final Session session)
-            throws RepositoryException, IOException {
+    private void removeExcessNamespaces(final ConfigurationModel update, final Session session) throws RepositoryException {
+        final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
+        final Set<String> prefixes = new HashSet<>(Arrays.asList(session.getNamespacePrefixes()));
+        for (String prefix : prefixes) {
+            if (findNamespaceByPrefix(update.getNamespaceDefinitions(), prefix) == null) {
+                namespaceRegistry.unregisterNamespace(prefix);
+            }
+        }
+    }
+
+    private NamespaceDefinition findNamespaceByPrefix(final List<NamespaceDefinition> namespaces, final String prefix) {
+        for (NamespaceDefinition namespace : namespaces) {
+            if (namespace.getPrefix().equals(prefix)) {
+                return namespace;
+            }
+        }
+        return null;
+    }
+
+    private void addNewNodeTypes(final ConfigurationModel baseline,
+                                 final ConfigurationModel update,
+                                 final Session session,
+                                 final boolean forceApply) throws RepositoryException, IOException {
         final List<NodeTypeDefinition> baselineNodeTypes = baseline.getNodeTypeDefinitions();
 
         for (NodeTypeDefinition updateNodeType : update.getNodeTypeDefinitions()) {
-            boolean isInBaseline = false;
-            for (NodeTypeDefinition baselineNodeType : baselineNodeTypes) {
-                try (final InputStream baselineCND = getCNDInputStream(baselineNodeType);
-                     final InputStream updateCND = getCNDInputStream(updateNodeType)) {
-                    if (IOUtils.contentEquals(baselineCND, updateCND)) {
-                        isInBaseline = true;
-                        break;
+            if (forceApply) {
+                applyNodeType(updateNodeType, session);
+            } else {
+                boolean isInBaseline = false;
+                for (NodeTypeDefinition baselineNodeType : baselineNodeTypes) {
+                    try (final InputStream baselineCND = getCNDInputStream(baselineNodeType);
+                         final InputStream updateCND = getCNDInputStream(updateNodeType)) {
+                        if (IOUtils.contentEquals(baselineCND, updateCND)) {
+                            isInBaseline = true;
+                            break;
+                        }
                     }
                 }
-            }
-            if (!isInBaseline) {
-                logger.debug(String.format("processing %s defined in %s.", makeCNDLabel(updateNodeType),
-                        ModelUtils.formatDefinition(updateNodeType)));
-
-                BootstrapUtils.initializeNodetypes(session, getCNDInputStream(updateNodeType),
-                        ModelUtils.formatDefinition(updateNodeType));
+                if (!isInBaseline) {
+                    applyNodeType(updateNodeType, session);
+                }
             }
         }
+    }
+
+    private void applyNodeType(final NodeTypeDefinition definition, final Session session)
+            throws RepositoryException, IOException {
+        if (logger.isDebugEnabled()) {
+            final String cndLabel = definition.isResource()
+                    ? String.format("CND '%s'", definition.getValue()) : "inline CND";
+            logger.debug(String.format("processing %s defined in %s.", cndLabel,
+                    ModelUtils.formatDefinition(definition)));
+        }
+
+        BootstrapUtils.initializeNodetypes(session, getCNDInputStream(definition),
+                ModelUtils.formatDefinition(definition));
     }
 
     private InputStream getCNDInputStream(final NodeTypeDefinition nodeTypeDefinition) throws IOException {
@@ -215,11 +253,7 @@ public class ConfigurationConfigService {
                 : new ByteArrayInputStream(nodeTypeDefinition.getValue().getBytes(StandardCharsets.UTF_8));
     }
 
-    private String makeCNDLabel(final NodeTypeDefinition nodeTypeDefinition) {
-        return nodeTypeDefinition.isResource() ? String.format("CND '%s'", nodeTypeDefinition.getValue()) : "inline CND";
-    }
-
-    void computeAndWriteNodeDelta(final ConfigurationNode baselineNode,
+    private void computeAndWriteNodeDelta(final ConfigurationNode baselineNode,
                                   final ConfigurationNode updateNode,
                                   final Node targetNode,
                                   final List<UnprocessedReference> unprocessedReferences)
@@ -323,9 +357,7 @@ public class ConfigurationConfigService {
             final ConfigurationProperty updateProperty = updateProperties.get(propertyName);
             final ConfigurationProperty baselineProperty = baselineProperties.getOrDefault(propertyName, null);
 
-            if (baselineProperty != null && propertyIsIdentical(updateProperty, baselineProperty)) {
-                    // No action needed
-            } else {
+            if (baselineProperty == null || !propertyIsIdentical(updateProperty, baselineProperty)) {
                 if (isReferenceTypeProperty(updateProperty)) {
                     unprocessedReferences.add(new UnprocessedReference(updateProperty, baselineProperty, targetNode));
                 } else {
@@ -405,10 +437,7 @@ public class ConfigurationConfigService {
             if (!updateChildren.containsKey(indexedChildName)) {
                 final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(indexedChildName);
                 final Node childNode = getChildWithIndex(targetNode, nameAndIndex.getLeft(), nameAndIndex.getRight());
-                if (childNode == null) {
-                    // Successful "merge" between an incoming node removal and the fact that the node has already
-                    // been removed in the repository.
-                } else {
+                if (childNode != null) {
                     // [OVERRIDE] We don't check if the removed node has changes compared to the baseline.
                     //            Such a check would be rather invasive (potentially full sub-tree compare)
                     childNode.remove();
