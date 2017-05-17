@@ -16,6 +16,9 @@
 
 package org.onehippo.cm.backend;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,11 +31,12 @@ import javax.jcr.Value;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Before;
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.Definition;
+import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModelTestUtils;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -146,14 +150,30 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
         return configurationModel;
     }
 
+    private final class TestResourceInputProvider implements ResourceInputProvider {
+        public boolean hasResource(final Source source, final String resourcePath) {
+            return this.getClass().getResource(resourcePath) != null;
+        }
+
+        public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
+            return this.getClass().getResourceAsStream("/configuration_config_service_test/" + resourcePath);
+        }
+
+        public URL getBaseURL() {
+            return null;
+        }
+    }
+
     private ConfigurationModel makeMergedModel(final String[] sources) throws Exception {
         final ConfigurationModelBuilder configurationModelBuilder = new ConfigurationModelBuilder();
         for (int i = 0; i < sources.length; i++) {
             final List<Definition> definitions = parseNoSort(sources[i], "test-module-" + i, ConfigDefinition.class);
             assertTrue(definitions.size() > 0);
             final ModuleImpl module = (ModuleImpl) definitions.get(0).getSource().getModule();
-            module.setConfigResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
-            module.setContentResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
+            module.setConfigResourceInputProvider(new TestResourceInputProvider());
+            module.setContentResourceInputProvider(new TestResourceInputProvider());
+//            module.setConfigResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
+//            module.setContentResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
             final GroupImpl configuration = (GroupImpl) module.getProject().getGroup();
             configurationModelBuilder.push(configuration);
         }

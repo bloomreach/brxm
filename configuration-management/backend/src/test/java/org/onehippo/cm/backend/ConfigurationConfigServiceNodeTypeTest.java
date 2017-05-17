@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.testutils.jcr.event.ExpectedEvents;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.junit.Assert.assertEquals;
@@ -136,6 +137,52 @@ public class ConfigurationConfigServiceNodeTypeTest extends BaseConfigurationCon
         expectNode("/test/node", "[]", "[jcr:primaryType, test2:property]");
         expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test2:type");
         expectProp("/test/node/test2:property", PropertyType.STRING, "value");
+    }
+
+    @Test
+    public void expect_debug_message_to_be_logged_upon_loading_of_cnd() throws Exception {
+        final String source
+                = "definitions:\n"
+                + "  namespace:\n"
+                + "  - prefix: test3\n"
+                + "    uri: http://www.onehippo.org/test/nt/3.0\n"
+                + "  cnd:\n"
+                + "  - |\n"
+                + "    <'nt'='http://www.jcp.org/jcr/nt/1.0'>\n"
+                + "    <'test3'='http://www.onehippo.org/test/nt/3.0'>\n"
+                + "    [test3:type] > nt:base";
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onDebug().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(source);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("processing inline CND defined in test-group/test-project/test-module-0 [string].")));
+        }
+
+        // as well as on reloading...
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onDebug().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(source);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("processing inline CND defined in test-group/test-project/test-module-0 [string].")));
+        }
+    }
+
+    @Test
+    public void expect_cnd_to_load_from_resource() throws Exception {
+        final String source
+                = "definitions:\n"
+                + "  namespace:\n"
+                + "  - prefix: example\n"
+                + "    uri: http://www.onehippo.org/example/nt/1.0\n"
+                + "  cnd:\n"
+                + "  - resource: example.cnd\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /example:\n"
+                + "        jcr:primaryType: example:type";
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onDebug().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(source);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("processing CND 'example.cnd' defined in test-group/test-project/test-module-0 [string].")));
+        }
     }
 
     @Test

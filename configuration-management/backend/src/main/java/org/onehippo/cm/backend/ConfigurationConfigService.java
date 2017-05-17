@@ -121,11 +121,11 @@ public class ConfigurationConfigService {
                               final boolean forceApply) throws RepositoryException, IOException {
 
         // Note: Namespaces, once they are in the repository, cannot be changed or removed.
-        //       Therefore, oth the baseline configuration and the forceApply flag are immaterial
-        //       to the handling of namespaces.
+        //       Therefore, both the baseline configuration and the forceApply flag are immaterial
+        //       to the handling of namespaces. The same applies to node types, at least, as far as
+        //       BootstrapUtils#initializeNodetypes offers support.
         applyNamespaces(update.getNamespaceDefinitions(), session);
-
-        addNewNodeTypes(baseline, update, session, forceApply);
+        applyNodeTypes(update.getNodeTypeDefinitions(), session);
 
         final ConfigurationNode baselineRoot = baseline.getConfigurationRootNode();
         final Node targetNode = session.getNode(baselineRoot.getPath());
@@ -161,50 +161,21 @@ public class ConfigurationConfigService {
         }
     }
 
-    private void addNewNodeTypes(final ConfigurationModel baseline,
-                                 final ConfigurationModel update,
-                                 final Session session,
-                                 final boolean forceApply) throws RepositoryException, IOException {
-        final List<NodeTypeDefinition> baselineNodeTypes = baseline.getNodeTypeDefinitions();
-
-        for (NodeTypeDefinition updateNodeType : update.getNodeTypeDefinitions()) {
-            if (forceApply) {
-                applyNodeType(updateNodeType, session);
-            } else {
-                boolean isInBaseline = false;
-                for (NodeTypeDefinition baselineNodeType : baselineNodeTypes) {
-                    try (final InputStream baselineCND = getCNDInputStream(baselineNodeType);
-                         final InputStream updateCND = getCNDInputStream(updateNodeType)) {
-                        if (IOUtils.contentEquals(baselineCND, updateCND)) {
-                            isInBaseline = true;
-                            break;
-                        }
-                    }
-                }
-                if (!isInBaseline) {
-                    applyNodeType(updateNodeType, session);
-                }
+    private void applyNodeTypes(final List<NodeTypeDefinition> nodeTypes, final Session session) throws RepositoryException, IOException {
+        for (NodeTypeDefinition nodeType : nodeTypes) {
+            if (logger.isDebugEnabled()) {
+                final String cndLabel = nodeType.isResource()
+                        ? String.format("CND '%s'", nodeType.getValue()) : "inline CND";
+                logger.debug(String.format("processing %s defined in %s.", cndLabel,
+                        ModelUtils.formatDefinition(nodeType)));
             }
+
+            // TODO: nodeTypeStream should be closed, right?
+            final InputStream nodeTypeStream = nodeType.isResource()
+                    ? getResourceInputStream(nodeType.getSource(), nodeType.getValue())
+                    : new ByteArrayInputStream(nodeType.getValue().getBytes(StandardCharsets.UTF_8));
+            BootstrapUtils.initializeNodetypes(session, nodeTypeStream, ModelUtils.formatDefinition(nodeType));
         }
-    }
-
-    private void applyNodeType(final NodeTypeDefinition definition, final Session session)
-            throws RepositoryException, IOException {
-        if (logger.isDebugEnabled()) {
-            final String cndLabel = definition.isResource()
-                    ? String.format("CND '%s'", definition.getValue()) : "inline CND";
-            logger.debug(String.format("processing %s defined in %s.", cndLabel,
-                    ModelUtils.formatDefinition(definition)));
-        }
-
-        BootstrapUtils.initializeNodetypes(session, getCNDInputStream(definition),
-                ModelUtils.formatDefinition(definition));
-    }
-
-    private InputStream getCNDInputStream(final NodeTypeDefinition nodeTypeDefinition) throws IOException {
-        return nodeTypeDefinition.isResource()
-                ? getResourceInputStream(nodeTypeDefinition.getSource(), nodeTypeDefinition.getValue())
-                : new ByteArrayInputStream(nodeTypeDefinition.getValue().getBytes(StandardCharsets.UTF_8));
     }
 
     private void computeAndWriteNodeDelta(final ConfigurationNode baselineNode,
