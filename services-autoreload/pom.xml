@@ -40,7 +40,7 @@
     <javax.websocket-api.version>1.0</javax.websocket-api.version>
 
     <!-- test dependencies -->
-    <commons-io.version>1.4</commons-io.version>
+    <commons-io.version>2.5</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <easymock.version>3.0</easymock.version>
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
