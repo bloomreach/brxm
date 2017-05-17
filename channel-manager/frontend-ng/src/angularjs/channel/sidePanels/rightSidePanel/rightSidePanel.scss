@@ -15,10 +15,24 @@
 @import 'variables';
 
 right-side-panel {
+  max-width: 0;
+
   &.sidepanel-open {
+    max-width: 50% !important;
+
     md-sidenav {
       width: 100%;
     }
+
+    &.fullwidth {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+  }
+
+  .btn-fullwidth,
+  .btn-normalwidth {
+    margin: 0 !important;
   }
 }
 

@@ -12,18 +12,17 @@ class resizeHandleController {
 
   _registerEvents() {
     this.handle.mousedown((mouseDownEvent) => {
+      let newWidth;
       const hippoIframe = $('hippo-iframe').find('iframe');
+      hippoIframe.css('pointer-events', 'none');
       const initialWidth = this.element.width();
       const initialX = mouseDownEvent.clientX;
 
-      hippoIframe.css('pointer-events', 'none');
-
-      let newWidth;
-
       this.$document.mousemove((moveEvent) => {
         const diff = initialX - moveEvent.pageX;
-
         newWidth = initialWidth + diff;
+
+        if (newWidth < 440 || newWidth > 880) return;
 
         this.element.css('width', newWidth);
         this.element.css('max-width', newWidth);

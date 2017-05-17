@@ -20,10 +20,28 @@
             md-component-id="right-side-panel"
             md-disable-backdrop>
 
-  <resize-handle element="$ctrl.$element" on-resize="$ctrl.onResize(newWidth)"></resize-handle>
+  <resize-handle element="$ctrl.$element"
+                 on-resize="$ctrl.onResize(newWidth)"
+                 ng-if="!$ctrl.isFullWidth">
+  </resize-handle>
 
   <md-toolbar>
     <div class="md-toolbar-tools">
+      <md-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
+                 aria-label="{{ 'FULL_WIDTH' | translate }}"
+                 ng-click="$ctrl.setFullWidth(true)"
+                 ng-show="!$ctrl.isFullWidth">
+        <md-tooltip md-delay="500">{{ 'FULL_WIDTH' | translate }}</md-tooltip>
+        <md-icon>fullscreen</md-icon>
+      </md-button>
+      <md-button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
+                 aria-label="{{ 'NORMAL_WIDTH' | translate }}"
+                 ng-click="$ctrl.setFullWidth(false)"
+                 ng-show="$ctrl.isFullWidth">
+        <md-tooltip md-delay="500">{{ 'NORMAL_WIDTH' | translate }}</md-tooltip>
+        <md-icon>fullscreen_exit</md-icon>
+      </md-button>
+
       <h1 class="md-title text-truncate">
         {{ $ctrl.title }}
         <md-tooltip md-delay="500">{{ $ctrl.doc.displayName }}</md-tooltip>

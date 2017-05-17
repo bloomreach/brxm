@@ -7,7 +7,7 @@ resize-handle {
   height: $handle-height;
   left: -5px;
   position: absolute;
-  top: 50vh;
+  top: calc(50vh - 40px);
   width: $handle-width;
   z-index: 20000;
 

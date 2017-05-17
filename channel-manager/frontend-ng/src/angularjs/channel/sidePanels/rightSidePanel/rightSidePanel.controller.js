@@ -90,6 +90,7 @@ class RightSidePanelCtrl {
     this.cancelLabel = $translate.instant('CANCEL');
 
     this.lastSavedWidth = null;
+    this.isFullWidth = false;
 
     SidePanelService.initialize('right', $element.find('.right-side-panel'), (documentId) => {
       this.openDocument(documentId);
@@ -397,6 +398,15 @@ class RightSidePanelCtrl {
   _closePanel() {
     this.SidePanelService.close('right')
       .then(() => this._resetState());
+  }
+
+  setFullWidth(state) {
+    if (state === true) {
+      this.$element.addClass('fullwidth');
+    } else {
+      this.$element.removeClass('fullwidth');
+    }
+    this.isFullWidth = state;
   }
 }
 
