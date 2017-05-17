@@ -40,7 +40,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFactory;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -128,7 +128,7 @@ public class ConfigurationConfigService {
         final Node targetNode = session.getNode(baselineRoot.getPath());
         final List<UnprocessedReference> unprocessedReferences = new ArrayList<>();
 
-        computeAndWriteNodeDelta(baselineRoot, update.getConfigurationRootNode(), targetNode, unprocessedReferences);
+        computeAndWriteNodeDelta(baselineRoot, update.getConfigurationRootNode(), targetNode, forceApply, unprocessedReferences);
         postProcessReferences(unprocessedReferences);
 
         if (forceApply) {
@@ -256,18 +256,20 @@ public class ConfigurationConfigService {
     private void computeAndWriteNodeDelta(final ConfigurationNode baselineNode,
                                   final ConfigurationNode updateNode,
                                   final Node targetNode,
+                                  final boolean forceApply,
                                   final List<UnprocessedReference> unprocessedReferences)
             throws RepositoryException, IOException {
 
-        computeAndWritePrimaryTypeDelta(baselineNode, updateNode, targetNode);
-        computeAndWriteMixinTypesDelta(baselineNode, updateNode, targetNode);
+        computeAndWritePrimaryTypeDelta(baselineNode, updateNode, targetNode, forceApply);
+        computeAndWriteMixinTypesDelta(baselineNode, updateNode, targetNode, forceApply);
         computeAndWritePropertiesDelta(baselineNode, updateNode, targetNode, unprocessedReferences);
-        computeAndWriteChildNodesDelta(baselineNode, updateNode, targetNode, unprocessedReferences);
+        computeAndWriteChildNodesDelta(baselineNode, updateNode, targetNode, forceApply, unprocessedReferences);
     }
 
     private void computeAndWritePrimaryTypeDelta(final ConfigurationNode baselineNode,
                                                  final ConfigurationNode updateNode,
-                                                 final Node targetNode)
+                                                 final Node targetNode,
+                                                 final boolean forceApply)
             throws RepositoryException {
 
         final Map<String, ConfigurationProperty> updateProperties = updateNode.getProperties();
@@ -276,13 +278,17 @@ public class ConfigurationConfigService {
         final String updatePrimaryType = updateProperties.get(JCR_PRIMARYTYPE).getValue().getString();
         final String baselinePrimaryType = baselineProperties.get(JCR_PRIMARYTYPE).getValue().getString();
 
-        if (!updatePrimaryType.equals(baselinePrimaryType)) {
+        if (!updatePrimaryType.equals(baselinePrimaryType) || forceApply) {
             final String jcrPrimaryType = targetNode.getPrimaryNodeType().getName();
             if (!jcrPrimaryType.equals(baselinePrimaryType)) {
-                final String msg = String.format("[OVERRIDE] Primary type '%s' of node '%s' has been changed from '%s'."
+                final String msg = forceApply
+                        ? String.format("[OVERRIDE] Primary type '%s' of node '%s' is adjusted to '%s' as defined in %s.",
+                                jcrPrimaryType, updateNode.getPath(), updatePrimaryType,
+                                ModelUtils.formatDefinitions(updateProperties.get(JCR_PRIMARYTYPE)))
+                        : String.format("[OVERRIDE] Primary type '%s' of node '%s' has been changed from '%s'."
                                 + "Overriding to type '%s', defined in %s.",
-                        jcrPrimaryType, updateNode.getPath(), baselinePrimaryType, updatePrimaryType,
-                        ModelUtils.formatDefinitions(updateProperties.get(JCR_PRIMARYTYPE)));
+                                jcrPrimaryType, updateNode.getPath(), baselinePrimaryType, updatePrimaryType,
+                                ModelUtils.formatDefinitions(updateProperties.get(JCR_PRIMARYTYPE)));
                 logger.info(msg);
             }
             targetNode.setPrimaryType(updatePrimaryType);
@@ -291,7 +297,8 @@ public class ConfigurationConfigService {
 
     private void computeAndWriteMixinTypesDelta(final ConfigurationNode baselineNode,
                                                 final ConfigurationNode updateNode,
-                                                final Node targetNode) throws RepositoryException {
+                                                final Node targetNode,
+                                                final boolean forceApply) throws RepositoryException {
 
         final Map<String, ConfigurationProperty> updateProperties = updateNode.getProperties();
         final Map<String, ConfigurationProperty> baselineProperties = baselineNode.getProperties();
@@ -305,37 +312,52 @@ public class ConfigurationConfigService {
         // Add new mixin types
         for (Value updateMixinValue : updateMixinValues) {
             final String updateMixin = updateMixinValue.getString();
-            boolean isInBaseline = false;
-            for (Value baselineMixinValue : baselineMixinValues) {
-                final String baselineMixin = baselineMixinValue.getString();
-                if (baselineMixin.equals(updateMixin)) {
-                    isInBaseline = true;
-                    break;
-                }
-            }
-            if (!isInBaseline) {
-                targetNode.addMixin(updateMixin);
+            if (forceApply || !hasMixin(baselineMixinValues, updateMixin)) {
+                addMixin(targetNode, updateMixin);
             }
         }
 
         // Remove old mixin types
-        for (Value baselineMixinValue : baselineMixinValues) {
-            final String baselineMixin = baselineMixinValue.getString();
-            boolean isInUpdate = false;
-            for (Value updateMixinValue : updateMixinValues) {
-                final String updateMixin = updateMixinValue.getString();
-                if (updateMixin.equals(baselineMixin)) {
-                    isInUpdate = true;
-                    break;
+        if (forceApply) {
+            for (NodeType mixinType : targetNode.getMixinNodeTypes()) {
+                final String jcrMixin = mixinType.getName();
+                if (!hasMixin(updateMixinValues, jcrMixin)) {
+                    removeMixin(targetNode, jcrMixin);
                 }
             }
-            if (!isInUpdate) {
-                try {
-                    targetNode.removeMixin(baselineMixin);
-                } catch (NoSuchNodeTypeException e) {
-                    // Successful "merge" between an incoming mixin removal and the fact that the mixin has already
-                    // been removed from the node in the repository. Swallow the exception.
+        } else {
+            for (Value baselineMixinValue : baselineMixinValues) {
+                final String baselineMixin = baselineMixinValue.getString();
+                if (!hasMixin(updateMixinValues, baselineMixin)) {
+                    removeMixin(targetNode, baselineMixin);
                 }
+            }
+        }
+    }
+
+    private boolean hasMixin(final Value[] mixinValues, final String mixin) {
+        for (Value mixinValue : mixinValues) {
+            if (mixinValue.getString().equals(mixin)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void addMixin(final Node node, final String mixin) throws RepositoryException {
+        for (NodeType mixinType : node.getMixinNodeTypes()) {
+            if (mixinType.getName().equals(mixin)) {
+                return;
+            }
+        }
+        node.addMixin(mixin);
+    }
+
+    private void removeMixin(final Node node, final String mixin) throws RepositoryException {
+        for (NodeType mixinType : node.getMixinNodeTypes()) {
+            if (mixinType.getName().equals(mixin)) {
+                node.removeMixin(mixin);
+                return;
             }
         }
     }
@@ -381,6 +403,7 @@ public class ConfigurationConfigService {
     private void computeAndWriteChildNodesDelta(final ConfigurationNode baselineNode,
                                                 final ConfigurationNode updateNode,
                                                 final Node targetNode,
+                                                final boolean forceApply,
                                                 final List<UnprocessedReference> unprocessedReferences)
             throws RepositoryException, IOException {
 
@@ -419,7 +442,7 @@ public class ConfigurationConfigService {
             }
 
             // recurse
-            computeAndWriteNodeDelta(baselineChild, updateChild, childNode, unprocessedReferences);
+            computeAndWriteNodeDelta(baselineChild, updateChild, childNode, forceApply, unprocessedReferences);
         }
 
         // Remove child nodes that are no longer in the model.
