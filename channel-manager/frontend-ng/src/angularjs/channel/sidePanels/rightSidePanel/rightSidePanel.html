@@ -53,6 +53,16 @@
 
   <md-content flex="grow"
               layout="column">
+
+    <md-subheader class="md-no-sticky"
+                  ng-if="$ctrl.docType && !$ctrl.docType.allFieldsIncluded"
+                  md-colors="{background: 'hippo-grey-200'}">
+      {{ 'NOT_ALL_FIELDS_SHOWN' | translate }}<br>
+      {{ 'NOT_ALL_FIELDS_SHOWN_SEE_ALL_1' | translate }}
+      <a href="#" ng-click="$ctrl.openFullContent('edit')">{{ 'NOT_ALL_FIELDS_SHOWN_SEE_ALL_2' | translate }}</a>
+      {{ 'NOT_ALL_FIELDS_SHOWN_SEE_ALL_3' | translate }}
+    </md-subheader>
+
     <div ng-if="$ctrl.feedback"
          class="md-padding qa-feedback"
          md-colors="{background: 'hippo-red-50'}">
