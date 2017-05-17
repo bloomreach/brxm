@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -43,8 +43,8 @@
     <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>5.0.0-SNAPSHOT</hippo.cms.version>
 
-    <lib.json.version>2.2.2</lib.json.version>
-    <lib.junit.version>4.8.2</lib.junit.version>
+    <json-lib.version>2.2.2</json-lib.version>
+    <junit.version>4.12</junit.version>
   </properties>
 
   <repositories>
@@ -74,7 +74,7 @@
       <groupId>net.sf.json-lib</groupId>
       <artifactId>json-lib</artifactId>
       <classifier>jdk15</classifier>
-      <version>${lib.json.version}</version>
+      <version>${json-lib.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -124,7 +124,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${lib.junit.version}</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
