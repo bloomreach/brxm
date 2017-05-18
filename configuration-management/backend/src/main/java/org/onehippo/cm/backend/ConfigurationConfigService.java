@@ -636,7 +636,7 @@ public class ConfigurationConfigService {
             final List<Value> verifiedBaselineValues = determineVerifiedValues(baselineProperty, session);
             if (!propertyIsIdentical(jcrProperty, baselineProperty, verifiedBaselineValues)) {
                 final String msg = String.format("[OVERRIDE] Property '%s' originally defined in %s has been changed, " +
-                                "but will be deleted because it is no longer is part of the configuration model.",
+                                "but will be deleted because it no longer is part of the configuration model.",
                         baselineProperty.getPath(), ModelUtils.formatDefinitions(baselineProperty));
                 logger.info(msg);
             }
