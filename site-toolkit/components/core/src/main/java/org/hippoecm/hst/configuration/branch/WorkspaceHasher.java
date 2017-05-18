@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
@@ -28,7 +29,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.statistics.Counter;
@@ -92,19 +92,10 @@ public class WorkspaceHasher implements NodeHasher {
                 hashTask = HDC.getCurrentTask().startSubtask("HashTask Node");
                 hashTask.setAttribute("Node path", node.getPath());
             }
-            if (!node.isNodeType(NODETYPE_HST_WORKSPACE)) {
-                Node current = node;
-                final Node root = node.getSession().getRootNode();
-                while (!current.isSame(root)) {
-                    current = current.getParent();
-                    if (current.isNodeType(NODETYPE_HST_WORKSPACE)) {
-                        break;
-                    }
-                }
-                if (current.isSame(root)) {
-                    throw new BranchException(String.format("Cannot not hash the node '%s' because not of type '%s' or " +
-                            "not a descendant of a node of type '%s'.", node.getPath(), NODETYPE_HST_WORKSPACE, NODETYPE_HST_WORKSPACE));
-                }
+
+            if (!isOrHasAncestorOfType(node, NODETYPE_HST_WORKSPACE)) {
+                throw new BranchException(String.format("Cannot not hash the node '%s' because not of type '%s' or " +
+                        "not a descendant of a node of type '%s'.", node.getPath(), NODETYPE_HST_WORKSPACE, NODETYPE_HST_WORKSPACE));
             }
 
             return startHashing(node, setHash, setUpstreamHash, counter);
@@ -120,6 +111,14 @@ public class WorkspaceHasher implements NodeHasher {
                 hashTask.setAttribute("Number of hashed nodes", counter.getValue());
                 hashTask.stop();
             }
+        }
+    }
+
+    private boolean isOrHasAncestorOfType(final Node node, final String nodeType) throws RepositoryException {
+        try {
+            return node.isNodeType(nodeType) || isOrHasAncestorOfType(node.getParent(), nodeType);
+        } catch (ItemNotFoundException e) {
+            return false;
         }
     }
 
