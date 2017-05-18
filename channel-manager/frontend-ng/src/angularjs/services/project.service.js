@@ -80,14 +80,12 @@ class ProjectService {
 
   projectChanged(selectedProject) {
     if (this.compareId(this._master)(selectedProject)) {
-      this.selectMaster();
-    } else if (this.withBranch.some(this.compareId(selectedProject))) {
-      this.selectBranch(selectedProject);
-    } else if (this.withoutBranch.some(this.compareId(selectedProject))) {
-      this.createBranch(selectedProject);
-      this.withBranch = this.withBranch.concat(selectedProject);
-      this.withoutBranch = this.withoutBranch.filter(project => project.id !== selectedProject.id);
+      return this.selectMaster();
     }
+    if (this.withoutBranch.some(this.compareId(selectedProject))) {
+      return this.createBranch(selectedProject);
+    }
+    return this.selectBranch(selectedProject);
   }
 
   currentBranch() {
@@ -96,11 +94,11 @@ class ProjectService {
   }
 
   createBranch(project) {
-    this.HstService.doPut(null, this._mountId, 'createbranch', project.id);
+    return this.HstService.doPut(null, this._mountId, 'createbranch', project.id);
   }
 
   selectBranch(project) {
-    this.HstService.doPut(null, this._mountId, 'selectbranch', project.id);
+    return this.HstService.doPut(null, this._mountId, 'selectbranch', project.id);
   }
 
   selectMaster() {

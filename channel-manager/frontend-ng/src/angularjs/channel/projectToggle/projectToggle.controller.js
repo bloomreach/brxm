@@ -46,8 +46,8 @@ class ProjectToggleController {
   }
 
   projectChanged() {
-    this.ProjectService.projectChanged(this.selectedProject);
-    this.HippoIframeService.reload();
+    this.ProjectService.projectChanged(this.selectedProject)
+      .then(() => this.HippoIframeService.reload());
   }
 }
 
