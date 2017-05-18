@@ -54,7 +54,7 @@ class ProjectService {
             let disabled = false;
             if (branchId) {
               disabled = true;
-              this.selectedProject = this.withBranch.find(project => this._compareIgnorePreview(project.id, branchId));
+              this.selectedProject = this.withBranch.find(project => project.id === branchId);
             }
             this.withoutBranch = this.withoutBranch.map(p => Object.create(p, { disabled: { value: disabled } }));
           });
@@ -67,15 +67,7 @@ class ProjectService {
   }
 
   compareId(p1) {
-    return p2 => this._compareIgnorePreview(p1.id, p2.id);
-  }
-
-  _compareIgnorePreview(id1, id2) {
-    return this._stripPreview(id1) === this._stripPreview(id2);
-  }
-
-  _stripPreview(id) {
-    return id.replace('-preview', '');
+    return p2 => p1.id === p2.id;
   }
 
   projectChanged(selectedProject) {
