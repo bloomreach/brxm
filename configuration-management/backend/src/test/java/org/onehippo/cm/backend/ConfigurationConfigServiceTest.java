@@ -329,7 +329,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
      */
 
     @Test
-    public void expect_tweaked_properties_to_be_untouched() throws Exception {
+    public void expect_unchanged_properties_to_be_untouched() throws Exception {
         final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
@@ -356,7 +356,42 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
     }
 
     @Test
-    public void expect_unchanged_existing_properties_to_persist_across_non_forced_bootstrap() throws Exception {
+    public void expect_updated_properties_to_be_updated() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org\n"
+                + "      multiple: [org1, org2]\n"
+                + "      reordered: [new2, new1]";
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: new\n"
+                + "      multiple: [new1, new2]\n"
+                + "      reordered: [new1, new2]\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectPropertyChanged("/test/single")
+                .expectPropertyChanged("/test/multiple")
+                .expectPropertyChanged("/test/reordered");
+
+        applyDefinitions(definition, baseline, expectedEvents);
+
+        expectNode("/test", "[]", "[jcr:primaryType, multiple, reordered, single]");
+        expectProp("/test/single", PropertyType.STRING, "new");
+        expectProp("/test/multiple", PropertyType.STRING, "[new1, new2]");
+        expectProp("/test/reordered", PropertyType.STRING, "[new1, new2]");
+    }
+
+    @Test
+    public void expect_tweaked_properties_to_be_untouched() throws Exception {
         final String baselineSource
                 = "definitions:\n"
                 + "  config:\n"
@@ -385,6 +420,46 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
         expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
         expectProp("/test/single", PropertyType.STRING, "new");
         expectProp("/test/multiple", PropertyType.STRING, "[new1]");
+    }
+
+    @Test
+    public void expect_tweaked_properties_to_be_overridden_if_model_changes() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org\n"
+                + "      multiple: [org1, org2]";
+        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        // tweak the properties
+        testNode.setProperty("single", "new");
+        testNode.setProperty("multiple", new String[] {"new1"});
+        session.save();
+
+        final String source
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org2\n"
+                + "      multiple: [org2, org1]\n"
+                + "";
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(source, baseline);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Property '/test/single' has been changed in the repository," +
+                            " and will be overridden due to definition [test-group/test-project/test-module-0 [string]].")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Property '/test/multiple' has been changed in the repository," +
+                            " and will be overridden due to definition [test-group/test-project/test-module-0 [string]].")));
+        }
+
+        expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
+        expectProp("/test/single", PropertyType.STRING, "org2");
+        expectProp("/test/multiple", PropertyType.STRING, "[org2, org1]");
     }
 
     @Test
@@ -456,6 +531,12 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
         expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
         expectProp("/test/single", PropertyType.STRING, "new");
         expectProp("/test/multiple", PropertyType.STRING, "[new1]");
+
+        // Also in forceApply mode...
+        applyDefinitions(source, baseline, true);
+
+        expectProp("/test/single", PropertyType.STRING, "new");
+        expectProp("/test/multiple", PropertyType.STRING, "[new1]");
     }
 
     @Test
@@ -480,19 +561,24 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
         expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
         expectProp("/test/single", PropertyType.STRING, "new");
         expectProp("/test/multiple", PropertyType.STRING, "[new1, new2]");
+
+        // Also in forceApply mode...
+        testNode.getProperty("single").remove();
+        testNode.getProperty("multiple").remove();
+        session.save();
+
+        applyDefinitions(definition, true);
+
+        expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
+        expectProp("/test/single", PropertyType.STRING, "new");
+        expectProp("/test/multiple", PropertyType.STRING, "[new1, new2]");
     }
 
     @Test
-    public void expect_updated_properties_to_be_updated() throws Exception {
-        final String baselineSource
-                = "definitions:\n"
-                + "  config:\n"
-                + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      single: org\n"
-                + "      multiple: [org1, org2]\n"
-                + "      reordered: [new2, new1]";
-        final ConfigurationModel baseline = applyDefinitions(baselineSource);
+    public void expect_manually_added_property_to_be_overridden_if_added_to_baseline() throws Exception {
+        testNode.setProperty("single", "tweaked");
+        testNode.setProperty("multiple", new String[] {"tw1", "tw2"});
+        session.save();
 
         final String definition
                 = "definitions:\n"
@@ -501,20 +587,114 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
                 + "      jcr:primaryType: nt:unstructured\n"
                 + "      single: new\n"
                 + "      multiple: [new1, new2]\n"
-                + "      reordered: [new1, new2]\n"
                 + "";
-
         final ExpectedEvents expectedEvents = new ExpectedEvents()
                 .expectPropertyChanged("/test/single")
-                .expectPropertyChanged("/test/multiple")
-                .expectPropertyChanged("/test/reordered");
+                .expectPropertyChanged("/test/multiple");
 
-        applyDefinitions(definition, baseline, expectedEvents);
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(definition, expectedEvents);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Property '/test/single' has been created in the repository, and will be " +
+                            "overridden due to definition [test-group/test-project/test-module-0 [string]].")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Property '/test/multiple' has been created in the repository, and will be" +
+                            " overridden due to definition [test-group/test-project/test-module-0 [string]].")));
+        }
 
-        expectNode("/test", "[]", "[jcr:primaryType, multiple, reordered, single]");
+        expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
         expectProp("/test/single", PropertyType.STRING, "new");
         expectProp("/test/multiple", PropertyType.STRING, "[new1, new2]");
-        expectProp("/test/reordered", PropertyType.STRING, "[new1, new2]");
+
+        // Also in forceApply mode...
+        testNode.setProperty("single", "tweaked");
+        testNode.setProperty("multiple", new String[] {"tw1", "tw2"});
+        session.save();
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(definition, true);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Property '/test/single' has been created in the repository, and will be " +
+                            "overridden due to definition [test-group/test-project/test-module-0 [string]].")));
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Property '/test/multiple' has been created in the repository, and will be" +
+                            " overridden due to definition [test-group/test-project/test-module-0 [string]].")));
+        }
+
+        expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
+        expectProp("/test/single", PropertyType.STRING, "new");
+        expectProp("/test/multiple", PropertyType.STRING, "[new1, new2]");
+    }
+
+    @Test
+    public void expect_manually_added_property_to_be_untouched_if_equal_to_baseline() throws Exception {
+        testNode.setProperty("single", "new");
+        testNode.setProperty("multiple", new String[] {"new1", "new2"});
+        session.save();
+
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: new\n"
+                + "      multiple: [new1, new2]";
+        applyDefinitions(definition, new ExpectedEvents());
+
+        expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
+        expectProp("/test/single", PropertyType.STRING, "new");
+        expectProp("/test/multiple", PropertyType.STRING, "[new1, new2]");
+
+        // Also in forceApply mode...
+        applyDefinitions(definition, true, new ExpectedEvents());
+
+        expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
+        expectProp("/test/single", PropertyType.STRING, "new");
+        expectProp("/test/multiple", PropertyType.STRING, "[new1, new2]");
+    }
+
+    @Test
+    public void expect_deleted_property_to_stay_deleted_if_baseline_unchanged() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        testNode.getProperty("single").remove();
+        session.save();
+
+        applyDefinitions(definition, baseline, new ExpectedEvents());
+
+        assertFalse(testNode.hasProperty("single"));
+    }
+
+    @Test
+    public void expect_deleted_property_to_be_resurrected_in_forced_bootstrap() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        testNode.getProperty("single").remove();
+        session.save();
+
+        ExpectedEvents expectedEvents = new ExpectedEvents().expectPropertyAdded("/test/single");
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(definition, baseline, true, expectedEvents);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Property '/test/single' has been deleted from the repository, and will be re-added " +
+                            "due to definition [test-group/test-project/test-module-0 [string]].")));
+        }
+
+        expectNode("/test", "[]", "[jcr:primaryType, single]");
+        expectProp("/test/single", PropertyType.STRING, "org");
     }
 
     @Test
@@ -553,6 +733,150 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
         applyDefinitions(new String[]{definition1,definition2}, baseline, false, expectedEvents);
 
         expectNode("/test", "[]", "[jcr:primaryType, not-in-config]");
+    }
+
+    @Test
+    public void expect_property_deletion_to_take_effect() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        final String update
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured";
+
+        ExpectedEvents expectedEvents = new ExpectedEvents().expectPropertyRemoved("/test/single");
+        applyDefinitions(update, baseline, expectedEvents);
+
+        expectNode("/test", "[]", "[jcr:primaryType]");
+
+        // Also in forceApply mode...
+        applyDefinitions(definition);
+        expectNode("/test", "[]", "[jcr:primaryType, single]");
+        applyDefinitions(update, baseline, true, expectedEvents);
+        expectNode("/test", "[]", "[jcr:primaryType]");
+    }
+
+    @Test
+    public void expect_tweaked_property_to_be_deleted_by_baseline_change() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        // tweak the property
+        testNode.setProperty("single", "new");
+        session.save();
+
+        final String update
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured";
+
+        ExpectedEvents expectedEvents = new ExpectedEvents().expectPropertyRemoved("/test/single");
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(update, baseline, expectedEvents);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Property '/test/single' originally defined in [test-group/test-project/test-module-0 [string]] " +
+                            "has been changed, but will be deleted because it no longer is part of the configuration model.")));
+        }
+
+        expectNode("/test", "[]", "[jcr:primaryType]");
+
+        // Also in forceApply mode...
+        testNode.setProperty("single", "new");
+        session.save();
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(update, baseline, true, expectedEvents);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Property '/test/single' originally defined in [test-group/test-project/test-module-0 [string]] " +
+                            "has been changed, but will be deleted because it no longer is part of the configuration model.")));
+        }
+
+        expectNode("/test", "[]", "[jcr:primaryType]");
+    }
+
+    @Test
+    public void expect_manually_deleted_property_to_stay_deleted_if_no_in_configuration_model() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      single: org";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        // tweak the property
+        testNode.getProperty("single").remove();
+        session.save();
+
+        final String update
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured";
+
+
+        applyDefinitions(update, baseline, new ExpectedEvents());
+        expectNode("/test", "[]", "[jcr:primaryType]");
+
+        // Also in forceApply mode...
+        applyDefinitions(update, baseline, true, new ExpectedEvents());
+        expectNode("/test", "[]", "[jcr:primaryType]");
+    }
+
+    @Test
+    public void expect_manually_added_property_to_be_untouched_if_model_unchanged() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        // tweak the property
+        testNode.setProperty("single", "tweaked");
+        session.save();
+
+        applyDefinitions(definition, baseline, new ExpectedEvents());
+
+        expectNode("/test", "[]", "[jcr:primaryType, single]");
+    }
+
+    @Test
+    public void expect_manually_added_property_to_be_wiped_on_forced_bootstrap() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        // tweak the property
+        testNode.setProperty("single", "tweaked");
+        session.save();
+
+        ExpectedEvents expectedEvents = new ExpectedEvents().expectPropertyRemoved("/test/single");
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(definition, baseline, true, expectedEvents);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Property 'single' of node '/test' has been added to the repository, but will be " +
+                            "deleted because it is not defined in [test-group/test-project/test-module-0 [string]].")));
+        }
+
+        expectNode("/test", "[]", "[jcr:primaryType]");
     }
 
     @Test

@@ -101,6 +101,10 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
         return applyDefinitions(new String[]{source}, makeMergedModel(DEFAULT_BASELINE_SOURCES), false);
     }
 
+    protected ConfigurationModel applyDefinitions(final String source, final boolean forceApply) throws Exception {
+        return applyDefinitions(new String[]{source}, makeMergedModel(DEFAULT_BASELINE_SOURCES), forceApply);
+    }
+
     protected ConfigurationModel applyDefinitions(final String source, final ConfigurationModel baseline) throws Exception {
         return applyDefinitions(new String[]{source}, baseline, false);
     }
@@ -113,8 +117,16 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
         return applyDefinitions(new String[]{source}, makeMergedModel(DEFAULT_BASELINE_SOURCES), false, expectedEvents);
     }
 
+    protected ConfigurationModel applyDefinitions(final String source, final boolean forceApply, final ExpectedEvents expectedEvents) throws Exception {
+        return applyDefinitions(new String[]{source}, makeMergedModel(DEFAULT_BASELINE_SOURCES), forceApply, expectedEvents);
+    }
+
     protected ConfigurationModel applyDefinitions(final String source, final ConfigurationModel baseline, final ExpectedEvents expectedEvents) throws Exception {
         return applyDefinitions(new String[]{source}, baseline, false, expectedEvents);
+    }
+
+    protected ConfigurationModel applyDefinitions(final String source, final ConfigurationModel baseline, final boolean forceApply, final ExpectedEvents expectedEvents) throws Exception {
+        return applyDefinitions(new String[]{source}, baseline, forceApply, expectedEvents);
     }
 
     protected ConfigurationModel applyDefinitions(final String[] sources, final ExpectedEvents expectedEvents) throws Exception {

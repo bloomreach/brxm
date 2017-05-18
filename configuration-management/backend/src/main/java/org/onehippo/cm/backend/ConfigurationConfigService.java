@@ -343,7 +343,7 @@ public class ConfigurationConfigService {
             for (String propertyName : getPropertyNames(targetNode)) {
                 if (!updateProperties.containsKey(propertyName)
                         && updateNode.getChildCategory(propertyName) == ConfigurationItemCategory.CONFIGURATION) {
-                    removeProperty(propertyName, baselineProperties.get(propertyName), targetNode);
+                    removeProperty(propertyName, baselineProperties.get(propertyName), targetNode, updateNode);
                 }
             }
         } else {
@@ -351,7 +351,7 @@ public class ConfigurationConfigService {
                 if (!propertyName.equals(JCR_PRIMARYTYPE)
                         && !propertyName.equals(JCR_MIXINTYPES)
                         && !updateProperties.containsKey(propertyName)) {
-                    removeProperty(propertyName, baselineProperties.get(propertyName), targetNode);
+                    removeProperty(propertyName, baselineProperties.get(propertyName), targetNode, updateNode);
                 }
             }
         }
@@ -624,7 +624,8 @@ public class ConfigurationConfigService {
 
     private void removeProperty(final String propertyName,
                                 final ConfigurationProperty baselineProperty,
-                                final Node jcrNode) throws RepositoryException, IOException {
+                                final Node jcrNode,
+                                final ConfigurationNode modelNode) throws RepositoryException, IOException {
         final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, propertyName);
         if (jcrProperty == null) {
             return; // Successful merge, no action needed.
@@ -635,14 +636,14 @@ public class ConfigurationConfigService {
             final List<Value> verifiedBaselineValues = determineVerifiedValues(baselineProperty, session);
             if (!propertyIsIdentical(jcrProperty, baselineProperty, verifiedBaselineValues)) {
                 final String msg = String.format("[OVERRIDE] Property '%s' originally defined in %s has been changed, " +
-                                "but will be deleted because it no longer is part of the configuration model.",
+                                "but will be deleted because it is no longer is part of the configuration model.",
                         baselineProperty.getPath(), ModelUtils.formatDefinitions(baselineProperty));
                 logger.info(msg);
             }
         } else {
-            final String msg = String.format("[OVERRIDE] Property '%s' of node '%s' exists in the repository, " +
-                            "but will be deleted because it is not part of the configuation model.",
-                    propertyName, jcrNode.getPath());
+            final String msg = String.format("[OVERRIDE] Property '%s' of node '%s' has been added to the repository, " +
+                            "but will be deleted because it is not defined in %s.",
+                    propertyName, jcrNode.getPath(), ModelUtils.formatDefinitions(modelNode));
             logger.info(msg);
         }
 
