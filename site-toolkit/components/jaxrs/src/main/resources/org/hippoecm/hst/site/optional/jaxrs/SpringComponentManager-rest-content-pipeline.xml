@@ -75,7 +75,7 @@
     <property name="valveName" value="jaxrsRestContentServiceValve" />
   </bean>
  
-  <bean id="jaxrsRestContentResourceProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="jaxrsRestContentResourceProviders" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
     <property name="targetMethod" value="union" />
     <property name="arguments">
@@ -84,6 +84,7 @@
         <ref bean="defaultRestContentResourceProviders" />
       </list>
     </property>
+    <property name="objectType" value="java.util.List" />
   </bean>
   
   <bean id="defaultRestContentResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
@@ -145,7 +146,7 @@
   
   <!-- Pipelining -->
   
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetObject">
       <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
         <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" />
@@ -181,6 +182,7 @@
         </bean>
       </list>
     </property>
+    <property name="objectType" value="org.hippoecm.hst.core.container.Pipeline" />
   </bean>
   
 </beans>

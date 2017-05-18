@@ -60,7 +60,7 @@
     </property>
   </bean>
 
-  <bean id="restApiAllEntityProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="restApiAllEntityProviders" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
     <property name="targetMethod" value="union" />
     <property name="arguments">
@@ -69,6 +69,7 @@
         <ref bean="customRestApiEntityProviders" />
       </list>
     </property>
+    <property name="objectType" value="java.util.List" />
   </bean>
 
 
@@ -111,7 +112,7 @@
     <property name="valveName" value="restApiServiceValve" />
   </bean>
 
-  <bean id="restApiResourceProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="restApiResourceProviders" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
     <property name="targetMethod" value="union" />
     <property name="arguments">
@@ -120,6 +121,7 @@
         <ref bean="defaultRestApiResourceProviders" />
       </list>
     </property>
+    <property name="objectType" value="java.util.List" />
   </bean>
 
   <bean id="fallbackNodeVisitors" class="org.springframework.beans.factory.config.ListFactoryBean">
@@ -209,7 +211,7 @@
     </property>
   </bean>
 
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetObject">
       <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
         <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" />
@@ -223,6 +225,7 @@
         <ref bean="restApiPipeline"/>
       </list>
     </property>
+    <property name="objectType" value="org.hippoecm.hst.core.container.Pipeline" />
   </bean>
 
   <bean id="htmlCleaner" class="org.hippoecm.hst.restapi.content.html.HtmlCleanerFactoryBean"/>

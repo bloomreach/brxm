@@ -38,12 +38,13 @@
     </constructor-arg>
   </bean>
 
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetObject" ref="jaxrsRestJacksonObjectMapper" />
     <property name="targetMethod" value="registerModule" />
     <property name="arguments">
       <ref bean="jaxrsHstConfigJacksonJsonModule" />
     </property>
+    <property name="objectType" value="com.fasterxml.jackson.databind.ObjectMapper" />
   </bean>
 
   <bean id="jaxrsHstConfigService" class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService">
@@ -232,7 +233,7 @@
     <constructor-arg ref="jaxrsHstConfigService"/>
   </bean>
 
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetObject">
       <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
         <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines"/>
@@ -266,9 +267,10 @@
         </bean>
       </list>
     </property>
+    <property name="objectType" value="org.hippoecm.hst.core.container.Pipeline" />
   </bean>
 
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetObject" ref="org.hippoecm.hst.configuration.model.HstManager"/>
     <property name="targetMethod" value="addHstConfigurationAugmenter"/>
     <property name="arguments">
@@ -278,11 +280,12 @@
         <property name="mountNamedPipeline" value="ComposerPipeline"/>
       </bean>
     </property>
+    <property name="objectType" value="java.lang.Void" />
   </bean>
 
   <!-- Inject the templatecomposer configuration invalidation listener to the EventListenersContainer -->
   <bean id="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel#SecurityModelEventListener"
-        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetObject" ref="jcrObservationEventListenerItems"/>
     <property name="targetMethod" value="add"/>
     <property name="arguments">
@@ -306,6 +309,7 @@
         </property>
       </bean>
     </property>
+    <property name="objectType" value="java.lang.Boolean" />
   </bean>
 
   <bean id="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel" class="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel">

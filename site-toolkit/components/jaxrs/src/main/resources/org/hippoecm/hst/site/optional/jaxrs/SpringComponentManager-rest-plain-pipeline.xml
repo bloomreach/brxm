@@ -75,7 +75,7 @@
     <property name="valveName" value="jaxrsRestPlainServiceValve" />
   </bean>
  
-  <bean id="jaxrsRestPlainResourceProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="jaxrsRestPlainResourceProviders" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
     <property name="targetMethod" value="union" />
     <property name="arguments">
@@ -84,6 +84,7 @@
         <ref bean="defaultRestPlainResourceProviders" />
       </list>
     </property>
+    <property name="objectType" value="java.util.List" />
   </bean>
   
   <bean id="defaultRestPlainResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
@@ -103,7 +104,7 @@
   
   <!-- Pipelining -->
   
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetObject">
       <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
         <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" />
@@ -139,6 +140,7 @@
         </bean>
       </list>
     </property>
+    <property name="objectType" value="org.hippoecm.hst.core.container.Pipeline" />
   </bean>
   
 </beans>

@@ -20,7 +20,7 @@
 
   <import resource="classpath:/org/hippoecm/hst/test/GeneralMultiplePoolingRepository.xml" />
 
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetObject" ref="org.hippoecm.hst.content.tool.ContentBeansTool" />
     <property name="targetMethod" value="setAnnotatedClassesResourcePath" />
     <property name="arguments">
@@ -28,6 +28,7 @@
         <value>classpath*:org/hippoecm/hst/jaxrs/model/beans/**.class</value>
       </list>
     </property>
+    <property name="objectType" value="java.lang.Void" />
   </bean>
 
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.xml" />

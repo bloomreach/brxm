@@ -24,34 +24,39 @@
     <property name="locateExistingServerIfPossible" value="${management.connector.server.locate.existing}" />
   </bean>
   
-  <bean id="_defaultSessionPool" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="_defaultSessionPool" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetObject" ref="javax.jcr.Repository"/>
     <property name="targetMethod" value="getRepositoryByCredentials"/>
     <property name="arguments"><list><ref bean="javax.jcr.Credentials.default"/></list></property>
+    <property name="objectType" value="javax.jcr.Repository" />
   </bean>
   
-  <bean id="_previewSessionPool" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="_previewSessionPool" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetObject" ref="javax.jcr.Repository"/>
     <property name="targetMethod" value="getRepositoryByCredentials"/>
     <property name="arguments"><list><ref bean="javax.jcr.Credentials.preview"/></list></property>
+    <property name="objectType" value="javax.jcr.Repository" />
   </bean>
   
-  <bean id="_binariesSessionPool" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="_binariesSessionPool" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetObject" ref="javax.jcr.Repository"/>
     <property name="targetMethod" value="getRepositoryByCredentials"/>
     <property name="arguments"><list><ref bean="javax.jcr.Credentials.binaries"/></list></property>
+    <property name="objectType" value="javax.jcr.Repository" />
   </bean>
   
-  <bean id="_writableSessionPool" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="_writableSessionPool" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetObject" ref="javax.jcr.Repository"/>
     <property name="targetMethod" value="getRepositoryByCredentials"/>
     <property name="arguments"><list><ref bean="javax.jcr.Credentials.writable"/></list></property>
+    <property name="objectType" value="javax.jcr.Repository" />
   </bean>
 
-  <bean id="_hstconfigreaderSessionPool" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="_hstconfigreaderSessionPool" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetObject" ref="javax.jcr.Repository"/>
     <property name="targetMethod" value="getRepositoryByCredentials"/>
     <property name="arguments"><list><ref bean="javax.jcr.Credentials.hstconfigreader"/></list></property>
+    <property name="objectType" value="javax.jcr.Repository" />
   </bean>
   
   <bean id="hstSessionPoolsMBeanExporter" class="org.hippoecm.hst.site.container.UnregisterableMBeanExporter">
@@ -117,7 +122,7 @@
     </property>
   </bean>
   
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetClass" value="net.sf.ehcache.management.ManagementService" />
     <property name="targetMethod" value="registerMBeans" />
     <property name="arguments">
@@ -130,6 +135,7 @@
         <value>true</value>
       </list>
     </property>
+    <property name="objectType" value="java.lang.Void" />
   </bean>
   
   <bean id="hstRmiRegistry" class="org.springframework.remoting.rmi.RmiRegistryFactoryBean">

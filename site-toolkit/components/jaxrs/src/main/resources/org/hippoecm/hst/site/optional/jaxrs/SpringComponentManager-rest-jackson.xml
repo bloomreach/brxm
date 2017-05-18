@@ -52,7 +52,7 @@
     </property>
   </bean>
 
-  <bean id="jaxrsRestAllEntityProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="jaxrsRestAllEntityProviders" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
     <property name="targetMethod" value="union" />
     <property name="arguments">
@@ -61,6 +61,7 @@
         <ref bean="customJaxrsRestEntityProviders" />
       </list>
     </property>
+    <property name="objectType" value="java.util.List" />
   </bean>
 
 </beans>

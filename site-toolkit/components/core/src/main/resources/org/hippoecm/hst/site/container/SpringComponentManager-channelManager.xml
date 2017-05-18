@@ -42,7 +42,7 @@
     </constructor-arg>
   </bean> 
 
-  <bean id="allChannelManagerEventListeners" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="allChannelManagerEventListeners" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
     <property name="targetMethod" value="union" />
     <property name="arguments">
@@ -51,6 +51,7 @@
         <ref bean="customChannelManagerEventListeners" />
       </list>
     </property>
+    <property name="objectType" value="java.util.List" />
   </bean>
 
   <!-- Default system channel manager event listeners may be added here. -->
