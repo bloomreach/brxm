@@ -16,11 +16,9 @@
 
 package org.onehippo.cm.api;
 
-import java.util.EnumSet;
 import java.util.List;
 
 import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cms7.services.SingletonService;
 import org.onehippo.repository.bootstrap.PostStartupTask;
 
@@ -44,9 +42,8 @@ public interface ConfigurationService {
     /**
      * Apply the whole or a part of a merged configuration model to the JCR as the new active configuration.
      * @param model the configuration model to apply
-     * @param includeDefinitionTypes the set of definition types to apply -- may be a subset
      */
-    void apply(final ConfigurationModel model, final EnumSet<DefinitionType> includeDefinitionTypes) throws Exception;
+    void apply(final ConfigurationModel model) throws Exception;
 
     /**
      * Store a merged configuration model as a baseline configuration in the JCR.

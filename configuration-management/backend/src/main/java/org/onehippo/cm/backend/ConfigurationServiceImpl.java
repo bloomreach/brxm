@@ -27,6 +27,7 @@ import org.onehippo.cm.api.ConfigurationService;
 import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.engine.ClasspathConfigurationModelReader;
+import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
 import org.onehippo.repository.bootstrap.PostStartupTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,11 +70,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             allExceptWebFileBundles.remove(DefinitionType.CONTENT);
 
             // TODO this should probably happen in contentBootstrap() instead of here, so that it is protected by the repo lock
-            apply(configurationModel, allExceptWebFileBundles);
+            apply(configurationModel);
 
             if (Boolean.getBoolean("repo.yaml.verify")) {
                 log.info("starting YAML verification");
-                apply(configurationModel, allExceptWebFileBundles);
+                apply(configurationModel);
                 log.info("YAML verification complete");
             }
 
@@ -92,10 +93,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         final List<PostStartupTask> tasks = new ArrayList(1);
         tasks.add(() -> {
             try {
-                apply(configurationModel, EnumSet.of(DefinitionType.WEBFILEBUNDLE));
-
-                final ContentService contentService = new ContentService(session);
-                contentService.apply(configurationModel);
+                final ConfigurationConfigService service = new ConfigurationConfigService();
+                service.writeWebfiles(configurationModel, session);
 
                 // update the stored baseline after fully applying the configurationModel
                 // this could result in the baseline becoming out of sync if the second phase of the apply fails
@@ -121,19 +120,20 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public void apply(final ConfigurationModel model, final EnumSet<DefinitionType> includeDefinitionTypes)
+    public void apply(final ConfigurationModel model)
             throws Exception {
         try {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
 
-            final ConfigService service =
-                    new ConfigService(session);
-            service.apply(model, includeDefinitionTypes);
+            final ConfigurationModel baseline = new ConfigurationModelBuilder().build();
+
+            final ConfigurationConfigService service = new ConfigurationConfigService();
+            service.computeAndWriteDelta(baseline, model, session, false);
             session.save();
 
             stopWatch.stop();
-            log.info("ConfigurationModel applied in {} for definitionTypes: {}", stopWatch.toString(), includeDefinitionTypes);
+            log.info("ConfigurationModel applied in {}", stopWatch.toString());
         }
         catch (Exception e) {
             log.warn("Failed to apply configuration", e);
