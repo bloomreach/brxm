@@ -222,7 +222,8 @@ public abstract class SourceParser extends AbstractBaseParser {
             operation = constructPropertyOperation(map.get(OPERATION_KEY));
             if (operation == PropertyOperation.DELETE) {
                 if (map.size() > 1) {
-                    throw new ParserException("Property map cannot contain '"+OPERATION_KEY+": "+PropertyOperation.DELETE.toString()+"' and other keys", value);
+                    throw new ParserException("Property map cannot contain '" + OPERATION_KEY + ": "
+                            + PropertyOperation.DELETE.toString() + "' and other keys", value);
                 }
                 property = parent.addProperty(name, ValueType.STRING, new ValueImpl[0]);
                 property.setOperation(operation);
@@ -243,7 +244,8 @@ public abstract class SourceParser extends AbstractBaseParser {
 
         if (map.size() != expectedMapSize) {
             throw new ParserException(
-                    "Property map must have either a '"+VALUE_KEY+"', '"+RESOURCE_KEY+"' or '"+PATH_KEY+"' key",
+                    "Property map must have either a '" + VALUE_KEY + "', '" + RESOURCE_KEY + "' or '" + PATH_KEY
+                            + "' key",
                     value);
         }
 
@@ -255,13 +257,15 @@ public abstract class SourceParser extends AbstractBaseParser {
             property = constructDefinitionPropertyFromPathMap(name, map.get(PATH_KEY), parent, valueType);
         } else {
             throw new ParserException(
-                    "Property map must have either a '"+VALUE_KEY+"', '"+RESOURCE_KEY+"' or '"+PATH_KEY+"' key",
+                    "Property map must have either a '" + VALUE_KEY + "', '" + RESOURCE_KEY + "' or '" + PATH_KEY
+                            + "' key",
                     value);
         }
 
         if (operation == PropertyOperation.ADD && property.getType() == PropertyType.SINGLE) {
             throw new ParserException(
-                    "Property map with operation 'add' must have a sequence for '"+VALUE_KEY+"', '"+RESOURCE_KEY+"' or '"+PATH_KEY+"'",
+                    "Property map with operation 'add' must have a sequence for '" + VALUE_KEY + "', '" + RESOURCE_KEY
+                            + "' or '" + PATH_KEY + "'",
                     value);
         }
 
@@ -458,8 +462,8 @@ public abstract class SourceParser extends AbstractBaseParser {
 
     private DefinitionPropertyImpl constructDefinitionPropertyFromPathMap(final String name, final Node node, final DefinitionNodeImpl parent, final ValueType valueType) throws ParserException {
         if (!(valueType == ValueType.REFERENCE || valueType == ValueType.WEAKREFERENCE)) {
-            throw new ParserException("Path values can only be used for value type '"+ValueType.REFERENCE.toString()+"' or '"
-            		+ValueType.WEAKREFERENCE.toString()+"'", node);
+            throw new ParserException("Path values can only be used for value type '" + ValueType.REFERENCE.toString()
+                    + "' or '" + ValueType.WEAKREFERENCE.toString() + "'", node);
         }
         switch (node.getNodeId()) {
             case scalar:
@@ -493,8 +497,8 @@ public abstract class SourceParser extends AbstractBaseParser {
 
     private DefinitionPropertyImpl constructDefinitionPropertyFromResourceMap(final String name, final Node node, final DefinitionNodeImpl parent, final ValueType valueType) throws ParserException {
         if (!(valueType == ValueType.STRING || valueType == ValueType.BINARY)) {
-            throw new ParserException("Resource values can only be used for value type '"+ValueType.BINARY.toString()
-            		+"' or '"+ValueType.STRING.toString()+"'", node);
+            throw new ParserException("Resource values can only be used for value type '" + ValueType.BINARY.toString()
+            		 + "' or '" + ValueType.STRING.toString() + "'", node);
         }
         switch (node.getNodeId()) {
             case scalar:
@@ -543,6 +547,5 @@ public abstract class SourceParser extends AbstractBaseParser {
             throw new ParserException("Unrecognized value type: '" + type + "'", node);
         }
     }
-
 
 }
