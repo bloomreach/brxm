@@ -3,8 +3,9 @@
 resize-handle {
   $handle-width: 14px;
   $handle-height: 80px;
+  $handle-bg-color: #666;
 
-  background-color: #666;
+  background-color: $handle-bg-color;
   border-radius: 10px;
   height: $handle-height;
   left: -5px;
@@ -18,11 +19,11 @@ resize-handle {
   }
 
   .handle-inner {
+    background-image: url('../../../../../images/resize-handle-dots.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
     height: 100%;
     width: $handle-width;
-    background-image: url(../../../../../images/resize-handle-dots.png);
-    background-size: 100%;
-    background-repeat: no-repeat;
-    background-position: center;
   }
 }
