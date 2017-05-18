@@ -18,6 +18,7 @@ package org.hippoecm.repository.security.group;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -53,6 +54,11 @@ public class RepositoryGroupManagerTest extends RepositoryTestCase {
         if (groups.hasNode(GROUPFOLDER_PREFIX + "1")) {
             groups.getNode(GROUPFOLDER_PREFIX + "1").remove();
         }
+        if (groups.hasNode(GROUPFOLDER_PREFIX + "2")) {
+            groups.getNode(GROUPFOLDER_PREFIX + "2").remove();
+        }
+        final Node groupProvider = session.getNode("/hippo:configuration/hippo:security/internal/hipposys:groupprovider");
+        groupProvider.setProperty("hipposys:dirlevels", 0L);
 
         session.save();
         super.tearDown();
@@ -95,6 +101,30 @@ public class RepositoryGroupManagerTest extends RepositoryTestCase {
         final Set<String> membershipIds = repositoryGroupManager.getMembershipIds(TESTUSER);
         Assert.assertFalse("Membership of a group below the current dirlevel", membershipIds.contains("group1"));
 
+    }
+
+    /**
+     * When a user is member of multiple groups on a level > 1, all memberships must be read.
+     */
+    @Test
+    public void testGroupDirLevels() throws Exception {
+        // set group dirlevels
+        final Node groupProvider = session.getNode("/hippo:configuration/hippo:security/internal/hipposys:groupprovider");
+        final Property property = groupProvider.setProperty("hipposys:dirlevels", 1L);
+
+        // 2 groupfolders with a group in each folder. make testuser member of the group.
+        final Node groups = session.getNode("/hippo:configuration/hippo:groups");
+        createGroupFolder(groups, 1);
+        createGroupFolder(groups, 2);
+        session.save();
+
+        managerContext = new ManagerContext(session, "hippo:configuration/hippo:security/internal", "hippo:configuration/hippo:groups",true);
+        RepositoryGroupManager repositoryGroupManager = new RepositoryGroupManager();
+        repositoryGroupManager.init(managerContext);
+
+        final Set<String> membershipIds = repositoryGroupManager.getMembershipIds(TESTUSER);
+        Assert.assertTrue("testuser is member of group 1", membershipIds.contains("group1"));
+        Assert.assertTrue("testuser is member of group 2", membershipIds.contains("group2"));
     }
 
     private void createGroupFolder(final Node parentNode, final int number) throws RepositoryException {
