@@ -29,6 +29,7 @@ import org.onehippo.testutils.jcr.event.ExpectedEvents;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -880,6 +881,77 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
     }
 
     @Test
+    public void expect_jcr_uuid_to_be_retained() throws Exception {
+        final String uuid = "e4ecf93e-2708-40b4-b091-51d84169a174";
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /child:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:uuid: "+uuid+"\n"
+                + "";
+
+        applyDefinitions(definition);
+        assertEquals(uuid, testNode.getNode("child").getIdentifier());
+    }
+
+    @Test
+    public void expect_uuid_to_be_retained_when_removed_from_the_model() throws Exception {
+        final String uuid = "e4ecf93e-2708-40b4-b091-51d84169a174";
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /child:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:uuid: "+uuid+"\n"
+                + "";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        final String update
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /child:\n"
+                + "        jcr:primaryType: nt:unstructured";
+        ExpectedEvents expectedEvents = new ExpectedEvents().expectPropertyRemoved("/test/child/" + JCR_UUID);
+        applyDefinitions(update, baseline, expectedEvents);
+
+        // Interesting enough, the node still has this identifier...
+        assertEquals(uuid, testNode.getNode("child").getIdentifier());
+    }
+
+    @Test
+    public void expect_new_jcr_uuid_created_on_collision() throws Exception {
+        final String uuid = "e4ecf93e-2708-40b4-b091-51d84169a174";
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /child:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:uuid: "+uuid+"\n"
+                + "      /child2:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:uuid: "+uuid+"\n"
+                + "";
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(definition);
+            assertEquals(uuid, testNode.getNode("child").getIdentifier());
+            assertNotEquals(uuid, testNode.getNode("child2").getIdentifier());
+            assertTrue(interceptor.messages().anyMatch(m->m.equals("Specified jcr:uuid " + uuid +
+                    " for node '/test/child2' defined in [test-group/test-project/test-module-0 [string]]" +
+                    " already in use: a new jcr:uuid will be generated instead.")));
+        }
+    }
+
+    @Test
     public void expect_propertytype_overrides_to_be_applied_if_necessary() throws Exception {
         final String baselineSource
                 = "definitions:\n"
@@ -1157,56 +1229,13 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
     }
 
     @Test
-    public void expect_jcr_uuid_to_be_retained() throws Exception {
-        final String uuid = "e4ecf93e-2708-40b4-b091-51d84169a174";
-        final String definition
-                = "definitions:\n"
-                + "  config:\n"
-                + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      /child:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "        jcr:uuid: "+uuid+"\n"
-                + "";
-
-        applyDefinitions(definition);
-        assertEquals(uuid, testNode.getNode("child").getIdentifier());
-    }
-
-    @Test
-    public void expect_new_jcr_uuid_created_on_collision() throws Exception {
-        final String uuid = "e4ecf93e-2708-40b4-b091-51d84169a174";
-        final String definition
-                = "definitions:\n"
-                + "  config:\n"
-                + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      /child:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "        jcr:uuid: "+uuid+"\n"
-                + "      /child2:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "        jcr:uuid: "+uuid+"\n"
-                + "";
-
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationConfigService.class).build()) {
-            applyDefinitions(definition);
-            assertEquals(uuid, testNode.getNode("child").getIdentifier());
-            assertNotEquals(uuid, testNode.getNode("child2").getIdentifier());
-            assertTrue(interceptor.messages().anyMatch(m->m.equals("Specified jcr:uuid " + uuid +
-                    " for node '/test/child2' defined in [test-group/test-project/test-module-0 [string]]" +
-                    " already in use: a new jcr:uuid will be generated instead.")));
-        }
-    }
-
-    @Test
     public void expect_protected_properties_to_be_untouched() throws Exception {
         final String definition
                 = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
-                + "      jcr:mixinTypes: ['mix:created']\n" // will auto-created protected properties jcr:created and jcr:createdBy
+                + "      jcr:mixinTypes: ['mix:created']\n" // will auto-create protected properties jcr:created and jcr:createdBy
                 + "";
 
         ConfigurationModel baseline = applyDefinitions(definition);
@@ -1336,6 +1365,130 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
     }
 
     @Test
+    public void expect_manually_added_node_matching_model_to_be_adjusted() throws Exception {
+        testNode.addNode("child", "nt:unstructured");
+        session.save();
+
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /child:\n"
+                + "        jcr:primaryType: nt:unstructured";
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(definition, new ExpectedEvents());
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Node '/test/child' has been added, but will be re-created " +
+                            "due to the incoming definition [test-group/test-project/test-module-0 [string]].")));
+        }
+
+        expectNode("/test", "[child]", "[jcr:primaryType]");
+
+        // likewise for forceApply
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(definition, true, new ExpectedEvents());
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Node '/test/child' has been added, but will be re-created " +
+                            "due to the incoming definition [test-group/test-project/test-module-0 [string]].")));
+        }
+        expectNode("/test", "[child]", "[jcr:primaryType]");
+    }
+
+    @Test
+    public void expect_manually_removed_node_to_be_untouched_while_model_unchanged() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /child:\n"
+                + "        jcr:primaryType: nt:unstructured";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        // tweak
+        testNode.getNode("child").remove();
+        session.save();
+
+        applyDefinitions(definition, baseline, new ExpectedEvents());
+
+        expectNode("/test", "[]", "[jcr:primaryType]");
+    }
+
+    @Test
+    public void expect_manually_removed_node_to_be_resurrected_during_forced_bootstrap() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /child:\n"
+                + "        jcr:primaryType: nt:unstructured";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        // tweak
+        testNode.getNode("child").remove();
+        session.save();
+
+        ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectNodeAdded("/test/child")
+                .expectPropertyAdded("/test/child/jcr:primaryType");
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(definition, baseline, true, expectedEvents);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Node '/test/child' has been removed, but will be re-added " +
+                            "due to definition [test-group/test-project/test-module-0 [string]].")));
+        }
+
+        expectNode("/test/child", "[]", "[jcr:primaryType]");
+    }
+
+    @Test
+    public void expect_manually_added_node_to_be_untouched_while_model_unchanged() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        // tweak
+        testNode.addNode("child", "nt:unstructured");
+        session.save();
+
+        applyDefinitions(definition, baseline, new ExpectedEvents());
+
+        expectNode("/test/child", "[]", "[jcr:primaryType]");
+    }
+
+    @Test
+    public void expect_manually_added_node_to_be_wiped_during_forced_bootstrap() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        // tweak
+        testNode.addNode("child", "nt:unstructured");
+        session.save();
+
+        ExpectedEvents expectedEvents = new ExpectedEvents().expectNodeRemoved("/test/child");
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(definition, baseline, true, expectedEvents);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
+                    "[OVERRIDE] Child node 'child[1]' exists, but will be deleted while processing the children " +
+                            "of node '/test' defined in [test-group/test-project/test-module-0 [string]].")));
+        }
+
+        assertFalse(testNode.hasNode("child"));
+    }
+
+    @Test
     public void expect_deleted_nodes_to_be_deleted() throws Exception {
         final String baselineSource
                 = "definitions:\n"
@@ -1343,33 +1496,54 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
                 + "      /a:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "        property: a\n"
-                + "        /z:\n"
-                + "          jcr:primaryType: nt:unstructured\n"
-                + "          property: z\n"
-                + "      /b:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "        property: b";
+                + "        jcr:primaryType: nt:unstructured";
         final ConfigurationModel baseline = applyDefinitions(baselineSource);
 
         final String source
                 = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      /a:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "        property: a\n"
-                + "";
+                + "      jcr:primaryType: nt:unstructured";
 
-        final ExpectedEvents expectedEvents = new ExpectedEvents()
-                .expectNodeRemoved("/test/a/z")
-                .expectNodeRemoved("/test/b");
+        final ExpectedEvents expectedEvents = new ExpectedEvents().expectNodeRemoved("/test/a");
 
         applyDefinitions(source, baseline, expectedEvents);
+        expectNode("/test", "[]", "[jcr:primaryType]");
 
-        expectNode("/test", "[a]", "[jcr:primaryType]");
+        // likewise for forceApply
+        testNode.addNode("a", "nt:unstructured");
+        session.save();
+
+        applyDefinitions(source, baseline, true, expectedEvents);
+        expectNode("/test", "[]", "[jcr:primaryType]");
+    }
+
+    @Test
+    public void expect_already_deleted_node_to_be_ignored() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /a:\n"
+                + "        jcr:primaryType: nt:unstructured";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        testNode.getNode("a").remove();
+        session.save();
+
+        final String source
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured";
+
+        applyDefinitions(source, baseline, new ExpectedEvents());
+        expectNode("/test", "[]", "[jcr:primaryType]");
+
+        // likewise for forceApply...
+        applyDefinitions(source, baseline, true, new ExpectedEvents());
+        expectNode("/test", "[]", "[jcr:primaryType]");
     }
 
     @Test

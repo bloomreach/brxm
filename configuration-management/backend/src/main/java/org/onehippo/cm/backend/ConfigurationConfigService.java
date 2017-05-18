@@ -381,7 +381,7 @@ public class ConfigurationConfigService {
         // Add or update child nodes
 
         for (String indexedChildName : updateChildren.keySet()) {
-            final ConfigurationNode baselineChild;
+            ConfigurationNode baselineChild = baselineChildren.get(indexedChildName);
             final ConfigurationNode updateChild = updateChildren.get(indexedChildName);
             final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(indexedChildName);
             final Node existingChildNode = getChildWithIndex(targetNode, nameAndIndex.getLeft(), nameAndIndex.getRight());
@@ -389,26 +389,37 @@ public class ConfigurationConfigService {
 
             if (existingChildNode == null) {
                 // need to add node
-                if (baselineChildren.containsKey(indexedChildName)) {
-                    final String msg = String.format("[OVERRIDE] Node '%s' has been removed, " +
-                            "but will be re-added due to definition %s.",
-                            updateChild.getPath(), ModelUtils.formatDefinitions(updateChild));
-                    logger.info(msg);
-                }
                 final String childPrimaryType = updateChild.getProperties().get(JCR_PRIMARYTYPE).getValue().getString();
                 final String childName = nameAndIndex.getLeft();
 
+                if (baselineChild == null) {
+                    baselineChild = newChildOfType(childPrimaryType);
+                } else {
+                    if (forceApply) {
+                        final String msg = String.format("[OVERRIDE] Node '%s' has been removed, " +
+                                        "but will be re-added due to definition %s.",
+                                updateChild.getPath(), ModelUtils.formatDefinitions(updateChild));
+                        logger.info(msg);
+                    } else {
+                        // In the baseline, the child exists. Some of its properties or (nested) children may
+                        // have changed, but the current implementation considers the manual removal of the
+                        // child node more important, so we don't compute if there is a difference between
+                        // baselineChild and updateChild, and refrain from re-adding the deleted child node.
+                        continue;
+                    }
+                }
                 childNode = addNode(targetNode, childName, childPrimaryType, updateChild);
-                baselineChild = newChildOfType(childPrimaryType);
             } else {
-                if (!baselineChildren.containsKey(indexedChildName)) {
+                if (baselineChild == null) {
                     final String msg = String.format("[OVERRIDE] Node '%s' has been added, " +
-                                    "but will be overridden due to definition %s.",
+                            "but will be re-created due to the incoming definition %s.",
                             updateChild.getPath(), ModelUtils.formatDefinitions(updateChild));
                     logger.info(msg);
+
+                    final String childPrimaryType = existingChildNode.getPrimaryNodeType().getName();
+                    baselineChild = newChildOfType(childPrimaryType);
                 }
                 childNode = existingChildNode;
-                baselineChild = baselineChildren.get(indexedChildName);
             }
 
             // recurse
@@ -510,9 +521,8 @@ public class ConfigurationConfigService {
     /**
      * Put nodes into the appropriate order:
      *
-     * At this point, the set of child node names of 'parent' (runtime/repository) is guaranteed to be a superset
-     * of the 'indexedModelChildNames' (model). We bring the children of parent into the desired order specified
-     * by indexedModelChildNames by ignoring/skipping non-model child nodes of parent, such that these children
+     * We bring the children of parent into the desired order specified by indexedModelChildNames
+     * by ignoring/skipping non-model child nodes of parent, such that these children
      * stay "in place", rather than trickle down to the end of parent's list of children.
      */
     private void reorderChildren(final Node parent, final List<String> indexedModelChildNames) throws RepositoryException {
@@ -525,8 +535,11 @@ public class ConfigurationConfigService {
 
         for (int modelIndex = 0, targetIndex = 0; modelIndex < indexedModelChildNames.size(); modelIndex++) {
             final String indexedModelName = indexedModelChildNames.get(modelIndex);
-            String indexedTargetName = indexedTargetNodeChildNames.get(targetIndex);
+            if (!indexedTargetNodeChildNames.contains(indexedModelName)) {
+                continue; // child may have been removed manually...
+            }
 
+            String indexedTargetName = indexedTargetNodeChildNames.get(targetIndex);
             while (indexedModelChildNames.indexOf(indexedTargetName) < modelIndex) {
                 targetIndex++; // skip target node, it isn't part of the model.
                 indexedTargetName = indexedTargetNodeChildNames.get(targetIndex);
