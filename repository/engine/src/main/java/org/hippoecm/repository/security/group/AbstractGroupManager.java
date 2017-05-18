@@ -308,7 +308,8 @@ public abstract class AbstractGroupManager implements GroupManager {
         return groupIds;
     }
 
-    private Set<Node> getMembershipsByPath(String userId, String providerId, Node groupFolder, int level) {
+    private Set<Node> getMembershipsByPath(final String userId, final String providerId, final Node groupFolder,
+                                           final int level) {
         final Set<Node> groups = new HashSet<>();
         try {
             for (Node groupNode : new NodeIterable(groupFolder.getNodes())) {
@@ -322,8 +323,7 @@ public abstract class AbstractGroupManager implements GroupManager {
                         }
                     }
                 } else if (groupNode.isNodeType(NT_GROUPFOLDER) && level < dirLevels) {
-                    level++;
-                    groups.addAll(getMembershipsByPath(userId, providerId, groupNode, level));
+                    groups.addAll(getMembershipsByPath(userId, providerId, groupNode, level + 1));
                 }
             }
         } catch (RepositoryException e) {
