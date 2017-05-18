@@ -1,12 +1,12 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,11 +48,10 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_FACETSELECT;
 
 class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkDecorator {
 
-    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(PreviewLinksBehavior.class);
 
     private static final String JS_PREVENT_DEFAULT = "Wicket.Event.fix(event).preventDefault();";
     private static final String JS_STOP_EVENT = "Wicket.Event.stop(event);";
-    private static final Logger log = LoggerFactory.getLogger(PreviewLinksBehavior.class);
 
     private final IModel<Node> model;
     private final IBrowseService browser;
@@ -62,15 +61,15 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
      */
     private final boolean encode;
 
-    PreviewLinksBehavior(final IModel<Node> model, final IBrowseService browser, boolean encode) {
+    PreviewLinksBehavior(final IModel<Node> model, final IBrowseService browser, final boolean encode) {
         this.model = model;
         this.browser = browser;
         this.encode = encode;
     }
 
     @Override
-    protected void respond(AjaxRequestTarget target) {
-        Request request = RequestCycle.get().getRequest();
+    protected void respond(final AjaxRequestTarget target) {
+        final Request request = RequestCycle.get().getRequest();
         final StringValue linkValue = request.getRequestParameters().getParameterValue("link");
         if (linkValue != null) {
             String link = linkValue.toString();
@@ -87,9 +86,9 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
                             browser.browse(new JcrNodeModel(node));
                         }
                     }
-                } catch (ItemNotFoundException ex) {
+                } catch (final ItemNotFoundException ex) {
                     log.info("Could not resolve link", ex);
-                } catch (RepositoryException e) {
+                } catch (final RepositoryException e) {
                     log.error("Error while browing to link", e);
                 }
             }
@@ -105,20 +104,20 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
                 link = UrlEncoder.QUERY_INSTANCE.encode(link, charset);
             }
             attributes.getExtraParameters().put("link", link);
-            CharSequence asString = renderAjaxAttributes(getComponent(), attributes);
+            final CharSequence asString = renderAjaxAttributes(getComponent(), attributes);
             return "href=\"#\" onclick='" + JS_PREVENT_DEFAULT + JS_STOP_EVENT + "Wicket.Ajax.get(" + asString + ");'";
         } else {
-            String message = new ClassResourceModel("brokenlink-alert", PreviewLinksBehavior.class).getObject();
+            final String message = new ClassResourceModel("brokenlink-alert", PreviewLinksBehavior.class).getObject();
             return "class=\"brokenlink\" href=\"#\" onclick=\"alert('" + message + "');return false;\"";
         }
     }
 
     @Override
-    public String externalLink(String link) {
+    public String externalLink(final String link) {
         return "href=\"" + link + "\" onclick=\"" + JS_STOP_EVENT + "\"";
     }
 
-    private boolean linkExists(String linkRelPath) {
+    private boolean linkExists(final String linkRelPath) {
         if (StringUtils.startsWith(linkRelPath, "/")) {
             // absolute path cannot be an internal link
             return false;
@@ -135,7 +134,7 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
             }
         } catch (ItemNotFoundException|NamespaceException|IllegalArgumentException ignored) {
             log.debug("Ignoring exception while checking that link '{}' exists and assume it does not exist", linkRelPath, ignored);
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.error("Error while checking internal link existence", e);
         }
         return false;
