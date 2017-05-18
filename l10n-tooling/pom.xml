@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2016-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>28.3</version>
+    <version>28.6</version>
     <relativePath/>
   </parent>
 
@@ -33,10 +33,10 @@
   <properties>
     <commons-io.version>2.5</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
-    <commons-csv.version>1.2</commons-csv.version>
+    <commons-csv.version>1.4</commons-csv.version>
     <json-lib.version>2.4</json-lib.version>
-    <apache-poi.version>3.14</apache-poi.version>
-    <junit.version>4.8</junit.version>
+    <apache-poi.version>3.16</apache-poi.version>
+    <junit.version>4.10</junit.version>
   </properties>
 
   <scm>
