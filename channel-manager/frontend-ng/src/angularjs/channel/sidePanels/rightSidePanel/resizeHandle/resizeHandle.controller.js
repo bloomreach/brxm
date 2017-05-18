@@ -17,6 +17,7 @@ class resizeHandleController {
       hippoIframe.css('pointer-events', 'none');
       const initialWidth = this.element.width();
       const initialX = mouseDownEvent.clientX;
+      this.element.addClass('in-resize');
 
       this.$document.mousemove((moveEvent) => {
         const diff = initialX - moveEvent.pageX;
@@ -32,6 +33,7 @@ class resizeHandleController {
         this.$document.unbind('mousemove');
         hippoIframe.css('pointer-events', 'auto');
         this.onResize({ newWidth });
+        this.element.removeClass('in-resize');
       });
     });
   }
