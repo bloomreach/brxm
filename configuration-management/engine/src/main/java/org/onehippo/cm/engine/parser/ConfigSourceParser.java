@@ -104,7 +104,8 @@ public class ConfigSourceParser extends SourceParser {
                     parent.addNodeTypeDefinition(resource, true);
                     break;
                 default:
-                    throw new ParserException("CND definition item must be a string or a map with key '"+RESOURCE_KEY+"'", node);
+                    throw new ParserException(
+                            "CND definition item must be a string or a map with key '" + RESOURCE_KEY + "'", node);
             }
         }
     }
@@ -126,7 +127,7 @@ public class ConfigSourceParser extends SourceParser {
             if (key.equals(META_DELETE_KEY)) {
                 if (!verifyOnly) {
                     if (tuples.size() > 1) {
-                        throw new ParserException("Node cannot contain '"+META_DELETE_KEY+"' and other keys", node);
+                        throw new ParserException("Node cannot contain '" + META_DELETE_KEY + "' and other keys", node);
                     }
                 }
                 final boolean delete = asNodeDeleteValue(tupleValue);
@@ -134,7 +135,7 @@ public class ConfigSourceParser extends SourceParser {
             } else if (key.equals(META_ORDER_BEFORE_KEY)) {
                 final String name = asNodeOrderBeforeValue(tupleValue);
                 if (definitionNode.getName().equals(name)) {
-                    throw new ParserException("Invalid "+META_ORDER_BEFORE_KEY+" targeting this node itself", node);
+                    throw new ParserException("Invalid " + META_ORDER_BEFORE_KEY + " targeting this node itself", node);
                 }
                 definitionNode.setOrderBefore(name);
             } else if (key.equals(META_IGNORE_REORDERED_CHILDREN)) {
@@ -153,7 +154,7 @@ public class ConfigSourceParser extends SourceParser {
         final ScalarNode scalar = asScalar(node);
         final Object object = scalarConstructor.constructScalarNode(scalar);
         if (!object.equals(true)) {
-            throw new ParserException("Value for "+META_DELETE_KEY+" must be boolean value 'true'", node);
+            throw new ParserException("Value for " + META_DELETE_KEY + " must be boolean value 'true'", node);
         }
         return true;
     }
