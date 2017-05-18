@@ -15,6 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -53,15 +64,6 @@ import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 public class FolderTreePlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(FolderTreePlugin.class);
@@ -111,7 +113,7 @@ public class FolderTreePlugin extends RenderPlugin {
         DocumentListFilter folderTreeConfig = new DocumentListFilter(config);
         final boolean workflowEnabled = getPluginConfig().getAsBoolean("workflow.enabled", true);
 
-        this.rootNode = new FolderTreeNode(rootModel, folderTreeConfig);
+        this.rootNode = new FolderTreeNode(rootModel, folderTreeConfig, createCustomChildComparator());
         treeModel = new JcrTreeModel(rootNode);
         context.registerService(treeModel, IObserver.class.getName());
         final CmsJcrTree cmsJcrTree = new CmsJcrTree("tree", treeModel, newTreeNodeTranslator(config), newTreeNodeIconProvider(context, config)) {
@@ -311,4 +313,24 @@ public class FolderTreePlugin extends RenderPlugin {
         }
     }
 
+    /**
+     * Initialize and return a custom comparator that can be used globally in this specific folder tree plugin
+     * if set by 'custom.child.comparator' string property in the plugin configuration.
+     * @return a custom comparator that can be used globally in this specific folder tree plugin
+     */
+    private Comparator<IJcrTreeNode> createCustomChildComparator() {
+        Comparator<IJcrTreeNode> customComparator = null;
+
+        final String customComparatorName = getPluginConfig().getString("custom.child.comparator", null);
+
+        if (StringUtils.isNotBlank(customComparatorName)) {
+            try {
+                customComparator = (Comparator<IJcrTreeNode>) Class.forName(customComparatorName).newInstance();
+            } catch (Throwable th) {
+                log.error("Failed to create custom comparator: '{}'.", customComparatorName, th);
+            }
+        }
+
+        return customComparator;
+    }
 }

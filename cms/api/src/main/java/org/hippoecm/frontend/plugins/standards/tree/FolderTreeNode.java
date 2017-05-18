@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.plugins.standards.tree;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -24,27 +26,70 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
+import org.hippoecm.frontend.model.tree.JcrTreeNameComparator;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FolderTreeNode extends JcrTreeNode {
+
     private static final long serialVersionUID = 1L;
+
     static final Logger log = LoggerFactory.getLogger(FolderTreeNode.class);
 
-    private DocumentListFilter config;
+    /**
+     * Comparator by folder display name.
+     */
+    private static Comparator<IJcrTreeNode> DISPLAY_NAME_COMPARATOR = new JcrTreeNameComparator();
 
-    public FolderTreeNode(JcrNodeModel model, DocumentListFilter config) {
-        super(model, null);
-        this.config = config;
+    /**
+     * Returns {@link #DISPLAY_NAME_COMPARATOR} if the current folder node is of {@link HippoStdNodeType#NT_DIRECTORY}
+     * type. Otherwise, returns null, meaning to follow the natural JCR ordering on child folders.
+     * @param model
+     * @return
+     */
+    private static Comparator<IJcrTreeNode> getDisplayNameComparatorIfDirectoryNode(JcrNodeModel model) {
+        try {
+            if (model.getNode().isNodeType(HippoStdNodeType.NT_DIRECTORY)) {
+                return DISPLAY_NAME_COMPARATOR;
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to check folder node type.", e);
+        }
+
+        return null;
     }
 
-    private FolderTreeNode(JcrNodeModel model, FolderTreeNode parent) {
+    /**
+     * Document list filter configuration.
+     */
+    private DocumentListFilter config;
+
+    /**
+     * Custom child comparator which can be provided for custom sorting use cases through configuration.
+     */
+    private Comparator<IJcrTreeNode> customChildComparator;
+
+    public FolderTreeNode(JcrNodeModel model, DocumentListFilter config) {
+        this(model, config, null);
+    }
+
+    public FolderTreeNode(JcrNodeModel model, DocumentListFilter config,
+            Comparator<IJcrTreeNode> customChildComparator) {
+        super(model, null, (customChildComparator != null) ? customChildComparator
+                : getDisplayNameComparatorIfDirectoryNode(model));
+        this.config = config;
+        this.customChildComparator = customChildComparator;
+    }
+
+    private FolderTreeNode(JcrNodeModel model, FolderTreeNode parent, Comparator<IJcrTreeNode> customChildComparator) {
         super(model, parent);
         this.config = parent.config;
+        this.customChildComparator = customChildComparator;
     }
 
     @Override
@@ -52,20 +97,9 @@ public class FolderTreeNode extends JcrTreeNode {
         final Node chainedModelObject = getChainedModel().getObject();
         if (chainedModelObject.hasNode(name)) {
             JcrNodeModel childModel = new JcrNodeModel(chainedModelObject.getNode(name));
-            return new FolderTreeNode(childModel, this);
+            return new FolderTreeNode(childModel, this, customChildComparator);
         }
         return null;
-    }
-
-    @Override
-    protected List<IJcrTreeNode> loadChildren() throws RepositoryException {
-        List<IJcrTreeNode> result = new ArrayList<IJcrTreeNode>();
-        List<Node> subNodes = subNodes(nodeModel.getObject());
-        for (Node subNode : subNodes) {
-            FolderTreeNode subfolder = new FolderTreeNode(new JcrNodeModel(subNode), this);
-            result.add(subfolder);
-        }
-        return result;
     }
 
     @Override
@@ -90,10 +124,17 @@ public class FolderTreeNode extends JcrTreeNode {
         return super.getChildCount();
     }
 
-    private List<Node> subNodes(Node node) throws RepositoryException {
+    /**
+     * {@inheritDoc}
+     * <P>
+     * Overrides to filter out child nodes based on folder filter configuration.
+     * </P>
+     */
+    @Override
+    protected List<Node> loadChildNodes() throws RepositoryException {
         List<Node> result = new ArrayList<Node>();
 
-        NodeIterator subNodes = config.filter(node, node.getNodes());
+        NodeIterator subNodes = config.filter(nodeModel.getNode(), nodeModel.getNode().getNodes());
         while (subNodes.hasNext()) {
             Node subNode = subNodes.nextNode();
             if (subNode.isNodeType(HippoNodeType.NT_TRANSLATION)) {
@@ -103,4 +144,52 @@ public class FolderTreeNode extends JcrTreeNode {
         }
         return result;
     }
+
+    /**
+     * {@inheritDoc}
+     * <P>
+     * Overrides to create {@link FolderTreeNode} instead of {@link JcrTreeNode}.
+     * </P>
+     */
+    @Override
+    protected JcrTreeNode createChildJcrTreeNode(JcrNodeModel childNodeModel)  {
+        return new FolderTreeNode(childNodeModel, this, customChildComparator);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <P>
+     * Overrides to return a custom child comparator if set to any in configuration.
+     * Otherwise, follows the default behavior of {@link JcrTreeNode}.
+     * </P>
+     */
+    @Override
+    protected Comparator<IJcrTreeNode> getChildComparator() {
+        if (customChildComparator != null) {
+            return customChildComparator;
+        }
+
+        return super.getChildComparator();
+    }
+
+    /**
+     * {@inheritDoc}
+     * <P>
+     * Overrides to sort children by the {@link #customChildComparator} if set to any.
+     * Otherwise, follow the default behavior of {@link JcrTreeNode}.
+     * </P>
+     */
+    @Override
+    protected void sortChildTreeNodes(List<IJcrTreeNode> childTreeNodes) throws RepositoryException {
+        if (customChildComparator != null) {
+            Node baseNode = nodeModel.getNode();
+
+            if (!baseNode.isNodeType(HippoNodeType.NT_FACETRESULT)) {
+                Collections.sort(childTreeNodes,  customChildComparator);
+            }
+        } else {
+            super.sortChildTreeNodes(childTreeNodes);
+        }
+    }
+
 }

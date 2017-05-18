@@ -14,30 +14,28 @@
  * limitations under the License.
  */
 
-package org.hippoecm.frontend.model.tree;
+package org.hippoecm.frontend.plugins.standards.tree;
 
 import java.util.Comparator;
 
 import javax.jcr.Node;
 
 import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.frontend.plugins.standards.list.comparators.NodeNameComparator;
+import org.hippoecm.frontend.model.tree.IJcrTreeNode;
+import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 
-/**
- * Comparator implementation based on physical JCR node names.
- */
-public class JcrTreeNodeComparator implements Comparator<IJcrTreeNode>, IClusterable {
+public class JcrFolderTreeNameComparator implements Comparator<IJcrTreeNode>, IClusterable {
 
     private static final long serialVersionUID = 1L;
 
-    private Comparator<Node> nodeComparator;
+    private Comparator<Node> nameComparator;
 
-    public JcrTreeNodeComparator() {
-        this.nodeComparator = new NodeNameComparator();
+    public JcrFolderTreeNameComparator() {
+        this.nameComparator = NameComparator.getInstance();
     }
 
     @Override
     public int compare(final IJcrTreeNode o1, final IJcrTreeNode o2) {
-        return nodeComparator.compare(o1.getNodeModel().getObject(), o2.getNodeModel().getObject());
+        return nameComparator.compare(o1.getNodeModel().getObject(), o2.getNodeModel().getObject());
     }
 }
