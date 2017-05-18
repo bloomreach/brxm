@@ -49,14 +49,14 @@ class ProjectService {
           .then((branchId) => {
             this.withBranch = [this._master];
             this.withBranch = this.withBranch.concat(result.withBranch);
-            this.withoutBranch = result.withoutBranch;
             this.selectedProject = this._master;
             let disabled = false;
             if (branchId) {
               disabled = true;
               this.selectedProject = this.withBranch.find(project => project.id === branchId);
             }
-            this.withoutBranch = this.withoutBranch.map(p => Object.create(p, { disabled: { value: disabled } }));
+            this.withoutBranch = result.withoutBranch;
+            this.withoutBranch.forEach((p) => { Object.assign(p, { disabled: disabled || p.state !== 'UNAPPROVED' }); });
           });
       });
   }
