@@ -235,14 +235,14 @@ public class FieldTypeUtils {
                                        final List<FieldValue> values,
                                        final int maxValues,
                                        final NodeFieldType field) throws RepositoryException, ErrorWithPayloadException {
-        long count = nodes.getSize();
+        final long count = nodes.getSize();
 
         // additional cardinality check to prevent creating new values or remove a subset of the old values
         if (!values.isEmpty() && values.size() != count && !(count > maxValues)) {
             throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
         }
 
-        for (FieldValue value : values) {
+        for (final FieldValue value : values) {
             field.writeValue(nodes.nextNode(), value);
         }
 

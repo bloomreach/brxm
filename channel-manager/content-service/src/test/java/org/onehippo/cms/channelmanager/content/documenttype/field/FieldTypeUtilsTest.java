@@ -134,7 +134,7 @@ public class FieldTypeUtilsTest {
         replay(context);
         PowerMock.replayAll();
 
-        FieldTypeUtils.populateFields(fields, context);
+        assertFalse(FieldTypeUtils.populateFields(fields, context));
 
         assertThat(fields.size(), equalTo(0));
         verify(context);
@@ -153,7 +153,7 @@ public class FieldTypeUtilsTest {
         replay(sorter, context);
         PowerMock.replayAll();
 
-        FieldTypeUtils.populateFields(fields, context);
+        assertTrue(FieldTypeUtils.populateFields(fields, context));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context);
@@ -177,7 +177,7 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item);
         PowerMock.replayAll();
 
-        FieldTypeUtils.populateFields(fields, context);
+        assertFalse(FieldTypeUtils.populateFields(fields, context));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -201,7 +201,7 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item);
         PowerMock.replayAll();
 
-        FieldTypeUtils.populateFields(fields, context);
+        assertFalse(FieldTypeUtils.populateFields(fields, context));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -227,7 +227,7 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item);
         PowerMock.replayAll();
 
-        FieldTypeUtils.populateFields(fields, context);
+        assertFalse(FieldTypeUtils.populateFields(fields, context));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -253,7 +253,7 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item);
         PowerMock.replayAll();
 
-        FieldTypeUtils.populateFields(fields, context);
+        assertFalse(FieldTypeUtils.populateFields(fields, context));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -280,7 +280,7 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item);
         PowerMock.replayAll();
 
-        FieldTypeUtils.populateFields(fields, context);
+        assertFalse(FieldTypeUtils.populateFields(fields, context));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item);
@@ -311,7 +311,7 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item, fieldType);
         PowerMock.replayAll();
 
-        FieldTypeUtils.populateFields(fields, context);
+        assertFalse(FieldTypeUtils.populateFields(fields, context));
 
         assertThat(fields.size(), equalTo(0));
         verify(sorter, context, fieldContext, item, fieldType);
@@ -342,7 +342,7 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item, fieldType);
         PowerMock.replayAll();
 
-        FieldTypeUtils.populateFields(fields, context);
+        assertTrue(FieldTypeUtils.populateFields(fields, context));
 
         assertThat(fields.size(), equalTo(1));
         assertThat(fields.get(0), equalTo(fieldType));
@@ -401,7 +401,7 @@ public class FieldTypeUtilsTest {
                 item1, item2, item3,
                 stringField1, multilineStringField, stringField2);
 
-        FieldTypeUtils.populateFields(fields, context);
+        assertTrue(FieldTypeUtils.populateFields(fields, context));
 
         assertThat(fields.size(), equalTo(3));
         assertThat(fields.get(0), equalTo(stringField1));
@@ -457,7 +457,7 @@ public class FieldTypeUtilsTest {
         PowerMock.replayAll();
         replay(sorter, context, fieldContext1, fieldContext2, item1, item2, formattedTextField, richTextField);
 
-        FieldTypeUtils.populateFields(fields, context);
+        assertTrue(FieldTypeUtils.populateFields(fields, context));
 
         assertThat(fields.size(), equalTo(2));
         assertThat(fields.get(0), equalTo(formattedTextField));
@@ -491,7 +491,7 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item, fieldType);
         PowerMock.replayAll();
 
-        FieldTypeUtils.populateFields(fields, context);
+        assertTrue(FieldTypeUtils.populateFields(fields, context));
 
         assertThat(fields.size(), equalTo(1));
         assertThat(fields.get(0), equalTo(fieldType));
@@ -523,7 +523,7 @@ public class FieldTypeUtilsTest {
         replay(sorter, context, fieldContext, item, fieldType);
         PowerMock.replayAll();
 
-        FieldTypeUtils.populateFields(fields, context);
+        assertTrue(FieldTypeUtils.populateFields(fields, context));
 
         assertThat(fields.size(), equalTo(1));
         assertThat(fields.get(0), equalTo(fieldType));
