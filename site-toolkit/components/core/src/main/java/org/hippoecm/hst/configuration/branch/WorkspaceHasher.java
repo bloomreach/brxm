@@ -193,7 +193,6 @@ public class WorkspaceHasher implements NodeHasher {
             throw new BranchException(String.format("Node '%s' has an illegal state: If marked as deleted, the '%s' and '%s' should " +
                     "be equal but they are not equal.", node.getPath(), HASHABLE_PROPERTY_HASH, HASHABLE_PROPERTY_UPSTREAM_HASH));
         }
-        return;
     }
 
     // since the order in which node.getProperties returns the properties can change over time we need to return
