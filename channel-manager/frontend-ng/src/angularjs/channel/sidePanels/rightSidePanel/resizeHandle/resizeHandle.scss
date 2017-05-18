@@ -1,3 +1,5 @@
+@import 'variables';
+
 resize-handle {
   $handle-width: 14px;
   $handle-height: 80px;
@@ -7,12 +9,20 @@ resize-handle {
   height: $handle-height;
   left: -5px;
   position: absolute;
-  top: calc(50vh - 40px);
+  top: calc(50vh - 80px);
   width: $handle-width;
   z-index: 20000;
 
-
   &:hover {
     cursor: col-resize;
+  }
+
+  .handle-inner {
+    height: 100%;
+    width: $handle-width;
+    background-image: url(../../../../../images/resize-handle-dots.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 }

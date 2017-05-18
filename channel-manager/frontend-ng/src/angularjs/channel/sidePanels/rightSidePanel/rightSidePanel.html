@@ -27,6 +27,13 @@
 
   <md-toolbar>
     <div class="md-toolbar-tools">
+      <h1 class="md-title text-truncate">
+        {{ $ctrl.title }}
+        <md-tooltip md-delay="500">{{ $ctrl.doc.displayName }}</md-tooltip>
+      </h1>
+
+      <span flex></span>
+
       <md-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
                  aria-label="{{ 'FULL_WIDTH' | translate }}"
                  ng-click="$ctrl.setFullWidth(true)"
@@ -41,14 +48,6 @@
         <md-tooltip md-delay="500">{{ 'NORMAL_WIDTH' | translate }}</md-tooltip>
         <md-icon>fullscreen_exit</md-icon>
       </md-button>
-
-      <h1 class="md-title text-truncate">
-        {{ $ctrl.title }}
-        <md-tooltip md-delay="500">{{ $ctrl.doc.displayName }}</md-tooltip>
-      </h1>
-
-      <span flex></span>
-
       <md-button class="md-icon-button qa-publish-in-content-perspective"
                  aria-label="{{ 'PUBLISH' | translate }}"
                  ng-disabled="!$ctrl.editing || $ctrl.disableContentButtons"
