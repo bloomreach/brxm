@@ -44,12 +44,9 @@ public class SystemInfoDataProvider implements IDataProvider {
 
     private static final Logger log = LoggerFactory.getLogger(SystemInfoDataProvider.class);
 
-    private static final long serialVersionUID = 1L;
-
     private final static double MB = 1024 * 1024;
 
     public class SystemInfoDataEntry implements Map.Entry<String, String>, Serializable {
-        private static final long serialVersionUID = 1L;
 
         String key;
 
@@ -71,7 +68,7 @@ public class SystemInfoDataProvider implements IDataProvider {
 
     }
 
-    Map<String, String> info = new LinkedHashMap<>();
+    private final Map<String, String> info = new LinkedHashMap<>();
 
     public SystemInfoDataProvider() {
         refresh();
