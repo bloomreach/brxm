@@ -42,7 +42,6 @@ class ProjectService {
   }
 
   projects() {
-    console.log('projects');
     return this._getProjects(this._mountId)
       .then((result) => {
         this.currentBranch()
@@ -77,6 +76,7 @@ class ProjectService {
     if (this.withoutBranch.some(this.compareId(selectedProject))) {
       return this.createBranch(selectedProject);
     }
+
     return this.selectBranch(selectedProject);
   }
 
@@ -96,7 +96,6 @@ class ProjectService {
   selectMaster() {
     return this.HstService.doPut(null, this._mountId, 'selectmaster');
   }
-
 }
 
 export default ProjectService;
