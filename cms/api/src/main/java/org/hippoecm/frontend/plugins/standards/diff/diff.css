@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,8 +49,7 @@ span.diff-html-removed {
 }
 
 span.diff-html-changed {
-  background: url(images/diffunderline.gif) bottom repeat-x;
-  *background-color: #c6c6fd; /* light blue */
+  background-color: #d9edff; /* light blue */
   cursor: pointer;
 }
 
@@ -73,12 +72,11 @@ span.diff-html-removed img{
 
 span.diff-html-changed img{
  border: 2px dotted #000099;
- 
 }
 
 div.diff-removed-image, div.diff-added-image{
   height: 300px;
-  width: 200px;  
+  width: 200px;
   position: absolute;
   opacity : 0.55;
   filter: alpha(opacity=55);
