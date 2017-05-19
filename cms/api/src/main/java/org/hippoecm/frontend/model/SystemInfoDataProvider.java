@@ -94,8 +94,8 @@ public class SystemInfoDataProvider implements IDataProvider {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(2);
         info.clear();
-        info.put("Project Version", getProjectVersion());
-        info.put("Hippo Release Version", getReleaseVersion());
+        info.put("Project version", getProjectVersion());
+        info.put("Hippo Release version", getReleaseVersion());
         info.put("Hippo CMS version", getCMSVersion());
         info.put("Repository vendor", getRepositoryVendor());
         info.put("Repository version", getRepositoryVersion());
