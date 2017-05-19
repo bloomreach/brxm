@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import './channelActions.scss';
 import deleteProgressTemplate from './delete/delete-channel-progress.html';
 
 class ChannelActionsCtrl {
