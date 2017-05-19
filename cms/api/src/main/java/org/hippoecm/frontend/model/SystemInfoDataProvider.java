@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,15 +44,12 @@ public class SystemInfoDataProvider implements IDataProvider {
 
     private static final Logger log = LoggerFactory.getLogger(SystemInfoDataProvider.class);
 
-    private static final long serialVersionUID = 1L;
-
     private final static double MB = 1024 * 1024;
 
     public class SystemInfoDataEntry implements Map.Entry<String, String>, Serializable {
-        private static final long serialVersionUID = 1L;
 
         String key;
-        
+
         public SystemInfoDataEntry(String key) {
             this.key = key;
         }
@@ -68,10 +65,10 @@ public class SystemInfoDataProvider implements IDataProvider {
         public String setValue(String value) {
             throw new UnsupportedOperationException("SystemInfo is read only");
         }
-        
+
     }
-    
-    Map<String, String> info = new LinkedHashMap<String, String>();
+
+    private final Map<String, String> info = new LinkedHashMap<>();
 
     public SystemInfoDataProvider() {
         refresh();
@@ -97,17 +94,17 @@ public class SystemInfoDataProvider implements IDataProvider {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(2);
         info.clear();
+        info.put("Project version", getProjectVersion());
+        info.put("Hippo Release version", getReleaseVersion());
+        info.put("Hippo CMS version", getCMSVersion());
+        info.put("Repository vendor", getRepositoryVendor());
+        info.put("Repository version", getRepositoryVersion());
         info.put("Memory maximum", nf.format(((double) runtime.maxMemory()) / MB) + " MB");
         info.put("Memory taken", nf.format(((double) runtime.totalMemory()) / MB) + " MB");
         info.put("Memory free", nf.format(((double) runtime.freeMemory()) / MB) + " MB");
         info.put("Memory in use", nf.format(((double) (runtime.totalMemory() - runtime.freeMemory())) / MB) + " MB");
-        info.put("Memory total free", nf.format(((double) 
+        info.put("Memory total free", nf.format(((double)
                 (runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory())) / MB) + " MB");
-        info.put("Hippo Release Version", getReleaseVersion());
-        info.put("Hippo CMS version", getCMSVersion());
-        info.put("Project Version", getProjectVersion());
-        info.put("Repository vendor", getRepositoryVendor());
-        info.put("Repository version", getRepositoryVersion());
         info.put("Java vendor", System.getProperty("java.vendor"));
         info.put("Java version", System.getProperty("java.version"));
         info.put("Java VM", System.getProperty("java.vm.name"));
@@ -133,7 +130,7 @@ public class SystemInfoDataProvider implements IDataProvider {
                     return hippoReleaseVersion;
                 }
             }
-        } catch(IOException iOException) {
+        } catch (IOException iOException) {
             log.debug("Error occurred getting the hippo cms release version from the webapp-manifest.", iOException);
         }
         return "unknown";
@@ -145,7 +142,7 @@ public class SystemInfoDataProvider implements IDataProvider {
             if (manifest != null) {
                 return buildVersionString(manifest, "Project-Version", "Project-Build");
             }
-        } catch(IOException iOException) {
+        } catch (IOException iOException) {
             log.debug("Error occurred getting the project version from the webapp-manifest.", iOException);
         }
         return "unknown";
@@ -199,11 +196,11 @@ public class SystemInfoDataProvider implements IDataProvider {
             return "unknown";
         }
     }
-    
+
     public String getRepositoryVendor() {
         Repository repository = UserSession.get().getJcrSession().getRepository();
         if (repository != null) {
-            return repository.getDescriptor(Repository.REP_NAME_DESC);
+            return repository.getDescriptor(Repository.REP_VENDOR_DESC);
         } else {
             return "unknown";
         }
