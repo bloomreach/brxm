@@ -80,6 +80,7 @@
     <property name="staleConfigurationSupported" value="${stale.configuration.supported}"/>
     <property name="hstFilterPrefixExclusions">
       <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+        <constructor-arg value="java.lang.Object" />
         <property name="targetClass" value="org.apache.commons.lang.StringUtils" />
         <property name="targetMethod" value="split" />
         <property name="arguments">
@@ -88,11 +89,11 @@
             <value>,</value>
           </list>
         </property>
-        <property name="objectType" value="java.lang.Object" />
       </bean>
     </property>
     <property name="hstFilterSuffixExclusions">
       <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+        <constructor-arg value="java.lang.Object" />
         <property name="targetClass" value="org.apache.commons.lang.StringUtils" />
         <property name="targetMethod" value="split" />
         <property name="arguments">
@@ -101,7 +102,6 @@
             <value>,</value>
           </list>
         </property>
-        <property name="objectType" value="java.lang.Object" />
       </bean>
     </property>
   </bean>

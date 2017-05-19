@@ -81,10 +81,12 @@
   </bean>
 
   <bean id="jcrObservationEventListenerItems" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
     <property name="targetClass" value="java.util.Collections" />
     <property name="targetMethod" value="synchronizedList" />
     <property name="arguments">
       <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+        <constructor-arg value="java.util.List" />
         <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
         <property name="targetMethod" value="union" />
         <property name="arguments">
@@ -93,10 +95,8 @@
             <ref bean="customJcrObservationEventListenerItems" />
           </list>
         </property>
-        <property name="objectType" value="java.util.List" />
       </bean>
     </property>
-    <property name="objectType" value="java.util.List" />
   </bean>
 
   <!-- Default jcr observation event listener items. -->
@@ -203,6 +203,7 @@
               <property name="poolingRepositories">
                 <list>
                   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -210,9 +211,9 @@
                         <ref bean="javax.jcr.Credentials.default"/>
                       </list>
                     </property>
-                    <property name="objectType" value="javax.jcr.Repository" />
                   </bean>
                   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -220,9 +221,9 @@
                         <ref bean="javax.jcr.Credentials.preview"/>
                       </list>
                     </property>
-                    <property name="objectType" value="javax.jcr.Repository" />
                   </bean>
                   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -230,9 +231,9 @@
                         <ref bean="javax.jcr.Credentials.writable"/>
                       </list>
                     </property>
-                    <property name="objectType" value="javax.jcr.Repository" />
                   </bean>
                   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -240,7 +241,6 @@
                         <ref bean="javax.jcr.Credentials.binaries"/>
                       </list>
                     </property>
-                    <property name="objectType" value="javax.jcr.Repository" />
                   </bean>
                 </list>
               </property>
@@ -285,6 +285,7 @@
               <property name="poolingRepositories">
                 <list>
                   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -292,9 +293,9 @@
                         <ref bean="javax.jcr.Credentials.default"/>
                       </list>
                     </property>
-                    <property name="objectType" value="javax.jcr.Repository" />
                   </bean>
                   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -302,9 +303,9 @@
                         <ref bean="javax.jcr.Credentials.preview"/>
                       </list>
                     </property>
-                    <property name="objectType" value="javax.jcr.Repository" />
                   </bean>
                   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -312,9 +313,9 @@
                         <ref bean="javax.jcr.Credentials.writable"/>
                       </list>
                     </property>
-                    <property name="objectType" value="javax.jcr.Repository" />
                   </bean>
                   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -322,7 +323,6 @@
                         <ref bean="javax.jcr.Credentials.binaries"/>
                       </list>
                     </property>
-                    <property name="objectType" value="javax.jcr.Repository" />
                   </bean>
                 </list>
               </property>
@@ -414,6 +414,7 @@
 
   <!-- Default empty list of custom jcr observation event listener items to be overriden by projects. (e.g., classpath:META-INF/hst-assembly/overrides/*.xml) -->
   <bean id="customJcrObservationEventListenerItems" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
     <property name="targetClass" value="java.util.Collections" />
     <property name="targetMethod" value="synchronizedList" />
     <property name="arguments">
@@ -425,7 +426,6 @@
         </bean>
       </list>
     </property>
-    <property name="objectType" value="java.util.List" />
   </bean>
 
 </beans>

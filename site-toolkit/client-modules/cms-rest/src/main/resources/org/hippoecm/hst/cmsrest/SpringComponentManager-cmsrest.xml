@@ -36,12 +36,12 @@
   </bean>
 
   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="com.fasterxml.jackson.databind.module.SimpleModule" />
     <property name="targetObject" ref="cmsRestJacksonJsonModule" />
     <property name="targetMethod" value="addSerializer" />
     <property name="arguments">
       <ref bean="annotationJsonSerializer" />
     </property>
-    <property name="objectType" value="com.fasterxml.jackson.databind.module.SimpleModule" />
   </bean>
 
   <bean id="cmsRestJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
@@ -54,12 +54,13 @@
 
   <!-- Enable Jackson JSON ObjectMapper default typing -->
   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="com.fasterxml.jackson.databind.module.SimpleModule" />
     <property name="targetObject" ref="cmsRestJacksonObjectMapper" />
     <property name="targetMethod" value="enableDefaultTyping" />
-    <property name="objectType" value="com.fasterxml.jackson.databind.module.SimpleModule" />
   </bean>
 
   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="com.fasterxml.jackson.databind.ObjectMapper" />
     <property name="targetObject" ref="cmsRestJacksonObjectMapper" />
     <property name="targetMethod" value="enableDefaultTypingAsProperty" />
     <property name="arguments">
@@ -68,16 +69,15 @@
         <value>@class</value>
       </list>
     </property>
-    <property name="objectType" value="com.fasterxml.jackson.databind.ObjectMapper" />
   </bean>
 
   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="com.fasterxml.jackson.databind.ObjectMapper" />
     <property name="targetObject" ref="cmsRestJacksonObjectMapper" />
     <property name="targetMethod" value="registerModule" />
     <property name="arguments">
       <ref bean="cmsRestJacksonJsonModule" />
     </property>
-    <property name="objectType" value="com.fasterxml.jackson.databind.ObjectMapper" />
   </bean>
 
 
@@ -87,6 +87,7 @@
   </bean>
 
   <bean id="allChannelFilters" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
     <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
     <property name="targetMethod" value="union" />
     <property name="arguments">
@@ -95,7 +96,6 @@
         <ref bean="customChannelFilters" />
       </list>
     </property>
-    <property name="objectType" value="java.util.List" />
   </bean>
 
   <!-- Default system channel filters be added here. -->
@@ -176,6 +176,7 @@
   </bean>
 
   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="org.hippoecm.hst.core.container.Pipeline" />
     <property name="targetObject">
       <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
         <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" />
@@ -209,11 +210,11 @@
         </bean>
       </list>
     </property>
-    <property name="objectType" value="org.hippoecm.hst.core.container.Pipeline" />
   </bean>
 
   <!-- configure that call to the programmatic creation of the _cmsrest Mount for Host 127.0.0.1 -->
   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.lang.Void" />
     <property name="targetObject" ref="org.hippoecm.hst.configuration.model.HstManager"/>
     <property name="targetMethod" value="addHstConfigurationAugmenter"/>
     <property name="arguments">
@@ -228,10 +229,10 @@
         <property name="customMountType" value="preview"/>
       </bean>
     </property>
-    <property name="objectType" value="java.lang.Void" />
   </bean>
 
   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.lang.Void" />
     <property name="targetObject" ref="org.hippoecm.hst.configuration.model.HstManager"/>
     <property name="targetMethod" value="addHstConfigurationAugmenter"/>
     <property name="arguments">
@@ -246,7 +247,6 @@
         <property name="customMountType" value="preview"/>
       </bean>
     </property>
-    <property name="objectType" value="java.lang.Void" />
   </bean>
 
 </beans>

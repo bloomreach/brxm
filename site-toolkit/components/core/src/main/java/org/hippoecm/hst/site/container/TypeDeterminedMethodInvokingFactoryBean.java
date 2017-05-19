@@ -25,7 +25,12 @@ public class TypeDeterminedMethodInvokingFactoryBean extends MethodInvokingFacto
     /**
      * Pre-determined object type. If null, fall back to super.getObjectType().
      */
-    private Class<?> objectType;
+    private final Class<?> objectType;
+
+    public TypeDeterminedMethodInvokingFactoryBean(final Class<?> objectType) {
+        super();
+        this.objectType = objectType;
+    }
 
     /**
      * {@inheritDoc}
@@ -40,13 +45,5 @@ public class TypeDeterminedMethodInvokingFactoryBean extends MethodInvokingFacto
         }
 
         return super.getObjectType();
-    }
-
-    /**
-     * Sets pre-determined object type if known.
-     * @param objectType pre-determined object type if known
-     */
-    public void setObjectType(Class<?> objectType) {
-        this.objectType = objectType;
     }
 }

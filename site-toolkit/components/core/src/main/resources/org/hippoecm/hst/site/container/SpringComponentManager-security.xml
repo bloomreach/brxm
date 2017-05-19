@@ -50,6 +50,7 @@
         class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
           value="empty(sys.getProperty('java.security.auth.login.config')) and config.containsKey('java.security.auth.login.config')" /> 
+    <constructor-arg value="java.lang.String" />
     <property name="targetClass"><value>java.lang.System</value></property>
     <property name="targetMethod"><value>setProperty</value></property>
     <property name="arguments">
@@ -58,6 +59,7 @@
         <bean class="org.hippoecm.hst.site.container.ResourceFactoryBean">
           <constructor-arg>
             <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+              <constructor-arg value="java.lang.String" />
               <property name="targetObject" ref="containerConfiguration" />
               <property name="targetMethod" value="getString" />
               <property name="arguments">
@@ -65,7 +67,6 @@
                   <value>java.security.auth.login.config</value>
                 </list>
               </property>
-              <property name="objectType" value="java.lang.String" />
             </bean>
           </constructor-arg>
           <constructor-arg value="java.lang.String" />
@@ -74,7 +75,6 @@
         </bean>
       </list>
     </property>
-    <property name="objectType" value="java.lang.String" />
   </bean>
 
 </beans>
