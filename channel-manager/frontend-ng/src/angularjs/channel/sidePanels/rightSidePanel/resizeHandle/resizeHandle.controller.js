@@ -26,14 +26,14 @@ class resizeHandleController {
     this._registerEvents(this.element);
   }
 
-  _registerEvents() {
+  _registerEvents(manipulatedElement) {
     this.handle.mousedown((mouseDownEvent) => {
       let newWidth;
       const hippoIframe = $('hippo-iframe').find('iframe');
       hippoIframe.css('pointer-events', 'none');
-      const initialWidth = this.element.width();
-      const initialX = mouseDownEvent.clientX;
-      this.element.addClass('in-resize');
+      const initialWidth = manipulatedElement.width();
+      const initialX = mouseDownEvent.pageX;
+      manipulatedElement.addClass('in-resize');
 
       this.$document.mousemove((moveEvent) => {
         const diff = initialX - moveEvent.pageX;
@@ -41,15 +41,15 @@ class resizeHandleController {
 
         if (newWidth < 440 || newWidth > 880) return;
 
-        this.element.css('width', newWidth);
-        this.element.css('max-width', newWidth);
+        manipulatedElement.css('width', newWidth);
+        manipulatedElement.css('max-width', newWidth);
       });
 
       this.$document.mouseup(() => {
         this.$document.unbind('mousemove');
         hippoIframe.css('pointer-events', 'auto');
         this.onResize({ newWidth });
-        this.element.removeClass('in-resize');
+        manipulatedElement.removeClass('in-resize');
       });
     });
   }
