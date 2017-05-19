@@ -34,10 +34,10 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSort
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -132,21 +132,25 @@ public class FieldTypeUtils {
     }
 
     /**
-     * Populate the list of fields of a content type, in the context of assembling a Document Type
+     * Populate the list of fields of a content type, in the context of assembling a Document Type.
      *
      * @param fields      list of fields to populate
      * @param context     determines which fields are available
+     * @return whether all fields in the document type have been included.
      */
-    public static void populateFields(final List<FieldType> fields, final ContentTypeContext context) {
-        NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
-                .ifPresent(sorter -> sortValidateAndAddFields(sorter, context, fields));
+    public static boolean populateFields(final List<FieldType> fields, final ContentTypeContext context) {
+        return NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
+                .map(sorter -> sortValidateAndAddFields(sorter, context, fields))
+                .orElse(false);
     }
 
-    private static void sortValidateAndAddFields(final FieldSorter sorter, final ContentTypeContext context,
+    private static boolean sortValidateAndAddFields(final FieldSorter sorter, final ContentTypeContext context,
                                                  final List<FieldType> fields) {
-        sorter.sortFields(context)
-                .stream()
-                .forEach(field -> validateCreateAndInit(field).ifPresent(fields::add));
+        final List<FieldTypeContext> fieldTypeContexts = sorter.sortFields(context);
+
+        fieldTypeContexts.forEach(field -> validateCreateAndInit(field).ifPresent(fields::add));
+
+        return fieldTypeContexts.size() == fields.size();
     }
 
     private static Optional<FieldType> validateCreateAndInit(final FieldTypeContext context) {
@@ -231,14 +235,14 @@ public class FieldTypeUtils {
                                        final List<FieldValue> values,
                                        final int maxValues,
                                        final NodeFieldType field) throws RepositoryException, ErrorWithPayloadException {
-        long count = nodes.getSize();
+        final long count = nodes.getSize();
 
         // additional cardinality check to prevent creating new values or remove a subset of the old values
         if (!values.isEmpty() && values.size() != count && !(count > maxValues)) {
             throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
         }
 
-        for (FieldValue value : values) {
+        for (final FieldValue value : values) {
             field.writeValue(nodes.nextNode(), value);
         }
 

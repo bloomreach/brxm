@@ -53,6 +53,15 @@
 
   <md-content flex="grow"
               layout="column">
+
+    <md-subheader class="md-no-sticky"
+                  ng-if="$ctrl.docType && !$ctrl.docType.allFieldsIncluded"
+                  md-colors="{background: 'hippo-grey-200'}">
+      <div>{{ 'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
+      <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
+      <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.openFullContent("edit")' translate-compile></div>
+    </md-subheader>
+
     <div ng-if="$ctrl.feedback"
          class="md-padding qa-feedback"
          md-colors="{background: 'hippo-red-50'}">

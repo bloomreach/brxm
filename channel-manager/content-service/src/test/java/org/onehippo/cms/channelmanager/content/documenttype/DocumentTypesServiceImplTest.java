@@ -131,12 +131,14 @@ public class DocumentTypesServiceImplTest {
         docType.setId(id);
         expectLastCall();
         expect(docType.getFields()).andReturn(fields);
-        FieldTypeUtils.populateFields(fields, context);
-        expectLastCall();
+        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(true);
 
         expect(context.getContentType()).andReturn(contentType);
         expect(context.getResourceBundle()).andReturn(Optional.empty());
         expect(contentType.isDocumentType()).andReturn(true);
+
+        docType.setAllFieldsIncluded(true);
+        expectLastCall();
 
         PowerMock.replayAll();
         replay(context, contentType);
@@ -167,12 +169,49 @@ public class DocumentTypesServiceImplTest {
         docType.setDisplayName("Document Display Name");
         expectLastCall();
         expect(docType.getFields()).andReturn(fields);
-        FieldTypeUtils.populateFields(fields, context);
+
+        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(true);
+
+        docType.setAllFieldsIncluded(true);
         expectLastCall();
 
         expect(context.getContentType()).andReturn(contentType);
         expect(context.getResourceBundle()).andReturn(Optional.of(resourceBundle));
         expect(contentType.isDocumentType()).andReturn(true);
+
+        PowerMock.replayAll();
+        replay(context, contentType);
+
+        assertThat(documentTypesService.getDocumentType(id, session, locale), equalTo(docType));
+
+        verify(context, contentType);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void getDocumentTypeWithoutAllFields() throws Exception {
+        final String id = "document:type";
+        final Session session = createMock(Session.class);
+        final Locale locale = new Locale("en");
+        final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
+        final ContentTypeContext context = createMock(ContentTypeContext.class);
+        final ContentType contentType = createMock(ContentType.class);
+        final List<FieldType> fields = new ArrayList<>();
+
+        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
+                .andReturn(Optional.of(context));
+        expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty())).andReturn(Optional.empty());
+        docType.setId(id);
+        expectLastCall();
+        expect(docType.getFields()).andReturn(fields);
+        expect(FieldTypeUtils.populateFields(fields, context)).andReturn(false);
+
+        expect(context.getContentType()).andReturn(contentType);
+        expect(context.getResourceBundle()).andReturn(Optional.empty());
+        expect(contentType.isDocumentType()).andReturn(true);
+
+        docType.setAllFieldsIncluded(false);
+        expectLastCall();
 
         PowerMock.replayAll();
         replay(context, contentType);
