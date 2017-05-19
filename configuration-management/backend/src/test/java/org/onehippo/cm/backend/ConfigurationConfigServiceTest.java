@@ -1497,8 +1497,11 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
                 + "      jcr:primaryType: nt:unstructured\n"
                 + "      /runtime:\n"
                 + "        jcr:primaryType: nt:unstructured\n"
+                + "        property:\n"
+                + "          .meta:category: runtime\n"
                 + "      /content:\n"
-                + "        jcr:primaryType: nt:unstructured";
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        .meta:residual-child-node-category: content\n";
         final ConfigurationModel baseline = applyDefinitions(definition);
 
         // add non-configuration nodes and properties

@@ -27,6 +27,7 @@ import java.util.UUID;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.ConfigurationItemCategory;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;
@@ -46,6 +47,7 @@ import org.yaml.snakeyaml.nodes.Tag;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.engine.Constants.META_CATEGORY_KEY;
 import static org.onehippo.cm.engine.Constants.OPERATION_KEY;
 import static org.onehippo.cm.engine.Constants.PATH_KEY;
 import static org.onehippo.cm.engine.Constants.RESOURCE_KEY;
@@ -214,7 +216,18 @@ public abstract class SourceParser extends AbstractBaseParser {
     DefinitionPropertyImpl constructDefinitionPropertyFromMap(final String name, final Node value, final ValueType defaultValueType, final DefinitionNodeImpl parent) throws ParserException {
         final DefinitionPropertyImpl property;
         final Map<String, Node> map = asMapping(value, new String[0],
-                new String[]{OPERATION_KEY,TYPE_KEY,VALUE_KEY,RESOURCE_KEY,PATH_KEY});
+                new String[]{META_CATEGORY_KEY,OPERATION_KEY,TYPE_KEY,VALUE_KEY,RESOURCE_KEY,PATH_KEY});
+
+        if (map.keySet().contains(META_CATEGORY_KEY)) {
+            if (map.size() != 1) {
+                throw new ParserException(
+                        "Property map cannot contain '" + META_CATEGORY_KEY + "' and other keys",
+                        value);
+            }
+            property = parent.addProperty(name, ValueType.STRING, new ValueImpl[0]);
+            property.setCategory(constructCategory(map.get(META_CATEGORY_KEY)));
+            return property;
+        }
 
         int expectedMapSize = 1; // the 'value', 'resource', or 'path' key
         final PropertyOperation operation;
@@ -271,6 +284,21 @@ public abstract class SourceParser extends AbstractBaseParser {
 
         property.setOperation(operation);
         return property;
+    }
+
+    protected ConfigurationItemCategory constructCategory(final Node node) throws ParserException {
+        final String categoryString = asStringScalar(node);
+        try {
+            final ConfigurationItemCategory category = ConfigurationItemCategory.valueOf(categoryString.toUpperCase());
+            if (category == ConfigurationItemCategory.CONFIGURATION) {
+                throw new ParserException(
+                        META_CATEGORY_KEY + " value '" + ConfigurationItemCategory.CONFIGURATION + "' is not allowed",
+                        node);
+            }
+            return category;
+        } catch (IllegalArgumentException e) {
+            throw new ParserException("Unrecognized category: '" + categoryString + "'", node);
+        }
     }
 
     private DefinitionPropertyImpl constructDefinitionPropertyFromValueMap(final String name, final Node node, final DefinitionNodeImpl parent, final ValueType valueType) throws ParserException {

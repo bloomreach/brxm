@@ -1138,6 +1138,110 @@ public class SourceValidationTest extends AbstractBaseTest {
         assertParserException(root, firstConfigTuple(root).getKeyNode(), "Path must not contain name indices");
     }
 
+    @Test
+    public void metaCategoryMustBeScalar() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:category: [runtime]\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node metaCategoryValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, metaCategoryValue, "Node must be scalar");
+    }
+
+    @Test
+    public void metaCategoryUnknown() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:category: foo\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node metaCategoryValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, metaCategoryValue, "Unrecognized category: 'foo'");
+    }
+
+    @Test
+    public void metaCategoryConfigurationCannotBeUsed() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:category: configuration\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node metaCategoryValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, metaCategoryValue, ".meta:category value 'configuration' is not allowed");
+    }
+
+    @Test
+    public void metaCategoryMustBeSoleStatementForNode() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:category: runtime\n"
+                + "      property: value\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+
+        assertParserException(root, nodeMap, "Node cannot contain '.meta:category' and other keys");
+    }
+
+    @Test
+    public void metaCategoryMustBeSoleStatementForProperty() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        .meta:category: runtime\n"
+                + "        value: foo\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap, "Property map cannot contain '.meta:category' and other keys");
+    }
+
+    @Test
+    public void metaCategoryNotAllowedForSns() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to:\n"
+                + "      /node[1]:\n"
+                + "        .meta:category: runtime\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node pathToMap = firstConfigTuple(root).getValueNode();
+        final Node snsNodeValue = firstTuple(pathToMap).getValueNode();
+
+        assertParserException(root, snsNodeValue,
+                "'.meta:category' cannot be configured for explicitly indexed same-name siblings");
+    }
+
+    @Test
+    public void metaResidualChildNodeCategoryNotAllowedForSns() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to:\n"
+                + "      /node[1]:\n"
+                + "        .meta:residual-child-node-category: runtime\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node pathToMap = firstConfigTuple(root).getValueNode();
+        final Node snsNodeValue = firstTuple(pathToMap).getValueNode();
+
+        assertParserException(root, snsNodeValue,
+                "'.meta:residual-child-node-category' cannot be configured for explicitly indexed same-name siblings");
+    }
+
     // start set for "explicit sequencing"
 
     @Test

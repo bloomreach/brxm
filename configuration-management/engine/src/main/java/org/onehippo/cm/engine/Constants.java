@@ -53,6 +53,8 @@ public final class Constants {
     public static final String META_IGNORE_REORDERED_CHILDREN = META_KEY_PREFIX + "ignore-reordered-children";
     public static final String META_DELETE_KEY = META_KEY_PREFIX + "delete";
     public static final String META_ORDER_BEFORE_KEY = META_KEY_PREFIX + "order-before";
+    public static final String META_CATEGORY_KEY = META_KEY_PREFIX + "category";
+    public static final String META_RESIDUAL_CHILD_NODE_CATEGORY_KEY = META_KEY_PREFIX + "residual-child-node-category";
 
     // JCR node where the HCM configuration baseline is stored
     // NOTE: currently this MUST only be a single new node with all required parents existing

@@ -22,14 +22,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.onehippo.cm.api.model.ConfigurationItemCategory;
+import org.onehippo.cm.api.model.DefinitionItem;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.engine.SnsUtils;
+import org.onehippo.cm.impl.model.ConfigurationItemImpl;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ConfigurationPropertyImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
+import org.onehippo.cm.impl.model.DefinitionItemImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
@@ -44,7 +48,9 @@ import static org.onehippo.cm.api.model.PropertyOperation.ADD;
 import static org.onehippo.cm.api.model.PropertyOperation.DELETE;
 import static org.onehippo.cm.api.model.PropertyOperation.OVERRIDE;
 import static org.onehippo.cm.api.model.PropertyOperation.REPLACE;
+import static org.onehippo.cm.engine.Constants.META_CATEGORY_KEY;
 import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
+import static org.onehippo.cm.engine.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
 
 class ConfigurationTreeBuilder {
 
@@ -55,6 +61,7 @@ class ConfigurationTreeBuilder {
 
     ConfigurationTreeBuilder() {
         root.setName("");
+        root.setResidualNodeCategory(ConfigurationItemCategory.RUNTIME);
 
         // add required jcr:primaryType: rep:root
         final ConfigurationPropertyImpl primaryTypeProperty = new ConfigurationPropertyImpl();
@@ -109,6 +116,17 @@ class ConfigurationTreeBuilder {
             String msg = String.format("%s: Trying to delete AND merge node %s defined before by %s.",
                     culprit, definitionNode.getPath(), sourceList);
             throw new IllegalArgumentException(msg);
+        }
+
+        if (definitionNode.getCategory() != null) {
+            signalUnsupportedCategoryOverride(definitionNode, node);
+        }
+        if (definitionNode.getResidualChildNodeCategory() != null) {
+            if (node.getResidualNodeCategory() != null) {
+                signalUnsupportedResidualCategoryOverride(definitionNode, node);
+            }
+            node.setResidualNodeCategory(definitionNode.getResidualChildNodeCategory());
+            node.setResidualNodeCategoryDefinitionItem(definitionNode);
         }
 
         if (definitionNode.getIgnoreReorderedChildren() != null) {
@@ -219,6 +237,25 @@ class ConfigurationTreeBuilder {
         node.clearProperties();
     }
 
+    private void signalUnsupportedCategoryOverride(final DefinitionItemImpl definitionItem, final ConfigurationItemImpl configurationItem) {
+        final String culprit = ModelUtils.formatDefinition(definitionItem.getDefinition());
+        final String source = ModelUtils.formatDefinitions(configurationItem);
+        String msg = String.format(
+                "%s: overriding %s is not supported; '%s' was contributed as configuration by %s.",
+                culprit, META_CATEGORY_KEY, definitionItem.getPath(), source);
+        throw new IllegalStateException(msg);
+    }
+
+    private void signalUnsupportedResidualCategoryOverride(final DefinitionNodeImpl definitionNode, final ConfigurationNodeImpl configurationNode) {
+        final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+        final String source = ModelUtils.formatDefinition(configurationNode.getResidualNodeCategoryDefinitionItem().getDefinition());
+        String msg = String.format(
+                "%s: overriding %s is not supported; node '%s' was set to %s by %s.",
+                culprit, META_RESIDUAL_CHILD_NODE_CATEGORY_KEY, definitionNode.getPath(),
+                configurationNode.getResidualNodeCategory(), source);
+        throw new IllegalStateException(msg);
+    }
+
     private ConfigurationNodeImpl getOrCreateRootForDefinition(final ContentDefinitionImpl definition) {
         final DefinitionNodeImpl definitionNode = definition.getModifiableNode();
         final String definitionRootPath = definitionNode.getPath();
@@ -274,6 +311,14 @@ class ConfigurationTreeBuilder {
         }
 
         final Pair<String, Integer> parsedName = SnsUtils.splitIndexedName(name);
+
+        failOnPriorCategorySettings(parent.getChildNodeCategorySettings(parsedName.getLeft()), definitionNode);
+
+        if (definitionNode.getCategory() != null) {
+            parent.setChildNodeCategorySettings(parsedName.getLeft(), definitionNode.getCategory(), definitionNode);
+            return null;
+        }
+
         if (parsedName.getRight() > 1) {
             final String expectedSibling = SnsUtils.createIndexedName(parsedName.getLeft(), parsedName.getRight() - 1);
             if (!parent.getNodes().containsKey(expectedSibling)) {
@@ -293,6 +338,27 @@ class ConfigurationTreeBuilder {
         return node;
     }
 
+    private void failOnPriorCategorySettings(
+            final Pair<ConfigurationItemCategory, DefinitionItem> priorSettings,
+            final DefinitionItem definitionItem) {
+        if (priorSettings != null) {
+            final String culprit = ModelUtils.formatDefinition(definitionItem.getDefinition());
+            final String source = ModelUtils.formatDefinition(priorSettings.getRight().getDefinition());
+
+            if (definitionItem.getCategory() != null) {
+                String msg = String.format("%s: overriding %s is not supported; was set to %s on %s by %s.",
+                        culprit, META_CATEGORY_KEY, priorSettings.getLeft(), definitionItem.getPath(), source);
+                throw new IllegalStateException(msg);
+            } else {
+                String msg = String.format(
+                        "%s: trying to add configuration on path %s while it had set '%s: %s' by %s.",
+                        culprit, definitionItem.getPath(), META_CATEGORY_KEY, priorSettings.getLeft(), source);
+                throw new IllegalStateException(msg);
+            }
+        }
+
+    }
+
     private void mergeProperty(final ConfigurationNodeImpl parent,
                                final DefinitionPropertyImpl definitionProperty) {
         final Map<String, ConfigurationPropertyImpl> properties = parent.getModifiableProperties();
@@ -302,6 +368,10 @@ class ConfigurationTreeBuilder {
         ConfigurationPropertyImpl property;
         if (properties.containsKey(name)) {
             property = properties.get(name);
+
+            if (definitionProperty.getCategory() != null) {
+                signalUnsupportedCategoryOverride(definitionProperty, property);
+            }
 
             if (property.isDeleted()) {
                 final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
@@ -326,6 +396,13 @@ class ConfigurationTreeBuilder {
             requireOverrideOperationForPrimaryType(definitionProperty, property, op == OVERRIDE);
             requireOverrideOperationForMixinTypes(definitionProperty, property, op);
         } else {
+            failOnPriorCategorySettings(parent.getChildPropertyCategorySettings(name), definitionProperty);
+
+            if (definitionProperty.getCategory() != null) {
+                parent.setChildPropertyCategorySettings(name, definitionProperty.getCategory(), definitionProperty);
+                return;
+            }
+
             if (op == DELETE) {
                 final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
                 final String msg = String.format("%s: Trying to delete property %s that does not exist.",

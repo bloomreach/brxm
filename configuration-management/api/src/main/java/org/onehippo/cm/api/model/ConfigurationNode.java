@@ -39,10 +39,18 @@ public interface ConfigurationNode extends ConfigurationItem {
     Boolean getIgnoreReorderedChildren();
 
     /**
-     * Get the {@link ConfigurationItemCategory} of a child item by name.
-     * @param childName A child item (node or property) name
-     * @return The {@link ConfigurationItemCategory} of the child item, never returns null.
+     * Get the {@link ConfigurationItemCategory} of a child node by name. Node names must be indexed, e.g.
+     * <code>node[1]</code>.
+     * @param nodeName A child node name; node names must be indexed, e.g. <code>node[1]</code>.
+     * @return The {@link ConfigurationItemCategory} of the child node, never returns null.
      */
-    ConfigurationItemCategory getChildCategory(final String childName);
+    ConfigurationItemCategory getChildNodeCategory(final String nodeName);
+
+    /**
+     * Get the {@link ConfigurationItemCategory} of a child property by name.
+     * @param propertyName A child property name.
+     * @return The {@link ConfigurationItemCategory} of the child property, never returns null.
+     */
+    ConfigurationItemCategory getChildPropertyCategory(final String propertyName);
 
 }

@@ -19,6 +19,7 @@ package org.onehippo.cm.impl.model.builder;
 import java.util.List;
 
 import org.junit.Test;
+import org.onehippo.cm.api.model.ConfigurationItemCategory;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
 import org.onehippo.cm.api.model.Definition;
@@ -32,6 +33,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
+
 public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     private final ConfigurationTreeBuilder builder = new ConfigurationTreeBuilder();
@@ -1769,6 +1771,274 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         } catch (IllegalStateException e) {
             assertEquals("test-group/test-project/test-module [string] defines node '/a/sns[2]', but no sibling named 'sns[1]' was found", e.getMessage());
         }
+    }
+
+    @Test
+    public void node_meta_category_override_not_allowed() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      .meta:category: runtime\n";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        final String yaml2 = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      .meta:category: content\n";
+
+        final List<Definition> definitions2 = parseNoSort(yaml2);
+
+        try {
+            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalStateException e) {
+            assertEquals("test-group/test-project/test-module [string]: overriding .meta:category is not supported; was set to runtime on /a by test-group/test-project/test-module [string].", e.getMessage());
+        }
+    }
+
+    @Test
+    public void node_with_meta_category_override_cannot_be_merged_with() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      .meta:category: runtime\n";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        final String yaml2 = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      property: value\n";
+
+        final List<Definition> definitions2 = parseNoSort(yaml2);
+
+        try {
+            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalStateException e) {
+            assertEquals("test-group/test-project/test-module [string]: trying to add configuration on path /a while it had set '.meta:category: runtime' by test-group/test-project/test-module [string].", e.getMessage());
+        }
+    }
+
+    @Test
+    public void existing_node_cannot_have_meta_category_merged_onto() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property: value\n";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        final String yaml2 = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      .meta:category: runtime\n";
+
+        final List<Definition> definitions2 = parseNoSort(yaml2);
+
+        try {
+            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalStateException e) {
+            assertEquals("test-group/test-project/test-module [string]: overriding .meta:category is not supported; '/a' was contributed as configuration by [test-group/test-project/test-module [string]].", e.getMessage());
+        }
+    }
+
+
+    @Test
+    public void property_meta_category_override_not_allowed() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property:\n"
+                + "        .meta:category: runtime\n";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        final String yaml2 = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      property:\n"
+                + "        .meta:category: content\n";
+
+        final List<Definition> definitions2 = parseNoSort(yaml2);
+
+        try {
+            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalStateException e) {
+            assertEquals("test-group/test-project/test-module [string]: overriding .meta:category is not supported; was set to runtime on /a/property by test-group/test-project/test-module [string].", e.getMessage());
+        }
+    }
+
+    @Test
+    public void property_with_meta_category_override_cannot_be_merged_with() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property:\n"
+                + "        .meta:category: runtime\n";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        final String yaml2 = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      property: value\n";
+
+        final List<Definition> definitions2 = parseNoSort(yaml2);
+
+        try {
+            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalStateException e) {
+            assertEquals("test-group/test-project/test-module [string]: trying to add configuration on path /a/property while it had set '.meta:category: runtime' by test-group/test-project/test-module [string].", e.getMessage());
+        }
+    }
+
+    @Test
+    public void existing_property_cannot_have_meta_category_merged_onto() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property: value\n";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        final String yaml2 = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      property:\n"
+                + "        .meta:category: runtime\n";
+
+        final List<Definition> definitions2 = parseNoSort(yaml2);
+
+        try {
+            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalStateException e) {
+            assertEquals("test-group/test-project/test-module [string]: overriding .meta:category is not supported; '/a/property' was contributed as configuration by [test-group/test-project/test-module [string]].", e.getMessage());
+        }
+    }
+
+    @Test
+    public void meta_residual_child_node_category_override_not_allowed() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      .meta:residual-child-node-category: runtime\n";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        final String yaml2 = "definitions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      .meta:residual-child-node-category: content\n";
+
+        final List<Definition> definitions2 = parseNoSort(yaml2);
+
+        try {
+            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalStateException e) {
+            assertEquals("test-group/test-project/test-module [string]: overriding .meta:residual-child-node-category is not supported; node '/a' was set to runtime by test-group/test-project/test-module [string].", e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_root_residual_child_settings() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /:\n"
+                + "      default: value\n"
+                + "      override:\n"
+                + "        .meta:category: content\n"
+                + "      /default:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /override:\n"
+                + "        .meta:category: content\n";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        final ConfigurationNodeImpl root = builder.build();
+
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, root.getChildNodeCategory("default[1]"));
+        assertEquals(ConfigurationItemCategory.RUNTIME,       root.getChildNodeCategory("non-existing-node[1]"));
+        assertEquals(ConfigurationItemCategory.CONTENT,       root.getChildNodeCategory("override[1]"));
+        assertEquals(ConfigurationItemCategory.CONTENT,       root.getChildNodeCategory("override[2]"));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, root.getChildPropertyCategory("default"));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, root.getChildPropertyCategory("non-existing-property"));
+        assertEquals(ConfigurationItemCategory.CONTENT,       root.getChildPropertyCategory("override"));
+    }
+
+    @Test
+    public void test_regular_node_residual_child_settings() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      default: value\n"
+                + "      override:\n"
+                + "        .meta:category: content\n"
+                + "      /default:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /override:\n"
+                + "        .meta:category: content\n";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNode node = root.getNodes().get("node[1]");
+
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, node.getChildNodeCategory("default[1]"));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, node.getChildNodeCategory("non-existing-node[1]"));
+        assertEquals(ConfigurationItemCategory.CONTENT,       node.getChildNodeCategory("override[1]"));
+        assertEquals(ConfigurationItemCategory.CONTENT,       node.getChildNodeCategory("override[2]"));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, node.getChildPropertyCategory("default"));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, node.getChildPropertyCategory("non-existing-property"));
+        assertEquals(ConfigurationItemCategory.CONTENT,       node.getChildPropertyCategory("override"));
+    }
+
+    @Test
+    public void test_node_with_explicit_residual() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      .meta:residual-child-node-category: content\n"
+                + "      default: value\n"
+                + "      override:\n"
+                + "        .meta:category: runtime\n"
+                + "      /default:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /override:\n"
+                + "        .meta:category: runtime\n";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNode node = root.getNodes().get("node[1]");
+
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, node.getChildNodeCategory("default[1]"));
+        assertEquals(ConfigurationItemCategory.CONTENT,       node.getChildNodeCategory("non-existing-node[1]"));
+        assertEquals(ConfigurationItemCategory.RUNTIME,       node.getChildNodeCategory("override[1]"));
+        assertEquals(ConfigurationItemCategory.RUNTIME,       node.getChildNodeCategory("override[2]"));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, node.getChildPropertyCategory("default"));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, node.getChildPropertyCategory("non-existing-property"));
+        assertEquals(ConfigurationItemCategory.RUNTIME,       node.getChildPropertyCategory("override"));
     }
 
 }
