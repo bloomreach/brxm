@@ -90,7 +90,7 @@
     <maven.plugin.dependency.version>3.0.0</maven.plugin.dependency.version>
     <maven.plugin.deploy.version>2.8.2</maven.plugin.deploy.version>
     <maven.plugin.eclipse.version>2.10</maven.plugin.eclipse.version>
-    <maven.plugin.exec.version>1.5.0</maven.plugin.exec.version>
+    <maven.plugin.exec.version>1.6.0</maven.plugin.exec.version>
     <maven.plugin.failsafe.version>2.19.1</maven.plugin.failsafe.version>
     <maven.plugin.install.version>2.5.2</maven.plugin.install.version>
     <maven.plugin.jar.version>3.0.2</maven.plugin.jar.version>
