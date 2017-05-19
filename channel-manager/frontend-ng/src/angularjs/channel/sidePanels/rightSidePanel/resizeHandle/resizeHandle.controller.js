@@ -25,7 +25,6 @@ class resizeHandleController {
 
   $onInit() {
     this._registerEvents(this.element);
-
     this.fullWidthToggleElement = this.element.find('.btn-fullwidth');
   }
 
