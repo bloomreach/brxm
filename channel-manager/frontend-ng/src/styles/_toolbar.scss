@@ -38,8 +38,13 @@ md-toolbar.hippo-toolbar {
     padding-right: 8px;
   }
 
-  channel-actions .md-button {
-    margin-left: 8px;
+  channel-actions {
+    .md-button {
+      margin-left: 8px;
+    }
+    md-icon {
+      fill: $toolbar-channel-changes-color;
+    }
   }
 
   .md-icon-button {
@@ -93,18 +98,6 @@ md-toolbar.hippo-toolbar {
 
   md-switch {
     margin: 0;
-  }
-
-  .changes-button {
-    margin-left: 0;
-    margin-right: 4px;
-    padding-right: 20px;
-
-    md-icon {
-      fill: $toolbar-channel-changes-color;
-      left: 4px;
-      position: relative;
-    }
   }
 }
 

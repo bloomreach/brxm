@@ -33,10 +33,6 @@
       </div>
 
       <div flex="30" layout layout-align="end center">
-        <changes-menu ng-show="channelCtrl.isChannelLoaded()"
-          on-manage-changes="channelCtrl.showSubpage('manage-changes')">
-        </changes-menu>
-
         <overlay-toggle state="channelCtrl.isComponentsOverlayDisplayed"
                         icon="view_quilt"
                         tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
