@@ -81,10 +81,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "system-info-gc" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "user-search-help" : {
       "status" : "CLEAN",
       "locales" : null
