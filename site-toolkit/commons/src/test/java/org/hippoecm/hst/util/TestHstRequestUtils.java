@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -269,9 +270,11 @@ public class TestHstRequestUtils {
     public void testGetRemoteAddrsWithDefaultForwardedForHeader() {
         httpForwardedForHeaderValue = DEFAULT_X_FORWARDED_FOR_HEADER_VALUE;
         HttpServletRequest request = setupMocks();
-        assertArrayEquals(StringUtils.split(DEFAULT_X_FORWARDED_FOR_HEADER_VALUE, ", "),
-                HstRequestUtils.getRemoteAddrs(request));
-        assertEquals(StringUtils.split(DEFAULT_X_FORWARDED_FOR_HEADER_VALUE, ", ")[0], HstRequestUtils.getFarthestRemoteAddr(request));
+        String[] split = StringUtils.split(DEFAULT_X_FORWARDED_FOR_HEADER_VALUE, ", ");
+        String[] remoteAddrs = HstRequestUtils.getRemoteAddrs(request);
+        assertArrayEquals(String.format("Arrays '%s' and '%s' are not equal", ArrayUtils.toString(split), ArrayUtils.toString(remoteAddrs)),
+                split, remoteAddrs);
+        assertEquals(split[0], HstRequestUtils.getFarthestRemoteAddr(request));
     }
 
     @Test
