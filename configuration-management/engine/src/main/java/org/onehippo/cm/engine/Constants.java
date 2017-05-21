@@ -70,11 +70,13 @@ public final class Constants {
 
     public static final String MODULE_DESCRIPTOR_NODE = HCM_MODULE_YAML;
     public static final String MODULE_DESCRIPTOR_TYPE = "hcm:descriptor";
+    public static final String MODULE_SEQUENCE_NUMBER = "hcm:seqnumber";
     public static final String ACTIONS_TYPE = "hcm:actions";
     public static final String ACTIONS_NODE = ACTIONS_YAML;
     public static final String CONTENT_TYPE = "hcm:content";
 
     public static final String CONTENT_FOLDER_TYPE = "hcm:contentfolder";
+    public static final String HCM_PROCESSED = "hcm:processed";
     public static final String CONTENT_PATH_PROPERTY = "hcm:contentpath";
     public static final String CONFIG_FOLDER_TYPE = "hcm:configfolder";
 

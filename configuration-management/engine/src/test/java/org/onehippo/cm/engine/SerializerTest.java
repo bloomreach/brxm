@@ -82,7 +82,8 @@ public class SerializerTest extends AbstractBaseTest {
 
     private List<Path> findFiles(final Path root) throws IOException {
         final List<Path> paths = new ArrayList<>();
-        final BiPredicate<Path, BasicFileAttributes> matcher = (filePath, fileAttr) -> fileAttr.isRegularFile();
+        //Ignore hcm-actions file as it is not being serialized to disk
+        final BiPredicate<Path, BasicFileAttributes> matcher = (filePath, fileAttr) -> fileAttr.isRegularFile() && !filePath.endsWith(Constants.ACTIONS_YAML);
         Files.find(root, Integer.MAX_VALUE, matcher).forEachOrdered((path) -> paths.add(root.relativize(path)));
         Collections.sort(paths);
         return paths;

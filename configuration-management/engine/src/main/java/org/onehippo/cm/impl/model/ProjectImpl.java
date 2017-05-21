@@ -111,6 +111,7 @@ public class ProjectImpl implements Project {
         addModule(name).addAfter(module.getAfter())
                 .setConfigResourceInputProvider(module.getConfigResourceInputProvider())
                 .setContentResourceInputProvider(module.getContentResourceInputProvider())
+                .setActionsMap(module.getActionsMap())
                 .pushDefinitions(module);
     }
 

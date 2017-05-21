@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.jcr.Binary;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 
@@ -45,7 +46,7 @@ public class ValueConverter {
      * @return
      * @throws Exception
      */
-    public javax.jcr.Value[] valuesFrom(final List<Value> modelValues, final Session session) throws Exception {
+    public javax.jcr.Value[] valuesFrom(final List<Value> modelValues, final Session session) throws RepositoryException, IOException {
         final javax.jcr.Value[] jcrValues = new javax.jcr.Value[modelValues.size()];
         for (int i = 0; i < jcrValues.length; i++) {
             jcrValues[i] = valueFrom(modelValues.get(i), session);
@@ -59,7 +60,7 @@ public class ValueConverter {
      * @return {@link javax.jcr.Value}
      * @throws Exception
      */
-    public javax.jcr.Value valueFrom(final Value modelValue, final Session session) throws Exception {
+    public javax.jcr.Value valueFrom(final Value modelValue, final Session session) throws RepositoryException, IOException {
         final ValueFactory factory = session.getValueFactory();
         final ValueType type = modelValue.getType();
 
@@ -110,11 +111,7 @@ public class ValueConverter {
     }
 
     private InputStream getBinaryInputStream(final Value modelValue) throws IOException {
-        if (modelValue.isResource()) {
-            return getResourceInputStream(modelValue);
-        } else {
-            return new ByteArrayInputStream((byte[]) modelValue.getObject());
-        }
+        return modelValue.isResource() ? getResourceInputStream(modelValue) : new ByteArrayInputStream((byte[]) modelValue.getObject());
     }
 
     private InputStream getResourceInputStream(final Source source, final String resourceName) throws IOException {

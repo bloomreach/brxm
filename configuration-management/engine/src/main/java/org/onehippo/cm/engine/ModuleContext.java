@@ -41,6 +41,7 @@ public class ModuleContext {
     protected final Module module;
     protected final boolean multiModule;
     private final Path moduleDescriptorPath;
+    private final Path moduleRoot;
 
     private Path moduleConfigRootPath;
     private Path moduleContentRootPath;
@@ -52,7 +53,13 @@ public class ModuleContext {
     public ModuleContext(Module module, Path moduleDescriptorPath, boolean multiModule) throws IOException {
         this.module = module;
         this.moduleDescriptorPath = moduleDescriptorPath;
+        this.moduleRoot = moduleDescriptorPath.getParent();
         this.multiModule = multiModule;
+    }
+
+    //TODO SS: Review whether we need to have module root property
+    public Path getModuleRoot() {
+        return moduleRoot;
     }
 
     public Path getConfigRoot() {

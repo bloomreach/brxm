@@ -44,6 +44,7 @@
     <commons-lang3.version>3.5</commons-lang3.version>
     <commons-io.version>2.5</commons-io.version>
     <commons-cli.version>1.4</commons-cli.version>
+    <commons-collections4.version>4.1</commons-collections4.version>
     <tdunning-json.version>1.8</tdunning-json.version>
     <lib.json.version>20160810</lib.json.version>
 
@@ -130,6 +131,11 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commons-io.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-collections4</artifactId>
+        <version>${commons-collections4.version}</version>
       </dependency>
       <dependency>
         <groupId>org.json</groupId>

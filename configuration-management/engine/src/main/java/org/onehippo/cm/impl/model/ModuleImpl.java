@@ -26,8 +26,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
@@ -40,9 +42,9 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigDefinition;
+import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
@@ -52,6 +54,7 @@ import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.api.model.action.ActionItem;
 import org.onehippo.cm.engine.serializer.ModuleDescriptorSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +79,8 @@ public class ModuleImpl implements Module, Comparable<Module> {
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
-    private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator.comparing(Source::getPath));
+    private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator.comparing(Source::getPath)
+            .thenComparing(x -> x.getClass().getSimpleName()));
 
     private final Set<Source> sources = Collections.unmodifiableSet(sortedSources);
 
@@ -89,6 +93,10 @@ public class ModuleImpl implements Module, Comparable<Module> {
     private final List<ConfigDefinitionImpl> configDefinitions = new ArrayList<>();
 
     private final List<WebFileBundleDefinitionImpl> webFileBundleDefinitions = new ArrayList<>();
+
+    private Map<Double, List<ActionItem>> actionsMap = new LinkedHashMap<>();
+
+    private Double sequenceNumber;
 
     private ResourceInputProvider configResourceInputProvider;
 
@@ -149,6 +157,19 @@ public class ModuleImpl implements Module, Comparable<Module> {
     public SourceImpl addConfigSource(final String path) {
         final SourceImpl source = new ConfigSourceImpl(path, this);
         return addSource(source);
+    }
+
+    @Override
+    public Map<Double, List<ActionItem>> getActionsMap() {
+        return actionsMap;
+    }
+
+    public Double getSequenceNumber() {
+        return sequenceNumber;
+    }
+
+    public void setSequenceNumber(double value) {
+        sequenceNumber = value;
     }
 
     /**
@@ -221,6 +242,11 @@ public class ModuleImpl implements Module, Comparable<Module> {
     @Override
     public ResourceInputProvider getContentResourceInputProvider() {
         return contentResourceInputProvider;
+    }
+
+    public ModuleImpl setActionsMap(Map<Double, List<ActionItem>> actionsMap) {
+        this.actionsMap = actionsMap;
+        return this;
     }
 
     public ModuleImpl setContentResourceInputProvider(final ResourceInputProvider contentResourceInputProvider) {
