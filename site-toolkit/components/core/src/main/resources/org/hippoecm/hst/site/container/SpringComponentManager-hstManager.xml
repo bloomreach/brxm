@@ -54,7 +54,7 @@
   </bean>
 
 
-  <bean id="org.hippoecm.hst.configuration.model.EventPathsInvalidator" class="org.hippoecm.hst.configuration.model.EventPathsInvalidator">
+  <bean id="org.hippoecm.hst.configuration.model.EventPathsInvalidator" class="org.hippoecm.hst.configuration.model.EventPathsInvalidatorImpl">
     <property name="hstModelMutex" ref="hstModelMutex"/>
     <property name="hstEventsCollector" ref="hstEventsCollector"/>
     <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>

@@ -21,7 +21,7 @@ import org.hippoecm.hst.configuration.cache.HstEventsCollector;
  * To dispatch events (for example from a HippoSession) directly, for example without having persisted the changes yet. This is important
  * in case the changes MUST be reflected in the model, and can't wait for the *asynchronous* jcr events to arrive
  */
-public class EventPathsInvalidator {
+public class EventPathsInvalidatorImpl implements EventPathsInvalidator {
 
     private Object hstModelMutex;
     private HstEventsCollector hstEventsCollector;
@@ -40,6 +40,7 @@ public class EventPathsInvalidator {
         this.hstEventsCollector = hstEventsCollector;
     }
 
+    @Override
     public void eventPaths(final String... absEventPaths) {
         synchronized(hstModelMutex) {
             hstEventsCollector.collect(absEventPaths);
