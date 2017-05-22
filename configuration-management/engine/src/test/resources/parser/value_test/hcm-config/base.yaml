@@ -82,3 +82,11 @@ definitions:
         type: long
         value: []
       emptyString: []
+    /categories:
+      regular-property: value
+      runtime-property:
+        .meta:category: runtime
+      /category:
+        .meta:category: runtime
+      /residual-child-node-category:
+        .meta:residual-child-node-category: content

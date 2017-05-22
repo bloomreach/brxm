@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.DefinitionNode;
+import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
@@ -45,6 +46,7 @@ import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class ParserValueTest extends AbstractBaseTest {
 
@@ -58,7 +60,7 @@ public class ParserValueTest extends AbstractBaseTest {
         final Group base = assertGroup(groups, "base", new String[0], 1);
         final Project project = assertProject(base, "project1", new String[0], 1);
         final Module module = assertModule(project, "module1", new String[0], 2);
-        final Source source = assertSource(module, "base.yaml", 4);
+        final Source source = assertSource(module, "base.yaml", 5);
         final Source contentSource = assertSource(module, "content.yaml", 1);
 
         final ContentDefinition contentDefinition = assertDefinition(contentSource, 0, ContentDefinition.class);
@@ -146,6 +148,22 @@ public class ParserValueTest extends AbstractBaseTest {
         assertProperty(emptyNode, "/empty/emptyDouble", "emptyDouble", emptyDefinition, ValueType.DOUBLE, new Object[0]);
         assertProperty(emptyNode, "/empty/emptyLong", "emptyLong", emptyDefinition, ValueType.LONG, new Object[0]);
         assertProperty(emptyNode, "/empty/emptyString", "emptyString", emptyDefinition, ValueType.STRING, new Object[0]);
+
+        final ConfigDefinition categoryDefinition = assertDefinition(source, 4, ConfigDefinition.class);
+        final DefinitionNode categoryTreeNode = assertNode(categoryDefinition, "/categories", "categories", categoryDefinition, 2, 2);
+        assertNull(categoryTreeNode.getCategory());
+        assertNull(categoryTreeNode.getResidualChildNodeCategory());
+        final DefinitionProperty regularProperty = categoryTreeNode.getProperties().get("regular-property");
+        assertNull(regularProperty.getCategory());
+        final DefinitionProperty categoryProperty = categoryTreeNode.getProperties().get("runtime-property");
+        assertEquals("runtime", categoryProperty.getCategory().toString());
+
+        final DefinitionNode runtimeCategoryNode = assertNode(categoryTreeNode, "/categories/category", "category", categoryDefinition, 0, 0);
+        assertEquals("runtime", runtimeCategoryNode.getCategory().toString());
+        assertNull(runtimeCategoryNode.getResidualChildNodeCategory());
+        final DefinitionNode residualChildNodes = assertNode(categoryTreeNode, "/categories/residual-child-node-category", "residual-child-node-category", categoryDefinition, 0, 0);
+        assertNull(residualChildNodes.getCategory());
+        assertEquals("content", residualChildNodes.getResidualChildNodeCategory().toString());
     }
 
     @Test

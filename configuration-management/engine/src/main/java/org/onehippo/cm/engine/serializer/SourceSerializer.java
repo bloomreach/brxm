@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.onehippo.cm.api.model.ConfigDefinition;
+import org.onehippo.cm.api.model.ConfigurationItemCategory;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
@@ -49,9 +50,11 @@ import org.yaml.snakeyaml.reader.StreamReader;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.Constants.DEFINITIONS;
+import static org.onehippo.cm.engine.Constants.META_CATEGORY_KEY;
 import static org.onehippo.cm.engine.Constants.META_DELETE_KEY;
 import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
 import static org.onehippo.cm.engine.Constants.META_ORDER_BEFORE_KEY;
+import static org.onehippo.cm.engine.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
 import static org.onehippo.cm.engine.Constants.OPERATION_KEY;
 import static org.onehippo.cm.engine.Constants.PATH_KEY;
 import static org.onehippo.cm.engine.Constants.PREFIX_KEY;
@@ -146,6 +149,12 @@ public class SourceSerializer extends AbstractBaseSerializer {
         if (node.getIgnoreReorderedChildren() != null) {
             children.add(representNodeIgnoreReorderedChildren(node.getIgnoreReorderedChildren()));
         }
+        if (node.getCategory() != null) {
+            children.add(representCategory(META_CATEGORY_KEY, node.getCategory()));
+        }
+        if (node.getResidualChildNodeCategory() != null) {
+            children.add(representCategory(META_RESIDUAL_CHILD_NODE_CATEGORY_KEY, node.getResidualChildNodeCategory()));
+        }
         for (DefinitionProperty childProperty : node.getProperties().values()) {
             children.add(representProperty(childProperty, resourceConsumer));
         }
@@ -169,6 +178,10 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return new NodeTuple(createStrScalar(META_IGNORE_REORDERED_CHILDREN), new ScalarNode(Tag.BOOL, ignoreReorderedChildren.toString(), null, null, null));
     }
 
+    private NodeTuple representCategory(final String metaDataField, final ConfigurationItemCategory category) {
+        return createStrStrTuple(metaDataField, category.toString());
+    }
+
     private NodeTuple representProperty(final DefinitionProperty property, final Consumer<PostProcessItem> resourceConsumer) {
         if (requiresValueMap(property)) {
             return representPropertyUsingMap(property, resourceConsumer);
@@ -180,7 +193,9 @@ public class SourceSerializer extends AbstractBaseSerializer {
     private NodeTuple representPropertyUsingMap(final DefinitionProperty property, final Consumer<PostProcessItem> resourceConsumer) {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
 
-        if (property.getOperation() == PropertyOperation.DELETE) {
+        if (property.getCategory() != null) {
+            valueMapTuples.add(representCategory(META_CATEGORY_KEY, property.getCategory()));
+        } else if (property.getOperation() == PropertyOperation.DELETE) {
             valueMapTuples.add(createStrStrTuple(OPERATION_KEY, property.getOperation().toString()));
         } else {
             if (property.getOperation() != PropertyOperation.REPLACE) {
@@ -259,7 +274,10 @@ public class SourceSerializer extends AbstractBaseSerializer {
 
     private boolean requiresValueMap(final DefinitionProperty property) {
 
-        if (property.getOperation() != PropertyOperation.REPLACE || hasResourceValues(property) || hasPathValues(property)) {
+        if (property.getOperation() != PropertyOperation.REPLACE
+                || hasResourceValues(property)
+                || hasPathValues(property)
+                || property.getCategory() != null) {
             return true;
         }
 
