@@ -81,11 +81,6 @@ public class HstConfigurationUtils {
     static String[] filterOutUpstream(final String[] pendingChangePaths) {
         String containsUpstream = "/" + HstNodeTypes.NODENAME_HST_UPSTREAM + "/";
         String endsWithUpstream = "/" + HstNodeTypes.NODENAME_HST_UPSTREAM;
-        for (String pendingChangePath : pendingChangePaths) {
-            if (pendingChangePath.contains(containsUpstream) || pendingChangePath.endsWith(endsWithUpstream)) {
-
-            }
-        }
 
         String[] filtered = asList(pendingChangePaths).stream()
                 .filter((path) -> (!path.contains(containsUpstream) && !path.endsWith(endsWithUpstream)))
