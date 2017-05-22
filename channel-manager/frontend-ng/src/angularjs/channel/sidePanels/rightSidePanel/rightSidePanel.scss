@@ -36,9 +36,7 @@ right-side-panel {
   }
 
   &.in-resize {
-    * {
-      user-select: none;
-    }
+    user-select: none;
   }
 }
 

@@ -26,7 +26,6 @@ fdescribe('resizeHandle component', () => {
       onResize: () => { },
     });
 
-    spyOn($ctrl, '_blinkFullWidthToggle');
     spyOn($ctrl, 'onResize');
   });
 
@@ -45,8 +44,8 @@ fdescribe('resizeHandle component', () => {
 
     mockHandleElement.trigger(eMouseDown);
 
-    mockSidePanelElement.width('440px');
-    expect(mockSidePanelElement.width()).toEqual(440);
+    mockSidePanelElement.width('450px');
+    expect(mockSidePanelElement.width()).toEqual(450);
 
     const eMouseMove = new $j.Event('mousemove');
     eMouseMove.pageX = 800;
@@ -55,12 +54,10 @@ fdescribe('resizeHandle component', () => {
     $ctrl.$document.trigger(eMouseMove);
 
     $ctrl.$document.trigger('mouseup');
-    expect($ctrl.onResize).toHaveBeenCalled();
     expect(mockSidePanelElement.width() > 440).toEqual(true);
-    expect($ctrl._blinkFullWidthToggle).not.toHaveBeenCalled();
   });
 
-  it('should not allow a too small or too big sidepanel and should show a visual blinking hint', () => {
+  it('should not allow a too small or too big sidepanel', () => {
     $ctrl._registerEvents(mockSidePanelElement);
 
     const eMouseDown = new $j.Event('mousedown');
@@ -75,7 +72,7 @@ fdescribe('resizeHandle component', () => {
     spyOn(mockSidePanelElement, 'css');
 
     const eMouseMove = new $j.Event('mousemove');
-    eMouseMove.pageX = 3000;
+    eMouseMove.pageX = 99999;
     eMouseMove.pageY = 100;
 
     $ctrl.$document.trigger(eMouseMove);
@@ -83,6 +80,5 @@ fdescribe('resizeHandle component', () => {
     $ctrl.$document.trigger('mouseup');
     expect($ctrl.onResize).toHaveBeenCalled();
     expect(mockSidePanelElement.css).not.toHaveBeenCalled();
-    expect($ctrl._blinkFullWidthToggle).toHaveBeenCalled();
   });
 });

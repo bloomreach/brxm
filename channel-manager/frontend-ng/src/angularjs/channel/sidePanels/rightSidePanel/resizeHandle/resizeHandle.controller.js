@@ -20,12 +20,11 @@ class resizeHandleController {
 
     this.$document = $document;
     this.handle = $element;
-    this.fullWidthToggleElement = null;
+    this.body = $('body');
   }
 
   $onInit() {
     this._registerEvents(this.element);
-    this.fullWidthToggleElement = this.element.find('.btn-fullwidth');
   }
 
   _registerEvents(manipulatedElement) {
@@ -41,14 +40,10 @@ class resizeHandleController {
         const diff = initialX - moveEvent.pageX;
         newWidth = initialWidth + diff;
 
-        if (newWidth <= 440 || newWidth >= 880) {
-          this._blinkFullWidthToggle();
-          this.$document.trigger('mouseup');
-          return;
+        if (newWidth > 440 && newWidth < (this.body.width() / 2)) {
+          manipulatedElement.css('width', newWidth);
+          manipulatedElement.css('max-width', newWidth);
         }
-
-        manipulatedElement.css('width', newWidth);
-        manipulatedElement.css('max-width', newWidth);
       });
 
       this.$document.mouseup(() => {
@@ -58,15 +53,6 @@ class resizeHandleController {
         manipulatedElement.removeClass('in-resize');
       });
     });
-  }
-
-  _blinkFullWidthToggle() {
-    this.fullWidthToggleElement
-      .fadeIn(100)
-      .fadeOut(100)
-      .fadeIn(100)
-      .fadeOut(100)
-      .fadeIn(100);
   }
 }
 
