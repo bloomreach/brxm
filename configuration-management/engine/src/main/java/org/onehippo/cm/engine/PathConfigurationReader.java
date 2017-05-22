@@ -79,6 +79,7 @@ public class PathConfigurationReader {
     /**
      * Read the module dependency data to extract the raw components of a configuration model.
      * These raw portions of config will be assembled into a ConfigurationModel later.
+     *
      * @param moduleDescriptorPath
      * @param verifyOnly
      * @return
@@ -102,8 +103,8 @@ public class PathConfigurationReader {
                     final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath, hasMultipleModules);
 
                     // Set the input providers on the Module directly, so it doesn't need to be held in a Map on ConfigurationModel
-                    ((ModuleImpl)module).setConfigResourceInputProvider(moduleContext.getConfigInputProvider());
-                    ((ModuleImpl)module).setContentResourceInputProvider(moduleContext.getContentInputProvider());
+                    ((ModuleImpl) module).setConfigResourceInputProvider(moduleContext.getConfigInputProvider());
+                    ((ModuleImpl) module).setContentResourceInputProvider(moduleContext.getContentInputProvider());
 
                     moduleContexts.put(module, moduleContext);
 
@@ -118,13 +119,10 @@ public class PathConfigurationReader {
     }
 
     private void processActionsList(final ModuleImpl module, final ModuleContext moduleContext) throws ParserException, IOException {
-        if (moduleContext.getModuleRoot() != null) //TODO SS: Workaround for jars
-        {
-            final Path actionsYaml = moduleContext.getModuleRoot().resolve(Constants.ACTIONS_YAML);
-            if (Files.exists(actionsYaml)) {
-                final ActionListParser parser = new ActionListParser(explicitSequencing);
-                parser.parse(actionsYaml.toUri().toURL().openStream(), actionsYaml.toString(), module);
-            }
+        final Path actionsYaml = moduleContext.getActionsDecriptorPath();
+        if (Files.exists(actionsYaml)) {
+            final ActionListParser parser = new ActionListParser(explicitSequencing);
+            parser.parse(actionsYaml.toUri().toURL().openStream(), actionsYaml.toString(), module);
         }
     }
 
