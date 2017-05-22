@@ -1,4 +1,4 @@
-fdescribe('resizeHandle component', () => {
+describe('resizeHandle component', () => {
   let $componentController;
   let $ctrl;
 
