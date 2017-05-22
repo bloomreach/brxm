@@ -112,6 +112,19 @@
     </resources>
     <plugins>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jslint-maven-plugin</artifactId>
+        <configuration>
+          <predefinedVars>
+            Hippo,
+            jQuery,
+            Wicket,
+            window,
+          </predefinedVars>
+          <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>

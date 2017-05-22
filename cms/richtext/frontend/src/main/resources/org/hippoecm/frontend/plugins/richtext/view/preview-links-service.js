@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function () {
+(function ($) {
   "use strict";
 
   if (typeof(Hippo) === 'undefined') {
-    window.Hippo = {};
+    Hippo = {};
   }
 
   Hippo.augmentInternalLinks = function(id, callbackConfig) {
     $('#' + id + ' a').each(function(index, element) {
-      var el = $(element);
-      var uuid = el.attr('data-uuid');
+      var el = $(element),
+        uuid = el.attr('data-uuid');
       if (uuid) {
         el.click(function(ev) {
           ev.preventDefault();
@@ -34,4 +34,4 @@
     });
   };
 
-})();
+}(jQuery));
