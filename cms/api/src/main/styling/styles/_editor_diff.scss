@@ -12,32 +12,63 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+.hippo-diff-removed,
+.hippo-diff-removed .hippo-editor-field {
+  background-color: $diff-removed !important;
+  text-decoration: line-through;
+
+  img {
+    border: 5px solid $diff-removed-border;
+  }
+}
+
+.hippo-diff-added,
+.hippo-diff-added .hippo-editor-field {
+  background-color: $diff-added !important;
+
+  img {
+    border: 5px solid $diff-added-border;
+  }
+}
+
+.compare {
+  .hippo-diff-removed,
+  .hippo-diff-added {
+    float: left;
+    padding: 0 10px 0 10px;
+  }
+}
+
+.compare-base {
+  padding-right: 15px;
+}
+
 .diff-html-added {
   font-size: 100%;
-  background-color: #ccffcc; /* light green */
+  background-color: $diff-added; /* light green */
   cursor: pointer;
 }
 
 .diff-html-removed {
   font-size: 100%;
   text-decoration: line-through;
-  background-color: #fdc6c6; /* light red */
+  background-color: $diff-removed; /* light red */
   cursor: pointer;
 }
 
 .diff-html-changed {
-  background-color: #d9edff; /* light blue */
+  background-color: $diff-changed; /* light blue */
   cursor: pointer;
 }
 
 .diff-html-added img {
-  border: 2px solid #ccffcc;
+  border: 2px solid $diff-added-border;
 }
 
 .diff-html-removed img {
-  border: 2px solid #fdc6c6;
+  border: 2px solid $diff-removed-border;
 }
 
 .diff-html-changed img {
-  border: 2px dotted #000099;
+  border: 2px dotted $diff-changed-border;
 }

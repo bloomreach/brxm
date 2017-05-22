@@ -1,4 +1,4 @@
-// Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -347,49 +347,6 @@
   background: $lightest-shade;
   min-width: 200px;
   padding: 16px 8px 16px 8px;
-}
-
-.hippo-diff-removed,
-.hippo-diff-removed .hippo-editor-field {
-  background-color: $danger-light !important;
-  text-decoration: line-through;
-
-  img {
-    border: 5px solid $danger-light;
-  }
-}
-
-.hippo-diff-added,
-.hippo-diff-added .hippo-editor-field {
-  background-color: $success-light !important;
-
-  img {
-    border: 5px solid $success-light;
-  }
-}
-
-.hippo-dif-removed,
-.hippo-dif-added {
-  .hippo-editor-field-textarea {
-    min-height: 0;
-  }
-
-  .resource-values ul {
-    clear: both;
-    padding: 0 10px 0 10px;
-  }
-}
-
-.compare {
-  .hippo-diff-removed,
-  .hippo-diff-added {
-    float: left;
-    padding: 0 10px 0 10px;
-  }
-}
-
-.compare-base {
-  padding-right: 15px;
 }
 
 .lock-ui {
