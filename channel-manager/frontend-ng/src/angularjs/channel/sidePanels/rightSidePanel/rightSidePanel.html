@@ -31,17 +31,17 @@
       <md-button class="md-icon-button qa-publish-in-content-perspective"
                  aria-label="{{ 'PUBLISH' | translate }}"
                  ng-disabled="!$ctrl.editing || $ctrl.disableContentButtons"
-                 ng-click="$ctrl.openFullContent('view')">
+                 ng-click="$ctrl.openContentEditor('view')">
         <md-tooltip md-delay="500">{{ 'PUBLISH' | translate }}</md-tooltip>
 
         <md-icon md-svg-src="images/publish.svg"></md-icon>
       </md-button>
 
       <md-button class="md-icon-button qa-edit-in-content-perspective"
-                 aria-label="{{ 'SWITCH_TO_FULL_EDITOR' | translate }}"
+                 aria-label="{{ 'SWITCH_TO_CONTENT_EDITOR' | translate }}"
                  ng-disabled="$ctrl.disableContentButtons"
-                 ng-click="$ctrl.openFullContent('edit')">
-        <md-tooltip md-delay="500">{{ 'SWITCH_TO_FULL_EDITOR' | translate }}</md-tooltip>
+                 ng-click="$ctrl.openContentEditor('edit')">
+        <md-tooltip md-delay="500">{{ 'SWITCH_TO_CONTENT_EDITOR' | translate }}</md-tooltip>
 
         <md-icon md-svg-src="images/document.svg"></md-icon>
       </md-button>
@@ -59,11 +59,11 @@
                   md-colors="{background: 'hippo-grey-200'}">
       <div>{{ 'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
       <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
-      <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.openFullContent("edit")' translate-compile></div>
+      <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.openContentEditor("edit")' translate-compile></div>
     </md-subheader>
 
     <div ng-if="$ctrl.feedback"
-         class="md-padding qa-feedback"
+         class="md-padding feedback qa-feedback"
          md-colors="{background: 'hippo-red-50'}">
       <h4 class="qa-feedback-title">{{::$ctrl.feedback.title | translate}}</h4>
 
@@ -71,10 +71,10 @@
         {{::$ctrl.feedback.message }}
       </p>
 
-      <md-button ng-if="$ctrl.feedback.linkToFullEditor"
-                 ng-click="$ctrl.openFullContent('edit')">
+      <md-button ng-if="$ctrl.feedback.linkToContentEditor"
+                 ng-click="$ctrl.openContentEditor('edit')">
         <md-icon md-svg-src="images/document.svg"></md-icon>
-        {{'FEEDBACK_SWITCH_TO_THE_FULL_EDITOR' | translate}}
+        {{'FEEDBACK_SWITCH_TO_CONTENT_EDITOR' | translate}}
       </md-button>
     </div>
 

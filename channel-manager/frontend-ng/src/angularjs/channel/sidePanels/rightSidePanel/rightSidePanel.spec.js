@@ -786,7 +786,7 @@ describe('RightSidePanel', () => {
     SidePanelService.close.and.returnValue($q.resolve());
 
     const mode = 'view';
-    $ctrl.openFullContent(mode);
+    $ctrl.openContentEditor(mode);
     $rootScope.$digest();
 
     expect(ContentService.saveDraft).not.toHaveBeenCalled();
@@ -802,7 +802,7 @@ describe('RightSidePanel', () => {
     $ctrl.doc = { displayName: 'Display Name' };
     $ctrl.form.$dirty = true;
 
-    $ctrl.openFullContent('edit');
+    $ctrl.openContentEditor('edit');
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalled();
@@ -820,7 +820,7 @@ describe('RightSidePanel', () => {
     ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
     SidePanelService.close.and.returnValue($q.resolve());
 
-    $ctrl.openFullContent('edit');
+    $ctrl.openContentEditor('edit');
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalled();
@@ -840,7 +840,7 @@ describe('RightSidePanel', () => {
     ContentService.deleteDraft.and.returnValue($q.resolve());
     SidePanelService.close.and.returnValue($q.resolve());
 
-    $ctrl.openFullContent('view');
+    $ctrl.openContentEditor('view');
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalled();
@@ -858,7 +858,7 @@ describe('RightSidePanel', () => {
     $ctrl.editing = true;
     ContentService.saveDraft.and.returnValue($q.reject({}));
 
-    $ctrl.openFullContent('view');
+    $ctrl.openContentEditor('view');
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalled();

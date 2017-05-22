@@ -21,11 +21,11 @@ const ERROR_MAP = {
   NO_CONTENT: {
     title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
     messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
-    linkToFullEditor: true,
+    linkToContentEditor: true,
   },
   NOT_A_DOCUMENT: {
     title: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
-    linkToFullEditor: true,
+    linkToContentEditor: true,
     messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
   },
   NOT_FOUND: {
@@ -44,13 +44,13 @@ const ERROR_MAP = {
   },
   UNAVAILABLE: { // default catch-all
     title: 'FEEDBACK_DEFAULT_TITLE',
-    linkToFullEditor: true,
+    linkToContentEditor: true,
     messageKey: 'FEEDBACK_DEFAULT_MESSAGE',
   },
   UNKNOWN_VALIDATOR: {
-    title: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_TITLE',
-    linkToFullEditor: true,
-    messageKey: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_MESSAGE',
+    title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
+    linkToContentEditor: true,
+    messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
   },
 };
 
@@ -147,7 +147,7 @@ class RightSidePanelCtrl {
     this.feedback = {
       title: 'FEEDBACK_DRAFT_INVALID_TITLE',
       message: this.$translate.instant('FEEDBACK_DRAFT_INVALID_MESSAGE'),
-      linkToFullEditor: true,
+      linkToContentEditor: true,
     };
   }
 
@@ -212,7 +212,7 @@ class RightSidePanelCtrl {
       this.feedback = {
         title: error.title,
         message: this.$translate.instant(error.messageKey, params),
-        linkToFullEditor: error.linkToFullEditor,
+        linkToContentEditor: error.linkToContentEditor,
       };
       this.disableContentButtons = error.disableContentButtons;
     }
@@ -273,10 +273,10 @@ class RightSidePanelCtrl {
       });
   }
 
-  openFullContent(mode) {
+  openContentEditor(mode) {
     const messageKey = mode === 'view'
       ? 'SAVE_CHANGES_ON_PUBLISH_MESSAGE'
-      : 'SAVE_CHANGES_ON_SWITCH_TO_FULL_EDITOR_MESSAGE';
+      : 'SAVE_CHANGES_ON_SWITCH_TO_CONTENT_EDITOR_MESSAGE';
 
     this._dealWithPendingChanges(messageKey, () => {
       if (mode === 'view') {
