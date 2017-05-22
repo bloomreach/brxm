@@ -112,6 +112,7 @@ public class ProjectImpl implements Project {
                 .setConfigResourceInputProvider(module.getConfigResourceInputProvider())
                 .setContentResourceInputProvider(module.getContentResourceInputProvider())
                 .pushActions(module)
+                .setMvnPath(module.getMvnPath())
                 .pushDefinitions(module);
     }
 
@@ -131,5 +132,13 @@ public class ProjectImpl implements Project {
     @Override
     public int hashCode() {
         return Objects.hash(name, group);
+    }
+
+    @Override
+    public String toString() {
+        return "ProjectImpl{" +
+                "name='" + name + '\'' +
+                ", group=" + group +
+                '}';
     }
 }

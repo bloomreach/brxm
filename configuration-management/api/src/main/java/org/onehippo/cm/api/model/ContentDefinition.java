@@ -15,6 +15,6 @@
  */
 package org.onehippo.cm.api.model;
 
-public interface ContentDefinition extends Definition {
+public interface ContentDefinition extends Definition, Comparable<ContentDefinition> {
     DefinitionNode getNode();
 }

@@ -1,0 +1,7 @@
+definitions:
+  namespace:
+  - prefix: test
+    uri: http://www.onehippo.org/jcr/test/1.0
+  config:
+    /topmost/upstream/exportFirst:
+      jcr:primaryType: nt:unstructured

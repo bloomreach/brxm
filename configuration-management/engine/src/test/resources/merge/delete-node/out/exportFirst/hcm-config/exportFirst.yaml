@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /topmost/upstreamToDelete:
+      .meta:operation: delete
+    /topmost/upstream/:
+      .meta:operation: delete

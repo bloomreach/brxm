@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /topmost/upstream/exportSecond:
+      jcr:primaryType: nt:unstructured

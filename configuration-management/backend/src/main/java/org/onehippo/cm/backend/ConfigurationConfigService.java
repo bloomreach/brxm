@@ -90,7 +90,7 @@ import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getBaseZipFi
  * Access to the repository is provided to this service through the API ({@link javax.jcr.Node} or
  * {@link Session}), this service is stateless.
  *
- * TODO: Currently, there also exists a ConfigurationPersistenceService. Its content should be moved here, in time.
+ * TODO: Currently, there also exists a ConfigService. Its content should be moved here, in time.
  */
 public class ConfigurationConfigService {
 

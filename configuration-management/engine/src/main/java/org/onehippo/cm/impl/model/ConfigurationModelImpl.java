@@ -19,18 +19,25 @@ package org.onehippo.cm.impl.model;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.ConfigurationNode;
+import org.onehippo.cm.api.model.ConfigurationProperty;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.Module;
@@ -41,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.DEFAULT_DIGEST;
+import static org.onehippo.cm.engine.SnsUtils.createIndexedName;
 
 public class ConfigurationModelImpl implements ConfigurationModel {
 
@@ -54,6 +62,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     private final List<WebFileBundleDefinition> webFileBundleDefinitions = new ArrayList<>();
     private final List<ContentDefinition> contentDefinitions = new ArrayList<>();
+    private final List<ConfigDefinition> configDefinitions = new ArrayList<>();
 
     // Used for cleanup when done with this ConfigurationModel
     private Set<FileSystem> filesystems = new HashSet<>();
@@ -88,6 +97,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         return contentDefinitions;
     }
 
+    public List<ConfigDefinition> getConfigDefinitions() {
+        return configDefinitions;
+    }
+
     @Override
     public void addContentDefinition(final ContentDefinition definition) {
         contentDefinitions.add(definition);
@@ -96,6 +109,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     @Override
     public void addContentDefinitions(final Collection<ContentDefinition> definitions) {
         contentDefinitions.addAll(definitions);
+    }
+
+    public void addConfigDefinitions(final Collection<ConfigDefinitionImpl> definitions) {
+        configDefinitions.addAll(definitions);
     }
 
     public void setSortedGroups(final List<GroupImpl> sortedGroups) {
@@ -236,5 +253,55 @@ public class ConfigurationModelImpl implements ConfigurationModel {
                 throw new IllegalStateException(msg);
             }
         }
+    }
+
+    /**
+     * Find a ConfigurationNode by its absolute path.
+     * @param path the path of a node
+     * @return a ConfigurationNode or null, if no node exists with this path
+     */
+    public ConfigurationNode resolveNode(String path) {
+        String[] segments = StringUtils.stripStart(path, "/").split("/");
+
+        ConfigurationNode currentNode = getConfigurationRootNode();
+        for (String segment : segments) {
+            currentNode = currentNode.getNodes().get(createIndexedName(segment));
+            if (currentNode == null) {
+                return null;
+            }
+        }
+        return currentNode;
+    }
+
+    /**
+     * Find a ConfigurationProperty by its absolute path.
+     * @param path the path of a property
+     * @return a ConfigurationProperty or null, if no property exists with this path
+     */
+    public ConfigurationProperty resolveProperty(String path) {
+        ConfigurationNode node = resolveNode(StringUtils.substringBeforeLast(path, "/"));
+        if (node == null) {
+            return null;
+        }
+        else {
+            return node.getProperties().get(StringUtils.substringAfterLast(path, "/"));
+        }
+    }
+
+    /**
+     * Find the ContentDefinition (not config) that has the longest common substring to the given path
+     * @param path
+     * @return
+     */
+    public Optional<ContentDefinition> findClosestContentDefinition(final String path) {
+        // Use the Path class to represent the JCR path, since all we need is a simple startsWith() comparison
+        Path p = Paths.get(path);
+
+        // make sure content definitions are sorted by lexical order of root path
+        final TreeSet<ContentDefinition> reverse = new TreeSet<>(Comparator.reverseOrder());
+        reverse.addAll(getContentDefinitions());
+
+        // check for prefix match on path in reverse lexical order -- first match is longest prefix match
+        return getContentDefinitions().stream().filter(cd -> p.startsWith(Paths.get(cd.getNode().getPath()))).findFirst();
     }
 }

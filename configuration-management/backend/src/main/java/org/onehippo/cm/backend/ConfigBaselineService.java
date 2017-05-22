@@ -630,6 +630,7 @@ public class ConfigBaselineService {
                                     group.getName(), project.getName(), module.getName());
 
                             // get InputStream
+                            // TODO adding the slash here is a silly hack to load a source path without needing the source first
                             InputStream is = rip.getResourceInputStream(null, "/" + sourcePath);
 
                             // parse config source

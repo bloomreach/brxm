@@ -18,6 +18,7 @@ package org.onehippo.cm.impl.model.builder;
 
 import java.nio.file.FileSystem;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,8 @@ import org.onehippo.cm.impl.model.ConfigurationModelImpl;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.GroupImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
+import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.impl.model.ProjectImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +44,13 @@ import org.slf4j.LoggerFactory;
  * the tree of {@link ConfigurationNodeImpl}s.
  */
 public class ConfigurationModelBuilder {
-    private static final Logger logger = LoggerFactory.getLogger(ConfigurationTreeBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationModelBuilder.class);
     private static final OrderableListSorter<GroupImpl> groupSorter = new OrderableListSorter<>(Group.class.getSimpleName());
 
     private final List<GroupImpl> groups = new ArrayList<>();
     private final Map<String, GroupImpl> groupMap = new HashMap<>();
+
+    private final Set<ModuleImpl> replacements = new HashSet<>();
 
     // Used for cleanup when done with this ConfigurationModel
     private final Set<FileSystem> filesystems = new HashSet<>();
@@ -64,6 +69,7 @@ public class ConfigurationModelBuilder {
                             mergedModel.addNamespaceDefinitions(module.getNamespaceDefinitions());
                             mergedModel.addNodeTypeDefinitions(module.getNodeTypeDefinitions());
                             module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
+                            mergedModel.addConfigDefinitions(module.getConfigDefinitions());
                             mergedModel.addContentDefinitions(module.getContentDefinitions().stream().map(x -> (ContentDefinition)x).collect(Collectors.toSet()));
                             mergedModel.addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
                         })
@@ -89,7 +95,20 @@ public class ConfigurationModelBuilder {
                 ? groupMap.get(name) : createGroup(name);
 
         consolidated.addAfter(group.getAfter());
-        group.getModifiableProjects().forEach(consolidated::pushProject);
+        for (ProjectImpl project : group.getModifiableProjects()) {
+            consolidated.pushProject(project, Collections.unmodifiableSet(replacements));
+        }
+        return this;
+    }
+
+    public ConfigurationModelBuilder pushReplacements(final Set<ModuleImpl> modules) {
+        modules.forEach(this::pushReplacement);
+        return this;
+    }
+
+    public ConfigurationModelBuilder pushReplacement(final ModuleImpl module) {
+        push((GroupImpl) module.getProject().getGroup());
+        replacements.add(module);
         return this;
     }
 

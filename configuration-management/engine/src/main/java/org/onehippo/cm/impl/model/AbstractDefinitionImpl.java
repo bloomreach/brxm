@@ -30,5 +30,4 @@ public abstract class AbstractDefinitionImpl implements Definition {
     public Source getSource() {
         return source;
     }
-
 }

@@ -85,7 +85,7 @@ public abstract class AbstractBaseTest {
         }
     }
 
-    Path find(final String moduleConfigResourceName) throws IOException {
+    protected Path find(final String moduleConfigResourceName) throws IOException {
         final URL url = AbstractBaseTest.class.getResource(moduleConfigResourceName);
         if (url == null) {
             fail("cannot find resource " + moduleConfigResourceName);
@@ -93,7 +93,7 @@ public abstract class AbstractBaseTest {
         return Paths.get(url.getFile());
     }
 
-    Path findBase(final String moduleConfigResourceName) throws IOException {
+    protected Path findBase(final String moduleConfigResourceName) throws IOException {
         return find(moduleConfigResourceName).getParent();
     }
 

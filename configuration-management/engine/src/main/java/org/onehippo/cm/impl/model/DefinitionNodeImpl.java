@@ -76,8 +76,9 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         return orderBefore;
     }
 
-    public void setOrderBefore(final String orderBefore) {
+    public DefinitionNodeImpl setOrderBefore(final String orderBefore) {
         this.orderBefore = orderBefore;
+        return this;
     }
 
     @Override
@@ -85,13 +86,41 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         return ignoreReorderedChildren;
     }
 
-    public void setIgnoreReorderedChildren(final boolean ignoreReorderedChildren) {
+    public void setIgnoreReorderedChildren(final Boolean ignoreReorderedChildren) {
         this.ignoreReorderedChildren = ignoreReorderedChildren;
     }
 
     public DefinitionNodeImpl addNode(final String name) {
         final DefinitionNodeImpl node = new DefinitionNodeImpl(name, this);
         modifiableNodes.put(name, node);
+        return node;
+    }
+
+    public DefinitionNodeImpl addNodeBefore(final String name, final String before) {
+        // we need to perform an O(n)*2 insert by clearing and rebuilding the nodes map
+
+        // handle case where order-before mentions a node that isn't actually listed here yet
+        if (!modifiableNodes.containsKey(before)) {
+            // add at end as usual, and also set the order-before here as a flag to the caller about what happened
+            return addNode(name).setOrderBefore(before);
+        }
+
+        // copy the existing child nodes, inserting at the right place
+        LinkedHashMap<String, DefinitionNodeImpl> newView = new LinkedHashMap<>();
+        DefinitionNodeImpl node = null;
+        for (Map.Entry<String, DefinitionNodeImpl> entry : modifiableNodes.entrySet()) {
+            if (entry.getKey().equals(before)) {
+                node = new DefinitionNodeImpl(name, this);
+                newView.put(name, node);
+            }
+            newView.put(entry.getKey(), entry.getValue());
+        }
+
+        // clear and copy back into the existing child nodes map
+        modifiableNodes.clear();
+        modifiableNodes.putAll(newView);
+
+        // it should be impossible for this to be null here
         return node;
     }
 

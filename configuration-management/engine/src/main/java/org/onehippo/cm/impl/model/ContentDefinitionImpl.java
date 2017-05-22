@@ -19,7 +19,8 @@ import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionType;
 
-public class ContentDefinitionImpl extends AbstractDefinitionImpl implements ContentDefinition {
+public class ContentDefinitionImpl extends AbstractDefinitionImpl
+        implements ContentDefinition {
 
     private DefinitionNodeImpl node = new DefinitionNodeImpl("/", "/", this);
 
@@ -45,4 +46,11 @@ public class ContentDefinitionImpl extends AbstractDefinitionImpl implements Con
         this.node = node;
     }
 
+    /**
+     * Compare ContentDefinitions based on the lexical order of the root definition node paths.
+     */
+    @Override
+    public int compareTo(final ContentDefinition o) {
+        return this.getNode().getPath().compareTo(o.getNode().getPath());
+    }
 }

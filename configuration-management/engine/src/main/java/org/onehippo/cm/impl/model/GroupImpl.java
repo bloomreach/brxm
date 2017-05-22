@@ -84,12 +84,17 @@ public class GroupImpl implements Group {
         modifiableProjects.forEach(ProjectImpl::sortModules);
     }
 
-    public void pushProject(final ProjectImpl project) {
+    public void pushProject(final ProjectImpl project, final Set<ModuleImpl> replacements) {
         final String name = project.getName();
         final ProjectImpl consolidated = projectMap.containsKey(name) ? projectMap.get(name) : addProject(name);
 
         consolidated.addAfter(project.getAfter());
-        project.getModifiableModules().forEach(consolidated::pushModule);
+        for (ModuleImpl module : project.getModifiableModules()) {
+            // if we have a replacement module, don't use the one from the given project
+            if (!replacements.contains(module)) {
+                consolidated.pushModule(module);
+            }
+        }
     }
 
     public boolean equals(Object other) {

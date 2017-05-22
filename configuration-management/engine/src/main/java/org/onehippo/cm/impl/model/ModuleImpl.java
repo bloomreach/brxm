@@ -55,6 +55,10 @@ import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.action.ActionItem;
+import org.onehippo.cm.engine.parser.ConfigSourceParser;
+import org.onehippo.cm.engine.parser.ContentSourceParser;
+import org.onehippo.cm.engine.parser.ParserException;
+import org.onehippo.cm.engine.parser.SourceParser;
 import org.onehippo.cm.engine.serializer.ModuleDescriptorSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,16 +70,13 @@ import static org.onehippo.cm.engine.Constants.HCM_CONFIG_FOLDER;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
 
-public class ModuleImpl implements Module, Comparable<Module> {
+public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     private static final Logger log = LoggerFactory.getLogger(ModuleImpl.class);
 
     private final String name;
     private final Project project;
 
-    /**
-     * Warning! not preserved in final ConfigurationModel!
-     */
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
@@ -101,6 +102,9 @@ public class ModuleImpl implements Module, Comparable<Module> {
     private ResourceInputProvider configResourceInputProvider;
 
     private ResourceInputProvider contentResourceInputProvider;
+
+    // store marker here to indicate whether this came from a filesystem mvn path at startup
+    private String mvnPath;
 
     public ModuleImpl(final String name, final ProjectImpl project) {
         if (name == null) {
@@ -149,14 +153,14 @@ public class ModuleImpl implements Module, Comparable<Module> {
         return sources.stream().filter(x -> x instanceof ConfigSourceImpl).collect(Collectors.toSet());
     }
 
-    public SourceImpl addContentSource(final String path) {
+    public ContentSourceImpl addContentSource(final String path) {
         final SourceImpl source = new ContentSourceImpl(path, this);
-        return addSource(source);
+        return (ContentSourceImpl) addSource(source);
     }
 
-    public SourceImpl addConfigSource(final String path) {
+    public ConfigSourceImpl addConfigSource(final String path) {
         final SourceImpl source = new ConfigSourceImpl(path, this);
-        return addSource(source);
+        return (ConfigSourceImpl) addSource(source);
     }
 
     @Override
@@ -175,13 +179,14 @@ public class ModuleImpl implements Module, Comparable<Module> {
 
     /**
      * Returns existing or adds new source to the source list
+     * TODO: separate sources, since this currently
      * @param source
      * @return
      */
     private SourceImpl addSource(SourceImpl source) {
         return sortedSources.add(source) ? source : sortedSources
                 .stream()
-                .filter(s -> s.getPath().equals(source.getPath()) && s.getClass().equals(source.getClass()))
+                .filter(source::equals)
                 .findFirst().get();
     }
 
@@ -255,11 +260,35 @@ public class ModuleImpl implements Module, Comparable<Module> {
         return this;
     }
 
+    /**
+     * This property stores the String used to find mvn source files relative to the project.basedir. This is
+     * the input expected from repo.bootstrap.modules and autoexport:config's autoexport:modules properties.
+     * Used to map parsed Modules back to source. Expect a null value for modules that are not loaded from
+     * mvn source files.
+     */
+    public String getMvnPath() {
+        return mvnPath;
+    }
+
+    public ModuleImpl setMvnPath(final String mvnPath) {
+        this.mvnPath = mvnPath;
+        return this;
+    }
+
     void pushDefinitions(final ModuleImpl module) {
         this.sortedSources.addAll(module.sortedSources);
+        sortDefinitions();
+    }
 
+    public void sortDefinitions() {
         // sort definitions into the different types
-        module.getSources().forEach(source ->
+        namespaceDefinitions.clear();
+        nodeTypeDefinitions.clear();
+        configDefinitions.clear();
+        contentDefinitions.clear();
+        webFileBundleDefinitions.clear();
+
+        getSources().forEach(source ->
                 source.getDefinitions().forEach(definition -> {
                     if (definition instanceof NamespaceDefinitionImpl) {
                         namespaceDefinitions.add((NamespaceDefinitionImpl) definition);
@@ -513,6 +542,11 @@ public class ModuleImpl implements Module, Comparable<Module> {
         }
     }
 
+    public SourceImpl getSourceByPath(String path) {
+        return sortedSources.stream().filter(source -> source.getPath().equals(path)).findFirst().get();
+    }
+
+    // TODO why is this defined here and not as natural order of ContentDefinitionImpl?
     private class ContentDefinitionComparator implements Comparator<ContentDefinitionImpl> {
         public int compare(final ContentDefinitionImpl def1, final ContentDefinitionImpl def2) {
             final String rootPath1 = def1.getNode().getPath();
@@ -534,6 +568,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
     @Override
     public String toString() {
         return "ModuleImpl{" +
+                ((mvnPath==null)? "": ("mvnPath='" + mvnPath +'\'')) +
                 "name='" + name + '\'' +
                 ", project=" + project +
                 '}';
@@ -550,6 +585,43 @@ public class ModuleImpl implements Module, Comparable<Module> {
                     this.getProject().equals(otherModule.getProject());
         }
         return false;
+    }
+
+    @Override
+    public ModuleImpl clone() {
+        // deep clone
+        try {
+            GroupImpl newGroup = new GroupImpl(project.getGroup().getName());
+            newGroup.addAfter(project.getGroup().getAfter());
+
+            ProjectImpl newProject = newGroup.addProject(project.getName());
+            newProject.addAfter(project.getAfter());
+
+            ModuleImpl newModule = newProject.addModule(name);
+            newModule.addAfter(after);
+            newModule.setMvnPath(mvnPath);
+            newModule.setConfigResourceInputProvider(configResourceInputProvider);
+            newModule.setContentResourceInputProvider(contentResourceInputProvider);
+
+            // reload sources from raw YAML instead of attempting to copy the full parsed structure
+            // TODO is this good enough? for auto-export, it should be, since baseline will not change during export
+            final SourceParser configSourceParser = new ConfigSourceParser(configResourceInputProvider, true, DEFAULT_EXPLICIT_SEQUENCING);
+            final SourceParser contentSourceParser = new ContentSourceParser(contentResourceInputProvider, true, DEFAULT_EXPLICIT_SEQUENCING);
+
+            for (Source source : getConfigSources()) {
+                // TODO adding the slash here is a silly hack to load a source path without needing the source first
+                configSourceParser.parse(configResourceInputProvider.getResourceInputStream(null, "/" + source.getPath()),
+                        source.getPath(), configResourceInputProvider.getBaseURL() + source.getPath(), newModule);
+            }
+            for (Source source : getContentSources()) {
+                contentSourceParser.parse(contentResourceInputProvider.getResourceInputStream(null, source.getPath()),
+                        source.getPath(), source.getPath(), newModule);
+            }
+
+            return newModule;
+        } catch (ParserException | IOException e) {
+            throw new RuntimeException("Unable to clone Module: "+getFullName(), e);
+        }
     }
 
     // hashCode() and equals() should be consistent!

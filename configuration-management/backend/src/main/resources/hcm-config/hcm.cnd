@@ -25,14 +25,13 @@
   - hcm:digest (string)
 
 // Stores the root definition path for a content source file
-[hcm:content] > hippo:skipindex
+[hcm:contentsource] > hippo:skipindex
   - hcm:contentpath (string) primary mandatory
-  - hcm:processed (boolean)
 
 // Used for storing content in a hierarchy
 [hcm:contentfolder] > hippo:skipindex
   + * (hcm:contentfolder)
-  + * (hcm:content)
+  + * (hcm:contentsource)
 
 // Stores an actions file with content processing directives
 [hcm:actions] > hippo:skipindex
@@ -83,6 +82,12 @@
   - hcm:lastupdated (date)
   + * (hcm:group)
 
+// Stores history of content processing
+[hcm:content] > hippo:skipindex
+  - hcm:contentPathsApplied (string) multiple
+  - hcm:moduleActionsApplied (string) multiple
+
 // Root node for baseline and locking etc.
 [hcm:hcm] > mix:lockable, hippo:skipindex
   + hcm:baseline (hcm:baseline)
+  + hcm:content (hcm:content)

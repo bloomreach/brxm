@@ -17,6 +17,8 @@ package org.onehippo.cm.impl.model;
 
 import java.net.URI;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class ConfigSourceImpl extends SourceImpl {
     public ConfigSourceImpl(String path, ModuleImpl module) {
         super(path, module);

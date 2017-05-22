@@ -27,6 +27,8 @@ import org.onehippo.cm.engine.serializer.ResourceNameResolver;
 import org.onehippo.cm.engine.serializer.ResourceNameResolverImpl;
 import org.onehippo.cm.impl.model.ConfigSourceImpl;
 
+import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
+
 /**
  * Incapsulates module's input/output providers and unique name resolver
  */
@@ -48,6 +50,11 @@ public class ModuleContext {
     private ResourceNameResolver configNameResolver = new ResourceNameResolverImpl();
     private ResourceNameResolver contentNameResolver = new ResourceNameResolverImpl();
 
+    public ModuleContext(Module module, Path moduleRootPath) {
+        this.module = module;
+        this.multiModule = false;
+        this.moduleDescriptorPath = moduleRootPath.resolve(HCM_MODULE_YAML);
+    }
 
     public ModuleContext(Module module, Path moduleDescriptorPath, boolean multiModule) throws IOException {
         this.module = module;

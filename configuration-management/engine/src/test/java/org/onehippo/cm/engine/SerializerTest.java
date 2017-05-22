@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.engine.parser.ParserException;
 
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
@@ -69,12 +70,21 @@ public class SerializerTest extends AbstractBaseTest {
 
         final Path expectedRoot = findBase(moduleConfig);
         final Path actualRoot = folder.getRoot().toPath();
+        assertNoFileDiff(expectedRoot, actualRoot);
+    }
+
+    protected void assertNoFileDiff(final Path expectedRoot, final Path actualRoot) throws IOException {
+        assertNoFileDiff(null, expectedRoot, actualRoot);
+    }
+
+    protected void assertNoFileDiff(final String msg, final Path expectedRoot, final Path actualRoot) throws IOException {
         final List<Path> expected = findFiles(expectedRoot);
         final List<Path> actual = findFiles(actualRoot);
 
-        assertEquals(expected.size(), actual.size());
+        assertEquals(msg, expected.stream().map(Path::toString).collect(toList()),
+                actual.stream().map(Path::toString).collect(toList()));
         for (int i = 0; i < expected.size(); i++) {
-            assertEquals(
+            assertEquals("comparing "+expected.get(i),
                     new String(Files.readAllBytes(expectedRoot.resolve(expected.get(i)))),
                     new String(Files.readAllBytes(actualRoot.resolve(actual.get(i)))));
         }

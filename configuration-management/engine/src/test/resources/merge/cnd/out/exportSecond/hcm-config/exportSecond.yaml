@@ -1,0 +1,12 @@
+definitions:
+  cnd:
+  - |
+    <'jcr'='http://www.jcp.org/jcr/1.0'>
+    <'mix'='http://www.jcp.org/jcr/mix/1.0'>
+    <'nt'='http://www.jcp.org/jcr/nt/1.0'>
+    <'test'='http://www.onehippo.org/jcr/test/1.1'>
+    [test:test] > nt:unstructured
+     - test:property (string) mandatory
+  config:
+    /topmost/upstream/exportSecond:
+      jcr:primaryType: nt:unstructured

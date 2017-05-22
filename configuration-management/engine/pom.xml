@@ -72,6 +72,10 @@
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-jcr-commons</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
 
     <!-- test -->
 
@@ -91,10 +95,14 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+
+
+    <!-- temporary dependency on auto-export
+         TODO move to separate module with other auto-export code -->
     <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <scope>test</scope>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-automatic-export-repository</artifactId>
+      <version>5.0.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
