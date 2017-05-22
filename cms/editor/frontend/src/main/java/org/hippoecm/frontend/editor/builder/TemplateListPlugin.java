@@ -175,10 +175,9 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                 if (!type.isMixin()) {
                     try {
                         final JavaFieldDescriptor fieldDescriptor = new JavaFieldDescriptor(prefix, type);
-                        // adjust node name and path for non-primitive fields
-                        if(type.getName().contains(":")) {
-                            final int index = StringUtils.indexOf(type.getName(), ":");
-                            final String name = type.getName().substring(index + 1).toLowerCase();
+                        // remove namespace from node name and path for non-primitive fields
+                        if (type.getName().contains(":")) {
+                            final String name = StringUtils.substringAfter(type.getName(), ":");
                             fieldDescriptor.setName(name);
                             final String path = prefix + ":" + name;
                             fieldDescriptor.setPath(path);

@@ -41,6 +41,7 @@ import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.collections.MiniMap;
@@ -1081,8 +1082,10 @@ public class TemplateBuilder implements IDetachable, IObservable {
             }
             pluginConfig.put("wicket.id", getSelectedExtensionPoint());
             pluginConfig.put("field", fieldDescriptor.getName());
-            int index = fieldType.getName().contains(":") ? fieldType.getName().indexOf(":") + 1 : 0;
-            pluginConfig.put("caption", fieldType.getName().substring(index));
+            // remove namespace from default caption for non-primitive fields
+            final String caption = fieldType.getName().contains(":") ?
+                    StringUtils.substringAfter(fieldType.getName(), ":") : fieldType.getName();
+            pluginConfig.put("caption", caption);
             getPlugins().add(pluginConfig);
 
             pluginModel.setObject(pluginName);
