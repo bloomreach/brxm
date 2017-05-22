@@ -105,7 +105,7 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-beanutils.version>1.7.0</commons-beanutils.version>
     <commons-lang.version>2.6</commons-lang.version>
-    <commons-io.version>1.4</commons-io.version>
+    <commons-io.version>2.5</commons-io.version>
     <commons-proxy.version>1.0</commons-proxy.version>
 
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
@@ -245,6 +245,12 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-engine</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-modules</artifactId>
         <version>${hippo.repository.version}</version>
         <scope>test</scope>
@@ -252,12 +258,6 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-config</artifactId>
-        <version>${hippo.repository.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-engine</artifactId>
         <version>${hippo.repository.version}</version>
         <scope>test</scope>
       </dependency>

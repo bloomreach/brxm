@@ -21,7 +21,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
 import org.hippoecm.frontend.plugins.richtext.processor.WicketModel;
-import org.hippoecm.frontend.plugins.richtext.model.BrowsableModel;
 import org.hippoecm.frontend.service.IBrowseService;
 
 /**
@@ -32,26 +31,21 @@ public class RichTextPreviewWithLinksAndImagesPanel extends AbstractRichTextView
     public RichTextPreviewWithLinksAndImagesPanel(final String id,
                                                   final IModel<Node> nodeModel,
                                                   final IModel<String> htmlModel,
-                                                  final IBrowseService browser,
+                                                  final IBrowseService<IModel<Node>> browser,
                                                   final String htmlProcessorId) {
         super(id);
 
-        final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(nodeModel, browser, true);
+        final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(browser);
         add(previewLinksBehavior);
 
-        final IModel<String> viewModel = createViewModel(nodeModel, htmlModel, previewLinksBehavior, htmlProcessorId);
+        final IModel<String> viewModel = createViewModel(nodeModel, htmlModel, htmlProcessorId);
         addView(viewModel);
     }
 
-    private IModel<String> createViewModel(final IModel<Node> nodeModel,
-                                           final IModel<String> htmlModel,
-                                           final PreviewLinksBehavior previewLinksBehavior,
+    private IModel<String> createViewModel(final IModel<Node> nodeModel, final IModel<String> htmlModel,
                                            final String htmlProcessorId) {
-
         final StripScriptModel stripScriptModel = new StripScriptModel(htmlModel);
-        final BrowsableModel browsableModel = new BrowsableModel(stripScriptModel, previewLinksBehavior);
 
-        return new RichTextModel(htmlProcessorId, WicketModel.of(browsableModel), WicketModel.of(nodeModel));
+        return new RichTextModel(htmlProcessorId, WicketModel.of(stripScriptModel), WicketModel.of(nodeModel));
     }
-
 }

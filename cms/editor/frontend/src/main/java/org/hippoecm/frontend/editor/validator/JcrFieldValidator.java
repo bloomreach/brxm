@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -126,7 +126,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                     }
                 }
 
-                if (required && field.getTypeDescriptor().isType("Date") && childModel.getObject() == null) {
+                if (required && field.getTypeDescriptor().isType("Date") && PropertyValueProvider.EMPTY_DATE.equals(childModel.getObject())) {
                     violations.add(newViolation(new ModelPathElement(field, field.getPath(), 0),
                                 getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT)));
                 }

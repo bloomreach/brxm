@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -75,18 +75,6 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
             TraceMonitor.track(item);
             property = !item.isNode();
             doSave();
-        }
-    }
-
-    @Deprecated
-    public JcrItemModel(String path) {
-        setUserId();
-        absPath = path;
-        try {
-            final Item item = UserSession.get().getJcrSession().getItem(path);
-            property = !item.isNode();
-        } catch (RepositoryException e) {
-            log.warn("Instantiation of item model by path failed: " + e);
         }
     }
 

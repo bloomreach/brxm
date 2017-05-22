@@ -198,9 +198,9 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
         return null;
     }
 
-    private IBrowseService getBrowser() {
+    private IBrowseService<IModel<Node>> getBrowser() {
         final String browserId = getPluginConfig().getString(IBrowseService.BROWSER_ID, "service.browse");
-        return getPluginContext().getService(browserId, IBrowseService.class);
+        return (IBrowseService<IModel<Node>>) getPluginContext().getService(browserId, IBrowseService.class);
     }
 
     private IModel<Node> getNodeModel() {

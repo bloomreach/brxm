@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -174,7 +174,15 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                 prefix = prefix.substring(0, prefix.indexOf(':'));
                 if (!type.isMixin()) {
                     try {
-                        containingType.addField(new JavaFieldDescriptor(prefix, type));
+                        final JavaFieldDescriptor fieldDescriptor = new JavaFieldDescriptor(prefix, type);
+                        // remove namespace from node name and path for non-primitive fields
+                        if (type.getName().contains(":")) {
+                            final String name = StringUtils.substringAfter(type.getName(), ":");
+                            fieldDescriptor.setName(name);
+                            final String path = prefix + ":" + name;
+                            fieldDescriptor.setPath(path);
+                        }
+                        containingType.addField(fieldDescriptor);
                     } catch (TypeException e) {
                         TemplateListPlugin.this.error(e.getLocalizedMessage());
                     }
