@@ -119,10 +119,10 @@ public class PathConfigurationReader {
     }
 
     private void processActionsList(final ModuleImpl module, final ModuleContext moduleContext) throws ParserException, IOException {
-        final Path actionsYaml = moduleContext.getActionsDecriptorPath();
-        if (Files.exists(actionsYaml)) {
-            final ActionListParser parser = new ActionListParser(explicitSequencing);
-            parser.parse(actionsYaml.toUri().toURL().openStream(), actionsYaml.toString(), module);
+        final Path actionsDescriptorPath = moduleContext.getActionsDescriptorPath();
+        if (Files.exists(actionsDescriptorPath)) {
+            final ActionListParser parser = new ActionListParser();
+            parser.parse(actionsDescriptorPath.toUri().toURL().openStream(), actionsDescriptorPath.toString(), module);
         }
     }
 

@@ -20,14 +20,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.DefinitionNode;
@@ -105,12 +106,11 @@ public class ContentService {
      * @param session
      * @throws RepositoryException
      */
-    void apply(final Module module, final Session session) throws RepositoryException {
+    private void apply(final ModuleImpl module, final Session session) throws RepositoryException {
 
-        final ModuleImpl moduleImpl = (ModuleImpl) module;
-        final double currentVersion = getModuleVersion(moduleImpl, session);
+        final double currentVersion = getModuleVersion(module, session);
 
-        final Map<Double, List<ActionItem>> actionsMap = moduleImpl.getActionsMap();
+        final Map<Double, Set<ActionItem>> actionsMap = module.getActionsMap();
 
         final List<ActionItem> actionsToProcess = actionsMap.entrySet().stream().filter(e -> e.getKey() > currentVersion)
                 .flatMap(e -> e.getValue().stream()).collect(toList());
@@ -118,8 +118,8 @@ public class ContentService {
         final List<ActionItem> itemsToDelete = actionsToProcess.stream().filter(x -> x.getType() == ActionType.DELETE).collect(toList());
         processItemsToDelete(itemsToDelete, session);
 
-        moduleImpl.getContentDefinitions().sort(Comparator.comparing(o -> o.getNode().getPath()));
-        for (final ContentDefinitionImpl contentDefinition : moduleImpl.getContentDefinitions()) {
+        module.getContentDefinitions().sort(Comparator.comparing(o -> o.getNode().getPath()));
+        for (final ContentDefinitionImpl contentDefinition : module.getContentDefinitions()) {
             final DefinitionNode contentNode = contentDefinition.getNode();
             final Optional<ActionType> actionType = findActionTypeToApply(contentNode.getPath(), actionsToProcess);
             if (actionType.isPresent() || !nodeAlreadyProcessed(contentNode, module, session)) {
@@ -129,7 +129,7 @@ public class ContentService {
         }
 
         final Optional<Double> latestVersion = actionsMap.keySet().stream().max(Double::compareTo);
-        latestVersion.ifPresent(moduleImpl::setSequenceNumber);
+        latestVersion.ifPresent(module::setSequenceNumber);
     }
 
     /**
@@ -140,13 +140,12 @@ public class ContentService {
      * @return
      * @throws RepositoryException
      */
-    private boolean nodeAlreadyProcessed(final DefinitionNode contentNode, final Module module, final Session session) throws RepositoryException {
+    private boolean nodeAlreadyProcessed(final DefinitionNode contentNode, final ModuleImpl module, final Session session) throws RepositoryException {
 
         try {
-            final String moduleNodePath = String.format("/%s/%s/%s/%s", HCM_ROOT_NODE, BASELINE_NODE, ((ModuleImpl) module).getFullName(), HCM_CONTENT_FOLDER);
+            final String moduleNodePath = String.format("/%s/%s/%s/%s", HCM_ROOT_NODE, BASELINE_NODE, module.getFullName(), HCM_CONTENT_FOLDER);
             final Node node = session.getNode(moduleNodePath);
-            for(final NodeIterator nodeIterator = node.getNodes(); nodeIterator.hasNext();) {
-                final Node childNode = nodeIterator.nextNode();
+            for (Node childNode : new NodeIterable(node.getNodes())) {
                 final String jcrNodeContentPath = childNode.getProperty(CONTENT_PATH_PROPERTY).getString();
                 if (contentNode.getPath().equals(jcrNodeContentPath)) {
                     return true;
@@ -193,13 +192,13 @@ public class ContentService {
 
     /**
      * Find an action type for the node, DELETE action type is excluded
-     * @param rootPath full path of the node
+     * @param absolutePath full path of the node
      * @param actions available actions
      * @return If found, contains action type for specified node
      */
-    private Optional<ActionType> findActionTypeToApply(final String rootPath, List<ActionItem> actions) {
+    private Optional<ActionType> findActionTypeToApply(final String absolutePath, List<ActionItem> actions) {
         return actions.stream()
-                .filter(x -> x.getPath().equals(rootPath) && x.getType() != ActionType.DELETE)
+                .filter(x -> x.getPath().equals(absolutePath) && x.getType() != ActionType.DELETE)
                 .map(ActionItem::getType)
                 .findFirst();
     }

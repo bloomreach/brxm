@@ -16,8 +16,8 @@
 package org.onehippo.cm.engine.parser;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 import org.onehippo.cm.api.model.action.ActionItem;
@@ -35,7 +35,7 @@ public class ActionListParserTest extends AbstractBaseTest {
 
     @Test
     public void testLoad() throws ParserException {
-        ActionListParser parser = new ActionListParser(true);
+        ActionListParser parser = new ActionListParser();
         GroupImpl group = new GroupImpl("group");
         ProjectImpl project = new ProjectImpl("project", group);
         ModuleImpl module = new ModuleImpl("module", project);
@@ -43,11 +43,11 @@ public class ActionListParserTest extends AbstractBaseTest {
         InputStream stream = this.getClass().getResourceAsStream("/parser/value_test/hcm-actions.yaml");
         parser.parse(stream, "test", module);
 
-        Map<Double, List<ActionItem>> actionsMap = module.getActionsMap();
+        Map<Double, Set<ActionItem>> actionsMap = module.getActionsMap();
         assertTrue(actionsMap.size() == 3);
-        List<ActionItem> actionItemsV1 = actionsMap.get(1.0d);
+        Set<ActionItem> actionItemsV1 = actionsMap.get(1.0d);
         assertTrue(actionItemsV1.size() == 2);
-        assertEquals(ActionType.APPEND, actionItemsV1.get(0).getType());
+        assertEquals(ActionType.APPEND, actionItemsV1.iterator().next().getType());
 
     }
 

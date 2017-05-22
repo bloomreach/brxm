@@ -16,7 +16,6 @@
 package org.onehippo.cm.api.model;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -68,6 +67,6 @@ public interface Module extends Orderable {
     /**
      * @return The immutable map of action items per version
      */
-    Map<Double, List<ActionItem>> getActionsMap();
+    Map<Double, Set<ActionItem>> getActionsMap();
 
 }

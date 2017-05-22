@@ -94,7 +94,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
 
     private final List<WebFileBundleDefinitionImpl> webFileBundleDefinitions = new ArrayList<>();
 
-    private Map<Double, List<ActionItem>> actionsMap = new LinkedHashMap<>();
+    private Map<Double, Set<ActionItem>> actionsMap = new LinkedHashMap<>();
 
     private Double sequenceNumber;
 
@@ -160,10 +160,11 @@ public class ModuleImpl implements Module, Comparable<Module> {
     }
 
     @Override
-    public Map<Double, List<ActionItem>> getActionsMap() {
+    public Map<Double, Set<ActionItem>> getActionsMap() {
         return actionsMap;
     }
 
+    @Override
     public Double getSequenceNumber() {
         return sequenceNumber;
     }
@@ -214,7 +215,7 @@ public class ModuleImpl implements Module, Comparable<Module> {
     }
 
     /**
-     * @return a sorted list of content definitions.
+     * @return a list of content definitions.
      * Note that these definitions are only populated for Modules that are part of the {@link ConfigurationModel}.
      */
     public List<ContentDefinitionImpl> getContentDefinitions() {
@@ -244,13 +245,13 @@ public class ModuleImpl implements Module, Comparable<Module> {
         return contentResourceInputProvider;
     }
 
-    public ModuleImpl setActionsMap(Map<Double, List<ActionItem>> actionsMap) {
-        this.actionsMap = actionsMap;
+    public ModuleImpl setContentResourceInputProvider(final ResourceInputProvider contentResourceInputProvider) {
+        this.contentResourceInputProvider = contentResourceInputProvider;
         return this;
     }
 
-    public ModuleImpl setContentResourceInputProvider(final ResourceInputProvider contentResourceInputProvider) {
-        this.contentResourceInputProvider = contentResourceInputProvider;
+    ModuleImpl pushActions(final ModuleImpl module) {
+        actionsMap.putAll(module.getActionsMap());
         return this;
     }
 

@@ -16,9 +16,9 @@
 package org.onehippo.cm.engine.parser;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.model.action.ActionItem;
@@ -28,12 +28,24 @@ import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 
+/**
+ * Parse an action list file, like for example
+ *
+ * action-lists:
+ * - 1.0:
+ * /content/path1: append
+ * /content/pathX: reload
+ * - 1.1:
+ * /content/path2: reload
+ * - 1.2:
+ * /content/path3: delete
+ */
 public class ActionListParser extends AbstractBaseParser {
 
     private static final String ACTION_LISTS_NODE = "action-lists";
 
-    public ActionListParser(final boolean explicitSequencing) {
-        super(explicitSequencing);
+    public ActionListParser() {
+        super(false);
     }
 
     public void parse(final InputStream inputStream, final String location, final ModuleImpl module) throws ParserException {
@@ -48,13 +60,13 @@ public class ActionListParser extends AbstractBaseParser {
             final String strVersion = asScalar(nodeTuple.getKeyNode()).getValue();
             final Double version = Double.parseDouble(strVersion);
 
-            final List<ActionItem> actionItems = collectActionItems(nodeTuple);
+            final Set<ActionItem> actionItems = collectActionItems(nodeTuple);
             module.getActionsMap().put(version, actionItems);
         }
     }
 
-    private List<ActionItem> collectActionItems(final NodeTuple nodeTuple) throws ParserException {
-        final List<ActionItem> actionItems = new ArrayList<>();
+    private Set<ActionItem> collectActionItems(final NodeTuple nodeTuple) throws ParserException {
+        final Set<ActionItem> actionItems = new HashSet<>();
         final Map<String, Node> actionItemsMap = asMapping(nodeTuple.getValueNode(), null, null);
         for (final String path : actionItemsMap.keySet()) {
             final ActionItem actionItem = createActionItem(actionItemsMap, path);

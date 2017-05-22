@@ -41,9 +41,9 @@ public class ModuleContext {
     protected final boolean multiModule;
     private final Path moduleDescriptorPath;
 
-    private Path moduleActionsDescriptorPath;
-    private Path moduleConfigRootPath;
-    private Path moduleContentRootPath;
+    private Path actionsDescriptorPath;
+    private Path configRootPath;
+    private Path contentRootPath;
 
     private ResourceNameResolver configNameResolver = new ResourceNameResolverImpl();
     private ResourceNameResolver contentNameResolver = new ResourceNameResolverImpl();
@@ -58,31 +58,31 @@ public class ModuleContext {
     /**
      * @return {@link Path} to hcm-actions.yaml of current module
      */
-    public Path getActionsDecriptorPath() {
-        if (moduleActionsDescriptorPath == null) {
-            moduleActionsDescriptorPath = moduleDescriptorPath.resolveSibling(Constants.ACTIONS_YAML);
+    public Path getActionsDescriptorPath() {
+        if (actionsDescriptorPath == null) {
+            actionsDescriptorPath = moduleDescriptorPath.resolveSibling(Constants.ACTIONS_YAML);
         }
-        return moduleActionsDescriptorPath;
+        return actionsDescriptorPath;
     }
 
     /**
      * @return {@link Path} to hcm-config folder of current module
      */
     public Path getConfigRoot() {
-        if (moduleConfigRootPath == null) {
-            moduleConfigRootPath = FileConfigurationUtils.getModuleBasePath(moduleDescriptorPath, module, multiModule);
+        if (configRootPath == null) {
+            configRootPath = FileConfigurationUtils.getModuleBasePath(moduleDescriptorPath, module, multiModule);
         }
-        return moduleConfigRootPath;
+        return configRootPath;
     }
 
     /**
      * @return {@link Path} to hcm-content folder of current module
      */
     public Path getContentRoot() {
-        if (moduleContentRootPath == null) {
-            moduleContentRootPath = FileConfigurationUtils.getModuleContentBasePath(moduleDescriptorPath, module, multiModule);
+        if (contentRootPath == null) {
+            contentRootPath = FileConfigurationUtils.getModuleContentBasePath(moduleDescriptorPath, module, multiModule);
         }
-        return moduleContentRootPath;
+        return contentRootPath;
     }
 
     public ResourceInputProvider getConfigInputProvider() {
