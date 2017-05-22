@@ -363,8 +363,6 @@ class RightSidePanelCtrl {
     this._confirmDiscardChanges().then(() => {
       this._deleteDraft();
       this._closePanel();
-      this.$element.removeClass('sidepanel-open');
-      this.$element.css('max-width', '0px');
     });
   }
 
@@ -397,7 +395,11 @@ class RightSidePanelCtrl {
 
   _closePanel() {
     this.SidePanelService.close('right')
-      .then(() => this._resetState());
+      .then(() => this._resetState())
+      .finally(() => {
+        this.$element.removeClass('sidepanel-open');
+        this.$element.css('max-width', '0px');
+      });
   }
 
   setFullWidth(state) {
