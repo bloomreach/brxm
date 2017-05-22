@@ -111,6 +111,10 @@ public class JcrContentProcessingService implements ContentProcessingService {
      * @throws RepositoryException
      */
     public synchronized void apply(final DefinitionNode definitionNode, final ActionType actionType, final Session session) throws RepositoryException {
+        if (actionType == null) {
+            throw new IllegalArgumentException("Action type cannot be null");
+        }
+
         try {
             applyNode(definitionNode, actionType, session);
             applyUnprocessedReferences();
@@ -147,10 +151,6 @@ public class JcrContentProcessingService implements ContentProcessingService {
     private void applyNode(final DefinitionNode definitionNode, final Node parentNode, final ActionType actionType) throws RepositoryException, IOException {
 
         final Session session = parentNode.getSession();
-        if (actionType == null) {
-            throw new IllegalArgumentException("Action type cannot be null");
-        }
-
         final String nodePath = definitionNode.getPath();
         final boolean nodeExists = session.nodeExists(nodePath);
 

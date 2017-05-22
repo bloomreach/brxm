@@ -30,7 +30,6 @@ import org.onehippo.cm.impl.model.ConfigSourceImpl;
 /**
  * Incapsulates module's input/output providers and unique name resolver
  */
-//todo SS: extract interface to API module
 public class ModuleContext {
 
     protected ResourceInputProvider configInputProvider;
