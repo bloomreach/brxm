@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.statistics.Counter;
@@ -125,12 +126,12 @@ public class WorkspaceHasher implements NodeHasher {
     private String startHashing(final Node node, final boolean setHash,
                               final boolean setUpstreamHash, final Counter counter) throws NoSuchAlgorithmException, RepositoryException {
         long start = System.currentTimeMillis();
-        byte[] bytes = doHash(node, true, setHash, setUpstreamHash, counter);
+        byte[] bytes = doHash(node, setHash, setUpstreamHash, counter);
         log.info("Hashing '{}' containing '{}' nodes took '{}' ms", node.getPath(), counter.getValue(), (System.currentTimeMillis() - start));
         return hexBinaryAdapter.marshal(bytes);
     }
 
-    private byte[] doHash(final Node node, final boolean isRoot, final boolean setHash,
+    private byte[] doHash(final Node node, final boolean setHash,
                           final boolean setUpstreamHash, final Counter counter)
             throws RepositoryException, NoSuchAlgorithmException, BranchException {
 
@@ -140,7 +141,7 @@ public class WorkspaceHasher implements NodeHasher {
             node.addMixin(MIXINTYPE_HST_HASHABLE);
         }
 
-        if (!isRoot) {
+        if (!node.isNodeType(NODETYPE_HST_WORKSPACE)) {
             md5.update(node.getName().getBytes());
         }
 
@@ -162,7 +163,7 @@ public class WorkspaceHasher implements NodeHasher {
                 confirmDeletedState(child);
                 continue;
             }
-            byte[] hash = doHash(child, false, setHash, setUpstreamHash, counter);
+            byte[] hash = doHash(child, setHash, setUpstreamHash, counter);
             md5.update(hash);
         }
         byte[] digest = md5.digest();

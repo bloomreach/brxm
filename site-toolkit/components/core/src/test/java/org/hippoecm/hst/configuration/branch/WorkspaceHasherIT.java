@@ -280,7 +280,7 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void node_names_influences_hashing_except_the_root_node() throws Exception {
+    public void node_names_influences_hashing_except_node_of_type_hst_workspace() throws Exception {
         // whether the 'root' node is hst:workspace or hst:upstream, that does not influence the hashing
         Session session = createSession();
         try {
