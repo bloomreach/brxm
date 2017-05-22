@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,16 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import rightSidePanelComponent from './rightSidePanel.component';
-import fieldsModule from './fields/fields.module';
-import resizeHandleModule from './resizeHandle/resizeHandle.module';
 
-const rightSidePanelModule = angular
-  .module('hippo-cm.channel.rightSidePanelModule', [
-    fieldsModule,
-    resizeHandleModule,
-  ])
-  .component('rightSidePanel', rightSidePanelComponent);
+@import 'variables';
 
-export default rightSidePanelModule.name;
+resize-handle {
+  $handle-width: 14px;
+  $handle-height: 60px;
 
+  height: $handle-height;
+  left: -5px;
+  position: absolute;
+  top: calc(50vh - 70px);
+  width: $handle-width;
+  z-index: 20000;
+
+  &:hover {
+    cursor: col-resize;
+  }
+
+  .handle-inner {
+    background-image: url('../../../../../images/resize-handle.svg');
+    background-position: 5px;
+    background-repeat: no-repeat;
+    background-size: 12px;
+    height: 100%;
+    width: $handle-width;
+  }
+}

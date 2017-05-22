@@ -14,9 +14,39 @@
 
 @import 'variables';
 
-.right-side-panel form {
-  padding-right: $form-dense-distance;
-  padding-top: $form-dense-distance;
+right-side-panel {
+  max-width: 0;
+
+  &.sidepanel-open {
+    max-width: 50% !important;
+
+    md-sidenav {
+      width: 100%;
+    }
+
+    &.fullwidth {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+  }
+
+  .btn-fullwidth,
+  .btn-normalwidth {
+    margin: 0 !important;
+  }
+
+  &.in-resize {
+    user-select: none;
+  }
+}
+
+.right-side-panel {
+  max-width: 100%;
+
+  form {
+    padding-right: $form-dense-distance;
+    padding-top: $form-dense-distance;
+  }
 }
 
 .feedback > :last-child {

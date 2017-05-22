@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import rightSidePanelComponent from './rightSidePanel.component';
-import fieldsModule from './fields/fields.module';
-import resizeHandleModule from './resizeHandle/resizeHandle.module';
 
-const rightSidePanelModule = angular
-  .module('hippo-cm.channel.rightSidePanelModule', [
-    fieldsModule,
-    resizeHandleModule,
-  ])
-  .component('rightSidePanel', rightSidePanelComponent);
+import controller from './resizeHandle.controller';
+import template from './resizeHandle.html';
+import './resizeHandle.scss';
 
-export default rightSidePanelModule.name;
+const resizeHandleComponent = {
+  restrict: 'E',
+  template,
+  controller,
+  bindings: {
+    element: '=',
+    onResize: '&',
+  },
+};
 
+export default resizeHandleComponent;
