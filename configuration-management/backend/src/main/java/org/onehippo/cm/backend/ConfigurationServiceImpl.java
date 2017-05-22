@@ -17,7 +17,6 @@
 package org.onehippo.cm.backend;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 import javax.jcr.Session;
@@ -25,7 +24,6 @@ import javax.jcr.Session;
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.api.ConfigurationService;
 import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.engine.ClasspathConfigurationModelReader;
 import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
 import org.onehippo.repository.bootstrap.PostStartupTask;
@@ -65,9 +63,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         try {
             // TODO when merging this code into LocalHippoRepository, use verifyOnly=false parameter
             configurationModel = new ClasspathConfigurationModelReader().read(Thread.currentThread().getContextClassLoader(), true);
-            final EnumSet allExceptWebFileBundles = EnumSet.allOf(DefinitionType.class);
-            allExceptWebFileBundles.remove(DefinitionType.WEBFILEBUNDLE);
-            allExceptWebFileBundles.remove(DefinitionType.CONTENT);
 
             // TODO this should probably happen in contentBootstrap() instead of here, so that it is protected by the repo lock
             apply(configurationModel);
