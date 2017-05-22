@@ -96,6 +96,6 @@ public abstract class SourceImpl implements Source {
 
     @Override
     public int hashCode() {
-        return Objects.hash(path, module);
+        return Objects.hash(path, module, this.getClass());
     }
 }

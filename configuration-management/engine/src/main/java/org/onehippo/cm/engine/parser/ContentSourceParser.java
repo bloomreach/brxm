@@ -28,6 +28,7 @@ import org.onehippo.cm.impl.model.ModuleImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 
+import static org.onehippo.cm.engine.Constants.META_CATEGORY_KEY;
 import static org.onehippo.cm.engine.Constants.META_KEY_PREFIX;
 import static org.onehippo.cm.engine.Constants.OPERATION_KEY;
 import static org.onehippo.cm.engine.Constants.PATH_KEY;
@@ -59,14 +60,6 @@ public class ContentSourceParser extends SourceParser {
         constructDefinitionNode(key, contentNode.values().iterator().next(), definition);
     }
 
-    private void constructContentDefinitions(final Node src, final ContentSourceImpl parent) throws ParserException {
-        for (NodeTuple nodeTuple : asTuples(src)) {
-            final ContentDefinitionImpl definition = parent.addContentDefinition();
-            final String key = asPathScalar(nodeTuple.getKeyNode(), true, false);
-            constructDefinitionNode(key, nodeTuple.getValueNode(), definition);
-        }
-    }
-
     @Override
     protected void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node node) throws ParserException {
         final List<NodeTuple> tuples = asTuples(node);
@@ -90,10 +83,15 @@ public class ContentSourceParser extends SourceParser {
     @Override
     DefinitionPropertyImpl constructDefinitionPropertyFromMap(final String name, final Node value, final ValueType defaultValueType, final DefinitionNodeImpl parent) throws ParserException {
         final Map<String, Node> map = asMapping(value, new String[0],
-                new String[]{OPERATION_KEY,TYPE_KEY,VALUE_KEY,RESOURCE_KEY,PATH_KEY});
-        if (map.keySet().contains(OPERATION_KEY)) {
-            throw new ParserException("Operation key is not allowed for content definition", value);
+                new String[]{META_CATEGORY_KEY,OPERATION_KEY,TYPE_KEY,VALUE_KEY,RESOURCE_KEY,PATH_KEY});
+
+        if (map.keySet().contains(META_CATEGORY_KEY)) {
+            throw new ParserException("Key '" + META_CATEGORY_KEY + "' is not allowed for content definition", value);
         }
+        if (map.keySet().contains(OPERATION_KEY)) {
+            throw new ParserException("Key '" + OPERATION_KEY + "' is not allowed for content definition", value);
+        }
+
         return super.constructDefinitionPropertyFromMap(name, value, defaultValueType, parent);
     }
 }

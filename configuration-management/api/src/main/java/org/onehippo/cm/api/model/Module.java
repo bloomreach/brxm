@@ -16,9 +16,12 @@
 package org.onehippo.cm.api.model;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.action.ActionItem;
 
 public interface Module extends Orderable {
 
@@ -42,6 +45,8 @@ public interface Module extends Orderable {
      */
     Set<Source> getConfigSources();
 
+    Double getSequenceNumber();
+
     /**
      * @return A helper object to access raw streams for configuration files.
      */
@@ -59,5 +64,10 @@ public interface Module extends Orderable {
      * @throws IOException
      */
     String compileDummyDescriptor();
+
+    /**
+     * @return The immutable map of action items per version
+     */
+    Map<Double, List<ActionItem>> getActionsMap();
 
 }

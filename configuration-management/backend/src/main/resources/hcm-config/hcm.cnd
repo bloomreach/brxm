@@ -27,6 +27,7 @@
 // Stores the root definition path for a content source file
 [hcm:content] > hippo:skipindex
   - hcm:contentpath (string) primary mandatory
+  - hcm:processed (boolean)
 
 // Used for storing content in a hierarchy
 [hcm:contentfolder] > hippo:skipindex
@@ -64,6 +65,7 @@
 [hcm:module] > hippo:skipindex
   + 'hcm-module.yaml' (hcm:descriptor) primary mandatory
   - hcm:lastexecutedaction (string)
+  - hcm:seqnumber (double)
   + 'hcm-actions.yaml' (hcm:actions)
   + 'hcm-config' (hcm:configfolder)
   + 'hcm-content' (hcm:contentfolder)

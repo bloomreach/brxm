@@ -1489,6 +1489,33 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
     }
 
     @Test
+    public void expect_manually_added_node_to_be_preserved_on_force_bootstrap_if_not_configuration_category() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /runtime:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        property:\n"
+                + "          .meta:category: runtime\n"
+                + "      /content:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        .meta:residual-child-node-category: content\n";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        // add non-configuration nodes and properties
+        testNode.getNode("runtime").setProperty("property", "tweaked");
+        testNode.getNode("content").addNode("tweaked", "nt:unstructured");
+        session.save();
+
+        applyDefinitions(definition, baseline, true);
+
+        expectNode("/test/content/tweaked", "[]", "[jcr:primaryType]");
+        expectProp("/test/runtime/property", PropertyType.STRING, "tweaked");
+    }
+
+    @Test
     public void expect_deleted_nodes_to_be_deleted() throws Exception {
         final String baselineSource
                 = "definitions:\n"

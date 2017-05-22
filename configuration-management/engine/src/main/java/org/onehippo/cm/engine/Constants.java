@@ -53,6 +53,8 @@ public final class Constants {
     public static final String META_IGNORE_REORDERED_CHILDREN = META_KEY_PREFIX + "ignore-reordered-children";
     public static final String META_DELETE_KEY = META_KEY_PREFIX + "delete";
     public static final String META_ORDER_BEFORE_KEY = META_KEY_PREFIX + "order-before";
+    public static final String META_CATEGORY_KEY = META_KEY_PREFIX + "category";
+    public static final String META_RESIDUAL_CHILD_NODE_CATEGORY_KEY = META_KEY_PREFIX + "residual-child-node-category";
 
     // JCR node where the HCM configuration baseline is stored
     // NOTE: currently this MUST only be a single new node with all required parents existing
@@ -68,11 +70,13 @@ public final class Constants {
 
     public static final String MODULE_DESCRIPTOR_NODE = HCM_MODULE_YAML;
     public static final String MODULE_DESCRIPTOR_TYPE = "hcm:descriptor";
+    public static final String MODULE_SEQUENCE_NUMBER = "hcm:seqnumber";
     public static final String ACTIONS_TYPE = "hcm:actions";
     public static final String ACTIONS_NODE = ACTIONS_YAML;
     public static final String CONTENT_TYPE = "hcm:content";
 
     public static final String CONTENT_FOLDER_TYPE = "hcm:contentfolder";
+    public static final String HCM_PROCESSED = "hcm:processed";
     public static final String CONTENT_PATH_PROPERTY = "hcm:contentpath";
     public static final String CONFIG_FOLDER_TYPE = "hcm:configfolder";
 

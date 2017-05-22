@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.onehippo.cm.api.model.ConfigurationItemCategory;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
@@ -33,6 +34,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     private boolean delete = false;
     private String orderBefore = null;
     private Boolean ignoreReorderedChildren;
+    private ConfigurationItemCategory residualChildNodeCategory = null;
 
     public DefinitionNodeImpl(final String path, final String name, final Definition definition) {
         super(path, name, definition);
@@ -118,5 +120,14 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
 
     public boolean isDeleted() {
         return isDelete() && isEmpty();
+    }
+
+    @Override
+    public ConfigurationItemCategory getResidualChildNodeCategory() {
+        return residualChildNodeCategory;
+    }
+
+    public void setResidualChildNodeCategory(final ConfigurationItemCategory category) {
+        residualChildNodeCategory = category;
     }
 }

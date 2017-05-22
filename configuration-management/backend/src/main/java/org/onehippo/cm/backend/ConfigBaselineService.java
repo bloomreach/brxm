@@ -81,10 +81,12 @@ import static org.onehippo.cm.engine.Constants.GROUP_TYPE;
 import static org.onehippo.cm.engine.Constants.HCM_CONFIG_FOLDER;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
+import static org.onehippo.cm.engine.Constants.HCM_PROCESSED;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_NODE;
 import static org.onehippo.cm.engine.Constants.LAST_UPDATED_PROPERTY;
 import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_NODE;
 import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_TYPE;
+import static org.onehippo.cm.engine.Constants.MODULE_SEQUENCE_NUMBER;
 import static org.onehippo.cm.engine.Constants.MODULE_TYPE;
 import static org.onehippo.cm.engine.Constants.PROJECT_TYPE;
 import static org.onehippo.cm.engine.Constants.YAML_PROPERTY;
@@ -198,6 +200,11 @@ public class ConfigBaselineService {
         // create descriptor node, if necessary
         Node descriptorNode = createNodeIfNecessary(moduleNode, MODULE_DESCRIPTOR_NODE, MODULE_DESCRIPTOR_TYPE, false);
 
+        final Double sequenceNumber = module.getSequenceNumber();
+        if (sequenceNumber != null) {
+            moduleNode.setProperty(MODULE_SEQUENCE_NUMBER, sequenceNumber);
+        }
+
         // AFAIK, a module MUST have a descriptor, but check here for a malformed package or special case
         // TODO the "/../" is an ugly hack because RIP actually treats absolute paths as relative to config base, not module base
         if (rip.hasResource(null, "/../" + HCM_MODULE_YAML)) {
@@ -244,6 +251,7 @@ public class ConfigBaselineService {
 
             // set content path property
             sourceNode.setProperty(CONTENT_PATH_PROPERTY, firstDef.getNode().getPath());
+            sourceNode.setProperty(HCM_PROCESSED, true);
         }
 
         // foreach config source

@@ -30,6 +30,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.api.model.Group;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.engine.parser.ActionListParser;
 import org.onehippo.cm.engine.parser.ConfigSourceParser;
 import org.onehippo.cm.engine.parser.ContentSourceParser;
 import org.onehippo.cm.engine.parser.ModuleDescriptorParser;
@@ -78,6 +79,7 @@ public class PathConfigurationReader {
     /**
      * Read the module dependency data to extract the raw components of a configuration model.
      * These raw portions of config will be assembled into a ConfigurationModel later.
+     *
      * @param moduleDescriptorPath
      * @param verifyOnly
      * @return
@@ -101,27 +103,43 @@ public class PathConfigurationReader {
                     final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath, hasMultipleModules);
 
                     // Set the input providers on the Module directly, so it doesn't need to be held in a Map on ConfigurationModel
-                    ((ModuleImpl)module).setConfigResourceInputProvider(moduleContext.getConfigInputProvider());
-                    ((ModuleImpl)module).setContentResourceInputProvider(moduleContext.getContentInputProvider());
+                    ((ModuleImpl) module).setConfigResourceInputProvider(moduleContext.getConfigInputProvider());
+                    ((ModuleImpl) module).setContentResourceInputProvider(moduleContext.getContentInputProvider());
 
                     moduleContexts.put(module, moduleContext);
 
-                    final Path configRootPath = moduleContext.getConfigRoot();
-                    if (Files.exists(configRootPath)) {
-                        final SourceParser configSourceParser = new ConfigSourceParser(moduleContext.getConfigInputProvider(), verifyOnly, explicitSequencing);
-                        parseSources((ModuleImpl) module, configRootPath, configSourceParser);
-                    }
-
-                    final Path contentRootPath = moduleContext.getContentRoot();
-                    if (Files.exists(contentRootPath)) {
-                        final SourceParser contentSourceParser = new ContentSourceParser(moduleContext.getContentInputProvider(), verifyOnly, explicitSequencing);
-                        parseSources((ModuleImpl) module, contentRootPath, contentSourceParser);
-                    }
+                    processConfigSources(verifyOnly, (ModuleImpl) module, moduleContext);
+                    processContentSources(verifyOnly, (ModuleImpl) module, moduleContext);
+                    processActionsList((ModuleImpl) module, moduleContext);
                 }
             }
         }
 
         return new ReadResult(groups, moduleContexts);
+    }
+
+    private void processActionsList(final ModuleImpl module, final ModuleContext moduleContext) throws ParserException, IOException {
+        final Path actionsYaml = moduleContext.getActionsDecriptorPath();
+        if (Files.exists(actionsYaml)) {
+            final ActionListParser parser = new ActionListParser(explicitSequencing);
+            parser.parse(actionsYaml.toUri().toURL().openStream(), actionsYaml.toString(), module);
+        }
+    }
+
+    private void processContentSources(final boolean verifyOnly, final ModuleImpl module, final ModuleContext moduleContext) throws IOException, ParserException {
+        final Path contentRootPath = moduleContext.getContentRoot();
+        if (Files.exists(contentRootPath)) {
+            final SourceParser contentSourceParser = new ContentSourceParser(moduleContext.getContentInputProvider(), verifyOnly, explicitSequencing);
+            parseSources(module, contentRootPath, contentSourceParser);
+        }
+    }
+
+    private void processConfigSources(final boolean verifyOnly, final ModuleImpl module, final ModuleContext moduleContext) throws IOException, ParserException {
+        final Path configRootPath = moduleContext.getConfigRoot();
+        if (Files.exists(configRootPath)) {
+            final SourceParser configSourceParser = new ConfigSourceParser(moduleContext.getConfigInputProvider(), verifyOnly, explicitSequencing);
+            parseSources(module, configRootPath, configSourceParser);
+        }
     }
 
     private void parseSources(ModuleImpl module, Path rootPath, SourceParser sourceParser) throws IOException, ParserException {

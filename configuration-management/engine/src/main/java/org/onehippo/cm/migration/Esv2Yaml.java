@@ -314,7 +314,6 @@ public class Esv2Yaml {
             }
         }
         if (resourceBundleParents.getNode() != null && !resourceBundleParents.getNode().getNodes().isEmpty()) {
-            System.out.println("resourceBundleParents = " + resourceBundleParents);
             // add resourcebundles translations root definition parents
             mainSource.addDefinition(resourceBundleParents);
         }

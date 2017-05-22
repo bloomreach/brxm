@@ -96,6 +96,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 final ConfigurationConfigService service = new ConfigurationConfigService();
                 service.writeWebfiles(configurationModel, session);
 
+                final ContentService contentService = new ContentService();
+                contentService.apply(configurationModel, session);
+
                 // update the stored baseline after fully applying the configurationModel
                 // this could result in the baseline becoming out of sync if the second phase of the apply fails
                 // NOTE: We may prefer to use a two-phase commit style process, where the new baseline is stored in a

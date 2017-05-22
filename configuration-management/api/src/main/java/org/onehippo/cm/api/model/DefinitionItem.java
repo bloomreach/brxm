@@ -22,4 +22,5 @@ public interface DefinitionItem {
     boolean isRoot();
     Definition getDefinition();
     SourceLocation getSourceLocation();
+    ConfigurationItemCategory getCategory();
 }

@@ -17,13 +17,16 @@ package org.onehippo.cm.impl.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.api.model.ConfigurationItemCategory;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
+import org.onehippo.cm.api.model.DefinitionItem;
 import org.onehippo.cm.engine.SnsUtils;
 
 public class ConfigurationNodeImpl extends ConfigurationItemImpl implements ConfigurationNode {
@@ -38,6 +41,13 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     private final Map<String, ConfigurationProperty> unmodifiableProperties = Collections.unmodifiableMap(modifiableProperties);
 
     private Boolean ignoreReorderedChildren;
+
+    // Category settings are not supported for individual same-name siblings, when configuring a certain node name
+    // with a category, all SNS should have that category, hence childNodeCategorySettings does not use indexed names
+    private Map<String, Pair<ConfigurationItemCategory, DefinitionItem>> childNodeCategorySettings = new HashMap<>();
+    private Map<String, Pair<ConfigurationItemCategory, DefinitionItem>> childPropertyCategorySettings = new HashMap<>();
+    private ConfigurationItemCategory residualNodeCategory;
+    private DefinitionItem residualNodeCategoryDefinitionItem;
 
     @Override
     public Map<String, ConfigurationNode> getNodes() {
@@ -146,14 +156,66 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     }
 
     @Override
-    public ConfigurationItemCategory getChildCategory(final String childName) {
-        // mock the implementation for now ...
-        if (getPath().equals("/")) return ConfigurationItemCategory.RUNTIME;
-        if (getPath().equals("/path/to/node/runtime-property")) return ConfigurationItemCategory.RUNTIME;
-        if (getPath().equals("/path/to/runtime-node")) return ConfigurationItemCategory.RUNTIME;
-        if (getPath().startsWith("/path/to/residual-child-nodes-runtime/")) return ConfigurationItemCategory.RUNTIME;
+    public ConfigurationItemCategory getChildNodeCategory(final String indexNodeName) {
+        if (modifiableNodes.containsKey(indexNodeName)) {
+            return ConfigurationItemCategory.CONFIGURATION;
+        }
+
+        final String unindexedName = SnsUtils.getUnindexedName(indexNodeName);
+        if (childNodeCategorySettings.containsKey(unindexedName)) {
+            return childNodeCategorySettings.get(unindexedName).getLeft();
+        }
+
+        if (residualNodeCategory != null) {
+            return residualNodeCategory;
+        }
 
         return ConfigurationItemCategory.CONFIGURATION;
+    }
+
+    @Override
+    public ConfigurationItemCategory getChildPropertyCategory(final String propertyName) {
+        if (modifiableProperties.containsKey(propertyName)) {
+            return ConfigurationItemCategory.CONFIGURATION;
+        }
+
+        if (childPropertyCategorySettings.containsKey(propertyName)) {
+            return childPropertyCategorySettings.get(propertyName).getLeft();
+        }
+
+        return ConfigurationItemCategory.CONFIGURATION;
+    }
+
+    public void setChildNodeCategorySettings(final String name, final ConfigurationItemCategory category, final DefinitionItem definitionItem) {
+        childNodeCategorySettings.put(SnsUtils.getUnindexedName(name), Pair.of(category, definitionItem));
+    }
+
+    public Pair<ConfigurationItemCategory, DefinitionItem> getChildNodeCategorySettings(final String name) {
+        return childNodeCategorySettings.get(name);
+    }
+
+    public void setChildPropertyCategorySettings(final String name, final ConfigurationItemCategory category, final DefinitionItem definitionItem) {
+        childPropertyCategorySettings.put(name, Pair.of(category, definitionItem));
+    }
+
+    public Pair<ConfigurationItemCategory, DefinitionItem> getChildPropertyCategorySettings(final String name) {
+        return childPropertyCategorySettings.get(name);
+    }
+
+    public ConfigurationItemCategory getResidualNodeCategory() {
+        return residualNodeCategory;
+    }
+
+    public void setResidualNodeCategory(final ConfigurationItemCategory residualNodeCategory) {
+        this.residualNodeCategory = residualNodeCategory;
+    }
+
+    public DefinitionItem getResidualNodeCategoryDefinitionItem() {
+        return residualNodeCategoryDefinitionItem;
+    }
+
+    public void setResidualNodeCategoryDefinitionItem(final DefinitionItem residualNodeCategoryDefinitionItem) {
+        this.residualNodeCategoryDefinitionItem = residualNodeCategoryDefinitionItem;
     }
 
 }

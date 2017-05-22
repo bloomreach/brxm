@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.backend;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,7 +86,7 @@ public class JcrContentProcessingService implements ContentProcessingService {
      * @param modelNode
      * @param parentNode
      */
-    public synchronized void importNode(final DefinitionNode modelNode, final Node parentNode, final ActionType actionType) throws Exception {
+    public synchronized void importNode(final DefinitionNode modelNode, final Node parentNode, final ActionType actionType) throws RepositoryException, IOException {
         if (actionType == DELETE) {
             throw new IllegalArgumentException("DELETE action is not supported for import operation");
         }
@@ -110,6 +111,10 @@ public class JcrContentProcessingService implements ContentProcessingService {
      * @throws RepositoryException
      */
     public synchronized void apply(final DefinitionNode definitionNode, final ActionType actionType, final Session session) throws RepositoryException {
+        if (actionType == null) {
+            throw new IllegalArgumentException("Action type cannot be null");
+        }
+
         try {
             applyNode(definitionNode, actionType, session);
             applyUnprocessedReferences();
@@ -143,13 +148,9 @@ public class JcrContentProcessingService implements ContentProcessingService {
         return session.getNode(path);
     }
 
-    private void applyNode(final DefinitionNode definitionNode, final Node parentNode, final ActionType actionType) throws Exception {
+    private void applyNode(final DefinitionNode definitionNode, final Node parentNode, final ActionType actionType) throws RepositoryException, IOException {
 
         final Session session = parentNode.getSession();
-        if (actionType == null) {
-            throw new IllegalArgumentException("Action type cannot be null");
-        }
-
         final String nodePath = definitionNode.getPath();
         final boolean nodeExists = session.nodeExists(nodePath);
 
@@ -173,7 +174,7 @@ public class JcrContentProcessingService implements ContentProcessingService {
         applyChildNodes(definitionNode, jcrNode, actionType);
     }
 
-    private void applyChildNodes(final DefinitionNode modelNode, final Node jcrNode, final ActionType actionType) throws Exception {
+    private void applyChildNodes(final DefinitionNode modelNode, final Node jcrNode, final ActionType actionType) throws RepositoryException, IOException {
         logger.debug(String.format("processing node '%s' defined in %s.", modelNode.getPath(), ModelUtils.formatDefinition(modelNode.getDefinition())));
         for (final String name : modelNode.getNodes().keySet()) {
             final DefinitionNode modelChild = modelNode.getNodes().get(name);
@@ -231,7 +232,7 @@ public class JcrContentProcessingService implements ContentProcessingService {
         return modelNode.getProperties().get(JCR_PRIMARYTYPE).getValue().getString();
     }
 
-    private void applyProperties(final DefinitionNode source, final Node targetNode) throws Exception {
+    private void applyProperties(final DefinitionNode source, final Node targetNode) throws RepositoryException, IOException {
         applyPrimaryAndMixinTypes(source, targetNode);
 
         for (DefinitionProperty modelProperty : source.getProperties().values()) {
@@ -275,7 +276,7 @@ public class JcrContentProcessingService implements ContentProcessingService {
         }
     }
 
-    private void applyProperty(final DefinitionProperty modelProperty, final Node jcrNode) throws Exception {
+    private void applyProperty(final DefinitionProperty modelProperty, final Node jcrNode) throws RepositoryException, IOException {
         final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, modelProperty.getName());
 
         if (jcrProperty != null && jcrProperty.getDefinition().isProtected()) {

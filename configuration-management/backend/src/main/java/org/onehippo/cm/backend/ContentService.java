@@ -15,61 +15,192 @@
  */
 package org.onehippo.cm.backend;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.api.model.DefinitionNode;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.action.ActionItem;
 import org.onehippo.cm.api.model.action.ActionType;
+import org.onehippo.cm.impl.model.ContentDefinitionImpl;
+import org.onehippo.cm.impl.model.DefinitionNodeImpl;
+import org.onehippo.cm.impl.model.ModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import static org.apache.commons.collections4.MapUtils.isNotEmpty;
+import static org.onehippo.cm.engine.Constants.BASELINE_NODE;
+import static org.onehippo.cm.engine.Constants.CONTENT_PATH_PROPERTY;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT_NODE;
+import static org.onehippo.cm.engine.Constants.MODULE_SEQUENCE_NUMBER;
 
 /**
- * Saves content definitions per source
+ * Applies content definitions to repository
  */
 public class ContentService {
 
     private static final Logger log = LoggerFactory.getLogger(ContentService.class);
 
-    private final Session session;
-    private final ValueConverter valueConverter;
+    private final ValueConverter valueConverter = new ValueConverter();
+    private final ContentProcessingService contentProcessingService = new JcrContentProcessingService(valueConverter);
 
-    public ContentService(final Session session) {
-        this.session = session;
-        this.valueConverter = new ValueConverter();
+    /**
+     * Apply content definitions from modules contained within configuration model
+     * @param model
+     * @param session
+     * @throws RepositoryException
+     */
+    public void apply(final ConfigurationModel model, final Session session) throws RepositoryException {
 
-    }
-
-    public void apply(final ConfigurationModel model)
-            throws Exception {
-        try {
-            final Collection<ContentDefinition> contentDefinitions = model.getContentDefinitions();
-            final Map<Source, List<ContentDefinition>> contentMap = contentDefinitions.stream()
-                    .collect(Collectors.groupingBy(Definition::getSource, toSortedList(comparing(e -> e.getNode().getPath()))));
-            for (final Source source : contentMap.keySet()) {
-                final ContentProcessingService contentProcessingService = new JcrContentProcessingService(valueConverter);
-                contentProcessingService.apply(contentMap.get(source).get(0).getNode(), ActionType.APPEND, session);
-
-                session.save();
+        final List<Module> modules = model.getSortedGroups().stream()
+                .flatMap(g -> g.getProjects().stream())
+                .flatMap(p -> p.getModules().stream())
+                .collect(toList());
+        for (final Module module : modules) {
+            final ModuleImpl moduleImpl = (ModuleImpl) module;
+            if (isNotEmpty(module.getActionsMap()) || isNotEmpty(moduleImpl.getContentDefinitions())) {
+                apply(moduleImpl, session);
             }
-        } catch (Exception e) {
-            log.warn("Failed to apply configuration", e);
-            throw e;
         }
     }
 
-    private static <T> Collector<T,?,List<T>> toSortedList(Comparator<? super T> c) {
-        return Collectors.collectingAndThen(Collectors.toCollection(ArrayList::new), l->{ l.sort(c); return l; } );
+    /**
+     * Import ContentDefinition
+     * @param definition
+     * @param parentNode parent node
+     * @param actionType action type
+     * @throws Exception
+     */
+    public void importNode(ContentDefinition definition, Node parentNode, ActionType actionType) throws RepositoryException, IOException {
+        contentProcessingService.importNode(definition.getNode(), parentNode, actionType);
+    }
+
+    /**
+     * Export node to module
+     * @param node node to export
+     * @return Module containing single content definition
+     */
+    public Module exportNode(Node node) {
+        return contentProcessingService.exportNode(node);
+    }
+
+    /**
+     * Apply content definitions from module
+     * @param module
+     * @param session
+     * @throws RepositoryException
+     */
+    void apply(final Module module, final Session session) throws RepositoryException {
+
+        final ModuleImpl moduleImpl = (ModuleImpl) module;
+        final double currentVersion = getModuleVersion(moduleImpl, session);
+
+        final Map<Double, List<ActionItem>> actionsMap = moduleImpl.getActionsMap();
+
+        final List<ActionItem> actionsToProcess = actionsMap.entrySet().stream().filter(e -> e.getKey() > currentVersion)
+                .flatMap(e -> e.getValue().stream()).collect(toList());
+
+        final List<ActionItem> itemsToDelete = actionsToProcess.stream().filter(x -> x.getType() == ActionType.DELETE).collect(toList());
+        processItemsToDelete(itemsToDelete, session);
+
+        moduleImpl.getContentDefinitions().sort(Comparator.comparing(o -> o.getNode().getPath()));
+        for (final ContentDefinitionImpl contentDefinition : moduleImpl.getContentDefinitions()) {
+            final DefinitionNode contentNode = contentDefinition.getNode();
+            final Optional<ActionType> actionType = findActionTypeToApply(contentNode.getPath(), actionsToProcess);
+            if (actionType.isPresent() || !nodeAlreadyProcessed(contentNode, module, session)) {
+                log.debug("Processing {} action for node: {}", actionType, contentNode.getPath());
+                contentProcessingService.apply(contentNode, actionType.orElse(ActionType.APPEND), session);
+            }
+        }
+
+        final Optional<Double> latestVersion = actionsMap.keySet().stream().max(Double::compareTo);
+        latestVersion.ifPresent(moduleImpl::setSequenceNumber);
+    }
+
+    /**
+     * Check if node was already processed and it's path is saved withing baseline
+     * @param contentNode
+     * @param module
+     * @param session
+     * @return
+     * @throws RepositoryException
+     */
+    private boolean nodeAlreadyProcessed(final DefinitionNode contentNode, final Module module, final Session session) throws RepositoryException {
+
+        try {
+            final String moduleNodePath = String.format("/%s/%s/%s/%s", HCM_ROOT_NODE, BASELINE_NODE, ((ModuleImpl) module).getFullName(), HCM_CONTENT_FOLDER);
+            final Node node = session.getNode(moduleNodePath);
+            for(final NodeIterator nodeIterator = node.getNodes(); nodeIterator.hasNext();) {
+                final Node childNode = nodeIterator.nextNode();
+                final String jcrNodeContentPath = childNode.getProperty(CONTENT_PATH_PROPERTY).getString();
+                if (contentNode.getPath().equals(jcrNodeContentPath)) {
+                    return true;
+                }
+            }
+        } catch (PathNotFoundException e) {
+            log.debug("Error while accessing to content node", e);
+        }
+
+        return false;
+    }
+
+    /**
+     * Delete nodes from action list
+     * @param deleteItems
+     * @param session
+     * @throws RepositoryException
+     */
+    private void processItemsToDelete(final List<ActionItem> deleteItems, final Session session) throws RepositoryException {
+
+        for (final ActionItem deleteItem : deleteItems) {
+            final DefinitionNode deleteNode = new DefinitionNodeImpl(deleteItem.getPath(), StringUtils.substringAfterLast(deleteItem.getPath(), "/"), null);
+            log.debug("Processing delete action for node: {}", deleteItem.getPath());
+            contentProcessingService.apply(deleteNode, ActionType.DELETE, session);
+        }
+    }
+
+    /**
+     * Get module's version from baseline
+     * @param module target module
+     * @param session
+     * @return Current module's version or MINIMAL value of double
+     * @throws RepositoryException
+     */
+    private double getModuleVersion(final Module module, final Session session) throws RepositoryException {
+        try {
+            final String moduleNodePath = String.format("/%s/%s/%s", HCM_ROOT_NODE, BASELINE_NODE, ((ModuleImpl) module).getFullName());
+            Node node = session.getNode(moduleNodePath);
+            return node.getProperty(MODULE_SEQUENCE_NUMBER).getDouble();
+        } catch (PathNotFoundException ignored) {}
+
+        return Double.MIN_VALUE;
+    }
+
+    /**
+     * Find an action type for the node, DELETE action type is excluded
+     * @param rootPath full path of the node
+     * @param actions available actions
+     * @return If found, contains action type for specified node
+     */
+    private Optional<ActionType> findActionTypeToApply(final String rootPath, List<ActionItem> actions) {
+        return actions.stream()
+                .filter(x -> x.getPath().equals(rootPath) && x.getType() != ActionType.DELETE)
+                .map(ActionItem::getType)
+                .findFirst();
     }
 }

@@ -30,7 +30,6 @@ import org.onehippo.cm.impl.model.ConfigSourceImpl;
 /**
  * Incapsulates module's input/output providers and unique name resolver
  */
-//todo SS: extract interface to API module
 public class ModuleContext {
 
     protected ResourceInputProvider configInputProvider;
@@ -42,6 +41,7 @@ public class ModuleContext {
     protected final boolean multiModule;
     private final Path moduleDescriptorPath;
 
+    private Path moduleActionsDescriptorPath;
     private Path moduleConfigRootPath;
     private Path moduleContentRootPath;
 
@@ -55,6 +55,19 @@ public class ModuleContext {
         this.multiModule = multiModule;
     }
 
+    /**
+     * @return {@link Path} to hcm-actions.yaml of current module
+     */
+    public Path getActionsDecriptorPath() {
+        if (moduleActionsDescriptorPath == null) {
+            moduleActionsDescriptorPath = moduleDescriptorPath.resolveSibling(Constants.ACTIONS_YAML);
+        }
+        return moduleActionsDescriptorPath;
+    }
+
+    /**
+     * @return {@link Path} to hcm-config folder of current module
+     */
     public Path getConfigRoot() {
         if (moduleConfigRootPath == null) {
             moduleConfigRootPath = FileConfigurationUtils.getModuleBasePath(moduleDescriptorPath, module, multiModule);
@@ -62,6 +75,9 @@ public class ModuleContext {
         return moduleConfigRootPath;
     }
 
+    /**
+     * @return {@link Path} to hcm-content folder of current module
+     */
     public Path getContentRoot() {
         if (moduleContentRootPath == null) {
             moduleContentRootPath = FileConfigurationUtils.getModuleContentBasePath(moduleDescriptorPath, module, multiModule);

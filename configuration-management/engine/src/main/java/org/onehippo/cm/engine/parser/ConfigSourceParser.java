@@ -19,10 +19,13 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.api.ResourceInputProvider;
+import org.onehippo.cm.api.model.ConfigurationItemCategory;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionType;
 import org.onehippo.cm.api.model.ValueType;
+import org.onehippo.cm.engine.SnsUtils;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.ConfigSourceImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
@@ -34,9 +37,11 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
 import static org.onehippo.cm.engine.Constants.DEFINITIONS;
+import static org.onehippo.cm.engine.Constants.META_CATEGORY_KEY;
 import static org.onehippo.cm.engine.Constants.META_DELETE_KEY;
 import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
 import static org.onehippo.cm.engine.Constants.META_ORDER_BEFORE_KEY;
+import static org.onehippo.cm.engine.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
 import static org.onehippo.cm.engine.Constants.PREFIX_KEY;
 import static org.onehippo.cm.engine.Constants.RESOURCE_KEY;
 import static org.onehippo.cm.engine.Constants.URI_KEY;
@@ -132,6 +137,25 @@ public class ConfigSourceParser extends SourceParser {
                 }
                 final boolean delete = asNodeDeleteValue(tupleValue);
                 definitionNode.setDelete(delete);
+            } else if (key.equals(META_CATEGORY_KEY)) {
+                if (tuples.size() > 1) {
+                    throw new ParserException("Node cannot contain '" + META_CATEGORY_KEY + "' and other keys", node);
+                }
+                final Pair<String, Integer> parsedName = SnsUtils.splitIndexedName(definitionNode.getName());
+                if (parsedName.getRight() > 0) {
+                    throw new ParserException("'" + META_CATEGORY_KEY
+                            + "' cannot be configured for explicitly indexed same-name siblings", node);
+                }
+                final ConfigurationItemCategory category = constructCategory(tupleValue);
+                definitionNode.setCategory(category);
+            } else if (key.equals(META_RESIDUAL_CHILD_NODE_CATEGORY_KEY)) {
+                final Pair<String, Integer> parsedName = SnsUtils.splitIndexedName(definitionNode.getName());
+                if (parsedName.getRight() > 0) {
+                    throw new ParserException("'" + META_RESIDUAL_CHILD_NODE_CATEGORY_KEY
+                            + "' cannot be configured for explicitly indexed same-name siblings", node);
+                }
+                final ConfigurationItemCategory category = constructCategory(tupleValue);
+                definitionNode.setResidualChildNodeCategory(category);
             } else if (key.equals(META_ORDER_BEFORE_KEY)) {
                 final String name = asNodeOrderBeforeValue(tupleValue);
                 if (definitionNode.getName().equals(name)) {
