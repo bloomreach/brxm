@@ -13,24 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * Styles for the Tag Diff
- */
-span.diff-tag-html {
-  font-family: "Andale Mono" monospace;
-  font-size: 80%;
-}
-
-span.diff-tag-removed {
-  font-size: 100%;
-  text-decoration: line-through;
-  background-color: #fdc6c6; /* light red */
-}
-
-span.diff-tag-added {
-  font-size: 100%;
-  background-color: #ccffcc; /* light green */
-}
 
 /*
  * Styles for the HTML Diff
@@ -53,15 +35,6 @@ span.diff-html-changed {
   cursor: pointer;
 }
 
-span.diff-html-selected {
-  background-color: #FF8800; /* light orange */
-  cursor: pointer;
-}
-
-span.diff-html-selected img{
-   border: 2px solid #FF8800; /* light orange */
-}
-
 span.diff-html-added img{
  border: 2px solid #ccffcc;
 }
@@ -72,30 +45,4 @@ span.diff-html-removed img{
 
 span.diff-html-changed img{
  border: 2px dotted #000099;
-}
-
-div.diff-removed-image, div.diff-added-image{
-  height: 300px;
-  width: 200px;
-  position: absolute;
-  opacity : 0.55;
-  filter: alpha(opacity=55);
-  -moz-opacity: 0.55;
-}
-
-div.diff-removed-image, div.diff-added-image {
-  margin-top: 2px;
-  margin-bottom: 2px;
-  margin-right: 2px;
-  margin-left: 2px;
-}
-
-div.diff-removed-image {
-  background-color: #fdc6c6;
-  background-image: url(images/diffmin.gif);
-}
-div.diff-added-image {
-  background-color: #ccffcc;
-  background-image: url(images/diffplus.gif);
-  background-repeat: no-repeat;
 }
