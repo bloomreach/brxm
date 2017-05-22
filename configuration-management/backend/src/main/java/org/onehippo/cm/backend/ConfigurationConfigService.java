@@ -17,9 +17,11 @@
 package org.onehippo.cm.backend;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +43,7 @@ import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -49,6 +52,7 @@ import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigurationItemCategory;
 import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.ConfigurationNode;
@@ -60,12 +64,16 @@ import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
+import org.onehippo.cm.api.model.WebFileBundleDefinition;
 import org.onehippo.cm.engine.SnsUtils;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ConfigurationPropertyImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
 import org.onehippo.cm.impl.model.ValueImpl;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
+import org.onehippo.repository.bootstrap.util.PartialZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +83,7 @@ import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
+import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getBaseZipFileFromURL;
 
 /**
  * ConfigurationConfigService is responsible for reading and writing Configuration from/to the repository.
@@ -101,6 +110,33 @@ public class ConfigurationConfigService {
             this.updateProperty = updateProperty;
             this.baselineProperty = baselineProperty;
             this.targetNode = targetNode;
+        }
+    }
+
+    void writeWebfiles(final ConfigurationModel model, final Session session) throws Exception {
+        final WebFilesService service = HippoServiceRegistry.getService(WebFilesService.class);
+        if (service == null) {
+            final String msg = String.format("Failed to import web file bundles: missing service for '%s'",
+                    WebFilesService.class.getName());
+            throw new RuntimeException(msg);
+        }
+
+        for (WebFileBundleDefinition webFileBundleDefinition : model.getWebFileBundleDefinitions()) {
+            final String bundleName = webFileBundleDefinition.getName();
+            logger.debug(String.format("processing web file bundle '%s' defined in %s.", bundleName,
+                    ModelUtils.formatDefinition(webFileBundleDefinition)));
+
+            final ResourceInputProvider resourceInputProvider =
+                    webFileBundleDefinition.getSource().getModule().getConfigResourceInputProvider();
+            final URL baseURL = resourceInputProvider.getBaseURL();
+            if (baseURL.toString().contains("jar!")) {
+                final PartialZipFile bundleZipFile =
+                        new PartialZipFile(getBaseZipFileFromURL(baseURL), bundleName);
+                service.importJcrWebFileBundle(session, bundleZipFile, true);
+            } else if (baseURL.toString().startsWith("file:")) {
+                final File bundleDir = new File(FileUtils.toFile(baseURL), bundleName);
+                service.importJcrWebFileBundle(session, bundleDir, true);
+            }
         }
     }
 
