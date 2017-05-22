@@ -66,7 +66,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.UserRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.BranchHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ChannelHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
@@ -83,9 +82,9 @@ import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
-import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
 
 @Path("/hst:mount/")
 public class MountResource extends AbstractConfigResource {
@@ -99,7 +98,6 @@ public class MountResource extends AbstractConfigResource {
     private SiteMapHelper siteMapHelper;
     private SiteMenuHelper siteMenuHelper;
     private PagesHelper pagesHelper;
-    private BranchHelper branchHelper;
     private LockHelper lockHelper = new LockHelper();
 
     public void setSiteMapHelper(final SiteMapHelper siteMapHelper) {
@@ -116,10 +114,6 @@ public class MountResource extends AbstractConfigResource {
 
     public void setChannelHelper(ChannelHelper channelHelper) {
         this.channelHelper = channelHelper;
-    }
-
-    public void setBranchHelper(org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.BranchHelper branchHelper) {
-        this.branchHelper = branchHelper;
     }
 
     @GET
@@ -195,7 +189,7 @@ public class MountResource extends AbstractConfigResource {
     public Response currentBranch(@Context HttpServletRequest servletRequest) {
         final Mount mount = getPageComposerContextService().getEditingMount();
         final HttpSession session = servletRequest.getSession();
-        Map<String,String> mountToBranchIdMap = (Map<String,String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        Map<String, String> mountToBranchIdMap = (Map<String, String>) session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
         if (mountToBranchIdMap == null || mountToBranchIdMap.get(mount.getIdentifier()) == null) {
             return ok("No current branch", null);
         }
@@ -225,44 +219,20 @@ public class MountResource extends AbstractConfigResource {
 
     private void clearMountToBranchId(final HttpServletRequest servletRequest, final Mount mount) {
         final HttpSession session = servletRequest.getSession();
-        Map<String,String> mountToBranchIdMap = (Map<String,String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        Map<String, String> mountToBranchIdMap = (Map<String, String>) session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
         if (mountToBranchIdMap != null) {
             mountToBranchIdMap.remove(mount.getIdentifier());
         }
     }
 
-    @PUT
-    @Path("/createbranch/{branchId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createBranch(@Context HttpServletRequest servletRequest, @PathParam("branchId") final String branchId) {
-        try {
-            doCreateBranch(branchId);
-            final Mount editingMount = getPageComposerContextService().getEditingMount();
-            log.debug("Create branch:{} from channel:{}", branchId, editingMount.getChannel());
-            selectBranch(servletRequest, branchId);
-            return ok("Branch created successfully");
-        } catch (RepositoryException e) {
-            log.warn("Could not create a branch : ", e);
-            return error("Could not create a branch : " + e);
-        } catch (ClientException e) {
-            return logAndReturnClientError(e);
-        }
-    }
-
     private void setMountToBranchId(final HttpServletRequest servletRequest, String branchId, final Mount mount) {
         HttpSession session = servletRequest.getSession();
-        Map<String,String> mountToBranchIdMap = (Map<String,String>)session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        Map<String, String> mountToBranchIdMap = (Map<String, String>) session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
         if (mountToBranchIdMap == null) {
             mountToBranchIdMap = new HashMap<>();
             session.setAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY, mountToBranchIdMap);
         }
         mountToBranchIdMap.put(mount.getIdentifier(), branchId);
-    }
-
-    private void doCreateBranch(final String branchId) throws RepositoryException, ClientException {
-        Session session = getPageComposerContextService().getRequestContext().getSession();
-        branchHelper.createBranch(branchId, session);
-        HstConfigurationUtils.persistChanges(session);
     }
 
     private NewPageModelRepresentation getNewPageModelRepresentation(final Mount mount) {
@@ -492,8 +462,7 @@ public class MountResource extends AbstractConfigResource {
      * Method that returns a {@link Response} containing the list of document of (sub)type <code>docType</code> that
      * belong to the content of the site that is currently composed.
      *
-     * @param docType the docType the found documents must be of. The documents can also be a subType of
-     *                docType
+     * @param docType the docType the found documents must be of. The documents can also be a subType of docType
      * @return An ok Response containing the list of documents or an error response in case an exception occurred
      */
     @POST
@@ -512,7 +481,7 @@ public class MountResource extends AbstractConfigResource {
         try {
             Session session = requestContext.getSession();
 
-            Node contentRoot = (Node)session.getItem(canonicalContentPath);
+            Node contentRoot = (Node) session.getItem(canonicalContentPath);
 
             String statement = "//element(*," + docType + ")[@hippo:paths = '" + contentRoot.getIdentifier() + "' and @hippo:availability = 'preview' and not(@jcr:primaryType='nt:frozenNode')]";
             QueryManager queryMngr = session.getWorkspace().getQueryManager();
