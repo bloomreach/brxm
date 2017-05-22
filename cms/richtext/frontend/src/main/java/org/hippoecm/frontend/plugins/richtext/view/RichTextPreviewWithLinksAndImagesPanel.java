@@ -38,7 +38,7 @@ public class RichTextPreviewWithLinksAndImagesPanel extends AbstractRichTextView
     public RichTextPreviewWithLinksAndImagesPanel(final String id,
                                                   final IModel<Node> nodeModel,
                                                   final IModel<String> htmlModel,
-                                                  final IBrowseService browser,
+                                                  final IBrowseService<IModel<Node>> browser,
                                                   final IHtmlCleanerService cleaner) {
         super(id);
 

@@ -25,6 +25,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
@@ -45,9 +46,9 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior {
     private static final ResourceReference PREVIEW_LINKS_SERVICE_JS =
             new JavaScriptResourceReference(PreviewLinksBehavior.class, "preview-links-service.js");
 
-    private final IBrowseService browser;
+    private final IBrowseService<IModel<Node>> browser;
 
-    PreviewLinksBehavior(final IBrowseService browser) {
+    PreviewLinksBehavior(final IBrowseService<IModel<Node>> browser) {
         this.browser = browser;
     }
 
@@ -58,7 +59,6 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior {
         if (uuid != null && !"null".equals(uuid) && browser != null) {
             final Node targetNode = getNodeById(uuid);
             if (targetNode == null) {
-                log.info("Node with UUID {} could not be loaded", uuid);
                 final String message = new ClassResourceModel("brokenlink-alert",
                                                               PreviewLinksBehavior.class).getObject();
                 target.appendJavaScript("alert('" + message + "');");
@@ -76,6 +76,7 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior {
                 return targetNode;
             }
         } catch (final RepositoryException ignore) {
+            log.info("Node with UUID {} could not be loaded", uuid, ignore);
         }
         return null;
     }

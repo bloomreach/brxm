@@ -57,7 +57,7 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
     public RichTextDiffWithLinksAndImagesPanel(final String id,
                                                final IModel<Node> baseNodeModel,
                                                final IModel<Node> currentNodeModel,
-                                               final IBrowseService browser,
+                                               final IBrowseService<IModel<Node>> browser,
                                                final DiffService diffService,
                                                final IHtmlCleanerService cleaner) {
         super(id);
@@ -103,14 +103,14 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
         return new HtmlDiffModel(scriptlessBase, scriptlessCurrent, diffService);
     }
 
-    private static JcrPropertyValueModel getContentModelOrNull(final IModel<Node> nodeModel) {
+    private static JcrPropertyValueModel<String> getContentModelOrNull(final IModel<Node> nodeModel) {
         final Node node = nodeModel.getObject();
         try {
             if (node == null) {
                 return null;
             }
             final Property prop = node.getProperty(HippoStdNodeType.HIPPOSTD_CONTENT);
-            return new JcrPropertyValueModel(new JcrPropertyModel(prop));
+            return new JcrPropertyValueModel<>(new JcrPropertyModel(prop));
         } catch (final RepositoryException e) {
             log.error("Cannot read HTML content from '" + JcrUtils.getNodePathQuietly(node) + "'", e);
         }
