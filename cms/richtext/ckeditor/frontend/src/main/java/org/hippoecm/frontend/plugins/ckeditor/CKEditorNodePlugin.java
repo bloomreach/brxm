@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -233,9 +233,9 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
         return null;
     }
 
-    private IBrowseService getBrowser() {
+    private IBrowseService<IModel<Node>> getBrowser() {
         final String browserId = getPluginConfig().getString(IBrowseService.BROWSER_ID, "service.browse");
-        return getPluginContext().getService(browserId, IBrowseService.class);
+        return (IBrowseService<IModel<Node>>) getPluginContext().getService(browserId, IBrowseService.class);
     }
 
     private IModel<Node> getNodeModel() {
