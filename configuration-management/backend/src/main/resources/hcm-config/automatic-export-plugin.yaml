@@ -1,0 +1,11 @@
+ definitions:
+  config:
+    /hippo:configuration/hippo:frontend/console:
+      jcr:primaryType: frontend:application
+      /console:
+        jcr:primaryType: frontend:plugincluster
+        /autoexport:
+          jcr:primaryType: frontend:plugin
+          wicket.id: service.menu.item
+          plugin.class: org.onehippo.cms7.autoexport.plugin.AutoExportPlugin
+          wicket.model: service.model

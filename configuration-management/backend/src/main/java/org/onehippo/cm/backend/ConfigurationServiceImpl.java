@@ -73,6 +73,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 log.info("YAML verification complete");
             }
 
+            final ContentService contentService = new ContentService();
+            contentService.apply(configurationModel, session);
+
+            // update the stored baseline after fully applying the configurationModel
+            // this could result in the baseline becoming out of sync if the second phase of the apply fails
+            // NOTE: We may prefer to use a two-phase commit style process, where the new baseline is stored in a
+            //       separate node, the apply() is completed, and then the old baseline is swapped for new.
+            baselineService.storeBaseline(configurationModel);
+
         } catch (RuntimeException e) {
             // TODO: ensure proper logging is done upstream
             log.debug("Bootstrap failed!", e);
@@ -90,15 +99,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             try {
                 final ConfigurationConfigService service = new ConfigurationConfigService();
                 service.writeWebfiles(configurationModel, session);
-
-                final ContentService contentService = new ContentService();
-                contentService.apply(configurationModel, session);
-
-                // update the stored baseline after fully applying the configurationModel
-                // this could result in the baseline becoming out of sync if the second phase of the apply fails
-                // NOTE: We may prefer to use a two-phase commit style process, where the new baseline is stored in a
-                //       separate node, the apply() is completed, and then the old baseline is swapped for new.
-                baselineService.storeBaseline(configurationModel);
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     log.error("Error initializing webfiles", e);

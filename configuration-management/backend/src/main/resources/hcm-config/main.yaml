@@ -2,5 +2,8 @@ definitions:
   namespace:
   - prefix: hcm
     uri: http://www.onehippo.org/jcr/hcm/1.0
+  - prefix: autoexport
+    uri: http://www.onehippo.org/autoexport/1.1
   cnd:
   - resource: hcm.cnd
+  - resource: autoexport.cnd
