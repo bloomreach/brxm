@@ -19,10 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
@@ -48,9 +45,7 @@ import org.slf4j.LoggerFactory;
  * document. Elements that have been added to or removed from the base version of the model are marked with green and
  * red, respectively.
  */
-public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPanel {
-
-    private static final CssResourceReference DIFF_CSS = new CssResourceReference(HtmlDiffModel.class, "diff.css");
+public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextViewPanel {
 
     private static final Logger log = LoggerFactory.getLogger(RichTextDiffWithLinksAndImagesPanel.class);
 
@@ -67,12 +62,6 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
 
         final IModel<String> viewModel = createDiffModel(baseNodeModel, currentNodeModel, diffService, cleaner);
         addView(viewModel);
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        response.render(CssHeaderItem.forReference(DIFF_CSS));
     }
 
     private static IModel<String> createDiffModel(final IModel<Node> baseNodeModel,
