@@ -42,7 +42,7 @@ public class FolderTreeNode extends JcrTreeNode {
     /**
      * Comparator by folder display name.
      */
-    private static Comparator<IJcrTreeNode> DISPLAY_NAME_COMPARATOR = new JcrTreeNameComparator();
+    private static final Comparator<IJcrTreeNode> DISPLAY_NAME_COMPARATOR = new JcrTreeNameComparator();
 
     /**
      * Returns {@link #DISPLAY_NAME_COMPARATOR} if the current folder node is of {@link HippoStdNodeType#NT_DIRECTORY}
