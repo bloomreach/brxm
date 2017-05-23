@@ -41,6 +41,8 @@
   <properties>
     <hippo.release.version>12.0.0-SNAPSHOT</hippo.release.version>
 
+    <hippo.jackrabbit.version>2.14.0-h1-SNAPSHOT</hippo.jackrabbit.version>
+
     <hippo.addon-hst-configuration-editor.version>4.0.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <hippo.addon-channel-manager.version>5.0.0-visual-editing-psp2-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>4.0.0-SNAPSHOT</hippo.addon-search-service.version>
@@ -83,7 +85,7 @@
 
   <repositories>
     <repository>
-      <id>hippo</id>
+      <id>hippo-maven2</id>
       <name>Hippo Maven 2</name>
       <url>https://maven.onehippo.com/maven2/</url>
       <snapshots>
@@ -91,26 +93,66 @@
       </snapshots>
       <releases>
         <updatePolicy>never</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
       </releases>
-      <layout>default</layout>
     </repository>
-    <repository>
-      <id>hippo-forge</id>
-      <name>Hippo Forge maven 2 repository.</name>
-      <url>https://maven.onehippo.com/maven2-forge/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
-    </repository>
-
   </repositories>
 
   <dependencyManagement>
     <dependencies>
+      <!-- JR dependencies -->
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-api</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-aws-ext</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-core</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-data</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-jcr-commons</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-jcr-rmi</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-jcr-servlets</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-spi</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-spi-commons</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-vfs-ext</artifactId>
+        <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+      <!-- End JR dependencies -->
+
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms7-commons</artifactId>
