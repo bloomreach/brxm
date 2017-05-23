@@ -22,8 +22,8 @@ import java.util.Objects;
  */
 public class ActionItem {
 
-    private String path;
-    private ActionType type;
+    private final String path;
+    private final ActionType type;
 
     public ActionItem(final String path, final ActionType type) {
         this.path = path;
@@ -34,16 +34,8 @@ public class ActionItem {
         return path;
     }
 
-    public void setPath(final String path) {
-        this.path = path;
-    }
-
     public ActionType getType() {
         return type;
-    }
-
-    public void setType(final ActionType type) {
-        this.type = type;
     }
 
     @Override
