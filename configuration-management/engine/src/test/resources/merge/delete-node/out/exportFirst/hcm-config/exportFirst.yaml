@@ -2,5 +2,5 @@ definitions:
   config:
     /topmost/upstreamToDelete:
       .meta:operation: delete
-    /topmost/upstream/:
+    /topmost/upstream:
       .meta:operation: delete

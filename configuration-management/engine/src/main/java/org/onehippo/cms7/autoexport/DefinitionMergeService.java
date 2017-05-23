@@ -24,8 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.ConfigurationItem;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.Definition;
@@ -155,7 +158,7 @@ public class DefinitionMergeService {
         // ConfigDefinitions are already sorted by root path
         for (final ConfigDefinitionImpl change : changes.getConfigDefinitions()) {
             // run the full and complex merge logic
-            mergeConfigDefinition(change, toExport, model);
+            model = mergeConfigDefinition(change, toExport, model);
         }
 
         // sort all ContentDefinitions by root path
@@ -164,7 +167,8 @@ public class DefinitionMergeService {
         // for each ContentDefinition
         for (final ContentDefinitionImpl change : changes.getContentDefinitions()) {
             // run the full and complex merge logic
-            mergeContentDefinition(change, toExport, baseline);
+//            model =
+                    mergeContentDefinition(change, toExport, baseline);
         }
 
         return toExport.values();
@@ -248,7 +252,9 @@ public class DefinitionMergeService {
         return (ConfigurationModelImpl) builder.build();
     }
 
-    void mergeConfigDefinition(final ConfigDefinitionImpl change, final HashMap<String, ModuleImpl> toExport, ConfigurationModelImpl model) {
+    protected ConfigurationModelImpl mergeConfigDefinition(final ConfigDefinitionImpl change,
+                                                 final HashMap<String, ModuleImpl> toExport,
+                                                 final ConfigurationModelImpl model) {
         // the change root path is a new node iff a jcr:primaryType is defined here and it's not an override or delete
         final DefinitionNodeImpl rootDefNode = (DefinitionNodeImpl) change.getNode();
 
@@ -264,9 +270,9 @@ public class DefinitionMergeService {
         else {
             // if the root path is not new, we should expect its path to exist -- find it
             final String rootDefPath = rootDefNode.getPath();
-            final ConfigurationNode root = model.resolveNode(rootDefPath);
+            final ConfigurationNode rootConfigNode = model.resolveNode(rootDefPath);
 
-            if (root == null) {
+            if (rootConfigNode == null) {
                 throw new IllegalStateException("Cannot modify a node that doesn't exist in baseline: " + rootDefPath);
             }
 
@@ -274,16 +280,8 @@ public class DefinitionMergeService {
 
             // is this a delete?
             if (rootDefNode.isDelete()) {
-                // TODO handle node delete
-                //    are there any local node defs for this node?
-                //        is there an upstream def?
-                //            if exists, change one local def (w/ jcr:primaryType!) to delete and remove other properties and subnodes,
-                //                remove other defnodes, defs, sources...
-                //            if doesn't exist, remove local defnode
-                //                if defnode was root, remove definition
-                //                if definition was last one in source, remove source
-                //    if existing node def is upstream,
-                //        create new defnode w/ delete
+                // handle node delete
+                deleteNode(rootDefNode, rootConfigNode, toExport);
             }
 
             // handle properties, then child nodes
@@ -298,7 +296,7 @@ public class DefinitionMergeService {
         }
 
         // rebuild the ConfigurationNodes after each change, to keep the back-references accurate
-        model = rebuild(toExport, model);
+        return rebuild(toExport, model);
     }
 
     /**
@@ -423,6 +421,13 @@ public class DefinitionMergeService {
         return to;
     }
 
+    /**
+     * Recursively copy all properties and descendants of the from-node to the to-node.
+     * Creates new definitions as required by LocationMapper.
+     * @param from
+     * @param to
+     * @param toExport
+     */
     protected void recursiveCopy(final DefinitionNodeImpl from, final DefinitionNodeImpl to,
                                  final HashMap<String, ModuleImpl> toExport) {
         if (from.isDelete()) {
@@ -457,6 +462,201 @@ public class DefinitionMergeService {
                 // no, just keep adding to the current destination defNode
                 recursiveAdd(childNode, to, toExport);
             }
+        }
+    }
+
+    protected void deleteNode(final DefinitionNodeImpl rootDefNode, final ConfigurationNode rootConfigNode, final HashMap<String, ModuleImpl> toExport) {
+        log.debug("Deleting node: {}", rootDefNode.getPath());
+
+        List<DefinitionItem> defsForRoot = rootConfigNode.getDefinitions();
+
+        // if last existing node def is upstream,
+        boolean lastDefIsUpstream = !isLocalDef(toExport).test(defsForRoot.get(defsForRoot.size()-1));
+
+        if (lastDefIsUpstream) {
+            log.debug("Last def for node is upstream of export: {}", rootDefNode.getPath());
+
+            // create new defnode w/ delete
+            createNewDef(rootDefNode, toExport);
+
+            // we know that there was no local def for the node we're deleting, but there may be defs for its children
+            // so for all descendants, remove all definitions and possibly sources
+            removeChildDefinitions(rootConfigNode, new ArrayList<>(), toExport);
+        }
+        else {
+            // there are local node defs for this node
+            // are there ONLY local node defs?
+            boolean onlyLocalDefs = defsForRoot.stream().allMatch(isLocalDef(toExport));
+
+            if (onlyLocalDefs) {
+                log.debug("Only local defs for node: {}", rootDefNode.getPath());
+
+                // since there's only local defs, we want this node to disappear from the record completely
+                removeDefinitionsAtOrBelow(rootConfigNode, toExport);
+            }
+            else {
+                log.debug("Both local and upstream defs for node: {}", rootDefNode.getPath());
+
+                // since there's also an upstream def, we want to collapse all local references to a single delete def
+                // if exists, change one local def to delete and remove other properties and subnodes
+                final List<Definition> alreadyRemovedFrom = new ArrayList<>();
+                final List<DefinitionItem> localDefs = defsForRoot.stream()
+                        .filter(isLocalDef(toExport)).collect(Collectors.toList());
+                final DefinitionNodeImpl defToKeep = (DefinitionNodeImpl) localDefs.get(0);
+
+                // mark chosen node as a delete
+                final ConfigDefinition defToKeepDefinition = (ConfigDefinition) defToKeep.getDefinition();
+                log.debug("Marking delete on node: {} from definition of: {} in source: {}",
+                        defToKeep.getPath(),
+                        defToKeepDefinition.getNode().getPath(),
+                        defToKeepDefinition.getSource().getPath());
+                defToKeep.delete();
+                alreadyRemovedFrom.add(defToKeepDefinition);
+
+                // remove all other defs and children
+                final List<DefinitionItem> localDefsExceptFirst = localDefs.subList(1, localDefs.size());
+                removeDefsAndChildren(rootConfigNode, localDefsExceptFirst, alreadyRemovedFrom, toExport);
+            }
+        }
+    }
+
+    /**
+     * Remove all definitions mentioning the given rootConfigNode or any of its descendants, because we are deleting
+     * the referenced node from all config.
+     * @param rootConfigNode
+     * @param toExport
+     */
+    protected void removeDefinitionsAtOrBelow(final ConfigurationNode rootConfigNode,
+                                              final HashMap<String, ModuleImpl> toExport) {
+        // keep track of the definitions that we've already handled
+        final List<Definition> alreadyRemovedFrom = new ArrayList<>();
+        final List<DefinitionItem> defsToRemove = rootConfigNode.getDefinitions();
+        removeDefsAndChildren(rootConfigNode, defsToRemove, alreadyRemovedFrom, toExport);
+    }
+
+    protected void removeDefsAndChildren(final ConfigurationNode rootConfigNode, final List<DefinitionItem> defsToRemove,
+                                         final List<Definition> alreadyRemovedFrom,
+                                         final HashMap<String, ModuleImpl> toExport) {
+        log.debug("Removing defs and children for node: {} with exceptions: {}", rootConfigNode.getPath(), alreadyRemovedFrom);
+
+        for (DefinitionItem definitionItem : defsToRemove) {
+            removeOneDefinitionItem(definitionItem, alreadyRemovedFrom, toExport);
+        }
+
+        // properties can only exist on definitions with root paths of the node itself, which are already removed above
+
+        // scan downwards for child definitions, which could be rooted on the children directly
+        removeChildDefinitions(rootConfigNode, alreadyRemovedFrom, toExport);
+    }
+
+    protected void removeOneDefinitionItem(final DefinitionItem definitionItem,
+                                           final List<Definition> alreadyRemovedFrom,
+                                           final HashMap<String, ModuleImpl> toExport) {
+        final ConfigDefinition definition = (ConfigDefinition) definitionItem.getDefinition();
+
+        log.debug("Removing one def item for node: {} with exceptions: {}", definitionItem.getPath(), alreadyRemovedFrom);
+
+        // remove the node itself
+        // if this node is the root
+        if (definitionItem.isRoot()) {
+            // remove the definition
+            removeDefinition(definition, toExport);
+        }
+        else {
+            removeFromParentDefinitionItem(definitionItem, toExport);
+        }
+        alreadyRemovedFrom.add(definition);
+    }
+
+    /**
+     * Remove child definitions from the given configNode, because configNode is being deleted.
+     * @param configNode the node being deleted
+     * @param alreadyRemovedFrom keep track of the definitions that we've already handled
+     * @param toExport modules we're merging/exporting -- changes should stay inside this scope
+     */
+    protected void removeChildDefinitions(final ConfigurationNode configNode, final List<Definition> alreadyRemovedFrom,
+                                          final HashMap<String, ModuleImpl> toExport) {
+        log.debug("Removing child defs for node: {} with exceptions: {}", configNode.getPath(), alreadyRemovedFrom);
+
+        for (ConfigurationNode childConfigNode : configNode.getNodes().values()) {
+            for (DefinitionItem childDefItem : childConfigNode.getDefinitions()) {
+                // if childNode def was part of a parent def, it was already removed above
+                final Definition childDefinition = childDefItem.getDefinition();
+                if (!alreadyRemovedFrom.contains(childDefinition)) {
+                    // otherwise, remove it now -- it must be a root of its definition
+                    if (!childDefItem.isRoot()) {
+                        throw new IllegalStateException(
+                                "Child node of a removed node must be contained in an already-removed parent def"
+                                        + " or be a root definition node: "
+                                        + childDefItem.getPath());
+                    }
+
+                    removeDefinition((ConfigDefinition) childDefinition, toExport);
+                    alreadyRemovedFrom.add(childDefinition);
+                }
+            }
+            removeChildDefinitions(childConfigNode, alreadyRemovedFrom, toExport);
+        }
+    }
+
+    protected void removeFromParentDefinitionItem(final DefinitionItem definitionItem,
+                                                  final HashMap<String, ModuleImpl> toExport) {
+        final ConfigDefinition definition = (ConfigDefinition) definitionItem.getDefinition();
+        final SourceImpl source = (SourceImpl) definition.getSource();
+        final ModuleImpl module = (ModuleImpl) source.getModule();
+
+        // check if the definition is in one of the toExport modules -- if not, we can't change it
+        if (!toExport.containsValue(module)) {
+            throw new IllegalStateException
+                    ("Cannot change a definition from module that is not being merged: " + module.getFullName()
+                            + " for node: " + definitionItem.getPath());
+        }
+        log.debug("Removing definition item for node: {} from definition of: {} in source: {}",
+                definitionItem.getPath(),
+                definition.getNode().getPath(), source.getPath());
+
+        // if this node isn't the root of its definition, remove the node from its parent
+        DefinitionNodeImpl parentNode = (DefinitionNodeImpl) definitionItem.getParent();
+        parentNode.getModifiableNodes().remove(definitionItem.getName());
+
+        // if this was the last item in the parent node
+        if ((parentNode.getModifiableNodes().size() == 0)
+                && (parentNode.getModifiableProperties().size() == 0)) {
+            // the parent must be the root! because the only way to modify an existing node is for it to be root
+            // of a new definition, and the only way for the parent to be empty is if it was only a modify with
+            // the one new child that we just removed
+            if (!parentNode.isRoot()) {
+                throw new IllegalStateException("Empty parent of removed node must be a root definition node: "
+                        + parentNode.getPath());
+            }
+
+            // remove the definition
+            removeDefinition(definition, toExport);
+        }
+    }
+
+    protected void removeDefinition(final ConfigDefinition definition, final HashMap<String, ModuleImpl> toExport) {
+        // remove the definition from its source and from its module
+        final SourceImpl source = (SourceImpl) definition.getSource();
+        final ModuleImpl module = (ModuleImpl) source.getModule();
+
+        // check if the definition is in one of the toExport modules -- if not, we can't change it
+        if (!toExport.containsValue(module)) {
+            throw new IllegalStateException
+                    ("Cannot remove a definition from module that is not being merged: " + module.getFullName()
+                            + " for node: " + definition.getNode().getPath());
+        }
+        log.debug("Removing definition for node: {} from source: {}", definition.getNode().getPath(), source.getPath());
+
+        source.getModifiableDefinitions().remove(definition);
+        module.getConfigDefinitions().remove(definition);
+
+        // if the definition was the last one from its source
+        if (source.getModifiableDefinitions().size() == 0) {
+            log.debug("Removing source: {}", source.getPath());
+
+            // remove the source from its module
+            module.getModifiableSources().remove(source);
         }
     }
 
@@ -506,9 +706,17 @@ public class DefinitionMergeService {
 
     protected Optional<DefinitionItem> getLastLocalDef(final ConfigurationItem item, final HashMap<String, ModuleImpl> toExport) {
         List<DefinitionItem> existingDefs = item.getDefinitions();
-        return Lists.reverse(existingDefs).stream().filter(def -> {
-            return toExport.containsKey(((ModuleImpl)def.getDefinition().getSource().getModule()).getMvnPath());
-        }).findFirst();
+        return Lists.reverse(existingDefs).stream()
+                .filter(isLocalDef(toExport))
+                .findFirst();
+    }
+
+    protected Predicate<DefinitionItem> isLocalDef(final HashMap<String, ModuleImpl> toExport) {
+        return def -> toExport.containsKey(getMvnPathFromDefinitionItem(def));
+    }
+
+    protected static String getMvnPathFromDefinitionItem(final DefinitionItem item) {
+        return ((ModuleImpl)item.getDefinition().getSource().getModule()).getMvnPath();
     }
 
     protected void mergeContentDefinition(final ContentDefinitionImpl change, final HashMap<String, ModuleImpl> toExport,

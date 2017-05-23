@@ -67,6 +67,7 @@ public class DefinitionMergeTest {
         new MergeTest("new-node").test();
     }
 
+    // disabled to safely commit for refactoring purposes
 //    @Test
 //    public void delete_node() throws Exception {
 //        new MergeTest("delete-node").test();
