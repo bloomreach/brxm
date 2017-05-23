@@ -29,7 +29,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.statistics.Counter;
@@ -94,12 +93,13 @@ public class WorkspaceHasher implements NodeHasher {
                 hashTask.setAttribute("Node path", node.getPath());
             }
 
-            if (!isOrHasAncestorOfType(node, NODETYPE_HST_WORKSPACE)) {
+            Node workspaceNode = getAncestorOrSelfOfType(node, NODETYPE_HST_WORKSPACE);
+            if (workspaceNode == null) {
                 throw new BranchException(String.format("Cannot not hash the node '%s' because not of type '%s' or " +
                         "not a descendant of a node of type '%s'.", node.getPath(), NODETYPE_HST_WORKSPACE, NODETYPE_HST_WORKSPACE));
             }
 
-            return startHashing(node, setHash, setUpstreamHash, counter);
+            return startHashing(node, workspaceNode, setHash, setUpstreamHash, counter);
 
         } catch (RepositoryException | NoSuchAlgorithmException e) {
             try {
@@ -115,23 +115,29 @@ public class WorkspaceHasher implements NodeHasher {
         }
     }
 
-    private boolean isOrHasAncestorOfType(final Node node, final String nodeType) throws RepositoryException {
+    /**
+     * Returns ancestor node of type <strong>nodeType</strong> and {@code null} if no such ancestor present
+     */
+    private Node getAncestorOrSelfOfType(final Node node, final String nodeType) throws RepositoryException {
         try {
-            return node.isNodeType(nodeType) || isOrHasAncestorOfType(node.getParent(), nodeType);
+            if (node.isNodeType(nodeType)) {
+                return node;
+            }
+            return  getAncestorOrSelfOfType(node.getParent(), nodeType);
         } catch (ItemNotFoundException e) {
-            return false;
+            return null;
         }
     }
 
-    private String startHashing(final Node node, final boolean setHash,
-                              final boolean setUpstreamHash, final Counter counter) throws NoSuchAlgorithmException, RepositoryException {
+    private String startHashing(final Node node, final Node workspaceNode, final boolean setHash,
+                                final boolean setUpstreamHash, final Counter counter) throws NoSuchAlgorithmException, RepositoryException {
         long start = System.currentTimeMillis();
-        byte[] bytes = doHash(node, setHash, setUpstreamHash, counter);
+        byte[] bytes = doHash(node, workspaceNode.getPath(), setHash, setUpstreamHash, counter);
         log.info("Hashing '{}' containing '{}' nodes took '{}' ms", node.getPath(), counter.getValue(), (System.currentTimeMillis() - start));
         return hexBinaryAdapter.marshal(bytes);
     }
 
-    private byte[] doHash(final Node node, final boolean setHash,
+    private byte[] doHash(final Node node, final String workspaceNodePath, final boolean setHash,
                           final boolean setUpstreamHash, final Counter counter)
             throws RepositoryException, NoSuchAlgorithmException, BranchException {
 
@@ -142,7 +148,8 @@ public class WorkspaceHasher implements NodeHasher {
         }
 
         if (!node.isNodeType(NODETYPE_HST_WORKSPACE)) {
-            md5.update(node.getName().getBytes());
+            // include the relative path the node has below the workspace
+            md5.update(node.getPath().substring(workspaceNodePath.length() + 1).getBytes());
         }
 
         SortedSet<String> sortedFilterPropertyNames = getSortedFilterPropertyNames(node);
@@ -163,7 +170,7 @@ public class WorkspaceHasher implements NodeHasher {
                 confirmDeletedState(child);
                 continue;
             }
-            byte[] hash = doHash(child, setHash, setUpstreamHash, counter);
+            byte[] hash = doHash(child, workspaceNodePath, setHash, setUpstreamHash, counter);
             md5.update(hash);
         }
         byte[] digest = md5.digest();

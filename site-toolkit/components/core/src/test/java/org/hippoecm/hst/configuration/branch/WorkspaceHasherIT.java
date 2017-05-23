@@ -216,6 +216,26 @@ public class WorkspaceHasherIT extends AbstractTestConfigurations {
         }
     }
 
+    @Test
+    public void copy_of_nested_node_within_workspace_results_in_different_hashes_for_descendants_because_relative_path_is_included_in_hash()
+            throws Exception {
+        Session session = createSession();
+        try {
+            createWorkspaceNodes(session);
+            JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/aboutfolder",
+                    "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/newaboutfolder");
+
+            Node indexNode = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/aboutfolder/_default_/_index_");
+            Node indexNode2 = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/newaboutfolder/_default_/_index_");
+
+            NodeHasher hasher = HstServices.getComponentManager().getComponent(WorkspaceHasher.class.getName());
+
+            assertFalse(hasher.hash(indexNode, true, false).equals(hasher.hash(indexNode2, true, false)));
+        } finally {
+            session.logout();
+        }
+    }
+
     private void recursiveAssertHashEquals(final Node source, final Node copy) throws RepositoryException {
         assertEquals(source.getProperty(HASHABLE_PROPERTY_HASH).getString(), copy.getProperty(HASHABLE_PROPERTY_HASH).getString());
         for (Node child : new NodeIterable(source.getNodes())) {
