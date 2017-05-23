@@ -43,13 +43,13 @@ class resizeHandleController {
         if (newWidth > 440 && newWidth < (this.body.width() / 2)) {
           manipulatedElement.css('width', newWidth);
           manipulatedElement.css('max-width', newWidth);
+          this.onResize({ newWidth });
         }
       });
 
       this.$document.mouseup(() => {
         this.$document.unbind('mousemove');
         hippoIframe.css('pointer-events', 'auto');
-        this.onResize({ newWidth });
         manipulatedElement.removeClass('in-resize');
       });
     });

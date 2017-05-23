@@ -356,6 +356,7 @@ class RightSidePanelCtrl {
 
   _onOpen() {
     this.$element.addClass('sidepanel-open');
+    this.$element.css('width', this.lastSavedWidth);
     this.$element.css('max-width', this.lastSavedWidth);
   }
 
