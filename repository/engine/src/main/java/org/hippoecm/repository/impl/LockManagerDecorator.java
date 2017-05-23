@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,40 +92,32 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
         return new LockDecorator(super.getLock(absPath));
     }
 
-    private void setTimeout(final Lock lock, final long timeoutHint) {
-        try {
-            final Node lockNode = lock.getNode();
-            if (timeoutHint != Long.MAX_VALUE) {
-                lockNode.addMixin(NT_LOCKABLE);
-                final Calendar timeout = Calendar.getInstance();
-                final long timeoutTime = System.currentTimeMillis() + timeoutHint * 1000;
-                timeout.setTimeInMillis(timeoutTime);
-                lockNode.setProperty(HIPPO_LOCKEXPIRATIONTIME, timeout);
-            } else {
-                if (lockNode.hasProperty(HIPPO_LOCKEXPIRATIONTIME)) {
-                    lockNode.getProperty(HIPPO_LOCKEXPIRATIONTIME).remove();
-                }
-            }
-            lockNode.getSession().save();
-        } catch (RepositoryException e) {
-            if (log.isDebugEnabled()) {
-                log.error("Failed to set hippo:timeout on lock", e);
-            } else {
-                log.error("Failed to set hippo:timeout on lock: {}", e.toString());
+    private void setTimeout(final Lock lock, final long timeoutHint) throws RepositoryException {
+        final Node lockNode = lock.getNode();
+        if (timeoutHint != Long.MAX_VALUE) {
+            lockNode.addMixin(NT_LOCKABLE);
+            final Calendar timeout = Calendar.getInstance();
+            final long timeoutTime = System.currentTimeMillis() + timeoutHint * 1000;
+            timeout.setTimeInMillis(timeoutTime);
+            lockNode.setProperty(HIPPO_LOCKEXPIRATIONTIME, timeout);
+        } else {
+            if (lockNode.hasProperty(HIPPO_LOCKEXPIRATIONTIME)) {
+                lockNode.getProperty(HIPPO_LOCKEXPIRATIONTIME).remove();
             }
         }
+        lockNode.getSession().save();
     }
 
     public class LockDecorator implements HippoLock {
 
         private Lock lock;
         private volatile ScheduledFuture future;
-        private final Object monitor = this; // guards future
         private final long timeout;
 
         private LockDecorator(final Lock lock, final long timeout) {
             this.lock = lock;
             this.timeout = timeout;
+
         }
 
         private LockDecorator(final Lock lock) throws RepositoryException {
@@ -135,48 +127,66 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
 
         @Override
         public String getLockOwner() {
-            return lock.getLockOwner();
+            synchronized (session) {
+                return lock.getLockOwner();
+            }
         }
 
         @Override
         public boolean isDeep() {
-            return lock.isDeep();
+            synchronized (session) {
+                return lock.isDeep();
+            }
         }
 
         @Override
         public Node getNode() {
-            return lock.getNode();
+            synchronized (session) {
+                return lock.getNode();
+            }
         }
 
         @Override
         public String getLockToken() {
-            return lock.getLockToken();
+            synchronized (session) {
+                return lock.getLockToken();
+            }
         }
 
         @Override
         public long getSecondsRemaining() throws RepositoryException {
-            return lock.getSecondsRemaining();
+            synchronized (session) {
+                return lock.getSecondsRemaining();
+            }
         }
 
         @Override
         public boolean isLive() throws RepositoryException {
-            return lock.isLive();
+            synchronized (session) {
+                return lock.isLive();
+            }
         }
 
         @Override
         public boolean isSessionScoped() {
-            return lock.isSessionScoped();
+            synchronized (session) {
+                return lock.isSessionScoped();
+            }
         }
 
         @Override
         public boolean isLockOwningSession() {
-            return lock.isLockOwningSession();
+            synchronized (session) {
+                return lock.isLockOwningSession();
+            }
         }
 
         @Override
         public void refresh() throws LockException, RepositoryException {
-            lock.refresh();
-            setTimeout(lock, getSecondsRemaining());
+            synchronized (session) {
+                lock.refresh();
+                setTimeout(lock, getSecondsRemaining());
+            }
         }
 
         @Override
@@ -199,7 +209,7 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
             future = executor.schedule(new Runnable() {
                 @Override
                 public void run() {
-                    synchronized (monitor) {
+                    synchronized (session) {
                         if (future.isCancelled()) {
                             return;
                         }
@@ -219,18 +229,10 @@ public class LockManagerDecorator extends org.hippoecm.repository.decorating.Loc
                                 setTimeout(lock, timeout);
                                 success = true;
                             } catch (RepositoryException e1) {
-                                if (log.isDebugEnabled()) {
-                                    log.error("Failed to refresh lock", e1);
-                                } else {
-                                    log.error("Failed to refresh lock: " + e1);
-                                }
+                                log.error("Failed to refresh lock", e1);
                             }
                         } catch (RepositoryException e) {
-                            if (log.isDebugEnabled()) {
-                                log.error("Failed to refresh lock", e);
-                            } else {
-                                log.error("Failed to refresh lock: " + e);
-                            }
+                            log.error("Failed to refresh lock", e);
                         }
                         if (success) {
                             try {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.spi.QNodeTypeDefinition;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
+import org.apache.jackrabbit.spi.commons.namespace.RegistryNamespaceResolver;
 import org.apache.jackrabbit.spi.commons.nodetype.QDefinitionBuilderFactory;
 import org.hippoecm.repository.util.VersionNumber;
 import org.slf4j.Logger;
@@ -46,6 +47,7 @@ public class HippoCompactNodeTypeDefReader extends CompactNodeTypeDefReader<QNod
         private NamespaceRegistry registry;
 
         private HippoNamespaceMapping(NamespaceRegistry registry) {
+            super(new RegistryNamespaceResolver(registry));
             this.registry = registry;
         }
 
