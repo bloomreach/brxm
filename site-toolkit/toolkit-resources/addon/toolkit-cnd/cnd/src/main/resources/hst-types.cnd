@@ -261,7 +261,7 @@
 + hst:upstream (hst:workspace) = hst:workspace
 
 [hst:hashable] mixin
-- hst:hash (string) mandatory
+- hst:hash (string)
 - hst:upstreamhash (string)
 - hst:deleted (boolean)
 
