@@ -20,7 +20,7 @@ class resizeHandleController {
 
     this.$document = $document;
     this.handle = $element;
-    this.body = $('body');
+    this.maxWidth = $('body').width() / 2;
   }
 
   $onInit() {
@@ -40,7 +40,7 @@ class resizeHandleController {
         const diff = initialX - moveEvent.pageX;
         newWidth = initialWidth + diff;
 
-        if (newWidth > 440 && newWidth < (this.body.width() / 2)) {
+        if (newWidth >= 440 && newWidth <= this.maxWidth) {
           manipulatedElement.css('width', newWidth);
           manipulatedElement.css('max-width', newWidth);
           this.onResize({ newWidth });

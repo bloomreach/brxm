@@ -42,6 +42,7 @@ describe('resizeHandle component', () => {
       onResize: () => { },
     });
 
+    $ctrl.maxWidth = 1350;
     spyOn($ctrl, 'onResize');
   });
 
@@ -94,7 +95,6 @@ describe('resizeHandle component', () => {
     $ctrl.$document.trigger(eMouseMove);
 
     $ctrl.$document.trigger('mouseup');
-    expect($ctrl.onResize).toHaveBeenCalled();
     expect(mockSidePanelElement.css).not.toHaveBeenCalled();
   });
 });
