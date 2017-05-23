@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,9 @@ public final class Constants {
     public static final String SYSTEM_ALLOWED_PROPERTY_NAME = "repo.autoexport.allowed";
     public static final String SYSTEM_ENABLED_PROPERTY_NAME = "repo.autoexport.enabled";
     public static final String CONFIG_ENABLED_PROPERTY_NAME = "autoexport:enabled";
+    public static final String CONFIG_MODULES_PROPERTY_NAME = "autoexport:modules";
+    public static final String CONFIG_EXCLUDED_PROPERTY_NAME = "autoexport:excluded";
+    public static final String CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME = "autoexport:filteruuidpaths";
     public static final String CONFIG_LAST_REVISION_PROPERTY_NAME = "autoexport:lastrevision";
     public static final String CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME = "autoexport:ntrlastmodified";
     public static final String SYSTEM_NODETYPES_PATH = "/jcr:system/jcr:nodeTypes/";
