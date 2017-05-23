@@ -70,26 +70,52 @@ public class FolderTreeNode extends JcrTreeNode {
     private DocumentListFilter config;
 
     /**
-     * Custom child comparator which can be provided for custom sorting use cases through configuration.
+     * Subfolder comparator which can be used in sorting child folders.
+     * This can be null. If null, the default behavior (no sorting or default sorting) should be taken place.
      */
-    private Comparator<IJcrTreeNode> customChildComparator;
+    private Comparator<IJcrTreeNode> subfolderComparator;
 
+    /**
+     * Constructs a folder tree node using {@code model} and {@code config}.
+     * @param model jcr folder node model
+     * @param config document list filtering configuration
+     */
     public FolderTreeNode(JcrNodeModel model, DocumentListFilter config) {
         this(model, config, null);
     }
 
+    /**
+     * Constructs a folder tree node using {@code model}, {@code config} and {@code subfolderComparator}.
+     * <P>
+     * If non-null {@code subfolderComparator} is provided, subfolders are sorted by the given comparator.
+     * And, 
+     * </P>
+     * @param model jcr folder node model
+     * @param config document list filtering configuration
+     * @param subfolderComparator subfolder comparator used in sorting if non-null object is provided
+     */
     public FolderTreeNode(JcrNodeModel model, DocumentListFilter config,
-            Comparator<IJcrTreeNode> customChildComparator) {
-        super(model, null, (customChildComparator != null) ? customChildComparator
+            Comparator<IJcrTreeNode> subfolderComparator) {
+        super(model, null, (subfolderComparator != null) ? subfolderComparator
                 : getDisplayNameComparatorIfDirectoryNode(model));
         this.config = config;
-        this.customChildComparator = customChildComparator;
+        this.subfolderComparator = subfolderComparator;
     }
 
-    private FolderTreeNode(JcrNodeModel model, FolderTreeNode parent, Comparator<IJcrTreeNode> customChildComparator) {
+    /**
+     * Private constructor to create a folder tree node with specifying parent folder tree node.
+     * <P>
+     * If non-null {@code subfolderComparator} is provided, subfolders are sorted by the given comparator.
+     * And, 
+     * </P>
+     * @param model jcr folder node model
+     * @param parent parent folder tree node
+     * @param subfolderComparator subfolder comparator used in sorting if non-null object is provided
+     */
+    private FolderTreeNode(JcrNodeModel model, FolderTreeNode parent, Comparator<IJcrTreeNode> subfolderComparator) {
         super(model, parent);
         this.config = parent.config;
-        this.customChildComparator = customChildComparator;
+        this.subfolderComparator = subfolderComparator;
     }
 
     @Override
@@ -97,7 +123,7 @@ public class FolderTreeNode extends JcrTreeNode {
         final Node chainedModelObject = getChainedModel().getObject();
         if (chainedModelObject.hasNode(name)) {
             JcrNodeModel childModel = new JcrNodeModel(chainedModelObject.getNode(name));
-            return new FolderTreeNode(childModel, this, customChildComparator);
+            return new FolderTreeNode(childModel, this, subfolderComparator);
         }
         return null;
     }
@@ -153,20 +179,20 @@ public class FolderTreeNode extends JcrTreeNode {
      */
     @Override
     protected JcrTreeNode createChildJcrTreeNode(JcrNodeModel childNodeModel)  {
-        return new FolderTreeNode(childNodeModel, this, customChildComparator);
+        return new FolderTreeNode(childNodeModel, this, subfolderComparator);
     }
 
     /**
      * {@inheritDoc}
      * <P>
-     * Overrides to return a custom child comparator if set to any in configuration.
+     * Overrides to return a subfolder comparator if set.
      * Otherwise, follows the default behavior of {@link JcrTreeNode}.
      * </P>
      */
     @Override
     protected Comparator<IJcrTreeNode> getChildComparator() {
-        if (customChildComparator != null) {
-            return customChildComparator;
+        if (subfolderComparator != null) {
+            return subfolderComparator;
         }
 
         return super.getChildComparator();
@@ -175,17 +201,17 @@ public class FolderTreeNode extends JcrTreeNode {
     /**
      * {@inheritDoc}
      * <P>
-     * Overrides to sort children by the {@link #customChildComparator} if set to any.
+     * Overrides to sort children by the {@link #subfolderComparator} if set to any.
      * Otherwise, follow the default behavior of {@link JcrTreeNode}.
      * </P>
      */
     @Override
     protected void sortChildTreeNodes(List<IJcrTreeNode> childTreeNodes) throws RepositoryException {
-        if (customChildComparator != null) {
+        if (subfolderComparator != null) {
             Node baseNode = nodeModel.getNode();
 
             if (!baseNode.isNodeType(HippoNodeType.NT_FACETRESULT)) {
-                Collections.sort(childTreeNodes,  customChildComparator);
+                Collections.sort(childTreeNodes,  subfolderComparator);
             }
         } else {
             super.sortChildTreeNodes(childTreeNodes);
