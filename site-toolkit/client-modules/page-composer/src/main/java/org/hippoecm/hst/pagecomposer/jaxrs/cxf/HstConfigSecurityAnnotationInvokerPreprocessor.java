@@ -49,7 +49,7 @@ public class HstConfigSecurityAnnotationInvokerPreprocessor extends SecurityAnno
             @Override
             public boolean isUserInRole(final String role) {
                 try {
-                    return securityModel.isUserInRule(RequestContextProvider.get().getSession(), role);
+                    return securityModel.isUserInRole(RequestContextProvider.get().getSession(), role);
                 } catch (RepositoryException e) {
                     throw new IllegalStateException("Exception while trying to find whether user is " +
                             "in role.", e);

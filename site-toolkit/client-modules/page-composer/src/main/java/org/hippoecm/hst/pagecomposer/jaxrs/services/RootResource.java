@@ -221,8 +221,8 @@ public class RootResource extends AbstractConfigResource {
 
         final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId);
         try {
-            final boolean hasAdminRole = securityModel.isUserInRule(requestContext.getSession(), CHANNEL_MANAGER_ADMIN_ROLE);
-            final boolean isWebmaster = securityModel.isUserInRule(requestContext.getSession(), CHANNEL_WEBMASTER_ROLE);
+            final boolean hasAdminRole = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_MANAGER_ADMIN_ROLE);
+            final boolean isWebmaster = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_WEBMASTER_ROLE);
             final boolean canDeleteChannel = isChannelDeletionSupported && hasAdminRole;
             final boolean canManageChanges = hasAdminRole;
 

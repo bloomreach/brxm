@@ -71,7 +71,7 @@ public class SecurityModelImpl implements SecurityModel {
      * whether a user was an admin or webmaster. Hence this kind of awkward looking implementation
      */
     @Override
-    public boolean isUserInRule(final Session session, final String functionalRole) {
+    public boolean isUserInRole(final Session session, final String functionalRole) {
 
         if (CHANNEL_MANAGER_ADMIN_ROLE.equals(functionalRole)) {
             final Map<String, PrivilegePathMapping> mapping = getMappingModel();

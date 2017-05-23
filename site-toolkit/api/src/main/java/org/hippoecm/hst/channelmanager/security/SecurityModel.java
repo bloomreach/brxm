@@ -40,5 +40,5 @@ public interface SecurityModel {
      * @return {@code true} when the user for the current {@code context} is in role {@code functionalRole} where the
      * {@code functionalRole} can be either {@link #CHANNEL_MANAGER_ADMIN_ROLE} or {@link #CHANNEL_WEBMASTER_ROLE}
      */
-    boolean isUserInRule(Session session, String functionalRole);
+    boolean isUserInRole(Session session, String functionalRole);
 }
