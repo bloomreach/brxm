@@ -22,20 +22,20 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.PropertyOperation;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
-import org.onehippo.cm.impl.model.ConfigSourceImpl;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
-import org.onehippo.cm.impl.model.SourceImpl;
-import org.onehippo.cm.impl.model.ValueImpl;
+import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.PropertyOperation;
+import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
 
-import static org.onehippo.cm.api.model.PropertyType.SINGLE;
+import static org.onehippo.cm.model.PropertyType.SINGLE;
 
 public class ContentInitializeInstruction extends InitializeInstruction {
 

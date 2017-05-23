@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.api;
+package org.onehippo.cm;
 
 import java.util.List;
 
-import org.onehippo.cm.api.model.ConfigurationModel;
+import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cms7.services.SingletonService;
 import org.onehippo.repository.bootstrap.PostStartupTask;
 

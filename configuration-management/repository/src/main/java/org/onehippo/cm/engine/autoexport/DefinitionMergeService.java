@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.autoexport;
+package org.onehippo.cm.engine.autoexport;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,27 +28,27 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.ConfigurationItem;
-import org.onehippo.cm.api.model.ConfigurationNode;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionItem;
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.NamespaceDefinition;
-import org.onehippo.cm.api.model.PropertyType;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
-import org.onehippo.cm.impl.model.ConfigSourceImpl;
-import org.onehippo.cm.impl.model.ConfigurationModelImpl;
-import org.onehippo.cm.impl.model.ContentDefinitionImpl;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.NamespaceDefinitionImpl;
-import org.onehippo.cm.impl.model.SourceImpl;
-import org.onehippo.cm.impl.model.ValueImpl;
-import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.model.ConfigDefinition;
+import org.onehippo.cm.model.ConfigurationItem;
+import org.onehippo.cm.model.ConfigurationNode;
+import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.DefinitionItem;
+import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.NamespaceDefinition;
+import org.onehippo.cm.model.PropertyType;
+import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,9 +56,9 @@ import com.google.common.collect.Lists;
 
 import static java.util.Arrays.asList;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
-import static org.onehippo.cm.api.model.DefinitionType.NAMESPACE;
-import static org.onehippo.cm.api.model.PropertyOperation.OVERRIDE;
-import static org.onehippo.cm.engine.Constants.YAML_EXT;
+import static org.onehippo.cm.model.DefinitionType.NAMESPACE;
+import static org.onehippo.cm.model.PropertyOperation.OVERRIDE;
+import static org.onehippo.cm.model.Constants.YAML_EXT;
 
 public class DefinitionMergeService {
 

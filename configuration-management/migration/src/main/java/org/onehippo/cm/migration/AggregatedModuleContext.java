@@ -18,8 +18,8 @@ package org.onehippo.cm.migration;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.engine.FileResourceOutputProvider;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.FileResourceOutputProvider;
 
 /**
  * Aggregated modules support

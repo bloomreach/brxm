@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -22,11 +22,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.engine.parser.ParserException;
-import org.onehippo.cm.impl.model.ModelTestUtils;
-import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.impl.ModelTestUtils;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

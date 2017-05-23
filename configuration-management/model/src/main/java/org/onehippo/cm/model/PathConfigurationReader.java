@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,20 +27,14 @@ import java.util.Map;
 import java.util.function.BiPredicate;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.engine.parser.ActionListParser;
-import org.onehippo.cm.engine.parser.ConfigSourceParser;
-import org.onehippo.cm.engine.parser.ContentSourceParser;
-import org.onehippo.cm.engine.parser.ModuleDescriptorParser;
-import org.onehippo.cm.engine.parser.ParserException;
-import org.onehippo.cm.engine.parser.SourceParser;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-
-import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
-import static org.onehippo.cm.engine.Constants.YAML_EXT;
+import org.onehippo.cm.model.parser.ActionListParser;
+import org.onehippo.cm.model.parser.ConfigSourceParser;
+import org.onehippo.cm.model.parser.ContentSourceParser;
+import org.onehippo.cm.model.parser.ModuleDescriptorParser;
+import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.parser.SourceParser;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
 
 public class PathConfigurationReader {
 
@@ -65,7 +59,7 @@ public class PathConfigurationReader {
     }
 
     public PathConfigurationReader() {
-        this(DEFAULT_EXPLICIT_SEQUENCING);
+        this(Constants.DEFAULT_EXPLICIT_SEQUENCING);
     }
 
     public PathConfigurationReader(final boolean explicitSequencing) {
@@ -153,7 +147,7 @@ public class PathConfigurationReader {
     private List<Pair<Path, String>> getSourceData(final Path modulePath) throws IOException {
         final List<Path> paths = new ArrayList<>();
         final BiPredicate<Path, BasicFileAttributes> matcher =
-                (filePath, fileAttr) -> filePath.toString().toLowerCase().endsWith(YAML_EXT) && fileAttr.isRegularFile();
+                (filePath, fileAttr) -> filePath.toString().toLowerCase().endsWith(Constants.YAML_EXT) && fileAttr.isRegularFile();
         Files.find(modulePath, Integer.MAX_VALUE, matcher).forEachOrdered(paths::add);
         final int modulePathSize = modulePath.getNameCount();
 

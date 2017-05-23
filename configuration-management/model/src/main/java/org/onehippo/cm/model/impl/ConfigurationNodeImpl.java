@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,11 +23,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.api.model.ConfigurationItemCategory;
-import org.onehippo.cm.api.model.ConfigurationNode;
-import org.onehippo.cm.api.model.ConfigurationProperty;
-import org.onehippo.cm.api.model.DefinitionItem;
-import org.onehippo.cm.engine.SnsUtils;
+import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.ConfigurationNode;
+import org.onehippo.cm.model.ConfigurationProperty;
+import org.onehippo.cm.model.DefinitionItem;
+import org.onehippo.cm.model.SnsUtils;
 
 public class ConfigurationNodeImpl extends ConfigurationItemImpl implements ConfigurationNode {
 

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.parser;
+package org.onehippo.cm.model.parser;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,9 +32,9 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.engine.SnsUtils;
+import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.SnsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;

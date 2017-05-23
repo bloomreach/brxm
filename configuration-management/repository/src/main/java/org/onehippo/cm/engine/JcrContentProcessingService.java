@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.backend;
+package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -38,15 +38,15 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.PropertyType;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.action.ActionType;
-import org.onehippo.cm.engine.SnsUtils;
-import org.onehippo.cm.impl.model.ModelUtils;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.PropertyType;
+import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.SnsUtils;
+import org.onehippo.cm.model.impl.ModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,9 +56,9 @@ import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
-import static org.onehippo.cm.api.model.ValueType.REFERENCE;
-import static org.onehippo.cm.api.model.ValueType.WEAKREFERENCE;
-import static org.onehippo.cm.api.model.action.ActionType.DELETE;
+import static org.onehippo.cm.model.ValueType.REFERENCE;
+import static org.onehippo.cm.model.ValueType.WEAKREFERENCE;
+import static org.onehippo.cm.model.ActionType.DELETE;
 
 /**
  * Applies definition nodes to JCR

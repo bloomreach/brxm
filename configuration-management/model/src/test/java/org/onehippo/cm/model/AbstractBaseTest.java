@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,31 +25,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionItem;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.PropertyOperation;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueFormatException;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.engine.parser.ParserException;
-import org.onehippo.cm.impl.model.GroupImpl;
+import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.impl.GroupImpl;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
-import static org.onehippo.cm.impl.model.ModelTestUtils.findByName;
-import static org.onehippo.cm.impl.model.ModelTestUtils.findByPath;
+import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.model.impl.ModelTestUtils.findByName;
+import static org.onehippo.cm.model.impl.ModelTestUtils.findByPath;
 
 public abstract class AbstractBaseTest {
 

@@ -13,15 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import org.onehippo.cm.api.model.Source;
 
 public class FileResourceOutputProvider implements ResourceOutputProvider {
     private final Path modulePath;

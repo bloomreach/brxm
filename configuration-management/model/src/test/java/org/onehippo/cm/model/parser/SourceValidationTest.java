@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.engine.parser;
+package org.onehippo.cm.model.parser;
 
 import java.io.StringReader;
 
 import org.junit.Test;
-import org.onehippo.cm.engine.AbstractBaseTest;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.ProjectImpl;
+import org.onehippo.cm.model.AbstractBaseTest;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
@@ -32,7 +32,7 @@ import org.yaml.snakeyaml.nodes.SequenceNode;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
 public class SourceValidationTest extends AbstractBaseTest {
 

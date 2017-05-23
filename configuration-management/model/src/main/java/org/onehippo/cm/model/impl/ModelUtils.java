@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
 import java.util.stream.Collectors;
 
-import org.onehippo.cm.api.model.ConfigurationItem;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionItem;
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.model.ConfigurationItem;
+import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.DefinitionItem;
+import org.onehippo.cm.model.Group;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.Project;
+import org.onehippo.cm.model.Source;
 
 public class ModelUtils {
     public static String formatModule(final Module module) {

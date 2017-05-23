@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.backend;
+package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,26 +32,26 @@ import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.action.ActionItem;
-import org.onehippo.cm.api.model.action.ActionType;
-import org.onehippo.cm.impl.model.ContentDefinitionImpl;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.ActionItem;
+import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.MapUtils.isNotEmpty;
-import static org.onehippo.cm.engine.Constants.BASELINE_NODE;
-import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
-import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
-import static org.onehippo.cm.engine.Constants.HCM_ROOT_NODE;
-import static org.onehippo.cm.engine.Constants.MODULE_SEQUENCE_NUMBER;
+import static org.onehippo.cm.model.Constants.BASELINE_NODE;
+import static org.onehippo.cm.model.Constants.CONTENT_TYPE;
+import static org.onehippo.cm.model.Constants.HCM_CONTENT_PATHS_APPLIED;
+import static org.onehippo.cm.model.Constants.HCM_ROOT_NODE;
+import static org.onehippo.cm.model.Constants.MODULE_SEQUENCE_NUMBER;
 
 /**
  * Applies content definitions to repository

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.impl.model.builder;
+package org.onehippo.cm.model.builder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,35 +22,35 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.api.model.ConfigurationItemCategory;
-import org.onehippo.cm.api.model.DefinitionItem;
-import org.onehippo.cm.api.model.PropertyOperation;
-import org.onehippo.cm.api.model.PropertyType;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.engine.SnsUtils;
-import org.onehippo.cm.impl.model.ConfigurationItemImpl;
-import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
-import org.onehippo.cm.impl.model.ConfigurationPropertyImpl;
-import org.onehippo.cm.impl.model.ContentDefinitionImpl;
-import org.onehippo.cm.impl.model.DefinitionItemImpl;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
-import org.onehippo.cm.impl.model.ModelUtils;
-import org.onehippo.cm.impl.model.ValueImpl;
+import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.DefinitionItem;
+import org.onehippo.cm.model.PropertyOperation;
+import org.onehippo.cm.model.PropertyType;
+import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.SnsUtils;
+import org.onehippo.cm.model.impl.ConfigurationItemImpl;
+import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
+import org.onehippo.cm.model.impl.ConfigurationPropertyImpl;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.DefinitionItemImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.ModelUtils;
+import org.onehippo.cm.model.impl.ValueImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.MIX_REFERENCEABLE;
-import static org.onehippo.cm.api.model.PropertyOperation.ADD;
-import static org.onehippo.cm.api.model.PropertyOperation.DELETE;
-import static org.onehippo.cm.api.model.PropertyOperation.OVERRIDE;
-import static org.onehippo.cm.api.model.PropertyOperation.REPLACE;
-import static org.onehippo.cm.engine.Constants.META_CATEGORY_KEY;
-import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
-import static org.onehippo.cm.engine.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
+import static org.onehippo.cm.model.PropertyOperation.ADD;
+import static org.onehippo.cm.model.PropertyOperation.DELETE;
+import static org.onehippo.cm.model.PropertyOperation.OVERRIDE;
+import static org.onehippo.cm.model.PropertyOperation.REPLACE;
+import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
+import static org.onehippo.cm.model.Constants.META_IGNORE_REORDERED_CHILDREN;
+import static org.onehippo.cm.model.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
 
 class ConfigurationTreeBuilder {
 

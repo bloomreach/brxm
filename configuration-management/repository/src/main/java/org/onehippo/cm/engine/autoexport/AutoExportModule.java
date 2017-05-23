@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.onehippo.cm.api.ConfigurationService;
+import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.modules.ConfigurableDaemonModule;
 import org.slf4j.Logger;

@@ -13,19 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.parser;
+package org.onehippo.cm.model.parser;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.NodeTypeDefinition;
-import org.onehippo.cm.api.model.PropertyType;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.NodeTypeDefinition;
+import org.onehippo.cm.model.PropertyType;
+import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.Value;
 
 /**
  * Collect a list of (YAML-)external resource files referred to by a {@link Source}.

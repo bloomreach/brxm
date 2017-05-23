@@ -13,11 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.DefinitionType;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.DefinitionType;
 
 public class ContentDefinitionImpl extends AbstractDefinitionImpl
         implements ContentDefinition {

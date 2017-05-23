@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.backend;
+package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,14 +31,15 @@ import javax.jcr.Value;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Before;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.engine.ConfigurationConfigService;
+import org.onehippo.cm.model.ConfigDefinition;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.testutils.jcr.event.EventCollector;
 import org.onehippo.testutils.jcr.event.EventPojo;
@@ -46,7 +47,7 @@ import org.onehippo.testutils.jcr.event.ExpectedEvents;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
+import static org.onehippo.cm.model.impl.ModelTestUtils.parseNoSort;
 
 /**
  * {@link ConfigurationConfigService} is a rather complex class, requiring a lot of unit tests.

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.mapper;
+package org.onehippo.cm.model.mapper;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.onehippo.cm.api.model.DefinitionNode;
+import org.onehippo.cm.model.DefinitionNode;
 
 public abstract class AbstractFileMapper implements ValueFileMapper {
 

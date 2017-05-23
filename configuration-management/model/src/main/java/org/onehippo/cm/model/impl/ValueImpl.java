@@ -13,15 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Calendar;
 
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueType;
+import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.ValueType;
 
 public class ValueImpl implements Value {
 

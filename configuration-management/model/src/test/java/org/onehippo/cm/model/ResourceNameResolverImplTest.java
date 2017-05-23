@@ -13,13 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cm.engine.serializer.ResourceNameResolver;
-import org.onehippo.cm.engine.serializer.ResourceNameResolverImpl;
+import org.onehippo.cm.model.serializer.ResourceNameResolver;
+import org.onehippo.cm.model.serializer.ResourceNameResolverImpl;
 
 
 public class ResourceNameResolverImplTest {

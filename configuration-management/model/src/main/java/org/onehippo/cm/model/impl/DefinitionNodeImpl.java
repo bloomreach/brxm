@@ -13,17 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.onehippo.cm.api.model.ConfigurationItemCategory;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.ValueType;
+import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.ValueType;
 
 public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
 

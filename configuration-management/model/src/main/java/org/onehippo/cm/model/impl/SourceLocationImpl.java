@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
-import org.onehippo.cm.api.model.SourceLocation;
+import org.onehippo.cm.model.SourceLocation;
 
 public class SourceLocationImpl implements SourceLocation {
 

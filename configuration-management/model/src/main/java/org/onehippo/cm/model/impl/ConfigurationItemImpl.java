@@ -13,17 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.model.ConfigurationItem;
-import org.onehippo.cm.api.model.ConfigurationNode;
-import org.onehippo.cm.api.model.DefinitionItem;
-import org.onehippo.cm.engine.SnsUtils;
+import org.onehippo.cm.model.ConfigurationItem;
+import org.onehippo.cm.model.ConfigurationNode;
+import org.onehippo.cm.model.DefinitionItem;
+import org.onehippo.cm.model.SnsUtils;
 
 public abstract class ConfigurationItemImpl implements ConfigurationItem {
 

@@ -22,8 +22,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
-import org.onehippo.cm.engine.Constants;
-import org.onehippo.cm.impl.model.SourceImpl;
+import org.onehippo.cm.model.Constants;
+import org.onehippo.cm.model.impl.SourceImpl;
 
 public class WebFileBundleInstruction extends InitializeInstruction {
 

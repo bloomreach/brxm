@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
 public class ContentSourceImpl extends SourceImpl {
     public ContentSourceImpl(String path, ModuleImpl module) {

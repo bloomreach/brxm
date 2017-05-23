@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.onehippo.cm.api.model.Orderable;
+import org.onehippo.cm.model.Orderable;
 
 /**
  * Dummy implementation of {@link Orderable} for testing the sorting of orderables.

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.backend;
+package org.onehippo.cm.engine;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-import org.onehippo.cm.api.model.ConfigurationModel;
+import org.onehippo.cm.model.ConfigurationModel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

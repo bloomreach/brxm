@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,33 +42,33 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.NodeTypeDefinition;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.action.ActionItem;
-import org.onehippo.cm.engine.parser.ConfigSourceParser;
-import org.onehippo.cm.engine.parser.ContentSourceParser;
-import org.onehippo.cm.engine.parser.ParserException;
-import org.onehippo.cm.engine.parser.SourceParser;
-import org.onehippo.cm.engine.serializer.ModuleDescriptorSerializer;
+import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.ConfigDefinition;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.NodeTypeDefinition;
+import org.onehippo.cm.model.Project;
+import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.ActionItem;
+import org.onehippo.cm.model.parser.ConfigSourceParser;
+import org.onehippo.cm.model.parser.ContentSourceParser;
+import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.parser.SourceParser;
+import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cm.engine.Constants.ACTIONS_YAML;
-import static org.onehippo.cm.engine.Constants.DEFAULT_DIGEST;
-import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
-import static org.onehippo.cm.engine.Constants.HCM_CONFIG_FOLDER;
-import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
-import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
+import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
+import static org.onehippo.cm.model.Constants.DEFAULT_DIGEST;
+import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
+import static org.onehippo.cm.model.Constants.HCM_CONTENT_FOLDER;
+import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
 
 public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 

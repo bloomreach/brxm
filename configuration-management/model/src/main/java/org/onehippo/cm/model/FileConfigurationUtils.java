@@ -13,21 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.impl.model.GroupImpl;
-
-import static org.onehippo.cm.engine.Constants.HCM_CONFIG_FOLDER;
-import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
+import org.onehippo.cm.model.impl.GroupImpl;
 
 public class FileConfigurationUtils {
 
@@ -37,15 +30,15 @@ public class FileConfigurationUtils {
         //TODO SS: review this if it still needed for initial esv conversion
         if (Files.isDirectory(moduleDescriptorPath)) {
             if (configHasMultipleModules) {
-                return moduleDescriptorPath.resolve(HCM_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
+                return moduleDescriptorPath.resolve(Constants.HCM_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
             } else {
-                return moduleDescriptorPath.resolve(HCM_CONFIG_FOLDER);
+                return moduleDescriptorPath.resolve(Constants.HCM_CONFIG_FOLDER);
             }
         }
         if (configHasMultipleModules) {
-            return moduleDescriptorPath.resolveSibling(HCM_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
+            return moduleDescriptorPath.resolveSibling(Constants.HCM_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
         } else {
-            return moduleDescriptorPath.resolveSibling(HCM_CONFIG_FOLDER);
+            return moduleDescriptorPath.resolveSibling(Constants.HCM_CONFIG_FOLDER);
         }
     }
 
@@ -54,15 +47,15 @@ public class FileConfigurationUtils {
         final Group group = project.getGroup();
         if (Files.isDirectory(moduleDescriptorPath)) {
             if (configHasMultipleModules) {
-                return moduleDescriptorPath.resolve(HCM_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
+                return moduleDescriptorPath.resolve(Constants.HCM_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
             } else {
-                return moduleDescriptorPath.resolve(HCM_CONTENT_FOLDER);
+                return moduleDescriptorPath.resolve(Constants.HCM_CONTENT_FOLDER);
             }
         }
         if (configHasMultipleModules) {
-            return moduleDescriptorPath.resolveSibling(HCM_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
+            return moduleDescriptorPath.resolveSibling(Constants.HCM_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
         } else {
-            return moduleDescriptorPath.resolveSibling(HCM_CONTENT_FOLDER);
+            return moduleDescriptorPath.resolveSibling(Constants.HCM_CONTENT_FOLDER);
         }
     }
 

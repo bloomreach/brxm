@@ -13,12 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
-import org.onehippo.cm.api.model.ConfigurationItemCategory;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionItem;
-import org.onehippo.cm.api.model.DefinitionNode;
+import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.DefinitionItem;
+import org.onehippo.cm.model.DefinitionNode;
 
 public abstract class DefinitionItemImpl implements DefinitionItem {
 

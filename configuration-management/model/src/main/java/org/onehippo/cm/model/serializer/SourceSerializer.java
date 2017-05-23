@@ -13,33 +13,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.serializer;
+package org.onehippo.cm.model.serializer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.ConfigurationItemCategory;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.DefinitionType;
-import org.onehippo.cm.api.model.NamespaceDefinition;
-import org.onehippo.cm.api.model.NodeTypeDefinition;
-import org.onehippo.cm.api.model.PropertyOperation;
-import org.onehippo.cm.api.model.PropertyType;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.api.model.WebFileBundleDefinition;
-import org.onehippo.cm.engine.BinaryItem;
-import org.onehippo.cm.engine.CopyItem;
-import org.onehippo.cm.engine.ModuleContext;
-import org.onehippo.cm.engine.PostProcessItem;
-import org.onehippo.cm.engine.mapper.ValueFileMapperProvider;
+import org.onehippo.cm.model.ConfigDefinition;
+import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.DefinitionType;
+import org.onehippo.cm.model.NamespaceDefinition;
+import org.onehippo.cm.model.NodeTypeDefinition;
+import org.onehippo.cm.model.PropertyOperation;
+import org.onehippo.cm.model.PropertyType;
+import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.WebFileBundleDefinition;
+import org.onehippo.cm.model.BinaryItem;
+import org.onehippo.cm.model.CopyItem;
+import org.onehippo.cm.model.ModuleContext;
+import org.onehippo.cm.model.PostProcessItem;
+import org.onehippo.cm.model.mapper.ValueFileMapperProvider;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -49,19 +49,19 @@ import org.yaml.snakeyaml.reader.StreamReader;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
-import static org.onehippo.cm.engine.Constants.DEFINITIONS;
-import static org.onehippo.cm.engine.Constants.META_CATEGORY_KEY;
-import static org.onehippo.cm.engine.Constants.META_DELETE_KEY;
-import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
-import static org.onehippo.cm.engine.Constants.META_ORDER_BEFORE_KEY;
-import static org.onehippo.cm.engine.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
-import static org.onehippo.cm.engine.Constants.OPERATION_KEY;
-import static org.onehippo.cm.engine.Constants.PATH_KEY;
-import static org.onehippo.cm.engine.Constants.PREFIX_KEY;
-import static org.onehippo.cm.engine.Constants.RESOURCE_KEY;
-import static org.onehippo.cm.engine.Constants.TYPE_KEY;
-import static org.onehippo.cm.engine.Constants.URI_KEY;
-import static org.onehippo.cm.engine.Constants.VALUE_KEY;
+import static org.onehippo.cm.model.Constants.DEFINITIONS;
+import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
+import static org.onehippo.cm.model.Constants.META_DELETE_KEY;
+import static org.onehippo.cm.model.Constants.META_IGNORE_REORDERED_CHILDREN;
+import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_KEY;
+import static org.onehippo.cm.model.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
+import static org.onehippo.cm.model.Constants.OPERATION_KEY;
+import static org.onehippo.cm.model.Constants.PATH_KEY;
+import static org.onehippo.cm.model.Constants.PREFIX_KEY;
+import static org.onehippo.cm.model.Constants.RESOURCE_KEY;
+import static org.onehippo.cm.model.Constants.TYPE_KEY;
+import static org.onehippo.cm.model.Constants.URI_KEY;
+import static org.onehippo.cm.model.Constants.VALUE_KEY;
 
 public class SourceSerializer extends AbstractBaseSerializer {
 

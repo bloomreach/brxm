@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.backend;
+package org.onehippo.cm.engine;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,22 +28,25 @@ import javax.jcr.RepositoryException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.action.ActionType;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModelTestUtils;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.engine.ContentProcessingService;
+import org.onehippo.cm.engine.JcrContentProcessingService;
+import org.onehippo.cm.engine.ValueConverter;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModelTestUtils;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
+import static org.onehippo.cm.model.impl.ModelTestUtils.parseNoSort;
 
 public class JcrContentProcessingServiceTest extends RepositoryTestCase {
 

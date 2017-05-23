@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,8 +22,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.ResourceInputProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

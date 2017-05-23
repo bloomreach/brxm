@@ -35,7 +35,7 @@
   <Loggers>
 
     <Logger name="org.onehippo.cm.migration" level="debug"/>
-    <Logger name="org.onehippo.cm.engine.parser.AbstractBaseParser" level="debug"/>
+    <Logger name="org.onehippo.cm.model.parser.AbstractBaseParser" level="debug"/>
 
     <Root level="info">
       <AppenderRef ref="console"/>

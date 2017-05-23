@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.mapper;
+package org.onehippo.cm.model.mapper;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.model.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.parser;
+package org.onehippo.cm.model.parser;
 
 import org.yaml.snakeyaml.nodes.Node;
 

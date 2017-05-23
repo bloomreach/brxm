@@ -27,16 +27,16 @@ import javax.jcr.PropertyType;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.PropertyOperation;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
-import org.onehippo.cm.impl.model.ConfigSourceImpl;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.SourceImpl;
+import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.PropertyOperation;
+import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.SourceImpl;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;

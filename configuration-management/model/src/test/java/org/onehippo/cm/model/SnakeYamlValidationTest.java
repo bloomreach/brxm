@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.io.StringReader;
 

@@ -13,24 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.parser;
+package org.onehippo.cm.model.parser;
 
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.ProjectImpl;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
 import org.yaml.snakeyaml.nodes.Node;
 
-import static org.onehippo.cm.engine.Constants.AFTER_KEY;
-import static org.onehippo.cm.engine.Constants.GROUPS_KEY;
-import static org.onehippo.cm.engine.Constants.GROUP_KEY;
-import static org.onehippo.cm.engine.Constants.MODULES_KEY;
-import static org.onehippo.cm.engine.Constants.MODULE_KEY;
-import static org.onehippo.cm.engine.Constants.PROJECTS_KEY;
-import static org.onehippo.cm.engine.Constants.PROJECT_KEY;
+import static org.onehippo.cm.model.Constants.AFTER_KEY;
+import static org.onehippo.cm.model.Constants.GROUPS_KEY;
+import static org.onehippo.cm.model.Constants.GROUP_KEY;
+import static org.onehippo.cm.model.Constants.MODULES_KEY;
+import static org.onehippo.cm.model.Constants.MODULE_KEY;
+import static org.onehippo.cm.model.Constants.PROJECTS_KEY;
+import static org.onehippo.cm.model.Constants.PROJECT_KEY;
 
 public class ModuleDescriptorParser extends AbstractBaseParser {
 

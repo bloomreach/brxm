@@ -13,38 +13,38 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.parser;
+package org.onehippo.cm.model.parser;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.ConfigurationItemCategory;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionType;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.engine.SnsUtils;
-import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
-import org.onehippo.cm.impl.model.ConfigSourceImpl;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.SourceImpl;
-import org.onehippo.cm.impl.model.WebFileBundleDefinitionImpl;
+import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.DefinitionType;
+import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.SnsUtils;
+import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.WebFileBundleDefinitionImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
-import static org.onehippo.cm.engine.Constants.DEFINITIONS;
-import static org.onehippo.cm.engine.Constants.META_CATEGORY_KEY;
-import static org.onehippo.cm.engine.Constants.META_DELETE_KEY;
-import static org.onehippo.cm.engine.Constants.META_IGNORE_REORDERED_CHILDREN;
-import static org.onehippo.cm.engine.Constants.META_ORDER_BEFORE_KEY;
-import static org.onehippo.cm.engine.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
-import static org.onehippo.cm.engine.Constants.PREFIX_KEY;
-import static org.onehippo.cm.engine.Constants.RESOURCE_KEY;
-import static org.onehippo.cm.engine.Constants.URI_KEY;
+import static org.onehippo.cm.model.Constants.DEFINITIONS;
+import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
+import static org.onehippo.cm.model.Constants.META_DELETE_KEY;
+import static org.onehippo.cm.model.Constants.META_IGNORE_REORDERED_CHILDREN;
+import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_KEY;
+import static org.onehippo.cm.model.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
+import static org.onehippo.cm.model.Constants.PREFIX_KEY;
+import static org.onehippo.cm.model.Constants.RESOURCE_KEY;
+import static org.onehippo.cm.model.Constants.URI_KEY;
 
 public class ConfigSourceParser extends SourceParser {
 

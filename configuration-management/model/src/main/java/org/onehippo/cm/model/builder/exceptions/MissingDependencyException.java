@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model.builder.exceptions;
+package org.onehippo.cm.model.builder.exceptions;
 
 public class MissingDependencyException extends RuntimeException {
 

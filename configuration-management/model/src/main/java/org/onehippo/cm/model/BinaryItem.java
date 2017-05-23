@@ -13,9 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
-import org.onehippo.cm.api.model.Value;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
 public final class BinaryItem implements PostProcessItem {

@@ -13,16 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.mapper;
+package org.onehippo.cm.model.mapper;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.PropertyType;
-import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.PropertyType;
+import org.onehippo.cm.model.Value;
 
 /**
  * File mapper for hippogallery:image & hippogallery:imageset node types

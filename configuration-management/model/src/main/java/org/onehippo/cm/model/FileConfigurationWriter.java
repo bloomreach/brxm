@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
@@ -27,14 +27,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.engine.serializer.ContentSourceSerializer;
-import org.onehippo.cm.engine.serializer.ModuleDescriptorSerializer;
-import org.onehippo.cm.engine.serializer.SourceSerializer;
-import org.onehippo.cm.impl.model.ConfigSourceImpl;
-import org.onehippo.cm.impl.model.GroupImpl;
+import org.onehippo.cm.model.serializer.ContentSourceSerializer;
+import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
+import org.onehippo.cm.model.serializer.SourceSerializer;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.GroupImpl;
 import org.yaml.snakeyaml.nodes.Node;
 
 public class FileConfigurationWriter {

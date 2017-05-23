@@ -13,16 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.serializer;
+package org.onehippo.cm.model.serializer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.engine.ModuleContext;
-import org.onehippo.cm.engine.PostProcessItem;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.ModuleContext;
+import org.onehippo.cm.model.PostProcessItem;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;

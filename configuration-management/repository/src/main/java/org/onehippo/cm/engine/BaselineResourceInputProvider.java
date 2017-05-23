@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.backend;
+package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,17 +29,17 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.NodeIterable;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cm.engine.Constants.ACTIONS_NODE;
-import static org.onehippo.cm.engine.Constants.ACTIONS_YAML;
-import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
-import static org.onehippo.cm.engine.Constants.DEFINITIONS_TYPE;
-import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
-import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_NODE;
+import static org.onehippo.cm.model.Constants.ACTIONS_NODE;
+import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
+import static org.onehippo.cm.model.Constants.CONTENT_TYPE;
+import static org.onehippo.cm.model.Constants.DEFINITIONS_TYPE;
+import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
+import static org.onehippo.cm.model.Constants.MODULE_DESCRIPTOR_NODE;
 
 /**
  * Provides access to InputStreams based on JCR Nodes stored in the configuration baseline.

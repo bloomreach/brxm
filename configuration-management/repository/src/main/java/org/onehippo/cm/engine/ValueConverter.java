@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.backend;
+package org.onehippo.cm.engine;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,11 +29,11 @@ import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 
 import org.apache.commons.io.IOUtils;
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.impl.model.ModelUtils;
+import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.ModelUtils;
 
 /**
  * Config {@link Value} -> JCR {@link javax.jcr.Value} converter

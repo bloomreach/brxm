@@ -1,4 +1,4 @@
-package org.onehippo.cms7.autoexport;/*
+/*
  *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@ package org.onehippo.cms7.autoexport;/*
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.onehippo.cm.engine.autoexport;
 
 import java.util.Collection;
 import java.util.List;

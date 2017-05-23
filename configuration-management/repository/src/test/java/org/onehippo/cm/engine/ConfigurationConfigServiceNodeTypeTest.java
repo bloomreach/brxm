@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.backend;
+package org.onehippo.cm.engine;
 
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.junit.Test;
-import org.onehippo.cm.api.model.ConfigurationModel;
+import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.testutils.jcr.event.ExpectedEvents;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 

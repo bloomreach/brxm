@@ -13,21 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Set;
 
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.engine.parser.SourceResourceCrawler;
-import org.onehippo.cm.engine.serializer.ResourceNameResolver;
-import org.onehippo.cm.engine.serializer.ResourceNameResolverImpl;
-import org.onehippo.cm.impl.model.ConfigSourceImpl;
-
-import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
+import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.parser.SourceResourceCrawler;
+import org.onehippo.cm.model.serializer.ResourceNameResolver;
+import org.onehippo.cm.model.serializer.ResourceNameResolverImpl;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
 
 /**
  * Incapsulates module's input/output providers and unique name resolver
@@ -53,7 +49,7 @@ public class ModuleContext {
     public ModuleContext(Module module, Path moduleRootPath) {
         this.module = module;
         this.multiModule = false;
-        this.moduleDescriptorPath = moduleRootPath.resolve(HCM_MODULE_YAML);
+        this.moduleDescriptorPath = moduleRootPath.resolve(Constants.HCM_MODULE_YAML);
     }
 
     public ModuleContext(Module module, Path moduleDescriptorPath, boolean multiModule) throws IOException {

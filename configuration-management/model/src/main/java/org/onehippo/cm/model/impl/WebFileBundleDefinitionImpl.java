@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
-import org.onehippo.cm.api.model.DefinitionType;
-import org.onehippo.cm.api.model.WebFileBundleDefinition;
+import org.onehippo.cm.model.DefinitionType;
+import org.onehippo.cm.model.WebFileBundleDefinition;
 
 public class WebFileBundleDefinitionImpl extends AbstractDefinitionImpl implements WebFileBundleDefinition {
 

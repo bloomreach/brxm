@@ -13,13 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.api;
+package org.onehippo.cm;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.model.Source;
 
 /**
  * Abstracts access to configuration module content from various storage formats, e.g. classpath, the native FileSystem,

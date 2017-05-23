@@ -13,19 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.parser;
+package org.onehippo.cm.model.parser;
 
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
-import org.onehippo.cm.api.model.action.ActionItem;
-import org.onehippo.cm.api.model.action.ActionType;
-import org.onehippo.cm.engine.AbstractBaseTest;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.ProjectImpl;
+import org.onehippo.cm.model.ActionItem;
+import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.AbstractBaseTest;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

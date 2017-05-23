@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.parser;
+package org.onehippo.cm.model.parser;
 
 import java.io.InputStream;
 import java.util.LinkedHashSet;
@@ -21,14 +21,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.model.action.ActionItem;
-import org.onehippo.cm.api.model.action.ActionType;
-import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.model.ActionItem;
+import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 
-import static org.onehippo.cm.engine.Constants.ACTION_LISTS_NODE;
+import static org.onehippo.cm.model.Constants.ACTION_LISTS_NODE;
 
 /**
  * Parse an action list file, like for example

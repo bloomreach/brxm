@@ -13,28 +13,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.parser;
+package org.onehippo.cm.model.parser;
 
 import java.util.List;
 import java.util.Map;
 
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.impl.model.ContentDefinitionImpl;
-import org.onehippo.cm.impl.model.ContentSourceImpl;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.ContentSourceImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 
-import static org.onehippo.cm.engine.Constants.META_CATEGORY_KEY;
-import static org.onehippo.cm.engine.Constants.META_KEY_PREFIX;
-import static org.onehippo.cm.engine.Constants.OPERATION_KEY;
-import static org.onehippo.cm.engine.Constants.PATH_KEY;
-import static org.onehippo.cm.engine.Constants.RESOURCE_KEY;
-import static org.onehippo.cm.engine.Constants.TYPE_KEY;
-import static org.onehippo.cm.engine.Constants.VALUE_KEY;
+import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
+import static org.onehippo.cm.model.Constants.META_KEY_PREFIX;
+import static org.onehippo.cm.model.Constants.OPERATION_KEY;
+import static org.onehippo.cm.model.Constants.PATH_KEY;
+import static org.onehippo.cm.model.Constants.RESOURCE_KEY;
+import static org.onehippo.cm.model.Constants.TYPE_KEY;
+import static org.onehippo.cm.model.Constants.VALUE_KEY;
 
 public class ContentSourceParser extends SourceParser {
     public ContentSourceParser(ResourceInputProvider resourceInputProvider) {

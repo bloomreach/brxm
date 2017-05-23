@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.impl.model.builder;
+package org.onehippo.cm.model.builder;
 
 import java.nio.file.FileSystem;
 import java.util.ArrayList;
@@ -26,15 +26,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.impl.model.ConfigurationModelImpl;
-import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModelUtils;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.ProjectImpl;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.Group;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModelUtils;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.backend;
+package org.onehippo.cm.engine;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -52,24 +52,24 @@ import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.ConfigurationItemCategory;
-import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.model.ConfigurationNode;
-import org.onehippo.cm.api.model.ConfigurationProperty;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.NamespaceDefinition;
-import org.onehippo.cm.api.model.NodeTypeDefinition;
-import org.onehippo.cm.api.model.PropertyType;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.api.model.WebFileBundleDefinition;
-import org.onehippo.cm.engine.SnsUtils;
-import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
-import org.onehippo.cm.impl.model.ConfigurationPropertyImpl;
-import org.onehippo.cm.impl.model.ModelUtils;
-import org.onehippo.cm.impl.model.ValueImpl;
+import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ConfigurationNode;
+import org.onehippo.cm.model.ConfigurationProperty;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.NamespaceDefinition;
+import org.onehippo.cm.model.NodeTypeDefinition;
+import org.onehippo.cm.model.PropertyType;
+import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.WebFileBundleDefinition;
+import org.onehippo.cm.model.SnsUtils;
+import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
+import org.onehippo.cm.model.impl.ConfigurationPropertyImpl;
+import org.onehippo.cm.model.impl.ModelUtils;
+import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;

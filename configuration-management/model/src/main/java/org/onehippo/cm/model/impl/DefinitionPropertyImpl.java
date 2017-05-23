@@ -13,14 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.PropertyOperation;
-import org.onehippo.cm.api.model.PropertyType;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueFormatException;
-import org.onehippo.cm.api.model.ValueType;
+import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.PropertyOperation;
+import org.onehippo.cm.model.PropertyType;
+import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.ValueFormatException;
+import org.onehippo.cm.model.ValueType;
 
 public class DefinitionPropertyImpl extends DefinitionItemImpl implements DefinitionProperty {
 

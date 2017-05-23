@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,11 +27,11 @@ import java.util.function.BiPredicate;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.onehippo.cm.engine.parser.ParserException;
+import org.onehippo.cm.model.parser.ParserException;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
-import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
 public class SerializerTest extends AbstractBaseTest {
 
@@ -40,7 +40,7 @@ public class SerializerTest extends AbstractBaseTest {
 
     @Test
     public void read_write_hierarchy_test() throws IOException, ParserException {
-        readAndWrite("/parser/hierarchy_test/"+Constants.HCM_MODULE_YAML);
+        readAndWrite("/parser/hierarchy_test/"+ Constants.HCM_MODULE_YAML);
     }
 
     @Test

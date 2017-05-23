@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -31,17 +31,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.engine.parser.ParserException;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.onehippo.cm.engine.Constants.BOOTSTRAP_MODULES_PROPERTY;
-import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
-import static org.onehippo.cm.engine.Constants.MAVEN_MODULE_DESCRIPTOR;
-import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 
 public class ClasspathConfigurationModelReader {
 
@@ -102,8 +96,8 @@ public class ClasspathConfigurationModelReader {
     protected List<Map<String, GroupImpl>> readModulesFromSourceFiles(final boolean verifyOnly) throws IOException, ParserException {
         // if repo.bootstrap.modules and project.basedir are defined, load modules from the filesystem before loading
         // additional modules from the classpath
-        final String projectDir = System.getProperty(PROJECT_BASEDIR_PROPERTY);
-        final String sourceModules = System.getProperty(BOOTSTRAP_MODULES_PROPERTY);
+        final String projectDir = System.getProperty(Constants.PROJECT_BASEDIR_PROPERTY);
+        final String sourceModules = System.getProperty(Constants.BOOTSTRAP_MODULES_PROPERTY);
         final List<Map<String, GroupImpl>> groupsFromSourceFiles = new ArrayList<>();
         if (StringUtils.isNotBlank(projectDir) && StringUtils.isNotBlank(sourceModules)) {
 
@@ -114,11 +108,11 @@ public class ClasspathConfigurationModelReader {
             final String[] mvnModulePaths = sourceModules.split(";");
             for (String mvnModulePath : mvnModulePaths) {
                 // use maven conventions to find a module descriptor, then parse it
-                final Path moduleDescriptorPath = projectPath.resolve(mvnModulePath).resolve(MAVEN_MODULE_DESCRIPTOR);
+                final Path moduleDescriptorPath = projectPath.resolve(mvnModulePath).resolve(Constants.MAVEN_MODULE_DESCRIPTOR);
 
                 if (!moduleDescriptorPath.toFile().exists()) {
                     throw new IllegalStateException("Cannot find module descriptor for module in "
-                            + BOOTSTRAP_MODULES_PROPERTY + ", expected: " + moduleDescriptorPath);
+                            + Constants.BOOTSTRAP_MODULES_PROPERTY + ", expected: " + moduleDescriptorPath);
                 }
 
                 log.debug("Loading module descriptor from filesystem here: {}", moduleDescriptorPath);
@@ -151,7 +145,7 @@ public class ClasspathConfigurationModelReader {
 
         // find all the classpath resources with a filename that matches the expected module descriptor filename
         // and also located at the root of a classpath entry
-        final Enumeration<URL> resources = classLoader.getResources(HCM_MODULE_YAML);
+        final Enumeration<URL> resources = classLoader.getResources(Constants.HCM_MODULE_YAML);
         while (resources.hasMoreElements()) {
             final URL resource = resources.nextElement();
 
@@ -168,7 +162,7 @@ public class ClasspathConfigurationModelReader {
                 final FileSystem fs = FileSystems.newFileSystem(jarPath, null);
 
                 // since this FS represents a jar, we should look for the descriptor at the root of the FS
-                final Path moduleDescriptorPath = fs.getPath(HCM_MODULE_YAML);
+                final Path moduleDescriptorPath = fs.getPath(Constants.HCM_MODULE_YAML);
                 final PathConfigurationReader.ReadResult result =
                         new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
 

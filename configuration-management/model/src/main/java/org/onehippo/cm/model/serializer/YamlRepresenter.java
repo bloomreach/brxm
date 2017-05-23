@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.serializer;
+package org.onehippo.cm.model.serializer;
 
 import java.util.Calendar;
 import java.util.Date;

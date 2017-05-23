@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,17 +27,17 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Orderable;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.engine.parser.ConfigSourceParser;
-import org.onehippo.cm.engine.parser.ContentSourceParser;
+import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.ConfigDefinition;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.Group;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.Orderable;
+import org.onehippo.cm.model.Project;
+import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.parser.ConfigSourceParser;
+import org.onehippo.cm.model.parser.ContentSourceParser;
 
 public class ModelTestUtils {
 

@@ -34,13 +34,13 @@ import javax.jcr.observation.ObservationManager;
 
 import org.hippoecm.repository.api.RevisionEvent;
 import org.hippoecm.repository.api.RevisionEventJournal;
-import org.onehippo.cm.api.ConfigurationService;
-import org.onehippo.cm.api.model.ConfigurationItemCategory;
-import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.model.ConfigurationNode;
-import org.onehippo.cm.engine.SnsUtils;
+import org.onehippo.cm.ConfigurationService;
+import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ConfigurationNode;
+import org.onehippo.cm.model.SnsUtils;
 
-import static org.onehippo.cm.engine.Constants.HCM_ROOT_NODE;
+import static org.onehippo.cm.model.Constants.HCM_ROOT_NODE;
 
 public class EventJournalProcessor {
 

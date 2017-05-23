@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,22 +28,12 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 import org.junit.Test;
-import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.PropertyOperation;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.engine.parser.ConfigSourceParser;
-import org.onehippo.cm.engine.parser.ParserException;
-import org.onehippo.cm.engine.parser.SourceParser;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.ProjectImpl;
+import org.onehippo.cm.model.parser.ConfigSourceParser;
+import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.parser.SourceParser;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -52,7 +42,7 @@ public class ParserValueTest extends AbstractBaseTest {
 
     @Test
     public void expect_value_test_loads() throws IOException, ParserException, URISyntaxException {
-        final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/value_test/"+Constants.HCM_MODULE_YAML);
+        final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/value_test/"+ Constants.HCM_MODULE_YAML);
         final Map<String, GroupImpl> groups = result.getGroups();
 
         assertEquals(1, groups.size());

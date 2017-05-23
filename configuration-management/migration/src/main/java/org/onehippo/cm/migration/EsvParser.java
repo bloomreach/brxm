@@ -26,7 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.onehippo.cm.impl.model.SourceLocationImpl;
+import org.onehippo.cm.model.impl.SourceLocationImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;

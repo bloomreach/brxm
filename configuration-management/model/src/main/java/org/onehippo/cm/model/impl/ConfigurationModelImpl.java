@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -34,21 +34,21 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.model.ConfigurationNode;
-import org.onehippo.cm.api.model.ConfigurationProperty;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.NamespaceDefinition;
-import org.onehippo.cm.api.model.NodeTypeDefinition;
-import org.onehippo.cm.api.model.WebFileBundleDefinition;
+import org.onehippo.cm.model.ConfigDefinition;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ConfigurationNode;
+import org.onehippo.cm.model.ConfigurationProperty;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.Group;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.NamespaceDefinition;
+import org.onehippo.cm.model.NodeTypeDefinition;
+import org.onehippo.cm.model.WebFileBundleDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cm.engine.Constants.DEFAULT_DIGEST;
-import static org.onehippo.cm.engine.SnsUtils.createIndexedName;
+import static org.onehippo.cm.model.Constants.DEFAULT_DIGEST;
+import static org.onehippo.cm.model.SnsUtils.createIndexedName;
 
 public class ConfigurationModelImpl implements ConfigurationModel {
 

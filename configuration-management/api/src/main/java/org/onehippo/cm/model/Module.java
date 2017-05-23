@@ -13,14 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.api.model;
+package org.onehippo.cm.model;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.action.ActionItem;
+import org.onehippo.cm.ResourceInputProvider;
 
 public interface Module extends Orderable {
 

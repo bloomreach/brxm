@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.parser;
+package org.onehippo.cm.model.parser;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -26,17 +26,18 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.ResourceInputProvider;
-import org.onehippo.cm.api.model.ConfigurationItemCategory;
-import org.onehippo.cm.api.model.PropertyOperation;
-import org.onehippo.cm.api.model.PropertyType;
-import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.impl.model.ContentDefinitionImpl;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.ValueImpl;
+import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.PropertyOperation;
+import org.onehippo.cm.model.PropertyType;
+import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.Source;
 import org.yaml.snakeyaml.constructor.Construct;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -46,13 +47,13 @@ import org.yaml.snakeyaml.nodes.Tag;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
-import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
-import static org.onehippo.cm.engine.Constants.META_CATEGORY_KEY;
-import static org.onehippo.cm.engine.Constants.OPERATION_KEY;
-import static org.onehippo.cm.engine.Constants.PATH_KEY;
-import static org.onehippo.cm.engine.Constants.RESOURCE_KEY;
-import static org.onehippo.cm.engine.Constants.TYPE_KEY;
-import static org.onehippo.cm.engine.Constants.VALUE_KEY;
+import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
+import static org.onehippo.cm.model.Constants.OPERATION_KEY;
+import static org.onehippo.cm.model.Constants.PATH_KEY;
+import static org.onehippo.cm.model.Constants.RESOURCE_KEY;
+import static org.onehippo.cm.model.Constants.TYPE_KEY;
+import static org.onehippo.cm.model.Constants.VALUE_KEY;
 
 public abstract class SourceParser extends AbstractBaseParser {
 
@@ -93,7 +94,7 @@ public abstract class SourceParser extends AbstractBaseParser {
     }
 
     /**
-     * Parses a YAML source file from the given {@link InputStream} and adds a {@link org.onehippo.cm.api.model.Source}
+     * Parses a YAML source file from the given {@link InputStream} and adds a {@link Source}
      * to the given {@link ModuleImpl}.
      * @param inputStream  the {@link InputStream} to read the YAML source file from
      * @param relativePath the relative path from the module, used in the model

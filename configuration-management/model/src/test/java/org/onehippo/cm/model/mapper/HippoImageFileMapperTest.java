@@ -13,20 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.mapper;
+package org.onehippo.cm.model.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
-import org.onehippo.cm.impl.model.ConfigSourceImpl;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.ProjectImpl;
-import org.onehippo.cm.impl.model.SourceImpl;
-import org.onehippo.cm.impl.model.ValueImpl;
+import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

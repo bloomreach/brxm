@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.backend;
+package org.onehippo.cm.engine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +22,10 @@ import java.util.List;
 import javax.jcr.Session;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.onehippo.cm.api.ConfigurationService;
-import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.engine.ClasspathConfigurationModelReader;
-import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.ConfigurationService;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ClasspathConfigurationModelReader;
+import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.onehippo.repository.bootstrap.PostStartupTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

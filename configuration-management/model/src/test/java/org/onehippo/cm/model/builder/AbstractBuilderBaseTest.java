@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.impl.model.builder;
+package org.onehippo.cm.model.builder;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.onehippo.cm.api.model.ConfigurationProperty;
-import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.model.ConfigurationProperty;
+import org.onehippo.cm.model.Value;
 
 public abstract class AbstractBuilderBaseTest {
     protected String valuesToString(final ConfigurationProperty property) {

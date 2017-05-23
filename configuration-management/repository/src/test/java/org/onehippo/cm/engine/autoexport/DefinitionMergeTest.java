@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.merge;
+package org.onehippo.cm.engine.autoexport;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -27,23 +27,20 @@ import java.util.Set;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.onehippo.cm.engine.Constants;
-import org.onehippo.cm.engine.FileConfigurationWriter;
-import org.onehippo.cm.engine.ModuleContext;
-import org.onehippo.cm.engine.PathConfigurationReader;
-import org.onehippo.cm.engine.SerializerTest;
-import org.onehippo.cm.impl.model.ConfigurationModelImpl;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
-import org.onehippo.cms7.autoexport.AutoExportConfigFactory;
-import org.onehippo.cms7.autoexport.Configuration;
-import org.onehippo.cms7.autoexport.DefinitionMergeService;
+import org.onehippo.cm.model.Constants;
+import org.onehippo.cm.model.FileConfigurationWriter;
+import org.onehippo.cm.model.ModuleContext;
+import org.onehippo.cm.model.PathConfigurationReader;
+import org.onehippo.cm.model.SerializerTest;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.singletonList;
-import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
 public class DefinitionMergeTest {
 

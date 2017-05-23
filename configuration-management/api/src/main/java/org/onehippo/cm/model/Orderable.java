@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.api.model;
+package org.onehippo.cm.model;
 
 import java.util.Set;
 

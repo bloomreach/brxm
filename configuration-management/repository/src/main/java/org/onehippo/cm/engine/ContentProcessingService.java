@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.backend;
+package org.onehippo.cm.engine;
 
 import java.io.IOException;
 
@@ -21,9 +21,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.action.ActionType;
+import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.ActionType;
 
 /**
  * Applies content definitions

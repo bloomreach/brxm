@@ -24,13 +24,13 @@ import java.util.Stack;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.json.JSONObject;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
-import org.onehippo.cm.impl.model.ConfigSourceImpl;
-import org.onehippo.cm.impl.model.DefinitionNodeImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.SourceImpl;
-import org.onehippo.cm.impl.model.ValueImpl;
+import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
 
 public class ResourcebundlesInitializeInstruction extends InitializeInstruction {
 

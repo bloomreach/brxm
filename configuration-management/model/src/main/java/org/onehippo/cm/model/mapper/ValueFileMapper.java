@@ -13,9 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.mapper;
+package org.onehippo.cm.model.mapper;
 
-import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.model.Value;
 
 /**
  * Value to File mapper. Maps JCR value to filename using smart name resolvers

@@ -23,8 +23,8 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Configuration Management Backend</name>
-  <artifactId>hippo-configuration-management-backend</artifactId>
+  <name>Hippo Configuration Management Repository</name>
+  <artifactId>hippo-configuration-management-repository</artifactId>
 
   <dependencies>
     <dependency>
@@ -34,7 +34,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms</groupId>
-      <artifactId>hippo-configuration-management-engine</artifactId>
+      <artifactId>hippo-configuration-management-model</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -81,6 +81,10 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-collections4</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
 
     <!-- test -->
 
@@ -91,7 +95,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms</groupId>
-      <artifactId>hippo-configuration-management-engine</artifactId>
+      <artifactId>hippo-configuration-management-model</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
       <type>test-jar</type>

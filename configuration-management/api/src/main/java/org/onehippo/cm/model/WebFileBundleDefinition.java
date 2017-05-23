@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.api.model;
+package org.onehippo.cm.model;
 
 public interface WebFileBundleDefinition extends Definition {
     String getName();

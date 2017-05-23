@@ -13,10 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
-import org.onehippo.cm.api.model.DefinitionType;
-import org.onehippo.cm.api.model.NodeTypeDefinition;
+import org.onehippo.cm.model.DefinitionType;
+import org.onehippo.cm.model.NodeTypeDefinition;
 
 public class NodeTypeDefinitionImpl extends AbstractDefinitionImpl implements NodeTypeDefinition {
 

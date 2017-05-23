@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.serializer;
+package org.onehippo.cm.model.serializer;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,24 +23,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Orderable;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.impl.model.GroupImpl;
+import org.onehippo.cm.model.Group;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.Orderable;
+import org.onehippo.cm.model.Project;
+import org.onehippo.cm.model.impl.GroupImpl;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
-import static org.onehippo.cm.engine.Constants.AFTER_KEY;
-import static org.onehippo.cm.engine.Constants.GROUPS_KEY;
-import static org.onehippo.cm.engine.Constants.GROUP_KEY;
-import static org.onehippo.cm.engine.Constants.MODULES_KEY;
-import static org.onehippo.cm.engine.Constants.MODULE_KEY;
-import static org.onehippo.cm.engine.Constants.PROJECTS_KEY;
-import static org.onehippo.cm.engine.Constants.PROJECT_KEY;
+import static org.onehippo.cm.model.Constants.AFTER_KEY;
+import static org.onehippo.cm.model.Constants.GROUPS_KEY;
+import static org.onehippo.cm.model.Constants.GROUP_KEY;
+import static org.onehippo.cm.model.Constants.MODULES_KEY;
+import static org.onehippo.cm.model.Constants.MODULE_KEY;
+import static org.onehippo.cm.model.Constants.PROJECTS_KEY;
+import static org.onehippo.cm.model.Constants.PROJECT_KEY;
 
 
 public class ModuleDescriptorSerializer extends AbstractBaseSerializer {

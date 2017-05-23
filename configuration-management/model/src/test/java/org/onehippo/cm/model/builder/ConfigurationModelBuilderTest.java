@@ -14,33 +14,34 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.impl.model.builder;
+package org.onehippo.cm.model.builder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.onehippo.cm.api.model.ConfigurationModel;
-import org.onehippo.cm.api.model.ConfigurationNode;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.NamespaceDefinition;
-import org.onehippo.cm.api.model.NodeTypeDefinition;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.WebFileBundleDefinition;
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.ProjectImpl;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ConfigurationNode;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.Group;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.NamespaceDefinition;
+import org.onehippo.cm.model.NodeTypeDefinition;
+import org.onehippo.cm.model.Project;
+import org.onehippo.cm.model.WebFileBundleDefinition;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.ModelTestUtils;
 
 import com.google.common.collect.ImmutableSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static org.onehippo.cm.impl.model.ModelTestUtils.loadYAMLResource;
-import static org.onehippo.cm.impl.model.ModelTestUtils.loadYAMLString;
+import static org.onehippo.cm.model.impl.ModelTestUtils.loadYAMLResource;
+import static org.onehippo.cm.model.impl.ModelTestUtils.loadYAMLString;
 
 public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
 
@@ -326,7 +327,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         final GroupImpl c1 = new GroupImpl("c1");
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
-        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
 
         ConfigurationModel model = new ConfigurationModelBuilder().push(c1).build();
 
@@ -350,8 +351,8 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         final GroupImpl c1 = new GroupImpl("c1");
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
-        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
-        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m1);
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m1);
 
         ConfigurationModel model = new ConfigurationModelBuilder().push(c1).build();
 
@@ -371,8 +372,8 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         final GroupImpl c1 = new GroupImpl("c1");
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
-        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m1);
-        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m1);
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
 
         ConfigurationModel model = new ConfigurationModelBuilder().push(c1).build();
 
@@ -397,8 +398,8 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
                 + "    /a/b:\n"
                 + "      propertyX: blaX";
 
-        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
-        loadYAMLString(yaml, m1);
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
+        ModelTestUtils.loadYAMLString(yaml, m1);
 
         ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
 
@@ -419,8 +420,8 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
                 + "  cnd:\n"
                 + "  - dummy CND content";
 
-        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
-        loadYAMLString(yaml, m1);
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
+        ModelTestUtils.loadYAMLString(yaml, m1);
 
         ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
 
@@ -442,7 +443,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
                 + "  - dummy CND content\n"
                 + "  - alphabetically earlier dummy CND";
 
-        loadYAMLString(yaml, m1);
+        ModelTestUtils.loadYAMLString(yaml, m1);
 
         ConfigurationModel model = new ConfigurationModelBuilder().push(c1).build();
 
@@ -460,7 +461,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
                 + "  - dummy\n"
                 + "  - another";
 
-        loadYAMLString(yaml, m1);
+        ModelTestUtils.loadYAMLString(yaml, m1);
 
         final ConfigurationModel model = new ConfigurationModelBuilder().push(c1).build();
 
@@ -478,7 +479,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
                 + "  webfilebundle:\n"
                 + "  - dummy\n";
 
-        loadYAMLString(yaml1, m1);
+        ModelTestUtils.loadYAMLString(yaml1, m1);
 
         final GroupImpl c2 = new GroupImpl("c2");
         final ModuleImpl m2 = c2.addProject("p2").addModule("m2");
@@ -487,7 +488,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
                 + "  webfilebundle:\n"
                 + "  - another";
 
-        loadYAMLString(yaml2, m2);
+        ModelTestUtils.loadYAMLString(yaml2, m2);
 
         final ConfigurationModel model = new ConfigurationModelBuilder().push(c1).push(c2).build();
 
@@ -505,12 +506,12 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
                 + "  webfilebundle:\n"
                 + "  - name";
 
-        loadYAMLString(yaml, m1);
+        ModelTestUtils.loadYAMLString(yaml, m1);
 
         final GroupImpl c2 = new GroupImpl("c2");
         final ModuleImpl m2 = c2.addProject("p2").addModule("m2");
 
-        loadYAMLString(yaml, m2);
+        ModelTestUtils.loadYAMLString(yaml, m2);
 
         final ConfigurationModelBuilder builder = new ConfigurationModelBuilder().push(c1).push(c2);
         try {

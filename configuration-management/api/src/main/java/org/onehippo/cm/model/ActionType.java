@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.api.model.action;
+package org.onehippo.cm.model;
 
 /**
  * Action type

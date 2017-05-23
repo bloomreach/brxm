@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.model.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.impl.model.builder.OrderableListSorter;
+import org.onehippo.cm.model.Group;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.Project;
+import org.onehippo.cm.model.builder.OrderableListSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

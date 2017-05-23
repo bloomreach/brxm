@@ -13,25 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.io.IOException;
 import java.util.Map;
 
 import org.junit.Test;
-import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.DefinitionNode;
-import org.onehippo.cm.api.model.Group;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.NamespaceDefinition;
-import org.onehippo.cm.api.model.NodeTypeDefinition;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.PropertyOperation;
-import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.engine.parser.ParserException;
-import org.onehippo.cm.impl.model.GroupImpl;
+import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.impl.GroupImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -41,7 +30,7 @@ public class HierarchyTest extends AbstractBaseTest {
 
     @Test
     public void expect_hierarchy_test_loads() throws IOException, ParserException {
-        final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/hierarchy_test/"+Constants.HCM_MODULE_YAML);
+        final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/hierarchy_test/"+ Constants.HCM_MODULE_YAML);
         final Map<String, GroupImpl> groups = result.getGroups();
         assertEquals(2, groups.size());
 

@@ -13,14 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.model;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import org.onehippo.cm.impl.model.GroupImpl;
-import org.onehippo.cm.impl.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 
 public class ConfigurationVerifier {
 
