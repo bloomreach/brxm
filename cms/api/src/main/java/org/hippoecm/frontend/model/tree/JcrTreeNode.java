@@ -43,7 +43,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
 
     static final int DETACHING = 0x00000001;
 
-    private List<? extends TreeNode> children;
+    private List<IJcrTreeNode> children;
 
     private final int hashCode;
     private boolean reloadChildren = true;
@@ -137,6 +137,18 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
 
     public boolean getAllowsChildren() {
         return true;
+    }
+
+    /**
+     * Ensure child tree nodes sorted properly.
+     */
+    public void ensureChildrenSorted() {
+        try {
+            ensureChildrenLoaded();
+            sortChildTreeNodes(children);
+        } catch (RepositoryException e) {
+            log.error("Failed to ensure children sorted.", e);
+        }
     }
 
     // implement IDetachable
@@ -242,7 +254,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
         if (nodeModel.getObject() == null) {
             reloadChildren = false;
             reloadChildCount = false;
-            children = new ArrayList<TreeNode>();
+            children = new ArrayList<>();
             childCount = 0;
         } else if (children == null || reloadChildren) {
             try {
@@ -250,7 +262,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
                 childCount = children.size();
             } catch (RepositoryException e) {
                 log.warn("Unable to load children, setting empty list: " + e.getMessage());
-                children = new ArrayList<TreeNode>();
+                children = new ArrayList<>();
                 childCount = 0;
             }
             reloadChildren = false;

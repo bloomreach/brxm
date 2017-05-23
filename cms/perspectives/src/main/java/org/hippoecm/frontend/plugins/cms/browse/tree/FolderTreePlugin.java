@@ -231,6 +231,8 @@ public class FolderTreePlugin extends RenderPlugin {
             @Override
             public void onTargetRespond(final AjaxRequestTarget target, boolean dirty) {
                 if (dirty) {
+                    rootNode.ensureChildrenSorted();
+                    tree.setDefaultModelObject(treeModel);
                     target.appendJavaScript(treeHelperBehavior.getRenderString());
                 }
             }
