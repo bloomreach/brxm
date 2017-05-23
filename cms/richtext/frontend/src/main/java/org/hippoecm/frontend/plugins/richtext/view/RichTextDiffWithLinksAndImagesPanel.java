@@ -1,12 +1,12 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,10 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
@@ -35,7 +32,6 @@ import org.hippoecm.frontend.plugins.richtext.UuidConverterBuilder;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
-import org.hippoecm.frontend.plugins.richtext.model.BrowsableModel;
 import org.hippoecm.frontend.plugins.standards.diff.DiffService;
 import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;
 import org.hippoecm.frontend.service.IBrowseService;
@@ -49,36 +45,27 @@ import org.slf4j.LoggerFactory;
  * document. Elements that have been added to or removed from the base version of the model are marked with green and
  * red, respectively.
  */
-public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPanel {
-
-    private static final CssResourceReference DIFF_CSS = new CssResourceReference(HtmlDiffModel.class, "diff.css");
+public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextViewPanel {
 
     private static final Logger log = LoggerFactory.getLogger(RichTextDiffWithLinksAndImagesPanel.class);
 
     public RichTextDiffWithLinksAndImagesPanel(final String id,
                                                final IModel<Node> baseNodeModel,
                                                final IModel<Node> currentNodeModel,
-                                               final IBrowseService browser,
+                                               final IBrowseService<IModel<Node>> browser,
                                                final DiffService diffService,
                                                final IHtmlCleanerService cleaner) {
         super(id);
 
-        final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(currentNodeModel, browser, false);
+        final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(browser);
         add(previewLinksBehavior);
 
-        final IModel<String> viewModel = createDiffModel(baseNodeModel, currentNodeModel, previewLinksBehavior, diffService, cleaner);
+        final IModel<String> viewModel = createDiffModel(baseNodeModel, currentNodeModel, diffService, cleaner);
         addView(viewModel);
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        response.render(CssHeaderItem.forReference(DIFF_CSS));
     }
 
     private static IModel<String> createDiffModel(final IModel<Node> baseNodeModel,
                                                   final IModel<Node> currentNodeModel,
-                                                  final PreviewLinksBehavior previewLinksBehavior,
                                                   final DiffService diffService,
                                                   final IHtmlCleanerService cleaner) {
 
@@ -93,14 +80,11 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
         final IImageURLProvider baseDecorator = new RichTextImageURLProvider(baseImageFactory, baseLinkFactory, baseNodeModel);
         final IImageURLProvider currentDecorator = new RichTextImageURLProvider(currentImageFactory, currentLinkFactory, currentNodeModel);
 
-        final BrowsableModel baseBrowsableModel = new BrowsableModel(baseModel, previewLinksBehavior);
-        final BrowsableModel currentBrowsableModel = new BrowsableModel(currentModel, previewLinksBehavior);
-
         final UuidConverterBuilder baseConverterBuilder = new UuidConverterBuilder(baseNodeModel, baseLinkFactory, baseDecorator);
         final UuidConverterBuilder currentConverterBuilder = new UuidConverterBuilder(currentNodeModel, currentLinkFactory, currentDecorator);
 
-        final IModel<String> decoratedBase = new RichTextModel(baseBrowsableModel, cleaner, baseConverterBuilder);
-        final IModel<String> decoratedCurrent = new RichTextModel(currentBrowsableModel, cleaner, currentConverterBuilder);
+        final IModel<String> decoratedBase = new RichTextModel(baseModel, cleaner, baseConverterBuilder);
+        final IModel<String> decoratedCurrent = new RichTextModel(currentModel, cleaner, currentConverterBuilder);
 
         final StripScriptModel scriptlessBase = new StripScriptModel(decoratedBase);
         final StripScriptModel scriptlessCurrent = new StripScriptModel(decoratedCurrent);
@@ -108,15 +92,15 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
         return new HtmlDiffModel(scriptlessBase, scriptlessCurrent, diffService);
     }
 
-    private static JcrPropertyValueModel getContentModelOrNull(IModel<Node> nodeModel) {
-        Node node = nodeModel.getObject();
+    private static JcrPropertyValueModel<String> getContentModelOrNull(final IModel<Node> nodeModel) {
+        final Node node = nodeModel.getObject();
         try {
             if (node == null) {
                 return null;
             }
-            Property prop = node.getProperty(HippoStdNodeType.HIPPOSTD_CONTENT);
-            return new JcrPropertyValueModel(new JcrPropertyModel(prop));
-        } catch (RepositoryException e) {
+            final Property prop = node.getProperty(HippoStdNodeType.HIPPOSTD_CONTENT);
+            return new JcrPropertyValueModel<>(new JcrPropertyModel(prop));
+        } catch (final RepositoryException e) {
             log.error("Cannot read HTML content from '" + JcrUtils.getNodePathQuietly(node) + "'", e);
         }
         return null;
