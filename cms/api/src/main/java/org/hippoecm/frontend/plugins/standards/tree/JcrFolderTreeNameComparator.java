@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 
 public class JcrFolderTreeNameComparator implements Comparator<IJcrTreeNode>, IClusterable {
-
-    private static final long serialVersionUID = 1L;
 
     private Comparator<Node> nameComparator;
 
