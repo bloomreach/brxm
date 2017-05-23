@@ -16,6 +16,8 @@
 package org.onehippo.cm.backend;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +28,10 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cm.api.model.ConfigurationModel;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.DefinitionNode;
@@ -45,8 +48,8 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.MapUtils.isNotEmpty;
 import static org.onehippo.cm.engine.Constants.BASELINE_NODE;
-import static org.onehippo.cm.engine.Constants.CONTENT_PATH_PROPERTY;
-import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
+import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_NODE;
 import static org.onehippo.cm.engine.Constants.MODULE_SEQUENCE_NUMBER;
 
@@ -112,19 +115,26 @@ public class ContentService {
 
         final Map<Double, Set<ActionItem>> actionsMap = module.getActionsMap();
 
-        final List<ActionItem> actionsToProcess = actionsMap.entrySet().stream().filter(e -> e.getKey() > currentVersion)
-                .flatMap(e -> e.getValue().stream()).collect(toList());
+        final List<ActionItem> actionsToProcess = collectNewActions(currentVersion, actionsMap);
 
         final List<ActionItem> itemsToDelete = actionsToProcess.stream().filter(x -> x.getType() == ActionType.DELETE).collect(toList());
-        processItemsToDelete(itemsToDelete, session);
+        processItemsToDelete(itemsToDelete, session); //TODO SS:, save processed actions to baseline (hcm:moduleActionsApplied)
+        session.save();
 
-        module.getContentDefinitions().sort(Comparator.comparing(o -> o.getNode().getPath()));
+        sortContentDefinitions(module);
+
         for (final ContentDefinitionImpl contentDefinition : module.getContentDefinitions()) {
             final DefinitionNode contentNode = contentDefinition.getNode();
             final Optional<ActionType> actionType = findActionTypeToApply(contentNode.getPath(), actionsToProcess);
-            if (actionType.isPresent() || !nodeAlreadyProcessed(contentNode, module, session)) {
+            final boolean nodeAlreadyProcessed = nodeAlreadyProcessed(contentNode, session);
+            if (actionType.isPresent() || !nodeAlreadyProcessed) {
                 log.debug("Processing {} action for node: {}", actionType, contentNode.getPath());
                 contentProcessingService.apply(contentNode, actionType.orElse(ActionType.APPEND), session);
+                if (!nodeAlreadyProcessed) {
+                    log.debug("Saving processed definition path: {}", contentNode.getPath());
+                    updateProcessedDefinition(contentNode.getPath(), session);
+                }
+                session.save(); //TODO SS: add processed action to baseline
             }
         }
 
@@ -133,21 +143,92 @@ public class ContentService {
     }
 
     /**
+     * Update processed definition lists (TODO SS: move to baseline service?)
+     * @param path
+     * @param session
+     * @throws RepositoryException
+     */
+    private void updateProcessedDefinition(final String path, final Session session) throws RepositoryException {
+
+        final Node rootNode = session.getRootNode();
+        final boolean hcmNodeExisted = rootNode.hasNode(HCM_ROOT_NODE);
+        final Node hcmRootNode = createNodeIfNecessary(rootNode, HCM_ROOT_NODE, HCM_ROOT_NODE, false);
+        if (!hcmNodeExisted) {
+            session.save();
+        }
+
+        final Node contentNode = createNodeIfNecessary(hcmRootNode, CONTENT_TYPE, CONTENT_TYPE, false);
+        final List<Value> valueList = new ArrayList<>();
+        final Value newValue = session.getValueFactory().createValue(path);
+        valueList.add(newValue);
+
+        if(contentNode.hasProperty(HCM_CONTENT_PATHS_APPLIED)) {
+            final Value[] values = contentNode.getProperty(HCM_CONTENT_PATHS_APPLIED).getValues();
+            valueList.addAll(Arrays.asList(values));
+        }
+
+        contentNode.setProperty(HCM_CONTENT_PATHS_APPLIED, valueList.toArray(new Value[0]));
+    }
+
+
+    /**
+     * TODO SS: this method should be used from baseline service
+     * @param parent
+     * @param name
+     * @param type
+     * @param encode
+     * @return
+     * @throws RepositoryException
+     */
+    private Node createNodeIfNecessary(Node parent, String name, String type, boolean encode) throws RepositoryException {
+        if (encode) {
+            name = NodeNameCodec.encode(name);
+        }
+        if (!parent.hasNode(name)) {
+            parent.addNode(name, type);
+        }
+        return parent.getNode(name);
+    }
+
+    /**
+     * Collect new items that were not processed yet
+     * @param currentVersion Latest sequence number that was processed
+     * @param actionsMap Action items per version map
+     * @return New action items
+     */
+    private List<ActionItem> collectNewActions(final double currentVersion, final Map<Double, Set<ActionItem>> actionsMap) {
+        return actionsMap.entrySet().stream().filter(e -> e.getKey() > currentVersion)
+                    .flatMap(e -> e.getValue().stream()).collect(toList());
+    }
+
+    /**
+     * Sort content definitions in natural order of their root node paths,
+     * i.e. node with a shortest hierarchy path goes first
+     * @param module
+     */
+    private void sortContentDefinitions(final ModuleImpl module) {
+        module.getContentDefinitions().sort(Comparator.comparing(o -> o.getNode().getPath()));
+    }
+
+    /**
      * Check if node was already processed and it's path is saved withing baseline
      * @param contentNode
-     * @param module
      * @param session
      * @return
      * @throws RepositoryException
      */
-    private boolean nodeAlreadyProcessed(final DefinitionNode contentNode, final ModuleImpl module, final Session session) throws RepositoryException {
+    private boolean nodeAlreadyProcessed(final DefinitionNode contentNode, final Session session) throws RepositoryException {
 
         try {
-            final String moduleNodePath = String.format("/%s/%s/%s/%s", HCM_ROOT_NODE, BASELINE_NODE, module.getFullName(), HCM_CONTENT_FOLDER);
-            final Node node = session.getNode(moduleNodePath);
-            for (Node childNode : new NodeIterable(node.getNodes())) {
-                final String jcrNodeContentPath = childNode.getProperty(CONTENT_PATH_PROPERTY).getString();
-                if (contentNode.getPath().equals(jcrNodeContentPath)) {
+            final String hcmContentNodePath = String.format("/%s/%s", HCM_ROOT_NODE, CONTENT_TYPE);
+            if (!session.nodeExists(hcmContentNodePath)) {
+                return false;
+            }
+            final Node node = session.getNode(hcmContentNodePath);
+            final Value[] values = node.getProperty(HCM_CONTENT_PATHS_APPLIED).getValues();
+            for (final Value value : values) {
+                final String strValue = value.getString();
+                if (contentNode.getPath().equals(strValue)) {
                     return true;
                 }
             }

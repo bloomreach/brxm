@@ -73,7 +73,7 @@ import static org.onehippo.cm.engine.Constants.CND_TYPE;
 import static org.onehippo.cm.engine.Constants.CONFIG_FOLDER_TYPE;
 import static org.onehippo.cm.engine.Constants.CONTENT_FOLDER_TYPE;
 import static org.onehippo.cm.engine.Constants.CONTENT_PATH_PROPERTY;
-import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
+import static org.onehippo.cm.engine.Constants.CONTENT_SOURCE_TYPE;
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.engine.Constants.DEFINITIONS_TYPE;
 import static org.onehippo.cm.engine.Constants.DIGEST_PROPERTY;
@@ -81,7 +81,6 @@ import static org.onehippo.cm.engine.Constants.GROUP_TYPE;
 import static org.onehippo.cm.engine.Constants.HCM_CONFIG_FOLDER;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_YAML;
-import static org.onehippo.cm.engine.Constants.HCM_PROCESSED;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_NODE;
 import static org.onehippo.cm.engine.Constants.LAST_UPDATED_PROPERTY;
 import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_NODE;
@@ -244,14 +243,13 @@ public class ConfigBaselineService {
 
             // create folder nodes, if necessary
             Node sourceNode = createNodeAndParentsIfNecessary(source.getPath(), contentRootNode,
-                    CONTENT_FOLDER_TYPE, CONTENT_TYPE);
+                    CONTENT_FOLDER_TYPE, CONTENT_SOURCE_TYPE);
 
             // assume that there is exactly one content definition here, as required
             ContentDefinition firstDef = (ContentDefinition) source.getDefinitions().get(0);
 
             // set content path property
             sourceNode.setProperty(CONTENT_PATH_PROPERTY, firstDef.getNode().getPath());
-            sourceNode.setProperty(HCM_PROCESSED, true);
         }
 
         // foreach config source

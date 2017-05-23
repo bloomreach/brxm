@@ -16,7 +16,7 @@
 package org.onehippo.cm.engine.parser;
 
 import java.io.InputStream;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +27,8 @@ import org.onehippo.cm.impl.model.ModuleImpl;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
+
+import static org.onehippo.cm.engine.Constants.ACTION_LISTS_NODE;
 
 /**
  * Parse an action list file, like for example
@@ -41,8 +43,6 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
  * /content/path3: delete
  */
 public class ActionListParser extends AbstractBaseParser {
-
-    private static final String ACTION_LISTS_NODE = "action-lists";
 
     public ActionListParser() {
         super(false);
@@ -66,7 +66,7 @@ public class ActionListParser extends AbstractBaseParser {
     }
 
     private Set<ActionItem> collectActionItems(final NodeTuple nodeTuple) throws ParserException {
-        final Set<ActionItem> actionItems = new HashSet<>();
+        final Set<ActionItem> actionItems = new LinkedHashSet<>();
         final Map<String, Node> actionItemsMap = asMapping(nodeTuple.getValueNode(), null, null);
         for (final String path : actionItemsMap.keySet()) {
             final ActionItem actionItem = createActionItem(actionItemsMap, path);
