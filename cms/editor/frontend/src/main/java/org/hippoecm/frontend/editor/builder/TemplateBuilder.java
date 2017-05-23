@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.collections.MiniMap;
@@ -85,15 +86,12 @@ import org.slf4j.LoggerFactory;
 
 public class TemplateBuilder implements IDetachable, IObservable {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(TemplateBuilder.class);
 
     /** Suffix to append to duplicated field names or paths */
     private static final char SUFFIX_WHEN_DUPLICATE = '_';
 
     class BuilderFieldDescriptor implements IFieldDescriptor, IDetachable {
-        private static final long serialVersionUID = 6935814333088957137L;
 
         private IFieldDescriptor delegate;
 
@@ -295,7 +293,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
         @Override
         public void startObservation() {
             obContext.registerObserver(observer = new IObserver<IFieldDescriptor>() {
-                private static final long serialVersionUID = -510095692858775942L;
 
                 @Override
                 public IFieldDescriptor getObservable() {
@@ -325,7 +322,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
     }
 
     class FieldMap extends AbstractMap<String, IFieldDescriptor> implements Serializable {
-        private static final long serialVersionUID = -7856611025545479323L;
 
         Map<String, IFieldDescriptor> delegate;
 
@@ -388,8 +384,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
     }
 
     class BuilderTypeDescriptor implements ITypeDescriptor {
-
-        private static final long serialVersionUID = 1L;
 
         private IObservationContext obContext;
         private IObserver observer;
@@ -548,8 +542,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
         @Override
         public void startObservation() {
             obContext.registerObserver(observer = new IObserver<ITypeDescriptor>() {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public ITypeDescriptor getObservable() {
                     return typeDescriptor;
@@ -586,7 +578,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
     }
 
     class BuilderPluginList extends AbstractList<IPluginConfig> implements IDetachable {
-        private static final long serialVersionUID = 1L;
 
         @Override
         public IPluginConfig get(int index) {
@@ -667,7 +658,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
     }
 
     private final class BuilderClusterDecorator extends AbstractPluginDecorator implements IClusterConfig {
-        private static final long serialVersionUID = 1L;
 
         private IObserver<IClusterConfig> observer;
 
@@ -721,7 +711,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
             super.startObservation();
             final IObservationContext<IClusterConfig> obContext = getObservationContext();
             obContext.registerObserver(observer = new IObserver<IClusterConfig>() {
-                private static final long serialVersionUID = 1L;
 
                 @Override
                 public IClusterConfig getObservable() {
@@ -1081,8 +1070,10 @@ public class TemplateBuilder implements IDetachable, IObservable {
             }
             pluginConfig.put("wicket.id", getSelectedExtensionPoint());
             pluginConfig.put("field", fieldDescriptor.getName());
-            pluginConfig.put("caption", fieldType.getName());
-
+            // remove namespace from default caption for non-primitive fields
+            final String caption = fieldType.getName().contains(":") ?
+                    StringUtils.substringAfter(fieldType.getName(), ":") : fieldType.getName();
+            pluginConfig.put("caption", caption);
             getPlugins().add(pluginConfig);
 
             pluginModel.setObject(pluginName);
@@ -1109,7 +1100,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private void registerObservers() {
         if (clusterConfig != null) {
             context.registerService(clusterObserver = new IObserver<IClusterConfig>() {
-                private static final long serialVersionUID = 1L;
 
                 @Override
                 public IClusterConfig getObservable() {

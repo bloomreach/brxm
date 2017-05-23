@@ -28,8 +28,6 @@ import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
  */
 public class JcrTreeNameComparator implements Comparator<IJcrTreeNode>, IClusterable {
 
-    private static final long serialVersionUID = 1L;
-
     private Comparator<Node> nameComparator;
 
     public JcrTreeNameComparator() {

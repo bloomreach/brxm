@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,14 +37,12 @@ import org.slf4j.LoggerFactory;
 
 public class FolderTreeNode extends JcrTreeNode {
 
-    private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(FolderTreeNode.class);
 
     /**
      * Comparator by folder display name.
      */
-    private static Comparator<IJcrTreeNode> DISPLAY_NAME_COMPARATOR = new JcrTreeNameComparator();
+    private static final Comparator<IJcrTreeNode> DISPLAY_NAME_COMPARATOR = new JcrTreeNameComparator();
 
     /**
      * Returns {@link #DISPLAY_NAME_COMPARATOR} if the current folder node is of {@link HippoStdNodeType#NT_DIRECTORY}
