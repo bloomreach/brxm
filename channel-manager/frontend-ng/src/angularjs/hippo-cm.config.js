@@ -131,7 +131,9 @@ function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $transla
     .warnPalette('hippo-red')
     .backgroundPalette('hippo-grey');
 
-  $compileProvider.debugInfoEnabled(false);
+  // only enable Angular debug information when the CMS runs in 'Wicket development mode'
+  const devMode = angular.element(window.parent.document.documentElement).hasClass('wicket-development-mode');
+  $compileProvider.debugInfoEnabled(devMode);
 }
 
 export default config;
