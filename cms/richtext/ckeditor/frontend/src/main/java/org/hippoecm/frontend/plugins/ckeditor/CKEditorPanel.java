@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.Application;
-import org.apache.wicket.RuntimeConfigurationType;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
@@ -35,10 +35,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.CmsHeaderItem;
-import org.hippoecm.frontend.util.WebApplicationHelper;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.onehippo.ckeditor.CKEditorConfig;
+import org.onehippo.ckeditor.Json;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +54,6 @@ public class CKEditorPanel extends Panel {
             return Collections.singleton(CmsHeaderItem.get());
         }
     };
-    private static final String CKEDITOR_TIMESTAMP = WebApplicationHelper.APPLICATION_HASH;
-    private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
-    private static final String CONFIG_STYLES_SET_LANGUAGE_PARAM = "{language}";
 
     private static final Logger log = LoggerFactory.getLogger(CKEditorPanel.class);
 
@@ -114,23 +109,13 @@ public class CKEditorPanel extends Panel {
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
 
-        response.render(JavaScriptUrlReferenceHeaderItem.forReference(getCKEditorJsReference()));
+        response.render(JavaScriptUrlReferenceHeaderItem.forReference(CKEditorConstants.getCKEditorJsReference()));
         response.render(OnDomReadyHeaderItem.forScript(getJavaScriptForCKEditorTimestamp()));
         response.render(JavaScriptUrlReferenceHeaderItem.forReference(CKEDITOR_PANEL_JS));
 
-        JSONObject editorConfig = getConfigurationForEditor();
+        final ObjectNode editorConfig = getConfigurationForEditor();
         renderContentsCss(response, editorConfig);
         response.render(OnDomReadyHeaderItem.forScript(getJavaScriptForEditor(editorConfig)));
-    }
-
-    public static ResourceReference getCKEditorJsReference() {
-        if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)
-                && CKEditorConstants.existsOnClassPath(CKEditorConstants.CKEDITOR_SRC_JS)) {
-            log.info("Using non-optimized CKEditor sources.");
-            return CKEditorConstants.CKEDITOR_SRC_JS;
-        }
-        log.info("Using optimized CKEditor sources");
-        return CKEditorConstants.CKEDITOR_OPTIMIZED_JS;
     }
 
     /**
@@ -139,59 +124,48 @@ public class CKEditorPanel extends Panel {
      * CKEditor source itself does not change.
      */
     private String getJavaScriptForCKEditorTimestamp() {
-        return "CKEDITOR.timestamp='" + CKEDITOR_TIMESTAMP + "';";
+        return "CKEDITOR.timestamp='" + CKEditorConstants.CKEDITOR_TIMESTAMP + "';";
     }
 
-    private JSONObject getConfigurationForEditor() {
+    private ObjectNode getConfigurationForEditor() {
         try {
-            JSONObject editorConfig = JsonUtils.createJSONObject(editorConfigJson);
+            final ObjectNode editorConfig = Json.object(editorConfigJson);
 
             // configure extensions
             for (CKEditorPanelExtension extension : extensions) {
                 extension.addConfiguration(editorConfig);
             }
 
-            // always use the language of the current CMS locale
-            final Locale locale = getLocale();
-            editorConfig.put(CKEditorConstants.CONFIG_LANGUAGE, locale.getLanguage());
-
-            // convert Hippo-specific 'declarative' keystrokes to numeric ones
-            final JSONArray declarativeAndNumericKeystrokes = editorConfig.optJSONArray(CKEditorConstants.CONFIG_KEYSTROKES);
-            final JSONArray numericKeystrokes = DeclarativeKeystrokesConverter.convertToNumericKeystrokes(declarativeAndNumericKeystrokes);
-            editorConfig.putOpt(CKEditorConstants.CONFIG_KEYSTROKES, numericKeystrokes);
-
-            // load the localized hippo styles if no other styles are specified
-            String stylesSet = editorConfig.optString(CKEditorConstants.CONFIG_STYLES_SET, HippoStyles.getConfigStyleSet(locale));
-            stylesSet = stylesSet.replace(CONFIG_STYLES_SET_LANGUAGE_PARAM, locale.getLanguage());
-            editorConfig.put(CKEditorConstants.CONFIG_STYLES_SET, stylesSet);
-
-            // disable custom config loading if not configured
-            JsonUtils.putIfAbsent(editorConfig, CKEditorConstants.CONFIG_CUSTOM_CONFIG, StringUtils.EMPTY);
+            final String cmsLanguage = getLocale().getLanguage();
+            CKEditorConfig.setDefaults(editorConfig, cmsLanguage);
 
             if (log.isInfoEnabled()) {
-                log.info("CKEditor configuration:\n" + editorConfig.toString(LOGGED_EDITOR_CONFIG_INDENT_SPACES));
+                log.info("CKEditor configuration:\n" + Json.prettyString(editorConfig));
             }
 
             return editorConfig;
-        } catch (JSONException e) {
+        } catch (IOException e) {
             throw new IllegalStateException("Error creating CKEditor configuration.", e);
         }
     }
 
-    static void renderContentsCss(IHeaderResponse response, JSONObject editorConfig) {
-        final JSONArray array = editorConfig.optJSONArray(CKEditorConstants.CONFIG_CONTENTS_CSS);
-        if (array != null) {
-            for (int i = 0; i < array.length(); i++) {
-                final String file = array.optString(i);
+    static void renderContentsCss(IHeaderResponse response, ObjectNode editorConfig) {
+        final JsonNode contentsCss = editorConfig.get(CKEditorConfig.CONTENTS_CSS);
+
+        if (contentsCss == null) {
+            return;
+        } else if (contentsCss.isArray()) {
+            for (int i = 0; i < contentsCss.size(); i++) {
+                final String file = contentsCss.get(i).asText();
                 response.render(CssHeaderItem.forUrl(file));
             }
-        } else {
-            final String file = editorConfig.optString(CKEditorConstants.CONFIG_CONTENTS_CSS);
+        } else if (contentsCss.isTextual()) {
+            final String file = contentsCss.asText();
             response.render(CssHeaderItem.forUrl(file));
         }
     }
 
-    private String getJavaScriptForEditor(JSONObject editorConfig) {
+    private String getJavaScriptForEditor(ObjectNode editorConfig) {
         return "Hippo.createCKEditor('" + editorId + "', " + editorConfig.toString() + ");";
     }
 
@@ -200,5 +174,4 @@ public class CKEditorPanel extends Panel {
         extensions.forEach(CKEditorPanelExtension::detach);
         super.onDetach();
     }
-
 }

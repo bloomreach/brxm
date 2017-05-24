@@ -88,6 +88,7 @@
     <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.utilities.version>4.0.0-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.htmlprocessor.version>1.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
@@ -131,7 +132,6 @@
     <hippo.ckeditor.version>4.5.11-h2-SNAPSHOT</hippo.ckeditor.version>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
-    <sf.htmlcleaner.version>2.16</sf.htmlcleaner.version>
 
   </properties>
 
@@ -205,10 +205,14 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-htmlprocessor</artifactId>
+        <version>${hippo.services.htmlprocessor.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms7-utilities</artifactId>
         <version>${hippo.utilities.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-api</artifactId>
@@ -342,6 +346,11 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
         <version>${jackson2.version}</version>
       </dependency>
       <dependency>

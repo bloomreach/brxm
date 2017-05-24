@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,14 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.richtext.LineEndingsModel;
-import org.hippoecm.frontend.plugins.richtext.RichTextModel;
+import org.hippoecm.frontend.plugins.richtext.HtmlModel;
+import org.hippoecm.frontend.plugins.richtext.processor.WicketModel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffPanel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewPanel;
 import org.hippoecm.frontend.plugins.standards.diff.DefaultHtmlDiffService;
 import org.hippoecm.frontend.plugins.standards.diff.DiffService;
+import org.onehippo.ckeditor.CKEditorConfig;
+import org.onehippo.cms7.services.processor.html.model.Model;
 
 /**
  * Property field plugin for editing HTML in a String property using CKEditor. Internal links and images are
@@ -33,24 +35,8 @@ import org.hippoecm.frontend.plugins.standards.diff.DiffService;
  */
 public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin<String> {
 
-    public static final String DEFAULT_EDITOR_CONFIG = "{"
-            // do not html encode but utf-8 encode hence entities = false
-            + "  entities: false,"
-            // &gt; must not be replaced with > hence basicEntities = true
-            + "  basicEntities: true,"
-            + "  autoUpdateElement: false,"
-            + "  contentsCss: ['ckeditor/hippocontents.css'],"
-            + "  plugins: 'basicstyles,button,clipboard,contextmenu,divarea,enterkey,entities,floatingspace,floatpanel,htmlwriter,listblock,magicline,menu,menubutton,panel,panelbutton,removeformat,richcombo,stylescombo,tab,toolbar,undo',"
-            + "  title: false,"
-            + "  toolbar: ["
-            + "    { name: 'styles', items: [ 'Styles' ] },"
-            + "    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', '-', 'RemoveFormat' ] },"
-            + "    { name: 'clipboard', items: [ 'Undo', 'Redo' ] }"
-            + "  ]"
-            + "}";
-
     public CKEditorPropertyPlugin(final IPluginContext context, final IPluginConfig config) {
-        super(context, config, DEFAULT_EDITOR_CONFIG);
+        super(context, config, CKEditorConfig.DEFAULT_FORMATTED_TEXT_CONFIG);
     }
 
     @Override
@@ -60,7 +46,8 @@ public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin<String> {
 
     @Override
     protected IModel<String> createEditModel() {
-        return new LineEndingsModel(new RichTextModel(getHtmlModel(), getHtmlCleaner()));
+        final Model<String> valueModel = WicketModel.of(getHtmlModel());
+        return new HtmlModel(getHtmlProcessorId(), valueModel);
     }
 
     @Override

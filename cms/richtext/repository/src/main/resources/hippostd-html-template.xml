@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -121,14 +121,14 @@
       </sv:property>
       <sv:property sv:name="excluded.image.variants" sv:type="String" sv:multiple="true">
       </sv:property>
-      <sv:property sv:name="htmlcleaner.id" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService</sv:value>
+      <sv:property sv:name="htmlprocessor.id" sv:type="String">
+        <sv:value>richtext</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:properties" sv:type="String">
         <sv:value>mode</sv:value>
         <sv:value>ckeditor.config.appended.json</sv:value>
         <sv:value>ckeditor.config.overlayed.json</sv:value>
-        <sv:value>htmlcleaner.id</sv:value>
+        <sv:value>htmlprocessor.id</sv:value>
         <sv:value>linkpicker.cluster.name</sv:value>
         <sv:value>linkpicker.nodetypes</sv:value>
         <sv:value>linkpicker.base.uuid</sv:value>
@@ -174,8 +174,8 @@
         <sv:property sv:name="ckeditor.config.overlayed.json" sv:type="String">
           <sv:value>${ckeditor.config.overlayed.json}</sv:value>
         </sv:property>
-        <sv:property sv:name="htmlcleaner.id" sv:type="String">
-          <sv:value>${htmlcleaner.id}</sv:value>
+        <sv:property sv:name="htmlprocessor.id" sv:type="String">
+          <sv:value>${htmlprocessor.id}</sv:value>
         </sv:property>
         <sv:node sv:name="imagepicker">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
