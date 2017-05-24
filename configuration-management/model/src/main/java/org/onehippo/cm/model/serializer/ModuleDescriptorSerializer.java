@@ -49,12 +49,12 @@ public class ModuleDescriptorSerializer extends AbstractBaseSerializer {
         super(explicitSequencing);
     }
 
-    public void serialize(final OutputStream outputStream, final Map<String, GroupImpl> groups) throws IOException {
+    public void serialize(final OutputStream outputStream, final Map<String, ? extends Group> groups) throws IOException {
         final Node node = representGroups(groups);
         serializeNode(outputStream, node);
     }
 
-    private Node representGroups(final Map<String, GroupImpl> groups) {
+    private Node representGroups(final Map<String, ? extends Group> groups) {
         final List<NodeTuple> rootTuples = new ArrayList<>();
 
         final List<Node> groupNodes = groups.values().stream().map(this::representGroup)

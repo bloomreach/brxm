@@ -17,9 +17,16 @@ package org.onehippo.cm.model.impl;
 
 import java.net.URI;
 
+import org.onehippo.cm.model.SourceType;
+
 public class ConfigSourceImpl extends SourceImpl {
+
     public ConfigSourceImpl(String path, ModuleImpl module) {
         super(path, module);
+    }
+
+    public final SourceType getType() {
+        return SourceType.CONFIG;
     }
 
     public void addNamespaceDefinition(final String prefix, final URI uri) {

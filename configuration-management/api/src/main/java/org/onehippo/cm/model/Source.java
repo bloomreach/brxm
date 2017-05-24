@@ -20,6 +20,11 @@ import java.util.List;
 public interface Source {
 
     /**
+     * @return the type of this source
+     */
+    SourceType getType();
+
+    /**
      * @return the relative path of this source to the {@link Module} base path
      */
     String getPath();

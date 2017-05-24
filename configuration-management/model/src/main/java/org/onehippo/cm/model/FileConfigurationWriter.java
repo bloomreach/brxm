@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
-import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 import org.onehippo.cm.model.serializer.SourceSerializer;
@@ -37,7 +35,7 @@ import org.yaml.snakeyaml.nodes.Node;
 public class FileConfigurationWriter {
 
     void write(final Path destination,
-               final Map<String, GroupImpl> groups,
+               final Map<String, ? extends Group> groups,
                final Map<Module, ModuleContext> moduleContextMap,
                final boolean explicitSequencing) throws IOException {
         final ModuleDescriptorSerializer moduleDescriptorSerializer = new ModuleDescriptorSerializer(explicitSequencing);
@@ -47,7 +45,7 @@ public class FileConfigurationWriter {
             moduleDescriptorSerializer.serialize(moduleDescriptorOutputStream, groups);
         }
 
-        for (GroupImpl group : groups.values()) {
+        for (Group group : groups.values()) {
             for (Project project : group.getProjects()) {
                 for (Module module : project.getModules()) {
                     final ModuleContext moduleContext = moduleContextMap.get(module);
@@ -67,9 +65,9 @@ public class FileConfigurationWriter {
 
             final SourceSerializer sourceSerializer;
 
-            if (source instanceof ConfigSourceImpl) {
+            if (SourceType.CONFIG == source.getType()) {
                 sourceSerializer = new SourceSerializer(moduleContext, source, explicitSequencing);
-            } else {
+            } else /* SourceType.CONTENT */ {
                 sourceSerializer = new ContentSourceSerializer(moduleContext, source, explicitSequencing);
             }
 

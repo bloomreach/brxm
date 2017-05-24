@@ -15,9 +15,16 @@
  */
 package org.onehippo.cm.model.impl;
 
+import org.onehippo.cm.model.SourceType;
+
 public class ContentSourceImpl extends SourceImpl {
+
     public ContentSourceImpl(String path, ModuleImpl module) {
         super(path, module);
+    }
+
+    public final SourceType getType() {
+        return SourceType.CONTENT;
     }
 
     public ContentDefinitionImpl addContentDefinition() {

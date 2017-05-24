@@ -20,7 +20,6 @@ import java.nio.file.Path;
 import java.util.Set;
 
 import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.parser.SourceResourceCrawler;
 import org.onehippo.cm.model.serializer.ResourceNameResolver;
 import org.onehippo.cm.model.serializer.ResourceNameResolverImpl;
@@ -103,11 +102,11 @@ public class ModuleContext {
     }
 
     public ResourceInputProvider getInputProvider(Source source) {
-        return source instanceof ConfigSourceImpl ? getConfigInputProvider() : getContentInputProvider();
+        return SourceType.CONFIG == source.getType() ? getConfigInputProvider() : getContentInputProvider();
     }
 
     public ResourceOutputProvider getOutputProvider(Source source) {
-        return source instanceof ConfigSourceImpl ? configOutputProvider : contentOutputProvider;
+        return SourceType.CONFIG == source.getType() ? configOutputProvider : contentOutputProvider;
     }
 
     public void createOutputProviders(Path destinationPath) {
@@ -119,7 +118,7 @@ public class ModuleContext {
     }
 
     public String generateUniqueName(Source source, String filePath) {
-        return source instanceof ConfigSourceImpl ? configNameResolver.generateName(filePath) : contentNameResolver.generateName(filePath);
+        return SourceType.CONFIG == source.getType() ? configNameResolver.generateName(filePath) : contentNameResolver.generateName(filePath);
     }
 
     /**
