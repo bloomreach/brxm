@@ -48,13 +48,16 @@
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
       this.iframeToHost.subscribe('destroy-component-properties-window', this._destroyComponentPropertiesWindow, this);
-      this.iframeToHost.subscribe('show-picker', this._showPicker, this);
+      this.iframeToHost.subscribe('show-path-picker', this._showPathPicker, this);
+      this.iframeToHost.subscribe('show-link-picker', this._showLinkPicker, this);
+      this.iframeToHost.subscribe('show-image-picker', this._showImagePicker, this);
       this.iframeToHost.subscribe('open-content', this._openContent, this);
       this.iframeToHost.subscribe('close-content', this._closeContent, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
       this.iframeToHost.subscribe('remove-mask', this._unmaskSurroundings, this);
       this.iframeToHost.subscribe('edit-alter-ego', this._showAlterEgoEditor, this);
       this.iframeToHost.subscribe('channel-deleted', this._onChannelDeleted, this);
+      this.iframeToHost.subscribe('close-channel', this._onCloseChannel, this);
 
       this.addEvents('show-channel-overview');
     },
@@ -229,13 +232,47 @@
       );
     },
 
-    _showPicker: function(field, value, pickerConfig) {
-      this.pickedField = field;
-      Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(value, pickerConfig, this._onPicked.bind(this));
+    _showPathPicker: function(field, value, pickerConfig) {
+      this.pathPickerField = field;
+      Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(value, pickerConfig, this._onPathPicked.bind(this));
     },
 
-    _onPicked: function(path, displayValue) {
-      this.hostToIFrame.publish('picked', this.pickedField, path, displayValue);
+    _onPathPicked: function(path, displayValue) {
+      this.hostToIFrame.publish('path-picked', this.pathPickerField, path, displayValue);
+    },
+
+    _showLinkPicker: function(fieldId, dialogConfig, selectedLink, callback) {
+      this.linkPickerCallback = callback;
+      this._showPicker(fieldId, dialogConfig, selectedLink, this.initialConfig.linkPickerWicketUrl);
+    },
+
+    _showImagePicker: function(fieldId, dialogConfig, selectedImage, callback) {
+      this.imagePickerCallback = callback;
+      this._showPicker(fieldId, dialogConfig, selectedImage, this.initialConfig.imagePickerWicketUrl);
+    },
+
+    _showPicker: function(fieldId, dialogConfig, selection, wicketUrl) {
+      Ext.apply(selection, {
+        'fieldId': fieldId,
+        'dialogConfig': JSON.stringify(dialogConfig)
+      });
+
+      Wicket.Ajax.post({
+        u: wicketUrl,
+        ep: selection
+      });
+    },
+
+    onLinkPicked: function(link) {
+      if (this.linkPickerCallback) {
+        this.linkPickerCallback(link);
+      }
+    },
+
+    onImagePicked: function(image) {
+      if (this.imagePickerCallback) {
+        this.imagePickerCallback(image);
+      }
     },
 
     _maskSurroundings: function() {
@@ -276,6 +313,10 @@
         this.hostToIFrame.publish('channel-removed-from-overview');
         this.fireEvent('show-channel-overview');
       }.bind(this));
+    },
+
+    _onCloseChannel: function() {
+      this.fireEvent('show-channel-overview');
     },
 
     initComponent: function() {

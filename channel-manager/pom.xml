@@ -38,8 +38,10 @@
     <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>5.0.0-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>5.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.ckeditor.version>4.5.11-h2-SNAPSHOT</hippo.ckeditor.version>
     <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.htmlprocessor.version>1.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.addon-hst-configuration-editor.version>4.0.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
 
     <commons-lang.version>2.6</commons-lang.version>
@@ -53,6 +55,7 @@
     <easymock.version>3.4</easymock.version>
     <!-- Make sure that powermock and easymock are compatible -->
     <powermock.version>1.6.5</powermock.version>
+    <hippo.testutils.version>1.0.0-SNAPSHOT</hippo.testutils.version>
   </properties>
 
   <repositories>
@@ -143,10 +146,20 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-ckeditor-config</artifactId>
+        <version>${hippo.ckeditor.version}</version>
+      </dependency>
+      <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
         <version>${commons-lang.version}</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-htmlprocessor</artifactId>
+        <version>${hippo.services.htmlprocessor.version}</version>
       </dependency>
 
       <!-- Test dependencies -->
@@ -178,6 +191,12 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-testutils</artifactId>
         <version>${hippo.repository.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-testutils</artifactId>
+        <version>${hippo.testutils.version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -256,6 +275,7 @@
 
                 <exclude>frontend-ng/.*</exclude>
                 <exclude>frontend-ng/*.md</exclude>
+                <exclude>frontend-ng/yarn.lock</exclude>
 
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>

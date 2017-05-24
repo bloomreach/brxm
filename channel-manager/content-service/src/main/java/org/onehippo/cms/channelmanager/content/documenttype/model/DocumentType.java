@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ public class DocumentType {
     private String id; // "namespace:typename"
     private String displayName;
     private boolean readOnlyDueToUnknownValidator;
+    private boolean allFieldsIncluded;
     private final List<FieldType> fields; // ordered list of fields
 
     public DocumentType() {
@@ -60,6 +61,14 @@ public class DocumentType {
 
     public void setReadOnlyDueToUnknownValidator(final boolean readOnlyDueToUnknownValidator) {
         this.readOnlyDueToUnknownValidator = readOnlyDueToUnknownValidator;
+    }
+
+    public boolean isAllFieldsIncluded() {
+        return allFieldsIncluded;
+    }
+
+    public void setAllFieldsIncluded(final boolean allFieldsIncluded) {
+        this.allFieldsIncluded = allFieldsIncluded;
     }
 
     public List<FieldType> getFields() {

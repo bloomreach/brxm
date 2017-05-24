@@ -1,0 +1,139 @@
+// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// sass-lint:disable class-name-format, no-qualifying-elements
+@import 'variables';
+
+// Editor
+$editor-bgcolor:                     #f7f7f7;
+$editor-color:                       #22272f;
+$editor-body-border-color:           #e8e8ea;
+$editor-subfield-bg:                 #fff;
+$editor-field-title-color:           #39434c;
+$editor-subfield-border:             #d4d6d8;
+$editor-compound-field-border:       #d4d6d8;
+$editor-padding:                     32px;
+$editor-field-bgs:                   (#ebeced, #e8e8ea, #d4d6d8, #b8bcbf, #9ba0a5);
+
+// Editor preview
+$editor-preview-field-bgcolor:       #f7f7f7;
+$rich-text-preview-link-hover-color: #0877d1;
+
+// Editor toolbar
+$editor-toolbar-border-color:        #b8bcbf;
+$editor-toolbar-fontsize:            15px;
+$editor-toolbar-color:               #39434c;
+$editor-toolbar-hover-color:         #0877d1;
+$editor-toolbar-active-color:        #39434c;
+$editor-toolbar-active-bgcolor:      #f7f7f7;
+$editor-toolbar-bgcolor:             #e8e8ea;
+
+// CKEditor
+$ckeditor-button-off-color:          #f7f7f7;
+$ckeditor-button-off-hover-color:    #d4d6d8;
+$ckeditor-button-on-color:           #9ba0a5;
+$ckeditor-button-on-hover-color:     #b8bcbf;
+$ckeditor-button-border-color:       #b8bcbf;
+
+ckeditor {
+  textarea {
+    + .cke {
+      border-bottom-width: 2px;
+    }
+
+    &.ng-invalid + .cke {
+      border-bottom-color: $red-500;
+    }
+
+    &.focussed + .cke {
+      border-bottom-color: $blue-500;
+    }
+  }
+
+  .cke {
+    border-color: $editor-subfield-border;
+    box-shadow: none;
+
+    a,
+    span {
+      box-shadow: none;
+    }
+
+    .cke_top,
+    .cke_bottom {
+      background: $editor-toolbar-bgcolor none;
+    }
+
+
+    .cke_top {
+      border-bottom: 0;
+      padding-bottom: 8px;
+      padding-left: 8px;
+      padding-right: 3px;
+      padding-top: 8px;
+    }
+
+    .cke_toolgroup,
+    .cke_combo_button {
+      background: $ckeditor-button-off-color none;
+      border-color: $ckeditor-button-border-color;
+      margin-bottom: 8px;
+      margin-right: 8px;
+    }
+
+    .cke_button_off:hover,
+    .cke_button_disabled:hover,
+    .cke_combo_off a.cke_combo_button:hover {
+      background: $ckeditor-button-off-hover-color none;
+      box-shadow: none;
+    }
+
+    .cke_button_on {
+      background: $ckeditor-button-on-color none;
+      border-color: $ckeditor-button-border-color;
+      box-shadow: none;
+      &:hover {
+        background-color: $ckeditor-button-on-hover-color;
+        box-shadow: none;
+      }
+    }
+
+    .cke_combo_on a.cke_combo_button,
+    .cke_combo_on a.cke_combo_button:focus {
+      background: $ckeditor-button-off-color none;
+      border-color: $ckeditor-button-border-color;
+      box-shadow: none;
+    }
+
+    .cke_combo_on a.cke_combo_button:hover,
+    .cke_combo_off {
+      background: none;
+      border-color: $ckeditor-button-border-color;
+      box-shadow: none;
+    }
+
+    .cke_wysiwyg_div.cke_editable {
+      padding: 8px;
+    }
+
+    .cke_bottom {
+      border-top: 0;
+      padding-left: 4px;
+    }
+
+    .cke_panel {
+      border-color: $editor-toolbar-border-color;
+    }
+  }
+}

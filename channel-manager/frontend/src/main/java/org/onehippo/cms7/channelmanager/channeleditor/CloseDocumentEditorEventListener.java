@@ -89,7 +89,7 @@ public class CloseDocumentEditorEventListener extends ExtEventListener {
     }
 
     private void returnResult(final String documentHandleUuid, final boolean isClosed, final AjaxRequestTarget target) {
-        final String resultScript = String.format("Ext.getCmp('%1s').closeDocumentResult('%2s', %3s);",
+        final String resultScript = String.format("Ext.getCmp('%s').closeDocumentResult('%s', %s);",
                 channelEditorId, documentHandleUuid, isClosed);
         target.appendJavaScript(resultScript);
     }

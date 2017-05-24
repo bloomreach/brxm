@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import documentFieldsComponent from './documentFields.component';
-import primitiveFieldComponent from './primitiveField.component';
-import choiceFieldComponent from './choiceField.component';
-import compoundFieldComponent from './compoundField.component';
-import collapse from './collapse.directive';
+import documentFieldsComponent from './documentFields/documentFields.component';
+import primitiveFieldComponent from './primitiveField/primitiveField.component';
+import choiceFieldComponent from './choiceField/choiceField.component';
+import compoundFieldComponent from './compoundField/compoundField.component';
+import ckeditorComponent from './ckeditor/ckeditor.component';
+import ckeditorService from './ckeditor/ckeditor.service';
+import collapse from './collapse/collapse.directive';
 
 const fieldsModule = angular
   .module('hippo-cm.channel.fieldsModule', [])
@@ -25,7 +27,8 @@ const fieldsModule = angular
   .component('primitiveField', primitiveFieldComponent)
   .component('choiceField', choiceFieldComponent)
   .component('compoundField', compoundFieldComponent)
-  .directive('collapse', collapse);
+  .component('ckeditor', ckeditorComponent)
+  .directive('collapse', collapse)
+  .service('CKEditorService', ckeditorService);
 
 export default fieldsModule.name;
-

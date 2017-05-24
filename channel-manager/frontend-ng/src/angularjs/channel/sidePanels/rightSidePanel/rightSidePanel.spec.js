@@ -117,8 +117,6 @@ describe('RightSidePanel', () => {
       DialogService,
       HippoIframeService,
       FeedbackService,
-    }, {
-      editMode: false,
     });
     $ctrl.form = jasmine.createSpyObj('form', ['$setPristine']);
     $rootScope.$apply();
@@ -299,13 +297,24 @@ describe('RightSidePanel', () => {
 
   it('knows that a document is loading', () => {
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
-    ContentService.createDraft.and.returnValue($q.resolve(testDocument));
-    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
+
+    const deferredDraft = $q.defer();
+    ContentService.createDraft.and.returnValue(deferredDraft.promise);
+
+    const deferredDocType = $q.defer();
+    ContentService.getDocumentType.and.returnValue(deferredDocType.promise);
 
     $ctrl._loadDocument('test');
-
     expect($ctrl.loading).toBeTruthy();
 
+    $rootScope.$digest();
+    expect($ctrl.loading).toBeTruthy();
+
+    deferredDraft.resolve(testDocument);
+    $rootScope.$digest();
+    expect($ctrl.loading).toBeTruthy();
+
+    deferredDocType.resolve(testDocumentType);
     $rootScope.$digest();
     expect($ctrl.loading).toBeFalsy();
   });
@@ -664,7 +673,7 @@ describe('RightSidePanel', () => {
 
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {}, $ctrl.$element);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {});
   });
 
   it('shows an error when document save fails due to other user now being the holder', () => {
@@ -684,7 +693,7 @@ describe('RightSidePanel', () => {
 
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_OTHER_HOLDER', { user: 'tester' }, $ctrl.$element);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_OTHER_HOLDER', { user: 'tester' });
   });
 
   it('shows an error when document save fails due to other *named* user now being the holder', () => {
@@ -705,7 +714,7 @@ describe('RightSidePanel', () => {
 
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_OTHER_HOLDER', { user: 'Joe Tester' }, $ctrl.$element);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_OTHER_HOLDER', { user: 'Joe Tester' });
   });
 
   describe('when document save fails because of an invalid field', () => {
@@ -737,7 +746,7 @@ describe('RightSidePanel', () => {
 
       $rootScope.$digest();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {}, $ctrl.$element);
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {});
       expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
       expect($ctrl.docType).toBe(reloadedDocumentType);
     });
@@ -751,7 +760,7 @@ describe('RightSidePanel', () => {
 
       $rootScope.$digest();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {}, $ctrl.$element);
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {});
       expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
       expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE', {});
       expect($ctrl.docType).toBe(testDocumentType);
@@ -769,7 +778,7 @@ describe('RightSidePanel', () => {
 
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UNABLE_TO_SAVE', {}, $ctrl.$element);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UNABLE_TO_SAVE', {});
   });
 
   it('directly opens the full content in a certain mode if the form is not dirty', () => {
@@ -777,7 +786,7 @@ describe('RightSidePanel', () => {
     SidePanelService.close.and.returnValue($q.resolve());
 
     const mode = 'view';
-    $ctrl.openFullContent(mode);
+    $ctrl.openContentEditor(mode);
     $rootScope.$digest();
 
     expect(ContentService.saveDraft).not.toHaveBeenCalled();
@@ -793,7 +802,7 @@ describe('RightSidePanel', () => {
     $ctrl.doc = { displayName: 'Display Name' };
     $ctrl.form.$dirty = true;
 
-    $ctrl.openFullContent('edit');
+    $ctrl.openContentEditor('edit');
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalled();
@@ -811,7 +820,7 @@ describe('RightSidePanel', () => {
     ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
     SidePanelService.close.and.returnValue($q.resolve());
 
-    $ctrl.openFullContent('edit');
+    $ctrl.openContentEditor('edit');
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalled();
@@ -831,7 +840,7 @@ describe('RightSidePanel', () => {
     ContentService.deleteDraft.and.returnValue($q.resolve());
     SidePanelService.close.and.returnValue($q.resolve());
 
-    $ctrl.openFullContent('view');
+    $ctrl.openContentEditor('view');
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalled();
@@ -849,7 +858,7 @@ describe('RightSidePanel', () => {
     $ctrl.editing = true;
     ContentService.saveDraft.and.returnValue($q.reject({}));
 
-    $ctrl.openFullContent('view');
+    $ctrl.openContentEditor('view');
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalled();

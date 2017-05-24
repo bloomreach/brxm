@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-/* eslint-disable prefer-const */
-
 import angular from 'angular';
 import 'angular-mocks';
 
@@ -30,35 +28,27 @@ describe('ChannelCtrl', () => {
   let FeedbackService;
   let HippoIframeService;
   let PageMetaDataService;
-  let SessionService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$timeout_, _$q_, _FeedbackService_, _SessionService_) => {
+    inject(($controller, _$rootScope_, _$timeout_, _$q_, _FeedbackService_) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
       $timeout = _$timeout_;
       $q = _$q_;
       FeedbackService = _FeedbackService_;
-      SessionService = _SessionService_;
 
       const $stateParams = {
         initialRenderPath: '/testPath',
       };
 
       ChannelService = jasmine.createSpyObj('ChannelService', [
-        'hasPreviewConfiguration',
-        'createPreviewConfiguration',
-        'getChannel',
-        'publishChanges',
-        'discardChanges',
-        'getCatalog',
-        'getSiteMapId',
+        'clearChannel',
+        'hasChannel',
+        'isEditable',
       ]);
-
-      ChannelService.createPreviewConfiguration.and.returnValue(resolvedPromise);
 
       SidePanelService = jasmine.createSpyObj('SidePanelService', [
         'open',
@@ -71,6 +61,7 @@ describe('ChannelCtrl', () => {
       ComponentsService.getComponents.and.returnValue(resolvedPromise);
 
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', [
+        'isPageLoaded',
         'load',
         'reload',
       ]);
@@ -97,13 +88,56 @@ describe('ChannelCtrl', () => {
     expect(HippoIframeService.load).toHaveBeenCalledWith('/testPath');
   });
 
-  it('checks with the session service is the current user has write access', () => {
-    spyOn(SessionService, 'hasWriteAccess');
+  it('closes an open sub-page and clears the channel when it receives a clear-channel message from the CMS', () => {
+    ChannelCtrl.showSubpage('test');
+    expect(ChannelCtrl.isSubpageOpen()).toBe(true);
 
-    SessionService.hasWriteAccess.and.returnValue(true);
-    expect(ChannelCtrl.isEditable()).toBe(true);
-    SessionService.hasWriteAccess.and.returnValue(false);
+    window.CMS_TO_APP.publish('clear-channel');
+
+    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+    expect(ChannelService.clearChannel).toHaveBeenCalled();
+  });
+
+  it('checks whether the channel is loaded', () => {
+    ChannelService.hasChannel.and.returnValue(false);
+    expect(ChannelCtrl.isChannelLoaded()).toBe(false);
+
+    ChannelService.hasChannel.and.returnValue(true);
+    expect(ChannelCtrl.isChannelLoaded()).toBe(true);
+  });
+
+  it('checks whether the page is loaded', () => {
+    HippoIframeService.isPageLoaded.and.returnValue(false);
+    expect(ChannelCtrl.isPageLoaded()).toBe(false);
+
+    HippoIframeService.isPageLoaded.and.returnValue(true);
+    expect(ChannelCtrl.isPageLoaded()).toBe(true);
+  });
+
+  it('checks whether controls are disabled', () => {
+    ChannelService.hasChannel.and.returnValue(false);
+    HippoIframeService.isPageLoaded.and.returnValue(false);
+    expect(ChannelCtrl.isControlsDisabled()).toBe(true);
+
+    ChannelService.hasChannel.and.returnValue(false);
+    HippoIframeService.isPageLoaded.and.returnValue(true);
+    expect(ChannelCtrl.isControlsDisabled()).toBe(true);
+
+    ChannelService.hasChannel.and.returnValue(true);
+    HippoIframeService.isPageLoaded.and.returnValue(false);
+    expect(ChannelCtrl.isControlsDisabled()).toBe(true);
+
+    ChannelService.hasChannel.and.returnValue(true);
+    HippoIframeService.isPageLoaded.and.returnValue(true);
+    expect(ChannelCtrl.isControlsDisabled()).toBe(false);
+  });
+
+  it('checks whether a channel is editable', () => {
+    ChannelService.isEditable.and.returnValue(false);
     expect(ChannelCtrl.isEditable()).toBe(false);
+
+    ChannelService.isEditable.and.returnValue(true);
+    expect(ChannelCtrl.isEditable()).toBe(true);
   });
 
   it('gets the render variant from the page meta-data service', () => {
@@ -111,74 +145,8 @@ describe('ChannelCtrl', () => {
     expect(ChannelCtrl.getRenderVariant()).toBe('variant1');
   });
 
-  it('is not in edit mode by default', () => {
-    expect(ChannelCtrl.isEditMode).toEqual(false);
-  });
-
-  it('enables and disables edit mode when toggling it', () => {
-    ChannelService.hasPreviewConfiguration.and.returnValue(true);
-
-    ChannelCtrl.enableEditMode();
-    expect(ChannelCtrl.isEditMode).toEqual(true);
-    ChannelCtrl.disableEditMode();
-    expect(ChannelCtrl.isEditMode).toEqual(false);
-  });
-
-  it('creates preview configuration when it has not been created yet before enabling edit mode', () => {
-    const deferCreatePreview = $q.defer();
-    const deferReload = $q.defer();
-
-    ChannelService.hasPreviewConfiguration.and.returnValue(false);
-    ChannelService.createPreviewConfiguration.and.returnValue(deferCreatePreview.promise);
-    HippoIframeService.reload.and.returnValue(deferReload.promise);
-
-    expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    ChannelCtrl.enableEditMode();
-
-    expect(ChannelService.createPreviewConfiguration).toHaveBeenCalled();
-    expect(ChannelCtrl.isCreatingPreview).toEqual(true);
-    expect(ChannelCtrl.isEditMode).toEqual(false);
-    expect(HippoIframeService.reload).not.toHaveBeenCalled();
-
-    deferCreatePreview.resolve(); // preview creation completed successfully, reload page
-    $rootScope.$digest();
-
-    expect(ChannelCtrl.isCreatingPreview).toEqual(true);
-    expect(ChannelCtrl.isEditMode).toEqual(false);
-    expect(HippoIframeService.reload).toHaveBeenCalled();
-
-    deferReload.resolve(); // reload completed successfully, enter edit mode
-    $rootScope.$digest();
-
-    expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    expect(ChannelCtrl.isEditMode).toEqual(true);
-  });
-
-  it('shows an error when the creation of the preview configuration fails', () => {
-    const deferCreatePreview = $q.defer();
-
-    ChannelService.hasPreviewConfiguration.and.returnValue(false);
-    ChannelService.createPreviewConfiguration.and.returnValue(deferCreatePreview.promise);
-
-    expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    ChannelCtrl.enableEditMode();
-
-    expect(ChannelService.createPreviewConfiguration).toHaveBeenCalled();
-    expect(ChannelCtrl.isCreatingPreview).toEqual(true);
-    expect(ChannelCtrl.isEditMode).toEqual(false);
-
-    deferCreatePreview.reject();
-    $rootScope.$digest();
-
-    expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    expect(ChannelCtrl.isEditMode).toEqual(false);
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ENTER_EDIT');
-  });
-
-  it('does not create preview configuration when it has already been created when enabling edit mode', () => {
-    ChannelService.hasPreviewConfiguration.and.returnValue(true);
-    ChannelCtrl.enableEditMode();
-    expect(ChannelService.createPreviewConfiguration).not.toHaveBeenCalled();
+  it('should not be true by default (components overlay)', () => {
+    expect(ChannelCtrl.isComponentsOverlayDisplayed).toEqual(false);
   });
 
   it('correctly shows and hides subpages', () => {

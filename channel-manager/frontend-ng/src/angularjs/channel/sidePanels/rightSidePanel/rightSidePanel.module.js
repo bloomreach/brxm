@@ -15,10 +15,12 @@
  */
 import rightSidePanelComponent from './rightSidePanel.component';
 import fieldsModule from './fields/fields.module';
+import resizeHandleModule from './resizeHandle/resizeHandle.module';
 
 const rightSidePanelModule = angular
   .module('hippo-cm.channel.rightSidePanelModule', [
     fieldsModule,
+    resizeHandleModule,
   ])
   .component('rightSidePanel', rightSidePanelComponent);
 

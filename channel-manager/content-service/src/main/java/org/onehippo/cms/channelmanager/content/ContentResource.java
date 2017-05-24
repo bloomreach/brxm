@@ -63,10 +63,8 @@ public class ContentResource {
     @Path("documents/{id}/draft")
     public Response updateDraftDocument(@PathParam("id") String id, Document document,
                                         @Context HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Response.Status.OK, (session, locale) -> {
-            DocumentsService.get().updateDraft(id, document, session, locale);
-            return document;
-        });
+        return executeTask(servletRequest, Response.Status.OK,
+                (session, locale) -> DocumentsService.get().updateDraft(id, document, session, locale));
     }
 
     @DELETE

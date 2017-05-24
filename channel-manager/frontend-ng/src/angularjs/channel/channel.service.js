@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 class ChannelService {
   constructor(
     $log,
+    $q,
     $rootScope,
     $http,
     $state,
@@ -32,6 +33,7 @@ class ChannelService {
     'ngInject';
 
     this.$log = $log;
+    this.$q = $q;
     this.$http = $http;
     this.$state = $state;
     this.SessionService = SessionService;
@@ -91,18 +93,21 @@ class ChannelService {
   _load(channelId, contextPath) {
     this.ConfigService.setContextPathForChannel(contextPath);
 
+    return this._initChannel(channelId)
+      .then(channel => this._setChannel(channel));
+  }
+
+  _initChannel(channelId) {
     return this.HstService.getChannel(channelId)
       .then(channel => this.SessionService.initialize(channel.hostname, channel.mountId)
-        .then(() => {
-          this._setChannel(channel);
-          return channel.id;
-        }),
+        .then(() => this._ensurePreviewHstConfigExists(channel)),
       )
       .catch((error) => {
         // TODO: improve error handling.
         // If this goes wrong, the CM won't work. display a toast explaining so
         // and switch back to the channel overview.
-        this.$log.error(`Failed to reload channel '${channelId}'.`, error);
+        this.$log.error(`Failed to load channel '${channelId}'.`, error);
+        return this.$q.reject();
       });
   }
 
@@ -118,6 +123,25 @@ class ChannelService {
     if (this.SessionService.hasWriteAccess()) {
       this._augmentChannelWithPrototypeInfo();
     }
+
+    return channel.id;
+  }
+
+  _ensurePreviewHstConfigExists(channel) {
+    if (this.SessionService.hasWriteAccess() && !channel.previewHstConfigExists) {
+      return this.HstService.doPost(null, channel.mountId, 'edit')
+        .then(() => this.HstService.getChannel(`${channel.id}-preview`))
+        .catch((error) => {
+          this.$log.error(`Failed to load channel '${channel.id}'.`, error.message);
+          this.FeedbackService.showError('ERROR_ENTER_EDIT');
+
+          // initialize the app with the non-editable channel so it becomes read-only
+          return this.$q.resolve(channel);
+        });
+    }
+
+    // channel is already editable or the user is not allowed to edit it
+    return this.$q.resolve(channel);
   }
 
   _makeContextPrefix(contextPath) {
@@ -172,16 +196,8 @@ class ChannelService {
     return this.channel.name;
   }
 
-  hasPreviewConfiguration() {
-    return this.channel.previewHstConfigExists === true;
-  }
-
-  createPreviewConfiguration() {
-    return this.HstService.doPost(null, this.getMountId(), 'edit')
-      .then(() => {
-        this.reload(`${this.channel.id}-preview`);
-        this.channel.previewHstConfigExists = true;
-      });
+  isEditable() {
+    return this.SessionService.hasWriteAccess() && this.hasChannel() && this.channel.previewHstConfigExists;
   }
 
   recordOwnChange() {

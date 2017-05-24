@@ -40,29 +40,29 @@
         <version>${maven.plugin.exec.version}</version>
         <executions>
           <execution>
-            <id>npm-install</id>
+            <id>frontend-install</id>
             <phase>generate-sources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
-              <executable>npm</executable>
+              <executable>yarn</executable>
               <commandlineArgs>install</commandlineArgs>
             </configuration>
           </execution>
           <execution>
-            <id>npm-build</id>
+            <id>frontend-build</id>
             <phase>process-resources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
-              <executable>npm</executable>
+              <executable>yarn</executable>
               <commandlineArgs>run build</commandlineArgs>
             </configuration>
           </execution>
           <execution>
-            <id>npm-test</id>
+            <id>frontend-test</id>
             <phase>test</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
-              <executable>npm</executable>
+              <executable>yarn</executable>
               <commandlineArgs>run testOnce</commandlineArgs>
               <skip>${skipTests}</skip>
             </configuration>

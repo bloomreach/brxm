@@ -23,7 +23,8 @@ function hippoIframe() {
     restrict: 'E',
     scope: {},
     bindToController: {
-      editMode: '=',
+      showComponentsOverlay: '=',
+      showContentOverlay: '=',
       onEditMenu: '&',
       onEditContent: '&',
     },

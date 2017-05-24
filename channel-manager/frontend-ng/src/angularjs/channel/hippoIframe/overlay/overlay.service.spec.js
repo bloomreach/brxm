@@ -153,23 +153,35 @@ describe('OverlayService', () => {
     });
   });
 
-  it('sets the class hippo-mode-edit on the HTML element when edit mode is active', (done) => {
+  it('sets the class hippo overlay classes on the HTML element', (done) => {
     spyOn(PageStructureService, 'getContainers').and.returnValue([]);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
     loadIframeFixture(() => {
-      OverlayService.setMode('view');
-      expect(iframe('html')).not.toHaveClass('hippo-mode-edit');
+      // Components overlay
+      OverlayService.showComponentsOverlay(true);
+      expect(iframe('html')).toHaveClass('hippo-show-components');
 
-      OverlayService.setMode('edit');
-      expect(iframe('html')).toHaveClass('hippo-mode-edit');
+      OverlayService.showComponentsOverlay(false);
+      expect(iframe('html')).not.toHaveClass('hippo-show-components');
 
-      // repeat same mode
-      OverlayService.setMode('edit');
-      expect(iframe('html')).toHaveClass('hippo-mode-edit');
+      // Content overlay
+      OverlayService.showContentOverlay(true);
+      expect(iframe('html')).toHaveClass('hippo-show-content');
 
-      // change mode again
-      OverlayService.setMode('view');
-      expect(iframe('html')).not.toHaveClass('hippo-mode-edit');
+      OverlayService.showContentOverlay(false);
+      expect(iframe('html')).not.toHaveClass('hippo-show-content');
+
+      // Combined
+      OverlayService.showComponentsOverlay(true);
+      OverlayService.showContentOverlay(true);
+      expect(iframe('html')).toHaveClass('hippo-show-components');
+      expect(iframe('html')).toHaveClass('hippo-show-content');
+
+      OverlayService.showComponentsOverlay(false);
+      OverlayService.showContentOverlay(false);
+      expect(iframe('html')).not.toHaveClass('hippo-show-components');
+      expect(iframe('html')).not.toHaveClass('hippo-show-content');
+
       done();
     });
   });
@@ -361,8 +373,8 @@ describe('OverlayService', () => {
     });
   });
 
-  it('syncs the position of overlay elements in view mode', (done) => {
-    OverlayService.setMode('view');
+  it('syncs the position of overlay elements when content overlay is active', (done) => {
+    OverlayService.showContentOverlay(true);
     loadIframeFixture(() => {
       const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
 
@@ -389,7 +401,7 @@ describe('OverlayService', () => {
   });
 
   it('syncs the position of overlay elements in edit mode', (done) => {
-    OverlayService.setMode('edit');
+    OverlayService.showComponentsOverlay(true);
     loadIframeFixture(() => {
       const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
 
@@ -425,7 +437,7 @@ describe('OverlayService', () => {
   });
 
   it('takes the scroll position of the iframe into account when positioning overlay elements', (done) => {
-    OverlayService.setMode('view');
+    OverlayService.showContentOverlay(true);
     loadIframeFixture(() => {
       // enlarge body so the iframe can scroll
       const body = iframe('body');
@@ -530,7 +542,7 @@ describe('OverlayService', () => {
     const editMenuHandler = jasmine.createSpy('editMenuHandler');
 
     OverlayService.onEditMenu(editMenuHandler);
-    OverlayService.setMode('edit');
+    OverlayService.showComponentsOverlay(true);
     loadIframeFixture(() => {
       const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
 
@@ -544,7 +556,7 @@ describe('OverlayService', () => {
   });
 
   it('removes overlay elements when they are no longer part of the page structure', (done) => {
-    OverlayService.setMode('edit');
+    OverlayService.showComponentsOverlay(true);
 
     loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(10);

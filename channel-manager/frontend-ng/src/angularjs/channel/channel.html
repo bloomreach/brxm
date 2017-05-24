@@ -20,9 +20,9 @@
       <div flex="30" layout layout-align="start center">
         <left-side-panel-toggle disabled="channelCtrl.isControlsDisabled()"></left-side-panel-toggle>
 
-        <channel-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
+        <channel-actions ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded()" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
 
-        <page-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
+        <page-actions ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded()" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
       </div>
 
       <div flex="40" layout layout-align="center center">
@@ -33,46 +33,39 @@
       </div>
 
       <div flex="30" layout layout-align="end center">
-        <changes-menu ng-show="channelCtrl.isChannelLoaded()"
-          on-manage-changes="channelCtrl.showSubpage('manage-changes')">
-        </changes-menu>
+        <overlay-toggle state="channelCtrl.isComponentsOverlayDisplayed"
+                        icon="view_quilt"
+                        tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
+                        class="qa-toggle-components"
+                        ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded()">
+        </overlay-toggle>
 
-        <div class="button-toggle" layout>
-          <md-button class="qa-button-view"
-                     ng-class="{ 'button-active': !channelCtrl.isEditMode }"
-                     ng-if="channelCtrl.isEditable()"
-                     ng-disabled="channelCtrl.isControlsDisabled()"
-                     ng-click="channelCtrl.disableEditMode()">
-                     {{ 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' | translate }}
-          </md-button>
-
-          <md-button class="qa-button-edit"
-                     ng-class="{ 'button-active': channelCtrl.isEditMode }"
-                     ng-if="channelCtrl.isEditable()"
-                     ng-disabled="channelCtrl.isControlsDisabled()"
-                     ng-click="channelCtrl.enableEditMode()">
-            {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
-          </md-button>
-        </div>
+        <overlay-toggle state="channelCtrl.isContentOverlayDisplayed"
+                        icon="description"
+                        class="qa-toggle-content"
+                        tooltip="{{ channelCtrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}"
+                        ng-if="channelCtrl.isPageLoaded()">
+        </overlay-toggle>
       </div>
     </div>
     <md-progress-linear md-mode="indeterminate"
-      ng-disabled="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded() && !channelCtrl.isCreatingPreview">
+      ng-disabled="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded()">
     </md-progress-linear>
   </md-toolbar>
 
-  <md-content layout="row" flex ng-class="{ 'hide-scrollbar': !channelCtrl.isSubpageOpen() }">
-    <left-side-panel layout="row" edit-mode="channelCtrl.isEditMode"></left-side-panel>
+  <md-content layout="row" flex>
+    <left-side-panel layout="row" components-visible="channelCtrl.isComponentsOverlayDisplayed"></left-side-panel>
 
     <hippo-iframe
       flex
       ng-show="channelCtrl.isChannelLoaded()"
-      edit-mode="channelCtrl.isEditMode"
+      show-components-overlay="channelCtrl.isComponentsOverlayDisplayed"
+      show-content-overlay="channelCtrl.isContentOverlayDisplayed"
       on-edit-content="channelCtrl.editContent(contentUuid)"
       on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>
 
-    <right-side-panel layout="row" edit-mode="channelCtrl.isEditMode"></right-side-panel>
+    <right-side-panel layout="row"></right-side-panel>
   </md-content>
 </div>
 
