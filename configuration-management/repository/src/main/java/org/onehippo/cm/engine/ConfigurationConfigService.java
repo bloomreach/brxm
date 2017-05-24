@@ -20,19 +20,16 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.Binary;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -40,11 +37,9 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.ValueFactory;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
@@ -100,6 +95,8 @@ public class ConfigurationConfigService {
             HIPPO_PATHS,
             HIPPOSTD_STATESUMMARY
     };
+
+    private final ValueConverter valueProcessor = new ValueConverter();
 
     private static class UnprocessedReference {
         final ConfigurationProperty updateProperty;
@@ -321,21 +318,11 @@ public class ConfigurationConfigService {
     }
 
     private boolean hasMixin(final Node node, final String mixin) throws RepositoryException {
-        for (NodeType mixinType : node.getMixinNodeTypes()) {
-            if (mixinType.getName().equals(mixin)) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(node.getMixinNodeTypes()).anyMatch(mixinType -> mixinType.getName().equals(mixin));
     }
 
     private boolean hasMixin(final Value[] mixinValues, final String mixin) {
-        for (Value mixinValue : mixinValues) {
-            if (mixinValue.getString().equals(mixin)) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(mixinValues).anyMatch(mixinValue -> mixinValue.getString().equals(mixin));
     }
 
     private void removeMixin(final Node node, final String mixin) throws RepositoryException {
@@ -575,23 +562,22 @@ public class ConfigurationConfigService {
 
         for (int modelIndex = 0, targetIndex = 0; modelIndex < indexedModelChildNames.size(); modelIndex++) {
             final String indexedModelName = indexedModelChildNames.get(modelIndex);
-            if (!indexedTargetNodeChildNames.contains(indexedModelName)) {
-                continue; // child may have been removed manually...
+            if (indexedTargetNodeChildNames.contains(indexedModelName)) {
+                String indexedTargetName = indexedTargetNodeChildNames.get(targetIndex);
+                while (indexedModelChildNames.indexOf(indexedTargetName) < modelIndex) {
+                    targetIndex++; // skip target node, it isn't part of the model.
+                    indexedTargetName = indexedTargetNodeChildNames.get(targetIndex);
+                }
+
+                if (indexedTargetName.equals(indexedModelName)) {
+                    // node is at appropriate position, do nothing
+                    targetIndex++;
+                } else {
+                    // node is at a later position, reorder it
+                    parent.orderBefore(indexedModelName, indexedTargetName);
+                }
             }
 
-            String indexedTargetName = indexedTargetNodeChildNames.get(targetIndex);
-            while (indexedModelChildNames.indexOf(indexedTargetName) < modelIndex) {
-                targetIndex++; // skip target node, it isn't part of the model.
-                indexedTargetName = indexedTargetNodeChildNames.get(targetIndex);
-            }
-
-            if (indexedTargetName.equals(indexedModelName)) {
-                // node is at appropriate position, do nothing
-                targetIndex++;
-            } else {
-                // node is at a later position, reorder it
-                parent.orderBefore(indexedModelName, indexedTargetName);
-            }
         }
     }
 
@@ -666,10 +652,10 @@ public class ConfigurationConfigService {
 
         try {
             if (updateProperty.isMultiple()) {
-                jcrNode.setProperty(updateProperty.getName(), valuesFrom(updateProperty, verifiedUpdateValues, session));
+                jcrNode.setProperty(updateProperty.getName(), valueProcessor.valuesFrom(updateProperty, verifiedUpdateValues, session));
             } else {
                 if (verifiedUpdateValues.size() > 0) {
-                    jcrNode.setProperty(updateProperty.getName(), valueFrom(updateProperty, verifiedUpdateValues.get(0), session));
+                    jcrNode.setProperty(updateProperty.getName(), valueProcessor.valueFrom(updateProperty, verifiedUpdateValues.get(0), session));
                 }
             }
         } catch (RepositoryException e) {
@@ -795,35 +781,13 @@ public class ConfigurationConfigService {
                 return false;
             }
             for (int i = 0; i < v1.length; i++) {
-                if (!valueIsIdentical(v1[i], v2[i])) {
+                if (!valueProcessor.valueIsIdentical(v1[i], v2[i])) {
                     return false;
                 }
             }
             return true;
         }
-        return valueIsIdentical(p1.getValue(), p2.getValue());
-    }
-
-    private boolean valueIsIdentical(final Value v1, final Value v2) throws IOException {
-        // Type equality at the property level is sufficient, no need to check for type equality at value level.
-
-        switch (v1.getType()) {
-            case STRING:
-                return getStringValue(v1).equals(getStringValue(v2));
-            case BINARY:
-                try (final InputStream v1InputStream = getBinaryInputStream(v1);
-                     final InputStream v2InputStream = getBinaryInputStream(v2)) {
-                    return IOUtils.contentEquals(v1InputStream, v2InputStream);
-                }
-            case URI:
-            case NAME:
-            case PATH:
-            case REFERENCE:
-            case WEAKREFERENCE:
-                return v1.getString().equals(v2.getString());
-            default:
-                return v1.getObject().equals(v2.getObject());
-        }
+        return valueProcessor.valueIsIdentical(p1.getValue(), p2.getValue());
     }
 
     private boolean propertyIsIdentical(final Property jcrProperty, final ConfigurationProperty modelProperty,
@@ -835,148 +799,31 @@ public class ConfigurationConfigService {
 
     private boolean valuesAreIdentical(final ConfigurationProperty modelProperty, final List<Value> modelValues,
                                        final Property jcrProperty) throws RepositoryException, IOException {
-        if (modelProperty.getType() == PropertyType.SINGLE) {
+        if (modelProperty.isMultiple()) {
+            final javax.jcr.Value[] jcrValues = jcrProperty.getValues();
+            if (modelValues.size() != jcrValues.length) {
+                return false;
+            }
+            for (int i = 0; i < jcrValues.length; i++) {
+                if (!valueProcessor.valueIsIdentical(modelProperty, modelValues.get(i), jcrValues[i])) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
             if (modelValues.size() > 0) {
-                return valueIsIdentical(modelProperty, modelProperty.getValue(), jcrProperty.getValue());
+                return valueProcessor.valueIsIdentical(modelProperty, modelProperty.getValue(), jcrProperty.getValue());
             } else {
                 // No modelValue indicates that a reference failed verification (of UUID or path).
                 // We leave the current reference (existing or not) unchanged and return true to
                 // short-circuit further processing of this modelProperty.
                 return true;
             }
-        } else {
-            final javax.jcr.Value[] jcrValues = jcrProperty.getValues();
-            if (modelValues.size() != jcrValues.length) {
-                return false;
-            }
-            for (int i = 0; i < jcrValues.length; i++) {
-                if (!valueIsIdentical(modelProperty, modelValues.get(i), jcrValues[i])) {
-                    return false;
-                }
-            }
-            return true;
         }
-    }
-
-    private boolean valueIsIdentical(final ConfigurationProperty modelProperty,
-                                     final Value modelValue,
-                                     final javax.jcr.Value jcrValue) throws RepositoryException, IOException {
-        if (modelValue.getType().ordinal() != jcrValue.getType()) {
-            return false;
-        }
-
-        switch (modelValue.getType()) {
-            case STRING:
-                return getStringValue(modelValue).equals(jcrValue.getString());
-            case BINARY:
-                try (final InputStream modelInputStream = getBinaryInputStream(modelValue)) {
-                    final Binary jcrBinary = jcrValue.getBinary();
-                    try (final InputStream jcrInputStream = jcrBinary.getStream()) {
-                        return IOUtils.contentEquals(modelInputStream, jcrInputStream);
-                    } finally {
-                        jcrBinary.dispose();
-                    }
-                }
-            case LONG:
-                return modelValue.getObject().equals(jcrValue.getLong());
-            case DOUBLE:
-                return modelValue.getObject().equals(jcrValue.getDouble());
-            case DATE:
-                return modelValue.getObject().equals(jcrValue.getDate());
-            case BOOLEAN:
-                return modelValue.getObject().equals(jcrValue.getBoolean());
-            case URI:
-            case NAME:
-            case PATH:
-            case REFERENCE:
-            case WEAKREFERENCE:
-                // REFERENCE and WEAKREFERENCE type values already are resolved to hold a validated uuid
-                return modelValue.getString().equals(jcrValue.getString());
-            case DECIMAL:
-                return modelValue.getObject().equals(jcrValue.getDecimal());
-            default:
-                final String msg = String.format(
-                        "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
-                        modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty), modelValue.getType());
-                throw new RuntimeException(msg);
-        }
-    }
-
-    private String getStringValue(final Value modelValue) throws IOException {
-        if (modelValue.isResource()) {
-            try (final InputStream inputStream = getResourceInputStream(modelValue)) {
-                return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            }
-        } else {
-            return modelValue.getString();
-        }
-    }
-
-    private InputStream getBinaryInputStream(final Value modelValue) throws IOException {
-        if (modelValue.isResource()) {
-            return getResourceInputStream(modelValue);
-        } else {
-            return new ByteArrayInputStream((byte[]) modelValue.getObject());
-        }
-    }
-
-    private InputStream getResourceInputStream(final Value modelValue) throws IOException {
-        return getResourceInputStream(modelValue.getParent().getDefinition().getSource(), modelValue.getString());
     }
 
     private InputStream getResourceInputStream(final Source source, final String resourceName) throws IOException {
         return source.getModule().getConfigResourceInputProvider().getResourceInputStream(source, resourceName);
-    }
-
-    private javax.jcr.Value[] valuesFrom(final ConfigurationProperty modelProperty,
-                                         final List<Value> modelValues,
-                                         final Session session) throws RepositoryException, IOException {
-        final javax.jcr.Value[] jcrValues = new javax.jcr.Value[modelValues.size()];
-        for (int i = 0; i < jcrValues.length; i++) {
-            jcrValues[i] = valueFrom(modelProperty, modelValues.get(i), session);
-        }
-        return jcrValues;
-    }
-
-    private javax.jcr.Value valueFrom(final ConfigurationProperty modelProperty,
-                                      final Value modelValue, final Session session)
-            throws RepositoryException, IOException {
-        final ValueFactory factory = session.getValueFactory();
-        final ValueType type = modelValue.getType();
-
-        switch (type) {
-            case STRING:
-                return factory.createValue(getStringValue(modelValue));
-            case BINARY:
-                final Binary binary = factory.createBinary(getBinaryInputStream(modelValue));
-                try {
-                    return factory.createValue(binary);
-                } finally {
-                    binary.dispose();
-                }
-            case LONG:
-                return factory.createValue((Long)modelValue.getObject());
-            case DOUBLE:
-                return factory.createValue((Double)modelValue.getObject());
-            case DATE:
-                return factory.createValue((Calendar)modelValue.getObject());
-            case BOOLEAN:
-                return factory.createValue((Boolean)modelValue.getObject());
-            case URI:
-            case NAME:
-            case PATH:
-            case REFERENCE:
-            case WEAKREFERENCE:
-                // REFERENCE and WEAKREFERENCE type values already are resolved to hold a validated uuid
-                return factory.createValue(modelValue.getString(), type.ordinal());
-            case DECIMAL:
-                return factory.createValue((BigDecimal)modelValue.getObject());
-            default:
-                final String msg = String.format(
-                        "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
-                        modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty), type);
-                throw new RuntimeException(msg);
-        }
     }
 
     private void postProcessReferences(final List<UnprocessedReference> references)

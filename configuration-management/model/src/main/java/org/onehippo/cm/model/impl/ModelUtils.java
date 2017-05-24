@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 import org.onehippo.cm.model.ConfigurationItem;
 import org.onehippo.cm.model.Definition;
-import org.onehippo.cm.model.DefinitionItem;
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.Project;
@@ -43,8 +42,7 @@ public class ModelUtils {
     public static String formatDefinitions(final ConfigurationItem item) {
         return item.getDefinitions()
                 .stream()
-                .map(DefinitionItem::getDefinition)
-                .map(ModelUtils::formatDefinition)
+                .map(d -> ModelUtils.formatDefinition(d.getDefinition()))
                 .collect(Collectors.toList())
                 .toString();
     }

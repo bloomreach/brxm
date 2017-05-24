@@ -30,7 +30,9 @@ import javax.jcr.ValueFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.ModelItem;
 import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.SourceType;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.ModelUtils;
@@ -52,6 +54,45 @@ public class ValueConverter {
             jcrValues[i] = valueFrom(modelValues.get(i), session);
         }
         return jcrValues;
+    }
+
+    public javax.jcr.Value[] valuesFrom(final ModelItem modelItem,
+                                         final List<Value> modelValues,
+                                         final Session session) throws RepositoryException, IOException {
+        final javax.jcr.Value[] jcrValues = new javax.jcr.Value[modelValues.size()];
+        for (int i = 0; i < jcrValues.length; i++) {
+            jcrValues[i] = valueFrom(modelItem, modelValues.get(i), session);
+        }
+        return jcrValues;
+    }
+
+    public javax.jcr.Value valueFrom(final ModelItem modelItem,
+                                      final Value modelValue, final Session session)
+            throws RepositoryException, IOException {
+
+        final ValueType type = modelValue.getType();
+
+        try {
+            return valueFrom(modelValue, session);
+        } catch (RuntimeException ex) {
+                final String msg = String.format(
+                        "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
+                        modelItem.getPath(), modelItem.getItemOrigin(), type);
+                throw new RuntimeException(msg, ex);
+        }
+    }
+
+    public boolean valueIsIdentical(final ModelItem modelItem,
+                                     final Value modelValue,
+                                     final javax.jcr.Value jcrValue) throws RepositoryException, IOException {
+        try {
+            return valueIsIdentical(modelValue, jcrValue);
+        } catch (RuntimeException e) {
+            final String msg = String.format(
+                    "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
+                    modelItem.getPath(), modelItem.getItemOrigin(), modelValue.getType());
+            throw new RuntimeException(msg);
+        }
     }
 
     /**
@@ -100,6 +141,71 @@ public class ValueConverter {
         }
     }
 
+    private boolean valueIsIdentical(final Value modelValue,
+                                     final javax.jcr.Value jcrValue) throws RepositoryException, IOException {
+        if (modelValue.getType().ordinal() != jcrValue.getType()) {
+            return false;
+        }
+
+        switch (modelValue.getType()) {
+            case STRING:
+                return getStringValue(modelValue).equals(jcrValue.getString());
+            case BINARY:
+                try (final InputStream modelInputStream = getBinaryInputStream(modelValue)) {
+                    final Binary jcrBinary = jcrValue.getBinary();
+                    try (final InputStream jcrInputStream = jcrBinary.getStream()) {
+                        return IOUtils.contentEquals(modelInputStream, jcrInputStream);
+                    } finally {
+                        jcrBinary.dispose();
+                    }
+                }
+            case LONG:
+                return modelValue.getObject().equals(jcrValue.getLong());
+            case DOUBLE:
+                return modelValue.getObject().equals(jcrValue.getDouble());
+            case DATE:
+                return modelValue.getObject().equals(jcrValue.getDate());
+            case BOOLEAN:
+                return modelValue.getObject().equals(jcrValue.getBoolean());
+            case URI:
+            case NAME:
+            case PATH:
+            case REFERENCE:
+            case WEAKREFERENCE:
+                // REFERENCE and WEAKREFERENCE type values already are resolved to hold a validated uuid
+                return modelValue.getString().equals(jcrValue.getString());
+            case DECIMAL:
+                return modelValue.getObject().equals(jcrValue.getDecimal());
+            default:
+                final String msg = String.format(
+                        "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
+                        modelValue.getParent().getPath(), ModelUtils.formatDefinition(modelValue.getParent().getDefinition()), modelValue.getType());
+                throw new RuntimeException(msg);
+        }
+    }
+
+    public boolean valueIsIdentical(final Value v1, final Value v2) throws IOException {
+        // Type equality at the property level is sufficient, no need to check for type equality at value level.
+
+        switch (v1.getType()) {
+            case STRING:
+                return getStringValue(v1).equals(getStringValue(v2));
+            case BINARY:
+                try (final InputStream v1InputStream = getBinaryInputStream(v1);
+                     final InputStream v2InputStream = getBinaryInputStream(v2)) {
+                    return IOUtils.contentEquals(v1InputStream, v2InputStream);
+                }
+            case URI:
+            case NAME:
+            case PATH:
+            case REFERENCE:
+            case WEAKREFERENCE:
+                return v1.getString().equals(v2.getString());
+            default:
+                return v1.getObject().equals(v2.getObject());
+        }
+    }
+
     private String getStringValue(final Value modelValue) throws IOException {
         if (modelValue.isResource()) {
             try (final InputStream inputStream = getResourceInputStream(modelValue)) {
@@ -115,7 +221,11 @@ public class ValueConverter {
     }
 
     private InputStream getResourceInputStream(final Source source, final String resourceName) throws IOException {
-        return source.getModule().getContentResourceInputProvider().getResourceInputStream(source, resourceName);
+        if (source.getType() == SourceType.CONTENT) {
+            return source.getModule().getContentResourceInputProvider().getResourceInputStream(source, resourceName);
+        } else {
+            return source.getModule().getConfigResourceInputProvider().getResourceInputStream(source, resourceName);
+        }
     }
 
     private InputStream getResourceInputStream(final Value modelValue) throws IOException {

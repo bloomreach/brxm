@@ -90,4 +90,10 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
         this.category = category;
     }
 
+    @Override
+    public String getItemOrigin() {
+        return ModelUtils.formatDefinition(this.getDefinition());
+    }
+
+
 }

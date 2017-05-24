@@ -90,4 +90,9 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
         return parent == null;
     }
 
+    @Override
+    public String getItemOrigin() {
+        return ModelUtils.formatDefinitions(this);
+    }
+
 }

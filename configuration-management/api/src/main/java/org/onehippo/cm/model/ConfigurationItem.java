@@ -17,9 +17,8 @@ package org.onehippo.cm.model;
 
 import java.util.List;
 
-public interface ConfigurationItem {
+public interface ConfigurationItem extends ModelItem {
     String getName();
-    String getPath();
     ConfigurationNode getParent();
 
     /**
