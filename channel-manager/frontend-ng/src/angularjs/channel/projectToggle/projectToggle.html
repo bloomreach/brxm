@@ -22,18 +22,15 @@
 
   <md-select aria-label="{{ 'TOOLBAR_PROJECT_LABEL' | translate }}"
              class="md-no-underline"
-             ng-model="$ctrl.selectedProject"
-             ng-change="$ctrl.projectChanged()">
-    <md-option ng-repeat="project in $ctrl.getWithBranch() | orderBy: 'name'"
-               ng-value="project"
-               md-truncate>
-      {{ project.name }}
+             ng-model="$ctrl.selectedProject">
+    <md-option ng-value="$ctrl.core">
+      {{ $ctrl.core.name }}
     </md-option>
 
-    <md-divider></md-divider>
+    <md-divider ng-if="$ctrl.getProjects()"></md-divider>
 
-    <md-option ng-repeat="project in $ctrl.getWithoutBranch() | orderBy: 'name'"
-               ng-value="project" ng-disabled="project.disabled"
+    <md-option ng-repeat="project in $ctrl.getProjects() | orderBy: 'name'"
+               ng-value="project"
                md-truncate>
       {{ project.name }}
     </md-option>

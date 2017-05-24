@@ -15,11 +15,13 @@
  *
  */
 
-const REST_API_PATH = 'ws/projects';
-
 class ProjectService {
-
-  constructor($http, ConfigService, PathService, HstService) {
+  constructor(
+    $http,
+    ConfigService,
+    PathService,
+    HstService,
+  ) {
     'ngInject';
 
     this.$http = $http;
@@ -29,72 +31,36 @@ class ProjectService {
   }
 
   load(channel) {
-    this._mountId = channel.mountId;
-    this._master = {
-      name: this._masterName(channel),
-      id: channel.id,
-    };
-    this.projects();
-  }
+    this.urlPrefix = `${this.ConfigService.getCmsContextPath()}ws/projects/`;
+    this.mountId = channel.mountId;
 
-  _masterName(channel) {
-    return `${channel.name} Core`;
-  }
-
-  projects() {
-    return this._getProjects(this._mountId)
-      .then((result) => {
-        this.currentBranch()
+    this.getProjects()
+      .then((projects) => {
+        this.getCurrentProject()
           .then((branchId) => {
-            this.withBranch = [this._master];
-            this.withBranch = this.withBranch.concat(result.withBranch);
-            this.selectedProject = this._master;
-            let disabled = false;
-            if (branchId) {
-              disabled = true;
-              this.selectedProject = this.withBranch.find(project => project.id === branchId);
-            }
-            this.withoutBranch = result.withoutBranch;
-            this.withoutBranch.forEach((p) => { Object.assign(p, { disabled: disabled || p.state !== 'UNAPPROVED' }); });
+            this.projects = projects;
+            this.selectedProject = this.projects.find(project => project.id === branchId);
           });
       });
   }
 
-  _getProjects(mountId) {
-    const url = `${this.ConfigService.getCmsContextPath()}${REST_API_PATH}/${mountId}/channel`;
-    return this.$http({ method: 'GET', url, headers: {}, data: {} }).then(result => result.data);
+  getProjects() {
+    const url = `${this.urlPrefix}${this.mountId}/associated-with-channel`;
+    return this.$http.get(url).then(result => result.data);
   }
 
-  compareId(p1) {
-    return p2 => p1.id === p2.id;
-  }
-
-  projectChanged(selectedProject) {
-    if (this.compareId(this._master)(selectedProject)) {
-      return this.selectMaster();
-    }
-    if (this.withoutBranch.some(this.compareId(selectedProject))) {
-      return this.createBranch(selectedProject);
+  selectProject(project) {
+    if (this.projects.find(p => p.id === project.id)) {
+      return this.HstService.doPut(null, this.mountId, 'selectbranch', project.id);
     }
 
-    return this.selectBranch(selectedProject);
+    return this.HstService.doPut(null, this.mountId, 'selectmaster');
   }
 
-  currentBranch() {
-    return this.HstService.doGet(this._mountId, 'currentbranch')
+  getCurrentProject() {
+    return this.HstService
+      .doGet(this.mountId, 'currentbranch')
       .then(result => result.data);
-  }
-
-  createBranch(project) {
-    return this.HstService.doPut(null, this._mountId, 'createbranch', project.id);
-  }
-
-  selectBranch(project) {
-    return this.HstService.doPut(null, this._mountId, 'selectbranch', project.id);
-  }
-
-  selectMaster() {
-    return this.HstService.doPut(null, this._mountId, 'selectmaster');
   }
 }
 

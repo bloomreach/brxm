@@ -14,6 +14,7 @@
  * limitations under the License.
  *
  */
+
 class ProjectToggleController {
   constructor(
     $scope,
@@ -29,24 +30,24 @@ class ProjectToggleController {
     this.ProjectService = ProjectService;
   }
 
-  getWithBranch() {
-    return this.ProjectService.withBranch;
+  $onInit() {
+    this.core = {
+      name: this.$translate.instant('CORE'),
+    };
   }
 
-  getWithoutBranch() {
-    return this.ProjectService.withoutBranch;
+  getProjects() {
+    return this.ProjectService.projects;
   }
 
   get selectedProject() {
-    return this.ProjectService.selectedProject;
+    return this.ProjectService.selectedProject || this.core;
   }
 
   set selectedProject(selectedProject) {
     this.ProjectService.selectedProject = selectedProject;
-  }
-
-  projectChanged() {
-    this.ProjectService.projectChanged(this.selectedProject)
+    this.ProjectService
+      .selectProject(this.selectedProject)
       .then(() => this.HippoIframeService.reload());
   }
 }
