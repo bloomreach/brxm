@@ -73,8 +73,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 log.info("YAML verification complete");
             }
 
-            final ContentService contentService = new ContentService();
-            contentService.apply(configurationModel, session);
+            final ConfigurationContentService configurationContentService = new ConfigurationContentService();
+            configurationContentService.apply(configurationModel, session);
 
             // update the stored baseline after fully applying the configurationModel
             // this could result in the baseline becoming out of sync if the second phase of the apply fails

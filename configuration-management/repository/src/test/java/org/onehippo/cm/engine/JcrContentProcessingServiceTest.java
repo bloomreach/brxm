@@ -47,7 +47,7 @@ import static org.onehippo.cm.model.impl.ModelTestUtils.parseNoSort;
 
 public class JcrContentProcessingServiceTest extends RepositoryTestCase {
 
-    private final ValueConverter valueConverter = new ValueConverter();
+    private final ValueProcessor valueProcessor = new ValueProcessor();
 
 
     private final String source =
@@ -165,7 +165,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
 
         final ConfigurationModel configModel2 = createConfigurationModel(new String[]{source2});
 
-        final ContentProcessingService processingService = new JcrContentProcessingService(valueConverter);
+        final JcrContentProcessingService processingService = new JcrContentProcessingService(valueProcessor);
 
         Node parentNode = session.getNode("/test/node1");
         processingService.importNode(configModel2.getContentDefinitions().get(0).getNode(), parentNode, ActionType.APPEND);
@@ -208,7 +208,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
     public void delete_content() throws Exception {
         append_content();
 
-        final ContentProcessingService processingService = new JcrContentProcessingService(valueConverter);
+        final JcrContentProcessingService processingService = new JcrContentProcessingService(valueProcessor);
 
         final DefinitionNodeImpl deleteNode = new DefinitionNodeImpl("/test/node3", "node3", null);
         processingService.apply(deleteNode, ActionType.DELETE, session);
@@ -233,7 +233,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
     }
 
     private void saveContent(final ConfigurationModel configModel, final ActionType actionType) throws RepositoryException {
-        final ContentProcessingService processingService = new JcrContentProcessingService(valueConverter);
+        final JcrContentProcessingService processingService = new JcrContentProcessingService(valueProcessor);
         for (final ContentDefinition contentDefinition : configModel.getContentDefinitions()) {
             processingService.apply(contentDefinition.getNode(), actionType, session);
         }

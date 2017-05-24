@@ -63,11 +63,11 @@ import static org.onehippo.cm.model.ValueType.WEAKREFERENCE;
 /**
  * Applies definition nodes to JCR
  */
-public class JcrContentProcessingService implements ContentProcessingService {
+public class JcrContentProcessingService {
 
     private static final Logger logger = LoggerFactory.getLogger(JcrContentProcessingService.class);
 
-    private final ValueConverter valueConverter;
+    private final ValueProcessor valueProcessor;
     private final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences = new ArrayList<>();
 
     private static final String[] knownDerivedPropertyNames = new String[]{
@@ -76,8 +76,8 @@ public class JcrContentProcessingService implements ContentProcessingService {
             HIPPOSTD_STATESUMMARY
     };
 
-    public JcrContentProcessingService(final ValueConverter valueConverter) {
-        this.valueConverter = valueConverter;
+    public JcrContentProcessingService(final ValueProcessor valueProcessor) {
+        this.valueProcessor = valueProcessor;
     }
 
     /**
@@ -299,9 +299,9 @@ public class JcrContentProcessingService implements ContentProcessingService {
         try {
             if (modelValues.size() > 0) {
                 if (modelProperty.getType() == PropertyType.SINGLE) {
-                    jcrNode.setProperty(modelProperty.getName(), valueConverter.valueFrom(modelValues.get(0), jcrNode.getSession()));
+                    jcrNode.setProperty(modelProperty.getName(), valueProcessor.valueFrom(modelValues.get(0), jcrNode.getSession()));
                 } else {
-                    jcrNode.setProperty(modelProperty.getName(), valueConverter.valuesFrom(modelValues, jcrNode.getSession()));
+                    jcrNode.setProperty(modelProperty.getName(), valueProcessor.valuesFrom(modelValues, jcrNode.getSession()));
                 }
             }
         } catch (RepositoryException e) {

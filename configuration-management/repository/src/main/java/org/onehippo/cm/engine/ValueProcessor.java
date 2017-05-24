@@ -40,7 +40,7 @@ import org.onehippo.cm.model.impl.ModelUtils;
 /**
  * Config {@link Value} -> JCR {@link javax.jcr.Value} converter
  */
-public class ValueConverter {
+public class ValueProcessor {
 
     /**
      * Creates array of {@link javax.jcr.Value} based on {@link Value} list

@@ -244,11 +244,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         }
     }
 
-    /**
-     * Find a ConfigurationNode by its absolute path.
-     * @param path the path of a node
-     * @return a ConfigurationNode or null, if no node exists with this path
-     */
+    @Override
     public ConfigurationNodeImpl resolveNode(String path) {
         String[] segments = StringUtils.stripStart(path, "/").split("/");
 
@@ -262,11 +258,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         return currentNode;
     }
 
-    /**
-     * Find a ConfigurationProperty by its absolute path.
-     * @param path the path of a property
-     * @return a ConfigurationProperty or null, if no property exists with this path
-     */
+    @Override
     public ConfigurationPropertyImpl resolveProperty(String path) {
         ConfigurationNodeImpl node = resolveNode(StringUtils.substringBeforeLast(path, "/"));
         if (node == null) {

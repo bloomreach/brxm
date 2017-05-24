@@ -56,12 +56,12 @@ import static org.onehippo.cm.model.Constants.MODULE_SEQUENCE_NUMBER;
 /**
  * Applies content definitions to repository
  */
-public class ContentService {
+public class ConfigurationContentService {
 
-    private static final Logger log = LoggerFactory.getLogger(ContentService.class);
+    private static final Logger log = LoggerFactory.getLogger(ConfigurationContentService.class);
 
-    private final ValueConverter valueConverter = new ValueConverter();
-    private final ContentProcessingService contentProcessingService = new JcrContentProcessingService(valueConverter);
+    private final ValueProcessor valueProcessor = new ValueProcessor();
+    private final JcrContentProcessingService contentProcessingService = new JcrContentProcessingService(valueProcessor);
 
     /**
      * Apply content definitions from modules contained within configuration model
@@ -78,7 +78,7 @@ public class ContentService {
         for (final Module module : modules) {
             final ModuleImpl moduleImpl = (ModuleImpl) module;
             if (isNotEmpty(module.getActionsMap()) || isNotEmpty(moduleImpl.getContentDefinitions())) {
-                apply(moduleImpl, session);
+                apply(moduleImpl, model, session);
             }
         }
     }
@@ -109,7 +109,7 @@ public class ContentService {
      * @param session
      * @throws RepositoryException
      */
-    private void apply(final ModuleImpl module, final Session session) throws RepositoryException {
+    private void apply(final ModuleImpl module, final ConfigurationModel model, final Session session) throws RepositoryException {
 
         final double currentVersion = getModuleVersion(module, session);
 
@@ -118,7 +118,9 @@ public class ContentService {
         final List<ActionItem> actionsToProcess = collectNewActions(currentVersion, actionsMap);
 
         final List<ActionItem> itemsToDelete = actionsToProcess.stream().filter(x -> x.getType() == ActionType.DELETE).collect(toList());
-        processItemsToDelete(itemsToDelete, session); //TODO SS:, save processed actions to baseline (hcm:moduleActionsApplied)
+
+        validateDeleteActions(model, itemsToDelete);
+        processItemsToDelete(itemsToDelete, session); //TODO SS:, save processed actions to baseline (hcm:moduleActionsApplied) ?
         session.save();
 
         sortContentDefinitions(module);
@@ -140,6 +142,17 @@ public class ContentService {
 
         final Optional<Double> latestVersion = actionsMap.keySet().stream().max(Double::compareTo);
         latestVersion.ifPresent(module::setSequenceNumber);
+    }
+
+    /**
+     * Validate if DELETE action is not related to configuration node
+     * @param model
+     * @param itemsToDelete
+     */
+    private void validateDeleteActions(final ConfigurationModel model, final List<ActionItem> itemsToDelete) {
+        itemsToDelete.stream().filter(item -> model.resolveNode(item.getPath()) != null).findFirst().ifPresent((x) -> {
+            throw new RuntimeException(String.format("Config definitions are not allowed to be deleted: %s", x.getPath()));
+        });
     }
 
     /**

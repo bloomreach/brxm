@@ -96,7 +96,7 @@ public class ConfigurationConfigService {
             HIPPOSTD_STATESUMMARY
     };
 
-    private final ValueConverter valueProcessor = new ValueConverter();
+    private final ValueProcessor valueProcessor = new ValueProcessor();
 
     private static class UnprocessedReference {
         final ConfigurationProperty updateProperty;

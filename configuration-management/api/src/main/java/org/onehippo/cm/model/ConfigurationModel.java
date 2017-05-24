@@ -66,4 +66,18 @@ public interface ConfigurationModel extends Closeable {
      * @throws IOException
      */
     void close() throws IOException;
+
+    /**
+     * Find a ConfigurationNode by its absolute path.
+     * @param path the path of a node
+     * @return a ConfigurationNode or null, if no node exists with this path
+     */
+    ConfigurationNode resolveNode(String path);
+
+    /**
+     * Find a ConfigurationProperty by its absolute path.
+     * @param path the path of a property
+     * @return a ConfigurationProperty or null, if no property exists with this path
+     */
+    ConfigurationProperty resolveProperty(String path);
 }
