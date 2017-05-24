@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 63 51">
+  <title>icon7</title>
+  <g fill="currentColor">
+    <path class="cls-1" d="M66,8.53H6A1.5,1.5,0,0,0,4.51,10V58A1.5,1.5,0,0,0,6,59.53H66a1.5,1.5,0,0,0,1.5-1.5V10A1.5,1.5,0,0,0,66,8.53Zm-1.5,48h-57v-45h57Z" transform="translate(-4.51 -8.53)"/>
+    <path class="cls-1" d="M36.74,24.82a1.5,1.5,0,0,0,1.5-1.5V16.69h6.62a1.5,1.5,0,1,0,0-3H36.74a1.5,1.5,0,0,0-1.5,1.5v8.12A1.5,1.5,0,0,0,36.74,24.82Z" transform="translate(-4.51 -8.53)"/>
+    <path class="cls-1" d="M36.74,54.18h8.12a1.5,1.5,0,0,0,0-3H38.24V44.56a1.5,1.5,0,0,0-3,0v8.12A1.5,1.5,0,0,0,36.74,54.18Z" transform="translate(-4.51 -8.53)"/>
+    <path class="cls-1" d="M52.26,16.69h6.62v6.62a1.5,1.5,0,0,0,3,0V15.19a1.5,1.5,0,0,0-1.5-1.5H52.26a1.5,1.5,0,0,0,0,3Z" transform="translate(-4.51 -8.53)"/>
+    <path class="cls-1" d="M52.26,54.18h8.12a1.5,1.5,0,0,0,1.5-1.5V44.56a1.5,1.5,0,0,0-3,0v6.62H52.26a1.5,1.5,0,0,0,0,3Z" transform="translate(-4.51 -8.53)"/>
+  </g>
+</svg>

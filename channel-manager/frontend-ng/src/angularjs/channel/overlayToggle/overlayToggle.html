@@ -18,7 +18,9 @@
            ng-click="$ctrl.toggleState()">
   <md-icon ng-class="{
             'active': $ctrl.state
-           }">{{ $ctrl.icon }}
+           }"
+           md-svg-src="{{ $ctrl.iconSrc }}">
+    {{ $ctrl.iconName }}
   </md-icon>
   <md-tooltip ng-if="$ctrl.tooltip" ng-bind="$ctrl.tooltip"></md-tooltip>
 </md-button>

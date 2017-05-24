@@ -28,7 +28,7 @@ describe('overlayToggle component', () => {
     ) => {
       $ctrl = $componentController('overlayToggle', {}, {
         state: false,
-        icon: 'md-icon-name',
+        iconName: 'md-icon-name',
         tooltip: 'Test tooltip',
       });
     });

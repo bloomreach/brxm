@@ -34,14 +34,14 @@
 
       <div flex="30" layout layout-align="end center">
         <overlay-toggle state="channelCtrl.isComponentsOverlayDisplayed"
-                        icon="view_quilt"
+                        icon-src="images/toggle_components_overlay.svg"
                         tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
                         class="qa-toggle-components"
                         ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded()">
         </overlay-toggle>
 
         <overlay-toggle state="channelCtrl.isContentOverlayDisplayed"
-                        icon="description"
+                        icon-src="images/document.svg"
                         class="qa-toggle-content"
                         tooltip="{{ channelCtrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}"
                         ng-if="channelCtrl.isPageLoaded()">
