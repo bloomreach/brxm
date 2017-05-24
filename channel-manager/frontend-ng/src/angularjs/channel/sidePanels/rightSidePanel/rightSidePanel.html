@@ -56,14 +56,13 @@
 
         <md-icon md-svg-src="images/publish.svg"></md-icon>
       </md-button>
-
       <md-button class="md-icon-button qa-edit-in-content-perspective"
                  aria-label="{{ 'SWITCH_TO_CONTENT_EDITOR' | translate }}"
                  ng-disabled="$ctrl.disableContentButtons"
                  ng-click="$ctrl.openContentEditor('edit')">
         <md-tooltip md-delay="500">{{ 'SWITCH_TO_CONTENT_EDITOR' | translate }}</md-tooltip>
 
-        <md-icon md-svg-src="images/document.svg"></md-icon>
+        <md-icon md-svg-src="images/switch-to-content-editor.svg"></md-icon>
       </md-button>
     </div>
     <md-progress-linear md-mode="indeterminate"
