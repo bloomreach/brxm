@@ -39,6 +39,11 @@ public class ConfigSourceImpl extends SourceImpl {
         modifiableDefinitions.add(definition);
     }
 
+    public void addWebFileBundleDefinition(final String name) {
+        final WebFileBundleDefinitionImpl definition = new WebFileBundleDefinitionImpl(this, name);
+        modifiableDefinitions.add(definition);
+    }
+
     public ConfigDefinitionImpl addConfigDefinition() {
         final ConfigDefinitionImpl definition = new ConfigDefinitionImpl(this);
         modifiableDefinitions.add(definition);

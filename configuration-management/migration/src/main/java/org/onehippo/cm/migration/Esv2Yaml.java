@@ -46,6 +46,7 @@ import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.FileConfigurationWriter;
 import org.onehippo.cm.model.ModuleContext;
+import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
@@ -278,7 +279,7 @@ public class Esv2Yaml {
         Map<String, DefinitionNodeImpl> nodeDefinitions = new HashMap<>();
 
         // not yet 'added' definition for resourcebundle root translation parent definitions, if needed
-        final ConfigDefinitionImpl resourceBundleParents = new ConfigDefinitionImpl(mainSource);
+        final ConfigDefinitionImpl resourceBundleParents = mainSource.addConfigDefinition();
         resourceBundleParents.setNode(null);
 
         for (InitializeInstruction instruction : instructions) {
@@ -313,9 +314,14 @@ public class Esv2Yaml {
                     break;
             }
         }
-        if (resourceBundleParents.getNode() != null && !resourceBundleParents.getNode().getNodes().isEmpty()) {
-            // add resourcebundles translations root definition parents
-            mainSource.addDefinition(resourceBundleParents);
+        if (resourceBundleParents.getNode() == null || resourceBundleParents.getNode().getNodes().isEmpty()) {
+            // remove empty resourcebundles translations root definition parents
+            for (Iterator<AbstractDefinitionImpl> defIter = mainSource.getModifiableDefinitions().iterator(); defIter.hasNext(); ) {
+                if (defIter.next() == resourceBundleParents) {
+                    defIter.remove();
+                    break;
+                }
+            }
         }
     }
 

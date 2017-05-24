@@ -30,7 +30,6 @@ import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.WebFileBundleDefinitionImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -187,7 +186,7 @@ public class ConfigSourceParser extends SourceParser {
         return asStringScalar(node);
     }
 
-    private void constructWebFileBundleDefinition(final Node definitionNode, final SourceImpl source) throws ParserException {
+    private void constructWebFileBundleDefinition(final Node definitionNode, final ConfigSourceImpl source) throws ParserException {
         final List<Node> nodes = asSequence(definitionNode);
         for (Node node : nodes) {
             final String name = asStringScalar(node);

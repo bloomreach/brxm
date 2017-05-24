@@ -60,23 +60,6 @@ public abstract class SourceImpl implements Source {
         return modifiableDefinitions;
     }
 
-    public void addWebFileBundleDefinition(final String name) {
-        final WebFileBundleDefinitionImpl definition = new WebFileBundleDefinitionImpl(this, name);
-        modifiableDefinitions.add(definition);
-    }
-
-    public void addDefinition(final ContentDefinitionImpl definition) {
-        if (definition.getSource() != this) {
-            throw new IllegalArgumentException("Definition does for this source");
-        }
-        for (AbstractDefinitionImpl def : modifiableDefinitions) {
-            if (def == definition) {
-                throw new IllegalStateException("Definition already added to this source");
-            }
-        }
-        modifiableDefinitions.add(definition);
-    }
-
     @Override
     public String toString() {
         return "SourceImpl{" + "path='" + path + '\'' + ", module=" + module + '}';

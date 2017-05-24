@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 import org.onehippo.cm.model.Constants;
-import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
 
 public class WebFileBundleInstruction extends InitializeInstruction {
 
@@ -32,7 +32,7 @@ public class WebFileBundleInstruction extends InitializeInstruction {
         super(instructionNode, type, combinedWith);
     }
 
-    public void processWebFileBundle(final SourceImpl source, final File moduleRoot) throws IOException {
+    public void processWebFileBundle(final ConfigSourceImpl source, final File moduleRoot) throws IOException {
         final String bundleName = getResourcePath();
         log.info("Processing " + getType().getPropertyName() + " named '" + bundleName + "'");
         source.addWebFileBundleDefinition(getResourcePath());
@@ -46,5 +46,4 @@ public class WebFileBundleInstruction extends InitializeInstruction {
             throw e;
         }
     }
-
 }
