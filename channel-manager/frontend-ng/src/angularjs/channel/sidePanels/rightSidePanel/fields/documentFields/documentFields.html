@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 <div class="field-wrapper"
-     ng-repeat="fieldType in $ctrl.fieldTypes track by fieldType.id"
+     ng-repeat="fieldType in $ctrl.fieldTypes track by $ctrl.getFieldTypeHash(fieldType)"
      ng-switch="fieldType.type">
 
   <compound-field ng-switch-when="COMPOUND"

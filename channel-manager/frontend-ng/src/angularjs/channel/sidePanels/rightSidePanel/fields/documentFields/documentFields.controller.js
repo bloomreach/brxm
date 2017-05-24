@@ -26,6 +26,10 @@ class DocumentFieldsCtrl {
     return index > 0 ? `${fieldName}[${index}]` : fieldName;
   }
 
+  getFieldTypeHash(fieldType) {
+    return `${fieldType.id}:${fieldType.validators}`;
+  }
+
   isValid(fieldType) {
     const fieldValues = this.fieldValues[fieldType.id];
     if (fieldValues) {

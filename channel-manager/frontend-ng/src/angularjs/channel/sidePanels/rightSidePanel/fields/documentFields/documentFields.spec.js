@@ -155,4 +155,10 @@ describe('DocumentFields', () => {
     $ctrl.fieldValues = {};
     expect($ctrl.isValid(stringField)).toBe(true);
   });
+
+  it('generates a unique hash per field type based on the ID and validators of a field', () => {
+    expect($ctrl.getFieldTypeHash({ id: 'hap:title' })).toEqual('hap:title:undefined');
+    expect($ctrl.getFieldTypeHash({ id: 'hap:title', validators: ['REQUIRED'] })).toEqual('hap:title:REQUIRED');
+    expect($ctrl.getFieldTypeHash({ id: 'hap:title', validators: ['REQUIRED', 'OTHER'] })).toEqual('hap:title:REQUIRED,OTHER');
+  });
 });
