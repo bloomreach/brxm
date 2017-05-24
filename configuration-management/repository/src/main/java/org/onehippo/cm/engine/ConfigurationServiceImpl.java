@@ -23,8 +23,8 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.ConfigurationService;
-import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
+import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.onehippo.repository.bootstrap.PostStartupTask;
 import org.slf4j.Logger;

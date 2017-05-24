@@ -74,7 +74,7 @@ class Configuration {
             try {
                 if (node.hasProperty(CONFIG_EXCLUDED_PROPERTY_NAME)) {
                     Value[] values = node.getProperty(CONFIG_EXCLUDED_PROPERTY_NAME).getValues();
-                    excluded = new ArrayList<String>(values.length);
+                    excluded = new ArrayList<>(values.length);
                     for (Value value : values) {
                         String exclude = value.getString();
                         excluded.add(exclude);
@@ -97,7 +97,7 @@ class Configuration {
             try {
                 if (node.hasProperty(CONFIG_MODULES_PROPERTY_NAME)) {
                     boolean rootRepositoryPathIsConfigured = false;
-                    Collection<String> allRepositoryPaths = new HashSet<String>();
+                    Collection<String> allRepositoryPaths = new HashSet<>();
                     Value[] values = node.getProperty(CONFIG_MODULES_PROPERTY_NAME).getValues();
                     for (Value value : values) {
                         String module = value.getString();
@@ -135,7 +135,7 @@ class Configuration {
     private void addRepositoryPath(String modulePath, String repositoryPath) {
         Collection<String> repositoryPaths = modules.get(modulePath);
         if (repositoryPaths == null) {
-            repositoryPaths = new ArrayList<String>();
+            repositoryPaths = new ArrayList<>();
             modules.put(modulePath, repositoryPaths);
         }
         if (isEnabled()) {
@@ -150,7 +150,7 @@ class Configuration {
             try {
                 if (node.hasProperty(CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME)) {
                     Value[] values = node.getProperty(CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME).getValues();
-                    filterUuidPaths = new ArrayList<String>(values.length);
+                    filterUuidPaths = new ArrayList<>(values.length);
                     for (Value value : values) {
                         String filterUuidPath = value.getString();
                         filterUuidPaths.add(filterUuidPath);

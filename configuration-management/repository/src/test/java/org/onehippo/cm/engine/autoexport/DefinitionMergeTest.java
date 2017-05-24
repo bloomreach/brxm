@@ -32,10 +32,9 @@ import org.onehippo.cm.model.FileConfigurationWriter;
 import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.PathConfigurationReader;
 import org.onehippo.cm.model.SerializerTest;
-import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.GroupImpl;
-import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +78,7 @@ public class DefinitionMergeTest {
         public MergeTest(final String testName) {
             this.testName = testName;
 
-            Map<String, Collection<String>> modules = new HashMap<String, Collection<String>>();
+            Map<String, Collection<String>> modules = new HashMap<>();
             modules.put("exportFirst", Arrays.asList("/topmost", "/exportFirstExistingRoot", "/hippo:namespaces"));
             modules.put("exportSecond", singletonList("/"));
             autoExportConfig = AutoExportConfigFactory.make(true, modules, null, null);
@@ -119,7 +118,7 @@ public class DefinitionMergeTest {
                     toExportModules.add(toExportModule);
                     push(builder, toExportModule);
                 }
-                ConfigurationModelImpl model = (ConfigurationModelImpl) builder.build();
+                ConfigurationModelImpl model = builder.build();
 
                 // load diff module
                 final ModuleImpl diff = loadModule(in(testName, "diff"));
@@ -139,7 +138,7 @@ public class DefinitionMergeTest {
         }
 
         protected void push(ConfigurationModelBuilder builder, ModuleImpl module) {
-            builder.push((GroupImpl) module.getProject().getGroup());
+            builder.push(module.getProject().getGroup());
         }
 
         /**

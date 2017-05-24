@@ -20,9 +20,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
+import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.ActionItem;
 import org.onehippo.cm.model.ActionType;
-import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;

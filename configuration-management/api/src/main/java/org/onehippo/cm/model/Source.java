@@ -30,5 +30,5 @@ public interface Source {
      * and empty immutable list if none present. Note the ordering is according to serialized yaml format and not in
      * model processing order.
      */
-    List<Definition> getDefinitions();
+    List<? extends Definition> getDefinitions();
 }

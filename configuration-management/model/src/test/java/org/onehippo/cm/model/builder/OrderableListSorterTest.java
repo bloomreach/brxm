@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.onehippo.cm.model.Orderable;
-import org.onehippo.cm.model.impl.OrderableImpl;
 import org.onehippo.cm.model.builder.exceptions.CircularDependencyException;
 import org.onehippo.cm.model.builder.exceptions.DuplicateNameException;
 import org.onehippo.cm.model.builder.exceptions.MissingDependencyException;
+import org.onehippo.cm.model.impl.OrderableImpl;
 
 import static org.junit.Assert.assertEquals;
 

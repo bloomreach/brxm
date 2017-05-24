@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 import org.onehippo.cm.model.serializer.SourceSerializer;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
-import org.onehippo.cm.model.impl.GroupImpl;
 import org.yaml.snakeyaml.nodes.Node;
 
 public class FileConfigurationWriter {

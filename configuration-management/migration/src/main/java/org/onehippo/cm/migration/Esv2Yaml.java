@@ -42,8 +42,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.Constants;
+import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.FileConfigurationWriter;
 import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
@@ -203,7 +203,7 @@ public class Esv2Yaml {
                 }
 
                 // generate unique 'main.yaml' source, optionally using 'root.yaml', 'base.yaml' or 'index.yaml' as fallback
-                final ConfigSourceImpl mainSource = (ConfigSourceImpl)module.addConfigSource(createSourcePath(MAIN_YAML_NAMES, sourcePaths, 0));  //TODO SS: review this. how to distinguish content from config definitions
+                final ConfigSourceImpl mainSource = module.addConfigSource(createSourcePath(MAIN_YAML_NAMES, sourcePaths, 0));  //TODO SS: review this. how to distinguish content from config definitions
 
                 processInitializeInstructions(mainSource, instructions);
                 serializeModule();

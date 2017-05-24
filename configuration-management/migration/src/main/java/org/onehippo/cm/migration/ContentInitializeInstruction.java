@@ -28,6 +28,7 @@ import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
@@ -89,7 +90,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                         } else {
                             if (removable) {
                                 deleteDefinitionNode(node);
-                                DefinitionNodeImpl parentNode = (DefinitionNodeImpl) node.getParent();
+                                DefinitionNodeImpl parentNode = node.getParent();
                                 while (parentNode.isEmpty()) {
                                     // empty (delta) parent: remove as well
                                     nodeDefinitions.remove(parentNode.getPath());
@@ -371,7 +372,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
     protected void deleteDefinition(final Definition definition) {
         // remove definition from source
         SourceImpl defSource = (SourceImpl) definition.getSource();
-        for (Iterator<Definition> defIterator = defSource.getModifiableDefinitions().iterator(); defIterator.hasNext(); ) {
+        for (Iterator<AbstractDefinitionImpl> defIterator = defSource.getModifiableDefinitions().iterator(); defIterator.hasNext(); ) {
             if (defIterator.next() == definition) {
                 defIterator.remove();
                 break;
@@ -381,7 +382,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
 
     private void deleteDefinitionNode(final DefinitionNodeImpl node) {
         // remove definitionNode from parent
-        ((DefinitionNodeImpl) node.getParent()).getModifiableNodes().remove(node.getName());
+        node.getParent().getModifiableNodes().remove(node.getName());
     }
 
     protected boolean isRemovableProp(final DefinitionProperty property, final Set<DefinitionNode> deltaNodes) {

@@ -31,9 +31,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.model.parser.ParserException;
-import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.parser.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +52,7 @@ public class ClasspathConfigurationModelReader {
      * @throws IOException
      * @throws ParserException
      */
-    public ConfigurationModel read(final ClassLoader classLoader, final boolean verifyOnly)
+    public ConfigurationModelImpl read(final ClassLoader classLoader, final boolean verifyOnly)
             throws IOException, ParserException, URISyntaxException {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -79,7 +80,7 @@ public class ClasspathConfigurationModelReader {
         classpathGroups.getLeft().forEach(builder::addFileSystem);
 
         // build the merged ConfigurationModel
-        final ConfigurationModel model = builder.build();
+        final ConfigurationModelImpl model = builder.build();
 
         stopWatch.stop();
         log.info("ConfigurationModel loaded in {}", stopWatch.toString());

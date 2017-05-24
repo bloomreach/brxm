@@ -17,7 +17,6 @@ package org.onehippo.cm.model;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -28,17 +27,17 @@ public interface ConfigurationModel extends Closeable {
     /**
      * @return a List of top-level configuration groups, pre-sorted in processing order
      */
-    List<Group> getSortedGroups();
+    List<? extends Group> getSortedGroups();
 
     /**
      * @return a List of all namespace definitions found anywhere in the merged configuration
      */
-    List<NamespaceDefinition> getNamespaceDefinitions();
+    List<? extends NamespaceDefinition> getNamespaceDefinitions();
 
     /**
      * @return a List of all node type definitions found anywhere in the merged configuration
      */
-    List<NodeTypeDefinition> getNodeTypeDefinitions();
+    List<? extends NodeTypeDefinition> getNodeTypeDefinitions();
 
     /**
      * TODO: explain this
@@ -46,16 +45,12 @@ public interface ConfigurationModel extends Closeable {
      */
     ConfigurationNode getConfigurationRootNode();
 
-    List<ContentDefinition> getContentDefinitions();
-
-    void addContentDefinitions(Collection<ContentDefinition> definitions);
-
-    void addContentDefinition(ContentDefinition definition);
+    List<? extends ContentDefinition> getContentDefinitions();
 
     /**
      * @return a List of all webfile bundle definitions found anywhere in the merged configuration
      */
-    List<WebFileBundleDefinition> getWebFileBundleDefinitions();
+    List<? extends WebFileBundleDefinition> getWebFileBundleDefinitions();
 
     /**
      * Compile cryptographic digest of contents including all referenced Modules, Sources, and resource files.

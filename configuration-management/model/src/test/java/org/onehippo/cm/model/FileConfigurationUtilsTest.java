@@ -19,7 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Test;
-import org.onehippo.cm.model.FileConfigurationUtils;
 
 import static org.junit.Assert.assertEquals;
 

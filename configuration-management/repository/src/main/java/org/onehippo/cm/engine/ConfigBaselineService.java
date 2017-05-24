@@ -49,15 +49,16 @@ import org.onehippo.cm.model.NodeTypeDefinition;
 import org.onehippo.cm.model.Project;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.Value;
-import org.onehippo.cm.model.parser.ConfigSourceParser;
-import org.onehippo.cm.model.parser.ModuleDescriptorParser;
-import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.ContentSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.parser.ConfigSourceParser;
+import org.onehippo.cm.model.parser.ModuleDescriptorParser;
+import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -556,7 +557,7 @@ public class ConfigBaselineService {
                         .parse(is, moduleNode.getPath());
 
                 // This should always produce exactly one module!
-                module = (ModuleImpl) moduleGroups.values().stream()
+                module = moduleGroups.values().stream()
                         .flatMap(g -> g.getProjects().stream())
                         .flatMap(p -> p.getModules().stream())
                         .findFirst().get();
@@ -595,11 +596,11 @@ public class ConfigBaselineService {
      */
     protected void parseSources(final List<GroupImpl> groups) throws RepositoryException, IOException, ParserException {
         // for each group
-        for (Group group : groups) {
+        for (GroupImpl group : groups) {
             // for each project
-            for (Project project : group.getProjects()) {
+            for (ProjectImpl project : group.getProjects()) {
                 // for each module
-                for (Module module : project.getModules()) {
+                for (ModuleImpl module : project.getModules()) {
                     log.debug("Parsing sources from baseline for {}/{}/{}",
                             group.getName(), project.getName(), module.getName());
 
@@ -632,9 +633,7 @@ public class ConfigBaselineService {
                             InputStream is = rip.getResourceInputStream(null, "/" + sourcePath);
 
                             // parse config source
-                            parser.parse(is, sourcePath, configNode.getPath(),
-                                    // TODO why is this cast necessary?
-                                    (ModuleImpl) module);
+                            parser.parse(is, sourcePath, configNode.getPath(), module);
                         }
                     }
 

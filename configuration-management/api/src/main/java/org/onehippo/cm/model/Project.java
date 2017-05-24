@@ -23,5 +23,5 @@ public interface Project extends Orderable {
     /**
      * @return The immutable list of {@link Module}s currently in this Project.
      */
-    List<Module> getModules();
+    List<? extends Module> getModules();
 }

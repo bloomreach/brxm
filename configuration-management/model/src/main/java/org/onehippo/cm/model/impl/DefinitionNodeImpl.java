@@ -20,23 +20,21 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.onehippo.cm.model.ConfigurationItemCategory;
-import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionNode;
-import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.ValueType;
 
 public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
 
     private final LinkedHashMap<String, DefinitionNodeImpl> modifiableNodes = new LinkedHashMap<>();
-    private final Map<String, DefinitionNode> nodes = Collections.unmodifiableMap(modifiableNodes);
+    private final Map<String, DefinitionNodeImpl> nodes = Collections.unmodifiableMap(modifiableNodes);
     private final Map<String, DefinitionPropertyImpl> modifiableProperties = new LinkedHashMap<>();
-    private final Map<String, DefinitionProperty> properties = Collections.unmodifiableMap(modifiableProperties);
+    private final Map<String, DefinitionPropertyImpl> properties = Collections.unmodifiableMap(modifiableProperties);
     private boolean delete = false;
     private String orderBefore = null;
     private Boolean ignoreReorderedChildren;
     private ConfigurationItemCategory residualChildNodeCategory = null;
 
-    public DefinitionNodeImpl(final String path, final String name, final Definition definition) {
+    public DefinitionNodeImpl(final String path, final String name, final AbstractDefinitionImpl definition) {
         super(path, name, definition);
     }
 
@@ -45,7 +43,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     }
 
     @Override
-    public Map<String, DefinitionNode> getNodes() {
+    public Map<String, DefinitionNodeImpl> getNodes() {
         return nodes;
     }
 
@@ -54,7 +52,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     }
 
     @Override
-    public Map<String, DefinitionProperty> getProperties() {
+    public Map<String, DefinitionPropertyImpl> getProperties() {
         return properties;
     }
 

@@ -20,16 +20,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.onehippo.cm.model.Definition;
-import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.Source;
 
 public abstract class SourceImpl implements Source {
 
     private String path;
-    private Module module;
-    List<Definition> modifiableDefinitions = new ArrayList<>();
-    private List<Definition> definitions = Collections.unmodifiableList(modifiableDefinitions);
+    private ModuleImpl module;
+    List<AbstractDefinitionImpl> modifiableDefinitions = new ArrayList<>();
+    private List<AbstractDefinitionImpl> definitions = Collections.unmodifiableList(modifiableDefinitions);
 
     public SourceImpl(final String path, final ModuleImpl module) {
         if (path == null) {
@@ -49,16 +47,16 @@ public abstract class SourceImpl implements Source {
     }
 
     @Override
-    public Module getModule() {
+    public ModuleImpl getModule() {
         return module;
     }
 
     @Override
-    public List<Definition> getDefinitions() {
+    public List<AbstractDefinitionImpl> getDefinitions() {
         return definitions;
     }
 
-    public List<Definition> getModifiableDefinitions() {
+    public List<AbstractDefinitionImpl> getModifiableDefinitions() {
         return modifiableDefinitions;
     }
 
@@ -71,7 +69,7 @@ public abstract class SourceImpl implements Source {
         if (definition.getSource() != this) {
             throw new IllegalArgumentException("Definition does for this source");
         }
-        for (Definition def : modifiableDefinitions) {
+        for (AbstractDefinitionImpl def : modifiableDefinitions) {
             if (def == definition) {
                 throw new IllegalStateException("Definition already added to this source");
             }

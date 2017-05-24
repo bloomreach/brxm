@@ -61,11 +61,11 @@ import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.NodeTypeDefinition;
 import org.onehippo.cm.model.PropertyType;
+import org.onehippo.cm.model.SnsUtils;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.WebFileBundleDefinition;
-import org.onehippo.cm.model.SnsUtils;
 import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.ModelUtils;
@@ -197,7 +197,7 @@ public class ConfigurationConfigService {
         }
     }
 
-    private void applyNodeTypes(final List<NodeTypeDefinition> nodeTypes, final Session session) throws RepositoryException, IOException {
+    private void applyNodeTypes(final List<? extends NodeTypeDefinition> nodeTypes, final Session session) throws RepositoryException, IOException {
         for (NodeTypeDefinition nodeType : nodeTypes) {
             if (logger.isDebugEnabled()) {
                 final String cndLabel = nodeType.isResource()
@@ -233,8 +233,8 @@ public class ConfigurationConfigService {
                                                  final boolean forceApply)
             throws RepositoryException {
 
-        final Map<String, ConfigurationProperty> updateProperties = updateNode.getProperties();
-        final Map<String, ConfigurationProperty> baselineProperties = baselineNode.getProperties();
+        final Map<String, ? extends ConfigurationProperty> updateProperties = updateNode.getProperties();
+        final Map<String, ? extends ConfigurationProperty> baselineProperties = baselineNode.getProperties();
 
         final String updatePrimaryType = updateProperties.get(JCR_PRIMARYTYPE).getValue().getString();
         final String baselinePrimaryType = baselineProperties.get(JCR_PRIMARYTYPE).getValue().getString();
@@ -265,8 +265,8 @@ public class ConfigurationConfigService {
                                                 final Node targetNode,
                                                 final boolean forceApply) throws RepositoryException {
 
-        final Map<String, ConfigurationProperty> updateProperties = updateNode.getProperties();
-        final Map<String, ConfigurationProperty> baselineProperties = baselineNode.getProperties();
+        final Map<String, ? extends ConfigurationProperty> updateProperties = updateNode.getProperties();
+        final Map<String, ? extends ConfigurationProperty> baselineProperties = baselineNode.getProperties();
 
         // Update the mixin types, if needed
         final Value[] updateMixinValues = updateProperties.containsKey(JCR_MIXINTYPES)
@@ -354,8 +354,8 @@ public class ConfigurationConfigService {
                                                  final List<UnprocessedReference> unprocessedReferences)
             throws RepositoryException, IOException {
 
-        final Map<String, ConfigurationProperty> updateProperties = updateNode.getProperties();
-        final Map<String, ConfigurationProperty> baselineProperties = baselineNode.getProperties();
+        final Map<String, ? extends ConfigurationProperty> updateProperties = updateNode.getProperties();
+        final Map<String, ? extends ConfigurationProperty> baselineProperties = baselineNode.getProperties();
 
         for (String propertyName : updateProperties.keySet()) {
             if (propertyName.equals(JCR_PRIMARYTYPE) || propertyName.equals(JCR_MIXINTYPES)) {
@@ -411,8 +411,8 @@ public class ConfigurationConfigService {
                                                 final List<UnprocessedReference> unprocessedReferences)
             throws RepositoryException, IOException {
 
-        final Map<String, ConfigurationNode> updateChildren = updateNode.getNodes();
-        final Map<String, ConfigurationNode> baselineChildren = baselineNode.getNodes();
+        final Map<String, ? extends ConfigurationNode> updateChildren = updateNode.getNodes();
+        final Map<String, ? extends ConfigurationNode> baselineChildren = baselineNode.getNodes();
 
         // Add or update child nodes
 

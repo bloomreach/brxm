@@ -38,7 +38,7 @@ public class GroupImpl implements Group {
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
     private final List<ProjectImpl> modifiableProjects = new ArrayList<>();
-    private final List<Project> projects = Collections.unmodifiableList(modifiableProjects);
+    private final List<ProjectImpl> projects = Collections.unmodifiableList(modifiableProjects);
     private final Map<String, ProjectImpl> projectMap = new HashMap<>();
 
     public GroupImpl(final String name) {
@@ -64,7 +64,7 @@ public class GroupImpl implements Group {
     }
 
     @Override
-    public List<Project> getProjects() {
+    public List<ProjectImpl> getProjects() {
         return projects;
     }
 

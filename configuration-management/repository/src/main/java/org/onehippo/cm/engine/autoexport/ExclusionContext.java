@@ -29,7 +29,7 @@ class ExclusionContext {
     }
     
     ExclusionContext(ExclusionContext exclusionContext, List<String> patterns) {
-        this.patterns = new ArrayList<Pattern>();
+        this.patterns = new ArrayList<>();
         for (String pattern : patterns) {
             this.patterns.add(Pattern.compile(compile(pattern)));
         }

@@ -28,9 +28,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.model.ConfigDefinition;
-import org.onehippo.cm.model.ContentDefinition;
-import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.Orderable;
@@ -68,8 +65,8 @@ public class ModelTestUtils {
         return findInCollection(name, entries, Orderable::getName);
     }
 
-    public static <T extends Source> T findByPath(final String name, final Collection<T> entries) {
-        return findInCollection(name, entries, Source::getPath);
+    public static <T extends SourceImpl> T findByPath(final String name, final Collection<T> entries) {
+        return findInCollection(name, entries, SourceImpl::getPath);
     }
 
     private static <T> T findInCollection(final String id, final Collection<T> entries, Function<T, String> identifier) {
@@ -84,60 +81,60 @@ public class ModelTestUtils {
         return new GroupImpl("test-group").addProject("test-project").addModule(moduleName);
     }
 
-    public static List<Definition> parseNoSort(final String yaml) throws Exception {
-        return parseNoSort(yaml, false, ConfigDefinition.class);
+    public static List<AbstractDefinitionImpl> parseNoSort(final String yaml) throws Exception {
+        return parseNoSort(yaml, false, true);
     }
 
 
-    public static List<Definition> parseNoSort(final String yaml, final boolean verifyOnly) throws Exception {
-        return parseNoSort(yaml, "test-module", verifyOnly, ConfigDefinition.class);
+    public static List<AbstractDefinitionImpl> parseNoSort(final String yaml, final boolean verifyOnly) throws Exception {
+        return parseNoSort(yaml, "test-module", verifyOnly, true);
     }
 
-    public static List<Definition> parseNoSort(final String yaml, final boolean verifyOnly,final Class clazz) throws Exception {
-        return parseNoSort(yaml, "test-module", verifyOnly, clazz);
+    public static List<AbstractDefinitionImpl> parseNoSort(final String yaml, final boolean verifyOnly,final boolean config) throws Exception {
+        return parseNoSort(yaml, "test-module", verifyOnly, config);
     }
 
-    public static List<Definition> parseNoSort(final String yaml, final String moduleName, final Class clazz) throws Exception {
-        return parseNoSort(yaml, moduleName, false, clazz);
+    public static List<AbstractDefinitionImpl> parseNoSort(final String yaml, final String moduleName, final boolean config) throws Exception {
+        return parseNoSort(yaml, moduleName, false, config);
     }
 
-    public static List<Definition> parseNoSort(final String yaml, final String moduleName, final boolean verifyOnly,final Class clazz) throws Exception {
+    public static List<AbstractDefinitionImpl> parseNoSort(final String yaml, final String moduleName, final boolean verifyOnly,final boolean config) throws Exception {
         final ModuleImpl module = makeModule(moduleName);
-        loadYAMLString(yaml, module, verifyOnly, clazz);
+        loadYAMLString(yaml, module, verifyOnly, config);
         return findByPath(STRING_SOURCE, module.getSources()).getDefinitions();
     }
 
     public static void loadYAMLResource(final ClassLoader classLoader, final String resourcePath, final ModuleImpl module) throws Exception {
-        loadYAMLResource(classLoader, resourcePath, module, false, ConfigDefinition.class);
+        loadYAMLResource(classLoader, resourcePath, module, false, true);
     }
 
-    public static void loadYAMLResource(final ClassLoader classLoader, final String resourcePath, final ModuleImpl module, final Class clazz) throws Exception {
-        loadYAMLResource(classLoader, resourcePath, module, false, clazz);
+    public static void loadYAMLResource(final ClassLoader classLoader, final String resourcePath, final ModuleImpl module, final boolean config) throws Exception {
+        loadYAMLResource(classLoader, resourcePath, module, false, config);
     }
 
-    public static void loadYAMLResource(final ClassLoader classLoader, final String resourcePath, final ModuleImpl module, final boolean verifyOnly, final Class clazz) throws Exception {
+    public static void loadYAMLResource(final ClassLoader classLoader, final String resourcePath, final ModuleImpl module, final boolean verifyOnly, final boolean config) throws Exception {
         final InputStream input = classLoader.getResourceAsStream(resourcePath);
-        loadYAMLStream(input, resourcePath, module, verifyOnly, clazz);
+        loadYAMLStream(input, resourcePath, module, verifyOnly, config);
     }
 
     public static void loadYAMLString(final String yaml, final ModuleImpl module) throws Exception {
-        loadYAMLString(yaml, module, false, ConfigDefinition.class);
+        loadYAMLString(yaml, module, false, true);
     }
 
-    public static void loadYAMLString(final String yaml, final ModuleImpl module, final Class clazz) throws Exception {
-        loadYAMLString(yaml, module, false, clazz);
+    public static void loadYAMLString(final String yaml, final ModuleImpl module, final boolean config) throws Exception {
+        loadYAMLString(yaml, module, false, config);
     }
 
-    public static void loadYAMLString(final String yaml, final ModuleImpl module, final boolean verifyOnly, Class clazz) throws Exception {
+    public static void loadYAMLString(final String yaml, final ModuleImpl module, final boolean verifyOnly, final boolean config) throws Exception {
         final InputStream input = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
-        loadYAMLStream(input, STRING_SOURCE, module, verifyOnly, clazz);
+        loadYAMLStream(input, STRING_SOURCE, module, verifyOnly, config);
     }
 
-    private static void loadYAMLStream(final InputStream input, final String sourcePath, final ModuleImpl module, final boolean verifyOnly, final Class clazz) throws Exception {
-        if (clazz.equals(ContentDefinition.class)) {
-            new ContentSourceParser(resourceInputProvider, verifyOnly).parse(input, sourcePath, sourcePath, module);
-        } else {
+    private static void loadYAMLStream(final InputStream input, final String sourcePath, final ModuleImpl module, final boolean verifyOnly, final boolean config) throws Exception {
+        if (config) {
             new ConfigSourceParser(resourceInputProvider, verifyOnly).parse(input, sourcePath, sourcePath, module);
+        } else {
+            new ContentSourceParser(resourceInputProvider, verifyOnly).parse(input, sourcePath, sourcePath, module);
         }
     }
 

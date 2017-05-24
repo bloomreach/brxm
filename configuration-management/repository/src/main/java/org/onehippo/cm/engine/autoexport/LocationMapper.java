@@ -27,7 +27,7 @@ final class LocationMapper {
 
     private LocationMapper() {}
 
-    private static final List<Entry> ENTRIES = new ArrayList<Entry>();
+    private static final List<Entry> ENTRIES = new ArrayList<>();
     private static final String NAME = "([^/\\u005B\\u005D\\|\\*]+(?:\\u005B\\d+\\u005D)?)";
     private static final String ANY = "(.*)";
     // cache the result of the last invocation 

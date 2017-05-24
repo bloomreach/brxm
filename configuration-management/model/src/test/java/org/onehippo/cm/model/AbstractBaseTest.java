@@ -26,8 +26,17 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.DefinitionItemImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.parser.ParserException;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -84,8 +93,8 @@ public abstract class AbstractBaseTest {
         return find(moduleConfigResourceName).getParent();
     }
 
-    Group assertGroup(final Map<String, GroupImpl> parent, final String name, final String[] after, final int projectCount) {
-        final Group group = parent.get(name);
+    protected GroupImpl assertGroup(final Map<String, GroupImpl> parent, final String name, final String[] after, final int projectCount) {
+        final GroupImpl group = parent.get(name);
         assertNotNull(group);
         assertEquals(name, group.getName());
         assertArrayEquals(after, group.getAfter().toArray());
@@ -93,8 +102,8 @@ public abstract class AbstractBaseTest {
         return group;
     }
 
-    Project assertProject(final Group parent, final String name, final String[] after, final int moduleCount) {
-        final Project project = findByName(name, parent.getProjects());
+    protected ProjectImpl assertProject(final GroupImpl parent, final String name, final String[] after, final int moduleCount) {
+        final ProjectImpl project = findByName(name, parent.getProjects());
         assertNotNull(project);
         assertEquals(name, project.getName());
         assertArrayEquals(after, project.getAfter().toArray());
@@ -103,8 +112,8 @@ public abstract class AbstractBaseTest {
         return project;
     }
 
-    Module assertModule(final Project parent, final String name, final String[] after, final int sourceCount) {
-        final Module module = findByName(name, parent.getModules());
+    protected ModuleImpl assertModule(final ProjectImpl parent, final String name, final String[] after, final int sourceCount) {
+        final ModuleImpl module = findByName(name, parent.getModules());
         assertNotNull(module);
         assertEquals(name, module.getName());
         assertArrayEquals(after, module.getAfter().toArray());
@@ -113,8 +122,8 @@ public abstract class AbstractBaseTest {
         return module;
     }
 
-    Source assertSource(final Module parent, final String path, final int definitionCount) {
-        Source source = findByPath(path, parent.getSources());
+    protected SourceImpl assertSource(final ModuleImpl parent, final String path, final int definitionCount) {
+        SourceImpl source = findByPath(path, parent.getSources());
         assertNotNull(source);
         assertEquals(path, source.getPath());
         assertEquals(parent, source.getModule());
@@ -122,65 +131,65 @@ public abstract class AbstractBaseTest {
         return source;
     }
 
-    <T extends Definition> T assertDefinition(final Source parent, final int index, Class<T> definitionClass) {
-        final Definition definition = parent.getDefinitions().get(index);
+    protected <T extends AbstractDefinitionImpl> T assertDefinition(final SourceImpl parent, final int index, Class<T> definitionClass) {
+        final AbstractDefinitionImpl definition = parent.getDefinitions().get(index);
         return definitionClass.cast(definition);
     }
 
-    DefinitionNode assertNode(final DefinitionNode parent,
-                              final String path,
-                              final String name,
-                              final Definition definition,
-                              final int nodeCount,
-                              final int propertyCount)
+    protected DefinitionNodeImpl assertNode(final DefinitionNodeImpl parent,
+                                            final String path,
+                                            final String name,
+                                            final AbstractDefinitionImpl definition,
+                                            final int nodeCount,
+                                            final int propertyCount)
     {
         return assertNode(parent, path, name, definition, false, null, nodeCount, propertyCount);
     }
 
-    DefinitionNode assertNode(final DefinitionNode parent,
+    protected DefinitionNodeImpl assertNode(final DefinitionNodeImpl parent,
                               final String path,
                               final String name,
-                              final Definition definition,
+                              final AbstractDefinitionImpl definition,
                               final boolean isDelete,
                               final String orderBefore,
                               final int nodeCount,
                               final int propertyCount)
     {
-        final DefinitionNode node = parent.getNodes().get(name);
+        final DefinitionNodeImpl node = parent.getNodes().get(name);
         validateNode(node, path, name, parent, false, definition, isDelete, orderBefore, nodeCount, propertyCount);
         return node;
     }
 
-    DefinitionNode assertNode(final ContentDefinition parent,
+    protected DefinitionNodeImpl assertNode(final ContentDefinitionImpl parent,
                               final String path,
                               final String name,
-                              final Definition definition,
+                              final AbstractDefinitionImpl definition,
                               final int nodeCount,
                               final int propertyCount)
     {
         return assertNode(parent, path, name, definition, false, null, nodeCount, propertyCount);
     }
 
-    DefinitionNode assertNode(final ContentDefinition parent,
+    protected DefinitionNodeImpl assertNode(final ContentDefinitionImpl parent,
                               final String path,
                               final String name,
-                              final Definition definition,
+                              final AbstractDefinitionImpl definition,
                               final boolean isDelete,
                               final String orderBefore,
                               final int nodeCount,
                               final int propertyCount)
     {
-        final DefinitionNode node = parent.getNode();
+        final DefinitionNodeImpl node = parent.getNode();
         validateNode(node, path, name, null, true, definition, isDelete, orderBefore, nodeCount, propertyCount);
         return node;
     }
 
-    private void validateNode(final DefinitionNode node,
+    private void validateNode(final DefinitionNodeImpl node,
                               final String path,
                               final String name,
-                              final DefinitionNode parent,
+                              final DefinitionNodeImpl parent,
                               final boolean isRoot,
-                              final Definition definition,
+                              final AbstractDefinitionImpl definition,
                               final boolean isDelete,
                               final String orderBefore,
                               final int nodeCount,
@@ -197,12 +206,12 @@ public abstract class AbstractBaseTest {
         assertEquals(propertyCount, node.getProperties().size());
     }
 
-    private void validateItem(final DefinitionItem item,
+    private void validateItem(final DefinitionItemImpl item,
                               final String path,
                               final String name,
-                              final DefinitionNode parent,
+                              final DefinitionNodeImpl parent,
                               final boolean isRoot,
-                              final Definition definition)
+                              final AbstractDefinitionImpl definition)
     {
         assertNotNull(item);
         assertEquals(path, item.getPath());
@@ -221,20 +230,20 @@ public abstract class AbstractBaseTest {
         assertEquals(definition, item.getDefinition());
     }
 
-    DefinitionProperty assertProperty(final DefinitionNode parent,
-                                      final String path,
-                                      final String name,
-                                      final Definition definition,
-                                      final ValueType valueType,
-                                      final Object value)
+    protected DefinitionPropertyImpl assertProperty(final DefinitionNodeImpl parent,
+                                                    final String path,
+                                                    final String name,
+                                                    final AbstractDefinitionImpl definition,
+                                                    final ValueType valueType,
+                                                    final Object value)
     {
         return assertProperty(parent, path, name, definition, PropertyOperation.REPLACE, valueType, value, false, false);
     }
 
-    DefinitionProperty assertProperty(final DefinitionNode parent,
+    protected DefinitionPropertyImpl assertProperty(final DefinitionNodeImpl parent,
                                       final String path,
                                       final String name,
-                                      final Definition definition,
+                                      final AbstractDefinitionImpl definition,
                                       final PropertyOperation operation,
                                       final ValueType valueType,
                                       final Object value)
@@ -242,17 +251,17 @@ public abstract class AbstractBaseTest {
         return assertProperty(parent, path, name, definition, operation, valueType, value, false, false);
     }
 
-    DefinitionProperty assertProperty(final DefinitionNode parent,
+    protected DefinitionPropertyImpl assertProperty(final DefinitionNodeImpl parent,
                                       final String path,
                                       final String name,
-                                      final Definition definition,
+                                      final AbstractDefinitionImpl definition,
                                       final PropertyOperation operation,
                                       final ValueType valueType,
                                       final Object value,
                                       final boolean valueIsResource,
                                       final boolean valueIsPath)
     {
-        final DefinitionProperty property = parent.getProperties().get(name);
+        final DefinitionPropertyImpl property = parent.getProperties().get(name);
         validateItem(property, path, name, parent, false, definition);
         assertEquals(operation, property.getOperation());
         try {
@@ -265,20 +274,20 @@ public abstract class AbstractBaseTest {
         return property;
     }
 
-    DefinitionProperty assertProperty(final DefinitionNode parent,
+    protected DefinitionPropertyImpl assertProperty(final DefinitionNodeImpl parent,
                                       final String path,
                                       final String name,
-                                      final Definition definition,
+                                      final AbstractDefinitionImpl definition,
                                       final ValueType valueType,
                                       final Object[] values)
     {
         return assertProperty(parent, path, name, definition, PropertyOperation.REPLACE, valueType, values, false, false);
     }
 
-    DefinitionProperty assertProperty(final DefinitionNode parent,
+    protected DefinitionPropertyImpl assertProperty(final DefinitionNodeImpl parent,
                                       final String path,
                                       final String name,
-                                      final Definition definition,
+                                      final AbstractDefinitionImpl definition,
                                       final PropertyOperation operation,
                                       final ValueType valueType,
                                       final Object[] values)
@@ -286,17 +295,17 @@ public abstract class AbstractBaseTest {
         return assertProperty(parent, path, name, definition, operation, valueType, values, false, false);
     }
 
-    DefinitionProperty assertProperty(final DefinitionNode parent,
+    protected DefinitionPropertyImpl assertProperty(final DefinitionNodeImpl parent,
                                       final String path,
                                       final String name,
-                                      final Definition definition,
+                                      final AbstractDefinitionImpl definition,
                                       final PropertyOperation operation,
                                       final ValueType valueType,
                                       final Object[] values,
                                       final boolean valuesAreResource,
                                       final boolean valuesArePath)
     {
-        final DefinitionProperty property = parent.getProperties().get(name);
+        final DefinitionPropertyImpl property = parent.getProperties().get(name);
         validateItem(property, path, name, parent, false, definition);
         assertEquals(operation, property.getOperation());
         assertEquals(valueType, property.getValueType());
@@ -313,8 +322,8 @@ public abstract class AbstractBaseTest {
         return property;
     }
 
-    void assertValue(final ValueType valueType, final Object expected, final boolean isResource, final boolean isPath,
-                     final DefinitionProperty parent, final Value actual) {
+    protected void assertValue(final ValueType valueType, final Object expected, final boolean isResource, final boolean isPath,
+                     final DefinitionPropertyImpl parent, final ValueImpl actual) {
         if (expected instanceof byte[]) {
             assertArrayEquals((byte[]) expected, (byte[]) actual.getObject());
         } else {

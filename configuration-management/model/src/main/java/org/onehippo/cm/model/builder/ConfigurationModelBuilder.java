@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
@@ -55,7 +53,7 @@ public class ConfigurationModelBuilder {
     // Used for cleanup when done with this ConfigurationModel
     private final Set<FileSystem> filesystems = new HashSet<>();
 
-    public ConfigurationModel build() {
+    public ConfigurationModelImpl build() {
         sort();
 
         final ConfigurationModelImpl mergedModel = new ConfigurationModelImpl();
@@ -70,7 +68,7 @@ public class ConfigurationModelBuilder {
                             mergedModel.addNodeTypeDefinitions(module.getNodeTypeDefinitions());
                             module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
                             mergedModel.addConfigDefinitions(module.getConfigDefinitions());
-                            mergedModel.addContentDefinitions(module.getContentDefinitions().stream().map(x -> (ContentDefinition)x).collect(Collectors.toSet()));
+                            mergedModel.addContentDefinitions(module.getContentDefinitions().stream().collect(Collectors.toSet()));
                             mergedModel.addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
                         })
                 )
@@ -107,7 +105,7 @@ public class ConfigurationModelBuilder {
     }
 
     public ConfigurationModelBuilder pushReplacement(final ModuleImpl module) {
-        push((GroupImpl) module.getProject().getGroup());
+        push(module.getProject().getGroup());
         replacements.add(module);
         return this;
     }
@@ -129,7 +127,7 @@ public class ConfigurationModelBuilder {
     /**
      * Track a FileSystem for later cleanup in ConfigurationModel#close().
      * @param fs
-     * @see ConfigurationModel#close()
+     * @see ConfigurationModelImpl#close()
      */
     public void addFileSystem(FileSystem fs) {
         filesystems.add(fs);

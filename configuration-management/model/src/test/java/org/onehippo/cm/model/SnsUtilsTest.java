@@ -17,7 +17,6 @@ package org.onehippo.cm.model;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
-import org.onehippo.cm.model.SnsUtils;
 
 import static org.junit.Assert.assertEquals;
 

@@ -20,40 +20,35 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
-import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.ConfigurationNode;
-import org.onehippo.cm.model.ContentDefinition;
-import org.onehippo.cm.model.Group;
-import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.NamespaceDefinition;
-import org.onehippo.cm.model.NodeTypeDefinition;
-import org.onehippo.cm.model.Project;
-import org.onehippo.cm.model.WebFileBundleDefinition;
-import org.onehippo.cm.model.impl.GroupImpl;
-import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.ProjectImpl;
-import org.onehippo.cm.model.impl.ModelTestUtils;
-
 import com.google.common.collect.ImmutableSet;
+
+import org.junit.Test;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModelTestUtils;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.NodeTypeDefinitionImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.WebFileBundleDefinitionImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static org.onehippo.cm.model.impl.ModelTestUtils.loadYAMLResource;
-import static org.onehippo.cm.model.impl.ModelTestUtils.loadYAMLString;
 
 public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void empty_builder() {
-        final ConfigurationModel model = new ConfigurationModelBuilder().build();
+        final ConfigurationModelImpl model = new ConfigurationModelBuilder().build();
 
         assertEquals(0, model.getSortedGroups().size());
         assertEquals(0, model.getNamespaceDefinitions().size());
         assertEquals(0, model.getNodeTypeDefinitions().size());
 
-        final ConfigurationNode root = model.getConfigurationRootNode();
+        final ConfigurationNodeImpl root = model.getConfigurationRootNode();
         assertEquals("/", root.getPath());
         assertEquals("", root.getName());
         assertNull(root.getParent());
@@ -65,9 +60,9 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
     public void new_group() {
         final GroupImpl group = new GroupImpl("c1");
         group.addProject("p1");
-        final ConfigurationModel model = new ConfigurationModelBuilder().push(group).build();
+        final ConfigurationModelImpl model = new ConfigurationModelBuilder().push(group).build();
 
-        final Group consolidated = model.getSortedGroups().get(0);
+        final GroupImpl consolidated = model.getSortedGroups().get(0);
         assertEquals("c1", consolidated.getName());
         assertEquals("p1", consolidated.getProjects().get(0).getName());
     }
@@ -79,17 +74,17 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         c1.addProject("p1");
         c2.addProject("p2");
 
-        ConfigurationModel model = new ConfigurationModelBuilder().push(c1).push(c2).build();
+        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).push(c2).build();
 
-        List<Group> groups = model.getSortedGroups();
+        List<GroupImpl> groups = model.getSortedGroups();
         assertEquals(2, groups.size());
         assertEquals("c1", groups.get(0).getName());
-        List<Project> projects1 = groups.get(0).getProjects();
+        List<ProjectImpl> projects1 = groups.get(0).getProjects();
         assertEquals(1, projects1.size());
         assertEquals("p1", projects1.get(0).getName());
 
         assertEquals("c2", groups.get(1).getName());
-        List<Project> projects2 = groups.get(1).getProjects();
+        List<ProjectImpl> projects2 = groups.get(1).getProjects();
         assertEquals(1, projects2.size());
         assertEquals("p2", projects2.get(0).getName());
 
@@ -116,12 +111,12 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         c1a.addProject("p1");
         c1b.addProject("p2");
 
-        ConfigurationModel model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
+        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
 
-        List<Group> groups = model.getSortedGroups();
+        List<GroupImpl> groups = model.getSortedGroups();
         assertEquals(1, groups.size());
         assertEquals("c1", groups.get(0).getName());
-        List<Project> projects = groups.get(0).getProjects();
+        List<ProjectImpl> projects = groups.get(0).getProjects();
         assertEquals(2, projects.size());
         assertEquals("p1", projects.get(0).getName());
         assertEquals("p2", projects.get(1).getName());
@@ -143,7 +138,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         final GroupImpl c1 = new GroupImpl("c1").addAfter(ImmutableSet.of("c2"));
         final GroupImpl c2 = new GroupImpl("c2");
 
-        ConfigurationModel model = new ConfigurationModelBuilder().push(c1).push(c2).build();
+        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).push(c2).build();
         assertEquals("c2", model.getSortedGroups().get(0).getName());
         assertEquals("c1", model.getSortedGroups().get(1).getName());
 
@@ -160,7 +155,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         final GroupImpl cx2 = new GroupImpl("cx2");
         final GroupImpl cx3 = new GroupImpl("cx3").addAfter(ImmutableSet.of("cx2"));
 
-        ConfigurationModel model = new ConfigurationModelBuilder()
+        ConfigurationModelImpl model = new ConfigurationModelBuilder()
                 .push(ca1a)
                 .push(ca1b)
                 .push(cx1)
@@ -182,15 +177,15 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         c1a.addProject("p1").addModule("m1");
         c1b.addProject("p1").addModule("m2");
 
-        ConfigurationModel model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
+        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
 
-        List<Group> groups = model.getSortedGroups();
+        List<GroupImpl> groups = model.getSortedGroups();
         assertEquals(1, groups.size());
         assertEquals("c1", groups.get(0).getName());
-        List<Project> projects = groups.get(0).getProjects();
+        List<ProjectImpl> projects = groups.get(0).getProjects();
         assertEquals(1, projects.size());
         assertEquals("p1", projects.get(0).getName());
-        List<Module> modules = projects.get(0).getModules();
+        List<ModuleImpl> modules = projects.get(0).getModules();
         assertEquals(2, modules.size());
         assertEquals("m1", modules.get(0).getName());
         assertEquals("m2", modules.get(1).getName());
@@ -216,9 +211,9 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         c1a.addProject("p1").addAfter(ImmutableSet.of("p2"));
         c1b.addProject("p2");
 
-        ConfigurationModel model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
-        List<Group> groups = model.getSortedGroups();
-        List<Project> projects = groups.get(0).getProjects();
+        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
+        List<GroupImpl> groups = model.getSortedGroups();
+        List<ProjectImpl> projects = groups.get(0).getProjects();
         assertEquals(2, projects.size());
         assertEquals("p2", projects.get(0).getName());
         assertEquals("p1", projects.get(1).getName());
@@ -242,13 +237,13 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         c1b.addProject("pa1").addAfter(ImmutableSet.of("px1", "px3"));
         c1b.addProject("px2");
 
-        ConfigurationModel model = new ConfigurationModelBuilder()
+        ConfigurationModelImpl model = new ConfigurationModelBuilder()
                 .push(c1a)
                 .push(c1b)
                 .build();
-        List<Group> groups = model.getSortedGroups();
+        List<GroupImpl> groups = model.getSortedGroups();
         assertEquals(1, groups.size());
-        List<Project> projects = groups.get(0).getProjects();
+        List<ProjectImpl> projects = groups.get(0).getProjects();
         assertEquals("px1", projects.get(0).getName());
         assertEquals("px2", projects.get(1).getName());
         assertEquals("px3", projects.get(2).getName());
@@ -278,11 +273,11 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         c1a.addProject("p1").addModule("m1").addAfter(ImmutableSet.of("m2"));
         c1b.addProject("p1").addModule("m2");
 
-        ConfigurationModel model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
+        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
 
-        List<Group> groups = model.getSortedGroups();
-        List<Project> projects = groups.get(0).getProjects();
-        List<Module> modules = projects.get(0).getModules();
+        List<GroupImpl> groups = model.getSortedGroups();
+        List<ProjectImpl> projects = groups.get(0).getProjects();
+        List<ModuleImpl> modules = projects.get(0).getModules();
         assertEquals(2, modules.size());
         assertEquals("m2", modules.get(0).getName());
         assertEquals("m1", modules.get(1).getName());
@@ -310,11 +305,11 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         p1a.addModule("mx3").addAfter(ImmutableSet.of("mx2"));
         p1b.addModule("mx2");
 
-        ConfigurationModel model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
+        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
 
-        List<Group> groups = model.getSortedGroups();
-        List<Project> projects = groups.get(0).getProjects();
-        List<Module> modules = projects.get(0).getModules();
+        List<GroupImpl> groups = model.getSortedGroups();
+        List<ProjectImpl> projects = groups.get(0).getProjects();
+        List<ModuleImpl> modules = projects.get(0).getModules();
 
         assertEquals("mx1", modules.get(0).getName());
         assertEquals("mx2", modules.get(1).getName());
@@ -329,21 +324,21 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
 
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
 
-        ConfigurationModel model = new ConfigurationModelBuilder().push(c1).build();
+        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).build();
 
         assertEquals(1, model.getNamespaceDefinitions().size());
         assertEquals(1, model.getNodeTypeDefinitions().size());
 
-        final List<ContentDefinition> definitions = getContentDefinitionsFromFirstModule(model);
+        final List<ContentDefinitionImpl> definitions = getContentDefinitionsFromFirstModule(model);
 
         assertEquals(5, definitions.size());
         String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
         assertEquals("[/a, /a/b, /a/b/a, /a/b/c, /a/b/c/d]", roots);
     }
 
-    private List<ContentDefinition> getContentDefinitionsFromFirstModule(final ConfigurationModel configurationModel) {
-        final Module module = configurationModel.getSortedGroups().get(0).getProjects().get(0).getModules().get(0);
-        return new ArrayList<>(((ModuleImpl) module).getConfigDefinitions());
+    private List<ContentDefinitionImpl> getContentDefinitionsFromFirstModule(final ConfigurationModelImpl configurationModel) {
+        final ModuleImpl module = configurationModel.getSortedGroups().get(0).getProjects().get(0).getModules().get(0);
+        return new ArrayList<>(module.getConfigDefinitions());
     }
 
     @Test
@@ -354,13 +349,13 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m1);
 
-        ConfigurationModel model = new ConfigurationModelBuilder().push(c1).build();
+        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).build();
 
-        String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinition::getPrefix).collect(Collectors.toList()).toString();
+        String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
         assertEquals("[myhippoproject, hishippoproject]", namespaces);
         assertEquals(1, model.getNodeTypeDefinitions().size());
 
-        final List<ContentDefinition> definitions = getContentDefinitionsFromFirstModule(model);
+        final List<ContentDefinitionImpl> definitions = getContentDefinitionsFromFirstModule(model);
 
         assertEquals(9, definitions.size());
         String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
@@ -375,13 +370,13 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m1);
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
 
-        ConfigurationModel model = new ConfigurationModelBuilder().push(c1).build();
+        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).build();
 
-        String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinition::getPrefix).collect(Collectors.toList()).toString();
+        String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
         assertEquals("[myhippoproject, hishippoproject]", namespaces);
         assertEquals(1, model.getNodeTypeDefinitions().size());
 
-        final List<ContentDefinition> definitions = getContentDefinitionsFromFirstModule(model);
+        final List<ContentDefinitionImpl> definitions = getContentDefinitionsFromFirstModule(model);
 
         assertEquals(9, definitions.size());
         String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
@@ -445,9 +440,9 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
 
         ModelTestUtils.loadYAMLString(yaml, m1);
 
-        ConfigurationModel model = new ConfigurationModelBuilder().push(c1).build();
+        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).build();
 
-        String nodeTypes = model.getNodeTypeDefinitions().stream().map(NodeTypeDefinition::getValue).collect(Collectors.toList()).toString();
+        String nodeTypes = model.getNodeTypeDefinitions().stream().map(NodeTypeDefinitionImpl::getValue).collect(Collectors.toList()).toString();
         assertEquals("[dummy CND content, alphabetically earlier dummy CND]", nodeTypes);
     }
 
@@ -463,10 +458,10 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
 
         ModelTestUtils.loadYAMLString(yaml, m1);
 
-        final ConfigurationModel model = new ConfigurationModelBuilder().push(c1).build();
+        final ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).build();
 
         final String webFileBundles = model.getWebFileBundleDefinitions().stream()
-                .map(WebFileBundleDefinition::getName).collect(Collectors.toList()).toString();
+                .map(WebFileBundleDefinitionImpl::getName).collect(Collectors.toList()).toString();
         assertEquals("[dummy, another]", webFileBundles);
     }
 
@@ -490,10 +485,10 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
 
         ModelTestUtils.loadYAMLString(yaml2, m2);
 
-        final ConfigurationModel model = new ConfigurationModelBuilder().push(c1).push(c2).build();
+        final ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).push(c2).build();
 
         final String webFileBundles = model.getWebFileBundleDefinitions().stream()
-                .map(WebFileBundleDefinition::getName).collect(Collectors.toList()).toString();
+                .map(WebFileBundleDefinitionImpl::getName).collect(Collectors.toList()).toString();
         assertEquals("[dummy, another]", webFileBundles);
     }
 

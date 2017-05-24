@@ -24,8 +24,8 @@ import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionType;
-import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.SnsUtils;
+import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
@@ -63,7 +63,7 @@ public class ConfigSourceParser extends SourceParser {
     @Override
     protected void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException {
         final Map<String, Node> sourceMap = asMapping(src, new String[]{DEFINITIONS}, null);
-        final ConfigSourceImpl source = (ConfigSourceImpl)parent.addConfigSource(path);
+        final ConfigSourceImpl source = parent.addConfigSource(path);
 
         final Map<String, Node> definitionsMap = asMapping(sourceMap.get(DEFINITIONS), null,
                 DefinitionType.CONFIG_NAMES);

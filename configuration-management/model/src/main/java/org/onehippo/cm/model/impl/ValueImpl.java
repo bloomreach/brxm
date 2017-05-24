@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Calendar;
 
-import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
 
@@ -102,7 +101,7 @@ public class ValueImpl implements Value {
     }
 
     @Override
-    public DefinitionProperty getParent() {
+    public DefinitionPropertyImpl getParent() {
         return parent;
     }
 

@@ -29,19 +29,19 @@ public interface Module extends Orderable {
      */
     Project getProject();
 
-    Set<Source> getSources();
+    Set<? extends Source> getSources();
 
     /**
      * @return The immutable set of content {@link Source}s of this module, ordered by path ({@link Source#getPath()})
      *         relative to the module's base resource path.
      */
-    Set<Source> getContentSources();
+    Set<? extends Source> getContentSources();
 
     /**
      * @return The immutable set of config {@link Source}s of this module, ordered by path ({@link Source#getPath()})
      *         relative to the module's base resource path.
      */
-    Set<Source> getConfigSources();
+    Set<? extends Source> getConfigSources();
 
     Double getSequenceNumber();
 

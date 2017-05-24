@@ -22,9 +22,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModelTestUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.parser.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,18 +39,18 @@ public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
     @Test
     public void load_modules_from_classpath() throws IOException, ParserException, URISyntaxException {
 
-        Set<Module> classpathModules = loadModules();
+        Set<ModuleImpl> classpathModules = loadModules();
 
         assertEquals("Classpath should contain correct number of modules", 1,
                 classpathModules.size());
 
-        Set<Module> expectedModules = new HashSet<>();
+        Set<ModuleImpl> expectedModules = new HashSet<>();
         final ModuleImpl testModule = ModelTestUtils.makeModule("test-module");
         expectedModules.add(testModule);
 
         assertTrue("Classpath should contain test-module", classpathModules.containsAll(expectedModules));
 
-        Module loadedTestModule = classpathModules.stream().filter(module -> module.equals(testModule)).findFirst().get();
+        ModuleImpl loadedTestModule = classpathModules.stream().filter(module -> module.equals(testModule)).findFirst().get();
 
         // the test-module loaded from classpath should have a single source with a single definition,
         // since that's what is contained in the files at the root of test-classes
@@ -63,18 +64,18 @@ public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
             System.setProperty("repo.bootstrap.modules", "TestModuleFileSource");
             System.setProperty("project.basedir", calculateBaseDir() + "/src/test/resources");
 
-            Set<Module> classpathModules = loadModules();
+            Set<ModuleImpl> classpathModules = loadModules();
 
             assertEquals("Classpath should contain correct number of modules", 1,
                     classpathModules.size());
 
-            Set<Module> expectedModules = new HashSet<>();
+            Set<ModuleImpl> expectedModules = new HashSet<>();
             final ModuleImpl testModule = ModelTestUtils.makeModule("test-module");
             expectedModules.add(testModule);
 
             assertTrue("Classpath should contain test-module", classpathModules.containsAll(expectedModules));
 
-            Module loadedTestModule = classpathModules.stream().filter(module -> module.equals(testModule)).findFirst().get();
+            ModuleImpl loadedTestModule = classpathModules.stream().filter(module -> module.equals(testModule)).findFirst().get();
 
             // the test-module loaded from source files should have a single source with two definitions, not one,
             // since that's what is contained in the files under TestModuleFileSource
@@ -102,10 +103,10 @@ public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
      * Helper to load modules using a ClasspathConfigurationModelReader.
      * @return the Set of Modules loaded by the ClasspathConfigurationModelReader with current system properties
      */
-    protected Set<Module> loadModules() throws IOException, ParserException, URISyntaxException {
+    protected Set<ModuleImpl> loadModules() throws IOException, ParserException, URISyntaxException {
 
         ClasspathConfigurationModelReader classpathReader = new ClasspathConfigurationModelReader();
-        ConfigurationModel model = classpathReader.read(getClass().getClassLoader(), true);
+        ConfigurationModelImpl model = classpathReader.read(getClass().getClassLoader(), true);
         return model.getSortedGroups().stream().flatMap(group -> group.getProjects().stream())
                 .flatMap(project -> project.getModules().stream()).collect(Collectors.toSet());
     }

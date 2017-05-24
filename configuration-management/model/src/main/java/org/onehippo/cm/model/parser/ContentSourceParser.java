@@ -52,7 +52,7 @@ public class ContentSourceParser extends SourceParser {
     @Override
     protected void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException {
 
-        final ContentSourceImpl source = (ContentSourceImpl) parent.addContentSource(path);
+        final ContentSourceImpl source = parent.addContentSource(path);
         final Map<String, Node> contentNode = asMapping(src, null, null);
 
         final ContentDefinitionImpl definition = source.addContentDefinition();

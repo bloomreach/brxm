@@ -16,7 +16,6 @@
 package org.onehippo.cm.model.impl;
 
 import org.onehippo.cm.model.ContentDefinition;
-import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.DefinitionType;
 
 public class ContentDefinitionImpl extends AbstractDefinitionImpl
@@ -34,7 +33,7 @@ public class ContentDefinitionImpl extends AbstractDefinitionImpl
     }
 
     @Override
-    public DefinitionNode getNode() {
+    public DefinitionNodeImpl getNode() {
         return node;
     }
 

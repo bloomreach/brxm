@@ -17,7 +17,6 @@ package org.onehippo.cm.model.impl;
 
 import org.onehippo.cm.model.ConfigurationProperty;
 import org.onehippo.cm.model.PropertyType;
-import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueFormatException;
 import org.onehippo.cm.model.ValueType;
 
@@ -26,8 +25,8 @@ public class ConfigurationPropertyImpl extends ConfigurationItemImpl implements 
 
     private PropertyType type;
     private ValueType valueType;
-    private Value value;
-    private Value[] values;
+    private ValueImpl value;
+    private ValueImpl[] values;
 
     @Override
     public PropertyType getType() {
@@ -53,20 +52,20 @@ public class ConfigurationPropertyImpl extends ConfigurationItemImpl implements 
     }
 
     @Override
-    public Value getValue() throws ValueFormatException {
+    public ValueImpl getValue() throws ValueFormatException {
         return value;
     }
 
-    public void setValue(final Value value) {
+    public void setValue(final ValueImpl value) {
         this.value = value;
     }
 
     @Override
-    public Value[] getValues() throws ValueFormatException {
+    public ValueImpl[] getValues() throws ValueFormatException {
         return values;
     }
 
-    public void setValues(final Value[] values) {
+    public void setValues(final ValueImpl[] values) {
         this.values = values;
     }
 }

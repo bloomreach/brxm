@@ -18,7 +18,6 @@ package org.onehippo.cm.model.impl;
 import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.PropertyType;
-import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueFormatException;
 import org.onehippo.cm.model.ValueType;
 
@@ -26,8 +25,8 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
 
     private PropertyType propertyType;
     private ValueType valueType;
-    private Value value;
-    private Value[] values;
+    private ValueImpl value;
+    private ValueImpl[] values;
     private PropertyOperation operation = PropertyOperation.REPLACE;
 
     public DefinitionPropertyImpl(final String name, final ValueImpl value, final DefinitionNodeImpl parent) {
@@ -63,7 +62,7 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     }
 
     @Override
-    public Value getValue() throws ValueFormatException {
+    public ValueImpl getValue() throws ValueFormatException {
         if (value == null) {
             throw new ValueFormatException("Property contains multiple values");
         }
@@ -71,7 +70,7 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     }
 
     @Override
-    public Value[] getValues() throws ValueFormatException {
+    public ValueImpl[] getValues() throws ValueFormatException {
         if (values == null) {
             throw new ValueFormatException("Property contains single value");
         }

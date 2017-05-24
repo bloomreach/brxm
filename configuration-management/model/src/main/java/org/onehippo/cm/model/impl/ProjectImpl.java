@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.Project;
 import org.onehippo.cm.model.builder.OrderableListSorter;
@@ -44,7 +43,7 @@ public class ProjectImpl implements Project {
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
     private final List<ModuleImpl> modifiableModules = new ArrayList<>();
-    private final List<Module> modules = Collections.unmodifiableList(modifiableModules);
+    private final List<ModuleImpl> modules = Collections.unmodifiableList(modifiableModules);
     private final Map<String, ModuleImpl> moduleMap = new HashMap<>();
 
     public ProjectImpl(final String name, final GroupImpl group) {
@@ -65,7 +64,7 @@ public class ProjectImpl implements Project {
     }
 
     @Override
-    public Group getGroup() {
+    public GroupImpl getGroup() {
         return group;
     }
 
@@ -80,7 +79,7 @@ public class ProjectImpl implements Project {
     }
 
     @Override
-    public List<Module> getModules() {
+    public List<ModuleImpl> getModules() {
         return modules;
     }
 

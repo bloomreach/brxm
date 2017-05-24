@@ -43,18 +43,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.model.ConfigDefinition;
-import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.ContentDefinition;
-import org.onehippo.cm.model.Definition;
-import org.onehippo.cm.model.DefinitionNode;
-import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.ActionItem;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.NodeTypeDefinition;
-import org.onehippo.cm.model.Project;
-import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.Value;
-import org.onehippo.cm.model.ActionItem;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
 import org.onehippo.cm.model.parser.ParserException;
@@ -75,15 +66,15 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     private static final Logger log = LoggerFactory.getLogger(ModuleImpl.class);
 
     private final String name;
-    private final Project project;
+    private final ProjectImpl project;
 
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
-    private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator.comparing(Source::getPath)
+    private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator.comparing(SourceImpl::getPath)
             .thenComparing(x -> x.getClass().getSimpleName()));
 
-    private final Set<Source> sources = Collections.unmodifiableSet(sortedSources);
+    private final Set<SourceImpl> sources = Collections.unmodifiableSet(sortedSources);
 
     private final List<NamespaceDefinitionImpl> namespaceDefinitions = new ArrayList<>();
 
@@ -124,7 +115,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     @Override
-    public Project getProject() {
+    public ProjectImpl getProject() {
         return project;
     }
 
@@ -139,18 +130,24 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     @Override
-    public Set<Source> getSources() {
+    public Set<SourceImpl> getSources() {
         return sources;
     }
 
     @Override
-    public Set<Source> getContentSources() {
-        return sources.stream().filter(x -> x instanceof ContentSourceImpl).collect(Collectors.toSet());
+    public Set<ContentSourceImpl> getContentSources() {
+        return sources.stream()
+                .filter(ContentSourceImpl.class::isInstance)
+                .map(ContentSourceImpl.class::cast)
+                .collect(Collectors.toSet());
     }
 
     @Override
-    public Set<Source> getConfigSources() {
-        return sources.stream().filter(x -> x instanceof ConfigSourceImpl).collect(Collectors.toSet());
+    public Set<ConfigSourceImpl> getConfigSources() {
+        return sources.stream()
+                .filter(ConfigSourceImpl.class::isInstance)
+                .map(ConfigSourceImpl.class::cast)
+                .collect(Collectors.toSet());
     }
 
     public ContentSourceImpl addContentSource(final String path) {
@@ -196,7 +193,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     /**
      * @return a sorted list of namespace definitions in insertion order.
-     * Note that these definitions are only populated for Modules that are part of the {@link ConfigurationModel}.
+     * Note that these definitions are only populated for Modules that are part of the {@link org.onehippo.cm.model.ConfigurationModel}.
      */
     public List<NamespaceDefinitionImpl> getNamespaceDefinitions() {
         return namespaceDefinitions;
@@ -204,7 +201,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     /**
      * @return a sorted list of node type definitions in insertion order.
-     * Note that these definitions are only populated for Modules that are part of the {@link ConfigurationModel}.
+     * Note that these definitions are only populated for Modules that are part of the {@link org.onehippo.cm.model.ConfigurationModel}.
      */
     public List<NodeTypeDefinitionImpl> getNodeTypeDefinitions() {
         return nodeTypeDefinitions;
@@ -213,7 +210,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     /**
      * @return a sorted list of config definitions.
-     * Note that these definitions are only populated for Modules that are part of the {@link ConfigurationModel}.
+     * Note that these definitions are only populated for Modules that are part of the {@link org.onehippo.cm.model.ConfigurationModel}.
      */
     public List<ConfigDefinitionImpl> getConfigDefinitions() {
         return configDefinitions;
@@ -221,7 +218,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     /**
      * @return a list of content definitions.
-     * Note that these definitions are only populated for Modules that are part of the {@link ConfigurationModel}.
+     * Note that these definitions are only populated for Modules that are part of the {@link org.onehippo.cm.model.ConfigurationModel}.
      */
     public List<ContentDefinitionImpl> getContentDefinitions() {
         return contentDefinitions;
@@ -229,7 +226,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     /**
      * @return a sorted list of web file bundle definitions in insertion order.
-     * Note that these definitions are only populated for Modules that are part of the {@link ConfigurationModel}.
+     * Note that these definitions are only populated for Modules that are part of the {@link org.onehippo.cm.model.ConfigurationModel}.
      */
     public List<WebFileBundleDefinitionImpl> getWebFileBundleDefinitions() {
         return webFileBundleDefinitions;
@@ -312,7 +309,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         configDefinitions.sort(new ContentDefinitionComparator());
     }
 
-    private void ensureSingleSourceForNodeTypes(final Definition nodeTypeDefinition) {
+    private void ensureSingleSourceForNodeTypes(final AbstractDefinitionImpl nodeTypeDefinition) {
         if (!nodeTypeDefinitions.isEmpty()
                 && !nodeTypeDefinition.getSource().getPath().equals(nodeTypeDefinitions.get(0).getSource().getPath())) {
             final String msg = String.format("CNDs are specified in multiple sources of a module: '%s' and '%s'. "
@@ -323,7 +320,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         }
     }
 
-    protected void compileManifest(ConfigurationModel model, TreeMap<Module,TreeMap<String,String>> manifest) {
+    protected void compileManifest(ConfigurationModelImpl model, TreeMap<ModuleImpl,TreeMap<String,String>> manifest) {
         TreeMap<String,String> items = new TreeMap<>();
 
         // get the resource input provider, which provides access to raw data for module content
@@ -346,21 +343,21 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         digestResource(null, "/../" + ACTIONS_YAML, rip, items);
 
         // for each content source
-        for (Source source : this.getContentSources()) {
+        for (SourceImpl source : this.getContentSources()) {
             // assume that there is exactly one content definition here, as required
-            ContentDefinition firstDef = (ContentDefinition) source.getDefinitions().get(0);
+            ContentDefinitionImpl firstDef = (ContentDefinitionImpl) source.getDefinitions().get(0);
 
             // add the first definition path to manifest
             items.put("/" + HCM_CONTENT_FOLDER + "/" + source.getPath(), firstDef.getNode().getPath());
         }
 
         // for each config source
-        for (Source source : this.getConfigSources()) {
+        for (ConfigSourceImpl source : this.getConfigSources()) {
             // digest the source
             digestResource(source, "/" + source.getPath(), rip, items);
 
             // for each definition
-            for (Definition def : source.getDefinitions()) {
+            for (AbstractDefinitionImpl def : source.getDefinitions()) {
                 switch (def.getType()) {
                     case NAMESPACE:
                     case WEBFILEBUNDLE:
@@ -379,7 +376,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
                         break;
                     case CONFIG:
                         // recursively find all config resources and digest them
-                        ConfigDefinition configDef = (ConfigDefinition) def;
+                        ConfigDefinitionImpl configDef = (ConfigDefinitionImpl) def;
                         digestResourcesForNode(configDef.getNode(), source, rip, items);
                         break;
                 }
@@ -397,12 +394,12 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      * @param rip provides access to raw data streams
      * @param items accumulator of [path,digest] Strings
      */
-    protected void digestResourcesForNode(DefinitionNode defNode, Source source, ResourceInputProvider rip,
+    protected void digestResourcesForNode(DefinitionNodeImpl defNode, SourceImpl source, ResourceInputProvider rip,
                                           TreeMap<String,String> items) {
         // find resource values
-        for (DefinitionProperty dp : defNode.getProperties().values()) {
+        for (DefinitionPropertyImpl dp : defNode.getProperties().values()) {
             // if value is a resource, digest it
-            Consumer<Value> digester = v -> {
+            Consumer<ValueImpl> digester = v -> {
                 if (v.isResource()) {
                     digestResource(source, v.getString(), rip, items);
                 }
@@ -413,7 +410,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
                     digester.accept(dp.getValue());
                     break;
                 case SET: case LIST:
-                    for (Value value : dp.getValues()) {
+                    for (ValueImpl value : dp.getValues()) {
                         digester.accept(value);
                     }
                     break;
@@ -421,7 +418,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         }
 
         // recursively visit child definition nodes
-        for (DefinitionNode dn : defNode.getNodes().values()) {
+        for (DefinitionNodeImpl dn : defNode.getNodes().values()) {
             digestResourcesForNode(dn, source, rip, items);
         }
     }
@@ -433,7 +430,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      * @param rip provides access to raw data streams
      * @param items accumulator of [path,digest] Strings
      */
-    protected boolean digestResource(Source source, String path, ResourceInputProvider rip, TreeMap<String,String> items) {
+    protected boolean digestResource(SourceImpl source, String path, ResourceInputProvider rip, TreeMap<String,String> items) {
         // if path starts with /, this is already relative to the config root, otherwise we must adjust it
         if (!path.startsWith("/")) {
             String sourcePath = source.getPath();
@@ -608,12 +605,12 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             final SourceParser configSourceParser = new ConfigSourceParser(configResourceInputProvider, true, DEFAULT_EXPLICIT_SEQUENCING);
             final SourceParser contentSourceParser = new ContentSourceParser(contentResourceInputProvider, true, DEFAULT_EXPLICIT_SEQUENCING);
 
-            for (Source source : getConfigSources()) {
+            for (ConfigSourceImpl source : getConfigSources()) {
                 // TODO adding the slash here is a silly hack to load a source path without needing the source first
                 configSourceParser.parse(configResourceInputProvider.getResourceInputStream(null, "/" + source.getPath()),
                         source.getPath(), configResourceInputProvider.getBaseURL() + source.getPath(), newModule);
             }
-            for (Source source : getContentSources()) {
+            for (ContentSourceImpl source : getContentSources()) {
                 contentSourceParser.parse(contentResourceInputProvider.getResourceInputStream(null, source.getPath()),
                         source.getPath(), source.getPath(), newModule);
             }

@@ -21,9 +21,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.ActionType;
 
 /**
  * Applies content definitions

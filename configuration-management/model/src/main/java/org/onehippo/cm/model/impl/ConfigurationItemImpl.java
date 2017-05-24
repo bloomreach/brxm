@@ -21,8 +21,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationItem;
-import org.onehippo.cm.model.ConfigurationNode;
-import org.onehippo.cm.model.DefinitionItem;
 import org.onehippo.cm.model.SnsUtils;
 
 public abstract class ConfigurationItemImpl implements ConfigurationItem {
@@ -30,7 +28,7 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
     private String name;
     private ConfigurationNodeImpl parent;
     private final List<DefinitionItemImpl> modifiableDefinitions = new ArrayList<>();
-    private final List<DefinitionItem> definitions = Collections.unmodifiableList(modifiableDefinitions);
+    private final List<DefinitionItemImpl> definitions = Collections.unmodifiableList(modifiableDefinitions);
     private boolean deleted;
 
     @Override
@@ -57,7 +55,7 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
     }
 
     @Override
-    public ConfigurationNode getParent() {
+    public ConfigurationNodeImpl getParent() {
         return parent;
     }
 
@@ -70,7 +68,7 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
     }
 
     @Override
-    public List<DefinitionItem> getDefinitions() {
+    public List<DefinitionItemImpl> getDefinitions() {
         return definitions;
     }
 

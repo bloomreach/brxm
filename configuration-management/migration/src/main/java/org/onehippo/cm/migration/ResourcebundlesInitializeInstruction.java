@@ -125,7 +125,7 @@ public class ResourcebundlesInitializeInstruction extends InitializeInstruction 
         int lastSlash = bundleName.substring(1).lastIndexOf('/');
         if (lastSlash > -1) {
             String[] parentPaths = bundleName.substring(1, lastSlash+1).split("/");
-            DefinitionNodeImpl translationsParentNode = (DefinitionNodeImpl)resourceBundleParents.getNode();
+            DefinitionNodeImpl translationsParentNode = resourceBundleParents.getNode();
             if (translationsParentNode == null) {
                 translationsParentNode = new DefinitionNodeImpl(TRANSLATIONS_ROOT, TRANSLATIONS_NODE, resourceBundleParents);
                 resourceBundleParents.setNode(translationsParentNode);

@@ -16,21 +16,19 @@
 package org.onehippo.cm.model.impl;
 
 import org.onehippo.cm.model.ConfigurationItemCategory;
-import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionItem;
-import org.onehippo.cm.model.DefinitionNode;
 
 public abstract class DefinitionItemImpl implements DefinitionItem {
 
     private String path;
     private String name;
-    private DefinitionNode parent;
-    private Definition definition;
+    private DefinitionNodeImpl parent;
+    private AbstractDefinitionImpl definition;
     private boolean delete;
     private SourceLocationImpl sourceLocation;
     private ConfigurationItemCategory category;
 
-    public DefinitionItemImpl(final String path, final String name, final Definition definition) {
+    public DefinitionItemImpl(final String path, final String name, final AbstractDefinitionImpl definition) {
         this.path = path;
         this.name = name;
         this.parent = null;
@@ -66,7 +64,7 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
     }
 
     @Override
-    public DefinitionNode getParent() {
+    public DefinitionNodeImpl getParent() {
         if (parent == null) {
             throw new IllegalStateException("Root node does not have a parent");
         }
@@ -79,7 +77,7 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
     }
 
     @Override
-    public Definition getDefinition() {
+    public AbstractDefinitionImpl getDefinition() {
         return definition;
     }
 

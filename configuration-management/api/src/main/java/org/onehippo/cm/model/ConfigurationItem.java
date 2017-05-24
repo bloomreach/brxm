@@ -27,7 +27,7 @@ public interface ConfigurationItem {
      * if no definitions present. Note the ordering is according to serialized yaml format and not in
      * model processing order.
      */
-    List<DefinitionItem> getDefinitions();
+    List<? extends DefinitionItem> getDefinitions();
     boolean isDeleted();
     boolean isRoot();
 }

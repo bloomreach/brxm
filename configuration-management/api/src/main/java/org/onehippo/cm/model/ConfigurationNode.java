@@ -24,13 +24,13 @@ public interface ConfigurationNode extends ConfigurationItem {
      * {@link ConfigurationNode} as an immutable map and empty immutable map if none present.
      * Nodes names are always indexed names, e.g. <code>node[1]</code>.
      */
-    Map<String, ConfigurationNode> getNodes();
+    Map<String, ? extends ConfigurationNode> getNodes();
 
     /**
      * @return The <strong>ordered</strong> map of {@link ConfigurationProperty}s by name for this
      * {@link ConfigurationNode} as an immutable map and empty immutable map if none present.
      */
-    Map<String, ConfigurationProperty> getProperties();
+    Map<String, ? extends ConfigurationProperty> getProperties();
 
     /**
      * @return Boolean.TRUE if for this node the order of its children can be ignored on detecting changes,

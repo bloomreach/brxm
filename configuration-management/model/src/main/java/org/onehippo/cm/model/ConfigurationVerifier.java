@@ -19,8 +19,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.model.impl.GroupImpl;
 
 public class ConfigurationVerifier {
 

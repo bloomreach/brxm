@@ -32,14 +32,12 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Before;
 import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.engine.ConfigurationConfigService;
-import org.onehippo.cm.model.ConfigDefinition;
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.testutils.jcr.event.EventCollector;
 import org.onehippo.testutils.jcr.event.EventPojo;
@@ -184,14 +182,14 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
     private ConfigurationModel makeMergedModel(final String[] sources) throws Exception {
         final ConfigurationModelBuilder configurationModelBuilder = new ConfigurationModelBuilder();
         for (int i = 0; i < sources.length; i++) {
-            final List<Definition> definitions = parseNoSort(sources[i], "test-module-" + i, ConfigDefinition.class);
+            final List<AbstractDefinitionImpl> definitions = parseNoSort(sources[i], "test-module-" + i, true);
             assertTrue(definitions.size() > 0);
-            final ModuleImpl module = (ModuleImpl) definitions.get(0).getSource().getModule();
+            final ModuleImpl module = definitions.get(0).getSource().getModule();
             module.setConfigResourceInputProvider(new TestResourceInputProvider());
             module.setContentResourceInputProvider(new TestResourceInputProvider());
 //            module.setConfigResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
 //            module.setContentResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
-            final GroupImpl configuration = (GroupImpl) module.getProject().getGroup();
+            final GroupImpl configuration = module.getProject().getGroup();
             configurationModelBuilder.push(configuration);
         }
         return configurationModelBuilder.build();

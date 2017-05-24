@@ -25,8 +25,6 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationNode;
-import org.onehippo.cm.model.ConfigurationProperty;
-import org.onehippo.cm.model.DefinitionItem;
 import org.onehippo.cm.model.SnsUtils;
 
 public class ConfigurationNodeImpl extends ConfigurationItemImpl implements ConfigurationNode {
@@ -34,23 +32,23 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     // Nodes names must always be indexed names, e.g. node[1]
     private final Map<String, ConfigurationNodeImpl> modifiableNodes = new LinkedHashMap<>();
     private final Map<String, ConfigurationNodeImpl> unmodifiableMapWithModifiableNodes = Collections.unmodifiableMap(modifiableNodes);
-    private final Map<String, ConfigurationNode> unmodifiableNodes = Collections.unmodifiableMap(modifiableNodes);
+    private final Map<String, ConfigurationNodeImpl> unmodifiableNodes = Collections.unmodifiableMap(modifiableNodes);
 
     private final Map<String, ConfigurationPropertyImpl> modifiableProperties = new LinkedHashMap<>();
     private final Map<String, ConfigurationPropertyImpl> unmodifiableMapWithModifiableProperties = Collections.unmodifiableMap(modifiableProperties);
-    private final Map<String, ConfigurationProperty> unmodifiableProperties = Collections.unmodifiableMap(modifiableProperties);
+    private final Map<String, ConfigurationPropertyImpl> unmodifiableProperties = Collections.unmodifiableMap(modifiableProperties);
 
     private Boolean ignoreReorderedChildren;
 
     // Category settings are not supported for individual same-name siblings, when configuring a certain node name
     // with a category, all SNS should have that category, hence childNodeCategorySettings does not use indexed names
-    private Map<String, Pair<ConfigurationItemCategory, DefinitionItem>> childNodeCategorySettings = new HashMap<>();
-    private Map<String, Pair<ConfigurationItemCategory, DefinitionItem>> childPropertyCategorySettings = new HashMap<>();
+    private Map<String, Pair<ConfigurationItemCategory, DefinitionItemImpl>> childNodeCategorySettings = new HashMap<>();
+    private Map<String, Pair<ConfigurationItemCategory, DefinitionItemImpl>> childPropertyCategorySettings = new HashMap<>();
     private ConfigurationItemCategory residualNodeCategory;
-    private DefinitionItem residualNodeCategoryDefinitionItem;
+    private DefinitionItemImpl residualNodeCategoryDefinitionItem;
 
     @Override
-    public Map<String, ConfigurationNode> getNodes() {
+    public Map<String, ConfigurationNodeImpl> getNodes() {
         return unmodifiableNodes;
     }
 
@@ -126,7 +124,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     }
 
     @Override
-    public Map<String, ConfigurationProperty> getProperties() {
+    public Map<String, ConfigurationPropertyImpl> getProperties() {
         return unmodifiableProperties;
     }
 
@@ -186,19 +184,19 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
         return ConfigurationItemCategory.CONFIGURATION;
     }
 
-    public void setChildNodeCategorySettings(final String name, final ConfigurationItemCategory category, final DefinitionItem definitionItem) {
+    public void setChildNodeCategorySettings(final String name, final ConfigurationItemCategory category, final DefinitionItemImpl definitionItem) {
         childNodeCategorySettings.put(SnsUtils.getUnindexedName(name), Pair.of(category, definitionItem));
     }
 
-    public Pair<ConfigurationItemCategory, DefinitionItem> getChildNodeCategorySettings(final String name) {
+    public Pair<ConfigurationItemCategory, DefinitionItemImpl> getChildNodeCategorySettings(final String name) {
         return childNodeCategorySettings.get(name);
     }
 
-    public void setChildPropertyCategorySettings(final String name, final ConfigurationItemCategory category, final DefinitionItem definitionItem) {
+    public void setChildPropertyCategorySettings(final String name, final ConfigurationItemCategory category, final DefinitionItemImpl definitionItem) {
         childPropertyCategorySettings.put(name, Pair.of(category, definitionItem));
     }
 
-    public Pair<ConfigurationItemCategory, DefinitionItem> getChildPropertyCategorySettings(final String name) {
+    public Pair<ConfigurationItemCategory, DefinitionItemImpl> getChildPropertyCategorySettings(final String name) {
         return childPropertyCategorySettings.get(name);
     }
 
@@ -210,11 +208,11 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
         this.residualNodeCategory = residualNodeCategory;
     }
 
-    public DefinitionItem getResidualNodeCategoryDefinitionItem() {
+    public DefinitionItemImpl getResidualNodeCategoryDefinitionItem() {
         return residualNodeCategoryDefinitionItem;
     }
 
-    public void setResidualNodeCategoryDefinitionItem(final DefinitionItem residualNodeCategoryDefinitionItem) {
+    public void setResidualNodeCategoryDefinitionItem(final DefinitionItemImpl residualNodeCategoryDefinitionItem) {
         this.residualNodeCategoryDefinitionItem = residualNodeCategoryDefinitionItem;
     }
 

@@ -34,16 +34,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.ConfigDefinition;
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.ConfigurationNode;
-import org.onehippo.cm.model.ConfigurationProperty;
-import org.onehippo.cm.model.ContentDefinition;
-import org.onehippo.cm.model.Group;
-import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.NamespaceDefinition;
-import org.onehippo.cm.model.NodeTypeDefinition;
-import org.onehippo.cm.model.WebFileBundleDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,60 +45,58 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationModelImpl.class);
 
-    private List<Group> sortedGroups;
-    private final List<NamespaceDefinition> namespaceDefinitions = new ArrayList<>();
-    private final List<NodeTypeDefinition> nodeTypeDefinitions = new ArrayList<>();
+    private List<GroupImpl> sortedGroups;
+    private final List<NamespaceDefinitionImpl> namespaceDefinitions = new ArrayList<>();
+    private final List<NodeTypeDefinitionImpl> nodeTypeDefinitions = new ArrayList<>();
 
-    private ConfigurationNode configurationRootNode;
+    private ConfigurationNodeImpl configurationRootNode;
 
-    private final List<WebFileBundleDefinition> webFileBundleDefinitions = new ArrayList<>();
-    private final List<ContentDefinition> contentDefinitions = new ArrayList<>();
-    private final List<ConfigDefinition> configDefinitions = new ArrayList<>();
+    private final List<WebFileBundleDefinitionImpl> webFileBundleDefinitions = new ArrayList<>();
+    private final List<ContentDefinitionImpl> contentDefinitions = new ArrayList<>();
+    private final List<ConfigDefinitionImpl> configDefinitions = new ArrayList<>();
 
     // Used for cleanup when done with this ConfigurationModel
     private Set<FileSystem> filesystems = new HashSet<>();
 
     @Override
-    public List<Group> getSortedGroups() {
+    public List<GroupImpl> getSortedGroups() {
         return sortedGroups;
     }
 
     @Override
-    public List<NamespaceDefinition> getNamespaceDefinitions() {
+    public List<NamespaceDefinitionImpl> getNamespaceDefinitions() {
         return namespaceDefinitions;
     }
 
     @Override
-    public List<NodeTypeDefinition> getNodeTypeDefinitions() {
+    public List<NodeTypeDefinitionImpl> getNodeTypeDefinitions() {
         return nodeTypeDefinitions;
     }
 
     @Override
-    public ConfigurationNode getConfigurationRootNode() {
+    public ConfigurationNodeImpl getConfigurationRootNode() {
         return configurationRootNode;
     }
 
     @Override
-    public List<WebFileBundleDefinition> getWebFileBundleDefinitions() {
+    public List<WebFileBundleDefinitionImpl> getWebFileBundleDefinitions() {
         return webFileBundleDefinitions;
     }
 
     @Override
-    public List<ContentDefinition> getContentDefinitions() {
+    public List<ContentDefinitionImpl> getContentDefinitions() {
         return contentDefinitions;
     }
 
-    public List<ConfigDefinition> getConfigDefinitions() {
+    public List<ConfigDefinitionImpl> getConfigDefinitions() {
         return configDefinitions;
     }
 
-    @Override
-    public void addContentDefinition(final ContentDefinition definition) {
+    public void addContentDefinition(final ContentDefinitionImpl definition) {
         contentDefinitions.add(definition);
     }
 
-    @Override
-    public void addContentDefinitions(final Collection<ContentDefinition> definitions) {
+    public void addContentDefinitions(final Collection<ContentDefinitionImpl> definitions) {
         contentDefinitions.addAll(definitions);
     }
 
@@ -127,7 +116,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         nodeTypeDefinitions.addAll(definitions);
     }
 
-    public void setConfigurationRootNode(final ConfigurationNode configurationRootNode) {
+    public void setConfigurationRootNode(final ConfigurationNodeImpl configurationRootNode) {
         this.configurationRootNode = configurationRootNode;
     }
 
@@ -165,13 +154,13 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     @Override
     public String getDigest() {
         // accumulate modules in sorted order
-        TreeSet<Module> modules = new TreeSet<>();
+        TreeSet<ModuleImpl> modules = new TreeSet<>();
         getSortedGroups().forEach(g -> g.getProjects().forEach(p -> p.getModules().forEach(m -> modules.add(m))));
 
         // for each module, accumulate manifest items
-        TreeMap<Module,TreeMap<String,String>> manifest = new TreeMap<>();
-        for (Module module : modules) {
-            ((ModuleImpl)module).compileManifest(this, manifest);
+        TreeMap<ModuleImpl,TreeMap<String,String>> manifest = new TreeMap<>();
+        for (ModuleImpl module : modules) {
+            module.compileManifest(this, manifest);
         }
 
         final String modelManifest = manifestToString(manifest);
@@ -206,7 +195,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @param manifest
      * @return
      */
-    protected static String manifestToString(final TreeMap<Module, TreeMap<String, String>> manifest) {
+    protected static String manifestToString(final TreeMap<ModuleImpl, TreeMap<String, String>> manifest) {
         // print to final manifest String (with ~10k initial buffer size)
         StringBuilder sb = new StringBuilder(10000);
 
@@ -243,7 +232,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     }
 
     private void ensureUniqueBundleName(final WebFileBundleDefinitionImpl newDefinition) {
-        for (WebFileBundleDefinition existingDefinition : webFileBundleDefinitions) {
+        for (WebFileBundleDefinitionImpl existingDefinition : webFileBundleDefinitions) {
             if (existingDefinition.getName().equals(newDefinition.getName())) {
                 final String msg = String.format(
                         "Duplicate web file bundle with name '%s' found in source files '%s' and '%s'.",
@@ -260,10 +249,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @param path the path of a node
      * @return a ConfigurationNode or null, if no node exists with this path
      */
-    public ConfigurationNode resolveNode(String path) {
+    public ConfigurationNodeImpl resolveNode(String path) {
         String[] segments = StringUtils.stripStart(path, "/").split("/");
 
-        ConfigurationNode currentNode = getConfigurationRootNode();
+        ConfigurationNodeImpl currentNode = getConfigurationRootNode();
         for (String segment : segments) {
             currentNode = currentNode.getNodes().get(createIndexedName(segment));
             if (currentNode == null) {
@@ -278,8 +267,8 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @param path the path of a property
      * @return a ConfigurationProperty or null, if no property exists with this path
      */
-    public ConfigurationProperty resolveProperty(String path) {
-        ConfigurationNode node = resolveNode(StringUtils.substringBeforeLast(path, "/"));
+    public ConfigurationPropertyImpl resolveProperty(String path) {
+        ConfigurationNodeImpl node = resolveNode(StringUtils.substringBeforeLast(path, "/"));
         if (node == null) {
             return null;
         }
@@ -293,12 +282,12 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @param path
      * @return
      */
-    public Optional<ContentDefinition> findClosestContentDefinition(final String path) {
+    public Optional<ContentDefinitionImpl> findClosestContentDefinition(final String path) {
         // Use the Path class to represent the JCR path, since all we need is a simple startsWith() comparison
         Path p = Paths.get(path);
 
         // make sure content definitions are sorted by lexical order of root path
-        final TreeSet<ContentDefinition> reverse = new TreeSet<>(Comparator.reverseOrder());
+        final TreeSet<ContentDefinitionImpl> reverse = new TreeSet<>(Comparator.reverseOrder());
         reverse.addAll(getContentDefinitions());
 
         // check for prefix match on path in reverse lexical order -- first match is longest prefix match

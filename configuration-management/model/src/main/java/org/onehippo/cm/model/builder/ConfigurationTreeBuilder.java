@@ -23,12 +23,10 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.ConfigurationItemCategory;
-import org.onehippo.cm.model.DefinitionItem;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.PropertyType;
-import org.onehippo.cm.model.Value;
-import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.SnsUtils;
+import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.ConfigurationItemImpl;
 import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.ConfigurationPropertyImpl;
@@ -44,13 +42,13 @@ import org.slf4j.LoggerFactory;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.MIX_REFERENCEABLE;
+import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
+import static org.onehippo.cm.model.Constants.META_IGNORE_REORDERED_CHILDREN;
+import static org.onehippo.cm.model.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
 import static org.onehippo.cm.model.PropertyOperation.ADD;
 import static org.onehippo.cm.model.PropertyOperation.DELETE;
 import static org.onehippo.cm.model.PropertyOperation.OVERRIDE;
 import static org.onehippo.cm.model.PropertyOperation.REPLACE;
-import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
-import static org.onehippo.cm.model.Constants.META_IGNORE_REORDERED_CHILDREN;
-import static org.onehippo.cm.model.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
 
 class ConfigurationTreeBuilder {
 
@@ -78,7 +76,7 @@ class ConfigurationTreeBuilder {
         mixinTypesProperty.setParent(root);
         mixinTypesProperty.setType(PropertyType.LIST);
         mixinTypesProperty.setValueType(ValueType.NAME);
-        mixinTypesProperty.setValues(new Value[]{new ValueImpl(MIX_REFERENCEABLE, ValueType.NAME, false, false)});
+        mixinTypesProperty.setValues(new ValueImpl[]{new ValueImpl(MIX_REFERENCEABLE, ValueType.NAME, false, false)});
         root.addProperty(JCR_MIXINTYPES, mixinTypesProperty);
     }
 
@@ -339,8 +337,8 @@ class ConfigurationTreeBuilder {
     }
 
     private void failOnPriorCategorySettings(
-            final Pair<ConfigurationItemCategory, DefinitionItem> priorSettings,
-            final DefinitionItem definitionItem) {
+            final Pair<ConfigurationItemCategory, DefinitionItemImpl> priorSettings,
+            final DefinitionItemImpl definitionItem) {
         if (priorSettings != null) {
             final String culprit = ModelUtils.formatDefinition(definitionItem.getDefinition());
             final String source = ModelUtils.formatDefinition(priorSettings.getRight().getDefinition());
@@ -491,10 +489,10 @@ class ConfigurationTreeBuilder {
                                                        final PropertyOperation op) {
         if (property.getName().equals(JCR_MIXINTYPES) && op != ADD) {
             final List<String> replacedMixins = Arrays.stream(definitionProperty.getValues())
-                    .map(Value::getString)
+                    .map(ValueImpl::getString)
                     .collect(Collectors.toList());
             final List<String> missingMixins = Arrays.stream(property.getValues())
-                    .map(Value::getString)
+                    .map(ValueImpl::getString)
                     .filter(mixin -> !replacedMixins.contains(mixin))
                     .collect(Collectors.toList());
 
@@ -521,23 +519,23 @@ class ConfigurationTreeBuilder {
     private void addValues(final DefinitionPropertyImpl definitionProperty, final ConfigurationPropertyImpl property) {
         // TODO: need to handle PropertyType.SET?
 
-        final Value[] existingValues = property.getValues();
+        final ValueImpl[] existingValues = property.getValues();
         if (existingValues == null) {
             final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
             logger.warn("Property '{}' defined in '{}' claims to ADD values, but property doesn't exist yet. Applying default behaviour.",
                     definitionProperty.getPath(), culprit);
             property.setValues(definitionProperty.getValues());
         } else {
-            List<Value> values = Arrays.stream(existingValues).collect(Collectors.toList());
+            List<ValueImpl> values = Arrays.stream(existingValues).collect(Collectors.toList());
             values.addAll(Arrays.asList(definitionProperty.getValues()));
-            property.setValues(values.toArray(new Value[values.size()]));
+            property.setValues(values.toArray(new ValueImpl[values.size()]));
         }
     }
 
     private void warnIfValuesAreEqual(final DefinitionPropertyImpl definitionProperty,
                                       final ConfigurationPropertyImpl property) {
         if (PropertyType.SINGLE == property.getType()) {
-            final Value existingValue = property.getValue();
+            final ValueImpl existingValue = property.getValue();
             if (existingValue != null) {
                 if (definitionProperty.getValue().equals(property.getValue())) {
                     final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
@@ -546,9 +544,9 @@ class ConfigurationTreeBuilder {
                 }
             }
         } else {
-            final Value[] existingValues = property.getValues();
+            final ValueImpl[] existingValues = property.getValues();
             if (existingValues != null) {
-                final Value[] definitionValues = definitionProperty.getValues();
+                final ValueImpl[] definitionValues = definitionProperty.getValues();
                 if (existingValues.length == definitionValues.length) {
                     for (int i = 0; i < existingValues.length; i++) {
                         if (!existingValues[i].equals(definitionValues[i])) {

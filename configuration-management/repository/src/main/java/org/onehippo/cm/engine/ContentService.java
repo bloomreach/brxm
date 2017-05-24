@@ -32,12 +32,12 @@ import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.onehippo.cm.model.ActionItem;
+import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.ActionItem;
-import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;

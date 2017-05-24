@@ -19,8 +19,16 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.junit.Test;
-import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.NodeTypeDefinitionImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.parser.ParserException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -34,17 +42,17 @@ public class HierarchyTest extends AbstractBaseTest {
         final Map<String, GroupImpl> groups = result.getGroups();
         assertEquals(2, groups.size());
 
-        final Group base = assertGroup(groups, "base", new String[0], 1);
-        final Project project1 = assertProject(base, "project1", new String[0], 1);
-        final Module module1 = assertModule(project1, "module1", new String[0], 3);
-        final Source source1 = assertSource(module1, "config.yaml", 8);
-        final Source contentSource1 = assertSource(module1, "content.yaml", 1);
+        final GroupImpl base = assertGroup(groups, "base", new String[0], 1);
+        final ProjectImpl project1 = assertProject(base, "project1", new String[0], 1);
+        final ModuleImpl module1 = assertModule(project1, "module1", new String[0], 3);
+        final SourceImpl source1 = assertSource(module1, "config.yaml", 8);
+        final SourceImpl contentSource1 = assertSource(module1, "content.yaml", 1);
 
-        final NamespaceDefinition namespace = assertDefinition(source1, 0, NamespaceDefinition.class);
+        final NamespaceDefinitionImpl namespace = assertDefinition(source1, 0, NamespaceDefinitionImpl.class);
         assertEquals("myhippoproject", namespace.getPrefix());
         assertEquals("http://www.onehippo.org/myhippoproject/nt/1.0", namespace.getURI().toString());
 
-        final NodeTypeDefinition nodeType = assertDefinition(source1, 1, NodeTypeDefinition.class);
+        final NodeTypeDefinitionImpl nodeType = assertDefinition(source1, 1, NodeTypeDefinitionImpl.class);
         assertEquals(
                 "<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>\n" +
                         "<'myhippoproject'='http://www.onehippo.org/myhippoproject/nt/1.0'>\n" +
@@ -52,19 +60,19 @@ public class HierarchyTest extends AbstractBaseTest {
                 nodeType.getValue());
         assertEquals(false, nodeType.isResource());
 
-        final NodeTypeDefinition nodeTypeFromResource = assertDefinition(source1, 2, NodeTypeDefinition.class);
+        final NodeTypeDefinitionImpl nodeTypeFromResource = assertDefinition(source1, 2, NodeTypeDefinitionImpl.class);
         assertEquals("example.cnd", nodeTypeFromResource.getValue());
         assertEquals(true, nodeTypeFromResource.isResource());
 
-        final ConfigDefinition source1definition1 = assertDefinition(source1, 3, ConfigDefinition.class);
-        final DefinitionNode rootDefinition1 = assertNode(source1definition1, "/", "", source1definition1, 6, 1);
+        final ConfigDefinitionImpl source1definition1 = assertDefinition(source1, 3, ConfigDefinitionImpl.class);
+        final DefinitionNodeImpl rootDefinition1 = assertNode(source1definition1, "/", "", source1definition1, 6, 1);
         assertProperty(rootDefinition1, "/root-level-property", "root-level-property",
                 source1definition1, ValueType.STRING, "root-level-property-value");
-        final DefinitionNode nodeWithSingleProperty = assertNode(rootDefinition1, "/node-with-single-property",
+        final DefinitionNodeImpl nodeWithSingleProperty = assertNode(rootDefinition1, "/node-with-single-property",
                 "node-with-single-property", source1definition1, 0, 1);
         assertProperty(nodeWithSingleProperty, "/node-with-single-property/property", "property",
                 source1definition1, ValueType.STRING, "node-with-single-property-value");
-        final DefinitionNode nodeWithMultipleProperties = assertNode(rootDefinition1, "/node-with-multiple-properties",
+        final DefinitionNodeImpl nodeWithMultipleProperties = assertNode(rootDefinition1, "/node-with-multiple-properties",
                 "node-with-multiple-properties", source1definition1, 0, 3);
         assertProperty(nodeWithMultipleProperties, "/node-with-multiple-properties/single", "single",
                 source1definition1, ValueType.STRING, "value1");
@@ -72,9 +80,9 @@ public class HierarchyTest extends AbstractBaseTest {
                 source1definition1, ValueType.STRING, new String[]{"value2","value3"});
         assertProperty(nodeWithMultipleProperties, "/node-with-multiple-properties/empty-multiple", "empty-multiple",
                 source1definition1, ValueType.STRING, new String[0]);
-        final DefinitionNode nodeWithSubNode =
+        final DefinitionNodeImpl nodeWithSubNode =
                 assertNode(rootDefinition1, "/node-with-sub-node", "node-with-sub-node", source1definition1, 1, 0);
-        final DefinitionNode subNode =
+        final DefinitionNodeImpl subNode =
                 assertNode(nodeWithSubNode, "/node-with-sub-node/sub-node", "sub-node", source1definition1, 0, 1);
         assertProperty(subNode, "/node-with-sub-node/sub-node/property", "property", source1definition1, ValueType.STRING, "sub-node-value");
         assertNode(rootDefinition1, "/node-delete", "node-delete", source1definition1, true, null, 0, 0);
@@ -82,14 +90,14 @@ public class HierarchyTest extends AbstractBaseTest {
         assertNull(rootDefinition1.getNodes().get("node-order-before").getIgnoreReorderedChildren());
         assertTrue(rootDefinition1.getNodes().get("node-ignore-reordered-children").getIgnoreReorderedChildren());
 
-        final ConfigDefinition source1definition2 = assertDefinition(source1, 4, ConfigDefinition.class);
+        final ConfigDefinitionImpl source1definition2 = assertDefinition(source1, 4, ConfigDefinitionImpl.class);
         assertNode(source1definition2, "/path/to/node-delete", "node-delete", source1definition2, true, null, 0, 0);
 
-        final ConfigDefinition source1definition3 = assertDefinition(source1, 5, ConfigDefinition.class);
+        final ConfigDefinitionImpl source1definition3 = assertDefinition(source1, 5, ConfigDefinitionImpl.class);
         assertNode(source1definition3, "/path/to/node-order-before", "node-order-before", source1definition3, false, "node", 0, 0);
 
-        final ConfigDefinition source1definition4 = assertDefinition(source1, 6, ConfigDefinition.class);
-        final DefinitionNode node = assertNode(source1definition4, "/path/to/node", "node", source1definition4, 2, 5);
+        final ConfigDefinitionImpl source1definition4 = assertDefinition(source1, 6, ConfigDefinitionImpl.class);
+        final DefinitionNodeImpl node = assertNode(source1definition4, "/path/to/node", "node", source1definition4, 2, 5);
         assertProperty(node, "/path/to/node/delete-property", "delete-property", source1definition4,
                 PropertyOperation.DELETE, ValueType.STRING, new String[0]);
         assertProperty(node, "/path/to/node/add-property", "add-property", source1definition4, PropertyOperation.ADD,
@@ -100,23 +108,23 @@ public class HierarchyTest extends AbstractBaseTest {
                 PropertyOperation.REPLACE, ValueType.BINARY, new String[]{"folder/image.png"}, true, false);
         assertProperty(node, "/path/to/node/override-property", "override-property", source1definition4,
                 PropertyOperation.OVERRIDE, ValueType.STRING, "single");
-        final DefinitionNode nodeWithNewType =
+        final DefinitionNodeImpl nodeWithNewType =
                 assertNode(node, "/path/to/node/node-with-new-type", "node-with-new-type", source1definition4, 0, 2);
         assertProperty(nodeWithNewType, "/path/to/node/node-with-new-type/jcr:primaryType", "jcr:primaryType",
                 source1definition4, PropertyOperation.OVERRIDE, ValueType.NAME, "some:type");
         assertProperty(nodeWithNewType, "/path/to/node/node-with-new-type/jcr:mixinTypes", "jcr:mixinTypes",
                 source1definition4, PropertyOperation.OVERRIDE, ValueType.NAME, new String[]{"some:mixin"});
-        final DefinitionNode nodeWithMixinAdd = assertNode(node, "/path/to/node/node-with-mixin-add", "node-with-mixin-add",
+        final DefinitionNodeImpl nodeWithMixinAdd = assertNode(node, "/path/to/node/node-with-mixin-add", "node-with-mixin-add",
                 source1definition4, 0, 1);
         assertProperty(nodeWithMixinAdd, "/path/to/node/node-with-mixin-add/jcr:mixinTypes", "jcr:mixinTypes",
                 source1definition4, PropertyOperation.ADD, ValueType.NAME, new String[]{"some:mixin"});
 
-        final ContentDefinition contentDefinition = assertDefinition(contentSource1, 0, ContentDefinition.class);
+        final ContentDefinitionImpl contentDefinition = assertDefinition(contentSource1, 0, ContentDefinitionImpl.class);
         assertNode(contentDefinition, "/content/documents/myhippoproject", "myhippoproject", contentDefinition, 0, 1);
 
-        final Source source2 = assertSource(module1, "folder/resources.yaml", 2);
-        final ConfigDefinition source2definition = assertDefinition(source2, 0, ConfigDefinition.class);
-        final DefinitionNode resourceNode = assertNode(source2definition, "/resources", "resources", source2definition, 0, 3);
+        final SourceImpl source2 = assertSource(module1, "folder/resources.yaml", 2);
+        final ConfigDefinitionImpl source2definition = assertDefinition(source2, 0, ConfigDefinitionImpl.class);
+        final DefinitionNodeImpl resourceNode = assertNode(source2definition, "/resources", "resources", source2definition, 0, 3);
         assertProperty(resourceNode, "/resources/single-value-string-resource", "single-value-string-resource",
                 source2definition, PropertyOperation.REPLACE, ValueType.STRING, "string.txt", true, false);
         assertProperty(resourceNode, "/resources/single-value-binary-resource", "single-value-binary-resource",
@@ -127,13 +135,13 @@ public class HierarchyTest extends AbstractBaseTest {
 //        final ConfigDefinition source2definition2 = assertDefinition(source2, 1, ConfigDefinition.class);
 //        assertNode(source2definition2, "/hippo:configuration/hippo:queries/hippo:templates/new-image", "new-image", source2definition2, 1, 2);
 
-        final Group myhippoproject = assertGroup(groups, "myhippoproject", new String[]{"base"}, 1);
-        final Project project2 = assertProject(myhippoproject, "project2", new String[]{"project1", "foo/bar"}, 1);
-        final Module module2 = assertModule(project2, "module2", new String[0], 1);
-        final Source baseSource = assertSource(module2, "config.yaml", 1);
-        final ConfigDefinition baseDefinition = assertDefinition(baseSource, 0, ConfigDefinition.class);
+        final GroupImpl myhippoproject = assertGroup(groups, "myhippoproject", new String[]{"base"}, 1);
+        final ProjectImpl project2 = assertProject(myhippoproject, "project2", new String[]{"project1", "foo/bar"}, 1);
+        final ModuleImpl module2 = assertModule(project2, "module2", new String[0], 1);
+        final SourceImpl baseSource = assertSource(module2, "config.yaml", 1);
+        final ConfigDefinitionImpl baseDefinition = assertDefinition(baseSource, 0, ConfigDefinitionImpl.class);
 
-        final DefinitionNode rootDefinition2 =
+        final DefinitionNodeImpl rootDefinition2 =
                 assertNode(baseDefinition, "/node-with-sub-node/sub-node", "sub-node", baseDefinition, 0, 1);
         assertProperty(rootDefinition2, "/node-with-sub-node/sub-node/property", "property", baseDefinition, ValueType.STRING, "override");
     }

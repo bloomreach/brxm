@@ -32,13 +32,6 @@ public enum ValueType {
     URI,
     DECIMAL;
 
-    /* other value types, not mapping on jcr PropertyType definitions, must go *after* the above required types */
-
-    // todo: decide whether to support (or remove) these
-    // ENCRYPTED
-    // CLASSNAME
-    // FOLDER
-
     public final String toString() {
         return name().toLowerCase();
     }

@@ -27,14 +27,14 @@ import java.util.Map;
 import java.util.function.BiPredicate;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.parser.ActionListParser;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
 import org.onehippo.cm.model.parser.ModuleDescriptorParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.SourceParser;
-import org.onehippo.cm.model.impl.GroupImpl;
-import org.onehippo.cm.model.impl.ModuleImpl;
 
 public class PathConfigurationReader {
 

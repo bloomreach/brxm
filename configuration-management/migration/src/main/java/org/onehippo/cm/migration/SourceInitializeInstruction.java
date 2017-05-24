@@ -106,7 +106,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
             String parentPath = null;
             if (parentNode == null && node.getMerge() != null) {
                 if (defNode != null) {
-                    parentNode = (DefinitionNodeImpl) defNode.getParent();
+                    parentNode = defNode.getParent();
                 } else {
                     parentPath = StringUtils.substringBeforeLast(path, "/");
                     if (parentPath.equals("")) {

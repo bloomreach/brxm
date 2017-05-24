@@ -28,20 +28,17 @@ import javax.jcr.RepositoryException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cm.engine.ContentProcessingService;
-import org.onehippo.cm.engine.JcrContentProcessingService;
-import org.onehippo.cm.engine.ValueConverter;
-import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.model.ContentDefinition;
-import org.onehippo.cm.model.Definition;
-import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModelTestUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
@@ -257,12 +254,12 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
         final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
         final ConfigurationModelBuilder configurationModelBuilder = new ConfigurationModelBuilder();
         for (int i = 0; i < sources.length; i++) {
-            final List<Definition> definitions = parseNoSort(sources[i], "test-module-" + i, ContentDefinition.class);
+            final List<AbstractDefinitionImpl> definitions = parseNoSort(sources[i], "test-module-" + i, false);
             assertTrue(definitions.size() == 1);
-            final ModuleImpl module = (ModuleImpl) definitions.get(0).getSource().getModule();
+            final ModuleImpl module = definitions.get(0).getSource().getModule();
             module.setConfigResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
             module.setContentResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
-            final GroupImpl group = (GroupImpl) module.getProject().getGroup();
+            final GroupImpl group = module.getProject().getGroup();
             configurationModelBuilder.push(group);
         }
         return configurationModelBuilder.build();

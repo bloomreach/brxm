@@ -27,9 +27,10 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Lists;
+
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigDefinition;
-import org.onehippo.cm.model.ConfigurationItem;
 import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionItem;
@@ -37,10 +38,16 @@ import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.ConfigurationItemImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.ContentSourceImpl;
+import org.onehippo.cm.model.impl.DefinitionItemImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
@@ -48,17 +55,14 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
-import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 import static java.util.Arrays.asList;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.onehippo.cm.model.Constants.YAML_EXT;
 import static org.onehippo.cm.model.DefinitionType.NAMESPACE;
 import static org.onehippo.cm.model.PropertyOperation.OVERRIDE;
-import static org.onehippo.cm.model.Constants.YAML_EXT;
 
 public class DefinitionMergeService {
 
@@ -183,7 +187,7 @@ public class DefinitionMergeService {
      */
     protected void mergeNamespace(final NamespaceDefinitionImpl nsd, final HashMap<String, ModuleImpl> toExport, final ConfigurationModelImpl baseline) {
         // find the corresponding definition by namespace prefix -- only one is permitted
-        final Optional<NamespaceDefinition> found = baseline.getNamespaceDefinitions().stream()
+        final Optional<NamespaceDefinitionImpl> found = baseline.getNamespaceDefinitions().stream()
                 .filter(namespaceDefinition -> namespaceDefinition.getPrefix().equals(nsd.getPrefix()))
                 .findFirst();
         if (found.isPresent()) {
@@ -206,7 +210,7 @@ public class DefinitionMergeService {
             log.debug("Merging namespace definition: {} to module: {} aka {} in file {}",
                     nsd.getPrefix(), newModule.getMvnPath(), newModule.getFullName(), newSource.getPath());
 
-            final List<Definition> defs = newSource.getModifiableDefinitions();
+            final List<AbstractDefinitionImpl> defs = newSource.getModifiableDefinitions();
             for (int i = 0; i < defs.size(); i++) {
                 Definition def = defs.get(i);
 
@@ -248,15 +252,15 @@ public class DefinitionMergeService {
         //       to copy FileSystems etc. here
         ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
         toExport.values().forEach(builder::pushReplacement);
-        baseline.getSortedGroups().forEach(group -> builder.push((GroupImpl) group));
-        return (ConfigurationModelImpl) builder.build();
+        baseline.getSortedGroups().forEach(group -> builder.push(group));
+        return builder.build();
     }
 
     protected ConfigurationModelImpl mergeConfigDefinition(final ConfigDefinitionImpl change,
                                                  final HashMap<String, ModuleImpl> toExport,
                                                  final ConfigurationModelImpl model) {
         // the change root path is a new node iff a jcr:primaryType is defined here and it's not an override or delete
-        final DefinitionNodeImpl rootDefNode = (DefinitionNodeImpl) change.getNode();
+        final DefinitionNodeImpl rootDefNode = change.getNode();
 
         log.debug("Merging config change for path: {}", rootDefNode.getPath());
 
@@ -310,7 +314,7 @@ public class DefinitionMergeService {
         // if the incoming node path is new, we should expect its parent to exist -- find it
         final String incomingPath = incomingDefNode.getPath();
         final String parentPath = StringUtils.substringBeforeLast(incomingPath, "/");
-        final ConfigurationNode existingParent = model.resolveNode(parentPath);
+        final ConfigurationNodeImpl existingParent = model.resolveNode(parentPath);
 
         if (existingParent == null) {
             throw new IllegalStateException("Cannot add a node whose parent doesn't exist in baseline: " + incomingPath);
@@ -328,7 +332,7 @@ public class DefinitionMergeService {
             // where was this node mentioned?
             // is one of the existing defs in the toMerge modules? grab the last one
             // TODO if there is more than one mention in toMerge, should we prefer the def with jcr:primaryType?
-            Optional<DefinitionItem> maybeDef = getLastLocalDef(existingParent, toExport);
+            Optional<DefinitionItemImpl> maybeDef = getLastLocalDef(existingParent, toExport);
 
             // TODO should we attempt any kind of sorting on output? current behavior is append, with history-dependent output
             // TODO i.e. the sequence of changes to the repository and the timing of auto-export will produce different files
@@ -439,10 +443,9 @@ public class DefinitionMergeService {
         to.setOrderBefore(from.getOrderBefore());
         to.setIgnoreReorderedChildren(from.getIgnoreReorderedChildren());
 
-        for (DefinitionProperty newProperty : from.getProperties().values()) {
+        for (DefinitionPropertyImpl newProperty : from.getProperties().values()) {
             if (newProperty.getType().equals(PropertyType.SINGLE)) {
-                // TODO remove need for this awful cast
-                to.addProperty(newProperty.getName(), (ValueImpl) newProperty.getValue());
+                to.addProperty(newProperty.getName(), newProperty.getValue());
             }
             else {
                 ValueImpl[] values = new ValueImpl[newProperty.getValues().length];
@@ -468,7 +471,7 @@ public class DefinitionMergeService {
     protected void deleteNode(final DefinitionNodeImpl rootDefNode, final ConfigurationNode rootConfigNode, final HashMap<String, ModuleImpl> toExport) {
         log.debug("Deleting node: {}", rootDefNode.getPath());
 
-        List<DefinitionItem> defsForRoot = rootConfigNode.getDefinitions();
+        List<? extends DefinitionItem> defsForRoot = rootConfigNode.getDefinitions();
 
         // if last existing node def is upstream,
         boolean lastDefIsUpstream = !isLocalDef(toExport).test(defsForRoot.get(defsForRoot.size()-1));
@@ -530,11 +533,11 @@ public class DefinitionMergeService {
                                               final HashMap<String, ModuleImpl> toExport) {
         // keep track of the definitions that we've already handled
         final List<Definition> alreadyRemovedFrom = new ArrayList<>();
-        final List<DefinitionItem> defsToRemove = rootConfigNode.getDefinitions();
+        final List<? extends DefinitionItem> defsToRemove = rootConfigNode.getDefinitions();
         removeDefsAndChildren(rootConfigNode, defsToRemove, alreadyRemovedFrom, toExport);
     }
 
-    protected void removeDefsAndChildren(final ConfigurationNode rootConfigNode, final List<DefinitionItem> defsToRemove,
+    protected void removeDefsAndChildren(final ConfigurationNode rootConfigNode, final List<? extends DefinitionItem> defsToRemove,
                                          final List<Definition> alreadyRemovedFrom,
                                          final HashMap<String, ModuleImpl> toExport) {
         log.debug("Removing defs and children for node: {} with exceptions: {}", rootConfigNode.getPath(), alreadyRemovedFrom);
@@ -603,7 +606,7 @@ public class DefinitionMergeService {
                                                   final HashMap<String, ModuleImpl> toExport) {
         final ConfigDefinition definition = (ConfigDefinition) definitionItem.getDefinition();
         final SourceImpl source = (SourceImpl) definition.getSource();
-        final ModuleImpl module = (ModuleImpl) source.getModule();
+        final ModuleImpl module = source.getModule();
 
         // check if the definition is in one of the toExport modules -- if not, we can't change it
         if (!toExport.containsValue(module)) {
@@ -638,7 +641,7 @@ public class DefinitionMergeService {
     protected void removeDefinition(final ConfigDefinition definition, final HashMap<String, ModuleImpl> toExport) {
         // remove the definition from its source and from its module
         final SourceImpl source = (SourceImpl) definition.getSource();
-        final ModuleImpl module = (ModuleImpl) source.getModule();
+        final ModuleImpl module = source.getModule();
 
         // check if the definition is in one of the toExport modules -- if not, we can't change it
         if (!toExport.containsValue(module)) {
@@ -704,8 +707,8 @@ public class DefinitionMergeService {
 //            if that was last def in source, remove source
     }
 
-    protected Optional<DefinitionItem> getLastLocalDef(final ConfigurationItem item, final HashMap<String, ModuleImpl> toExport) {
-        List<DefinitionItem> existingDefs = item.getDefinitions();
+    protected Optional<DefinitionItemImpl> getLastLocalDef(final ConfigurationItemImpl item, final HashMap<String, ModuleImpl> toExport) {
+        List<DefinitionItemImpl> existingDefs = item.getDefinitions();
         return Lists.reverse(existingDefs).stream()
                 .filter(isLocalDef(toExport))
                 .findFirst();
@@ -878,13 +881,12 @@ public class DefinitionMergeService {
         final String sourcePath = getFilePathByLocationMapper(path, true);
 
         // does this Source already exist?
-        final Optional<Source> maybeSource =
+        final Optional<ConfigSourceImpl> maybeSource =
                 module.getConfigSources().stream()
                         .filter(source -> source.getPath().equals(sourcePath))
                         .findFirst();
         if (maybeSource.isPresent()) {
-            // TODO <sigh> oi, with the casting again...
-            return (ConfigSourceImpl) maybeSource.get();
+            return maybeSource.get();
         }
         else {
             return module.addConfigSource(sourcePath);

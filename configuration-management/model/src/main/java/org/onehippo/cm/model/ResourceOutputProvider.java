@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
 
-import org.onehippo.cm.model.Source;
-
 public interface ResourceOutputProvider {
 
     /**
