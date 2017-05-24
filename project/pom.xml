@@ -70,7 +70,7 @@
     <jackson2.version>2.4.5</jackson2.version>
     <spring.version>4.2.6.RELEASE</spring.version>
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
-    <groovy.version>2.4.7</groovy.version>
+    <groovy.version>2.4.11</groovy.version>
     <freemarker.version>2.3.24-incubating</freemarker.version>
     <tika-core.version>1.3</tika-core.version>
     <tika-parsers.version>1.3</tika-parsers.version>
