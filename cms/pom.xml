@@ -123,7 +123,6 @@
 
     <drewnoakes-extractor.version>2.6.2</drewnoakes-extractor.version>
     <sanselan.version>0.97-incubator</sanselan.version>
-    <agilecoders.wicket.bootstrap.version>0.9.7</agilecoders.wicket.bootstrap.version>
     <imgscalr-lib.version>4.2</imgscalr-lib.version>
 
     <yui.sources.version>1.01.12</yui.sources.version>
