@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -30,6 +31,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.commons.collections4.iterators.IteratorIterable;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cm.model.ActionItem;
@@ -38,6 +40,7 @@ import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
@@ -64,21 +67,21 @@ public class ConfigurationContentService {
     private final JcrContentProcessingService contentProcessingService = new JcrContentProcessingService(valueProcessor);
 
     /**
+     * TODO SS: model should be interface (ConfigurationModel) not ConfigurationModuleImpl, but
+     * TODO     current operations cast to/require ModuleImpl, which first needs to be corrected
      * Apply content definitions from modules contained within configuration model
      * @param model
      * @param session
      * @throws RepositoryException
      */
-    public void apply(final ConfigurationModel model, final Session session) throws RepositoryException {
+    public void apply(final ConfigurationModelImpl model, final Session session) throws RepositoryException {
 
-        final List<Module> modules = model.getSortedGroups().stream()
+        final Stream<ModuleImpl> modulesStream = model.getSortedGroups().stream()
                 .flatMap(g -> g.getProjects().stream())
-                .flatMap(p -> p.getModules().stream())
-                .collect(toList());
-        for (final Module module : modules) {
-            final ModuleImpl moduleImpl = (ModuleImpl) module;
-            if (isNotEmpty(module.getActionsMap()) || isNotEmpty(moduleImpl.getContentDefinitions())) {
-                apply(moduleImpl, model, session);
+                .flatMap(p -> p.getModules().stream());
+        for (ModuleImpl module : new IteratorIterable<>(modulesStream.iterator())) {
+            if (isNotEmpty(module.getActionsMap()) || isNotEmpty(module.getContentDefinitions())) {
+                apply(module, model, session);
             }
         }
     }

@@ -26,6 +26,7 @@ import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.repository.bootstrap.PostStartupTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      * Once the code is moved, the model will likely be loaded in #contentBootstrap and the need for these instance
      * variables will be gone.
      */
-    private ConfigurationModel configurationModel;
+    private ConfigurationModelImpl configurationModel;
 
     public ConfigurationServiceImpl(final Session session) {
         this.session = session;
