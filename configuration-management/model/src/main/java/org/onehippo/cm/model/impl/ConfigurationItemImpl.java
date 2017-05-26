@@ -18,6 +18,7 @@ package org.onehippo.cm.model.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationItem;
@@ -91,8 +92,11 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
     }
 
     @Override
-    public String getItemOrigin() {
-        return ModelUtils.formatDefinitions(this);
+    public String getOrigin() {
+        return getDefinitions()
+                .stream()
+                .map(d -> d.getDefinition().getOrigin())
+                .collect(Collectors.toList())
+                .toString();
     }
-
 }

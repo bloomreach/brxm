@@ -314,8 +314,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
                 && !nodeTypeDefinition.getSource().getPath().equals(nodeTypeDefinitions.get(0).getSource().getPath())) {
             final String msg = String.format("CNDs are specified in multiple sources of a module: '%s' and '%s'. "
                     + "For proper ordering, they must be specified in a single source.",
-                    ModelUtils.formatDefinition(nodeTypeDefinition),
-                    ModelUtils.formatDefinition(nodeTypeDefinitions.get(0)));
+                    nodeTypeDefinition.getOrigin(), nodeTypeDefinitions.get(0).getOrigin());
             throw new IllegalStateException(msg);
         }
     }
@@ -552,10 +551,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             if (def1 != def2 && rootPath1.equals(rootPath2)) {
                 final String msg = String.format(
                         "Duplicate content root paths '%s' in module '%s' in source files '%s' and '%s'.",
-                        rootPath1,
-                        getName(),
-                        ModelUtils.formatDefinition(def1),
-                        ModelUtils.formatDefinition(def2));
+                        rootPath1, getName(), def1.getOrigin(), def2.getOrigin());
                 throw new IllegalStateException(msg);
             }
             return rootPath1.compareTo(rootPath2);
@@ -631,17 +627,10 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      * @return the full group/project/module name for this module
      */
     public String getFullName() {
-        return buildFullName(this);
-    }
-
-    /**
-     * @return the full group/project/module name for the given module
-     */
-    public static String buildFullName(Module m) {
         return String.join("/",
-                m.getProject().getGroup().getName(),
-                m.getProject().getName(),
-                m.getName());
+                getProject().getGroup().getName(),
+                getProject().getName(),
+                getName());
     }
 
     /**
@@ -650,6 +639,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      */
     @Override
     public int compareTo(final Module o) {
-        return getFullName().compareTo(buildFullName(o));
+        return getFullName().compareTo(o.getFullName());
     }
 }

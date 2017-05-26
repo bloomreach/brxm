@@ -35,7 +35,6 @@ import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.SourceType;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
-import org.onehippo.cm.model.impl.ModelUtils;
 
 /**
  * Config {@link Value} -> JCR {@link javax.jcr.Value} converter
@@ -77,7 +76,7 @@ public class ValueProcessor {
         } catch (RuntimeException ex) {
                 final String msg = String.format(
                         "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
-                        modelItem.getPath(), modelItem.getItemOrigin(), type);
+                        modelItem.getPath(), modelItem.getOrigin(), type);
                 throw new RuntimeException(msg, ex);
         }
     }
@@ -90,7 +89,7 @@ public class ValueProcessor {
         } catch (RuntimeException e) {
             final String msg = String.format(
                     "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
-                    modelItem.getPath(), modelItem.getItemOrigin(), modelValue.getType());
+                    modelItem.getPath(), modelItem.getOrigin(), modelValue.getType());
             throw new RuntimeException(msg);
         }
     }
@@ -136,7 +135,7 @@ public class ValueProcessor {
                 DefinitionProperty parentProperty = modelValue.getParent();
                 final String msg = String.format(
                         "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
-                        parentProperty.getPath(), ModelUtils.formatDefinition(parentProperty.getDefinition()), type);
+                        parentProperty.getPath(), parentProperty.getOrigin(), type);
                 throw new RuntimeException(msg);
         }
     }
@@ -179,7 +178,7 @@ public class ValueProcessor {
             default:
                 final String msg = String.format(
                         "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
-                        modelValue.getParent().getPath(), ModelUtils.formatDefinition(modelValue.getParent().getDefinition()), modelValue.getType());
+                        modelValue.getParent().getPath(), modelValue.getParent().getOrigin(), modelValue.getType());
                 throw new RuntimeException(msg);
         }
     }

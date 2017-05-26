@@ -24,6 +24,11 @@ import org.onehippo.cm.ResourceInputProvider;
 public interface Module extends Orderable {
 
     /**
+     * @return the full group/project/module name for this module
+     */
+    String getFullName();
+
+    /**
      * Modules are composed into Projects and Groups for purposes of expressing dependencies.
      * @return the Project of which this Module is a part
      */

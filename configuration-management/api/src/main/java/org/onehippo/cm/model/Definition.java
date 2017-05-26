@@ -18,4 +18,5 @@ package org.onehippo.cm.model;
 public interface Definition {
     DefinitionType getType();
     Source getSource();
+    String getOrigin();
 }

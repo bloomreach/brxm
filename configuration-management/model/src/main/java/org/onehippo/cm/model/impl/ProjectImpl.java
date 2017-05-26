@@ -103,7 +103,7 @@ public class ProjectImpl implements Project {
 
         if (moduleMap.containsKey(name)) {
             final String msg = String.format("Module %s already exists while merging projects. Merging of modules is not supported.",
-                    ModelUtils.formatModule(module));
+                    module.getFullName());
             throw new IllegalStateException(msg);
         }
 

@@ -46,7 +46,6 @@ import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.SnsUtils;
 import org.onehippo.cm.model.Value;
-import org.onehippo.cm.model.impl.ModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,7 +174,7 @@ public class JcrContentProcessingService {
     }
 
     private void applyChildNodes(final DefinitionNode modelNode, final Node jcrNode, final ActionType actionType) throws RepositoryException, IOException {
-        logger.debug(String.format("processing node '%s' defined in %s.", modelNode.getPath(), ModelUtils.formatDefinition(modelNode.getDefinition())));
+        logger.debug(String.format("processing node '%s' defined in %s.", modelNode.getPath(), modelNode.getOrigin()));
         for (final String name : modelNode.getNodes().keySet()) {
             final DefinitionNode modelChild = modelNode.getNodes().get(name);
             applyNode(modelChild, jcrNode, actionType);
@@ -206,7 +205,7 @@ public class JcrContentProcessingService {
             }
             logger.warn(String.format("Specified jcr:uuid %s for node '%s' defined in %s already in use: "
                             + "a new jcr:uuid will be generated instead.",
-                    uuid, modelNode.getPath(), ModelUtils.formatDefinition(modelNode.getDefinition())));
+                    uuid, modelNode.getPath(), modelNode.getOrigin()));
         }
         // create node with a new uuid
         return parentNode.addNode(name, primaryType);
@@ -225,7 +224,7 @@ public class JcrContentProcessingService {
         if (!modelNode.getProperties().containsKey(JCR_PRIMARYTYPE)) {
             final String msg = String.format(
                     "Failed to process node '%s' defined in %s: cannot add child node '%s': %s property missing.",
-                    modelNode.getPath(), ModelUtils.formatDefinition(modelNode.getDefinition()), modelNode.getPath(), JCR_PRIMARYTYPE);
+                    modelNode.getPath(), modelNode.getOrigin(), modelNode.getPath(), JCR_PRIMARYTYPE);
             throw new RuntimeException(msg);
         }
 
@@ -307,7 +306,7 @@ public class JcrContentProcessingService {
         } catch (RepositoryException e) {
             String msg = String.format(
                     "Failed to process property '%s' defined in %s: %s",
-                    modelProperty.getPath(), ModelUtils.formatDefinition(modelProperty.getDefinition()), e.getMessage());
+                    modelProperty.getPath(), modelProperty.getOrigin(), e.getMessage());
             throw new RuntimeException(msg, e);
         }
     }
@@ -349,7 +348,7 @@ public class JcrContentProcessingService {
                 identifier = session.getNode(nodePath).getIdentifier();
             } catch (PathNotFoundException e) {
                 logger.warn(String.format("Path reference '%s' for property '%s' defined in %s not found: skipping.",
-                        nodePath, modelProperty.getPath(), ModelUtils.formatDefinition(modelProperty.getDefinition())));
+                        nodePath, modelProperty.getPath(), modelProperty.getOrigin()));
                 return null;
             }
         } else {
@@ -357,7 +356,7 @@ public class JcrContentProcessingService {
                 session.getNodeByIdentifier(identifier);
             } catch (ItemNotFoundException e) {
                 logger.warn(String.format("Reference %s for property '%s' defined in %s not found: skipping.",
-                        identifier, modelProperty.getPath(), ModelUtils.formatDefinition(modelProperty.getDefinition())));
+                        identifier, modelProperty.getPath(), modelProperty.getOrigin()));
                 return null;
             }
         }

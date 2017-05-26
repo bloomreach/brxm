@@ -63,7 +63,6 @@ import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.WebFileBundleDefinition;
 import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.ConfigurationPropertyImpl;
-import org.onehippo.cm.model.impl.ModelUtils;
 import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
@@ -121,7 +120,7 @@ public class ConfigurationConfigService {
         for (WebFileBundleDefinition webFileBundleDefinition : model.getWebFileBundleDefinitions()) {
             final String bundleName = webFileBundleDefinition.getName();
             logger.debug(String.format("processing web file bundle '%s' defined in %s.", bundleName,
-                    ModelUtils.formatDefinition(webFileBundleDefinition)));
+                    webFileBundleDefinition.getOrigin()));
 
             final ResourceInputProvider resourceInputProvider =
                     webFileBundleDefinition.getSource().getModule().getConfigResourceInputProvider();
@@ -177,7 +176,7 @@ public class ConfigurationConfigService {
             final String uriString = namespaceDefinition.getURI().toString();
 
             logger.debug(String.format("processing namespace prefix='%s' uri='%s' defined in %s.",
-                    prefix, uriString, ModelUtils.formatDefinition(namespaceDefinition)));
+                    prefix, uriString, namespaceDefinition.getOrigin()));
 
             if (prefixes.contains(prefix)) {
                 final String repositoryURI = session.getNamespaceURI(prefix);
@@ -185,7 +184,7 @@ public class ConfigurationConfigService {
                     final String msg = String.format("Failed to process namespace definition defined in %s: " +
                                     "namespace with prefix '%s' already exists in repository with different URI. " +
                                     "Existing: '%s', target: '%s'. Changing existing namespaces is not supported. Aborting.",
-                            ModelUtils.formatDefinition(namespaceDefinition), prefix, repositoryURI, uriString);
+                            namespaceDefinition.getOrigin(), prefix, repositoryURI, uriString);
                     throw new RuntimeException(msg);
                 }
             } else {
@@ -199,15 +198,14 @@ public class ConfigurationConfigService {
             if (logger.isDebugEnabled()) {
                 final String cndLabel = nodeType.isResource()
                         ? String.format("CND '%s'", nodeType.getValue()) : "inline CND";
-                logger.debug(String.format("processing %s defined in %s.", cndLabel,
-                        ModelUtils.formatDefinition(nodeType)));
+                logger.debug(String.format("processing %s defined in %s.", cndLabel, nodeType.getOrigin()));
             }
 
             // TODO: nodeTypeStream should be closed, right?
             final InputStream nodeTypeStream = nodeType.isResource()
                     ? getResourceInputStream(nodeType.getSource(), nodeType.getValue())
                     : new ByteArrayInputStream(nodeType.getValue().getBytes(StandardCharsets.UTF_8));
-            BootstrapUtils.initializeNodetypes(session, nodeTypeStream, ModelUtils.formatDefinition(nodeType));
+            BootstrapUtils.initializeNodetypes(session, nodeTypeStream, nodeType.getOrigin());
         }
     }
 
@@ -246,11 +244,11 @@ public class ConfigurationConfigService {
                 final String msg = forceApply
                         ? String.format("[OVERRIDE] Primary type '%s' of node '%s' is adjusted to '%s' as defined in %s.",
                                 jcrPrimaryType, updateNode.getPath(), updatePrimaryType,
-                                ModelUtils.formatDefinitions(updateProperties.get(JCR_PRIMARYTYPE)))
+                                updateProperties.get(JCR_PRIMARYTYPE).getOrigin())
                         : String.format("[OVERRIDE] Primary type '%s' of node '%s' has been changed from '%s'."
                                 + "Overriding to type '%s', defined in %s.",
                                 jcrPrimaryType, updateNode.getPath(), baselinePrimaryType, updatePrimaryType,
-                                ModelUtils.formatDefinitions(updateProperties.get(JCR_PRIMARYTYPE)));
+                                updateProperties.get(JCR_PRIMARYTYPE).getOrigin());
                 logger.info(msg);
             }
             targetNode.setPrimaryType(updatePrimaryType);
@@ -279,7 +277,7 @@ public class ConfigurationConfigService {
                     if (hasMixin(baselineMixinValues, mixin)) {
                         final String msg = String.format("[OVERRIDE] Mixin '%s' has been removed from node '%s', " +
                                         "but is re-added because it is defined at %s.",
-                                mixin, updateNode.getPath(), ModelUtils.formatDefinitions(updateProperties.get(JCR_MIXINTYPES)));
+                                mixin, updateNode.getPath(), updateProperties.get(JCR_MIXINTYPES).getOrigin());
                         logger.info(msg);
                     }
                     targetNode.addMixin(mixin);
@@ -300,7 +298,7 @@ public class ConfigurationConfigService {
                     if (!hasMixin(baselineMixinValues, jcrMixin)) {
                         final String msg = String.format("[OVERRIDE] Mixin '%s' has been added to node '%s'," +
                                         " but is removed because it is not present in definition %s.",
-                                jcrMixin, updateNode.getPath(), ModelUtils.formatDefinitions(updateNode));
+                                jcrMixin, updateNode.getPath(), updateNode.getOrigin());
                         logger.info(msg);
                     }
 
@@ -421,7 +419,7 @@ public class ConfigurationConfigService {
                     if (forceApply) {
                         final String msg = String.format("[OVERRIDE] Node '%s' has been removed, " +
                                         "but will be re-added due to definition %s.",
-                                updateChild.getPath(), ModelUtils.formatDefinitions(updateChild));
+                                updateChild.getPath(), updateChild.getOrigin());
                         logger.info(msg);
                     } else {
                         // In the baseline, the child exists. Some of its properties or (nested) children may
@@ -439,7 +437,7 @@ public class ConfigurationConfigService {
                     if (!(existingChildNode.getDefinition().isAutoCreated() && existingChildNode.getParent().isNew())) {
                         final String msg = String.format("[OVERRIDE] Node '%s' has been added, " +
                                         "but will be re-created due to the incoming definition %s.",
-                                updateChild.getPath(), ModelUtils.formatDefinitions(updateChild));
+                                updateChild.getPath(), updateChild.getOrigin());
                         logger.info(msg);
                     }
 
@@ -489,7 +487,7 @@ public class ConfigurationConfigService {
                 if (!baselineChildren.containsKey(indexedChildName)) {
                     final String msg = String.format("[OVERRIDE] Child node '%s' exists, " +
                                     "but will be deleted while processing the children of node '%s' defined in %s.",
-                            indexedChildName, updateNode.getPath(), ModelUtils.formatDefinitions(updateNode));
+                            indexedChildName, updateNode.getPath(), updateNode.getOrigin());
                     logger.info(msg);
                 } else {
                     // [OVERRIDE] We don't currently check if the removed node has changes compared to the baseline.
@@ -519,7 +517,7 @@ public class ConfigurationConfigService {
             } else {
                 logger.warn(String.format("Specified jcr:uuid %s for node '%s' defined in %s already in use: "
                                 + "a new jcr:uuid will be generated instead.",
-                        uuid, childModelNode.getPath(), ModelUtils.formatDefinitions(childModelNode)));
+                        uuid, childModelNode.getPath(), childModelNode.getOrigin()));
             }
         }
         return parentNode.addNode(childName, childPrimaryType);
@@ -619,7 +617,7 @@ public class ConfigurationConfigService {
                 if (!propertyIsIdentical(jcrProperty, baselineProperty, verifiedBaselineValues)) {
                     final String msg = String.format("[OVERRIDE] Property '%s' has been changed in the repository, " +
                                     "and will be overridden due to definition %s.",
-                            updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty));
+                            updateProperty.getPath(), updateProperty.getOrigin());
                     logger.info(msg);
                 }
             } else {
@@ -630,7 +628,7 @@ public class ConfigurationConfigService {
                 if (!(jcrProperty.getDefinition().isAutoCreated() && jcrNode.isNew())) {
                     final String msg = String.format("[OVERRIDE] Property '%s' has been created in the repository, " +
                                     "and will be overridden due to definition %s.",
-                            updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty));
+                            updateProperty.getPath(), updateProperty.getOrigin());
                     logger.info(msg);
                 }
             }
@@ -645,7 +643,7 @@ public class ConfigurationConfigService {
                 // property should already exist, doesn't.
                 final String msg = String.format("[OVERRIDE] Property '%s' has been deleted from the repository, " +
                                 "and will be re-added due to definition %s.",
-                        updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty));
+                        updateProperty.getPath(), updateProperty.getOrigin());
                 logger.info(msg);
             }
         }
@@ -661,7 +659,7 @@ public class ConfigurationConfigService {
         } catch (RepositoryException e) {
             String msg = String.format(
                     "Failed to process property '%s' defined in %s: %s",
-                    updateProperty.getPath(), ModelUtils.formatDefinitions(updateProperty), e.getMessage());
+                    updateProperty.getPath(), updateProperty.getOrigin(), e.getMessage());
             throw new RuntimeException(msg, e);
         }
     }
@@ -681,13 +679,13 @@ public class ConfigurationConfigService {
             if (!propertyIsIdentical(jcrProperty, baselineProperty, verifiedBaselineValues)) {
                 final String msg = String.format("[OVERRIDE] Property '%s' originally defined in %s has been changed, " +
                                 "but will be deleted because it no longer is part of the configuration model.",
-                        baselineProperty.getPath(), ModelUtils.formatDefinitions(baselineProperty));
+                        baselineProperty.getPath(), baselineProperty.getOrigin());
                 logger.info(msg);
             }
         } else {
             final String msg = String.format("[OVERRIDE] Property '%s' of node '%s' has been added to the repository, " +
                             "but will be deleted because it is not defined in %s.",
-                    propertyName, jcrNode.getPath(), ModelUtils.formatDefinitions(modelNode));
+                    propertyName, jcrNode.getPath(), modelNode.getOrigin());
             logger.info(msg);
         }
 
@@ -751,7 +749,7 @@ public class ConfigurationConfigService {
                 identifier = session.getNode(nodePath).getIdentifier();
             } catch (PathNotFoundException e) {
                 logger.warn(String.format("Path reference '%s' for property '%s' defined in %s not found: skipping.",
-                        nodePath, modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty)));
+                        nodePath, modelProperty.getPath(), modelProperty.getOrigin()));
                 return null;
             }
         } else {
@@ -759,7 +757,7 @@ public class ConfigurationConfigService {
                 session.getNodeByIdentifier(identifier);
             } catch (ItemNotFoundException e) {
                 logger.warn(String.format("Reference %s for property '%s' defined in %s not found: skipping.",
-                        identifier, modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty)));
+                        identifier, modelProperty.getPath(), modelProperty.getOrigin()));
                 return null;
             }
         }

@@ -17,5 +17,5 @@ package org.onehippo.cm.model;
 
 public interface ModelItem {
     String getPath();
-    String getItemOrigin();
+    String getOrigin();
 }

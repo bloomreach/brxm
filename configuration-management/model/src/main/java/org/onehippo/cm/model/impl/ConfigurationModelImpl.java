@@ -200,7 +200,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         StringBuilder sb = new StringBuilder(10000);
 
         manifest.forEach((m,items) -> {
-            sb.append(ModuleImpl.buildFullName(m));
+            sb.append(m.getFullName());
             sb.append(":\n");
             items.forEach((p,d) -> {
                 sb.append("    ");
@@ -237,8 +237,8 @@ public class ConfigurationModelImpl implements ConfigurationModel {
                 final String msg = String.format(
                         "Duplicate web file bundle with name '%s' found in source files '%s' and '%s'.",
                         newDefinition.getName(),
-                        ModelUtils.formatDefinition(existingDefinition),
-                        ModelUtils.formatDefinition(newDefinition));
+                        existingDefinition.getOrigin(),
+                        newDefinition.getOrigin());
                 throw new IllegalStateException(msg);
             }
         }

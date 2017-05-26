@@ -30,7 +30,6 @@ import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
-import org.onehippo.cm.model.impl.ModelUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.slf4j.Logger;
@@ -63,7 +62,7 @@ public class ConfigurationModelBuilder {
         groups.forEach(group ->
                 group.getModifiableProjects().forEach(project ->
                         project.getModifiableModules().forEach(module -> {
-                            logger.info("Merging module {}", ModelUtils.formatModule(module));
+                            logger.info("Merging module {}", module.getFullName());
                             mergedModel.addNamespaceDefinitions(module.getNamespaceDefinitions());
                             mergedModel.addNodeTypeDefinitions(module.getNodeTypeDefinitions());
                             module.getConfigDefinitions().forEach(configurationTreeBuilder::push);

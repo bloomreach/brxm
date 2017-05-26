@@ -34,7 +34,6 @@ import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.DefinitionItemImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
-import org.onehippo.cm.model.impl.ModelUtils;
 import org.onehippo.cm.model.impl.ValueImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,10 +108,8 @@ class ConfigurationTreeBuilder {
             }
             return;
         } else if (definitionNode.isDelete() && !node.isNew()) {
-            final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
-            final String sourceList = ModelUtils.formatDefinitions(node);
             String msg = String.format("%s: Trying to delete AND merge node %s defined before by %s.",
-                    culprit, definitionNode.getPath(), sourceList);
+                    definitionNode.getOrigin(), definitionNode.getPath(), node.getOrigin());
             throw new IllegalArgumentException(msg);
         }
 
@@ -129,13 +126,13 @@ class ConfigurationTreeBuilder {
 
         if (definitionNode.getIgnoreReorderedChildren() != null) {
             if (node.getIgnoreReorderedChildren() != null || definitionNode.getIgnoreReorderedChildren() == node.getIgnoreReorderedChildren()) {
-                final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
                 if (definitionNode.getIgnoreReorderedChildren() == node.getIgnoreReorderedChildren()) {
                     logger.warn("Redundant '{}: {}' for node '{}' defined in '{}'", META_IGNORE_REORDERED_CHILDREN,
-                            node.getIgnoreReorderedChildren(), node.getPath(), culprit);
+                            node.getIgnoreReorderedChildren(), node.getPath(), definitionNode.getOrigin());
                 } else {
                     logger.warn("Overriding '{}' for node '{}' defined in '{}' which was {} before.",
-                            META_IGNORE_REORDERED_CHILDREN, node.getPath(), culprit, node.getIgnoreReorderedChildren());
+                            META_IGNORE_REORDERED_CHILDREN, node.getPath(), definitionNode.getOrigin(),
+                            node.getIgnoreReorderedChildren());
                 }
             }
             node.setIgnoreReorderedChildren(definitionNode.getIgnoreReorderedChildren());
@@ -145,23 +142,20 @@ class ConfigurationTreeBuilder {
         if (parent != null && definitionNode.getOrderBefore() != null) {
             final String orderBefore = definitionNode.getOrderBefore();
             if (parent.getIgnoreReorderedChildren() != null && parent.getIgnoreReorderedChildren()) {
-                final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
                 logger.warn("Potential unnecessary orderBefore: '{}' for node '{}' defined in '{}': parent '{}' already configured with '{}: true'",
-                        orderBefore, node.getPath(), culprit, parent.getPath(), META_IGNORE_REORDERED_CHILDREN);
+                        orderBefore, node.getPath(), definitionNode.getOrigin(), parent.getPath(), META_IGNORE_REORDERED_CHILDREN);
             }
             final boolean orderFirst = "".equals(orderBefore);
             final String orderBeforeIndexedName = SnsUtils.createIndexedName(orderBefore);
             if (!orderFirst) {
                 if (node.getName().equals(orderBeforeIndexedName)) {
-                    final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
                     final String msg = String.format("Invalid orderBefore: '%s' for node '%s' defined in '%s': targeting this node itself.",
-                            orderBeforeIndexedName, node.getPath(), culprit);
+                            orderBeforeIndexedName, node.getPath(), definitionNode.getOrigin());
                     throw new IllegalArgumentException(msg);
                 }
                 if (!parent.getNodes().containsKey(orderBeforeIndexedName)) {
-                    final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
                     final String msg = String.format("Invalid orderBefore: '%s' for node '%s' defined in '%s': no sibling named '%s'.",
-                            orderBeforeIndexedName, node.getPath(), culprit, orderBeforeIndexedName);
+                            orderBeforeIndexedName, node.getPath(), definitionNode.getOrigin(), orderBeforeIndexedName);
                     throw new IllegalArgumentException(msg);
                 }
             }
@@ -172,9 +166,8 @@ class ConfigurationTreeBuilder {
                     // current == src
                     if (first && orderFirst) {
                         // src already first
-                        final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
                         logger.warn("Unnecessary orderBefore: '' (first) for node '{}' defined in '{}': already first child of '{}'.",
-                                node.getPath(), culprit, parent.getPath());
+                                node.getPath(), definitionNode.getOrigin(), parent.getPath());
                         break;
                     }
                     // track src for next loop, once
@@ -187,9 +180,8 @@ class ConfigurationTreeBuilder {
                     // found dest: only reorder if prev != src
                     if (prevIsSrc) {
                         // previous was src, current is dest: already is right order
-                        final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
                         logger.warn("Unnecessary orderBefore: '{}' for node '{}' defined in '{}': already ordered before sibling '{}'.",
-                                orderBefore, node.getPath(), culprit, orderBeforeIndexedName);
+                                orderBefore, node.getPath(), definitionNode.getOrigin(), orderBeforeIndexedName);
                     } else {
                         // dest < src: reorder
                         parent.orderBefore(node.getName(), orderBeforeIndexedName);
@@ -236,21 +228,17 @@ class ConfigurationTreeBuilder {
     }
 
     private void signalUnsupportedCategoryOverride(final DefinitionItemImpl definitionItem, final ConfigurationItemImpl configurationItem) {
-        final String culprit = ModelUtils.formatDefinition(definitionItem.getDefinition());
-        final String source = ModelUtils.formatDefinitions(configurationItem);
         String msg = String.format(
                 "%s: overriding %s is not supported; '%s' was contributed as configuration by %s.",
-                culprit, META_CATEGORY_KEY, definitionItem.getPath(), source);
+                definitionItem.getOrigin(), META_CATEGORY_KEY, definitionItem.getPath(), configurationItem.getOrigin());
         throw new IllegalStateException(msg);
     }
 
     private void signalUnsupportedResidualCategoryOverride(final DefinitionNodeImpl definitionNode, final ConfigurationNodeImpl configurationNode) {
-        final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
-        final String source = ModelUtils.formatDefinition(configurationNode.getResidualNodeCategoryDefinitionItem().getDefinition());
         String msg = String.format(
                 "%s: overriding %s is not supported; node '%s' was set to %s by %s.",
-                culprit, META_RESIDUAL_CHILD_NODE_CATEGORY_KEY, definitionNode.getPath(),
-                configurationNode.getResidualNodeCategory(), source);
+                definitionNode.getOrigin(), META_RESIDUAL_CHILD_NODE_CATEGORY_KEY, definitionNode.getPath(),
+                configurationNode.getResidualNodeCategory(), configurationNode.getResidualNodeCategoryDefinitionItem().getOrigin());
         throw new IllegalStateException(msg);
     }
 
@@ -276,9 +264,8 @@ class ConfigurationTreeBuilder {
         if (pathSegments.length > segmentsConsumed + 1) {
             // this definition is rooted more than 1 node level deeper than a leaf node of the current tree.
             // that's unsupported, because it is likely to create models that cannot be persisted to JCR.
-            final String culprit = ModelUtils.formatDefinition(definition);
             String msg = String.format("%s contains definition rooted at unreachable node '%s'. "
-                            + "Closest ancestor is at '%s'.", culprit, definitionRootPath,
+                            + "Closest ancestor is at '%s'.", definition.getOrigin(), definitionRootPath,
                     rootForDefinition.getPath());
             throw new IllegalStateException(msg);
         }
@@ -299,9 +286,8 @@ class ConfigurationTreeBuilder {
         final ConfigurationNodeImpl node = new ConfigurationNodeImpl();
 
         if (definitionNode.isDelete()) {
-            final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
             final String msg = String.format("%s: Trying to %sdelete node %s that does not exist.",
-                    culprit, definitionNode.isDeleted() ? "" : "merge ", definitionNode.getPath());
+                    definitionNode.getOrigin(), definitionNode.isDeleted() ? "" : "merge ", definitionNode.getPath());
             logger.warn(msg);
             if (definitionNode.isDeleted()) {
                 return null;
@@ -320,9 +306,8 @@ class ConfigurationTreeBuilder {
         if (parsedName.getRight() > 1) {
             final String expectedSibling = SnsUtils.createIndexedName(parsedName.getLeft(), parsedName.getRight() - 1);
             if (!parent.getNodes().containsKey(expectedSibling)) {
-                final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
                 final String msg = String.format("%s defines node '%s', but no sibling named '%s' was found",
-                        culprit, definitionNode.getPath(), expectedSibling);
+                        definitionNode.getOrigin(), definitionNode.getPath(), expectedSibling);
                 throw new IllegalStateException(msg);
             }
         }
@@ -340,17 +325,16 @@ class ConfigurationTreeBuilder {
             final Pair<ConfigurationItemCategory, DefinitionItemImpl> priorSettings,
             final DefinitionItemImpl definitionItem) {
         if (priorSettings != null) {
-            final String culprit = ModelUtils.formatDefinition(definitionItem.getDefinition());
-            final String source = ModelUtils.formatDefinition(priorSettings.getRight().getDefinition());
-
             if (definitionItem.getCategory() != null) {
                 String msg = String.format("%s: overriding %s is not supported; was set to %s on %s by %s.",
-                        culprit, META_CATEGORY_KEY, priorSettings.getLeft(), definitionItem.getPath(), source);
+                        definitionItem.getOrigin(), META_CATEGORY_KEY, priorSettings.getLeft(), definitionItem.getPath(),
+                        priorSettings.getRight().getOrigin());
                 throw new IllegalStateException(msg);
             } else {
                 String msg = String.format(
                         "%s: trying to add configuration on path %s while it had set '%s: %s' by %s.",
-                        culprit, definitionItem.getPath(), META_CATEGORY_KEY, priorSettings.getLeft(), source);
+                        definitionItem.getOrigin(), definitionItem.getPath(), META_CATEGORY_KEY, priorSettings.getLeft(),
+                        priorSettings.getRight().getOrigin());
                 throw new IllegalStateException(msg);
             }
         }
@@ -372,9 +356,8 @@ class ConfigurationTreeBuilder {
             }
 
             if (property.isDeleted()) {
-                final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
                 logger.warn("Property '{}' defined in '{}' has already been deleted. This property is not re-created.",
-                        property.getPath(), culprit);
+                        property.getPath(), definitionProperty.getOrigin());
             }
 
             if (op == DELETE) {
@@ -402,9 +385,8 @@ class ConfigurationTreeBuilder {
             }
 
             if (op == DELETE) {
-                final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
                 final String msg = String.format("%s: Trying to delete property %s that does not exist.",
-                        culprit, definitionProperty.getPath());
+                        definitionProperty.getOrigin(), definitionProperty.getPath());
                 logger.warn(msg);
                 return;
             }
@@ -443,11 +425,10 @@ class ConfigurationTreeBuilder {
             property.setValue(null);
             property.setValues(null);
         } else {
-            final String sourceList = ModelUtils.formatDefinitions(property);
-            final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
             final String msg = String.format("Property %s already exists with type '%s', as determined by %s, "
                             + "but type '%s' is requested in %s.",
-                    property.getPath(), property.getType(), sourceList, definitionProperty.getType(), culprit);
+                    property.getPath(), property.getType(), property.getOrigin(), definitionProperty.getType(),
+                    definitionProperty.getOrigin());
             throw new IllegalStateException(msg);
         }
     }
@@ -459,12 +440,10 @@ class ConfigurationTreeBuilder {
             property.setValue(null);
             property.setValues(null);
         } else {
-            final String sourceList = ModelUtils.formatDefinitions(property);
-            final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
             final String msg = String.format("Property %s already exists with value type '%s', "
                             + "as determined by %s, but value type '%s' is requested in %s.",
-                    property.getPath(), property.getValueType(), sourceList, definitionProperty.getValueType(),
-                    culprit);
+                    property.getPath(), property.getValueType(), property.getOrigin(),
+                    definitionProperty.getValueType(), definitionProperty.getOrigin());
             throw new IllegalStateException(msg);
         }
     }
@@ -475,11 +454,9 @@ class ConfigurationTreeBuilder {
         if (property.getName().equals(JCR_PRIMARYTYPE)
                 && !property.getValue().getString().equals(definitionProperty.getValue().getString())
                 && !isOverride) {
-            final String sourceList = ModelUtils.formatDefinitions(property);
-            final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
             final String msg = String.format("Property %s is already defined on node %s as determined by %s, but change is requested in %s. "
                             + "Use 'operation: override' if you really intend to change the value of this property.",
-                    JCR_PRIMARYTYPE, property.getParent().getPath(), sourceList, culprit);
+                    JCR_PRIMARYTYPE, property.getParent().getPath(), property.getOrigin(), definitionProperty.getOrigin());
             throw new IllegalStateException(msg);
         }
     }
@@ -497,11 +474,10 @@ class ConfigurationTreeBuilder {
                     .collect(Collectors.toList());
 
             if (missingMixins.size() > 0 && op != OVERRIDE) {
-                final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
                 final String msg = String.format("Property %s is already defined on node %s, and replace operation of "
                                 + "%s would remove values %s. Use 'operation: override' if you really intend to remove "
                                 + "these values.",
-                        JCR_MIXINTYPES, property.getParent().getPath(), culprit, missingMixins.toString());
+                        JCR_MIXINTYPES, property.getParent().getPath(), definitionProperty.getOrigin(), missingMixins.toString());
                 throw new IllegalStateException(msg);
             }
         }
@@ -509,9 +485,8 @@ class ConfigurationTreeBuilder {
 
     private void requirePrimaryType(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
         if (!node.getProperties().containsKey(JCR_PRIMARYTYPE)) {
-            final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
             final String msg = String.format("Node '%s' defined at '%s' is missing the required %s property.",
-                    definitionNode.getPath(), culprit, JCR_PRIMARYTYPE);
+                    definitionNode.getPath(), definitionNode.getOrigin(), JCR_PRIMARYTYPE);
             throw new IllegalStateException(msg);
         }
     }
@@ -521,9 +496,8 @@ class ConfigurationTreeBuilder {
 
         final ValueImpl[] existingValues = property.getValues();
         if (existingValues == null) {
-            final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
             logger.warn("Property '{}' defined in '{}' claims to ADD values, but property doesn't exist yet. Applying default behaviour.",
-                    definitionProperty.getPath(), culprit);
+                    definitionProperty.getPath(), definitionProperty.getOrigin());
             property.setValues(definitionProperty.getValues());
         } else {
             List<ValueImpl> values = Arrays.stream(existingValues).collect(Collectors.toList());
@@ -538,9 +512,8 @@ class ConfigurationTreeBuilder {
             final ValueImpl existingValue = property.getValue();
             if (existingValue != null) {
                 if (definitionProperty.getValue().equals(property.getValue())) {
-                    final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
                     logger.warn("Property '{}' defined in '{}' specifies value equivalent to existing property.",
-                            definitionProperty.getPath(), culprit);
+                            definitionProperty.getPath(), definitionProperty.getOrigin());
                 }
             }
         } else {
@@ -553,9 +526,8 @@ class ConfigurationTreeBuilder {
                             return;
                         }
                     }
-                    final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
                     logger.warn("Property '{}' defined in '{}' specifies values equivalent to existing property.",
-                            definitionProperty.getPath(), culprit);
+                            definitionProperty.getPath(), definitionProperty.getOrigin());
                 }
             }
         }

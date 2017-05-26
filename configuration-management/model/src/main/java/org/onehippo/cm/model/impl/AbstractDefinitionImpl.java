@@ -29,4 +29,13 @@ public abstract class AbstractDefinitionImpl implements Definition {
     public SourceImpl getSource() {
         return source;
     }
+
+    @Override
+    public String getOrigin() {
+        return new StringBuilder(source.getModule().getFullName())
+                .append(" [")
+                .append(source.getPath())
+                .append(']')
+                .toString();
+    }
 }
