@@ -94,8 +94,7 @@ public class FolderTreeNode extends JcrTreeNode {
      */
     public FolderTreeNode(JcrNodeModel model, DocumentListFilter config,
             Comparator<IJcrTreeNode> subfolderComparator) {
-        super(model, null, (subfolderComparator != null) ? subfolderComparator
-                : getDisplayNameComparatorIfDirectoryNode(model));
+        super(model, null, getDisplayNameComparatorIfDirectoryNode(model));
         this.config = config;
         this.subfolderComparator = subfolderComparator;
     }
@@ -111,19 +110,9 @@ public class FolderTreeNode extends JcrTreeNode {
      * @param subfolderComparator subfolder comparator used in sorting if non-null object is provided
      */
     private FolderTreeNode(JcrNodeModel model, FolderTreeNode parent, Comparator<IJcrTreeNode> subfolderComparator) {
-        super(model, parent);
+        super(model, parent, getDisplayNameComparatorIfDirectoryNode(model));
         this.config = parent.config;
         this.subfolderComparator = subfolderComparator;
-    }
-
-    @Override
-    public IJcrTreeNode getChild(String name) throws RepositoryException {
-        final Node chainedModelObject = getChainedModel().getObject();
-        if (chainedModelObject.hasNode(name)) {
-            JcrNodeModel childModel = new JcrNodeModel(chainedModelObject.getNode(name));
-            return new FolderTreeNode(childModel, this, subfolderComparator);
-        }
-        return null;
     }
 
     @Override
@@ -156,7 +145,7 @@ public class FolderTreeNode extends JcrTreeNode {
      */
     @Override
     protected List<Node> loadChildNodes() throws RepositoryException {
-        List<Node> result = new ArrayList<Node>();
+        List<Node> result = new ArrayList<>();
 
         NodeIterator subNodes = config.filter(nodeModel.getNode(), nodeModel.getNode().getNodes());
         while (subNodes.hasNext()) {
@@ -171,9 +160,9 @@ public class FolderTreeNode extends JcrTreeNode {
 
     /**
      * {@inheritDoc}
-     * <P>
+     * <p>
      * Overrides to create {@link FolderTreeNode} instead of {@link JcrTreeNode}.
-     * </P>
+     * </p>
      */
     @Override
     protected JcrTreeNode createChildJcrTreeNode(JcrNodeModel childNodeModel)  {
@@ -182,26 +171,10 @@ public class FolderTreeNode extends JcrTreeNode {
 
     /**
      * {@inheritDoc}
-     * <P>
-     * Overrides to return a subfolder comparator if set.
-     * Otherwise, follows the default behavior of {@link JcrTreeNode}.
-     * </P>
-     */
-    @Override
-    protected Comparator<IJcrTreeNode> getChildComparator() {
-        if (subfolderComparator != null) {
-            return subfolderComparator;
-        }
-
-        return super.getChildComparator();
-    }
-
-    /**
-     * {@inheritDoc}
-     * <P>
+     * <p>
      * Overrides to sort children by the {@link #subfolderComparator} if set to any.
      * Otherwise, follow the default behavior of {@link JcrTreeNode}.
-     * </P>
+     * </p>
      */
     @Override
     protected void sortChildTreeNodes(List<IJcrTreeNode> childTreeNodes) throws RepositoryException {

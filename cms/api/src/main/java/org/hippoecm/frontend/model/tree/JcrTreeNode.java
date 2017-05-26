@@ -75,9 +75,10 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
      * @throws RepositoryException
      */
     public IJcrTreeNode getChild(String name) throws RepositoryException {
-        if (getNodeModel().getObject().hasNode(name)) {
-            JcrNodeModel childModel = new JcrNodeModel(getNodeModel().getObject().getNode(name));
-            return new JcrTreeNode(childModel, this, getChildComparator());
+        final Node chainedModelObject = getChainedModel().getObject();
+        if (chainedModelObject.hasNode(name)) {
+            JcrNodeModel childModel = new JcrNodeModel(chainedModelObject.getNode(name));
+            return createChildJcrTreeNode(childModel);
         }
         return null;
     }
@@ -223,15 +224,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
      * @return child tree node.
      */
     protected JcrTreeNode createChildJcrTreeNode(JcrNodeModel childNodeModel) {
-        return new JcrTreeNode(childNodeModel, this, getChildComparator());
-    }
-
-    /**
-     * Returns comparator to be used when sorting child tree nodes.
-     * @return comparator to be used when sorting child tree nodes
-     */
-    protected Comparator<IJcrTreeNode> getChildComparator() {
-        return childComparator;
+        return new JcrTreeNode(childNodeModel, this, childComparator);
     }
 
     /**
@@ -240,12 +233,12 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
      * @throws RepositoryException if repository exception occurs
      */
     protected void sortChildTreeNodes(List<IJcrTreeNode> childTreeNodes) throws RepositoryException {
-        if (getChildComparator() != null) {
+        if (childComparator != null) {
             Node baseNode = nodeModel.getNode();
 
             if (!baseNode.getPrimaryNodeType().hasOrderableChildNodes()
                     && !baseNode.isNodeType(HippoNodeType.NT_FACETRESULT)) {
-                Collections.sort(childTreeNodes,  getChildComparator());
+                Collections.sort(childTreeNodes,  childComparator);
             }
         }
     }
