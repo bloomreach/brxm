@@ -19,10 +19,10 @@ import focusIf from 'ng-focus-if';
 
 import pageActionsDirective from './pageActions.directive';
 import PageActionsCtrl from './pageActions.controller';
-import pageCreateDirective from './new/new.directive';
-import PageCreateCtrl from './new/new.controller';
-import pageEditDirective from './properties/properties.directive';
-import PageEditCtrl from './properties/properties.controller';
+import pageNewDirective from './new/new.directive';
+import PageNewCtrl from './new/new.controller';
+import pagePropertiesDirective from './properties/properties.directive';
+import PagePropertiesCtrl from './properties/properties.controller';
 import pageMoveDirective from './move/move.directive';
 import PageMoveCtrl from './move/move.controller';
 import pageCopyDirective from './copy/copy.directive';
@@ -35,10 +35,10 @@ const channelPageActionsModule = angular
   ])
   .controller('PageActionsCtrl', PageActionsCtrl)
   .directive('pageActions', pageActionsDirective)
-  .controller('PageCreateCtrl', PageCreateCtrl)
-  .directive('pageCreate', pageCreateDirective)
-  .controller('PageEditCtrl', PageEditCtrl)
-  .directive('pageEdit', pageEditDirective)
+  .controller('PageNewCtrl', PageNewCtrl)
+  .directive('pageNew', pageNewDirective)
+  .controller('PagePropertiesCtrl', PagePropertiesCtrl)
+  .directive('pageProperties', pagePropertiesDirective)
   .controller('PageMoveCtrl', PageMoveCtrl)
   .directive('pageMove', pageMoveDirective)
   .controller('PageCopyCtrl', PageCopyCtrl)

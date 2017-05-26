@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import template from './edit.html';
+import template from './properties.html';
 
-function pageEditDirective() {
+function pagePropertiesDirective() {
   'ngInject';
 
   return {
@@ -25,9 +25,9 @@ function pageEditDirective() {
       onDone: '&',
     },
     template,
-    controller: 'PageEditCtrl',
-    controllerAs: 'pageEdit',
+    controller: 'PagePropertiesCtrl',
+    controllerAs: '$ctrl',
   };
 }
 
-export default pageEditDirective;
+export default pagePropertiesDirective;

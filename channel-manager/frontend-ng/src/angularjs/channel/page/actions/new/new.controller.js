@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-class PageCreateCtrl {
-  constructor($element, $log, $scope, $translate, ChannelService, SiteMapService, HippoIframeService,
+class PageNewCtrl {
+  constructor($log, $scope, $translate, ChannelService, SiteMapService, HippoIframeService,
     FeedbackService, lowercaseFilter) {
     'ngInject';
 
@@ -39,7 +39,7 @@ class PageCreateCtrl {
       INVALID_PATH_INFO: 'ERROR_PAGE_PATH_INVALID',
     };
 
-    $scope.$watch('pageCreate.title', () => {
+    $scope.$watch('$ctrl.title', () => {
       if (this.updateLastPathInfoElementAutomatically) {
         this.lastPathInfoElement = this._replaceIllegalCharacters(lowercaseFilter(this.title), '-');
       }
@@ -90,4 +90,4 @@ class PageCreateCtrl {
   }
 }
 
-export default PageCreateCtrl;
+export default PageNewCtrl;

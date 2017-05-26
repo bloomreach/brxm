@@ -26,7 +26,7 @@ function pageActionsDirective() {
     },
     template,
     controller: 'PageActionsCtrl',
-    controllerAs: 'pageActions',
+    controllerAs: '$ctrl',
   };
 }
 

@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('PageActionEdit', () => {
+describe('PageActionProperties', () => {
   let $q;
   let $scope;
   let $rootScope;
@@ -99,56 +99,56 @@ describe('PageActionEdit', () => {
   function compileDirectiveAndGetController() {
     $scope = $rootScope.$new();
     $scope.onDone = jasmine.createSpy('onDone');
-    $element = angular.element('<page-edit on-done="onDone()"> </page-edit>');
+    $element = angular.element('<page-properties on-done="onDone()"> </page-properties>');
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('pageEdit');
+    return $element.controller('pageProperties');
   }
 
   it('initializes correctly', () => {
-    let PageEditCtrl = compileDirectiveAndGetController();
+    let $ctrl = compileDirectiveAndGetController();
 
     expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_PAGE_EDIT_TITLE', { pageName: 'name' });
     expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_PAGE_EDIT_PRIMARY_DOCUMENT_VALUE_NONE');
-    expect(PageEditCtrl.title).toBe('title');
-    expect(PageEditCtrl.availableDocuments.length).toBe(3);
-    expect(PageEditCtrl.availableDocuments[0].path).toBe('');
-    expect(PageEditCtrl.primaryDocument).toBe(PageEditCtrl.availableDocuments[0]);
-    expect(PageEditCtrl.isAssigningNewTemplate).toBeFalsy();
+    expect($ctrl.title).toBe('title');
+    expect($ctrl.availableDocuments.length).toBe(3);
+    expect($ctrl.availableDocuments[0].path).toBe('');
+    expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
+    expect($ctrl.isAssigningNewTemplate).toBeFalsy();
     expect(ChannelService.getNewPageModel).toHaveBeenCalled();
 
     $rootScope.$digest();
-    expect(PageEditCtrl.prototypes.length).toBe(2);
+    expect($ctrl.prototypes.length).toBe(2);
 
     // try again with different document settings
     siteMapItem.primaryDocumentRepresentation = { path: '/test/b' };
     siteMapItem.availableDocumentRepresentations.shift();
-    PageEditCtrl = compileDirectiveAndGetController();
-    expect(PageEditCtrl.primaryDocument).toBe(PageEditCtrl.availableDocuments[2]);
+    $ctrl = compileDirectiveAndGetController();
+    expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[2]);
 
     siteMapItem.primaryDocumentRepresentation = { path: '/test/c' }; // no match, fallback to none-document
     siteMapItem.availableDocumentRepresentations.shift();
-    PageEditCtrl = compileDirectiveAndGetController();
-    expect(PageEditCtrl.primaryDocument).toBe(PageEditCtrl.availableDocuments[0]);
+    $ctrl = compileDirectiveAndGetController();
+    expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
 
     delete siteMapItem.availableDocumentRepresentations;
-    PageEditCtrl = compileDirectiveAndGetController();
-    expect(PageEditCtrl.availableDocuments.length).toBe(1);
-    expect(PageEditCtrl.primaryDocument).toBe(PageEditCtrl.availableDocuments[0]);
+    $ctrl = compileDirectiveAndGetController();
+    expect($ctrl.availableDocuments.length).toBe(1);
+    expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
 
     siteMapItem.availableDocumentRepresentations = [];
-    PageEditCtrl = compileDirectiveAndGetController();
-    expect(PageEditCtrl.availableDocuments.length).toBe(1);
-    expect(PageEditCtrl.primaryDocument).toBe(PageEditCtrl.availableDocuments[0]);
+    $ctrl = compileDirectiveAndGetController();
+    expect($ctrl.availableDocuments.length).toBe(1);
+    expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
   });
 
   it('flashes a toast when the retrieval of the templates fails', () => {
     ChannelService.getNewPageModel.and.returnValue($q.reject());
-    const PageEditCtrl = compileDirectiveAndGetController();
+    const $ctrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    expect(PageEditCtrl.prototypes).toEqual([]);
+    expect($ctrl.prototypes).toEqual([]);
     expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
   });
 
@@ -160,24 +160,24 @@ describe('PageActionEdit', () => {
   });
 
   it('saves the new item values successfully', () => {
-    const PageEditCtrl = compileDirectiveAndGetController();
+    const $ctrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    PageEditCtrl.title = 'newTitle';
-    PageEditCtrl.primaryDocument = PageEditCtrl.availableDocuments[1];
-    PageEditCtrl.isAssigningNewTemplate = true;
-    PageEditCtrl.prototype = pageModel.prototypes[1];
+    $ctrl.title = 'newTitle';
+    $ctrl.primaryDocument = $ctrl.availableDocuments[1];
+    $ctrl.isAssigningNewTemplate = true;
+    $ctrl.prototype = pageModel.prototypes[1];
 
     const savedItem = {
       id: 'siteMapItemId',
       parentId: null,
       name: 'name',
       pageTitle: 'newTitle',
-      primaryDocumentRepresentation: PageEditCtrl.availableDocuments[1],
+      primaryDocumentRepresentation: $ctrl.availableDocuments[1],
       componentConfigurationId: 'prototype-b',
     };
 
-    PageEditCtrl.save();
+    $ctrl.save();
     expect(SiteMapItemService.updateItem).toHaveBeenCalledWith(savedItem, 'siteMapId');
     $rootScope.$digest();
 
@@ -190,7 +190,7 @@ describe('PageActionEdit', () => {
   it('tells the user that the page is already locked', () => {
     const response = { key: 'value' };
     SiteMapItemService.updateItem.and.returnValue($q.reject(response));
-    const PageEditCtrl = compileDirectiveAndGetController();
+    const $ctrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
     const savedItem = {
@@ -198,95 +198,95 @@ describe('PageActionEdit', () => {
       parentId: null,
       name: 'name',
       pageTitle: 'title',
-      primaryDocumentRepresentation: PageEditCtrl.availableDocuments[0],
+      primaryDocumentRepresentation: $ctrl.availableDocuments[0],
     };
 
-    PageEditCtrl.save();
+    $ctrl.save();
     expect(SiteMapItemService.updateItem).toHaveBeenCalledWith(savedItem, 'siteMapId');
     $rootScope.$digest();
 
     expect(FeedbackService.showErrorResponse)
-      .toHaveBeenCalledWith(response, 'ERROR_PAGE_SAVE_FAILED', PageEditCtrl.errorMap);
+      .toHaveBeenCalledWith(response, 'ERROR_PAGE_SAVE_FAILED', $ctrl.errorMap);
     expect($scope.onDone).not.toHaveBeenCalled();
   });
 
   it('flashes a toast when saving failed', () => {
     SiteMapItemService.updateItem.and.returnValue($q.reject());
-    const PageEditCtrl = compileDirectiveAndGetController();
+    const $ctrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    PageEditCtrl.title = 'newTitle';
-    PageEditCtrl.primaryDocument = PageEditCtrl.availableDocuments[0];
+    $ctrl.title = 'newTitle';
+    $ctrl.primaryDocument = $ctrl.availableDocuments[0];
 
     const savedItem = {
       id: 'siteMapItemId',
       parentId: null,
       name: 'name',
       pageTitle: 'newTitle',
-      primaryDocumentRepresentation: PageEditCtrl.availableDocuments[0],
+      primaryDocumentRepresentation: $ctrl.availableDocuments[0],
     };
 
-    PageEditCtrl.save();
+    $ctrl.save();
     expect(SiteMapItemService.updateItem).toHaveBeenCalledWith(savedItem, 'siteMapId');
     $rootScope.$digest();
 
     expect(FeedbackService.showErrorResponse)
-      .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_SAVE_FAILED', PageEditCtrl.errorMap);
+      .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_SAVE_FAILED', $ctrl.errorMap);
     expect($scope.onDone).not.toHaveBeenCalled();
   });
 
   it('checks if the channel has prototypes available', () => {
-    let PageEditCtrl = compileDirectiveAndGetController();
+    let $ctrl = compileDirectiveAndGetController();
     $rootScope.$digest();
-    expect(PageEditCtrl.hasPrototypes()).toBe(true);
+    expect($ctrl.hasPrototypes()).toBe(true);
 
     siteMapItem.availableDocumentRepresentations.shift();
     ChannelService.getNewPageModel.and.returnValue($q.when({ prototypes: [] }));
-    PageEditCtrl = compileDirectiveAndGetController();
+    $ctrl = compileDirectiveAndGetController();
     $rootScope.$digest();
-    expect(PageEditCtrl.hasPrototypes()).toBe(false);
+    expect($ctrl.hasPrototypes()).toBe(false);
 
     siteMapItem.availableDocumentRepresentations.shift();
     ChannelService.getNewPageModel.and.returnValue($q.reject());
-    PageEditCtrl = compileDirectiveAndGetController();
+    $ctrl = compileDirectiveAndGetController();
     $rootScope.$digest();
-    expect(PageEditCtrl.hasPrototypes()).toBe(false);
+    expect($ctrl.hasPrototypes()).toBe(false);
   });
 
   it('shows an alert dialog when assigning a new template to a page with container items', () => {
-    const PageEditCtrl = compileDirectiveAndGetController();
+    const $ctrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
     siteMapItem.hasContainerItemInPageDefinition = true;
-    PageEditCtrl.isAssigningNewTemplate = false;
-    PageEditCtrl.evaluatePrototype();
+    $ctrl.isAssigningNewTemplate = false;
+    $ctrl.evaluatePrototype();
     expect($mdDialog.show).not.toHaveBeenCalled();
 
     siteMapItem.hasContainerItemInPageDefinition = false;
-    PageEditCtrl.isAssigningNewTemplate = false;
-    PageEditCtrl.evaluatePrototype();
+    $ctrl.isAssigningNewTemplate = false;
+    $ctrl.evaluatePrototype();
     expect($mdDialog.show).not.toHaveBeenCalled();
 
     siteMapItem.hasContainerItemInPageDefinition = false;
-    PageEditCtrl.isAssigningNewTemplate = true;
-    PageEditCtrl.evaluatePrototype();
+    $ctrl.isAssigningNewTemplate = true;
+    $ctrl.evaluatePrototype();
     expect($mdDialog.show).not.toHaveBeenCalled();
 
     $mdDialog.show.calls.reset();
     mockAlert.textContent.calls.reset();
     siteMapItem.hasContainerItemInPageDefinition = true;
-    PageEditCtrl.isAssigningNewTemplate = true;
-    PageEditCtrl.prototype = pageModel.prototypes[0]; // has containers
-    PageEditCtrl.evaluatePrototype();
+    $ctrl.isAssigningNewTemplate = true;
+    $ctrl.prototype = pageModel.prototypes[0]; // has containers
+    $ctrl.evaluatePrototype();
     expect($mdDialog.show).toHaveBeenCalledWith(mockAlert);
     expect(mockAlert.textContent).toHaveBeenCalledWith('SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REPOSITIONING');
 
     $mdDialog.show.calls.reset();
     mockAlert.textContent.calls.reset();
     siteMapItem.hasContainerItemInPageDefinition = true;
-    PageEditCtrl.isAssigningNewTemplate = true;
-    PageEditCtrl.prototype = pageModel.prototypes[1]; // has no
-    PageEditCtrl.evaluatePrototype();
+    $ctrl.isAssigningNewTemplate = true;
+    $ctrl.prototype = pageModel.prototypes[1]; // has no
+    $ctrl.evaluatePrototype();
     expect($mdDialog.show).toHaveBeenCalledWith(mockAlert);
     expect(mockAlert.textContent).toHaveBeenCalledWith('SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REMOVAL');
   });

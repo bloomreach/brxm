@@ -96,123 +96,80 @@ describe('PageActions', () => {
     return $element.controller('pageActions');
   }
 
-  it('displays a menu with 5 actions', () => {
-    const PageActionsCtrl = compileDirectiveAndGetController();
+  it('calls the passed in callback when opening a sub-page', () => {
+    const $ctrl = compileDirectiveAndGetController();
 
-    expect(PageActionsCtrl.actions.length).toBe(4);
-    expect(PageActionsCtrl.actions[0].id).toBe('edit');
-    expect(PageActionsCtrl.actions[1].id).toBe('copy');
-    expect(PageActionsCtrl.actions[2].id).toBe('move');
-    expect(PageActionsCtrl.actions[3].id).toBe('delete');
-
-    expect(PageActionsCtrl.createAction.id).toBe('create');
+    $ctrl.openSubPage('page-properties');
+    expect($scope.onActionSelected).toHaveBeenCalledWith('page-properties');
   });
 
-  it('calls the passed in callback when selecting an action', () => {
-    const PageActionsCtrl = compileDirectiveAndGetController();
+  it('enables the "new" action if the current channel has both a workspace and prototypes', () => {
+    const $ctrl = compileDirectiveAndGetController();
 
-    PageActionsCtrl.trigger(PageActionsCtrl.actions[0]);
-    expect($scope.onActionSelected).toHaveBeenCalledWith('page-edit');
-
-    PageActionsCtrl.trigger(PageActionsCtrl.actions[1]);
-    expect($scope.onActionSelected).toHaveBeenCalledWith('page-copy');
-  });
-
-  it('enables the create action if the current channel has both a workspace and prototypes', () => {
-    const PageActionsCtrl = compileDirectiveAndGetController();
-    const createAction = PageActionsCtrl.createAction;
-
-    $translate.instant.calls.reset();
     ChannelService.hasWorkspace.and.returnValue(false);
     ChannelService.hasPrototypes.and.returnValue(false);
-    expect(createAction.isEnabled()).toBe(false);
-    expect(PageActionsCtrl.getSitemapNotEditableMarker()).not.toBe('');
-    expect($translate.instant).toHaveBeenCalledWith('TOOLBAR_MENU_PAGE_SITEMAP_NOT_EDITABLE');
+    expect($ctrl.isNewEnabled()).toBe(false);
 
     ChannelService.hasWorkspace.and.returnValue(false);
     ChannelService.hasPrototypes.and.returnValue(true);
-    expect(createAction.isEnabled()).toBe(false);
-    expect(PageActionsCtrl.getSitemapNotEditableMarker()).not.toBe('');
+    expect($ctrl.isNewEnabled()).toBe(false);
 
     ChannelService.hasWorkspace.and.returnValue(true);
     ChannelService.hasPrototypes.and.returnValue(false);
-    expect(createAction.isEnabled()).toBe(false);
-    expect(PageActionsCtrl.getSitemapNotEditableMarker()).not.toBe('');
+    expect($ctrl.isNewEnabled()).toBe(false);
 
     ChannelService.hasWorkspace.and.returnValue(true);
     ChannelService.hasPrototypes.and.returnValue(true);
-    expect(createAction.isEnabled()).toBe(true);
-    expect(PageActionsCtrl.getSitemapNotEditableMarker()).toBe('');
+    expect($ctrl.isNewEnabled()).toBe(true);
   });
 
-  it('enables the delete action if the current page is editable', () => {
-    const PageActionsCtrl = compileDirectiveAndGetController();
-    const deleteAction = PageActionsCtrl.actions.find(action => action.id === 'delete');
+  it('knows whether the current page is editable', () => {
+    const $ctrl = compileDirectiveAndGetController();
 
     SiteMapItemService.isEditable.and.returnValue(false);
-    expect(deleteAction.isEnabled()).toBe(false);
-    expect(PageActionsCtrl.getPageNotEditableMarker(deleteAction)).toBe('');
+    expect($ctrl.isPageEditable()).toBe(false);
 
     SiteMapItemService.isEditable.and.returnValue(true);
-    expect(deleteAction.isEnabled()).toBe(true);
-    expect(PageActionsCtrl.getPageNotEditableMarker(deleteAction)).toBe('');
-  });
-
-  it('enables the edit action if the current page is editable', () => {
-    const PageActionsCtrl = compileDirectiveAndGetController();
-    const editAction = PageActionsCtrl.actions.find(action => action.id === 'edit');
-
-    $translate.instant.calls.reset();
-    SiteMapItemService.isEditable.and.returnValue(false);
-    expect(editAction.isEnabled()).toBe(false);
-    expect(PageActionsCtrl.getPageNotEditableMarker(editAction)).not.toBe('');
-    expect($translate.instant).toHaveBeenCalledWith('TOOLBAR_MENU_PAGE_PAGE_NOT_EDITABLE');
-
-    SiteMapItemService.isEditable.and.returnValue(true);
-    expect(editAction.isEnabled()).toBe(true);
-    expect(PageActionsCtrl.getPageNotEditableMarker(editAction)).toBe('');
+    expect($ctrl.isPageEditable()).toBe(true);
   });
 
   it('enables the copy action if the page can be copied', () => {
-    const PageActionsCtrl = compileDirectiveAndGetController();
-    const copyAction = PageActionsCtrl.actions.find(action => action.id === 'copy');
+    const $ctrl = compileDirectiveAndGetController();
 
     SiteMapItemService.isLocked.and.returnValue(true);
-    expect(copyAction.isEnabled()).toBe(false);
+    expect($ctrl.isCopyEnabled()).toBe(false);
 
     SiteMapItemService.isLocked.and.returnValue(false);
     ChannelService.hasWorkspace.and.returnValue(true);
-    expect(copyAction.isEnabled()).toBe(true);
+    expect($ctrl.isCopyEnabled()).toBe(true);
 
     ChannelService.hasWorkspace.and.returnValue(false);
     SessionService.isCrossChannelPageCopySupported.and.returnValue(false);
-    expect(copyAction.isEnabled()).toBe(false);
+    expect($ctrl.isCopyEnabled()).toBe(false);
 
     SessionService.isCrossChannelPageCopySupported.and.returnValue(true);
     ChannelService.getPageModifiableChannels.and.returnValue(undefined);
-    expect(copyAction.isEnabled()).toBe(false);
+    expect($ctrl.isCopyEnabled()).toBe(false);
 
     ChannelService.getPageModifiableChannels.and.returnValue([]);
-    expect(copyAction.isEnabled()).toBe(false);
+    expect($ctrl.isCopyEnabled()).toBe(false);
 
     ChannelService.getPageModifiableChannels.and.returnValue(['dummy']);
-    expect(copyAction.isEnabled()).toBe(true);
+    expect($ctrl.isCopyEnabled()).toBe(true);
   });
 
   it('disables the copy action if the page is undefined', () => {
-    const PageActionsCtrl = compileDirectiveAndGetController();
-    const copyAction = PageActionsCtrl.actions.find(action => action.id === 'copy');
+    const $ctrl = compileDirectiveAndGetController();
 
     SiteMapItemService.hasItem.and.returnValue(false);
-    expect(copyAction.isEnabled()).toBe(false);
+    expect($ctrl.isCopyEnabled()).toBe(false);
   });
 
   it('does nothing when not confirming the deletion of a page', () => {
-    const PageActionsCtrl = compileDirectiveAndGetController();
-    const deleteAction = PageActionsCtrl.actions.find(action => action.id === 'delete');
+    const $ctrl = compileDirectiveAndGetController();
 
     DialogService.show.and.returnValue($q.reject());
-    PageActionsCtrl.trigger(deleteAction);
+    $ctrl.deletePage();
     expect(DialogService.confirm).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalledWith(confirmDialog);
     $rootScope.$digest();
@@ -220,12 +177,11 @@ describe('PageActions', () => {
   });
 
   it('flashes a toast when failing to delete the current page', () => {
-    const PageActionsCtrl = compileDirectiveAndGetController();
-    const deleteAction = PageActionsCtrl.actions.find(action => action.id === 'delete');
+    const $ctrl = compileDirectiveAndGetController();
 
     DialogService.show.and.returnValue($q.when());
     SiteMapItemService.deleteItem.and.returnValue($q.reject());
-    PageActionsCtrl.trigger(deleteAction);
+    $ctrl.deletePage();
     $rootScope.$digest();
     expect(SiteMapItemService.deleteItem).toHaveBeenCalled();
     $rootScope.$digest();
@@ -234,14 +190,12 @@ describe('PageActions', () => {
   });
 
   it('navigates to the channel\'s homepage after successfully deleting the current page', () => {
-    const PageActionsCtrl = compileDirectiveAndGetController();
-    const deleteAction = PageActionsCtrl.actions.find(action => action.id === 'delete');
+    const $ctrl = compileDirectiveAndGetController();
 
     DialogService.show.and.returnValue($q.when());
     SiteMapItemService.deleteItem.and.returnValue($q.when());
-    PageActionsCtrl.trigger(deleteAction);
+    $ctrl.deletePage();
     $rootScope.$digest(); // process confirm action
-    $rootScope.$digest(); // necessary?
     expect(HippoIframeService.load).toHaveBeenCalledWith('');
     expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
     expect(SiteMapItemService.clear).toHaveBeenCalled();
