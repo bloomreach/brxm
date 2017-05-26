@@ -19,21 +19,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-class ExclusionContext {
+class PatternSet {
 
     private List<Pattern> patterns;
-    private ExclusionContext exclusionContext;
+    private PatternSet parentPatternSet;
 
-    ExclusionContext(List<String> patterns) {
+    PatternSet(List<String> patterns) {
         this(null, patterns);
     }
     
-    ExclusionContext(ExclusionContext exclusionContext, List<String> patterns) {
+    PatternSet(PatternSet parentPatternSet, List<String> patterns) {
         this.patterns = new ArrayList<>();
         for (String pattern : patterns) {
             this.patterns.add(Pattern.compile(compile(pattern)));
         }
-        this.exclusionContext = exclusionContext;
+        this.parentPatternSet = parentPatternSet;
     }
 
     static String compile(String s) {
@@ -68,8 +68,8 @@ class ExclusionContext {
         return sb.toString();
     }
 
-    boolean isExcluded(String s) {
-        if (exclusionContext != null && exclusionContext.isExcluded(s)) {
+    boolean matches(String s) {
+        if (parentPatternSet != null && parentPatternSet.matches(s)) {
             return true;
         }
         for (Pattern pattern : patterns) {

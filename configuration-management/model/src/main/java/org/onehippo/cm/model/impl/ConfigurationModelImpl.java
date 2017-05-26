@@ -48,6 +48,7 @@ import static org.onehippo.cm.model.SnsUtils.createIndexedName;
 public class ConfigurationModelImpl implements ConfigurationModel {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationModelImpl.class);
+
     private static final OrderableListSorter<GroupImpl> groupSorter = new OrderableListSorter<>(Group.class.getSimpleName());
 
     private final Map<String, GroupImpl> groupMap = new HashMap<>();

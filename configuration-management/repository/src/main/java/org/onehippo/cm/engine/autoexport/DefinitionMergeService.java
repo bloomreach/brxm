@@ -27,8 +27,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Lists;
-
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigDefinition;
 import org.onehippo.cm.model.ConfigurationNode;
@@ -54,6 +52,8 @@ import org.onehippo.cm.model.impl.ValueImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import static java.util.Arrays.asList;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.model.Constants.YAML_EXT;
@@ -71,7 +71,7 @@ public class DefinitionMergeService {
         Collection<String> repositoryPaths;
 
         // NOTE: this class should have been called PatternSet, and let the interpretation depend on the caller!
-        ExclusionContext pathPatterns;
+        PatternSet pathPatterns;
 
         ModuleMapping(final String mvnPath, final Collection<String> repositoryPaths) {
             this.mvnPath = mvnPath;
@@ -82,12 +82,11 @@ public class DefinitionMergeService {
                 patterns.add(repositoryPath);
                 patterns.add(repositoryPath.equals("/") ? "/**" : repositoryPath + "/**");
             }
-            pathPatterns = new ExclusionContext(patterns);
+            pathPatterns = new PatternSet(patterns);
         }
 
         boolean matchesPath(String path) {
-            // ignore this method name -- pretend isExcluded==matches
-            return pathPatterns.isExcluded(path);
+            return pathPatterns.matches(path);
         }
     }
 

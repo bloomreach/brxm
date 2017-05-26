@@ -42,11 +42,11 @@ class Configuration {
     private Boolean enabled;
     private Long lastRevision;
     private Map<String, Collection<String>> modules;
-    private ExclusionContext exclusionContext;
+    private PatternSet exclusionContext;
     private List<String> filterUuidPaths;
 
     // constructor for testing purposes only
-    Configuration(Boolean enabled, Map<String, Collection<String>> modules, ExclusionContext exclusionContext, List<String> filterUuidPaths) {
+    Configuration(Boolean enabled, Map<String, Collection<String>> modules, PatternSet exclusionContext, List<String> filterUuidPaths) {
         this.node = null;
         this.nodePath = null;
         this.enabled = enabled;
@@ -68,7 +68,7 @@ class Configuration {
         return node.getSession();
     }
 
-    ExclusionContext getExclusionContext() {
+    PatternSet getExclusionContext() {
         if (exclusionContext == null) {
             List<String> excluded = Collections.emptyList();
             try {
@@ -86,7 +86,7 @@ class Configuration {
             } catch (RepositoryException e) {
                 log.error("Failed to get excluded paths from repository", e);
             }
-            exclusionContext = new ExclusionContext(excluded);
+            exclusionContext = new PatternSet(excluded);
         }
         return exclusionContext;
     }
