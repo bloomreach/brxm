@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('PrimitiveField', () => {
+fdescribe('PrimitiveField', () => {
   let $componentController;
 
   let $ctrl;
@@ -162,5 +162,22 @@ describe('PrimitiveField', () => {
   it('assumes that a field without any value is valid', () => {
     $ctrl.fieldValues = [];
     expect($ctrl.isValid(0)).toBe(true);
+  });
+
+  it('keeps track of the focused state', () => {
+    expect($ctrl.hasFocus).toBeFalsy();
+
+    $ctrl.focusPrimitive();
+
+    expect($ctrl.hasFocus).toBeTruthy();
+    expect(onFieldFocus).toHaveBeenCalled();
+    expect(onFieldBlur).not.toHaveBeenCalled();
+    onFieldFocus.calls.reset();
+
+    $ctrl.blurPrimitive();
+
+    expect($ctrl.hasFocus).toBeFalsy();
+    expect(onFieldFocus).not.toHaveBeenCalled();
+    expect(onFieldBlur).toHaveBeenCalled();
   });
 });
