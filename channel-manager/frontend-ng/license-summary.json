@@ -99,10 +99,6 @@
     "url": "http://paulmillr.com",
     "licenseFile": "node_modules/es6-shim/LICENSE"
   },
-  "hippo-cm@": {
-    "licenses": "Apache-2.0",
-    "licenseFile": "license-summary.json"
-  },
   "jquery@3.2.1": {
     "licenses": "MIT",
     "repository": "https://github.com/jquery/jquery",
@@ -144,10 +140,5 @@
     "email": "nicolasbevacqua@gmail.com",
     "url": "http://bevacqua.io/",
     "licenseFile": "node_modules/ticky/license"
-  },
-  "ui-router-core@3.1.0": {
-    "licenses": "MIT",
-    "repository": "https://github.com/ui-router/core",
-    "licenseFile": "node_modules/ui-router-core/LICENSE"
   }
 }

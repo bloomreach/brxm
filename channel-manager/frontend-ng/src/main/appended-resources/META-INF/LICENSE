@@ -46,7 +46,7 @@ angular/hippo-cm/styles/hippo-cm-*.min.css
     http://angularjs.org
         The MIT License
 
-        Copyright (c) 2010-2016 Google, Inc. http://angularjs.org
+        Copyright (c) 2010-2017 Google, Inc. http://angularjs.org
 
         Permission is hereby granted, free of charge, to any person obtaining a copy
         of this software and associated documentation files (the "Software"), to deal
@@ -89,10 +89,10 @@ angular/hippo-cm/styles/hippo-cm-*.min.css
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
         THE SOFTWARE.
 
-    http://github.com/angular-translate/angular-translate
+    https://github.com/angular-translate/angular-translate
         The MIT License (MIT)
 
-        Copyright (c) <2014> <pascal.precht@gmail.com>
+        Copyright (c) 2013-2017 The angular-translate team and Pascal Precht
 
         Permission is hereby granted, free of charge, to any person obtaining a copy
         of this software and associated documentation files (the "Software"), to deal
@@ -208,7 +208,7 @@ angular/hippo-cm/styles/hippo-cm-*.min.css
         THE SOFTWARE.
 
     https://github.com/jquery/jquery
-        Copyright jQuery Foundation and other contributors, https://jquery.org/
+        Copyright JS Foundation and other contributors, https://js.foundation/
 
         This software consists of voluntary contributions made by many
         individuals. For exact contribution history, see the revision history
