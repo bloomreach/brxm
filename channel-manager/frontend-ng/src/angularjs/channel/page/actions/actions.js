@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import pageActionsDirective from './pageActions.directive';
 import PageActionsCtrl from './pageActions.controller';
 import pageCreateDirective from './create/create.directive';
 import PageCreateCtrl from './create/create.controller';
-import pageEditDirective from './edit/edit.directive';
-import PageEditCtrl from './edit/edit.controller';
+import pageEditDirective from './properties/edit.directive';
+import PageEditCtrl from './properties/edit.controller';
 import pageMoveDirective from './move/move.directive';
 import PageMoveCtrl from './move/move.controller';
 import pageCopyDirective from './copy/copy.directive';
