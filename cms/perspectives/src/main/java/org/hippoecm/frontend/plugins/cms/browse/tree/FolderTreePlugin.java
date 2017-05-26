@@ -15,6 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -53,15 +63,6 @@ import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 public class FolderTreePlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(FolderTreePlugin.class);
@@ -105,13 +106,26 @@ public class FolderTreePlugin extends RenderPlugin {
         add(new ScrollBehavior());
     }
 
+    /**
+     * Creates root folder tree node for the tree view.
+     * <P>
+     * By default, this method creates a folder tree node without specifying any subfolder comparator.
+     * </P>
+     * @param folderTreeConfig document list filter configuration
+     * @return
+     */
+    protected FolderTreeNode createRootFolderTreeNode(DocumentListFilter documentListFilter) {
+        return new FolderTreeNode(rootModel, documentListFilter, null);
+    }
+
     private CmsJcrTree initializeTree(final IPluginContext context, final IPluginConfig config, final String startingPath) {
         rootModel = new JcrNodeModel(startingPath);
 
         DocumentListFilter folderTreeConfig = new DocumentListFilter(config);
         final boolean workflowEnabled = getPluginConfig().getAsBoolean("workflow.enabled", true);
 
-        this.rootNode = new FolderTreeNode(rootModel, folderTreeConfig);
+        this.rootNode = createRootFolderTreeNode(folderTreeConfig);
+
         treeModel = new JcrTreeModel(rootNode);
         context.registerService(treeModel, IObserver.class.getName());
         final CmsJcrTree cmsJcrTree = new CmsJcrTree("tree", treeModel, newTreeNodeTranslator(config), newTreeNodeIconProvider(context, config)) {
@@ -217,6 +231,8 @@ public class FolderTreePlugin extends RenderPlugin {
             @Override
             public void onTargetRespond(final AjaxRequestTarget target, boolean dirty) {
                 if (dirty) {
+                    rootNode.ensureChildrenSorted();
+                    tree.setDefaultModelObject(treeModel);
                     target.appendJavaScript(treeHelperBehavior.getRenderString());
                 }
             }
@@ -310,5 +326,4 @@ public class FolderTreePlugin extends RenderPlugin {
             treeState.selectNode(treePath.getLastPathComponent(), true);
         }
     }
-
 }

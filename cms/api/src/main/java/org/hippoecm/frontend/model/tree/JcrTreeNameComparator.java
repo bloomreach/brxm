@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,21 +21,21 @@ import java.util.Comparator;
 import javax.jcr.Node;
 
 import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.frontend.plugins.standards.list.comparators.NodeNameComparator;
+import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 
 /**
- * Comparator implementation based on physical JCR node names.
+ * Comparator implementation based on display names of folder or document nodes.
  */
-public class JcrTreeNodeComparator implements Comparator<IJcrTreeNode>, IClusterable {
+public class JcrTreeNameComparator implements Comparator<IJcrTreeNode>, IClusterable {
 
-    private Comparator<Node> nodeComparator;
+    private Comparator<Node> nameComparator;
 
-    public JcrTreeNodeComparator() {
-        this.nodeComparator = new NodeNameComparator();
+    public JcrTreeNameComparator() {
+        this.nameComparator = NameComparator.getInstance();
     }
 
     @Override
     public int compare(final IJcrTreeNode o1, final IJcrTreeNode o2) {
-        return nodeComparator.compare(o1.getNodeModel().getObject(), o2.getNodeModel().getObject());
+        return nameComparator.compare(o1.getNodeModel().getObject(), o2.getNodeModel().getObject());
     }
 }
