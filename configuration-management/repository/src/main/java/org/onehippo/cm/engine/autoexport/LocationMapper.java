@@ -182,41 +182,34 @@ final class LocationMapper {
                 for (Pattern pattern : entry.nodePatterns) {
                     Matcher matcher = pattern.matcher(path);
                     if (matcher.matches()) {
-                        String contextNode = entry.contextNode;
-                        for (int i = 1; i <= matcher.groupCount(); i++) {
-                            contextNode = contextNode.replace("$" + i, matcher.group(i));
-                        }
-                        String file = entry.file;
-                        for (int i = 1; i <= matcher.groupCount(); i++) {
-                            String qName = matcher.group(i);
-                            int indexOfColon = qName.indexOf(':');
-                            String name = indexOfColon == -1 ? qName : qName.substring(indexOfColon + 1);
-                            file = file.replace("$" + i, name);
-                        }
-                        return new CachedItem(path, contextNode, file);
+                        return getCachedItem(path, entry, matcher);
                     }
                 }
             } else {
                 for (Pattern pattern : entry.propertyPatterns) {
                     Matcher matcher = pattern.matcher(path);
                     if (matcher.matches()) {
-                        String contextNode = entry.contextNode;
-                        for (int i = 1; i <= matcher.groupCount(); i++) {
-                            contextNode = contextNode.replace("$" + i, matcher.group(i));
-                        }
-                        String file = entry.file;
-                        for (int i = 1; i <= matcher.groupCount(); i++) {
-                            String qName = matcher.group(i);
-                            int indexOfColon = qName.indexOf(':');
-                            String name = indexOfColon == -1 ? qName : qName.substring(indexOfColon + 1);
-                            file = file.replace("$" + i, name);
-                        }
-                        return new CachedItem(path, contextNode, file);
+                        return getCachedItem(path, entry, matcher);
                     }
                 }
             }
         }
         return new CachedItem(null, null, null);
+    }
+
+    private static CachedItem getCachedItem(final String path, final Entry entry, final Matcher matcher) {
+        String contextNode = entry.contextNode;
+        for (int i = 1; i <= matcher.groupCount(); i++) {
+            contextNode = contextNode.replace("$" + i, matcher.group(i));
+        }
+        String file = entry.file;
+        for (int i = 1; i <= matcher.groupCount(); i++) {
+            String qName = matcher.group(i);
+            int indexOfColon = qName.indexOf(':');
+            String name = indexOfColon == -1 ? qName : qName.substring(indexOfColon + 1);
+            file = file.replace("$" + i, name);
+        }
+        return new CachedItem(path, contextNode, file);
     }
 
     private static final class Entry {

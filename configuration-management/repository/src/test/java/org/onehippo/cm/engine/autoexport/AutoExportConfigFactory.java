@@ -16,12 +16,11 @@
 package org.onehippo.cm.engine.autoexport;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 public class AutoExportConfigFactory {
 
-    public static Configuration make(Boolean enabled, Map<String, Collection<String>> modules, ExclusionContext exclusionContext, List<String> filterUuidPaths) {
-        return new Configuration(true, modules, null, null);
+    public static Configuration make(Boolean enabled, Map<String, Collection<String>> modules) {
+        return new Configuration(enabled, modules, null, null);
     }
 }
