@@ -34,8 +34,8 @@ import org.junit.Before;
 import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -180,7 +180,7 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
     }
 
     private ConfigurationModel makeMergedModel(final String[] sources) throws Exception {
-        final ConfigurationModelBuilder configurationModelBuilder = new ConfigurationModelBuilder();
+        final ConfigurationModelImpl configurationModelImpl = new ConfigurationModelImpl();
         for (int i = 0; i < sources.length; i++) {
             final List<AbstractDefinitionImpl> definitions = parseNoSort(sources[i], "test-module-" + i, true);
             assertTrue(definitions.size() > 0);
@@ -189,10 +189,10 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
             module.setContentResourceInputProvider(new TestResourceInputProvider());
 //            module.setConfigResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
 //            module.setContentResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
-            final GroupImpl configuration = module.getProject().getGroup();
-            configurationModelBuilder.push(configuration);
+            final GroupImpl group = module.getProject().getGroup();
+            configurationModelImpl.addGroup(group);
         }
-        return configurationModelBuilder.build();
+        return configurationModelImpl.build();
     }
 
     protected void expectNode(final String nodePath, final String childNodes, final String childProperties)

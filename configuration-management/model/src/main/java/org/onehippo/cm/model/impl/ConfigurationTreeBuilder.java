@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.model.builder;
+package org.onehippo.cm.model.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -27,14 +28,6 @@ import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.SnsUtils;
 import org.onehippo.cm.model.ValueType;
-import org.onehippo.cm.model.impl.ConfigurationItemImpl;
-import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
-import org.onehippo.cm.model.impl.ConfigurationPropertyImpl;
-import org.onehippo.cm.model.impl.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.DefinitionItemImpl;
-import org.onehippo.cm.model.impl.DefinitionNodeImpl;
-import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
-import org.onehippo.cm.model.impl.ValueImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,8 +94,8 @@ class ConfigurationTreeBuilder {
     private void mergeNode(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
         if (definitionNode.isDeleted()) {
             final String indexedName = SnsUtils.createIndexedName(definitionNode.getName());
-            if (SnsUtils.hasSns(indexedName, node.getModifiableParent().getNodes().keySet())) {
-                node.getModifiableParent().removeNode(indexedName, true);
+            if (SnsUtils.hasSns(indexedName, node.getParent().getNodes().keySet())) {
+                node.getParent().removeNode(indexedName, true);
             } else {
                 markNodeAsDeletedBy(node, definitionNode);
             }
@@ -138,7 +131,7 @@ class ConfigurationTreeBuilder {
             node.setIgnoreReorderedChildren(definitionNode.getIgnoreReorderedChildren());
         }
 
-        final ConfigurationNodeImpl parent = node.getModifiableParent();
+        final ConfigurationNodeImpl parent = node.getParent();
         if (parent != null && definitionNode.getOrderBefore() != null) {
             final String orderBefore = definitionNode.getOrderBefore();
             if (parent.getIgnoreReorderedChildren() != null && parent.getIgnoreReorderedChildren()) {
@@ -547,7 +540,7 @@ class ConfigurationTreeBuilder {
 
     private void pruneDeletedItems(final ConfigurationNodeImpl node) {
         if (node.isDeleted()) {
-            node.getModifiableParent().removeNode(node.getName(), false);
+            node.getParent().removeNode(node.getName(), false);
             return;
         }
 
@@ -558,7 +551,7 @@ class ConfigurationTreeBuilder {
         deletedProperties.forEach(node::removeProperty);
 
         final Map<String, ConfigurationNodeImpl> childMap = node.getModifiableNodes();
-        final List<String> children = childMap.keySet().stream().collect(Collectors.toList());
+        final List<String> children = new ArrayList<>(childMap.keySet());
         children.forEach(name -> pruneDeletedItems(childMap.get(name)));
     }
 

@@ -15,9 +15,7 @@
  */
 package org.onehippo.cm.engine;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
@@ -28,13 +26,11 @@ import javax.jcr.RepositoryException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ContentDefinition;
-import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModelTestUtils;
@@ -251,8 +247,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
     }
 
     private ConfigurationModel createConfigurationModel(final String[] sources) throws Exception {
-        final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
-        final ConfigurationModelBuilder configurationModelBuilder = new ConfigurationModelBuilder();
+        final ConfigurationModelImpl model = new ConfigurationModelImpl();
         for (int i = 0; i < sources.length; i++) {
             final List<AbstractDefinitionImpl> definitions = parseNoSort(sources[i], "test-module-" + i, false);
             assertTrue(definitions.size() == 1);
@@ -260,9 +255,9 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
             module.setConfigResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
             module.setContentResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
             final GroupImpl group = module.getProject().getGroup();
-            configurationModelBuilder.push(group);
+            model.addGroup(group);
         }
-        return configurationModelBuilder.build();
+        return model.build();
     }
 
 

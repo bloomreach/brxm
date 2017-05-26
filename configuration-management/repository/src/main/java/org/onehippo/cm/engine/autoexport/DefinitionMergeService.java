@@ -34,11 +34,9 @@ import org.onehippo.cm.model.ConfigDefinition;
 import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionItem;
-import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
@@ -46,11 +44,9 @@ import org.onehippo.cm.model.impl.ConfigurationItemImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.ContentSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionItemImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
-import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
@@ -140,7 +136,7 @@ public class DefinitionMergeService {
         }
 
         // make sure the changes module has all the definitions nicely sorted
-        changes.sortDefinitions();
+        changes.build();
 
         // handle namespaces before rebuilding, since we want any validation to happen after this
         // TODO does it make sense to do this, if we can't handle CNDs yet?
@@ -250,10 +246,10 @@ public class DefinitionMergeService {
 
         // note: we assume that the original baseline will perform any required cleanup in close(), so we don't need
         //       to copy FileSystems etc. here
-        ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
-        toExport.values().forEach(builder::pushReplacement);
-        baseline.getSortedGroups().forEach(group -> builder.push(group));
-        return builder.build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl();
+        toExport.values().forEach(model::addModule);
+        baseline.getSortedGroups().forEach(model::addGroup);
+        return model.build();
     }
 
     protected ConfigurationModelImpl mergeConfigDefinition(final ConfigDefinitionImpl change,

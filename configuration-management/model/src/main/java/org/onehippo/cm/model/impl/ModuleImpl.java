@@ -109,6 +109,18 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         this.project = project;
     }
 
+    ModuleImpl(final ModuleImpl module, final ProjectImpl project) {
+        this(module.getName(), project);
+        modifiableAfter.addAll(module.getAfter());
+        configResourceInputProvider = module.getConfigResourceInputProvider();
+        contentResourceInputProvider = module.getContentResourceInputProvider();
+        actionsMap.putAll(module.getActionsMap());
+        // TODO: the following two methods require ModuleImpl access, but clone/creation should only use/need Module interface
+        sortedSources.addAll(module.getSources());
+        mvnPath = module.getMvnPath();
+        build();
+    }
+
     @Override
     public String getName() {
         return name;
@@ -252,11 +264,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         return this;
     }
 
-    ModuleImpl pushActions(final ModuleImpl module) {
-        actionsMap.putAll(module.getActionsMap());
-        return this;
-    }
-
     /**
      * This property stores the String used to find mvn source files relative to the project.basedir. This is
      * the input expected from repo.bootstrap.modules and autoexport:config's autoexport:modules properties.
@@ -272,13 +279,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         return this;
     }
 
-    void pushDefinitions(final ModuleImpl module) {
-        this.sortedSources.addAll(module.sortedSources);
-        sortDefinitions();
-    }
-
-    public void sortDefinitions() {
-        // sort definitions into the different types
+    public void build() {
+        // clear and sort definitions into the different types
         namespaceDefinitions.clear();
         nodeTypeDefinitions.clear();
         configDefinitions.clear();

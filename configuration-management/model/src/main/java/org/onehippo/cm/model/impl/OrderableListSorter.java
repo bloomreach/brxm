@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cm.model.builder;
+package org.onehippo.cm.model.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,10 +23,10 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.onehippo.cm.model.CircularDependencyException;
+import org.onehippo.cm.model.DuplicateNameException;
+import org.onehippo.cm.model.MissingDependencyException;
 import org.onehippo.cm.model.Orderable;
-import org.onehippo.cm.model.builder.exceptions.CircularDependencyException;
-import org.onehippo.cm.model.builder.exceptions.DuplicateNameException;
-import org.onehippo.cm.model.builder.exceptions.MissingDependencyException;
 
 /**
  * Topological <em>in place</em> {@link #sort(List) sorter} of a <em>modifiable</em> DAG list of {@link Orderable}s.

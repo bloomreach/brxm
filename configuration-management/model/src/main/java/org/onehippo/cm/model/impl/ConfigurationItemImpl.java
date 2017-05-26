@@ -60,10 +60,6 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
         return parent;
     }
 
-    public ConfigurationNodeImpl getModifiableParent() {
-        return parent;
-    }
-
     public void setParent(final ConfigurationNodeImpl parent) {
         this.parent = parent;
     }

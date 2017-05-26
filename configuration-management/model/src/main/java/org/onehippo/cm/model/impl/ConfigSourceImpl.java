@@ -29,19 +29,22 @@ public class ConfigSourceImpl extends SourceImpl {
         return SourceType.CONFIG;
     }
 
-    public void addNamespaceDefinition(final String prefix, final URI uri) {
+    public NamespaceDefinitionImpl addNamespaceDefinition(final String prefix, final URI uri) {
         final NamespaceDefinitionImpl definition = new NamespaceDefinitionImpl(this, prefix, uri);
         modifiableDefinitions.add(definition);
+        return definition;
     }
 
-    public void addNodeTypeDefinition(final String value, final boolean isResource) {
+    public NodeTypeDefinitionImpl addNodeTypeDefinition(final String value, final boolean isResource) {
         final NodeTypeDefinitionImpl definition = new NodeTypeDefinitionImpl(this, value, isResource);
         modifiableDefinitions.add(definition);
+        return definition;
     }
 
-    public void addWebFileBundleDefinition(final String name) {
+    public WebFileBundleDefinitionImpl addWebFileBundleDefinition(final String name) {
         final WebFileBundleDefinitionImpl definition = new WebFileBundleDefinitionImpl(this, name);
         modifiableDefinitions.add(definition);
+        return definition;
     }
 
     public ConfigDefinitionImpl addConfigDefinition() {

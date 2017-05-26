@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.Project;
-import org.onehippo.cm.model.builder.OrderableListSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,11 +82,16 @@ public class ProjectImpl implements Project {
         return modules;
     }
 
-    public List<ModuleImpl> getModifiableModules() {
-        return modifiableModules;
+    private void verifyNewModule(final String name) {
+        if (moduleMap.containsKey(name)) {
+            final String msg = String.format("Module %s already exists while merging projects. Merging of modules is not supported.",
+                    moduleMap.get(name).getFullName());
+            throw new IllegalStateException(msg);
+        }
     }
 
     public ModuleImpl addModule(final String name) {
+        verifyNewModule(name);
         final ModuleImpl module = new ModuleImpl(name, this);
         moduleMap.put(name, module);
         modifiableModules.add(module);
@@ -98,21 +102,11 @@ public class ProjectImpl implements Project {
         modulesSorter.sort(modifiableModules);
     }
 
-    void pushModule(final ModuleImpl module) {
-        final String name = module.getName();
-
-        if (moduleMap.containsKey(name)) {
-            final String msg = String.format("Module %s already exists while merging projects. Merging of modules is not supported.",
-                    module.getFullName());
-            throw new IllegalStateException(msg);
-        }
-
-        addModule(name).addAfter(module.getAfter())
-                .setConfigResourceInputProvider(module.getConfigResourceInputProvider())
-                .setContentResourceInputProvider(module.getContentResourceInputProvider())
-                .pushActions(module)
-                .setMvnPath(module.getMvnPath())
-                .pushDefinitions(module);
+    void addModule(final ModuleImpl other) {
+        verifyNewModule(other.getName());
+        final ModuleImpl module = new ModuleImpl(other, this);
+        moduleMap.put(module.getName(), module);
+        modifiableModules.add(module);
     }
 
     public boolean equals(Object other) {

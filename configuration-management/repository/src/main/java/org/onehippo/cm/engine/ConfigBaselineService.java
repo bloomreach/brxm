@@ -49,7 +49,7 @@ import org.onehippo.cm.model.NodeTypeDefinition;
 import org.onehippo.cm.model.Project;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.Value;
-import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.ContentSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
@@ -509,7 +509,7 @@ public class ConfigBaselineService {
         else {
             // otherwise, if the baseline node DOES exist...
             final Node baselineNode = getBaselineNode(rootNode);
-            final ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
+            final ConfigurationModelImpl model = new ConfigurationModelImpl();
             final List<GroupImpl> groups = new ArrayList<>();
 
             // First phase: load and parse module descriptors
@@ -519,10 +519,8 @@ public class ConfigBaselineService {
             parseSources(groups);
 
             // build the final merged model
-            for (GroupImpl group : groups) {
-                builder.push(group);
-            }
-            result = builder.build();
+            groups.forEach(model::addGroup);
+            result = model.build();
         }
 
         stopWatch.stop();

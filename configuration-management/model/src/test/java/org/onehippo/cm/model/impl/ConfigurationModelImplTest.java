@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.model.builder;
+package org.onehippo.cm.model.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,26 +23,16 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableSet;
 
 import org.junit.Test;
-import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
-import org.onehippo.cm.model.impl.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.GroupImpl;
-import org.onehippo.cm.model.impl.ModelTestUtils;
-import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
-import org.onehippo.cm.model.impl.NodeTypeDefinitionImpl;
-import org.onehippo.cm.model.impl.ProjectImpl;
-import org.onehippo.cm.model.impl.WebFileBundleDefinitionImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
+public class ConfigurationModelImplTest {
 
     @Test
     public void empty_builder() {
-        final ConfigurationModelImpl model = new ConfigurationModelBuilder().build();
+        final ConfigurationModelImpl model = new ConfigurationModelImpl().build();
 
         assertEquals(0, model.getSortedGroups().size());
         assertEquals(0, model.getNamespaceDefinitions().size());
@@ -60,7 +50,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
     public void new_group() {
         final GroupImpl group = new GroupImpl("c1");
         group.addProject("p1");
-        final ConfigurationModelImpl model = new ConfigurationModelBuilder().push(group).build();
+        final ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(group).build();
 
         final GroupImpl consolidated = model.getSortedGroups().get(0);
         assertEquals("c1", consolidated.getName());
@@ -74,7 +64,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         c1.addProject("p1");
         c2.addProject("p2");
 
-        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).push(c2).build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).addGroup(c2).build();
 
         List<GroupImpl> groups = model.getSortedGroups();
         assertEquals(2, groups.size());
@@ -89,7 +79,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         assertEquals("p2", projects2.get(0).getName());
 
         // validate 'natural' sorting
-        model = new ConfigurationModelBuilder().push(c2).push(c1).build();
+        model = new ConfigurationModelImpl().addGroup(c2).addGroup(c1).build();
 
         groups = model.getSortedGroups();
         assertEquals(2, groups.size());
@@ -111,7 +101,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         c1a.addProject("p1");
         c1b.addProject("p2");
 
-        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1a).addGroup(c1b).build();
 
         List<GroupImpl> groups = model.getSortedGroups();
         assertEquals(1, groups.size());
@@ -122,7 +112,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         assertEquals("p2", projects.get(1).getName());
 
         // validate 'natural' sorting
-        model = new ConfigurationModelBuilder().push(c1b).push(c1a).build();
+        model = new ConfigurationModelImpl().addGroup(c1b).addGroup(c1a).build();
 
         groups = model.getSortedGroups();
         assertEquals(1, groups.size());
@@ -138,11 +128,11 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         final GroupImpl c1 = new GroupImpl("c1").addAfter(ImmutableSet.of("c2"));
         final GroupImpl c2 = new GroupImpl("c2");
 
-        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).push(c2).build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).addGroup(c2).build();
         assertEquals("c2", model.getSortedGroups().get(0).getName());
         assertEquals("c1", model.getSortedGroups().get(1).getName());
 
-        model = new ConfigurationModelBuilder().push(c2).push(c1).build();
+        model = new ConfigurationModelImpl().addGroup(c2).addGroup(c1).build();
         assertEquals("c2", model.getSortedGroups().get(0).getName());
         assertEquals("c1", model.getSortedGroups().get(1).getName());
     }
@@ -155,12 +145,12 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         final GroupImpl cx2 = new GroupImpl("cx2");
         final GroupImpl cx3 = new GroupImpl("cx3").addAfter(ImmutableSet.of("cx2"));
 
-        ConfigurationModelImpl model = new ConfigurationModelBuilder()
-                .push(ca1a)
-                .push(ca1b)
-                .push(cx1)
-                .push(cx2)
-                .push(cx3)
+        ConfigurationModelImpl model = new ConfigurationModelImpl()
+                .addGroup(ca1a)
+                .addGroup(ca1b)
+                .addGroup(cx1)
+                .addGroup(cx2)
+                .addGroup(cx3)
                 .build();
 
         assertEquals(4, model.getSortedGroups().size());
@@ -177,7 +167,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         c1a.addProject("p1").addModule("m1");
         c1b.addProject("p1").addModule("m2");
 
-        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1a).addGroup(c1b).build();
 
         List<GroupImpl> groups = model.getSortedGroups();
         assertEquals(1, groups.size());
@@ -191,7 +181,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         assertEquals("m2", modules.get(1).getName());
 
         // validate 'natural' sorting
-        model = new ConfigurationModelBuilder().push(c1b).push(c1a).build();
+        model = new ConfigurationModelImpl().addGroup(c1b).addGroup(c1a).build();
         groups = model.getSortedGroups();
         assertEquals(1, groups.size());
         assertEquals("c1", groups.get(0).getName());
@@ -211,14 +201,14 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         c1a.addProject("p1").addAfter(ImmutableSet.of("p2"));
         c1b.addProject("p2");
 
-        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1a).addGroup(c1b).build();
         List<GroupImpl> groups = model.getSortedGroups();
         List<ProjectImpl> projects = groups.get(0).getProjects();
         assertEquals(2, projects.size());
         assertEquals("p2", projects.get(0).getName());
         assertEquals("p1", projects.get(1).getName());
 
-        model = new ConfigurationModelBuilder().push(c1b).push(c1a).build();
+        model = new ConfigurationModelImpl().addGroup(c1b).addGroup(c1a).build();
         groups = model.getSortedGroups();
         projects = groups.get(0).getProjects();
         assertEquals(2, projects.size());
@@ -237,9 +227,9 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         c1b.addProject("pa1").addAfter(ImmutableSet.of("px1", "px3"));
         c1b.addProject("px2");
 
-        ConfigurationModelImpl model = new ConfigurationModelBuilder()
-                .push(c1a)
-                .push(c1b)
+        ConfigurationModelImpl model = new ConfigurationModelImpl()
+                .addGroup(c1a)
+                .addGroup(c1b)
                 .build();
         List<GroupImpl> groups = model.getSortedGroups();
         assertEquals(1, groups.size());
@@ -257,10 +247,10 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         c1a.addProject("p1").addModule("m1");
         c1b.addProject("p1").addModule("m1");
 
-        ConfigurationModelBuilder builder = new ConfigurationModelBuilder().push(c1a);
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1a);
 
         try {
-            builder.push(c1b);
+            model.addGroup(c1b);
         } catch (IllegalStateException e) {
             assertEquals("Module c1/p1/m1 already exists while merging projects. Merging of modules is not supported.", e.getMessage());
         }
@@ -273,7 +263,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         c1a.addProject("p1").addModule("m1").addAfter(ImmutableSet.of("m2"));
         c1b.addProject("p1").addModule("m2");
 
-        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1a).addGroup(c1b).build();
 
         List<GroupImpl> groups = model.getSortedGroups();
         List<ProjectImpl> projects = groups.get(0).getProjects();
@@ -282,7 +272,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         assertEquals("m2", modules.get(0).getName());
         assertEquals("m1", modules.get(1).getName());
 
-        model = new ConfigurationModelBuilder().push(c1b).push(c1a).build();
+        model = new ConfigurationModelImpl().addGroup(c1b).addGroup(c1a).build();
 
         groups = model.getSortedGroups();
         projects = groups.get(0).getProjects();
@@ -305,7 +295,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         p1a.addModule("mx3").addAfter(ImmutableSet.of("mx2"));
         p1b.addModule("mx2");
 
-        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1a).push(c1b).build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1a).addGroup(c1b).build();
 
         List<GroupImpl> groups = model.getSortedGroups();
         List<ProjectImpl> projects = groups.get(0).getProjects();
@@ -324,7 +314,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
 
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
 
-        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
 
         assertEquals(1, model.getNamespaceDefinitions().size());
         assertEquals(1, model.getNodeTypeDefinitions().size());
@@ -349,7 +339,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m1);
 
-        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
 
         String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
         assertEquals("[myhippoproject, hishippoproject]", namespaces);
@@ -370,7 +360,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m1);
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
 
-        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
 
         String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
         assertEquals("[myhippoproject, hishippoproject]", namespaces);
@@ -396,10 +386,10 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
         ModelTestUtils.loadYAMLString(yaml, m1);
 
-        ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
+        ConfigurationModelImpl model = new ConfigurationModelImpl();
 
         try {
-            builder.push(c1);
+            model.addGroup(c1);
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
             assertEquals("Duplicate content root paths '/a/b' in module 'm1' in source files 'c1/p1/m1 [string]' and 'c1/p1/m1 [builder/definition-sorter.yaml]'.", e.getMessage());
@@ -418,10 +408,10 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
         ModelTestUtils.loadYAMLString(yaml, m1);
 
-        ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
+        ConfigurationModelImpl model = new ConfigurationModelImpl();
 
         try {
-            builder.push(c1);
+            model.addGroup(c1);
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
             assertEquals("CNDs are specified in multiple sources of a module: 'c1/p1/m1 [string]' and 'c1/p1/m1 [builder/definition-sorter.yaml]'. For proper ordering, they must be specified in a single source.", e.getMessage());
@@ -440,7 +430,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
 
         ModelTestUtils.loadYAMLString(yaml, m1);
 
-        ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
 
         String nodeTypes = model.getNodeTypeDefinitions().stream().map(NodeTypeDefinitionImpl::getValue).collect(Collectors.toList()).toString();
         assertEquals("[dummy CND content, alphabetically earlier dummy CND]", nodeTypes);
@@ -458,7 +448,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
 
         ModelTestUtils.loadYAMLString(yaml, m1);
 
-        final ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).build();
+        final ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
 
         final String webFileBundles = model.getWebFileBundleDefinitions().stream()
                 .map(WebFileBundleDefinitionImpl::getName).collect(Collectors.toList()).toString();
@@ -485,7 +475,7 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
 
         ModelTestUtils.loadYAMLString(yaml2, m2);
 
-        final ConfigurationModelImpl model = new ConfigurationModelBuilder().push(c1).push(c2).build();
+        final ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).addGroup(c2).build();
 
         final String webFileBundles = model.getWebFileBundleDefinitions().stream()
                 .map(WebFileBundleDefinitionImpl::getName).collect(Collectors.toList()).toString();
@@ -508,9 +498,9 @@ public class ConfigurationModelBuilderTest extends AbstractBuilderBaseTest {
 
         ModelTestUtils.loadYAMLString(yaml, m2);
 
-        final ConfigurationModelBuilder builder = new ConfigurationModelBuilder().push(c1).push(c2);
+        final ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).addGroup(c2);
         try {
-            builder.build();
+            model.build();
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
             assertEquals("Duplicate web file bundle with name 'name' found in source files 'c1/p1/m1 [string]' and 'c2/p2/m2 [string]'.",

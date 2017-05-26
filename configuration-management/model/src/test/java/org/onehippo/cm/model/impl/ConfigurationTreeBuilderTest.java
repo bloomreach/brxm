@@ -14,28 +14,41 @@
  * limitations under the License.
  */
 
-package org.onehippo.cm.model.builder;
+package org.onehippo.cm.model.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.ConfigurationProperty;
 import org.onehippo.cm.model.PropertyType;
+import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
-import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
-import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
-import org.onehippo.cm.model.impl.ConfigurationPropertyImpl;
-import org.onehippo.cm.model.impl.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.ModelTestUtils;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
+public class ConfigurationTreeBuilderTest {
 
     private final ConfigurationTreeBuilder builder = new ConfigurationTreeBuilder();
+
+    private String valuesToString(final ConfigurationProperty property) {
+        return Arrays.stream(property.getValues()).map(Value::getString).collect(Collectors.toList()).toString();
+    }
+
+    private String valueToString(final ConfigurationProperty property) {
+        return property.getValue().getString();
+    }
+
+    private String sortedCollectionToString(final Map<String, ? extends Object> map) {
+        return new ArrayList<>(map.keySet()).toString();
+    }
 
     @Test
     public void simple_single_definition() throws Exception {
@@ -2039,5 +2052,4 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         assertEquals(ConfigurationItemCategory.CONFIGURATION, node.getChildPropertyCategory("non-existing-property"));
         assertEquals(ConfigurationItemCategory.RUNTIME,       node.getChildPropertyCategory("override"));
     }
-
 }

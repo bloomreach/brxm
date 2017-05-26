@@ -24,14 +24,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.parser.ParserException;
@@ -57,30 +58,29 @@ public class ClasspathConfigurationModelReader {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        final ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
+        final ConfigurationModelImpl model = new ConfigurationModelImpl();
 
         // load modules that are specified via repo.bootstrap.modules system property
-        final List<Map<String, GroupImpl>> groupsFromSourceFiles = readModulesFromSourceFiles(verifyOnly);
+        final List<GroupImpl> groupsFromSourceFiles = readModulesFromSourceFiles(verifyOnly);
 
         // add all of the filesystem modules to the builder as "replacements" that override later additions
         groupsFromSourceFiles.stream()
-                .flatMap(gm -> gm.values().stream())
-                .flatMap(g -> g.getModifiableProjects().stream())
-                .flatMap(p -> p.getModifiableModules().stream())
-                .forEach(builder::pushReplacement);
+                .flatMap(g -> g.getProjects().stream())
+                .flatMap(p -> p.getModules().stream())
+                .forEach(model::addModule);
 
         // load modules that are packaged on the classpath
-        final Pair<List<FileSystem>, List<Map<String, GroupImpl>>> classpathGroups =
+        final Pair<Set<FileSystem>, List<GroupImpl>> classpathGroups =
                 readModulesFromClasspath(classLoader, verifyOnly);
 
-        // add classpath modules to builder
-        classpathGroups.getRight().stream().forEach(builder::push);
+        // add classpath modules to model
+        classpathGroups.getRight().stream().forEach(model::addGroup);
 
-        // add filesystems to the builder
-        classpathGroups.getLeft().forEach(builder::addFileSystem);
+        // add filesystems to the model
+        model.setFileSystems(classpathGroups.getLeft());
 
-        // build the merged ConfigurationModel
-        final ConfigurationModelImpl model = builder.build();
+        // build the merged model
+        model.build();
 
         stopWatch.stop();
         log.info("ConfigurationModel loaded in {}", stopWatch.toString());
@@ -94,12 +94,12 @@ public class ClasspathConfigurationModelReader {
      * @param verifyOnly TODO
      * @return a List of results from PathConfigurationReader
      */
-    protected List<Map<String, GroupImpl>> readModulesFromSourceFiles(final boolean verifyOnly) throws IOException, ParserException {
+    protected List<GroupImpl> readModulesFromSourceFiles(final boolean verifyOnly) throws IOException, ParserException {
         // if repo.bootstrap.modules and project.basedir are defined, load modules from the filesystem before loading
         // additional modules from the classpath
         final String projectDir = System.getProperty(Constants.PROJECT_BASEDIR_PROPERTY);
         final String sourceModules = System.getProperty(Constants.BOOTSTRAP_MODULES_PROPERTY);
-        final List<Map<String, GroupImpl>> groupsFromSourceFiles = new ArrayList<>();
+        final List<GroupImpl> groupsFromSourceFiles = new ArrayList<>();
         if (StringUtils.isNotBlank(projectDir) && StringUtils.isNotBlank(sourceModules)) {
 
             // convert the project basedir to a Path, so we can resolve modules against it
@@ -123,11 +123,11 @@ public class ClasspathConfigurationModelReader {
 
                 // store mvnSourcePath on each module for later use by auto-export
                 result.getGroups().values().stream()
-                        .flatMap(g -> g.getModifiableProjects().stream())
-                        .flatMap(p -> p.getModifiableModules().stream())
+                        .flatMap(g -> g.getProjects().stream())
+                        .flatMap(p -> p.getModules().stream())
                         .forEach(m -> m.setMvnPath(mvnModulePath));
 
-                groupsFromSourceFiles.add(result.getGroups());
+                groupsFromSourceFiles.addAll(result.getGroups().values());
             }
 
         }
@@ -140,9 +140,9 @@ public class ClasspathConfigurationModelReader {
      * @param verifyOnly TODO
      * @return a Map of FileSystems that will need to be closed after processing the modules and the corresponding PathConfigurationReader result
      */
-    protected Pair<List<FileSystem>, List<Map<String, GroupImpl>>> readModulesFromClasspath(final ClassLoader classLoader, final boolean verifyOnly)
+    protected Pair<Set<FileSystem>, List<GroupImpl>> readModulesFromClasspath(final ClassLoader classLoader, final boolean verifyOnly)
             throws IOException, ParserException, URISyntaxException {
-        final Pair<List<FileSystem>, List<Map<String, GroupImpl>>> groups = new MutablePair<>(new ArrayList<>(), new ArrayList<>());
+        final Pair<Set<FileSystem>, List<GroupImpl>> groups = new MutablePair<>(new HashSet<>(), new ArrayList<>());
 
         // find all the classpath resources with a filename that matches the expected module descriptor filename
         // and also located at the root of a classpath entry
@@ -170,7 +170,7 @@ public class ClasspathConfigurationModelReader {
                 // Hang onto a reference to this FS, so we can close it later with ConfigurationModel.close()
                 groups.getLeft().add(fs);
 
-                groups.getRight().add(result.getGroups());
+                groups.getRight().addAll(result.getGroups().values());
             }
             else {
                 // if part of the classpath is a raw dir on the native filesystem, just use the default FileSystem
@@ -180,7 +180,7 @@ public class ClasspathConfigurationModelReader {
                 final PathConfigurationReader.ReadResult result =
                         new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
 
-                groups.getRight().add(result.getGroups());
+                groups.getRight().addAll(result.getGroups().values());
             }
         }
         return groups;

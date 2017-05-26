@@ -32,7 +32,6 @@ import org.onehippo.cm.model.FileConfigurationWriter;
 import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.PathConfigurationReader;
 import org.onehippo.cm.model.SerializerTest;
-import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.slf4j.Logger;
@@ -103,11 +102,11 @@ public class DefinitionMergeTest {
             try {
                 log.debug("\n\nRunning test: {}", testName);
 
-                final ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
+                final ConfigurationModelImpl model = new ConfigurationModelImpl();
 
                 // build base
                 for (String baseName : base) {
-                    push(builder, loadModule(in(testName, baseName)));
+                    model.addModule(loadModule(in(testName, baseName)));
                 }
 
                 // build auto-export targets
@@ -116,9 +115,9 @@ public class DefinitionMergeTest {
                     final ModuleImpl toExportModule = loadModule(in(testName, toExportName));
                     toExportModule.setMvnPath(toExportName);
                     toExportModules.add(toExportModule);
-                    push(builder, toExportModule);
+                    model.addModule(toExportModule);
                 }
-                ConfigurationModelImpl model = builder.build();
+                model.build();
 
                 // load diff module
                 final ModuleImpl diff = loadModule(in(testName, "diff"));
@@ -135,10 +134,6 @@ public class DefinitionMergeTest {
                 e.printStackTrace(System.err);
                 throw e;
             }
-        }
-
-        protected void push(ConfigurationModelBuilder builder, ModuleImpl module) {
-            builder.push(module.getProject().getGroup());
         }
 
         /**
@@ -165,8 +160,8 @@ public class DefinitionMergeTest {
                     readFromResource(modulePath + "/" + Constants.HCM_MODULE_YAML);
 
             return result.getGroups().values().stream()
-                    .flatMap(group -> group.getModifiableProjects().stream())
-                    .flatMap(project -> project.getModifiableModules().stream())
+                    .flatMap(group -> group.getProjects().stream())
+                    .flatMap(project -> project.getModules().stream())
                     .findFirst().get();
         }
 

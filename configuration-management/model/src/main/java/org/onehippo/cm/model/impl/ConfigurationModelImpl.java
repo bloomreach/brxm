@@ -25,9 +25,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -35,6 +38,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,16 +48,26 @@ import static org.onehippo.cm.model.SnsUtils.createIndexedName;
 public class ConfigurationModelImpl implements ConfigurationModel {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationModelImpl.class);
+    private static final OrderableListSorter<GroupImpl> groupSorter = new OrderableListSorter<>(Group.class.getSimpleName());
 
-    private List<GroupImpl> sortedGroups;
-    private final List<NamespaceDefinitionImpl> namespaceDefinitions = new ArrayList<>();
-    private final List<NodeTypeDefinitionImpl> nodeTypeDefinitions = new ArrayList<>();
+    private final Map<String, GroupImpl> groupMap = new HashMap<>();
+    private final List<GroupImpl> groups = new ArrayList<>();
+    private final List<GroupImpl> sortedGroups = Collections.unmodifiableList(groups);
+
+    private final Set<ModuleImpl> replacements = new HashSet<>();
 
     private ConfigurationNodeImpl configurationRootNode;
 
-    private final List<WebFileBundleDefinitionImpl> webFileBundleDefinitions = new ArrayList<>();
-    private final List<ContentDefinitionImpl> contentDefinitions = new ArrayList<>();
-    private final List<ConfigDefinitionImpl> configDefinitions = new ArrayList<>();
+    private final List<NamespaceDefinitionImpl> modifiableNamespaceDefinitions = new ArrayList<>();
+    private final List<NamespaceDefinitionImpl> namespaceDefinitions = Collections.unmodifiableList(modifiableNamespaceDefinitions);
+    private final List<NodeTypeDefinitionImpl> modifiableNodeTypeDefinitions = new ArrayList<>();
+    private final List<NodeTypeDefinitionImpl> nodeTypeDefinitions = Collections.unmodifiableList(modifiableNodeTypeDefinitions);
+    private final List<WebFileBundleDefinitionImpl> modifiableWebFileBundleDefinitions = new ArrayList<>();
+    private final List<WebFileBundleDefinitionImpl> webFileBundleDefinitions = Collections.unmodifiableList(modifiableWebFileBundleDefinitions);
+    private final List<ContentDefinitionImpl> modifiableContentDefinitions = new ArrayList<>();
+    private final List<ContentDefinitionImpl> contentDefinitions = Collections.unmodifiableList(modifiableContentDefinitions);
+    private final List<ConfigDefinitionImpl> modifiableConfigDefinitions = new ArrayList<>();
+    private final List<ConfigDefinitionImpl> configDefinitions = Collections.unmodifiableList(modifiableConfigDefinitions);
 
     // Used for cleanup when done with this ConfigurationModel
     private Set<FileSystem> filesystems = new HashSet<>();
@@ -88,45 +102,97 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         return contentDefinitions;
     }
 
-    public List<ConfigDefinitionImpl> getConfigDefinitions() {
-        return configDefinitions;
+    private void addContentDefinitions(final Collection<ContentDefinitionImpl> definitions) {
+        modifiableContentDefinitions.addAll(definitions);
     }
 
-    public void addContentDefinition(final ContentDefinitionImpl definition) {
-        contentDefinitions.add(definition);
+    private void addConfigDefinitions(final Collection<ConfigDefinitionImpl> definitions) {
+        modifiableConfigDefinitions.addAll(definitions);
     }
 
-    public void addContentDefinitions(final Collection<ContentDefinitionImpl> definitions) {
-        contentDefinitions.addAll(definitions);
+    private void addNamespaceDefinitions(final List<NamespaceDefinitionImpl> definitions) {
+        modifiableNamespaceDefinitions.addAll(definitions);
     }
 
-    public void addConfigDefinitions(final Collection<ConfigDefinitionImpl> definitions) {
-        configDefinitions.addAll(definitions);
+    private void addNodeTypeDefinitions(final List<NodeTypeDefinitionImpl> definitions) {
+        modifiableNodeTypeDefinitions.addAll(definitions);
     }
 
-    public void setSortedGroups(final List<GroupImpl> sortedGroups) {
-        this.sortedGroups = new ArrayList<>(sortedGroups);
-    }
-
-    public void addNamespaceDefinitions(final List<NamespaceDefinitionImpl> definitions) {
-        namespaceDefinitions.addAll(definitions);
-    }
-
-    public void addNodeTypeDefinitions(final List<NodeTypeDefinitionImpl> definitions) {
-        nodeTypeDefinitions.addAll(definitions);
-    }
-
-    public void setConfigurationRootNode(final ConfigurationNodeImpl configurationRootNode) {
+    private void setConfigurationRootNode(final ConfigurationNodeImpl configurationRootNode) {
         this.configurationRootNode = configurationRootNode;
     }
 
-    public void addWebFileBundleDefinitions(final List<WebFileBundleDefinitionImpl> definitions) {
+    private void addWebFileBundleDefinitions(final List<WebFileBundleDefinitionImpl> definitions) {
         for (WebFileBundleDefinitionImpl definition : definitions) {
             ensureUniqueBundleName(definition);
         }
-        webFileBundleDefinitions.addAll(definitions);
+        modifiableWebFileBundleDefinitions.addAll(definitions);
     }
 
+    public ConfigurationModelImpl addGroup(final GroupImpl group) {
+        if (!groupMap.containsKey(group.getName())) {
+            groupMap.put(group.getName(), new GroupImpl(group.getName()));
+        }
+        final GroupImpl consolidatedGroup = groupMap.get(group.getName());
+        consolidatedGroup.addAfter(group.getAfter());
+        for (ProjectImpl project : group.getProjects()) {
+            final ProjectImpl consolidatedProject = consolidatedGroup.getOrAddProject(project.getName());
+            consolidatedProject.addAfter(project.getAfter());
+            for (ModuleImpl module : project.getModules()) {
+                if (!replacements.contains(module)) {
+                    consolidatedProject.addModule(module);
+                }
+            }
+        }
+        return this;
+    }
+
+    public ConfigurationModelImpl addModule(final ModuleImpl module) {
+        addGroup(module.getProject().getGroup());
+        replacements.add(module);
+        return this;
+    }
+
+    public ConfigurationModelImpl build() {
+        buildModel();
+        buildConfiguration();
+        return this;
+    }
+
+    public ConfigurationModelImpl buildModel() {
+        groups.clear();
+        groups.addAll(groupMap.values());
+        groupSorter.sort(groups);
+        groups.forEach(GroupImpl::sortProjects);
+        return this;
+    }
+
+    public ConfigurationModelImpl buildConfiguration() {
+
+        modifiableNamespaceDefinitions.clear();
+        modifiableNodeTypeDefinitions.clear();
+        modifiableConfigDefinitions.clear();
+        modifiableContentDefinitions.clear();
+        modifiableWebFileBundleDefinitions.clear();
+
+        final ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
+        for (GroupImpl g : groups) {
+            for (ProjectImpl p : g.getProjects()) {
+                for (ModuleImpl module : p.getModules()) {
+                    log.info("Merging module {}", module.getFullName());
+                    addNamespaceDefinitions(module.getNamespaceDefinitions());
+                    addNodeTypeDefinitions(module.getNodeTypeDefinitions());
+                    addConfigDefinitions(module.getConfigDefinitions());
+                    addContentDefinitions(new HashSet<>(module.getContentDefinitions()));
+                    addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
+                    module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
+                }
+            }
+        }
+        setConfigurationRootNode(configurationTreeBuilder.build());
+        return this;
+    }
+    
     /**
      * Compile a manifest of contents. Format will be a YAML document as follows.
      * <pre>
@@ -153,14 +219,14 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      */
     @Override
     public String getDigest() {
-        // accumulate modules in sorted order
-        TreeSet<ModuleImpl> modules = new TreeSet<>();
-        getSortedGroups().forEach(g -> g.getProjects().forEach(p -> p.getModules().forEach(m -> modules.add(m))));
-
-        // for each module, accumulate manifest items
         TreeMap<ModuleImpl,TreeMap<String,String>> manifest = new TreeMap<>();
-        for (ModuleImpl module : modules) {
-            module.compileManifest(this, manifest);
+        // for each module, accumulate manifest items
+        for (GroupImpl g : getSortedGroups()) {
+            for (ProjectImpl p : g.getProjects()) {
+                for (ModuleImpl m : p.getModules()) {
+                    m.compileManifest(this, manifest);
+                }
+            }
         }
 
         final String modelManifest = manifestToString(manifest);

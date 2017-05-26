@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model.builder;
+package org.onehippo.cm.model.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,10 +22,9 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.onehippo.cm.model.Orderable;
-import org.onehippo.cm.model.builder.exceptions.CircularDependencyException;
-import org.onehippo.cm.model.builder.exceptions.DuplicateNameException;
-import org.onehippo.cm.model.builder.exceptions.MissingDependencyException;
-import org.onehippo.cm.model.impl.OrderableImpl;
+import org.onehippo.cm.model.CircularDependencyException;
+import org.onehippo.cm.model.DuplicateNameException;
+import org.onehippo.cm.model.MissingDependencyException;
 
 import static org.junit.Assert.assertEquals;
 

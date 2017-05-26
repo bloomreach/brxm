@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.Project;
-import org.onehippo.cm.model.builder.OrderableListSorter;
 
 public class GroupImpl implements Group {
 
@@ -68,10 +67,6 @@ public class GroupImpl implements Group {
         return projects;
     }
 
-    public List<ProjectImpl> getModifiableProjects() {
-        return modifiableProjects;
-    }
-
     public ProjectImpl addProject(final String name) {
         final ProjectImpl project = new ProjectImpl(name, this);
         projectMap.put(name, project);
@@ -84,17 +79,8 @@ public class GroupImpl implements Group {
         modifiableProjects.forEach(ProjectImpl::sortModules);
     }
 
-    public void pushProject(final ProjectImpl project, final Set<ModuleImpl> replacements) {
-        final String name = project.getName();
-        final ProjectImpl consolidated = projectMap.containsKey(name) ? projectMap.get(name) : addProject(name);
-
-        consolidated.addAfter(project.getAfter());
-        for (ModuleImpl module : project.getModifiableModules()) {
-            // if we have a replacement module, don't use the one from the given project
-            if (!replacements.contains(module)) {
-                consolidated.pushModule(module);
-            }
-        }
+    public ProjectImpl getOrAddProject(final String name) {
+        return projectMap.containsKey(name) ? projectMap.get(name) : addProject(name);
     }
 
     public boolean equals(Object other) {

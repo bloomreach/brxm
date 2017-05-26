@@ -13,11 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model.builder.exceptions;
+package org.onehippo.cm.model;
 
-public class MissingDependencyException extends RuntimeException {
+public class CircularDependencyException extends RuntimeException {
 
-    public MissingDependencyException(final String message) {
+    public CircularDependencyException(final String message) {
         super(message);
     }
 }

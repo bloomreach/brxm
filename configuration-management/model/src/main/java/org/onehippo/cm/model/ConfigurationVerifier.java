@@ -17,10 +17,8 @@ package org.onehippo.cm.model;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 
-import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
-import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 
 public class ConfigurationVerifier {
 
@@ -33,11 +31,8 @@ public class ConfigurationVerifier {
         }
         final Path moduleDescriptorPath = Paths.get(args[0]);
         final PathConfigurationReader.ReadResult result = new PathConfigurationReader().read(moduleDescriptorPath, true);
-        final Map<String, GroupImpl> groups = result.getGroups();
-        ConfigurationModelBuilder builder = new ConfigurationModelBuilder();
-        for (GroupImpl group : groups.values()) {
-            builder.push(group);
-        }
-        builder.build();
+        ConfigurationModelImpl model = new ConfigurationModelImpl();
+        result.getGroups().values().forEach(model::addGroup);
+        model.build();
     }
 }

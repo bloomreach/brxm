@@ -25,7 +25,6 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.builder.ConfigurationModelBuilder;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.repository.bootstrap.PostStartupTask;
 import org.slf4j.Logger;
@@ -125,7 +124,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
 
-            final ConfigurationModel baseline = new ConfigurationModelBuilder().build();
+            final ConfigurationModel baseline = new ConfigurationModelImpl().build();
 
             final ConfigurationConfigService service = new ConfigurationConfigService();
             service.computeAndWriteDelta(baseline, model, session, false);
