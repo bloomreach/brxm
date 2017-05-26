@@ -63,10 +63,10 @@ public class DefinitionMergeTest {
     }
 
     // disabled to safely commit for refactoring purposes
-//    @Test
-//    public void delete_node() throws Exception {
-//        new MergeTest("delete-node").test();
-//    }
+    @Test
+    public void delete_node() throws Exception {
+        new MergeTest("delete-node").test();
+    }
 
     public class MergeTest extends SerializerTest {
         String testName;
@@ -174,8 +174,15 @@ public class DefinitionMergeTest {
             moduleContext.createOutputProviders(mOut);
             writer.writeModule(module, DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
 
+            // in case we expect an empty output for a module, we need to create the empty dir to compare against,
+            // since the normal mvn resource copy will not recreate empty dirs in target
+            final Path expectedRoot = out(testName, module);
+            if (!expectedRoot.toFile().exists()) {
+                expectedRoot.toFile().mkdir();
+            }
+
             // compare output to expected
-            assertNoFileDiff(testName+": "+module.getName(), out(testName, module), mOut);
+            assertNoFileDiff(testName+": "+module.getName(), expectedRoot, mOut);
         }
     }
 }

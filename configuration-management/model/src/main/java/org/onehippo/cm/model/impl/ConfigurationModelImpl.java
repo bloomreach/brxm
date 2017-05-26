@@ -148,6 +148,14 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         return this;
     }
 
+    /**
+     * Note: calling this method directly, rather than addGroup(), has the important effect of disabling the normal
+     * validation check to prevent adding two modules with the same full-name. This is intended to support the use-case
+     * where a new clone of a module will be used to replace an existing module from an existing ConfigurationModel.
+     * Call this method with any new replacement modules before adding the groups from the existing model instance.
+     * @param module the new module to add as a replacement
+     * @return this
+     */
     public ConfigurationModelImpl addModule(final ModuleImpl module) {
         addGroup(module.getProject().getGroup());
         replacements.add(module);

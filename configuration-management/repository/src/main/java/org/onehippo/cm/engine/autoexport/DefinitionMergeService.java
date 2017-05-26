@@ -28,6 +28,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.model.ConfigDefinition;
 import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.Definition;
@@ -165,7 +166,7 @@ public class DefinitionMergeService {
 
         // for each ContentDefinition
         for (final ContentDefinitionImpl change : changes.getContentDefinitions()) {
-            // run the full and complex merge logic
+            // todo run the full and complex merge logic
 //            model =
                     mergeContentDefinition(change, toExport, baseline);
         }
@@ -241,14 +242,19 @@ public class DefinitionMergeService {
      */
     protected static ConfigurationModelImpl rebuild(final HashMap<String, ModuleImpl> toExport,
                                                     final ConfigurationModelImpl baseline) {
-        log.debug("Rebuilding ConfigurationModel for auto-export merge");
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
 
         // note: we assume that the original baseline will perform any required cleanup in close(), so we don't need
         //       to copy FileSystems etc. here
         ConfigurationModelImpl model = new ConfigurationModelImpl();
         toExport.values().forEach(model::addModule);
         baseline.getSortedGroups().forEach(model::addGroup);
-        return model.build();
+        model.build();
+
+        stopWatch.stop();
+        log.info("ConfigurationModel rebuilt for auto-export merge in {}", stopWatch.toString());
+        return model;
     }
 
     protected ConfigurationModelImpl mergeConfigDefinition(final ConfigDefinitionImpl change,
@@ -582,13 +588,7 @@ public class DefinitionMergeService {
                 final Definition childDefinition = childDefItem.getDefinition();
                 if (!alreadyRemovedFrom.contains(childDefinition)) {
                     // otherwise, remove it now -- it must be a root of its definition
-                    if (!childDefItem.isRoot()) {
-                        throw new IllegalStateException(
-                                "Child node of a removed node must be contained in an already-removed parent def"
-                                        + " or be a root definition node: "
-                                        + childDefItem.getPath());
-                    }
-
+                    // or the direct child of a parent that is also being removed
                     removeDefinition((ConfigDefinition) childDefinition, toExport);
                     alreadyRemovedFrom.add(childDefinition);
                 }
