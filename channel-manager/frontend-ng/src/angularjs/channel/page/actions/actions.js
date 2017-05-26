@@ -19,8 +19,8 @@ import focusIf from 'ng-focus-if';
 
 import pageActionsDirective from './pageActions.directive';
 import PageActionsCtrl from './pageActions.controller';
-import pageCreateDirective from './create/create.directive';
-import PageCreateCtrl from './create/create.controller';
+import pageCreateDirective from './new/create.directive';
+import PageCreateCtrl from './new/create.controller';
 import pageEditDirective from './properties/properties.directive';
 import PageEditCtrl from './properties/properties.controller';
 import pageMoveDirective from './move/move.directive';
