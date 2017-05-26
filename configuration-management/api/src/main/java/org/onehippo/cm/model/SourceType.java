@@ -21,5 +21,9 @@ package org.onehippo.cm.model;
 public enum SourceType {
 
     CONFIG,
-    CONTENT
+    CONTENT;
+
+    public final boolean isOfType(final Source source) {
+        return this == source.getType();
+    }
 }

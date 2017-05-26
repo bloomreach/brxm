@@ -46,6 +46,7 @@ import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.ActionItem;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.NodeTypeDefinition;
+import org.onehippo.cm.model.SourceType;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
 import org.onehippo.cm.model.parser.ParserException;
@@ -71,7 +72,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
-    private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator.comparing(SourceImpl::getPath)
+    private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator
+            .comparing(SourceImpl::getPath)
             .thenComparing(x -> x.getClass().getSimpleName()));
 
     private final Set<SourceImpl> sources = Collections.unmodifiableSet(sortedSources);
@@ -149,7 +151,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     @Override
     public Set<ContentSourceImpl> getContentSources() {
         return sources.stream()
-                .filter(ContentSourceImpl.class::isInstance)
+                .filter(SourceType.CONTENT::isOfType)
                 .map(ContentSourceImpl.class::cast)
                 .collect(Collectors.toSet());
     }
@@ -157,7 +159,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     @Override
     public Set<ConfigSourceImpl> getConfigSources() {
         return sources.stream()
-                .filter(ConfigSourceImpl.class::isInstance)
+                .filter(SourceType.CONFIG::isOfType)
                 .map(ConfigSourceImpl.class::cast)
                 .collect(Collectors.toSet());
     }
@@ -287,25 +289,28 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         contentDefinitions.clear();
         webFileBundleDefinitions.clear();
 
-        getSources().forEach(source ->
-                source.getDefinitions().forEach(definition -> {
-                    if (definition instanceof NamespaceDefinitionImpl) {
+        for (SourceImpl source : getSources()) {
+            for (AbstractDefinitionImpl definition : source.getDefinitions()) {
+                switch (definition.getType()) {
+                    case NAMESPACE:
                         namespaceDefinitions.add((NamespaceDefinitionImpl) definition);
-                    } else if (definition instanceof NodeTypeDefinitionImpl) {
+                        break;
+                    case CND:
                         ensureSingleSourceForNodeTypes(definition);
                         nodeTypeDefinitions.add((NodeTypeDefinitionImpl) definition);
-                    } else if (definition instanceof ConfigDefinitionImpl) {
+                        break;
+                    case CONFIG:
                         configDefinitions.add((ConfigDefinitionImpl) definition);
-                    } else if (definition instanceof ContentDefinitionImpl) {
+                        break;
+                    case CONTENT:
                         contentDefinitions.add((ContentDefinitionImpl) definition);
-                    } else if (definition instanceof WebFileBundleDefinitionImpl) {
+                        break;
+                    case WEBFILEBUNDLE:
                         webFileBundleDefinitions.add((WebFileBundleDefinitionImpl) definition);
-                    } else {
-                        throw new IllegalStateException("Failed to sort unsupported definition class '"
-                                + definition.getClass().getName() + "'.");
-                    }
-                })
-        );
+                        break;
+                }
+            }
+        }
 
         // sort the content/config definitions, all other remain in insertion order
         configDefinitions.sort(new ContentDefinitionComparator());
@@ -363,7 +368,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
                     case NAMESPACE:
                     case WEBFILEBUNDLE:
                         // no special processing required
-                        break;
                     case CONTENT:
                         // this shouldn't exist here anymore, but we'll let the verifier handle it
                         break;

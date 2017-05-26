@@ -22,6 +22,10 @@ public enum DefinitionType {
     NAMESPACE,
     CND,
     WEBFILEBUNDLE;
+
+    public final boolean isOfType(final Definition definition) {
+        return this == definition.getType();
+    }
 	
 	public static final String[] CONFIG_NAMES = {
 			CONFIG.toString(),
