@@ -260,11 +260,6 @@
 - hst:branchid (string) mandatory
 + hst:upstream (hst:workspace) = hst:workspace
 
-[hst:hashable] mixin
-- hst:hash (string)
-- hst:upstreamhash (string)
-- hst:deleted (boolean)
-
 [hst:configuration] > nt:base, mix:referenceable, mix:versionable
 - hst:inheritsfrom (string) multiple
 // deprecated : not used any more as only fine grained locking
