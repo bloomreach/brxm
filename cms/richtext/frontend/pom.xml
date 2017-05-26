@@ -62,9 +62,8 @@
     </dependency>
 
     <dependency>
-      <groupId>net.sourceforge.htmlcleaner</groupId>
-      <artifactId>htmlcleaner</artifactId>
-      <version>${sf.htmlcleaner.version}</version>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services-htmlprocessor</artifactId>
     </dependency>
 
     <!-- test -->
@@ -83,6 +82,7 @@
     <dependency>
       <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>

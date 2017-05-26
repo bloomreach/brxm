@@ -18,16 +18,9 @@ package org.hippoecm.frontend.plugins.richtext.view;
 import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
-import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
-import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
-import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
-import org.hippoecm.frontend.plugins.richtext.UuidConverterBuilder;
-import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
-import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
+import org.hippoecm.frontend.plugins.richtext.processor.WicketModel;
 import org.hippoecm.frontend.service.IBrowseService;
 
 /**
@@ -39,25 +32,20 @@ public class RichTextPreviewWithLinksAndImagesPanel extends AbstractRichTextView
                                                   final IModel<Node> nodeModel,
                                                   final IModel<String> htmlModel,
                                                   final IBrowseService<IModel<Node>> browser,
-                                                  final IHtmlCleanerService cleaner) {
+                                                  final String htmlProcessorId) {
         super(id);
 
         final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(browser);
         add(previewLinksBehavior);
 
-        final IModel<String> viewModel = createViewModel(nodeModel, htmlModel, cleaner);
+        final IModel<String> viewModel = createViewModel(nodeModel, htmlModel, htmlProcessorId);
         addView(viewModel);
     }
 
     private IModel<String> createViewModel(final IModel<Node> nodeModel, final IModel<String> htmlModel,
-                                           final IHtmlCleanerService cleaner) {
-        final IRichTextImageFactory imageFactory = new JcrRichTextImageFactory(nodeModel);
-        final IRichTextLinkFactory linkFactory = new JcrRichTextLinkFactory(nodeModel);
-        final IImageURLProvider urlProvider = new RichTextImageURLProvider(imageFactory, linkFactory, nodeModel);
-        final UuidConverterBuilder converterBuilder = new UuidConverterBuilder(nodeModel, linkFactory, urlProvider);
+                                           final String htmlProcessorId) {
         final StripScriptModel stripScriptModel = new StripScriptModel(htmlModel);
 
-        return new RichTextModel(stripScriptModel, cleaner, converterBuilder);
+        return new RichTextModel(htmlProcessorId, WicketModel.of(stripScriptModel), WicketModel.of(nodeModel));
     }
-
 }

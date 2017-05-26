@@ -88,6 +88,7 @@
     <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.utilities.version>4.0.0-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.htmlprocessor.version>1.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
@@ -112,7 +113,7 @@
     <jetty.version>6.1.22</jetty.version>
 
     <xerces.version>2.8.1</xerces.version>
-    <wicket.version>6.19.0</wicket.version>
+    <wicket.version>6.26.0</wicket.version>
     <wicket-extjs.version>0.25.3</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <httpclient.version>4.5.2</httpclient.version>
@@ -122,7 +123,6 @@
 
     <drewnoakes-extractor.version>2.6.2</drewnoakes-extractor.version>
     <sanselan.version>0.97-incubator</sanselan.version>
-    <agilecoders.wicket.bootstrap.version>0.9.7</agilecoders.wicket.bootstrap.version>
     <imgscalr-lib.version>4.2</imgscalr-lib.version>
 
     <yui.sources.version>1.01.12</yui.sources.version>
@@ -131,7 +131,6 @@
     <hippo.ckeditor.version>4.5.11-h2-SNAPSHOT</hippo.ckeditor.version>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
-    <sf.htmlcleaner.version>2.16</sf.htmlcleaner.version>
 
   </properties>
 
@@ -205,10 +204,14 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-htmlprocessor</artifactId>
+        <version>${hippo.services.htmlprocessor.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms7-utilities</artifactId>
         <version>${hippo.utilities.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-api</artifactId>
@@ -342,6 +345,11 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
         <version>${jackson2.version}</version>
       </dependency>
       <dependency>

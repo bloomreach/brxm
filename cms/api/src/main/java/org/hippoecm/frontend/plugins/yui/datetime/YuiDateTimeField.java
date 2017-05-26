@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,11 +59,11 @@ public class YuiDateTimeField extends DateTimeField {
     private final YuiDatePickerSettings settings;
     private boolean todayLinkVisible = true;
 
-    public YuiDateTimeField(String id, IModel<Date> model) {
+    public YuiDateTimeField(final String id, final IModel<Date> model) {
         this(id, model, null);
     }
 
-    public YuiDateTimeField(String id, IModel<Date> model, YuiDatePickerSettings settings) {
+    public YuiDateTimeField(final String id, final IModel<Date> model, YuiDatePickerSettings settings) {
         super(id, model);
 
         if (settings == null) {
@@ -95,10 +95,10 @@ public class YuiDateTimeField extends DateTimeField {
         minutesField.setLabel(Model.of(getString(MINUTES_LABEL)));
 
         //add "Now" link
-        AjaxLink<Date> today;
+        final AjaxLink<Date> today;
         add(today = new AjaxLink<Date>("today") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 YuiDateTimeField.this.setDefaultModelObject(new Date());
                 dateField.clearInput();
                 hoursField.clearInput();
@@ -117,17 +117,17 @@ public class YuiDateTimeField extends DateTimeField {
         today.add(HippoIcon.fromSprite("current-date-icon", Icon.RESTORE));
 
         //Add change behavior to super fields
-        for (String name : new String[] { "date", "hours", "minutes", "amOrPmChoice" }) {
-            get(name).add(new AjaxFormComponentUpdatingBehavior("onChange") {
+        for (final String name : new String[] { "date", "hours", "minutes", "amOrPmChoice" }) {
+            get(name).add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                 @Override
-                protected void onUpdate(AjaxRequestTarget target) {
+                protected void onUpdate(final AjaxRequestTarget target) {
                     updateDateTime();
                     send(YuiDateTimeField.this, Broadcast.BUBBLE, new UpdateFeedbackInfo(target));
                 }
 
                 @Override
-                protected void onError(AjaxRequestTarget target, RuntimeException e){
+                protected void onError(final AjaxRequestTarget target, final RuntimeException e){
                     super.onError(target, e);
                     send(YuiDateTimeField.this, Broadcast.BUBBLE, new UpdateFeedbackInfo(target));
                 }
@@ -140,27 +140,27 @@ public class YuiDateTimeField extends DateTimeField {
     }
 
     private void updateDateTime() {
-        Date date = getDate();
+        final Date date = getDate();
         if (date != null) {
-            MutableDateTime datetime = new MutableDateTime(date);
+            final MutableDateTime datetime = new MutableDateTime(date);
             try {
-                TimeZone zone = getClientTimeZone();
+                final TimeZone zone = getClientTimeZone();
                 if (zone != null) {
                     datetime.setZone(DateTimeZone.forTimeZone(zone));
                 }
 
-                Integer hours = getHours();
+                final Integer hours = getHours();
                 if (hours != null) {
                     datetime.set(DateTimeFieldType.hourOfDay(), hours % 24);
 
-                    Integer minutes = getMinutes();
+                    final Integer minutes = getMinutes();
                     datetime.setMinuteOfHour(minutes != null ? minutes : 0);
                 }
 
                 // the date will be in the server's timezone
                 setDate(datetime.toDate());
                 //setModelObject(datetime.toDate());
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 error(e.getMessage());
                 invalid();
             }
@@ -172,7 +172,7 @@ public class YuiDateTimeField extends DateTimeField {
         return false;
     }
 
-    public void setTodayLinkVisible(boolean todayLinkVisible) {
+    public void setTodayLinkVisible(final boolean todayLinkVisible) {
         this.todayLinkVisible = todayLinkVisible;
     }
 
@@ -192,15 +192,15 @@ public class YuiDateTimeField extends DateTimeField {
     }
 
     @Override
-    protected DateTextField newDateTextField(String id, PropertyModel<Date> dateFieldModel) {
+    protected DateTextField newDateTextField(final String id, final PropertyModel<Date> dateFieldModel) {
         return new DateTextField(id, dateFieldModel, new DateConverter(false) {
             @Override
-            public String getDatePattern(Locale locale) {
+            public String getDatePattern(final Locale locale) {
                 return YuiDateTimeField.this.getDatePattern();
             }
 
             @Override
-            protected DateTimeFormatter getFormat(Locale locale) {
+            protected DateTimeFormatter getFormat(final Locale locale) {
                 return DateTimeFormat.forPattern(YuiDateTimeField.this.getDatePattern()).withLocale(getLocale());
             }
         });

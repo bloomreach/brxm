@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.model.IDetachable;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Extends a {@link CKEditorPanel} with additional functionality. A CKEditor extension can add configuration properties
- * for a CKEditor instance in {@link #addConfiguration(org.json.JSONObject)}, and create one or more Wicket
+ * for a CKEditor instance in {@link #addConfiguration(com.fasterxml.jackson.databind.node.ObjectNode)}, and create one or more Wicket
  * behaviors to render additional Wicket components. The Wicket behaviors will be detached when the
  * {@link CKEditorPanel} to which it is added is detached.
  */
@@ -31,9 +33,9 @@ public interface CKEditorPanelExtension extends IDetachable {
     /**
      * Adds configuration to a CKEditor instance.
      * @param editorConfig the configuration for a CKEditor instance
-     * @throws JSONException
+     * @throws IOException
      */
-    void addConfiguration(JSONObject editorConfig) throws JSONException;
+    void addConfiguration(ObjectNode editorConfig) throws IOException;
 
     /**
      * @return all Wicket behaviors needed by this CKEditor behavior.

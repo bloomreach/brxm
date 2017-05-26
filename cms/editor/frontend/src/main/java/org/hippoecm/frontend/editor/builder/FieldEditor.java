@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,24 +25,22 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.model.ReadOnlyModel;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeException;
 
 public class FieldEditor extends Panel {
 
-    private static final long serialVersionUID = 1L;
-
     private String prefix;
-    private ITypeDescriptor type;
-    private boolean edit;
+    private final ITypeDescriptor type;
+    private final boolean edit;
 
-    public FieldEditor(String id, ITypeDescriptor type, IModel<IFieldDescriptor> model, boolean edit) {
+    public FieldEditor(final String id, final ITypeDescriptor type, final IModel<IFieldDescriptor> model, final boolean edit) {
         super(id, model);
 
         this.type = type;
@@ -51,22 +49,23 @@ public class FieldEditor extends Panel {
         setOutputMarkupId(true);
 
         prefix = null;
-        String typeName = type.getType();
+        final String typeName = type.getType();
         if (typeName.indexOf(':') > 0) {
             prefix = typeName.substring(0, typeName.indexOf(':'));
         }
-        addFormField(new LockedTextField<String>("path", new IModel<String>() {
-            private static final long serialVersionUID = 1L;
+        addFormField(new LockedTextField<>("path", new IModel<String>() {
 
+            @Override
             public String getObject() {
-                String path = getDescriptor().getPath();
+                final String path = getDescriptor().getPath();
                 if (path.indexOf(':') > 0 && path.startsWith(prefix)) {
                     return path.substring(prefix.length() + 1);
                 }
                 return path;
             }
 
-            public void setObject(String path) {
+            @Override
+            public void setObject(final String path) {
                 if (StringUtils.isBlank(path)) {
                     final StringResourceModel errorModel = new StringResourceModel("error-path-cannot-be-blank",
                             FieldEditor.this, null, null, getDescriptor().getName());
@@ -78,7 +77,7 @@ public class FieldEditor extends Panel {
                         } else {
                             getDescriptor().setPath(path);
                         }
-                    } catch (TypeException e) {
+                    } catch (final TypeException e) {
                         showError(e.getLocalizedMessage());
                     }
                 }
@@ -86,25 +85,28 @@ public class FieldEditor extends Panel {
 
             private void showError(final String msg) {
                 error(msg);
-                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                 if (target != null) {
                     target.add(FieldEditor.this);
                 }
             }
 
+            @Override
             public void detach() {
             }
         }));
-        // required checkbox
-        CheckBox mandatoryCheckBox = new CheckBox("mandatory", new IModel<Boolean>() {
-            private static final long serialVersionUID = 1L;
 
+        // required checkbox
+        final CheckBox mandatoryCheckBox = new CheckBox("mandatory", new IModel<Boolean>() {
+
+            @Override
             public Boolean getObject() {
                 return getDescriptor().getValidators().contains("required");
             }
 
-            public void setObject(Boolean object) {
-                IFieldDescriptor field = getDescriptor();
+            @Override
+            public void setObject(final Boolean object) {
+                final IFieldDescriptor field = getDescriptor();
                 if (object) {
                     field.addValidator("required");
                     if (field.getTypeDescriptor().isType("String")) {
@@ -118,37 +120,38 @@ public class FieldEditor extends Panel {
                 }
             }
 
+            @Override
             public void detach() {
             }
         }) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public boolean isEnabled() {
-                if (getDescriptor().isMandatory()) {
+                final IFieldDescriptor descriptor = getDescriptor();
+                if (descriptor.isMandatory()) {
                     return false;
                 }
-                if (getDescriptor().getValidators().contains("optional")) {
+                if (descriptor.getValidators().contains("optional")) {
                     return false;
                 }
                 return super.isEnabled();
             }
         };
         addFormField(mandatoryCheckBox);
-        Label mandatoryLabel = new Label("mandatory-label", new ResourceModel("mandatory"));
-        mandatoryLabel.add(new CheckBoxDisableCssClassAppender(mandatoryCheckBox));
+        final Label mandatoryLabel = new Label("mandatory-label", new ResourceModel("mandatory"));
+        addCheckBoxCssClass(mandatoryLabel, mandatoryCheckBox);
         add(mandatoryLabel);
-        
-        // optional checkbox
-        CheckBox optionalCheckBox = new CheckBox("optional", new IModel<Boolean>() {
-            private static final long serialVersionUID = 1L;
 
+        // optional checkbox
+        final CheckBox optionalCheckBox = new CheckBox("optional", new IModel<Boolean>() {
+
+            @Override
             public Boolean getObject() {
                 return getDescriptor().getValidators().contains("optional");
             }
 
-            public void setObject(Boolean object) {
-                IFieldDescriptor field = getDescriptor();
+            @Override
+            public void setObject(final Boolean object) {
+                final IFieldDescriptor field = getDescriptor();
                 if (object) {
                     field.addValidator("optional");
                 } else {
@@ -156,75 +159,77 @@ public class FieldEditor extends Panel {
                 }
             }
 
+            @Override
             public void detach() {
             }
         }) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public boolean isEnabled() {
-                if (getDescriptor().isMandatory()) {
+                final IFieldDescriptor descriptor = getDescriptor();
+                if (descriptor.isMandatory()) {
                     return false;
                 }
-                if (getDescriptor().getValidators().contains("required")) {
+                if (descriptor.getValidators().contains("required")) {
                     return false;
                 }
-                if (getDescriptor().isMultiple()) {
+                if (descriptor.isMultiple()) {
                     return false;
                 }
                 return super.isEnabled();
             }
         };
         addFormField(optionalCheckBox);
-        Label optionalLabel = new Label("optional-label", new ResourceModel("optional"));
-        optionalLabel.add(new CheckBoxDisableCssClassAppender(optionalCheckBox));
+        final Label optionalLabel = new Label("optional-label", new ResourceModel("optional"));
+        addCheckBoxCssClass(optionalLabel, optionalCheckBox);
         add(optionalLabel);
-        
+
         // multiple checkbox
         addFormField(new CheckBox("multiple", new IModel<Boolean>() {
-            private static final long serialVersionUID = 1L;
 
+            @Override
             public Boolean getObject() {
-                return getDescriptor() == null ? null : new Boolean(getDescriptor().isMultiple());
+                return getDescriptor() == null ? null : getDescriptor().isMultiple();
             }
 
-            public void setObject(Boolean object) {
+            @Override
+            public void setObject(final Boolean object) {
                 getDescriptor().setMultiple(object);
                 if (object) {
                     getDescriptor().removeValidator("optional");
                 }
             }
 
+            @Override
             public void detach() {
             }
         }));
         add(new Label("multiple-label", new ResourceModel("multiple")));
-        
-        // ordered checkbox
-        CheckBox orderedCheckBox = new CheckBox("ordered", new IModel<Boolean>() {
-            private static final long serialVersionUID = 1L;
 
+        // ordered checkbox
+        final CheckBox orderedCheckBox = new CheckBox("ordered", new IModel<Boolean>() {
+
+            @Override
             public Boolean getObject() {
-                return getDescriptor() == null ? null : new Boolean(getDescriptor().isOrdered());
+                return getDescriptor() == null ? null : getDescriptor().isOrdered();
             }
 
-            public void setObject(Boolean object) {
+            @Override
+            public void setObject(final Boolean object) {
                 getDescriptor().setOrdered(object);
             }
 
+            @Override
             public void detach() {
             }
         }) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public boolean isEnabled() {
                 return super.isEnabled() && getDescriptor().isMultiple();
             }
         };
         addFormField(orderedCheckBox);
-        Label orderedLabel = new Label("ordered-label", new ResourceModel("ordered"));
-        orderedLabel.add(new CheckBoxDisableCssClassAppender(orderedCheckBox));
+        final Label orderedLabel = new Label("ordered-label", new ResourceModel("ordered"));
+        addCheckBoxCssClass(orderedLabel, orderedCheckBox);
         add(orderedLabel);
     }
 
@@ -240,15 +245,14 @@ public class FieldEditor extends Panel {
     /**
      * Adds an ajax updating form component
      */
-    protected void addFormField(FormComponent<?> component) {
+    protected void addFormField(final FormComponent<?> component) {
         add(component);
         if (edit) {
             component.setOutputMarkupId(true);
-            component.add(new AjaxFormComponentUpdatingBehavior("onChange") {
-                private static final long serialVersionUID = 1L;
+            component.add(new AjaxFormComponentUpdatingBehavior("onchange") {
 
                 @Override
-                protected void onUpdate(AjaxRequestTarget target) {
+                protected void onUpdate(final AjaxRequestTarget target) {
                     FieldEditor.this.onUpdate(target);
                 }
             });
@@ -257,12 +261,16 @@ public class FieldEditor extends Panel {
         }
     }
 
-    protected void onUpdate(AjaxRequestTarget target) {
+    protected void onUpdate(final AjaxRequestTarget target) {
     }
-    
+
+    private void addCheckBoxCssClass(final Label label, final CheckBox checkBox) {
+        label.add(CssClass.append(ReadOnlyModel.of(() -> checkBox.isEnabled() ? "" : "disabled")));
+    }
+
     class LockedTextField<T> extends TextField<T> implements IAjaxIndicatorAware {
 
-        public LockedTextField(String id, IModel<T> tiModel) {
+        public LockedTextField(final String id, final IModel<T> tiModel) {
             super(id, tiModel);
         }
 
@@ -270,22 +278,5 @@ public class FieldEditor extends Panel {
         public String getAjaxIndicatorMarkupId() {
             return "veil";
         }
-    }
-    
-    private static class CheckBoxDisableCssClassAppender extends CssClassAppender {
-
-        public CheckBoxDisableCssClassAppender(final CheckBox checkBox) {
-            super(new LoadableDetachableModel<String>() {
-                @Override
-                public String load() {
-                    if (checkBox.isEnabled()) {
-                        return "";
-                    } else {
-                        return "disabled";
-                    }
-                }
-            });
-        }
-        
     }
 }

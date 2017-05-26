@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,23 @@ package org.hippoecm.frontend.plugins.ckeditor;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.apache.wicket.behavior.Behavior;
+import org.onehippo.ckeditor.HippoPicker;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
-import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.ckeditor.Json;
 
-import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -59,21 +63,25 @@ public class CKEditorPanelPickerExtensionTest {
 
         replay(linkPickerBehavior, imagePickerBehavior);
 
-        final JSONObject editorConfig = new JSONObject();
+        final ObjectNode editorConfig = Json.object();
         extension.addConfiguration(editorConfig);
 
         verify(linkPickerBehavior, imagePickerBehavior);
 
         assertTrue("CKEditor config has configuration for the hippopicker plugin", editorConfig.has(HippoPicker.CONFIG_KEY));
-        JSONObject hippoPickerConfig = editorConfig.getJSONObject(HippoPicker.CONFIG_KEY);
+        JsonNode hippoPickerConfig = editorConfig.get(HippoPicker.CONFIG_KEY);
 
-        assertTrue("hippopicker configuration has configuration for the internal link picker", hippoPickerConfig.has(HippoPicker.InternalLink.CONFIG_KEY));
-        JSONObject internalLinkPickerConfig = hippoPickerConfig.getJSONObject(HippoPicker.InternalLink.CONFIG_KEY);
-        assertEquals(linkPickerCallbackUrl, internalLinkPickerConfig.getString(HippoPicker.InternalLink.CONFIG_CALLBACK_URL));
+        assertTrue("hippopicker config is an object", hippoPickerConfig.isObject());
 
-        assertTrue("hippopicker configuration has configuration for the image picker", hippoPickerConfig.has(HippoPicker.Image.CONFIG_KEY));
-        JSONObject imagePickerConfig = hippoPickerConfig.getJSONObject(HippoPicker.Image.CONFIG_KEY);
-        assertEquals(imagePickerCallbackUrl, imagePickerConfig.getString(HippoPicker.Image.CONFIG_CALLBACK_URL));
+        JsonNode internalLinkPickerConfig = hippoPickerConfig.get(HippoPicker.InternalLink.CONFIG_KEY);
+        assertNotNull("hippopicker configuration has configuration for the internal link picker", internalLinkPickerConfig);
+        assertTrue("internal link picker config is an object", internalLinkPickerConfig.isObject());
+        assertEquals(linkPickerCallbackUrl, internalLinkPickerConfig.get(HippoPicker.InternalLink.CONFIG_CALLBACK_URL).asText());
+
+        JsonNode imagePickerConfig = hippoPickerConfig.get(HippoPicker.Image.CONFIG_KEY);
+        assertNotNull("hippopicker configuration has configuration for the image picker", imagePickerConfig);
+        assertTrue("image picker config is an object", imagePickerConfig.isObject());
+        assertEquals(imagePickerCallbackUrl, imagePickerConfig.get(HippoPicker.Image.CONFIG_CALLBACK_URL).asText());
     }
 
     @Test
