@@ -47,7 +47,7 @@
     <hippo.hst.version>5.0.0-SNAPSHOT</hippo.hst.version>
 
     <junit.version>4.8.2</junit.version>
-    <wicket.version>6.19.0</wicket.version>
+    <wicket.version>6.26.0</wicket.version>
   </properties>
 
   <repositories>
