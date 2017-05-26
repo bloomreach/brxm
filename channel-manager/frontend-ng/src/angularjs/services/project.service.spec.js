@@ -18,11 +18,22 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ProjectService', () => {
+  let $q;
   let $httpBackend;
   let ProjectService;
   let HstService;
 
   const mountId = '12';
+
+  const branches = [
+    {
+      id: 'test1',
+      name: 'test1',
+    },
+    {
+      id: 'test2',
+      name: 'test2',
+    }];
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -41,12 +52,14 @@ describe('ProjectService', () => {
       $provide.value('ChannelService', channelServiceMock);
     });
 
-    inject((_$httpBackend_, _ProjectService_, _HstService_) => {
+    inject((_$q_, _$httpBackend_, _ProjectService_, _HstService_) => {
+      $q = _$q_;
       $httpBackend = _$httpBackend_;
       ProjectService = _ProjectService_;
       HstService = _HstService_;
     });
 
+    spyOn(HstService, 'doGet');
     spyOn(HstService, 'doPut');
   });
 
@@ -55,89 +68,34 @@ describe('ProjectService', () => {
     $httpBackend.verifyNoOutstandingExpectation();
   });
 
-  it('can get projects', () => {
-    const withBranch = [
-      {
-        id: 'test1',
-        name: 'test1',
-      },
-      {
-        id: 'test2',
-        name: 'test2',
-      }];
-    const withoutBranch = [
-      {
-        id: 'test3',
-        name: 'test3',
-      },
-    ];
-    const returnFromRest = { withBranch, withoutBranch };
-    let actual = null;
-
-    $httpBackend.expectGET(`/test/ws/projects/${mountId}/channel`).respond(200, returnFromRest);
-
-    ProjectService._getProjects(12).then((returned) => {
-      actual = returned;
-    });
+  it('loads projects and sets the current branch', () => {
+    const currentBranch = branches[0];
+    $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, branches);
+    HstService.doGet.and.returnValue($q.when({ data: currentBranch.id }));
+    ProjectService.load({ mountId });
     $httpBackend.flush();
-
-    expect(actual).toEqual(returnFromRest);
+    expect(ProjectService.projects).toEqual(branches);
+    expect(ProjectService.selectedProject).toEqual(currentBranch);
+    expect(HstService.doGet).toHaveBeenCalledWith(mountId, 'currentbranch');
   });
 
-  it('selects master if the selectedProject changes to master', () => {
-    const master = {
-      id: 'master',
-      name: 'master',
-    };
-    ProjectService._master = master;
-    ProjectService._mountId = mountId;
-    ProjectService.projectChanged(master);
+  it('calls setmaster if the selectedProject is not a branch', () => {
+    const currentBranch = branches[0];
+    $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, branches);
+    HstService.doGet.and.returnValue($q.when({ data: currentBranch.id }));
+    ProjectService.load({ mountId });
+    $httpBackend.flush();
+    ProjectService.selectProject({ id: 'master' });
     expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectmaster');
   });
 
-  it('selects the branch associated with the selectedProject if the selectedProject has already been associated', () => {
-    const master = {
-      id: 'master',
-      name: 'master',
-    };
-    const test1 = {
-      id: 'test1',
-      name: 'test1',
-    };
-    const withBranch = [
-      test1,
-      {
-        id: 'test2',
-        name: 'test2',
-      }];
-    ProjectService.withBranch = withBranch;
-    ProjectService.withoutBranch = [];
-    ProjectService._master = master;
-    ProjectService._mountId = mountId;
-    ProjectService.projectChanged(test1);
-    expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectbranch', test1.id);
-  });
-
-  it('creates a branch based on the selectedProject if the selectedProject has not been yet associated', () => {
-    const master = {
-      id: 'master',
-      name: 'master',
-    };
-    const test1 = {
-      id: 'test1',
-      name: 'test1',
-    };
-    const withoutBranch = [
-      test1,
-      {
-        id: 'test2',
-        name: 'test2',
-      }];
-    ProjectService.withBranch = [];
-    ProjectService.withoutBranch = withoutBranch;
-    ProjectService._master = master;
-    ProjectService._mountId = mountId;
-    ProjectService.projectChanged(test1);
-    expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'createbranch', test1.id);
+  it('calls setbranch if the selectedProject is a branch', () => {
+    const currentBranch = branches[0];
+    $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, branches);
+    HstService.doGet.and.returnValue($q.when({ data: currentBranch.id }));
+    ProjectService.load({ mountId });
+    $httpBackend.flush();
+    ProjectService.selectProject(branches[1]);
+    expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectbranch', branches[1].id);
   });
 });
