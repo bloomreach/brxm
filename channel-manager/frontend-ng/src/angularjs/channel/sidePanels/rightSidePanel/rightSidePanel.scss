@@ -128,7 +128,8 @@ md-input-container:not(:last-child) .md-errors-spacer {
 
 .has-invalid-field {
   label,
-  md-icon {
+  md-icon,
+  > .has-focused-field > .field-title {
     color: $red-a700 !important;
   }
 

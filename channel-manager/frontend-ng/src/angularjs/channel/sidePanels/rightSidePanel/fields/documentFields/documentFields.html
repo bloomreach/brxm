@@ -39,7 +39,6 @@
   <primitive-field ng-switch-default
                    ng-if="$ctrl.hasValue(fieldType)"
                    name="$ctrl.name"
-                   ng-class="{'has-invalid-field': !$ctrl.isValid(fieldType)}"
                    field-type="fieldType"
                    field-values="$ctrl.fieldValues[fieldType.id]"
                    on-field-focus="$ctrl.onFieldFocus()"

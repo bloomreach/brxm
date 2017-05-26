@@ -137,25 +137,6 @@ describe('DocumentFields', () => {
     expect($ctrl.getFieldName(stringField)).toEqual('ns:compound/ns:string');
   });
 
-  it('knowns whether a field is valid', () => {
-    $ctrl.form = {
-      'ns:string': {
-        $invalid: true,
-      },
-      'ns:multiplestring[1]': {
-        $invalid: true,
-      },
-    };
-    expect($ctrl.isValid(stringField)).toBe(false);
-    expect($ctrl.isValid(multipleStringField)).toBe(false);
-    expect($ctrl.isValid(compoundField)).toBe(true);
-  });
-
-  it('assumes that a field without any value is valid', () => {
-    $ctrl.fieldValues = {};
-    expect($ctrl.isValid(stringField)).toBe(true);
-  });
-
   it('generates a unique hash per field type based on the ID and validators of a field', () => {
     expect($ctrl.getFieldTypeHash({ id: 'hap:title' })).toEqual('hap:title:undefined');
     expect($ctrl.getFieldTypeHash({ id: 'hap:title', validators: ['REQUIRED'] })).toEqual('hap:title:REQUIRED');
