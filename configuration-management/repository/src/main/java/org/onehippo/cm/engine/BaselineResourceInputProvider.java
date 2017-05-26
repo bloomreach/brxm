@@ -34,12 +34,12 @@ import org.onehippo.cm.model.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cm.model.Constants.ACTIONS_NODE;
+import static org.onehippo.cm.engine.Constants.ACTIONS_NODE;
+import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
+import static org.onehippo.cm.engine.Constants.DEFINITIONS_TYPE;
+import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_NODE;
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
-import static org.onehippo.cm.model.Constants.CONTENT_TYPE;
-import static org.onehippo.cm.model.Constants.DEFINITIONS_TYPE;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
-import static org.onehippo.cm.model.Constants.MODULE_DESCRIPTOR_NODE;
 
 /**
  * Provides access to InputStreams based on JCR Nodes stored in the configuration baseline.

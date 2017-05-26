@@ -40,7 +40,7 @@ import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.SnsUtils;
 
-import static org.onehippo.cm.model.Constants.HCM_ROOT_NODE;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT_NODE;
 
 public class EventJournalProcessor {
 

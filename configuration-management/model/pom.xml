@@ -31,6 +31,12 @@
       <groupId>org.onehippo.cms</groupId>
       <artifactId>hippo-configuration-management-api</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.onehippo.cms7</groupId>
+          <artifactId>hippo-repository-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>
@@ -55,18 +61,11 @@
     </dependency>
 
     <!-- test -->
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-testutils</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-testutils</artifactId>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

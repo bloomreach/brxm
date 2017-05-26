@@ -57,42 +57,6 @@ public final class Constants {
     public static final String META_CATEGORY_KEY = META_KEY_PREFIX + "category";
     public static final String META_RESIDUAL_CHILD_NODE_CATEGORY_KEY = META_KEY_PREFIX + "residual-child-node-category";
 
-    // JCR node where the HCM configuration baseline is stored
-    // NOTE: currently this MUST only be a single new node with all required parents existing
-    // TODO: Move under a new /hcm:hcm node at JCR root, and new node type hcm:hcm
-    public static final String HCM_ROOT_NODE = "hcm:hcm";
-    public static final String BASELINE_NODE = "hcm:baseline";
-    public static final String BASELINE_TYPE = "hcm:baseline";
-    public static final String GROUP_TYPE = "hcm:group";
-    public static final String PROJECT_TYPE = "hcm:project";
-    public static final String MODULE_TYPE = "hcm:module";
-
-    public static final String LAST_UPDATED_PROPERTY = "hcm:lastupdated";
-
-    public static final String MODULE_DESCRIPTOR_NODE = HCM_MODULE_YAML;
-    public static final String MODULE_DESCRIPTOR_TYPE = "hcm:descriptor";
-    public static final String MODULE_SEQUENCE_NUMBER = "hcm:seqnumber";
-    public static final String ACTIONS_TYPE = "hcm:actions";
-    public static final String ACTIONS_NODE = ACTIONS_YAML;
-    public static final String CONTENT_TYPE = "hcm:content";
-    public static final String CONTENT_SOURCE_TYPE = "hcm:contentsource";
-    public static final String HCM_CONTENT_PATHS_APPLIED = "hcm:contentPathsApplied";
-    public static final String HCM_MODULE_ACTIONS_APPLIED = "hcm:moduleActionsApplied";
-
-    public static final String CONTENT_FOLDER_TYPE = "hcm:contentfolder";
-    public static final String HCM_PROCESSED = "hcm:processed";
-    public static final String CONTENT_PATH_PROPERTY = "hcm:contentpath";
-    public static final String CONFIG_FOLDER_TYPE = "hcm:configfolder";
-
-    public static final String DEFINITIONS_TYPE = "hcm:definitions";
-    public static final String CND_TYPE = "hcm:cnd";
-    public static final String BINARY_TYPE = "hcm:binary";
-
-    public static final String YAML_PROPERTY = "hcm:yaml";
-    public static final String CND_PROPERTY = "hcm:cnd";
-
-    // This should be one of the required digest algorithms (MD5, SHA-1, or SHA-256)
-    public static final String DIGEST_PROPERTY = "hcm:digest";
     public static final String DEFAULT_DIGEST = "MD5";
 
     // Path within a Maven module where we expect the module descriptor to be

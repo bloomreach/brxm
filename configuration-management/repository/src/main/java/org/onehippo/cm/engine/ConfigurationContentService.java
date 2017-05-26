@@ -50,11 +50,11 @@ import org.slf4j.LoggerFactory;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.MapUtils.isNotEmpty;
-import static org.onehippo.cm.model.Constants.BASELINE_NODE;
-import static org.onehippo.cm.model.Constants.CONTENT_TYPE;
-import static org.onehippo.cm.model.Constants.HCM_CONTENT_PATHS_APPLIED;
-import static org.onehippo.cm.model.Constants.HCM_ROOT_NODE;
-import static org.onehippo.cm.model.Constants.MODULE_SEQUENCE_NUMBER;
+import static org.onehippo.cm.engine.Constants.BASELINE_NODE;
+import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT_NODE;
+import static org.onehippo.cm.engine.Constants.MODULE_SEQUENCE_NUMBER;
 
 /**
  * Applies content definitions to repository
