@@ -13,10 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.richtext.processor;
+package org.hippoecm.frontend.plugins.richtext.htmlprocessor;
 
 import org.apache.wicket.model.IModel;
-import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.model.Model;
 
 public class WicketModel<T> implements Model<T> {
 

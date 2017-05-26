@@ -19,7 +19,7 @@ import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
-import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.model.Model;
 
 public class RichTextModelFactory {
 

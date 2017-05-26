@@ -16,9 +16,9 @@
 package org.hippoecm.frontend.plugins.richtext;
 
 import org.apache.wicket.model.IModel;
-import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
-import org.onehippo.cms7.services.processor.html.model.HtmlProcessorModel;
-import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorFactory;
+import org.onehippo.cms7.services.htmlprocessor.model.HtmlProcessorModel;
+import org.onehippo.cms7.services.htmlprocessor.model.Model;
 
 public class HtmlModel implements IModel<String> {
 

@@ -13,15 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.richtext.processor;
+package org.hippoecm.frontend.plugins.richtext.htmlprocessor;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
-import org.onehippo.cms7.services.processor.html.model.Model;
-import org.onehippo.cms7.services.processor.richtext.jcr.JcrNodeFactory;
+import org.onehippo.cms7.services.htmlprocessor.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.richtext.jcr.JcrNodeFactory;
 
 public class WicketNodeFactory extends JcrNodeFactory {
 
