@@ -25,9 +25,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -39,15 +36,18 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConte
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms7.services.processor.html.model.HtmlProcessorModel;
-import org.onehippo.cms7.services.processor.html.model.Model;
-import org.onehippo.cms7.services.processor.html.visit.Tag;
-import org.onehippo.cms7.services.processor.html.visit.TagVisitor;
-import org.onehippo.cms7.services.processor.richtext.jcr.JcrNodeFactory;
-import org.onehippo.cms7.services.processor.richtext.model.RichTextProcessorModel;
-import org.onehippo.cms7.services.processor.richtext.visit.ImageVisitor;
+import org.onehippo.cms7.services.htmlprocessor.Tag;
+import org.onehippo.cms7.services.htmlprocessor.TagVisitor;
+import org.onehippo.cms7.services.htmlprocessor.model.HtmlProcessorModel;
+import org.onehippo.cms7.services.htmlprocessor.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.richtext.jcr.JcrNodeFactory;
+import org.onehippo.cms7.services.htmlprocessor.richtext.model.RichTextProcessorModel;
+import org.onehippo.cms7.services.htmlprocessor.richtext.visit.ImageVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * A document field of type hippostd:html.

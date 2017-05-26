@@ -23,18 +23,18 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.ckeditor.Json;
-import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Base class for the manager of a picker for rich text fields. Contains the generic code for parsing AJAX parameters:
