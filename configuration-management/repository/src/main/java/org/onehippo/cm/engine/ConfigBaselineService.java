@@ -478,7 +478,12 @@ public class ConfigBaselineService {
      * @param rootNode the JCR root node
      */
     protected boolean baselineExists(final Node rootNode) throws RepositoryException {
-        return rootNode.hasNode(HCM_ROOT_NODE) || !rootNode.getNode(HCM_ROOT_NODE).hasNode(BASELINE_NODE);
+        try {
+            // TODO: remove the try-catch when the hcm namespace is registered in an earlier stage
+            return rootNode.hasNode(HCM_ROOT_NODE) || !rootNode.getNode(HCM_ROOT_NODE).hasNode(BASELINE_NODE);
+        } catch (RepositoryException e) {
+            return false;
+        }
     }
 
     /**

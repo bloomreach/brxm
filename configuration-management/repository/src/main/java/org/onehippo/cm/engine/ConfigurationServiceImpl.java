@@ -124,7 +124,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
 
-            final ConfigurationModel baseline = new ConfigurationModelImpl().build();
+            ConfigurationModel baseline = loadBaseline();
+            if (baseline == null) {
+                baseline = new ConfigurationModelImpl().build();
+            }
 
             final ConfigurationConfigService service = new ConfigurationConfigService();
             service.computeAndWriteDelta(baseline, model, session, false);
