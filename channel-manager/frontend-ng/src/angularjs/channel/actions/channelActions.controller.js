@@ -44,16 +44,10 @@ class ChannelActionsCtrl {
     this.SiteMapService = SiteMapService;
   }
 
-  hasMenuOptions() {
-    return this.isChannelSettingsAvailable()
-      || this.isChangesAvailable()
-      || this.isChannelDeletionAvailable();
-  }
-
   // Settings
 
   isChannelSettingsAvailable() {
-    return this.ChannelService.getChannel().hasCustomProperties;
+    return this.ChannelService.isEditable() && this.ChannelService.getChannel().hasCustomProperties;
   }
 
   openSettings() {

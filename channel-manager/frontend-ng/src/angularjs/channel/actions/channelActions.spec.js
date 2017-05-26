@@ -76,6 +76,7 @@ describe('ChannelActions', () => {
       hasCustomProperties: true,
     });
     spyOn(ChannelService, 'getName').and.returnValue('test-channel');
+    spyOn(ChannelService, 'isEditable').and.returnValue(true);
     spyOn(ChannelService, 'publishOwnChanges').and.returnValue($q.resolve());
     spyOn(ChannelService, 'discardOwnChanges').and.returnValue($q.resolve());
     spyOn(ChannelService, 'deleteChannel').and.returnValue($q.resolve());
@@ -110,7 +111,16 @@ describe('ChannelActions', () => {
     expect($scope.onActionSelected).toHaveBeenCalledWith('channel-settings');
   });
 
-  it('doesn\'t expose the settings option if the channel has no custom properties', () => {
+  it('does not expose the settings option if the channel is not editable', () => {
+    let $ctrl = compileDirectiveAndGetController();
+    expect($ctrl.isChannelSettingsAvailable()).toBe(true);
+
+    ChannelService.isEditable.and.returnValue(false);
+    $ctrl = compileDirectiveAndGetController();
+    expect($ctrl.isChannelSettingsAvailable()).toBe(false);
+  });
+
+  it('does not expose the settings option if the channel has no custom properties', () => {
     let $ctrl = compileDirectiveAndGetController();
     expect($ctrl.isChannelSettingsAvailable()).toBe(true);
 
@@ -125,28 +135,6 @@ describe('ChannelActions', () => {
 
     SessionService.canDeleteChannel.and.returnValue(false);
     expect($ctrl.isChannelDeletionAvailable()).toBe(false);
-  });
-
-  it('displays the menu if there is at least one option available', () => {
-    // both options
-    let $ctrl = compileDirectiveAndGetController();
-    expect($ctrl.hasMenuOptions()).toBe(true);
-
-    // delete only
-    ChannelService.getChannel.and.returnValue({ hasCustomProperties: false });
-    $ctrl = compileDirectiveAndGetController();
-    expect($ctrl.hasMenuOptions()).toBe(true);
-
-    // no option
-    SessionService.canDeleteChannel.and.returnValue(false);
-    $ctrl = compileDirectiveAndGetController();
-    expect($ctrl.hasMenuOptions()).toBe(false);
-
-    // settings only
-    ChannelService.getChannel.and.returnValue({ hasCustomProperties: true });
-    $ctrl = compileDirectiveAndGetController();
-
-    expect($ctrl.hasMenuOptions()).toBe(true);
   });
 
   it('determines if there are own changes', () => {
