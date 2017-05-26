@@ -46,11 +46,6 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-services-htmlprocessor</artifactId>
-      <version>${hippo.services.htmlprocessor.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <version>${project.version}</version>
     </dependency>
