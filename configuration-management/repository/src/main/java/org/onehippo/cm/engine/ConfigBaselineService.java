@@ -45,7 +45,7 @@ import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.NodeTypeDefinition;
+import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.Project;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.Value;
@@ -290,19 +290,9 @@ public class ConfigBaselineService {
         for (Definition def : source.getDefinitions()) {
             switch (def.getType()) {
                 case NAMESPACE:
-                case WEBFILEBUNDLE:
-                    // no special processing required
-                    break;
-                case CONTENT:
-                    // this shouldn't exist here anymore, but we'll let the verifier handle it
-                    break;
-                case CND:
-                    NodeTypeDefinition ntd = (NodeTypeDefinition) def;
-
-                    // if this is not a resource reference, the YAML source is all we need here
-                    // if this IS a resource reference, we want to handle this resource differently
-                    if (ntd.isResource()) {
-                        String cndPath = ntd.getValue();
+                    NamespaceDefinition namespaceDefinition = (NamespaceDefinition)def;
+                    if (namespaceDefinition.getCndPath() != null) {
+                        String cndPath = namespaceDefinition.getCndPath();
 
                         // create folder nodes, if necessary
                         Node cndNode = createNodeAndParentsIfNecessary(cndPath, baseForPath(cndPath, sourceNode, configRootNode),
@@ -314,6 +304,11 @@ public class ConfigBaselineService {
                         // store cnd and digest (this call will close the input stream)
                         storeString(cndIS, cndNode, CND_PROPERTY);
                     }
+                case WEBFILEBUNDLE:
+                    // no special processing required
+                    break;
+                case CONTENT:
+                    // this shouldn't exist here anymore, but we'll let the verifier handle it
                     break;
                 case CONFIG:
                     ConfigDefinition configDef = (ConfigDefinition) def;

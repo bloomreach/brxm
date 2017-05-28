@@ -61,8 +61,6 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     private final List<NamespaceDefinitionImpl> modifiableNamespaceDefinitions = new ArrayList<>();
     private final List<NamespaceDefinitionImpl> namespaceDefinitions = Collections.unmodifiableList(modifiableNamespaceDefinitions);
-    private final List<NodeTypeDefinitionImpl> modifiableNodeTypeDefinitions = new ArrayList<>();
-    private final List<NodeTypeDefinitionImpl> nodeTypeDefinitions = Collections.unmodifiableList(modifiableNodeTypeDefinitions);
     private final List<WebFileBundleDefinitionImpl> modifiableWebFileBundleDefinitions = new ArrayList<>();
     private final List<WebFileBundleDefinitionImpl> webFileBundleDefinitions = Collections.unmodifiableList(modifiableWebFileBundleDefinitions);
     private final List<ContentDefinitionImpl> modifiableContentDefinitions = new ArrayList<>();
@@ -81,11 +79,6 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     @Override
     public List<NamespaceDefinitionImpl> getNamespaceDefinitions() {
         return namespaceDefinitions;
-    }
-
-    @Override
-    public List<NodeTypeDefinitionImpl> getNodeTypeDefinitions() {
-        return nodeTypeDefinitions;
     }
 
     @Override
@@ -113,10 +106,6 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     private void addNamespaceDefinitions(final List<NamespaceDefinitionImpl> definitions) {
         modifiableNamespaceDefinitions.addAll(definitions);
-    }
-
-    private void addNodeTypeDefinitions(final List<NodeTypeDefinitionImpl> definitions) {
-        modifiableNodeTypeDefinitions.addAll(definitions);
     }
 
     private void setConfigurationRootNode(final ConfigurationNodeImpl configurationRootNode) {
@@ -179,7 +168,6 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     public ConfigurationModelImpl buildConfiguration() {
 
         modifiableNamespaceDefinitions.clear();
-        modifiableNodeTypeDefinitions.clear();
         modifiableConfigDefinitions.clear();
         modifiableContentDefinitions.clear();
         modifiableWebFileBundleDefinitions.clear();
@@ -190,7 +178,6 @@ public class ConfigurationModelImpl implements ConfigurationModel {
                 for (ModuleImpl module : p.getModules()) {
                     log.info("Merging module {}", module.getFullName());
                     addNamespaceDefinitions(module.getNamespaceDefinitions());
-                    addNodeTypeDefinitions(module.getNodeTypeDefinitions());
                     addConfigDefinitions(module.getConfigDefinitions());
                     addContentDefinitions(new HashSet<>(module.getContentDefinitions()));
                     addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());

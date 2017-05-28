@@ -230,7 +230,7 @@ public class DefinitionMergeService {
             log.debug("Creating new namespace definition: {} in module: {} aka {} in file {}",
                     nsd.getPrefix(), newModule.getMvnPath(), newModule.getFullName(), newSource.getPath());
 
-            newSource.addNamespaceDefinition(nsd.getPrefix(), nsd.getURI());
+            newSource.addNamespaceDefinition(nsd.getPrefix(), nsd.getURI(), nsd.getCndPath());
         }
     }
 

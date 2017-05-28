@@ -21,10 +21,8 @@ import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
 
 public final class Constants {
 
-    // JCR node where the HCM configuration baseline is stored
-    // NOTE: currently this MUST only be a single new node with all required parents existing
-    // TODO: Move under a new /hcm:hcm node at JCR root, and new node type hcm:hcm
-    public static final String HCM_ROOT_NODE = "hcm:hcm";
+    public static final String HCM_ROOT_NODE_TYPE = "hcm:hcm";
+    public static final String HCM_ROOT_NODE = HCM_ROOT_NODE_TYPE;
     public static final String BASELINE_NODE = "hcm:baseline";
     public static final String BASELINE_TYPE = "hcm:baseline";
     public static final String GROUP_TYPE = "hcm:group";

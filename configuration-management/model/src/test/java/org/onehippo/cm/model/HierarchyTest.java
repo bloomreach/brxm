@@ -25,7 +25,6 @@ import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
-import org.onehippo.cm.model.impl.NodeTypeDefinitionImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.parser.ParserException;
@@ -45,26 +44,15 @@ public class HierarchyTest extends AbstractBaseTest {
         final GroupImpl base = assertGroup(groups, "base", new String[0], 1);
         final ProjectImpl project1 = assertProject(base, "project1", new String[0], 1);
         final ModuleImpl module1 = assertModule(project1, "module1", new String[0], 3);
-        final SourceImpl source1 = assertSource(module1, "config.yaml", 8);
+        final SourceImpl source1 = assertSource(module1, "config.yaml", 6);
         final SourceImpl contentSource1 = assertSource(module1, "content.yaml", 1);
 
         final NamespaceDefinitionImpl namespace = assertDefinition(source1, 0, NamespaceDefinitionImpl.class);
         assertEquals("myhippoproject", namespace.getPrefix());
         assertEquals("http://www.onehippo.org/myhippoproject/nt/1.0", namespace.getURI().toString());
+        assertEquals("example.cnd", namespace.getCndPath());
 
-        final NodeTypeDefinitionImpl nodeType = assertDefinition(source1, 1, NodeTypeDefinitionImpl.class);
-        assertEquals(
-                "<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>\n" +
-                        "<'myhippoproject'='http://www.onehippo.org/myhippoproject/nt/1.0'>\n" +
-                        "[myhippoproject:basedocument] > hippo:document orderable\n",
-                nodeType.getValue());
-        assertEquals(false, nodeType.isResource());
-
-        final NodeTypeDefinitionImpl nodeTypeFromResource = assertDefinition(source1, 2, NodeTypeDefinitionImpl.class);
-        assertEquals("example.cnd", nodeTypeFromResource.getValue());
-        assertEquals(true, nodeTypeFromResource.isResource());
-
-        final ConfigDefinitionImpl source1definition1 = assertDefinition(source1, 3, ConfigDefinitionImpl.class);
+        final ConfigDefinitionImpl source1definition1 = assertDefinition(source1, 1, ConfigDefinitionImpl.class);
         final DefinitionNodeImpl rootDefinition1 = assertNode(source1definition1, "/", "", source1definition1, 6, 1);
         assertProperty(rootDefinition1, "/root-level-property", "root-level-property",
                 source1definition1, ValueType.STRING, "root-level-property-value");
@@ -90,13 +78,13 @@ public class HierarchyTest extends AbstractBaseTest {
         assertNull(rootDefinition1.getNodes().get("node-order-before").getIgnoreReorderedChildren());
         assertTrue(rootDefinition1.getNodes().get("node-ignore-reordered-children").getIgnoreReorderedChildren());
 
-        final ConfigDefinitionImpl source1definition2 = assertDefinition(source1, 4, ConfigDefinitionImpl.class);
+        final ConfigDefinitionImpl source1definition2 = assertDefinition(source1, 2, ConfigDefinitionImpl.class);
         assertNode(source1definition2, "/path/to/node-delete", "node-delete", source1definition2, true, null, 0, 0);
 
-        final ConfigDefinitionImpl source1definition3 = assertDefinition(source1, 5, ConfigDefinitionImpl.class);
+        final ConfigDefinitionImpl source1definition3 = assertDefinition(source1, 3, ConfigDefinitionImpl.class);
         assertNode(source1definition3, "/path/to/node-order-before", "node-order-before", source1definition3, false, "node", 0, 0);
 
-        final ConfigDefinitionImpl source1definition4 = assertDefinition(source1, 6, ConfigDefinitionImpl.class);
+        final ConfigDefinitionImpl source1definition4 = assertDefinition(source1, 4, ConfigDefinitionImpl.class);
         final DefinitionNodeImpl node = assertNode(source1definition4, "/path/to/node", "node", source1definition4, 2, 5);
         assertProperty(node, "/path/to/node/delete-property", "delete-property", source1definition4,
                 PropertyOperation.DELETE, ValueType.STRING, new String[0]);

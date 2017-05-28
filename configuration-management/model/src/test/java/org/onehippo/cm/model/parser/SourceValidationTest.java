@@ -81,29 +81,21 @@ public class SourceValidationTest extends AbstractBaseTest {
     public void namespaceWithScalarValue() {
         final Node root = yamlParser.compose(new StringReader("definitions: { namespace: scalar value }"));
 
-        assertParserException(root, firstDefinitionTuple(root).getValueNode(), "Node must be a sequence");
+        assertParserException(root, firstDefinitionTuple(root).getValueNode(), "Node must be a mapping");
     }
 
     @Test
     public void namespaceWithSequenceOfScalar() {
         final Node root = yamlParser.compose(new StringReader("definitions: { namespace: [ scalar value ] }"));
 
-        assertParserException(root, firstDefinitionFirstValue(root), "Node must be a mapping");
-    }
-
-    @Test
-    public void namespaceWithMissingPrefix() {
-        final Node root = yamlParser.compose(new StringReader("definitions: { namespace: [ uri: testURI ] }"));
-
-        assertParserException(root, firstDefinitionFirstValue(root),
-                "Node must contain pair with key 'prefix'");
+        assertParserException(root, firstDefinitionTuple(root).getValueNode(), "Node must be a mapping");
     }
 
     @Test
     public void namespaceWithMissingURI() {
-        final Node root = yamlParser.compose(new StringReader("definitions: { namespace: [ prefix: testPrefix ] }"));
+        final Node root = yamlParser.compose(new StringReader("definitions: { namespace: { testPrefix: {} } }"));
 
-        assertParserException(root, firstDefinitionFirstValue(root),
+        assertParserException(root, firstDefinitionFirstTuple(root).getValueNode(),
                 "Node must contain pair with key 'uri'");
     }
 
@@ -111,124 +103,80 @@ public class SourceValidationTest extends AbstractBaseTest {
     public void namespaceWithUnsupportedKeys() {
         final String yaml = "definitions:\n"
                 + "  namespace:\n"
-                + "  - prefix: testPrefix\n"
-                + "    uri: testURI\n"
-                + "    unsupported: value";
+                + "    testPrefix:\n"
+                + "      uri: testURI\n"
+                + "      unsupported: value";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
 
-        assertParserException(root, firstDefinitionFirstValue(root),
+        assertParserException(root, firstTuple(firstDefinitionTuple(root).getValueNode()).getValueNode(),
                 "Key 'unsupported' is not allowed");
-    }
-
-    @Test
-    public void namespaceWithNonScalarPrefix() {
-        final String yaml = "definitions:\n"
-                + "  namespace:\n"
-                + "  - prefix: [ ]\n"
-                + "    uri: testURI";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node namespaceMapping = firstDefinitionFirstValue(root);
-
-        assertParserException(root, firstTuple(namespaceMapping).getValueNode(), "Node must be scalar");
     }
 
     @Test
     public void namespaceWithNonStringPrefix() {
         final String yaml = "definitions:\n"
                 + "  namespace:\n"
-                + "  - prefix: 25\n"
-                + "    uri: testURI";
+                + "    25:\n"
+                + "      uri: testURI";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node namespaceMapping = firstDefinitionFirstValue(root);
+        final NodeTuple namespaceMapping = firstDefinitionTuple(root);
 
-        assertParserException(root, firstTuple(namespaceMapping).getValueNode(), "Scalar must be a string");
+        assertParserException(root, firstTuple(namespaceMapping.getValueNode()).getKeyNode(), "Scalar must be a string");
     }
 
     @Test
     public void namespaceWithNonScalarURI() {
         final String yaml = "definitions:\n"
                 + "  namespace:\n"
-                + "  - prefix: testPrefix\n"
-                + "    uri: { }";
+                + "    testPrefix:\n"
+                + "      uri: { }";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node namespaceMapping = firstDefinitionFirstValue(root);
+        final Node testPrefix = firstDefinitionFirstTuple(root).getValueNode();
 
-        assertParserException(root, secondTuple(namespaceMapping).getValueNode(), "Node must be scalar");
+        assertParserException(root, firstTuple(testPrefix).getValueNode(), "Node must be scalar");
     }
 
     @Test
     public void namespaceWithNonStringURI() {
         final String yaml = "definitions:\n"
                 + "  namespace:\n"
-                + "  - prefix: testPrefix\n"
-                + "    uri: 42";
+                + "    testPrefix:\n"
+                + "      uri: 42";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node namespaceMapping = firstDefinitionFirstValue(root);
+        final Node namespaceMapping = firstDefinitionTuple(root).getValueNode();
+        final Node testPrefix = firstTuple(namespaceMapping).getValueNode();
 
-        assertParserException(root, secondTuple(namespaceMapping).getValueNode(), "Scalar must be a string");
+        assertParserException(root, firstTuple(testPrefix).getValueNode(), "Scalar must be a string");
     }
 
     @Test
     public void namespaceWithInvalidURI() {
         final String yaml = "definitions:\n"
                 + "  namespace:\n"
-                + "  - prefix: testPrefix\n"
-                + "    uri: 44:bla?//]";
+                + "    testPrefix:\n"
+                + "      uri: 44:bla?//]";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node namespaceMapping = firstDefinitionFirstValue(root);
+        final Node namespaceMapping = firstDefinitionTuple(root).getValueNode();
+        final Node testPrefix = firstTuple(namespaceMapping).getValueNode();
 
-        assertParserException(root, secondTuple(namespaceMapping).getValueNode(),
+        assertParserException(root, firstTuple(testPrefix).getValueNode(),
                 "Scalar must be formatted as an URI");
     }
 
     @Test
-    public void cndWithScalarValue() {
-        final Node root = yamlParser.compose(new StringReader("definitions: { cnd: scalar value }"));
+    public void namespaceWithNotExistingCndPath() {
+        final Node root = yamlParser.compose(new StringReader("definitions: { namespace: { foo: { uri: foo, cnd: foo.txt } } }"));
 
-        assertParserException(root, firstDefinitionTuple(root).getValueNode(), "Node must be a sequence");
-    }
+        final NodeTuple namespace = firstDefinitionTuple(root);
+        final NodeTuple foo = firstTuple(namespace.getValueNode());
+        final NodeTuple cnd = secondTuple(foo.getValueNode());
 
-    @Test
-    public void cndWithNonStringValue() {
-        final Node root = yamlParser.compose(new StringReader("definitions: { cnd: [ 24 ] }"));
-
-        assertParserException(root, firstDefinitionFirstValue(root), "Scalar must be a string");
-    }
-
-    @Test
-    public void cndWithNonStringResourceValue() {
-        final Node root = yamlParser.compose(new StringReader("definitions: { cnd: [ resource: 24 ] }"));
-
-        final Node cnd = firstDefinitionFirstValue(root);
-
-        assertParserException(root, firstTuple(cnd).getValueNode(), "Scalar must be a string");
-    }
-
-    @Test
-    public void cndWithNotExistingResourceValue() {
-        final Node root = yamlParser.compose(new StringReader("definitions: { cnd: [ resource: foo.txt ] }"));
-
-        final Node cnd = firstDefinitionFirstValue(root);
-
-        assertParserException(root, firstTuple(cnd).getValueNode(), "Cannot find resource 'foo.txt'");
-    }
-
-    @Test
-    public void cndWithNeitherScalarNorMap() {
-        final String yaml = "definitions:\n"
-                + "  cnd:\n"
-                + "  - [ sequence ]\n";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-
-        assertParserException(root, firstDefinitionFirstValue(root),
-                "CND definition item must be a string or a map with key 'resource'");
+        assertParserException(root, cnd.getValueNode(), "Cannot find resource 'foo.txt'");
     }
 
     @Test
@@ -1346,6 +1294,10 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     private NodeTuple firstConfigTuple(final Node root) {
+        return firstTuple(firstDefinitionTuple(root).getValueNode());
+    }
+
+    private NodeTuple firstDefinitionFirstTuple(final Node root) {
         return firstTuple(firstDefinitionTuple(root).getValueNode());
     }
 

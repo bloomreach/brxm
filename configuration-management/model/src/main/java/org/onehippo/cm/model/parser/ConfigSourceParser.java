@@ -35,14 +35,13 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
+import static org.onehippo.cm.model.Constants.CND_KEY;
 import static org.onehippo.cm.model.Constants.DEFINITIONS;
 import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
 import static org.onehippo.cm.model.Constants.META_DELETE_KEY;
 import static org.onehippo.cm.model.Constants.META_IGNORE_REORDERED_CHILDREN;
 import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_KEY;
 import static org.onehippo.cm.model.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
-import static org.onehippo.cm.model.Constants.PREFIX_KEY;
-import static org.onehippo.cm.model.Constants.RESOURCE_KEY;
 import static org.onehippo.cm.model.Constants.URI_KEY;
 
 public class ConfigSourceParser extends SourceParser {
@@ -73,9 +72,6 @@ public class ConfigSourceParser extends SourceParser {
                 case NAMESPACE:
                     constructNamespaceDefinitions(definitionNode, source);
                     break;
-                case CND:
-                    constructNodeTypeDefinitions(definitionNode, source);
-                    break;
                 case CONFIG:
                     constructConfigDefinitions(definitionNode, source);
                     break;
@@ -87,30 +83,14 @@ public class ConfigSourceParser extends SourceParser {
     }
 
     private void constructNamespaceDefinitions(final Node src, final ConfigSourceImpl parent) throws ParserException {
-        for (Node node : asSequence(src)) {
-            final Map<String, Node> namespaceMap = asMapping(node, new String[]{PREFIX_KEY, URI_KEY}, null);
-            final String prefix = asStringScalar(namespaceMap.get(PREFIX_KEY));
-            final URI uri = asURIScalar(namespaceMap.get(URI_KEY));
-            parent.addNamespaceDefinition(prefix, uri);
-        }
-    }
-
-    private void constructNodeTypeDefinitions(final Node src, final ConfigSourceImpl parent) throws ParserException {
-        for (Node node : asSequence(src)) {
-            switch (node.getNodeId()) {
-                case scalar:
-                    final String cndString = asStringScalar(node);
-                    parent.addNodeTypeDefinition(cndString, false);
-                    break;
-                case mapping:
-                    final Map<String, Node> map = asMapping(node, new String[]{RESOURCE_KEY}, new String[0]);
-                    final String resource = asResourcePathScalar(map.get(RESOURCE_KEY), parent, resourceInputProvider);
-                    parent.addNodeTypeDefinition(resource, true);
-                    break;
-                default:
-                    throw new ParserException(
-                            "CND definition item must be a string or a map with key '" + RESOURCE_KEY + "'", node);
-            }
+        for (NodeTuple nodeTuple : asTuples(src)) {
+            final String prefix = asStringScalar(nodeTuple.getKeyNode());
+            final Map<String, Node> map = asMapping(nodeTuple.getValueNode(), new String[]{URI_KEY}, new String[]{CND_KEY});
+            final URI uri = asURIScalar(map.get(URI_KEY));
+            final String cndPath = map.containsKey(CND_KEY)
+                    ? asResourcePathScalar(map.get(CND_KEY), parent, resourceInputProvider)
+                    : null;
+            parent.addNamespaceDefinition(prefix, uri, cndPath);
         }
     }
 

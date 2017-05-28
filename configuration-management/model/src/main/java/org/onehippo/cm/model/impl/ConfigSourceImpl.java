@@ -29,14 +29,8 @@ public class ConfigSourceImpl extends SourceImpl {
         return SourceType.CONFIG;
     }
 
-    public NamespaceDefinitionImpl addNamespaceDefinition(final String prefix, final URI uri) {
-        final NamespaceDefinitionImpl definition = new NamespaceDefinitionImpl(this, prefix, uri);
-        modifiableDefinitions.add(definition);
-        return definition;
-    }
-
-    public NodeTypeDefinitionImpl addNodeTypeDefinition(final String value, final boolean isResource) {
-        final NodeTypeDefinitionImpl definition = new NodeTypeDefinitionImpl(this, value, isResource);
+    public NamespaceDefinitionImpl addNamespaceDefinition(final String prefix, final URI uri, final String cndPath) {
+        final NamespaceDefinitionImpl definition = new NamespaceDefinitionImpl(this, prefix, uri, cndPath);
         modifiableDefinitions.add(definition);
         return definition;
     }

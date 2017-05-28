@@ -18,7 +18,7 @@
               jcr:primaryType: hcm:definitions
               hcm:digest: MD5:xxx
               hcm:yaml: xxx
-            /cndResource.cnd:
+            /cndPath.cnd:
               jcr:primaryType: hcm:cnd
               hcm:digest: MD5:xxx
               hcm:cnd: xxx

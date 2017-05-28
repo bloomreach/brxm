@@ -1,0 +1,4 @@
+<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+<'test'='http://www.onehippo.org/test/nt/1.0'>
+
+[test:type] > nt:base

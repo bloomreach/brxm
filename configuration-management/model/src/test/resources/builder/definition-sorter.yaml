@@ -17,10 +17,7 @@ definitions:
       jcr:primaryType: foo
       property6: bla6
   namespace:
-  - prefix: myhippoproject
-    uri: http://www.onehippo.org/myhippoproject/nt/1.0
-  cnd:
-  - |
-    <'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
-    <'myhippoproject'='http://www.onehippo.org/myhippoproject/nt/1.0'>
-    [myhippoproject:basedocument] > hippo:document orderable
+    myhippoproject:
+      uri: http://www.onehippo.org/myhippoproject/nt/1.0
+    hishippoproject:
+      uri: http://www.onehippo.org/hishippoproject/nt/1.0

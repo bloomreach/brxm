@@ -45,7 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.ActionItem;
 import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.NodeTypeDefinition;
+import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.SourceType;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
@@ -79,8 +79,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     private final Set<SourceImpl> sources = Collections.unmodifiableSet(sortedSources);
 
     private final List<NamespaceDefinitionImpl> namespaceDefinitions = new ArrayList<>();
-
-    private final List<NodeTypeDefinitionImpl> nodeTypeDefinitions = new ArrayList<>();
 
     private final List<ContentDefinitionImpl> contentDefinitions = new ArrayList<>();
 
@@ -214,15 +212,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     }
 
     /**
-     * @return a sorted list of node type definitions in insertion order.
-     * Note that these definitions are only populated for Modules that are part of the {@link org.onehippo.cm.model.ConfigurationModel}.
-     */
-    public List<NodeTypeDefinitionImpl> getNodeTypeDefinitions() {
-        return nodeTypeDefinitions;
-    }
-
-
-    /**
      * @return a sorted list of config definitions.
      * Note that these definitions are only populated for Modules that are part of the {@link org.onehippo.cm.model.ConfigurationModel}.
      */
@@ -284,7 +273,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     public void build() {
         // clear and sort definitions into the different types
         namespaceDefinitions.clear();
-        nodeTypeDefinitions.clear();
         configDefinitions.clear();
         contentDefinitions.clear();
         webFileBundleDefinitions.clear();
@@ -293,11 +281,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             for (AbstractDefinitionImpl definition : source.getDefinitions()) {
                 switch (definition.getType()) {
                     case NAMESPACE:
+                        ensureSingleSourceForNamespaces(definition);
                         namespaceDefinitions.add((NamespaceDefinitionImpl) definition);
-                        break;
-                    case CND:
-                        ensureSingleSourceForNodeTypes(definition);
-                        nodeTypeDefinitions.add((NodeTypeDefinitionImpl) definition);
                         break;
                     case CONFIG:
                         configDefinitions.add((ConfigDefinitionImpl) definition);
@@ -316,12 +301,12 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         configDefinitions.sort(new ContentDefinitionComparator());
     }
 
-    private void ensureSingleSourceForNodeTypes(final AbstractDefinitionImpl nodeTypeDefinition) {
-        if (!nodeTypeDefinitions.isEmpty()
-                && !nodeTypeDefinition.getSource().getPath().equals(nodeTypeDefinitions.get(0).getSource().getPath())) {
-            final String msg = String.format("CNDs are specified in multiple sources of a module: '%s' and '%s'. "
-                    + "For proper ordering, they must be specified in a single source.",
-                    nodeTypeDefinition.getOrigin(), nodeTypeDefinitions.get(0).getOrigin());
+    private void ensureSingleSourceForNamespaces(final AbstractDefinitionImpl namespaceDefinition) {
+        if (!namespaceDefinitions.isEmpty()
+                && !namespaceDefinition.getSource().getPath().equals(namespaceDefinitions.get(0).getSource().getPath())) {
+            final String msg = String.format("Namespaces are specified in multiple sources of a module: '%s' and '%s'. "
+                    + "To ensure proper ordering, they must be specified in a single source.",
+                    namespaceDefinition.getOrigin(), namespaceDefinitions.get(0).getOrigin());
             throw new IllegalStateException(msg);
         }
     }
@@ -366,18 +351,15 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             for (AbstractDefinitionImpl def : source.getDefinitions()) {
                 switch (def.getType()) {
                     case NAMESPACE:
+                        NamespaceDefinition namespaceDefinition = (NamespaceDefinition)def;
+                        if (namespaceDefinition.getCndPath() != null) {
+                            digestResource(source, namespaceDefinition.getCndPath(), rip, items);
+                        }
+                        break;
                     case WEBFILEBUNDLE:
                         // no special processing required
                     case CONTENT:
                         // this shouldn't exist here anymore, but we'll let the verifier handle it
-                        break;
-                    case CND:
-                        // digest cnd, if stored in a resource
-                        NodeTypeDefinition ntd = (NodeTypeDefinition) def;
-                        if (ntd.isResource()) {
-                            String cndPath = ntd.getValue();
-                            digestResource(source, cndPath, rip, items);
-                        }
                         break;
                     case CONFIG:
                         // recursively find all config resources and digest them

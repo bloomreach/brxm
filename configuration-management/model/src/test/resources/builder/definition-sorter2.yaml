@@ -12,6 +12,3 @@ definitions:
     /a/b/c/b:
       jcr:primaryType: foo
       propertyB4: bli4
-  namespace:
-  - prefix: hishippoproject
-    uri: http://www.onehippo.org/hishippoproject/nt/1.0

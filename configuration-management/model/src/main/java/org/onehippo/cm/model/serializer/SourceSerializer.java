@@ -31,7 +31,6 @@ import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.DefinitionType;
 import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.NamespaceDefinition;
-import org.onehippo.cm.model.NodeTypeDefinition;
 import org.onehippo.cm.model.PostProcessItem;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.PropertyType;
@@ -49,6 +48,7 @@ import org.yaml.snakeyaml.reader.StreamReader;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.onehippo.cm.model.Constants.CND_KEY;
 import static org.onehippo.cm.model.Constants.DEFINITIONS;
 import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
 import static org.onehippo.cm.model.Constants.META_DELETE_KEY;
@@ -57,7 +57,6 @@ import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_KEY;
 import static org.onehippo.cm.model.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
 import static org.onehippo.cm.model.Constants.OPERATION_KEY;
 import static org.onehippo.cm.model.Constants.PATH_KEY;
-import static org.onehippo.cm.model.Constants.PREFIX_KEY;
 import static org.onehippo.cm.model.Constants.RESOURCE_KEY;
 import static org.onehippo.cm.model.Constants.TYPE_KEY;
 import static org.onehippo.cm.model.Constants.URI_KEY;
@@ -81,8 +80,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
     public Node representSource(final Consumer<PostProcessItem> resourceConsumer) {
         final List<NodeTuple> configDefinitionTuples = new ArrayList<>();
         final List<NodeTuple> contentDefinitionTuples = new ArrayList<>();
-        final List<Node> namespaceDefinitionNodes = new ArrayList<>();
-        final List<Node> nodeTypeDefinitionNodes = new ArrayList<>();
+        final List<NodeTuple> namespaceDefinitionTuples = new ArrayList<>();
         final List<Node> webFilesDefinitionNodes = new ArrayList<>();
 
         for (Definition definition : source.getDefinitions()) {
@@ -94,10 +92,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
                     contentDefinitionTuples.add(representContentDefinition((ContentDefinition) definition, resourceConsumer));
                     break;
                 case NAMESPACE:
-                    namespaceDefinitionNodes.add(representNamespaceDefinition((NamespaceDefinition) definition));
-                    break;
-                case CND:
-                    nodeTypeDefinitionNodes.add(representNodetypeDefinition((NodeTypeDefinition) definition, resourceConsumer));
+                    namespaceDefinitionTuples.add(representNamespaceDefinition((NamespaceDefinition) definition, resourceConsumer));
                     break;
                 case WEBFILEBUNDLE:
                     webFilesDefinitionNodes.add(representWebFilesDefinition((WebFileBundleDefinition) definition));
@@ -108,11 +103,8 @@ public class SourceSerializer extends AbstractBaseSerializer {
         }
 
         final List<NodeTuple> definitionNodes = new ArrayList<>();
-        if (namespaceDefinitionNodes.size() > 0) {
-            definitionNodes.add(createStrSeqTuple(DefinitionType.NAMESPACE.toString(), namespaceDefinitionNodes));
-        }
-        if (nodeTypeDefinitionNodes.size() > 0) {
-            definitionNodes.add(createStrSeqTuple(DefinitionType.CND.toString(), nodeTypeDefinitionNodes));
+        if (namespaceDefinitionTuples.size() > 0) {
+            definitionNodes.add(createStrOptionalSequenceTuple(DefinitionType.NAMESPACE.toString(), namespaceDefinitionTuples));
         }
         if (configDefinitionTuples.size() > 0) {
             definitionNodes.add(createStrOptionalSequenceTuple(DefinitionType.CONFIG.toString(), configDefinitionTuples));
@@ -353,22 +345,14 @@ public class SourceSerializer extends AbstractBaseSerializer {
         }
     }
 
-    private Node representNamespaceDefinition(final NamespaceDefinition definition) {
-        final List<NodeTuple> tuples = new ArrayList<>(1);
-        tuples.add(createStrStrTuple(PREFIX_KEY, definition.getPrefix()));
-        tuples.add(createStrStrTuple(URI_KEY, definition.getURI().toString()));
-        return new MappingNode(Tag.MAP, tuples, false);
-    }
-
-    private Node representNodetypeDefinition(final NodeTypeDefinition definition, final Consumer<PostProcessItem> resourceConsumer) {
-        if (definition.isResource()) {
-            resourceConsumer.accept(new CopyItem(definition.getValue()));
-            final List<NodeTuple> tuples = new ArrayList<>(1);
-            tuples.add(createStrStrTuple(RESOURCE_KEY, definition.getValue()));
-            return new MappingNode(Tag.MAP, tuples, false);
-        } else {
-            return createStrScalar(definition.getValue(), '|');
+    private NodeTuple representNamespaceDefinition(final NamespaceDefinition definition, final Consumer<PostProcessItem> resourceConsumer) {
+        final List<NodeTuple> children = new ArrayList<>(2);
+        children.add(createStrStrTuple(URI_KEY, definition.getURI().toString()));
+        if (definition.getCndPath() != null) {
+            resourceConsumer.accept(new CopyItem(definition.getCndPath()));
+            children.add(createStrStrTuple(CND_KEY, definition.getCndPath()));
         }
+        return new NodeTuple(createStrScalar(definition.getPrefix()), new MappingNode(Tag.MAP, children, false));
     }
 
     private Node representWebFilesDefinition(final WebFileBundleDefinition definition) {

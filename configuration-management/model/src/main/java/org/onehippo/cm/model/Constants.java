@@ -48,8 +48,8 @@ public final class Constants {
     public static final String VALUE_KEY = "value";
     public static final String RESOURCE_KEY = "resource";
     public static final String PATH_KEY = "path";
-    public static final String PREFIX_KEY = "prefix";
     public static final String URI_KEY = "uri";
+    public static final String CND_KEY = "cnd";
     public static final String META_KEY_PREFIX = ".meta:";
     public static final String META_IGNORE_REORDERED_CHILDREN = META_KEY_PREFIX + "ignore-reordered-children";
     public static final String META_DELETE_KEY = META_KEY_PREFIX + "delete";

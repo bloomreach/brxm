@@ -20,7 +20,6 @@ public enum DefinitionType {
     CONFIG,
     CONTENT,
     NAMESPACE,
-    CND,
     WEBFILEBUNDLE;
 
     public final boolean isOfType(final Definition definition) {
@@ -30,7 +29,6 @@ public enum DefinitionType {
 	public static final String[] CONFIG_NAMES = {
 			CONFIG.toString(),
 			NAMESPACE.toString(),
-			CND.toString(),
 			WEBFILEBUNDLE.toString()
 	};
 

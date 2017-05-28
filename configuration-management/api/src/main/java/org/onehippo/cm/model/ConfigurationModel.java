@@ -35,11 +35,6 @@ public interface ConfigurationModel extends Closeable {
     List<? extends NamespaceDefinition> getNamespaceDefinitions();
 
     /**
-     * @return a List of all node type definitions found anywhere in the merged configuration
-     */
-    List<? extends NodeTypeDefinition> getNodeTypeDefinitions();
-
-    /**
      * TODO: explain this
      * @return
      */

@@ -1,7 +1,7 @@
 definitions:
     namespace:
-      - prefix: prefix
-        uri: uri
+      - prefix:
+            uri: uri
     config:
       - /root1:
           - property: value

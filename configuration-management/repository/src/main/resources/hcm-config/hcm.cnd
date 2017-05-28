@@ -45,7 +45,7 @@
 [hcm:definitions] > hippo:skipindex
   - hcm:yaml (string) primary mandatory
 
-// Stores a CND resource file as referenced from a node type definition
+// Stores a CND resource file as referenced from a namespace definition
 [hcm:cnd] > hippo:skipindex
   - hcm:cnd (string) primary mandatory
 

@@ -36,7 +36,6 @@ public class ConfigurationModelImplTest {
 
         assertEquals(0, model.getSortedGroups().size());
         assertEquals(0, model.getNamespaceDefinitions().size());
-        assertEquals(0, model.getNodeTypeDefinitions().size());
 
         final ConfigurationNodeImpl root = model.getConfigurationRootNode();
         assertEquals("/", root.getPath());
@@ -316,8 +315,7 @@ public class ConfigurationModelImplTest {
 
         ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
 
-        assertEquals(1, model.getNamespaceDefinitions().size());
-        assertEquals(1, model.getNodeTypeDefinitions().size());
+        assertEquals(2, model.getNamespaceDefinitions().size());
 
         final List<ContentDefinitionImpl> definitions = getContentDefinitionsFromFirstModule(model);
 
@@ -343,7 +341,6 @@ public class ConfigurationModelImplTest {
 
         String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
         assertEquals("[myhippoproject, hishippoproject]", namespaces);
-        assertEquals(1, model.getNodeTypeDefinitions().size());
 
         final List<ContentDefinitionImpl> definitions = getContentDefinitionsFromFirstModule(model);
 
@@ -364,7 +361,6 @@ public class ConfigurationModelImplTest {
 
         String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
         assertEquals("[myhippoproject, hishippoproject]", namespaces);
-        assertEquals(1, model.getNodeTypeDefinitions().size());
 
         final List<ContentDefinitionImpl> definitions = getContentDefinitionsFromFirstModule(model);
 
@@ -402,8 +398,9 @@ public class ConfigurationModelImplTest {
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
         final String yaml = "definitions:\n"
-                + "  cnd:\n"
-                + "  - dummy CND content";
+                + "  namespace:\n"
+                + "    foo:\n"
+                + "      uri: foo";
 
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
         ModelTestUtils.loadYAMLString(yaml, m1);
@@ -414,26 +411,28 @@ public class ConfigurationModelImplTest {
             model.addGroup(c1);
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
-            assertEquals("CNDs are specified in multiple sources of a module: 'c1/p1/m1 [string]' and 'c1/p1/m1 [builder/definition-sorter.yaml]'. For proper ordering, they must be specified in a single source.", e.getMessage());
+            assertEquals("Namespaces are specified in multiple sources of a module: 'c1/p1/m1 [string]' and 'c1/p1/m1 [builder/definition-sorter.yaml]'. To ensure proper ordering, they must be specified in a single source.", e.getMessage());
         }
     }
 
     @Test
-    public void assert_insertion_order_for_cnd() throws Exception {
+    public void assert_insertion_order_for_namespace() throws Exception {
         final GroupImpl c1 = new GroupImpl("c1");
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
         final String yaml = "definitions:\n"
-                + "  cnd:\n"
-                + "  - dummy CND content\n"
-                + "  - alphabetically earlier dummy CND";
+                + "  namespace:\n"
+                + "    foo:\n"
+                + "      uri: foo\n"
+                + "    bar:\n"
+                + "      uri: bar\n";
 
         ModelTestUtils.loadYAMLString(yaml, m1);
 
         ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
 
-        String nodeTypes = model.getNodeTypeDefinitions().stream().map(NodeTypeDefinitionImpl::getValue).collect(Collectors.toList()).toString();
-        assertEquals("[dummy CND content, alphabetically earlier dummy CND]", nodeTypes);
+        String prefixes = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
+        assertEquals("[foo, bar]", prefixes);
     }
 
     @Test

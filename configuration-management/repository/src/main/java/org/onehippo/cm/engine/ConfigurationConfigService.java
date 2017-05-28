@@ -16,12 +16,10 @@
 
 package org.onehippo.cm.engine;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,7 +52,6 @@ import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.ConfigurationProperty;
 import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.NamespaceDefinition;
-import org.onehippo.cm.model.NodeTypeDefinition;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.SnsUtils;
 import org.onehippo.cm.model.Source;
@@ -157,7 +154,7 @@ public class ConfigurationConfigService {
         //       to the handling of namespaces. The same applies to node types, at least, as far as
         //       BootstrapUtils#initializeNodetypes offers support.
         applyNamespaces(update.getNamespaceDefinitions(), session);
-        applyNodeTypes(update.getNodeTypeDefinitions(), session);
+        applyNodeTypes(update.getNamespaceDefinitions(), session);
 
         final ConfigurationNode baselineRoot = baseline.getConfigurationRootNode();
         final Node targetNode = session.getNode(baselineRoot.getPath());
@@ -193,19 +190,20 @@ public class ConfigurationConfigService {
         }
     }
 
-    private void applyNodeTypes(final List<? extends NodeTypeDefinition> nodeTypes, final Session session) throws RepositoryException, IOException {
-        for (NodeTypeDefinition nodeType : nodeTypes) {
-            if (logger.isDebugEnabled()) {
-                final String cndLabel = nodeType.isResource()
-                        ? String.format("CND '%s'", nodeType.getValue()) : "inline CND";
-                logger.debug(String.format("processing %s defined in %s.", cndLabel, nodeType.getOrigin()));
-            }
+    private void applyNodeTypes(final List<? extends NamespaceDefinition> nsDefinitions, final Session session)
+            throws RepositoryException, IOException {
+        for (NamespaceDefinition nsDefinition : nsDefinitions) {
+            if (nsDefinition.getCndPath() != null) {
+                final String cndPath = nsDefinition.getCndPath();
+                if (logger.isDebugEnabled()) {
+                    logger.debug(String.format("processing CND '%s' defined in %s.", cndPath, nsDefinition.getOrigin()));
+                }
 
-            // TODO: nodeTypeStream should be closed, right?
-            final InputStream nodeTypeStream = nodeType.isResource()
-                    ? getResourceInputStream(nodeType.getSource(), nodeType.getValue())
-                    : new ByteArrayInputStream(nodeType.getValue().getBytes(StandardCharsets.UTF_8));
-            BootstrapUtils.initializeNodetypes(session, nodeTypeStream, nodeType.getOrigin());
+                // TODO: nodeTypeStream should be closed, right?
+                final InputStream nodeTypeStream = getResourceInputStream(nsDefinition.getSource(), cndPath);
+                final String cndPathOrigin = String.format("'%s' (%s)", cndPath, nsDefinition.getOrigin());
+                BootstrapUtils.initializeNodetypes(session, nodeTypeStream, cndPathOrigin);
+            }
         }
     }
 

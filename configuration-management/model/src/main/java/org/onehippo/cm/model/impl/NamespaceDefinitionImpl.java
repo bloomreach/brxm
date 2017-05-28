@@ -24,11 +24,13 @@ public class NamespaceDefinitionImpl extends AbstractDefinitionImpl implements N
 
     private final String prefix;
     private final URI uri;
+    private final String cndPath;
 
-    public NamespaceDefinitionImpl(final SourceImpl source, final String prefix, final URI uri) {
+    public NamespaceDefinitionImpl(final SourceImpl source, final String prefix, final URI uri, final String cndPath) {
         super(source);
         this.prefix = prefix;
         this.uri = uri;
+        this.cndPath = cndPath;
     }
 
     @Override
@@ -46,4 +48,8 @@ public class NamespaceDefinitionImpl extends AbstractDefinitionImpl implements N
         return uri;
     }
 
+    @Override
+    public String getCndPath() {
+        return cndPath;
+    }
 }

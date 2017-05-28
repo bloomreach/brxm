@@ -22,7 +22,7 @@ import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.DefinitionProperty;
-import org.onehippo.cm.model.NodeTypeDefinition;
+import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.Value;
@@ -46,8 +46,8 @@ public class SourceResourceCrawler {
                 case CONTENT:
                     collectResourcesForNode(((ContentDefinition)definition).getNode(), resources);
                     break;
-                case CND:
-                    collectResourcesForNodeType((NodeTypeDefinition) definition, resources);
+                case NAMESPACE:
+                    collectResourcesForNamespace((NamespaceDefinition) definition, resources);
                     break;
             }
         }
@@ -80,9 +80,9 @@ public class SourceResourceCrawler {
         }
     }
 
-    private void collectResourcesForNodeType(final NodeTypeDefinition definition, final Set<String> resources) {
-        if (definition.isResource()) {
-            resources.add(definition.getValue());
+    private void collectResourcesForNamespace(final NamespaceDefinition definition, final Set<String> resources) {
+        if (definition.getCndPath() != null) {
+            resources.add(definition.getCndPath());
         }
     }
 }

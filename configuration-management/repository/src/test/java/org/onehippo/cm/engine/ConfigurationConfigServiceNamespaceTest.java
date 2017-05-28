@@ -19,9 +19,15 @@ package org.onehippo.cm.engine;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+
 import org.junit.Test;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.testutils.jcr.event.ExpectedEvents;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -39,8 +45,8 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
         final String source
                 = "definitions:\n"
                 + "  namespace:\n"
-                + "  - prefix: test\n"
-                + "    uri: http://www.onehippo.org/test/nt/1.0";
+                + "    test:\n"
+                + "      uri: http://www.onehippo.org/test/nt/1.0";
 
         configurationModel = applyDefinitions(source);
 
@@ -50,8 +56,8 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
         final String source2
                 = "definitions:\n"
                 + "  namespace:\n"
-                + "  - prefix: test\n"
-                + "    uri: http://www.onehippo.org/test/nt/1.0";
+                + "    test:\n"
+                + "      uri: http://www.onehippo.org/test/nt/1.0";
 
         applyDefinitions(source2, configurationModel);
 
@@ -62,20 +68,20 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
     @Test
     public void expect_adding_already_existing_namespace_to_be_allowed() throws Exception {
 
-        assertFalse(getNamespacePrefixes().contains("test2"));
-        session.getWorkspace().getNamespaceRegistry().registerNamespace("test2", "http://www.onehippo.org/test/nt/2.0");
-        assertTrue(getNamespacePrefixes().contains("test2"));
+        assertFalse(getNamespacePrefixes().contains("foo"));
+        session.getWorkspace().getNamespaceRegistry().registerNamespace("foo", "http://www.onehippo.org/foo/nt/1.0");
+        assertTrue(getNamespacePrefixes().contains("foo"));
 
         final String source
                 = "definitions:\n"
                 + "  namespace:\n"
-                + "  - prefix: test2\n"
-                + "    uri: http://www.onehippo.org/test/nt/2.0";
+                + "    foo:\n"
+                + "      uri: http://www.onehippo.org/foo/nt/1.0";
 
         applyDefinitions(source);
 
-        assertTrue(getNamespacePrefixes().contains("test2"));
-        assertEquals(getNamespaceURIForPrefix("test2"), "http://www.onehippo.org/test/nt/2.0");
+        assertTrue(getNamespacePrefixes().contains("foo"));
+        assertEquals(getNamespaceURIForPrefix("foo"), "http://www.onehippo.org/foo/nt/1.0");
     }
 
     @Test
@@ -83,8 +89,8 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
         final String source
                 = "definitions:\n"
                 + "  namespace:\n"
-                + "  - prefix: test3\n"
-                + "    uri: http://www.onehippo.org/test/nt/3.0";
+                + "    test3:\n"
+                + "      uri: http://www.onehippo.org/test/nt/3.0";
         ConfigurationModel configurationModel = applyDefinitions(source);
 
         assertTrue(getNamespacePrefixes().contains("test3"));
@@ -105,15 +111,15 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
         final String source
                 = "definitions:\n"
                 + "  namespace:\n"
-                + "  - prefix: test4\n"
-                + "    uri: http://www.onehippo.org/test/nt/4.0";
+                + "    test4:\n"
+                + "      uri: http://www.onehippo.org/test/nt/4.0";
         ConfigurationModel configurationModel = applyDefinitions(source);
 
         final String source2
                 = "definitions:\n"
                 + "  namespace:\n"
-                + "  - prefix: test4\n"
-                + "    uri: http://www.onehippo.org/test/nt/4.0-changed";
+                + "    test4:\n"
+                + "      uri: http://www.onehippo.org/test/nt/4.0-changed";
         try {
             applyDefinitions(source2, configurationModel);
             fail("Should have thrown a RuntimeException");
@@ -125,6 +131,144 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
         }
     }
 
+    @Test
+    public void expect_namespace_and_cnd_to_be_registered() throws Exception {
+        final String source
+                = "definitions:\n"
+                + "  namespace:\n"
+                + "    test:\n"
+                + "      uri: http://www.onehippo.org/test/nt/1.0\n"
+                + "      cnd: test.cnd\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /node:\n"
+                + "        jcr:primaryType: test:type\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectNodeAdded("/test/node", JCR_PRIMARYTYPE);
+
+        applyDefinitions(source, expectedEvents);
+
+        expectNode("/test/node", "[]", "[jcr:primaryType]");
+        expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test:type");
+    }
+
+    @Test
+    public void expect_cnd_reloads_to_work() throws Exception {
+        /* Test in three steps:
+         *  - step 1: load a basic cnd for a node type that does not allow sibling properties
+         *  - step 2: validate that it is not possible to create a sibling property
+         *  - step 3: reload the cnd, allowing a sibling property and test it is possible to load some content
+         */
+
+        // step 1
+        final String startConfiguration
+                = "definitions:\n"
+                + "  namespace:\n"
+                + "    test2:\n"
+                + "      uri: http://www.onehippo.org/test/nt/2.0\n"
+                + "      cnd: test2.cnd\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /node:\n"
+                + "        jcr:primaryType: test2:type\n"
+                + "";
+
+        ConfigurationModel baseline = applyDefinitions(startConfiguration);
+
+        expectNode("/test/node", "[]", "[jcr:primaryType]");
+        expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test2:type");
+
+        // step 2
+        final String additionalPropertyConfiguration
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /node:\n"
+                + "        jcr:primaryType: test2:type\n"
+                + "        test2:property: value\n"
+                + "";
+
+        try {
+            applyDefinitions(additionalPropertyConfiguration, baseline);
+            fail("an exception should have occurred");
+        } catch (Exception e) {
+            assertEquals(
+                    "Failed to process property '/test/node/test2:property' defined in"
+                            + " [test-group/test-project/test-module-0 [string]]: no matching property definition"
+                            + " found for {http://www.onehippo.org/test/nt/2.0}property",
+                    e.getMessage());
+        }
+
+        // step 3
+        final String reregisterConfiguration
+                = "definitions:\n"
+                + "  namespace:\n"
+                + "    test2:\n"
+                + "      uri: http://www.onehippo.org/test/nt/2.0\n"
+                + "      cnd: test2b.cnd\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /node:\n"
+                + "        jcr:primaryType: test2:type\n"
+                + "        test2:property: value\n"
+                + "";
+
+        applyDefinitions(reregisterConfiguration, baseline);
+
+        expectNode("/test/node", "[]", "[jcr:primaryType, test2:property]");
+        expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test2:type");
+        expectProp("/test/node/test2:property", PropertyType.STRING, "value");
+    }
+
+    @Test
+    public void expect_debug_message_to_be_logged_upon_loading_of_cnd() throws Exception {
+        final String source
+                = "definitions:\n"
+                + "  namespace:\n"
+                + "    test3:\n"
+                + "      uri: http://www.onehippo.org/test/nt/3.0\n"
+                + "      cnd: test3.cnd";
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onDebug().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(source);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("processing CND 'test3.cnd' defined in test-group/test-project/test-module-0 [string].")));
+        }
+
+        // as well as on reloading...
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onDebug().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(source);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("processing CND 'test3.cnd' defined in test-group/test-project/test-module-0 [string].")));
+        }
+    }
+
+    @Test
+    public void expect_parse_error_in_cnd() throws Exception {
+        final String source
+                = "definitions:\n"
+                + "  namespace:\n"
+                + "    test:\n"
+                + "      uri: http://www.onehippo.org/test/nt/1.0\n"
+                + "      cnd: unknown.cnd\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /node:\n"
+                + "        jcr:primaryType: test:type\n"
+                + "";
+
+        try {
+            applyDefinitions(source);
+            fail("an exception should have occurred");
+        } catch (RepositoryException e) {
+            assertTrue(e.getMessage().contains("Failed to parse cnd 'unknown.cnd' (test-group/test-project/test-module-0 [string])"));
+        }
+    }
 
     private List<String> getNamespacePrefixes() throws Exception {
         return Arrays.asList(session.getNamespacePrefixes());

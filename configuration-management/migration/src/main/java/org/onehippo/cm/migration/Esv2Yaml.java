@@ -193,6 +193,9 @@ public class Esv2Yaml {
                 // now sort the instructions on processing order
                 Collections.sort(instructions, InitializeInstruction.COMPARATOR);
 
+                // combine/link nodetypes to namespace instructions and remove them from the list
+                combineNamespaceAndNodeTypesInstructions(instructions);
+
                 // for resourcebundles (.json) make sure to use/create a unique target yaml source path
                 // e.g. to cater for a xyz.xml esv file + xyz.json -> xyz.yaml + xyz-1.yaml
                 for (InitializeInstruction instruction : instructions) {
@@ -270,6 +273,40 @@ public class Esv2Yaml {
         }
     }
 
+    protected void combineNamespaceAndNodeTypesInstructions(final List<InitializeInstruction> initializeInstructions)
+            throws EsvParseException {
+        for (int i = initializeInstructions.size()-1; i >= 0; i--) {
+            final InitializeInstruction instruction = initializeInstructions.get(i);
+            if (instruction.getType() == InitializeInstruction.Type.NODETYPESRESOURCE) {
+                if (instruction.getCombinedWith() == null) {
+                    // try find matching namespace instruction based on file basename as prefix
+                    final String basename = FilenameUtils.getBaseName(instruction.getResource().getName());
+                    InitializeInstruction match = null;
+                    for (InitializeInstruction initializeInstruction : initializeInstructions) {
+                        if (initializeInstruction.getType() == InitializeInstruction.Type.NAMESPACE &&
+                                initializeInstruction.getName().equals(basename)) {
+                            if (initializeInstruction.getCombinedWith() != null) {
+                                if (initializeInstruction.getCombinedWith().getResourcePath().equals(instruction.getResourcePath())) {
+                                    // special case: additional instruction to (re)load same CND again...? Whatever, its a match
+                                    match = initializeInstruction;
+                                }
+                            } else {
+                                // match found: combine
+                                initializeInstruction.setCombinedWith(instruction);
+                                match = initializeInstruction;
+                            }
+                        }
+                    }
+                    if (match == null) {
+                        throw new EsvParseException("Cannot match separate nodetypesresource initialize item: "
+                                + instruction.getName() + " to a corresponding separate namespace initialize item");
+                    }
+                }
+                initializeInstructions.remove(i);
+            }
+        }
+    }
+
     // generate and merge instruction definitions which already have been sorted in processing order
     protected void processInitializeInstructions(final ConfigSourceImpl mainSource, final List<InitializeInstruction> instructions)
             throws IOException, EsvParseException {
@@ -289,13 +326,11 @@ public class Esv2Yaml {
             switch (instruction.getType()) {
                 case NAMESPACE:
                     try {
-                        mainSource.addNamespaceDefinition(instruction.getName(), new URI(instruction.getTypePropertyValue()));
+                        String cndPath = instruction.getCombinedWith() != null ? instruction.getCombinedWith().getResourcePath() : null;
+                        mainSource.addNamespaceDefinition(instruction.getName(), new URI(instruction.getTypePropertyValue()), cndPath);
                     } catch (URISyntaxException e) {
                         // already checked
                     }
-                    break;
-                case NODETYPESRESOURCE:
-                    mainSource.addNodeTypeDefinition(instruction.getResourcePath(), true);
                     break;
                 case CONTENTDELETE:
                 case CONTENTPROPDELETE:

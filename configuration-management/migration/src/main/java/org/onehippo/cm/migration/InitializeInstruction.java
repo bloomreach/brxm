@@ -250,7 +250,7 @@ public class InitializeInstruction {
         this.sequence = value != null ? Double.valueOf(value) : -1.0;
     }
 
-    protected void setCombinedWith(final InitializeInstruction combinedWith) {
+    public void setCombinedWith(final InitializeInstruction combinedWith) {
         this.combinedWith = combinedWith;
     }
 
