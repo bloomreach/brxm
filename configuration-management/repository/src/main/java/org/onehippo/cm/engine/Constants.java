@@ -21,38 +21,36 @@ import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
 
 public final class Constants {
 
-    public static final String HCM_ROOT_NODE_TYPE = "hcm:hcm";
-    public static final String HCM_ROOT_NODE = HCM_ROOT_NODE_TYPE;
-    public static final String BASELINE_NODE = "hcm:baseline";
-    public static final String BASELINE_TYPE = "hcm:baseline";
-    public static final String GROUP_TYPE = "hcm:group";
-    public static final String PROJECT_TYPE = "hcm:project";
-    public static final String MODULE_TYPE = "hcm:module";
+    public static final String HCM_NAMESPACE = "http://www.onehippo.org/jcr/hcm/1.0";
+    public static final String HCM_PREFIX = "hcm";
 
-    public static final String LAST_UPDATED_PROPERTY = "hcm:lastupdated";
+    public static final String NT_HCM_ROOT = "hcm:hcm";
+    public static final String NT_HCM_BASELINE = "hcm:baseline";
+    public static final String NT_HCM_GROUP = "hcm:group";
+    public static final String NT_HCM_PROJECT = "hcm:project";
+    public static final String NT_HCM_MODULE = "hcm:module";
+    public static final String NT_HCM_DESCRIPTOR = "hcm:descriptor";
+    public static final String NT_HCM_ACTIONS = "hcm:actions";
+    public static final String NT_HCM_CONTENT = "hcm:content";
+    public static final String NT_HCM_CONTENT_SOURCE = "hcm:contentsource";
+    public static final String NT_HCM_CONTENT_FOLDER = "hcm:contentfolder";
+    public static final String NT_HCM_CONFIG_FOLDER = "hcm:configfolder";
+    public static final String NT_HCM_DEFINITIONS = "hcm:definitions";
+    public static final String NT_HCM_CND = "hcm:cnd";
+    public static final String NT_HCM_BINARY = "hcm:binary";
 
-    public static final String MODULE_DESCRIPTOR_NODE = HCM_MODULE_YAML;
-    public static final String MODULE_DESCRIPTOR_TYPE = "hcm:descriptor";
-    public static final String MODULE_SEQUENCE_NUMBER = "hcm:seqnumber";
-    public static final String ACTIONS_TYPE = "hcm:actions";
-    public static final String ACTIONS_NODE = ACTIONS_YAML;
-    public static final String CONTENT_TYPE = "hcm:content";
-    public static final String CONTENT_SOURCE_TYPE = "hcm:contentsource";
+    public static final String HCM_ROOT = NT_HCM_ROOT;
+    public static final String HCM_BASELINE = "hcm:baseline";
+    public static final String HCM_LAST_UPDATED = "hcm:lastupdated";
+    public static final String HCM_MODULE_DESCRIPTOR = HCM_MODULE_YAML;
+    public static final String HCM_MODULE_SEQUENCE = "hcm:seqnumber";
+    public static final String HCM_ACTIONS = ACTIONS_YAML;
     public static final String HCM_CONTENT_PATHS_APPLIED = "hcm:contentPathsApplied";
     public static final String HCM_MODULE_ACTIONS_APPLIED = "hcm:moduleActionsApplied";
-
-    public static final String CONTENT_FOLDER_TYPE = "hcm:contentfolder";
     public static final String HCM_PROCESSED = "hcm:processed";
-    public static final String CONTENT_PATH_PROPERTY = "hcm:contentpath";
-    public static final String CONFIG_FOLDER_TYPE = "hcm:configfolder";
-
-    public static final String DEFINITIONS_TYPE = "hcm:definitions";
-    public static final String CND_TYPE = "hcm:cnd";
-    public static final String BINARY_TYPE = "hcm:binary";
-
-    public static final String YAML_PROPERTY = "hcm:yaml";
-    public static final String CND_PROPERTY = "hcm:cnd";
-
+    public static final String HCM_CONTENT_PATH = "hcm:contentpath";
+    public static final String HCM_YAML = "hcm:yaml";
+    public static final String HCM_CND = "hcm:cnd";
     // This should be one of the required digest algorithms (MD5, SHA-1, or SHA-256)
-    public static final String DIGEST_PROPERTY = "hcm:digest";
+    public static final String HCM_DIGEST = "hcm:digest";
 }

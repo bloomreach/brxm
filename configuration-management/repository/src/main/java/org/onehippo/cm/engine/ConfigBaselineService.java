@@ -63,28 +63,29 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cm.engine.Constants.ACTIONS_NODE;
-import static org.onehippo.cm.engine.Constants.ACTIONS_TYPE;
-import static org.onehippo.cm.engine.Constants.BASELINE_NODE;
-import static org.onehippo.cm.engine.Constants.BASELINE_TYPE;
-import static org.onehippo.cm.engine.Constants.BINARY_TYPE;
-import static org.onehippo.cm.engine.Constants.CND_PROPERTY;
-import static org.onehippo.cm.engine.Constants.CND_TYPE;
-import static org.onehippo.cm.engine.Constants.CONFIG_FOLDER_TYPE;
-import static org.onehippo.cm.engine.Constants.CONTENT_FOLDER_TYPE;
-import static org.onehippo.cm.engine.Constants.CONTENT_PATH_PROPERTY;
-import static org.onehippo.cm.engine.Constants.CONTENT_SOURCE_TYPE;
-import static org.onehippo.cm.engine.Constants.DEFINITIONS_TYPE;
-import static org.onehippo.cm.engine.Constants.DIGEST_PROPERTY;
-import static org.onehippo.cm.engine.Constants.GROUP_TYPE;
-import static org.onehippo.cm.engine.Constants.HCM_ROOT_NODE;
-import static org.onehippo.cm.engine.Constants.LAST_UPDATED_PROPERTY;
-import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_NODE;
-import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_TYPE;
-import static org.onehippo.cm.engine.Constants.MODULE_SEQUENCE_NUMBER;
-import static org.onehippo.cm.engine.Constants.MODULE_TYPE;
-import static org.onehippo.cm.engine.Constants.PROJECT_TYPE;
-import static org.onehippo.cm.engine.Constants.YAML_PROPERTY;
+import static org.onehippo.cm.engine.Constants.HCM_ACTIONS;
+import static org.onehippo.cm.engine.Constants.NT_HCM_ACTIONS;
+import static org.onehippo.cm.engine.Constants.HCM_BASELINE;
+import static org.onehippo.cm.engine.Constants.NT_HCM_BASELINE;
+import static org.onehippo.cm.engine.Constants.NT_HCM_BINARY;
+import static org.onehippo.cm.engine.Constants.HCM_CND;
+import static org.onehippo.cm.engine.Constants.NT_HCM_CND;
+import static org.onehippo.cm.engine.Constants.NT_HCM_CONFIG_FOLDER;
+import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT_FOLDER;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATH;
+import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT_SOURCE;
+import static org.onehippo.cm.engine.Constants.NT_HCM_DEFINITIONS;
+import static org.onehippo.cm.engine.Constants.HCM_DIGEST;
+import static org.onehippo.cm.engine.Constants.NT_HCM_GROUP;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT;
+import static org.onehippo.cm.engine.Constants.HCM_LAST_UPDATED;
+import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
+import static org.onehippo.cm.engine.Constants.NT_HCM_DESCRIPTOR;
+import static org.onehippo.cm.engine.Constants.HCM_MODULE_SEQUENCE;
+import static org.onehippo.cm.engine.Constants.NT_HCM_MODULE;
+import static org.onehippo.cm.engine.Constants.NT_HCM_PROJECT;
+import static org.onehippo.cm.engine.Constants.HCM_YAML;
+import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
@@ -114,8 +115,8 @@ public class ConfigBaselineService {
 
             // find baseline root node, or create if necessary
             final Node rootNode = session.getRootNode();
-            boolean hcmNodeExisted = rootNode.hasNode(HCM_ROOT_NODE);
-            final Node hcmRootNode = createNodeIfNecessary(rootNode, HCM_ROOT_NODE, HCM_ROOT_NODE, false);
+            boolean hcmNodeExisted = rootNode.hasNode(HCM_ROOT);
+            final Node hcmRootNode = createNodeIfNecessary(rootNode, HCM_ROOT, NT_HCM_ROOT, false);
 
             // if the baseline node didn't exist before, save it before attempting to lock it
             if (!hcmNodeExisted) {
@@ -128,7 +129,7 @@ public class ConfigBaselineService {
             session.save();
 
             try {
-                Node baseline = createNodeIfNecessary(hcmRootNode, BASELINE_NODE, BASELINE_TYPE, false);
+                Node baseline = createNodeIfNecessary(hcmRootNode, HCM_BASELINE, NT_HCM_BASELINE, false);
 
                 // TODO: implement a smarter partial-update process instead of brute-force removal
                 // clear existing group nodes before creating new ones
@@ -138,26 +139,26 @@ public class ConfigBaselineService {
                 }
 
                 // set lastupdated date to now
-                baseline.setProperty(LAST_UPDATED_PROPERTY, Calendar.getInstance());
+                baseline.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
 
                 // compute and store digest from model manifest
                 // Note: we've decided not to worry about processing data twice, since we don't expect large files
                 //       in the config portion, and content is already optimized to use content path instead of digest
                 String modelDigestString = model.getDigest();
-                baseline.setProperty(DIGEST_PROPERTY, modelDigestString);
+                baseline.setProperty(HCM_DIGEST, modelDigestString);
 
                 // create group, project, and module nodes, if necessary
                 // foreach group
                 for (Group group : model.getSortedGroups()) {
-                    Node groupNode = createNodeIfNecessary(baseline, group.getName(), GROUP_TYPE, true);
+                    Node groupNode = createNodeIfNecessary(baseline, group.getName(), NT_HCM_GROUP, true);
 
                     // foreach project
                     for (Project project : group.getProjects()) {
-                        Node projectNode = createNodeIfNecessary(groupNode, project.getName(), PROJECT_TYPE, true);
+                        Node projectNode = createNodeIfNecessary(groupNode, project.getName(), NT_HCM_PROJECT, true);
 
                         // foreach module
                         for (Module module : project.getModules()) {
-                            Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), MODULE_TYPE, true);
+                            Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
 
                             // process each module in detail
                             storeBaselineModule(module, moduleNode, model);
@@ -198,11 +199,11 @@ public class ConfigBaselineService {
         ResourceInputProvider rip = module.getConfigResourceInputProvider();
 
         // create descriptor node, if necessary
-        Node descriptorNode = createNodeIfNecessary(moduleNode, MODULE_DESCRIPTOR_NODE, MODULE_DESCRIPTOR_TYPE, false);
+        Node descriptorNode = createNodeIfNecessary(moduleNode, HCM_MODULE_DESCRIPTOR, NT_HCM_DESCRIPTOR, false);
 
         final Double sequenceNumber = module.getSequenceNumber();
         if (sequenceNumber != null) {
-            moduleNode.setProperty(MODULE_SEQUENCE_NUMBER, sequenceNumber);
+            moduleNode.setProperty(HCM_MODULE_SEQUENCE, sequenceNumber);
         }
 
         // AFAIK, a module MUST have a descriptor, but check here for a malformed package or special case
@@ -212,7 +213,7 @@ public class ConfigBaselineService {
             InputStream is = rip.getResourceInputStream(null, "/../" + HCM_MODULE_YAML);
 
             // store yaml and digest (this call will close the input stream)
-            storeString(is, descriptorNode, YAML_PROPERTY);
+            storeString(is, descriptorNode, HCM_YAML);
         }
         else {
             // if descriptor doesn't exist,
@@ -220,44 +221,44 @@ public class ConfigBaselineService {
             String dummyDescriptor = module.compileDummyDescriptor();
 
             // write that back to the YAML property and digest it
-            storeString(IOUtils.toInputStream(dummyDescriptor, StandardCharsets.UTF_8), descriptorNode, YAML_PROPERTY);
+            storeString(IOUtils.toInputStream(dummyDescriptor, StandardCharsets.UTF_8), descriptorNode, HCM_YAML);
         }
 
         // if this Module has an actions file...
         // TODO the "/../" is an ugly hack because RIP actually treats absolute paths as relative to config base, not module base
         if (rip.hasResource(null, "/../" + ACTIONS_YAML)) {
             // create actions node, if necessary
-            Node actionsNode = createNodeIfNecessary(moduleNode, ACTIONS_NODE, ACTIONS_TYPE, false);
+            Node actionsNode = createNodeIfNecessary(moduleNode, HCM_ACTIONS, NT_HCM_ACTIONS, false);
 
             // open actions InputStream
             InputStream is = rip.getResourceInputStream(null, "/../" + ACTIONS_YAML);
 
             // store yaml and digest (this call will close the input stream)
-            storeString(is, actionsNode, YAML_PROPERTY);
+            storeString(is, actionsNode, HCM_YAML);
         }
 
         // foreach content source
         for (Source source : module.getContentSources()) {
             // TODO this is an ugly hack because source.getPath() is actually relative to content root, not module root
             // create the content root node, if necessary
-            Node contentRootNode = createNodeIfNecessary(moduleNode, HCM_CONTENT_FOLDER, CONTENT_FOLDER_TYPE, false);
+            Node contentRootNode = createNodeIfNecessary(moduleNode, HCM_CONTENT_FOLDER, NT_HCM_CONTENT_FOLDER, false);
 
             // create folder nodes, if necessary
             Node sourceNode = createNodeAndParentsIfNecessary(source.getPath(), contentRootNode,
-                    CONTENT_FOLDER_TYPE, CONTENT_SOURCE_TYPE);
+                    NT_HCM_CONTENT_FOLDER, NT_HCM_CONTENT_SOURCE);
 
             // assume that there is exactly one content definition here, as required
             ContentDefinition firstDef = (ContentDefinition) source.getDefinitions().get(0);
 
             // set content path property
-            sourceNode.setProperty(CONTENT_PATH_PROPERTY, firstDef.getNode().getPath());
+            sourceNode.setProperty(HCM_CONTENT_PATH, firstDef.getNode().getPath());
         }
 
         // foreach config source
         for (Source source : module.getConfigSources()) {
             // TODO this is an ugly hack because source.getPath() is actually relative to config root, not module root
             // create the config root node, if necessary
-            Node configRootNode = createNodeIfNecessary(moduleNode, HCM_CONFIG_FOLDER, CONFIG_FOLDER_TYPE, false);
+            Node configRootNode = createNodeIfNecessary(moduleNode, HCM_CONFIG_FOLDER, NT_HCM_CONFIG_FOLDER, false);
 
             // process in detail ...
             storeBaselineConfigSource(source, configRootNode, rip);
@@ -278,13 +279,13 @@ public class ConfigBaselineService {
         // create folder nodes, if necessary
         String sourcePath = source.getPath();
         Node sourceNode = createNodeAndParentsIfNecessary(sourcePath, configRootNode,
-                CONFIG_FOLDER_TYPE, DEFINITIONS_TYPE);
+                NT_HCM_CONFIG_FOLDER, NT_HCM_DEFINITIONS);
 
         // open source yaml InputStream
         InputStream is = rip.getResourceInputStream(null, "/" + sourcePath);
 
         // store yaml and digest (this call will close the input stream)
-        storeString(is, sourceNode, YAML_PROPERTY);
+        storeString(is, sourceNode, HCM_YAML);
 
         // foreach definition
         for (Definition def : source.getDefinitions()) {
@@ -296,13 +297,13 @@ public class ConfigBaselineService {
 
                         // create folder nodes, if necessary
                         Node cndNode = createNodeAndParentsIfNecessary(cndPath, baseForPath(cndPath, sourceNode, configRootNode),
-                                CONFIG_FOLDER_TYPE, CND_TYPE);
+                                NT_HCM_CONFIG_FOLDER, NT_HCM_CND);
 
                         // open cnd resource InputStream
                         InputStream cndIS = rip.getResourceInputStream(source, cndPath);
 
                         // store cnd and digest (this call will close the input stream)
-                        storeString(cndIS, cndNode, CND_PROPERTY);
+                        storeString(cndIS, cndNode, HCM_CND);
                     }
                 case WEBFILEBUNDLE:
                     // no special processing required
@@ -368,7 +369,7 @@ public class ConfigBaselineService {
             // create nodes, if necessary
             String path = value.getString();
             Node resourceNode = createNodeAndParentsIfNecessary(path, baseForPath(path, sourceNode, configRootNode),
-                    CONFIG_FOLDER_TYPE, BINARY_TYPE);
+                    NT_HCM_CONFIG_FOLDER, NT_HCM_BINARY);
 
             // open cnd resource InputStream
             InputStream is = rip.getResourceInputStream(source, value.getString());
@@ -475,7 +476,7 @@ public class ConfigBaselineService {
     protected boolean baselineExists(final Node rootNode) throws RepositoryException {
         try {
             // TODO: remove the try-catch when the hcm namespace is registered in an earlier stage
-            return rootNode.hasNode(HCM_ROOT_NODE) || !rootNode.getNode(HCM_ROOT_NODE).hasNode(BASELINE_NODE);
+            return rootNode.hasNode(HCM_ROOT) || !rootNode.getNode(HCM_ROOT).hasNode(HCM_BASELINE);
         } catch (RepositoryException e) {
             return false;
         }
@@ -486,7 +487,7 @@ public class ConfigBaselineService {
      * @param rootNode the JCR root node
      */
     protected Node getBaselineNode(final Node rootNode) throws RepositoryException {
-        return rootNode.getNode(HCM_ROOT_NODE).getNode(BASELINE_NODE);
+        return rootNode.getNode(HCM_ROOT).getNode(HCM_BASELINE);
     }
 
     /**
@@ -543,11 +544,11 @@ public class ConfigBaselineService {
             Map<String, GroupImpl> moduleGroups;
             ModuleImpl module;
 
-            Node descriptorNode = moduleNode.getNode(MODULE_DESCRIPTOR_NODE);
+            Node descriptorNode = moduleNode.getNode(HCM_MODULE_DESCRIPTOR);
 
             // if descriptor exists
             // TODO when demo project is restructured, we should assume this exists
-            final String descriptor = descriptorNode.getProperty(YAML_PROPERTY).getString();
+            final String descriptor = descriptorNode.getProperty(HCM_YAML).getString();
             if (StringUtils.isNotEmpty(descriptor)) {
                 // parse descriptor with ModuleDescriptorParser
                 InputStream is = IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8);
@@ -662,7 +663,7 @@ public class ConfigBaselineService {
                             ContentSourceImpl source = new ContentSourceImpl(sourcePath, (ModuleImpl) module);
 
                             // get content path from JCR Node
-                            String contentPath = contentNode.getProperty(CONTENT_PATH_PROPERTY).getString();
+                            String contentPath = contentNode.getProperty(HCM_CONTENT_PATH).getString();
 
                             // create ContentDefinition with a single definition node and just the node path
                             ContentDefinitionImpl cd = source.addContentDefinition();
@@ -689,15 +690,15 @@ public class ConfigBaselineService {
         for (NodeIterator gni = baselineNode.getNodes(); gni.hasNext();) {
             Node possibleGroup = gni.nextNode();
 
-            if (possibleGroup.getPrimaryNodeType().isNodeType(GROUP_TYPE)) {
+            if (possibleGroup.getPrimaryNodeType().isNodeType(NT_HCM_GROUP)) {
                 // for each project node
                 for (NodeIterator pni = possibleGroup.getNodes(); pni.hasNext(); ) {
                     Node possibleProject = pni.nextNode();
-                    if (possibleProject.getPrimaryNodeType().isNodeType(PROJECT_TYPE)) {
+                    if (possibleProject.getPrimaryNodeType().isNodeType(NT_HCM_PROJECT)) {
                         // for each module node
                         for (NodeIterator mni = possibleProject.getNodes(); mni.hasNext(); ) {
                             Node possibleModule = mni.nextNode();
-                            if (possibleModule.getPrimaryNodeType().isNodeType(MODULE_TYPE)) {
+                            if (possibleModule.getPrimaryNodeType().isNodeType(NT_HCM_MODULE)) {
                                 // accumulate
                                 moduleNodes.add(possibleModule);
                             }
@@ -729,7 +730,7 @@ public class ConfigBaselineService {
         else {
             // otherwise, if the baseline node DOES exist...
             // ... load the digest directly from the baseline JCR node
-            String baselineDigestString = getBaselineNode(rootNode).getProperty(DIGEST_PROPERTY).getString();
+            String baselineDigestString = getBaselineNode(rootNode).getProperty(HCM_DIGEST).getString();
             log.debug("baseline digest:\n" + baselineDigestString);
 
             // compute a digest from the model manifest

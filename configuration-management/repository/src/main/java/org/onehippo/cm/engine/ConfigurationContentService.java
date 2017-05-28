@@ -50,11 +50,12 @@ import org.slf4j.LoggerFactory;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.MapUtils.isNotEmpty;
-import static org.onehippo.cm.engine.Constants.BASELINE_NODE;
-import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
+import static org.onehippo.cm.engine.Constants.HCM_BASELINE;
+import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
-import static org.onehippo.cm.engine.Constants.HCM_ROOT_NODE;
-import static org.onehippo.cm.engine.Constants.MODULE_SEQUENCE_NUMBER;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT;
+import static org.onehippo.cm.engine.Constants.HCM_MODULE_SEQUENCE;
+import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 
 /**
  * Applies content definitions to repository
@@ -167,13 +168,13 @@ public class ConfigurationContentService {
     private void updateProcessedDefinition(final String path, final Session session) throws RepositoryException {
 
         final Node rootNode = session.getRootNode();
-        final boolean hcmNodeExisted = rootNode.hasNode(HCM_ROOT_NODE);
-        final Node hcmRootNode = createNodeIfNecessary(rootNode, HCM_ROOT_NODE, HCM_ROOT_NODE, false);
+        final boolean hcmNodeExisted = rootNode.hasNode(HCM_ROOT);
+        final Node hcmRootNode = createNodeIfNecessary(rootNode, HCM_ROOT, NT_HCM_ROOT, false);
         if (!hcmNodeExisted) {
             session.save();
         }
 
-        final Node contentNode = createNodeIfNecessary(hcmRootNode, CONTENT_TYPE, CONTENT_TYPE, false);
+        final Node contentNode = createNodeIfNecessary(hcmRootNode, NT_HCM_CONTENT, NT_HCM_CONTENT, false);
         final List<Value> valueList = new ArrayList<>();
         final Value newValue = session.getValueFactory().createValue(path);
         valueList.add(newValue);
@@ -236,7 +237,7 @@ public class ConfigurationContentService {
     private boolean nodeAlreadyProcessed(final DefinitionNode contentNode, final Session session) throws RepositoryException {
 
         try {
-            final String hcmContentNodePath = String.format("/%s/%s", HCM_ROOT_NODE, CONTENT_TYPE);
+            final String hcmContentNodePath = String.format("/%s/%s", HCM_ROOT, NT_HCM_CONTENT);
             if (!session.nodeExists(hcmContentNodePath)) {
                 return false;
             }
@@ -279,9 +280,9 @@ public class ConfigurationContentService {
      */
     private double getModuleVersion(final Module module, final Session session) throws RepositoryException {
         try {
-            final String moduleNodePath = String.format("/%s/%s/%s", HCM_ROOT_NODE, BASELINE_NODE, ((ModuleImpl) module).getFullName());
+            final String moduleNodePath = String.format("/%s/%s/%s", HCM_ROOT, HCM_BASELINE, ((ModuleImpl) module).getFullName());
             Node node = session.getNode(moduleNodePath);
-            return node.getProperty(MODULE_SEQUENCE_NUMBER).getDouble();
+            return node.getProperty(HCM_MODULE_SEQUENCE).getDouble();
         } catch (PathNotFoundException ignored) {}
 
         return Double.MIN_VALUE;

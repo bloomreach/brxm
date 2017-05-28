@@ -40,7 +40,7 @@ import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.SnsUtils;
 
-import static org.onehippo.cm.engine.Constants.HCM_ROOT_NODE;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 
 public class EventJournalProcessor {
 
@@ -54,7 +54,7 @@ public class EventJournalProcessor {
             "/hippo:configuration/hippo:update/jcr:",
             "/hippo:configuration/hippo:temporary",
             "/hippo:configuration/hippo:modules/brokenlinks",
-            "/" + HCM_ROOT_NODE
+            "/" + HCM_ROOT
     };
 
     private final Configuration configuration;

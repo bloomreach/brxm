@@ -34,10 +34,10 @@ import org.onehippo.cm.model.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cm.engine.Constants.ACTIONS_NODE;
-import static org.onehippo.cm.engine.Constants.CONTENT_TYPE;
-import static org.onehippo.cm.engine.Constants.DEFINITIONS_TYPE;
-import static org.onehippo.cm.engine.Constants.MODULE_DESCRIPTOR_NODE;
+import static org.onehippo.cm.engine.Constants.HCM_ACTIONS;
+import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT;
+import static org.onehippo.cm.engine.Constants.NT_HCM_DEFINITIONS;
+import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
 
@@ -96,11 +96,11 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
             // special case handling for descriptor and actions
             if (resourcePath.equals("/../"+ HCM_MODULE_YAML)) {
                 // short-circuit here, because we want to skip JCR name escaping
-                return "../"+MODULE_DESCRIPTOR_NODE;
+                return "../"+ HCM_MODULE_DESCRIPTOR;
             }
             if (resourcePath.equals("/../"+ACTIONS_YAML)) {
                 // short-circuit here, because we want to skip JCR name escaping
-                return "../"+ ACTIONS_NODE;
+                return "../"+ HCM_ACTIONS;
             }
 
             result = StringUtils.stripStart(result, "/");
@@ -153,7 +153,7 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
     public List<Node> getConfigSourceNodes() throws RepositoryException {
         // we expect baseNode to be HCM_CONFIG_FOLDER for this module
         // search for definitions nodes by type
-        return searchByType(DEFINITIONS_TYPE, baseNode);
+        return searchByType(NT_HCM_DEFINITIONS, baseNode);
     }
 
     /**
@@ -163,7 +163,7 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
     public List<Node> getContentSourceNodes() throws RepositoryException {
         // we expect baseNode to be HCM_CONTENT_FOLDER for this module
         // search for content nodes by type
-        return searchByType(CONTENT_TYPE, baseNode);
+        return searchByType(NT_HCM_CONTENT, baseNode);
     }
 
     /**
