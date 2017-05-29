@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,8 +109,8 @@ describe('PageActionProperties', () => {
   it('initializes correctly', () => {
     let $ctrl = compileDirectiveAndGetController();
 
-    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_PAGE_EDIT_TITLE', { pageName: 'name' });
-    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_PAGE_EDIT_PRIMARY_DOCUMENT_VALUE_NONE');
+    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_PAGE_PROPERTIES_TITLE', { pageName: 'name' });
+    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_PAGE_PROPERTIES_PRIMARY_DOCUMENT_VALUE_NONE');
     expect($ctrl.title).toBe('title');
     expect($ctrl.availableDocuments.length).toBe(3);
     expect($ctrl.availableDocuments[0].path).toBe('');
@@ -279,7 +279,7 @@ describe('PageActionProperties', () => {
     $ctrl.prototype = pageModel.prototypes[0]; // has containers
     $ctrl.evaluatePrototype();
     expect($mdDialog.show).toHaveBeenCalledWith(mockAlert);
-    expect(mockAlert.textContent).toHaveBeenCalledWith('SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REPOSITIONING');
+    expect(mockAlert.textContent).toHaveBeenCalledWith('SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REPOSITIONING');
 
     $mdDialog.show.calls.reset();
     mockAlert.textContent.calls.reset();
@@ -288,6 +288,6 @@ describe('PageActionProperties', () => {
     $ctrl.prototype = pageModel.prototypes[1]; // has no
     $ctrl.evaluatePrototype();
     expect($mdDialog.show).toHaveBeenCalledWith(mockAlert);
-    expect(mockAlert.textContent).toHaveBeenCalledWith('SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REMOVAL');
+    expect(mockAlert.textContent).toHaveBeenCalledWith('SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REMOVAL');
   });
 });

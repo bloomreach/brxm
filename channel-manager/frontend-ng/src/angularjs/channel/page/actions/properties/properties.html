@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@
       </div>
     </md-input-container>
     <md-input-container class="md-block">
-      <label>{{ 'SUBPAGE_PAGE_EDIT_LABEL_PRIMARY_DOCUMENT' | translate }}</label>
+      <label>{{ 'SUBPAGE_PAGE_PROPERTIES_LABEL_PRIMARY_DOCUMENT' | translate }}</label>
       <md-select name="prototype" class="qa-primary-document"
                  ng-disabled="!$ctrl.isEditable"
                  ng-model="$ctrl.primaryDocument"
@@ -51,8 +51,8 @@
     <md-switch class="qa-assign-new-template"
                ng-disabled="!$ctrl.isEditable || !$ctrl.hasPrototypes()"
                ng-model="$ctrl.isAssigningNewTemplate"
-               aria-label="{{ 'SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE' | translate }}">
-      {{ 'SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE' | translate }}
+               aria-label="{{ 'SUBPAGE_PAGE_PROPERTIES_LABEL_ASSIGN_NEW_TEMPLATE' | translate }}">
+      {{ 'SUBPAGE_PAGE_PROPERTIES_LABEL_ASSIGN_NEW_TEMPLATE' | translate }}
     </md-switch>
     <md-input-container ng-if="$ctrl.isAssigningNewTemplate" class="md-block">
       <label>{{ 'SUBPAGE_PAGE_LABEL_TEMPLATE' | translate }}</label>
