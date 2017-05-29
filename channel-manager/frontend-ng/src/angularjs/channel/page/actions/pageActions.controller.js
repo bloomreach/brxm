@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,32 +28,13 @@ class PageActionsCtrl {
     this.DialogService = DialogService;
     this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
-
-    this.actions = [];
-
-    ['edit', 'copy', 'move', 'delete']
-      .forEach((id) => {
-        this.actions.push({
-          id,
-        });
-      });
-
-    this.createAction = {
-      id: 'create',
-      isEnabled: () => ChannelService.hasWorkspace() && ChannelService.hasPrototypes(),
-    };
-
-    this._findAction('edit').isEnabled = () => SiteMapItemService.isEditable();
-    this._findAction('copy').isEnabled = () => this._isCopyEnabled();
-    this._findAction('move').isEnabled = () => SiteMapItemService.isEditable();
-    this._findAction('delete').isEnabled = () => SiteMapItemService.isEditable();
   }
 
-  _findAction(id) {
-    return this.actions.find(action => action.id === id);
+  isPageEditable() {
+    return this.SiteMapItemService.isEditable();
   }
 
-  _isCopyEnabled() {
+  isCopyEnabled() {
     if (!this.SiteMapItemService.hasItem()) {
       return false;
     }
@@ -72,26 +53,8 @@ class PageActionsCtrl {
     return false;
   }
 
-  getLabel(action) {
-    return this.$translate.instant(`TOOLBAR_MENU_PAGE_${action.id.toUpperCase()}`);
-  }
-
-  getPageNotEditableMarker(action) {
-    if (this.SiteMapItemService.isEditable() || action.id !== 'edit') {
-      return '';
-    }
-
-    const disclaimer = this.$translate.instant('TOOLBAR_MENU_PAGE_PAGE_NOT_EDITABLE');
-    return `- ${disclaimer}`;
-  }
-
-  getSitemapNotEditableMarker() {
-    if (this.createAction.isEnabled()) {
-      return '';
-    }
-
-    const disclaimer = this.$translate.instant('TOOLBAR_MENU_PAGE_SITEMAP_NOT_EDITABLE');
-    return `- ${disclaimer}`;
+  isNewEnabled() {
+    return this.ChannelService.hasWorkspace() && this.ChannelService.hasPrototypes();
   }
 
   onOpenMenu() {
@@ -99,15 +62,11 @@ class PageActionsCtrl {
     this.ChannelService.loadPageModifiableChannels();
   }
 
-  trigger(action) {
-    if (action.id === 'delete') {
-      this._deletePage();
-    } else {
-      this.onActionSelected({ subpage: `page-${action.id}` });
-    }
+  openSubPage(subpage) {
+    this.onActionSelected({ subpage });
   }
 
-  _deletePage() {
+  deletePage() {
     const siteMapItem = this.SiteMapItemService.get();
     this._confirmDelete(siteMapItem.name)
       .then(() => {

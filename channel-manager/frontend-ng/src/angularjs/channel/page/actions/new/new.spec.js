@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('PageActionCreate', () => {
+describe('PageActionNew', () => {
   let $q;
   let $scope;
   let $rootScope;
@@ -76,43 +76,43 @@ describe('PageActionCreate', () => {
   function compileDirectiveAndGetController() {
     $scope = $rootScope.$new();
     $scope.onDone = jasmine.createSpy('onDone');
-    $element = angular.element('<page-create on-done="onDone()"> </page-create>');
+    $element = angular.element('<page-new on-done="onDone()"> </page-new>');
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('pageCreate');
+    return $element.controller('pageNew');
   }
 
   it('initializes correctly', () => {
-    const PageCreateCtrl = compileDirectiveAndGetController();
+    const $ctrl = compileDirectiveAndGetController();
 
-    expect(PageCreateCtrl.illegalCharacters).toBe('/ :');
-    expect(PageCreateCtrl.illegalCharactersMessage).toBe('Illegal Characters');
-    expect(PageCreateCtrl.siteMapId).toBe('siteMapId');
-    expect(PageCreateCtrl.updateLastPathInfoElementAutomatically).toBe(true);
+    expect($ctrl.illegalCharacters).toBe('/ :');
+    expect($ctrl.illegalCharactersMessage).toBe('Illegal Characters');
+    expect($ctrl.siteMapId).toBe('siteMapId');
+    expect($ctrl.updateLastPathInfoElementAutomatically).toBe(true);
     expect(ChannelService.getNewPageModel).toHaveBeenCalled();
     $rootScope.$digest();
 
-    expect(PageCreateCtrl.locations).toBe(pageModel.locations);
-    expect(PageCreateCtrl.location).toBe(pageModel.locations[0]);
-    expect(PageCreateCtrl.prototypes).toBe(pageModel.prototypes);
-    expect(PageCreateCtrl.prototype).toBe(pageModel.prototypes[0]);
+    expect($ctrl.locations).toBe(pageModel.locations);
+    expect($ctrl.location).toBe(pageModel.locations[0]);
+    expect($ctrl.prototypes).toBe(pageModel.prototypes);
+    expect($ctrl.prototype).toBe(pageModel.prototypes[0]);
   });
 
   it('updates the last pathinfo element as long as it is coupled to the title field', () => {
-    const PageCreateCtrl = compileDirectiveAndGetController();
+    const $ctrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    expect(PageCreateCtrl.title).toBeUndefined();
-    expect(PageCreateCtrl.lastPathInfoElement).toBe('');
-    PageCreateCtrl.title = '/foo :bar:';
+    expect($ctrl.title).toBeUndefined();
+    expect($ctrl.lastPathInfoElement).toBe('');
+    $ctrl.title = '/foo :bar:';
     $rootScope.$digest();
-    expect(PageCreateCtrl.lastPathInfoElement).toBe('-foo--bar-');
+    expect($ctrl.lastPathInfoElement).toBe('-foo--bar-');
 
-    PageCreateCtrl.disableAutomaticLastPathInfoElementUpdate();
-    PageCreateCtrl.title = 'bar';
+    $ctrl.disableAutomaticLastPathInfoElementUpdate();
+    $ctrl.title = 'bar';
     $rootScope.$digest();
-    expect(PageCreateCtrl.lastPathInfoElement).toBe('-foo--bar-');
+    expect($ctrl.lastPathInfoElement).toBe('-foo--bar-');
   });
 
   it('calls the callback when navigating back', () => {
@@ -135,20 +135,20 @@ describe('PageActionCreate', () => {
     pageModel.prototypes = [];
     pageModel.locations = [];
 
-    const PageCreateCtrl = compileDirectiveAndGetController();
+    const $ctrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    expect(PageCreateCtrl.location).toBeUndefined();
-    expect(PageCreateCtrl.prototype).toBeUndefined();
+    expect($ctrl.location).toBeUndefined();
+    expect($ctrl.prototype).toBeUndefined();
   });
 
   it('successfully creates a new page', () => {
-    const PageCreateCtrl = compileDirectiveAndGetController();
+    const $ctrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    PageCreateCtrl.title = 'title';
-    PageCreateCtrl.lastPathInfoElement = 'lastPathInfoElement';
-    PageCreateCtrl.create();
+    $ctrl.title = 'title';
+    $ctrl.lastPathInfoElement = 'lastPathInfoElement';
+    $ctrl.create();
 
     expect(SiteMapService.create).toHaveBeenCalledWith('siteMapId', undefined, {
       pageTitle: 'title',
@@ -165,14 +165,14 @@ describe('PageActionCreate', () => {
 
   it('flashes a toast when failing to create a new page with a parent sitemap item id', () => {
     SiteMapService.create.and.returnValue($q.reject());
-    const PageCreateCtrl = compileDirectiveAndGetController();
+    const $ctrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    PageCreateCtrl.title = 'title';
-    PageCreateCtrl.lastPathInfoElement = 'lastPathInfoElement';
-    PageCreateCtrl.location = pageModel.locations[1];
-    PageCreateCtrl.prototype = pageModel.prototypes[1];
-    PageCreateCtrl.create();
+    $ctrl.title = 'title';
+    $ctrl.lastPathInfoElement = 'lastPathInfoElement';
+    $ctrl.location = pageModel.locations[1];
+    $ctrl.prototype = pageModel.prototypes[1];
+    $ctrl.create();
 
     expect(SiteMapService.create).toHaveBeenCalledWith('siteMapId', 'location-2', {
       pageTitle: 'title',
@@ -182,18 +182,18 @@ describe('PageActionCreate', () => {
     $rootScope.$digest();
 
     expect(FeedbackService.showErrorResponse)
-      .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_CREATION_FAILED', PageCreateCtrl.errorMap);
+      .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_CREATION_FAILED', $ctrl.errorMap);
   });
 
   it('correctly dispatches the error from the server when trying to create a new page', () => {
-    const PageCreateCtrl = compileDirectiveAndGetController();
+    const $ctrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
     const response = { key: 'value' };
     SiteMapService.create.and.returnValue($q.reject(response));
-    PageCreateCtrl.create();
+    $ctrl.create();
     $rootScope.$digest();
     expect(FeedbackService.showErrorResponse)
-      .toHaveBeenCalledWith(response, 'ERROR_PAGE_CREATION_FAILED', PageCreateCtrl.errorMap);
+      .toHaveBeenCalledWith(response, 'ERROR_PAGE_CREATION_FAILED', $ctrl.errorMap);
   });
 });

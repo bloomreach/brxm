@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import template from './edit.html';
+import template from './new.html';
 
-function pageEditDirective() {
+function pageNewDirective() {
   'ngInject';
 
   return {
@@ -25,9 +25,9 @@ function pageEditDirective() {
       onDone: '&',
     },
     template,
-    controller: 'PageEditCtrl',
-    controllerAs: 'pageEdit',
+    controller: 'PageNewCtrl',
+    controllerAs: '$ctrl',
   };
 }
 
-export default pageEditDirective;
+export default pageNewDirective;

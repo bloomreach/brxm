@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,29 +15,56 @@
   -->
 
 <md-menu>
-  <md-button aria-label="{{ 'TOOLBAR_BUTTON_PAGE' | translate }}"
+  <md-button aria-label="{{ ::'TOOLBAR_BUTTON_PAGE' | translate }}"
              class="qa-button-page"
-             ng-click="pageActions.onOpenMenu(); $mdMenu.open($event)">
-    {{ 'TOOLBAR_BUTTON_PAGE' | translate }}
+             ng-click="$ctrl.onOpenMenu(); $mdMenu.open($event)">
+    {{ ::'TOOLBAR_BUTTON_PAGE' | translate }}
   </md-button>
   <md-menu-content width="4" class="qa-page-menu">
-    <md-menu-item ng-repeat="action in pageActions.actions">
-      <md-button class="qa-page-action-{{ action.id }}"
-                 aria-label="{{ pageActions.getLabel(action) }}"
-                 ng-click="pageActions.trigger(action)"
-                 ng-disabled="!action.isEnabled()">
-        {{ pageActions.getLabel(action) }}
-        <span><i>&nbsp;{{ pageActions.getPageNotEditableMarker(action) }}</i></span>
+    <md-menu-item>
+      <md-button class="qa-page-action-properties"
+                 aria-label="{{ ::'TOOLBAR_MENU_PAGE_PROPERTIES' | translate }}"
+                 ng-click="$ctrl.openSubPage('page-properties')"
+                 ng-disabled="!$ctrl.isPageEditable()">
+        {{ ::'TOOLBAR_MENU_PAGE_PROPERTIES' | translate }}
       </md-button>
     </md-menu-item>
+
     <md-menu-divider></md-menu-divider>
+
     <md-menu-item>
-      <md-button class="qa-page-action-create"
-                 aria-label="{{ pageActions.getLabel(pageActions.createAction) }}"
-                 ng-click="pageActions.trigger(pageActions.createAction)"
-                 ng-disabled="!pageActions.createAction.isEnabled()">
-        {{ pageActions.getLabel(pageActions.createAction) }}
-        <span><i>&nbsp;{{ pageActions.getSitemapNotEditableMarker() }}</i></span>
+      <md-button class="qa-page-action-copy"
+                 aria-label="{{ ::'TOOLBAR_MENU_PAGE_COPY' | translate }}"
+                 ng-click="$ctrl.openSubPage('page-copy')"
+                 ng-disabled="!$ctrl.isCopyEnabled()">
+        {{ ::'TOOLBAR_MENU_PAGE_COPY' | translate }}
+      </md-button>
+    </md-menu-item>
+    <md-menu-item>
+      <md-button class="qa-page-action-move"
+                 aria-label="{{ ::'TOOLBAR_MENU_PAGE_MOVE' | translate }}"
+                 ng-click="$ctrl.openSubPage('page-move')"
+                 ng-disabled="!$ctrl.isPageEditable()">
+        {{ ::'TOOLBAR_MENU_PAGE_MOVE' | translate }}
+      </md-button>
+    </md-menu-item>
+    <md-menu-item>
+      <md-button class="qa-page-action-delete"
+                 aria-label="{{ ::'TOOLBAR_MENU_PAGE_DELETE' | translate }}"
+                 ng-click="$ctrl.deletePage()"
+                 ng-disabled="!$ctrl.isPageEditable()">
+        {{ ::'TOOLBAR_MENU_PAGE_DELETE' | translate }}
+      </md-button>
+    </md-menu-item>
+
+    <md-menu-divider></md-menu-divider>
+
+    <md-menu-item>
+      <md-button class="qa-page-action-new"
+                 aria-label="{{ ::'TOOLBAR_MENU_PAGE_NEW' | translate }}"
+                 ng-click="$ctrl.openSubPage('page-new')"
+                 ng-disabled="!$ctrl.isNewEnabled()">
+        {{ ::'TOOLBAR_MENU_PAGE_NEW' | translate }}
       </md-button>
     </md-menu-item>
   </md-menu-content>

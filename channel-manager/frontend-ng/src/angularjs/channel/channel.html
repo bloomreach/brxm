@@ -69,10 +69,10 @@
   </md-content>
 </div>
 
-<page-edit layout="column" flex
-           ng-if="channelCtrl.currentSubpage == 'page-edit'"
-           on-done="channelCtrl.hideSubpage()">
-</page-edit>
+<page-properties layout="column" flex
+                 ng-if="channelCtrl.currentSubpage == 'page-properties'"
+                 on-done="channelCtrl.hideSubpage()">
+</page-properties>
 
 <page-copy layout="column" flex
            ng-if="channelCtrl.currentSubpage == 'page-copy'"
@@ -84,10 +84,10 @@
            on-done="channelCtrl.hideSubpage()">
 </page-move>
 
-<page-create layout="column" flex
-          ng-if="channelCtrl.currentSubpage == 'page-create'"
+<page-new layout="column" flex
+          ng-if="channelCtrl.currentSubpage == 'page-new'"
           on-done="channelCtrl.hideSubpage()">
-</page-create>
+</page-new>
 
 <channel-settings layout="column" flex
                   ng-if="channelCtrl.currentSubpage == 'channel-settings'"

@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
   -->
 
 <subpage-toolbar flex="none"
-                 data-title="{{ 'SUBPAGE_PAGE_CREATE_TITLE' | translate }}"
-                 on-back="pageCreate.onDone()"
+                 data-title="{{ 'SUBPAGE_PAGE_NEW_TITLE' | translate }}"
+                 on-back="$ctrl.onDone()"
                  mode="cancel">
 </subpage-toolbar>
 
@@ -24,14 +24,14 @@
   <form name="form"
         flex="initial"
         class="qa-subpage"
-        ng-submit="form.$valid && pageCreate.create()"
+        ng-submit="form.$valid && $ctrl.create()"
         novalidate>
     <md-input-container class="md-block">
       <label class="md-required">{{ 'SUBPAGE_PAGE_LABEL_TITLE' | translate }}</label>
       <input type="text" name="title" class="qa-title"
              required
              focus-if
-             ng-model="pageCreate.title">
+             ng-model="$ctrl.title">
       <div ng-messages="form.title.$error">
         <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
       </div>
@@ -40,9 +40,9 @@
       <md-input-container class="md-block" flex>
         <label>{{ 'SUBPAGE_PAGE_LABEL_URL_STEM' | translate }}</label>
         <md-select required name="location" class="qa-url-stem"
-                   ng-model="pageCreate.location"
+                   ng-model="$ctrl.location"
                    ng-model-options="{trackBy: '$value.location'}">
-          <md-option ng-repeat="location in pageCreate.locations" ng-value="{{location}}">
+          <md-option ng-repeat="location in $ctrl.locations" ng-value="{{location}}">
             {{ location.location }}
           </md-option>
         </md-select>
@@ -54,21 +54,21 @@
         <label class="md-required">{{ 'SUBPAGE_PAGE_LABEL_LAST_PATHINFO_ELEMENT' | translate }}</label>
         <input type="text" name="lastPathInfoElement" class="qa-url-leaf"
                required
-               illegal-characters="{{pageCreate.illegalCharacters}}"
-               ng-keyup="pageCreate.disableAutomaticLastPathInfoElementUpdate()"
-               ng-model="pageCreate.lastPathInfoElement">
+               illegal-characters="{{$ctrl.illegalCharacters}}"
+               ng-keyup="$ctrl.disableAutomaticLastPathInfoElementUpdate()"
+               ng-model="$ctrl.lastPathInfoElement">
         <div ng-messages="form.lastPathInfoElement.$error">
           <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
-          <div ng-message="illegalCharacters">{{ pageCreate.illegalCharactersMessage }}</div>
+          <div ng-message="illegalCharacters">{{ $ctrl.illegalCharactersMessage }}</div>
         </div>
       </md-input-container>
     </div>
     <md-input-container class="md-block">
       <label>{{ 'SUBPAGE_PAGE_LABEL_TEMPLATE' | translate }}</label>
       <md-select required name="prototype" class="qa-template"
-                 ng-model="pageCreate.prototype"
+                 ng-model="$ctrl.prototype"
                  ng-model-options="{trackBy: '$value.id'}">
-        <md-option ng-repeat="prototype in pageCreate.prototypes" ng-value="{{prototype}}">
+        <md-option ng-repeat="prototype in $ctrl.prototypes" ng-value="{{prototype}}">
           {{ prototype.displayName }}
         </md-option>
       </md-select>
@@ -79,7 +79,7 @@
     <div layout="row" layout-align="end center">
       <md-button type="button"
                  class="qa-discard"
-                 ng-click="pageCreate.onDone()">
+                 ng-click="$ctrl.onDone()">
         {{ 'CANCEL' | translate }}
       </md-button>
       <md-button type="submit"
