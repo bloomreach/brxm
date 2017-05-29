@@ -288,8 +288,19 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @throws IOException
      */
     public void close() throws IOException {
+        IOException firstIOException = null;
         for (FileSystem fs : filesystems) {
-            fs.close();
+            try {
+                fs.close();
+            } catch (IOException e) {
+                if (firstIOException != null) {
+                    firstIOException = e;
+                }
+            }
+        }
+        filesystems.clear();
+        if (firstIOException != null) {
+            throw firstIOException;
         }
     }
 

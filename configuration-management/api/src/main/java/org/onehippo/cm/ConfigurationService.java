@@ -16,41 +16,21 @@
 
 package org.onehippo.cm;
 
-import java.util.List;
-
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cms7.services.SingletonService;
-import org.onehippo.repository.bootstrap.PostStartupTask;
 
 /**
- * Operations related to repository configuration, including those related to bootstrap and the config baseline.
+ * Service providing access to the current repository ConfigurationModel (baseline) and allowing applying and
+ * new/updated ConfigurationModel at runtime.
  */
 @SingletonService
 public interface ConfigurationService {
-
-    /**
-     * Perform initial repository configuration, including first-start bootstrap or configuration updates as necessary.
-     */
-    void configureRepository();
-
-    /**
-     * Setup tasks for the post-startup bootstrap phase.
-     * @return a List of PostStartupTasks to be executed after normal repository startup has completed
-     */
-    List<PostStartupTask> contentBootstrap();
 
     /**
      * Apply the whole or a part of a merged configuration model to the JCR as the new active configuration.
      * @param model the configuration model to apply
      */
     void apply(final ConfigurationModel model) throws Exception;
-
-    /**
-     * Store a merged configuration model as a baseline configuration in the JCR.
-     * The provided ConfigurationModel is assumed to be fully formed and validated.
-     * @param model the configuration model to store as the new baseline
-     */
-    void storeBaseline(final ConfigurationModel model) throws Exception;
 
     /**
      * Load a (partial) ConfigurationModel from the stored configuration baseline in the JCR. This model will not contain

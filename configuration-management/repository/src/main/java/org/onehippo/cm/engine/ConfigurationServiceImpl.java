@@ -16,9 +16,6 @@
 
 package org.onehippo.cm.engine;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jcr.Session;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -26,7 +23,6 @@ import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.repository.bootstrap.PostStartupTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +54,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         baselineService = new ConfigBaselineService(session);
     }
 
-    @Override
-    public void configureRepository() {
+    /**
+     * Perform initial repository configuration, including creating (claiming) a Repository initialization scope
+     * lock, which only will be released through {@link #finishConfigureRepository(Session)}
+     * @param lockSession the session for creating/claiming the Repository initialization scope lock
+     */
+    public void startConfigureRepository(final Session lockSession) {
         try {
             // TODO when merging this code into LocalHippoRepository, use verifyOnly=false parameter
             configurationModel = new ClasspathConfigurationModelReader().read(Thread.currentThread().getContextClassLoader(), true);
@@ -93,28 +93,36 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
     }
 
-    public List<PostStartupTask> contentBootstrap() {
-        final List<PostStartupTask> tasks = new ArrayList(1);
-        tasks.add(() -> {
-            try {
-                final ConfigurationConfigService service = new ConfigurationConfigService();
-                service.writeWebfiles(configurationModel, session);
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.error("Error initializing webfiles", e);
-                } else {
-                    log.error("Error initializing webfiles", e.getMessage());
-                }
+    /**
+     * Execute additional tasks (if any) after the Repository has been started (virtual layer, Modules, security, etc.)
+     */
+    public void postStartRepository() {
+        try {
+            final ConfigurationConfigService service = new ConfigurationConfigService();
+            service.writeWebfiles(configurationModel, session);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.error("Error initializing webfiles", e);
+            } else {
+                log.error("Error initializing webfiles", e.getMessage());
             }
-            try {
-                // We're completely done with the configurationModel at this point, so clean up its resources
-                configurationModel.close();
-            }
-            catch (Exception e) {
-                log.error("Error closing configuration ConfigurationModel", e);
-            }
-        });
-        return tasks;
+        }
+        try {
+            // We're completely done with the configurationModel at this point, so clean up its resources
+            configurationModel.close();
+        }
+        catch (Exception e) {
+            log.error("Error closing configuration ConfigurationModel", e);
+        }
+    }
+
+    /**
+     * Execute cleanup tasks (if any) after the Repository has been initialized, and at least release the lock
+     * created by {@link #startConfigureRepository(Session)}.
+     * @param lockSession the session which was used for {@link #startConfigureRepository(Session)} to create the lock
+     */
+    public void finishConfigureRepository(final Session lockSession) {
+
     }
 
     @Override
@@ -143,11 +151,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public void storeBaseline(final ConfigurationModel model) throws Exception {
-        baselineService.storeBaseline(model);
-    }
-
-    @Override
     public ConfigurationModel loadBaseline() throws Exception {
         return baselineService.loadBaseline();
     }
@@ -157,4 +160,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         return baselineService.matchesBaselineManifest(model);
     }
 
+    public void shutdown() {
+        if (configurationModel != null) {
+            try {
+                // We're completely done with the configurationModel at this point, so clean up its resources
+                configurationModel.close();
+            }
+            catch (Exception e) {
+                log.error("Error closing configuration ConfigurationModel", e);
+            }
+        }
+    }
 }
