@@ -27,11 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.services.htmlprocessor.HtmlProcessor;
-import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorConfig;
-import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorImpl;
-import org.onehippo.cms7.services.htmlprocessor.Tag;
-import org.onehippo.cms7.services.htmlprocessor.TagVisitor;
 import org.onehippo.cms7.services.htmlprocessor.filter.Element;
 import org.onehippo.repository.mock.MockNode;
 
@@ -143,10 +138,12 @@ public class HtmlProcessorTest {
         config.setOmitJavascriptProtocol(true);
         processor = new HtmlProcessorImpl(config);
 
-        String read = processor.read("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>", null);
+        String read = processor.read("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>",
+                                     null);
         assertEquals("<a href=\"#\" onclick=\"javascript:lancerPu('XXXcodepuXXX')\">XXXTexteXXX</a>", read);
 
-        String write = processor.write("<a onclick=\"javascript:lancerPu('XXXcodepuXXX')\" href=\"#\">XXXTexteXXX</a>", null);
+        String write = processor.write("<a onclick=\"javascript:lancerPu('XXXcodepuXXX')\" href=\"#\">XXXTexteXXX</a>",
+                                       null);
         assertEquals("<a onclick=\"\" href=\"#\">XXXTexteXXX</a>", write);
 
         config.setOmitJavascriptProtocol(false);
@@ -165,7 +162,7 @@ public class HtmlProcessorTest {
         processor = new HtmlProcessorImpl(htmlProcessorConfig);
 
         final TagNameCollector one = new TagNameCollector();
-        final TagNameCollector two= new TagNameCollector();
+        final TagNameCollector two = new TagNameCollector();
 
         final List<TagVisitor> readVisitors = Arrays.asList(one, two);
         final String html = processor.read("<h1>Heading 1</h1><h2>Heading 2</h2>", readVisitors);
@@ -190,7 +187,8 @@ public class HtmlProcessorTest {
         final TagNameCollector one = new TagNameCollector();
 
         final List<TagVisitor> writeVisitors = Collections.singletonList(one);
-        final String html = processor.write("<h1>Heading 1</h1><h2>Heading 2</h2><script>alert(\"xss\")</script>", writeVisitors);
+        final String html = processor.write("<h1>Heading 1</h1><h2>Heading 2</h2><script>alert(\"xss\")</script>",
+                                            writeVisitors);
         assertEquals("<h1>Heading 1</h1><h2>Heading 2</h2>", html);
 
         final List<String> tagsOne = one.getTags();
