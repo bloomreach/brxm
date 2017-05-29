@@ -23,13 +23,13 @@ import javax.jcr.Node;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.richtext.processor.WicketModel;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorInternalLink;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorLink;
-import org.onehippo.cms7.services.processor.html.model.Model;
-import org.onehippo.cms7.services.processor.richtext.RichTextException;
-import org.onehippo.cms7.services.processor.richtext.link.RichTextLink;
-import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactory;
+import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketModel;
+import org.onehippo.cms7.services.htmlprocessor.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.richtext.RichTextException;
+import org.onehippo.cms7.services.htmlprocessor.richtext.link.RichTextLink;
+import org.onehippo.cms7.services.htmlprocessor.richtext.link.RichTextLinkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

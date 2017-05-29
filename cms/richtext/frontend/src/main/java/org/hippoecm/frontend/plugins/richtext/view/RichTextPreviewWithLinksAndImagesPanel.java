@@ -20,7 +20,7 @@ import javax.jcr.Node;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
-import org.hippoecm.frontend.plugins.richtext.processor.WicketModel;
+import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketModel;
 import org.hippoecm.frontend.service.IBrowseService;
 
 /**

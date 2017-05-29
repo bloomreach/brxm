@@ -13,11 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.richtext.processor;
+package org.hippoecm.frontend.plugins.richtext.htmlprocessor;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.onehippo.cms7.services.processor.richtext.URLEncoder;
+import org.onehippo.cms7.services.htmlprocessor.richtext.URLEncoder;
 
 public class WicketURLEncoder implements URLEncoder {
 

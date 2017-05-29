@@ -18,11 +18,11 @@ package org.hippoecm.frontend.plugins.richtext;
 import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.richtext.processor.WicketNodeFactory;
-import org.hippoecm.frontend.plugins.richtext.processor.WicketURLEncoder;
-import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
-import org.onehippo.cms7.services.processor.html.model.Model;
-import org.onehippo.cms7.services.processor.richtext.model.RichTextProcessorModel;
+import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketNodeFactory;
+import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketURLEncoder;
+import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorFactory;
+import org.onehippo.cms7.services.htmlprocessor.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.richtext.model.RichTextProcessorModel;
 
 public class RichTextModel implements IModel<String> {
 

@@ -21,13 +21,13 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.HtmlModel;
-import org.hippoecm.frontend.plugins.richtext.processor.WicketModel;
+import org.hippoecm.frontend.plugins.richtext.htmlprocessor.WicketModel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffPanel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewPanel;
 import org.hippoecm.frontend.plugins.standards.diff.DefaultHtmlDiffService;
 import org.hippoecm.frontend.plugins.standards.diff.DiffService;
 import org.onehippo.ckeditor.CKEditorConfig;
-import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.model.Model;
 
 /**
  * Property field plugin for editing HTML in a String property using CKEditor. Internal links and images are
