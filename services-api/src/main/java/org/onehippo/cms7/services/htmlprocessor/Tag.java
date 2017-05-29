@@ -15,6 +15,9 @@
  */
 package org.onehippo.cms7.services.htmlprocessor;
 
+/**
+ * Represents a DOM element, i.e. a node name with attributes.
+ */
 public interface Tag {
 
     String getName();

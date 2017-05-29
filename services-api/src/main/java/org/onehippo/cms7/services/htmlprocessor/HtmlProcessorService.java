@@ -17,11 +17,14 @@ package org.onehippo.cms7.services.htmlprocessor;
 
 import org.onehippo.cms7.services.SingletonService;
 
+/**
+ * Looks up {@link HtmlProcessor} instances.
+ */
 @SingletonService
 public interface HtmlProcessorService {
 
     /**
-     * Returns instance of HtmlProcessor or null if the configuration cannot be found
+     * Returns instance of {@link HtmlProcessor} or null if the configuration cannot be found
      * @param id The HTML processor id
      * @return Instance of HTML processor
      */

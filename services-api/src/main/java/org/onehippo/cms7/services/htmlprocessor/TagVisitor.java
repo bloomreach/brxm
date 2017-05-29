@@ -16,13 +16,31 @@
 package org.onehippo.cms7.services.htmlprocessor;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.jcr.RepositoryException;
 
+/**
+ * Visits {@link Tag}s that are part of a DOM tree.
+ */
 public interface TagVisitor extends Serializable {
 
+    /**
+     * Called by {@link HtmlProcessor#read(String, List)} for each {@link Tag} in the DOM tree.
+     *
+     * @param parent The parent of the tag parameter, or null if the tag is the root node of the DOM tree
+     * @param tag The visited tag
+     * @throws RepositoryException when an error occurred. Visiting will continue for the other tags.
+     */
     void onRead(Tag parent, Tag tag) throws RepositoryException;
 
+    /**
+     * Called by {@link HtmlProcessor#write(String, List)} for each {@link Tag} in the DOM tree.
+     *
+     * @param parent The parent of the tag parameter, or null if the tag is the root node of the DOM tree
+     * @param tag The visited tag
+     * @throws RepositoryException when an error occurred. Visiting will continue for the other tags.
+     */
     void onWrite(Tag parent, Tag tag) throws RepositoryException;
 
     void release();

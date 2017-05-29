@@ -19,10 +19,37 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Processes HTML that is meant to be read from or written to the repository. It can be used to fix malformed HTML,
+ * remove unwanted elements and attributes, and transform elements into a representation needed by the CMS, e.g. images
+ * and internal links.
+ *
+ * The process applied is:
+ *
+ *  1. Parse HTML into DOM tree
+ *  2. Apply visitors to DOM tree
+ *  3. Serialize DOM tree as string
+ */
 public interface HtmlProcessor extends Serializable {
 
+    /**
+     * Process stored HTML.
+     *
+     * @param html The stored HTML
+     * @param visitors Visitors applied to the DOM tree
+     * @return Processed HTML
+     * @throws IOException when the DOM tree cannot be serialized
+     */
     String read(final String html, final List<TagVisitor> visitors) throws IOException;
 
+    /**
+     * Process HTML to store.
+     *
+     * @param html The HTML to be stored
+     * @param visitors Visitors applied to the DOM tree
+     * @return Processed HTML
+     * @throws IOException when the DOM tree cannot be serialized
+     */
     String write(final String html, final List<TagVisitor> visitors) throws IOException;
 
 }
