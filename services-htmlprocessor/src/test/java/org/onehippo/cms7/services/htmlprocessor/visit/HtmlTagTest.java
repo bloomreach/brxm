@@ -27,7 +27,7 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-public class TagTest {
+public class HtmlTagTest {
 
     @Test
     public void testCreateTagFromTagNode() throws Exception {
