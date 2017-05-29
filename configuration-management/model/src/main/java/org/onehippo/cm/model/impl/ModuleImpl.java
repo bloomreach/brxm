@@ -270,7 +270,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         return this;
     }
 
-    public void build() {
+    public ModuleImpl build() {
         // clear and sort definitions into the different types
         namespaceDefinitions.clear();
         configDefinitions.clear();
@@ -299,6 +299,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
         // sort the content/config definitions, all other remain in insertion order
         configDefinitions.sort(new ContentDefinitionComparator());
+
+        return this;
     }
 
     private void ensureSingleSourceForNamespaces(final AbstractDefinitionImpl namespaceDefinition) {
@@ -319,7 +321,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
         // digest the descriptor
         // TODO this is an ugly hack in part because RIP uses config root instead of module root
-        boolean hasDescriptor = digestResource(null, "/../" + HCM_MODULE_YAML, rip, items);
+        boolean hasDescriptor = digestResource(null, "/../" + HCM_MODULE_YAML, null, rip, items);
 
         // special-case handle a missing descriptor by generating a dummy one, for demo case
         // TODO remove when demo is restructured to use module-specific descriptors
@@ -331,7 +333,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         }
 
         // digest the actions file
-        digestResource(null, "/../" + ACTIONS_YAML, rip, items);
+        digestResource(null, "/../" + ACTIONS_YAML, null, rip, items);
 
         // for each content source
         for (SourceImpl source : this.getContentSources()) {
@@ -345,7 +347,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         // for each config source
         for (ConfigSourceImpl source : this.getConfigSources()) {
             // digest the source
-            digestResource(source, "/" + source.getPath(), rip, items);
+            digestResource(source, "/" + source.getPath(), null, rip, items);
 
             // for each definition
             for (AbstractDefinitionImpl def : source.getDefinitions()) {
@@ -353,7 +355,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
                     case NAMESPACE:
                         NamespaceDefinition namespaceDefinition = (NamespaceDefinition)def;
                         if (namespaceDefinition.getCndPath() != null) {
-                            digestResource(source, namespaceDefinition.getCndPath(), rip, items);
+                            digestResource(source, namespaceDefinition.getCndPath().getString(), null, rip, items);
                         }
                         break;
                     case WEBFILEBUNDLE:
@@ -388,7 +390,12 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             // if value is a resource, digest it
             Consumer<ValueImpl> digester = v -> {
                 if (v.isResource()) {
-                    digestResource(source, v.getString(), rip, items);
+                    try {
+                        digestResource(source, v.getString(), v.getResourceInputStream(), rip, items);
+                    }
+                    catch (IOException e) {
+                        throw new RuntimeException("Exception while computing resource digest", e);
+                    }
                 }
             };
 
@@ -414,10 +421,13 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      * Compute and accumulate a crypto digest for the resource referenced by source at path.
      * @param source the Source from which path might be a relative reference
      * @param path iff starts with '/', a module-relative path, else a path relative to source
+     * @param valueIs if we're digesting a value, pass in the IS from the value.getResourceInputStream() method
+     *                instead of looking up a new IS via the RIP
      * @param rip provides access to raw data streams
      * @param items accumulator of [path,digest] Strings
      */
-    protected boolean digestResource(SourceImpl source, String path, ResourceInputProvider rip, TreeMap<String,String> items) {
+    protected boolean digestResource(final SourceImpl source, String path, final InputStream valueIs,
+                                     final ResourceInputProvider rip, final TreeMap<String,String> items) {
         // if path starts with /, this is already relative to the config root, otherwise we must adjust it
         if (!path.startsWith("/")) {
             String sourcePath = source.getPath();
@@ -431,13 +441,11 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             }
         }
 
-        // if the RIP cannot provide an InputStream, short-circuit here
-        if (!rip.hasResource(null, path)) {
-            return false;
-        }
+        try (final InputStream is = useOrCreateInputStream(valueIs, path, rip)) {
+            if (is == null) {
+                return false;
+            }
 
-        try {
-            final InputStream is = rip.getResourceInputStream(null, path);
             String digestString = digestFromStream(is);
 
             // TODO dirty hack because RIP uses paths relative to content root instead of module root
@@ -453,6 +461,25 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         }
         catch (IOException e) {
             throw new RuntimeException("Exception while computing resource digest", e);
+        }
+    }
+
+    /**
+     * Helper for digestResource().
+     * @throws IOException
+     */
+    protected InputStream useOrCreateInputStream(final InputStream valueIs, final String path,
+                                                 final ResourceInputProvider rip) throws IOException {
+        if (valueIs == null) {
+            // if the RIP cannot provide an InputStream, short-circuit here
+            if (!rip.hasResource(null, path)) {
+                return null;
+//                throw new RuntimeException("Cannot digest missing resource: " + path);
+            }
+            return rip.getResourceInputStream(null, path);
+        }
+        else {
+            return valueIs;
         }
     }
 

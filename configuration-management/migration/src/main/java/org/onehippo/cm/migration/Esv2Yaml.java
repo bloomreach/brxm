@@ -46,6 +46,7 @@ import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.FileConfigurationWriter;
 import org.onehippo.cm.model.ModuleContext;
+import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
@@ -53,6 +54,7 @@ import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -327,7 +329,8 @@ public class Esv2Yaml {
                 case NAMESPACE:
                     try {
                         String cndPath = instruction.getCombinedWith() != null ? instruction.getCombinedWith().getResourcePath() : null;
-                        mainSource.addNamespaceDefinition(instruction.getName(), new URI(instruction.getTypePropertyValue()), cndPath);
+                        final ValueImpl value = new ValueImpl(cndPath, ValueType.STRING, true, false);
+                        mainSource.addNamespaceDefinition(instruction.getName(), new URI(instruction.getTypePropertyValue()), value);
                     } catch (URISyntaxException e) {
                         // already checked
                     }
@@ -375,6 +378,10 @@ public class Esv2Yaml {
         ModuleContext moduleContext = aggregate ? new AggregatedModuleContext(module, src.toPath(), multiModule) :
                 new LegacyModuleContext(module, src.toPath(), multiModule);
         moduleContext.createOutputProviders(target.toPath());
+
+        // patch up references to RIPs, so they can be accessed during processing via back-references
+        module.setConfigResourceInputProvider(moduleContext.getConfigInputProvider());
+        module.setContentResourceInputProvider(moduleContext.getContentInputProvider());
 
         new FileConfigurationWriter().writeModule(module, Constants.DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
     }

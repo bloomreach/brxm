@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.ValueType;
 
 public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
@@ -34,7 +35,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     private Boolean ignoreReorderedChildren;
     private ConfigurationItemCategory residualChildNodeCategory = null;
 
-    public DefinitionNodeImpl(final String path, final String name, final AbstractDefinitionImpl definition) {
+    public DefinitionNodeImpl(final String path, final String name, final ContentDefinitionImpl definition) {
         super(path, name, definition);
     }
 
@@ -132,6 +133,25 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, type, values, this);
         modifiableProperties.put(name, property);
         return property;
+    }
+
+    /**
+     * Add a new property by copying the contents of an existing property.
+     * @param other the property to copy
+     * @return the new property
+     */
+    public DefinitionPropertyImpl addProperty(final DefinitionPropertyImpl other) {
+        // TODO copy resources from old module to new module
+        if (other.getType() == PropertyType.SINGLE) {
+            DefinitionPropertyImpl newProp = addProperty(other.getName(), other.getValue().clone());
+            newProp.setOperation(other.getOperation());
+            return newProp;
+        }
+        else {
+            DefinitionPropertyImpl newProp = addProperty(other.getName(), other.getValueType(), other.cloneValues(null));
+            newProp.setOperation(other.getOperation());
+            return newProp;
+        }
     }
 
     public void delete() {

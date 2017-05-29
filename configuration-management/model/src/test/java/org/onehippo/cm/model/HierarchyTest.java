@@ -50,7 +50,7 @@ public class HierarchyTest extends AbstractBaseTest {
         final NamespaceDefinitionImpl namespace = assertDefinition(source1, 0, NamespaceDefinitionImpl.class);
         assertEquals("myhippoproject", namespace.getPrefix());
         assertEquals("http://www.onehippo.org/myhippoproject/nt/1.0", namespace.getURI().toString());
-        assertEquals("example.cnd", namespace.getCndPath());
+        assertEquals("example.cnd", namespace.getCndPath().getString());
 
         final ConfigDefinitionImpl source1definition1 = assertDefinition(source1, 1, ConfigDefinitionImpl.class);
         final DefinitionNodeImpl rootDefinition1 = assertNode(source1definition1, "/", "", source1definition1, 6, 1);

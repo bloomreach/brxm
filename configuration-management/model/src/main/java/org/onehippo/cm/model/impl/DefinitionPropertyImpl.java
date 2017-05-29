@@ -86,4 +86,42 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
         this.operation = operation;
     }
 
+    /**
+     * In-place update the content of this definition with content from another definition.
+     * @param other
+     */
+    public void updateFrom(final DefinitionPropertyImpl other) {
+        this.propertyType = other.propertyType;
+        this.valueType = other.valueType;
+
+        // todo merge correctly with all operations, existing and new
+        // todo should override from old local def stay in place?
+        this.operation = other.operation;
+
+        // TODO copy resources from old module to new module
+        if (propertyType == PropertyType.SINGLE) {
+            this.values = null;
+            this.value = other.value.clone();
+            value.setParent(this);
+        }
+        else {
+            this.value = null;
+            this.values = other.cloneValues(this);
+        }
+    }
+
+    /**
+     * Clone the values array of this Property and set the parent of the newly-created clones to newParent.
+     * @param newParent the parent of the new Values
+     * @return the newly-created cloned Values
+     */
+    protected ValueImpl[] cloneValues(final DefinitionPropertyImpl newParent) {
+        final ValueImpl[] cloned = new ValueImpl[values.length];
+
+        for (int i = 0; i < values.length; i++) {
+            cloned[i] = values[i].clone();
+            cloned[i].setParent(newParent);
+        }
+        return cloned;
+    }
 }

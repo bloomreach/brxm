@@ -31,8 +31,6 @@ import javax.jcr.ValueFactory;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.ModelItem;
-import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.SourceType;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
 
@@ -207,7 +205,7 @@ public class ValueProcessor {
 
     private String getStringValue(final Value modelValue) throws IOException {
         if (modelValue.isResource()) {
-            try (final InputStream inputStream = getResourceInputStream(modelValue)) {
+            try (final InputStream inputStream = modelValue.getResourceInputStream()) {
                 return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             }
         } else {
@@ -216,18 +214,7 @@ public class ValueProcessor {
     }
 
     private InputStream getBinaryInputStream(final Value modelValue) throws IOException {
-        return modelValue.isResource() ? getResourceInputStream(modelValue) : new ByteArrayInputStream((byte[]) modelValue.getObject());
+        return modelValue.isResource() ? modelValue.getResourceInputStream() : new ByteArrayInputStream((byte[]) modelValue.getObject());
     }
 
-    private InputStream getResourceInputStream(final Source source, final String resourceName) throws IOException {
-        if (source.getType() == SourceType.CONTENT) {
-            return source.getModule().getContentResourceInputProvider().getResourceInputStream(source, resourceName);
-        } else {
-            return source.getModule().getConfigResourceInputProvider().getResourceInputStream(source, resourceName);
-        }
-    }
-
-    private InputStream getResourceInputStream(final Value modelValue) throws IOException {
-        return getResourceInputStream(modelValue.getParent().getDefinition().getSource(), modelValue.getString());
-    }
 }

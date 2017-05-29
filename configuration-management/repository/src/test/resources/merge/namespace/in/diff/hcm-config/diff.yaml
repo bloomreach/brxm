@@ -1,6 +1,8 @@
 definitions:
   namespace:
-  - prefix: testCreate
-    uri: http://www.onehippo.org/jcr/testCreate/1.0
-  - prefix: testEdit
-    uri: http://www.onehippo.org/jcr/testEdit/1.1
+    testCreate:
+      uri: http://www.onehippo.org/jcr/testCreate/1.0
+      cnd: testCreate.cnd
+    testEdit:
+      uri: http://www.onehippo.org/jcr/testEdit/1.1
+      cnd: testEdit.cnd

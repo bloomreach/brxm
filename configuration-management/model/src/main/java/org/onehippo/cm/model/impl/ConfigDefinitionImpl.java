@@ -29,4 +29,9 @@ public class ConfigDefinitionImpl extends ContentDefinitionImpl implements Confi
         return DefinitionType.CONFIG;
     }
 
+    @Override
+    public ConfigSourceImpl getSource() {
+        return (ConfigSourceImpl) super.getSource();
+    }
+
 }

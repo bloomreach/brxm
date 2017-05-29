@@ -23,12 +23,12 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
     private String path;
     private String name;
     private DefinitionNodeImpl parent;
-    private AbstractDefinitionImpl definition;
+    private ContentDefinitionImpl definition;
     private boolean delete;
     private SourceLocationImpl sourceLocation;
     private ConfigurationItemCategory category;
 
-    public DefinitionItemImpl(final String path, final String name, final AbstractDefinitionImpl definition) {
+    public DefinitionItemImpl(final String path, final String name, final ContentDefinitionImpl definition) {
         this.path = path;
         this.name = name;
         this.parent = null;
@@ -77,7 +77,7 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
     }
 
     @Override
-    public AbstractDefinitionImpl getDefinition() {
+    public ContentDefinitionImpl getDefinition() {
         return definition;
     }
 

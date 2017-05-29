@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.onehippo.cm.model.Value;
-import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
@@ -49,7 +48,7 @@ public class ValueFileMapperProviderTest {
         ProjectImpl project = new ProjectImpl("dummyProject", group);
         ModuleImpl module = new ModuleImpl("dummyModule", project);
         SourceImpl source = new ConfigSourceImpl("somePath", module);
-        AbstractDefinitionImpl definition = new ConfigDefinitionImpl(source);
+        ConfigDefinitionImpl definition = new ConfigDefinitionImpl(source);
         DefinitionNodeImpl definitionNode = new DefinitionNodeImpl("/path/to/", "dummyNode", definition);
 
         ValueImpl value = new ValueImpl(DUMMY_VALUE);

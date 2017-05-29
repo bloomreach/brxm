@@ -24,13 +24,17 @@ public class NamespaceDefinitionImpl extends AbstractDefinitionImpl implements N
 
     private final String prefix;
     private final URI uri;
-    private final String cndPath;
+    private final ValueImpl cndPath;
 
-    public NamespaceDefinitionImpl(final SourceImpl source, final String prefix, final URI uri, final String cndPath) {
+    public NamespaceDefinitionImpl(final SourceImpl source, final String prefix, final URI uri, final ValueImpl cndPath) {
         super(source);
         this.prefix = prefix;
         this.uri = uri;
         this.cndPath = cndPath;
+
+        if (cndPath != null && !cndPath.isResource()) {
+            throw new IllegalArgumentException("CND path must be a resource reference!");
+        }
     }
 
     @Override
@@ -49,7 +53,12 @@ public class NamespaceDefinitionImpl extends AbstractDefinitionImpl implements N
     }
 
     @Override
-    public String getCndPath() {
+    public ValueImpl getCndPath() {
         return cndPath;
+    }
+
+    @Override
+    public ConfigSourceImpl getSource() {
+        return (ConfigSourceImpl) super.getSource();
     }
 }

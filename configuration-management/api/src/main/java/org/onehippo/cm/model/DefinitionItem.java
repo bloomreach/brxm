@@ -19,7 +19,7 @@ public interface DefinitionItem extends ModelItem {
     String getName();
     DefinitionNode getParent();
     boolean isRoot();
-    Definition getDefinition();
+    ContentDefinition getDefinition();
     SourceLocation getSourceLocation();
     ConfigurationItemCategory getCategory();
 }

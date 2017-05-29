@@ -15,20 +15,26 @@
  */
 package org.onehippo.cm.model.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Calendar;
 
+import org.onehippo.cm.model.DefinitionType;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
 
-public class ValueImpl implements Value {
+public class ValueImpl implements Value, Cloneable {
 
     private final Object value;
     private final ValueType valueType;
     private final boolean isResource;
     private final boolean isPath;
     private DefinitionPropertyImpl parent = null;
+
+    private SourceImpl foreignSource;
+    private NamespaceDefinitionImpl namespaceDefinition;
 
     public ValueImpl(final BigDecimal value) {
         this(value, ValueType.DECIMAL, false, false);
@@ -105,8 +111,62 @@ public class ValueImpl implements Value {
         return parent;
     }
 
-    public void setParent(DefinitionPropertyImpl parent) {
+    @Override
+    public AbstractDefinitionImpl getDefinition() {
+        if (getParent() != null) {
+            return getParent().getDefinition();
+        }
+        else {
+            return namespaceDefinition;
+        }
+    }
+
+    /**
+     * To be used only in case of a CND Path value on a NamespaceDefinition, when a normal DefinitionProperty parent
+     * doesn't make sense, but we still need a back-reference.
+     * @param namespaceDefinition
+     */
+    public void setDefinition(NamespaceDefinitionImpl namespaceDefinition) {
+        this.namespaceDefinition = namespaceDefinition;
+    }
+
+    public ValueImpl setParent(DefinitionPropertyImpl parent) {
         this.parent = parent;
+        return this;
+    }
+
+    /**
+     * Set a "foreign" Source for use when this value is a resource belonging to another Module, and
+     * we want to delay actual data copying until the ultimate destination can be computed.
+     * @param foreignSource a SourceImpl, typically originating from a different Module
+     */
+    public void setForeignSource(final SourceImpl foreignSource) {
+        this.foreignSource = foreignSource;
+    }
+
+    @Override
+    public InputStream getResourceInputStream() throws IOException {
+        if (!isResource()) {
+            throw new IllegalStateException("Cannot get an InputStream for a Value that is not a Resource!");
+        }
+
+        final AbstractDefinitionImpl definition = getDefinition();
+
+        // If we have a "foreign" source, use that to find the RIP instead of the local Source
+        SourceImpl source = definition.getSource();
+        if (foreignSource != null) {
+            source = foreignSource;
+        }
+
+        if (definition.getType() == DefinitionType.CONTENT) {
+            return source.getModule().getContentResourceInputProvider().getResourceInputStream(source, getString());
+        }
+        else {
+            return source
+                    .getModule()
+                    .getConfigResourceInputProvider()
+                    .getResourceInputStream(source, getString());
+        }
     }
 
     @Override
@@ -141,4 +201,14 @@ public class ValueImpl implements Value {
         return result;
     }
 
+    @Override
+    public ValueImpl clone() {
+        try {
+            return (ValueImpl) super.clone();
+        }
+        catch (CloneNotSupportedException e) {
+            // this should be impossible
+            throw new RuntimeException("Exception cloning ValueImpl", e);
+        }
+    }
 }

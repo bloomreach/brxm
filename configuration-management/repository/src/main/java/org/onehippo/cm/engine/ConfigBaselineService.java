@@ -161,7 +161,7 @@ public class ConfigBaselineService {
                             Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
 
                             // process each module in detail
-                            storeBaselineModule(module, moduleNode, model);
+                            storeBaselineModule(module, moduleNode);
                         }
                     }
                 }
@@ -190,10 +190,9 @@ public class ConfigBaselineService {
      * managed in storeBaseline().
      * @param module the module to store
      * @param moduleNode the JCR node destination for the module
-     * @param model the full ConfigurationModel of which the Module is a part
      * @see #storeBaseline(ConfigurationModel)
      */
-    protected void storeBaselineModule(Module module, Node moduleNode, ConfigurationModel model) throws RepositoryException, IOException {
+    protected void storeBaselineModule(Module module, Node moduleNode) throws RepositoryException, IOException {
 
         // get the resource input provider, which provides access to raw data for module content
         ResourceInputProvider rip = module.getConfigResourceInputProvider();
@@ -293,7 +292,7 @@ public class ConfigBaselineService {
                 case NAMESPACE:
                     NamespaceDefinition namespaceDefinition = (NamespaceDefinition)def;
                     if (namespaceDefinition.getCndPath() != null) {
-                        String cndPath = namespaceDefinition.getCndPath();
+                        String cndPath = namespaceDefinition.getCndPath().getString();
 
                         // create folder nodes, if necessary
                         Node cndNode = createNodeAndParentsIfNecessary(cndPath, baseForPath(cndPath, sourceNode, configRootNode),
@@ -315,7 +314,7 @@ public class ConfigBaselineService {
                     ConfigDefinition configDef = (ConfigDefinition) def;
 
                     // recursively find all resources, make nodes, store binary and digest
-                    storeResourcesForNode(configDef.getNode(), source, sourceNode, configRootNode, rip);
+                    storeResourcesForNode(configDef.getNode(), sourceNode, configRootNode);
                     break;
             }
         }
@@ -325,24 +324,22 @@ public class ConfigBaselineService {
      * Recursively find resource references in properties of a DefinitionNode and its children nodes and store the
      * referenced resource content in the configuration baseline.
      * @param defNode a DefinitionNode to search for resource references
-     * @param source the Source to which the DefinitionNode belongs
      * @param sourceNode the JCR Node where source is stored in the baseline
      * @param configRootNode the JCR node destination for the config Sources and resources
-     * @param rip provides access to raw data streams
      */
-    protected void storeResourcesForNode(DefinitionNode defNode, Source source, Node sourceNode, Node configRootNode, ResourceInputProvider rip)
+    protected void storeResourcesForNode(DefinitionNode defNode, Node sourceNode, Node configRootNode)
             throws RepositoryException, IOException {
 
         // find resource values
         for (DefinitionProperty dp : defNode.getProperties().values()) {
             switch (dp.getType()) {
                 case SINGLE:
-                    storeBinaryResourceIfNecessary(dp.getValue(), source, sourceNode, configRootNode, rip);
+                    storeBinaryResourceIfNecessary(dp.getValue(), sourceNode, configRootNode);
                     break;
                 case SET:
                 case LIST:
                     for (Value value : dp.getValues()) {
-                        storeBinaryResourceIfNecessary(value, source, sourceNode, configRootNode, rip);
+                        storeBinaryResourceIfNecessary(value, sourceNode, configRootNode);
                     }
                     break;
             }
@@ -350,7 +347,7 @@ public class ConfigBaselineService {
 
         // recursively visit child definition nodes
         for (DefinitionNode dn : defNode.getNodes().values()) {
-            storeResourcesForNode(dn, source, sourceNode, configRootNode, rip);
+            storeResourcesForNode(dn, sourceNode, configRootNode);
         }
     }
 
@@ -358,12 +355,10 @@ public class ConfigBaselineService {
      * For the given Value, check if it is a resource reference, and if so, store the referenced resource content
      * as an appropriate binary resource node in the baseline.
      * @param value the Value to check for a resource reference
-     * @param source the Source to which this Value belongs
      * @param sourceNode the JCR Node where source is stored in the baseline
      * @param configRootNode the JCR node destination for the config Sources and resources
-     * @param rip provides access to raw data streams
      */
-    protected void storeBinaryResourceIfNecessary(Value value, Source source, Node sourceNode, Node configRootNode, ResourceInputProvider rip)
+    protected void storeBinaryResourceIfNecessary(Value value, Node sourceNode, Node configRootNode)
             throws RepositoryException, IOException {
         if (value.isResource()) {
             // create nodes, if necessary
@@ -372,7 +367,7 @@ public class ConfigBaselineService {
                     NT_HCM_CONFIG_FOLDER, NT_HCM_BINARY);
 
             // open cnd resource InputStream
-            InputStream is = rip.getResourceInputStream(source, value.getString());
+            InputStream is = value.getResourceInputStream();
 
             // store binary and digest
             storeBinary(is, resourceNode);

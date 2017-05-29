@@ -51,22 +51,53 @@ public class DefinitionMergeTest {
     public void template_works() throws Exception {
         new MergeTest("template").test();
     }
-/* TODO: needs re-assessment
+
+    // TODO Re-enable once resource handling is figured out
     @Test
-    public void created_and_updated_namespaces() throws Exception {
+    public void create_and_update_namespaces() throws Exception {
         new MergeTest("namespace").test();
     }
-*/
+
     @Test
     public void new_node() throws Exception {
         new MergeTest("new-node").test();
     }
 
-    // disabled to safely commit for refactoring purposes
     @Test
     public void delete_node() throws Exception {
         new MergeTest("delete-node").test();
     }
+
+    @Test
+    public void add_property() throws Exception {
+        new MergeTest("add-property").test();
+    }
+
+//    @Test
+//    public void append_property() throws Exception {
+//        new MergeTest("append-property").test();
+//    }
+//
+//    @Test
+//    public void delete_property() throws Exception {
+//        new MergeTest("delete-property").test();
+//    }
+//
+//    @Test
+//    public void change_property_type_or_multiplicity() throws Exception {
+//        new MergeTest("change-property-type-or-multiplicity").test();
+//    }
+//
+//    @Test
+//    public void override_primary_type() throws Exception {
+//        new MergeTest("override-primary-type").test();
+//    }
+//
+//    @Test
+//    public void override_mixin_types() throws Exception {
+//        new MergeTest("override-mixin-types").test();
+//    }
+
 
     public class MergeTest extends SerializerTest {
         String testName;

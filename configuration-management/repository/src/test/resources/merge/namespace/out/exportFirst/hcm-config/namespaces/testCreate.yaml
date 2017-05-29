@@ -1,4 +1,0 @@
-definitions:
-  namespace:
-  - prefix: testCreate
-    uri: http://www.onehippo.org/jcr/testCreate/1.0

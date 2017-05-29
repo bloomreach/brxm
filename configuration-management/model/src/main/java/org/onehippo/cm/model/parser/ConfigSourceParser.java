@@ -30,6 +30,7 @@ import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cm.model.impl.WebFileBundleDefinitionImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -87,8 +88,9 @@ public class ConfigSourceParser extends SourceParser {
             final String prefix = asStringScalar(nodeTuple.getKeyNode());
             final Map<String, Node> map = asMapping(nodeTuple.getValueNode(), new String[]{URI_KEY}, new String[]{CND_KEY});
             final URI uri = asURIScalar(map.get(URI_KEY));
-            final String cndPath = map.containsKey(CND_KEY)
-                    ? asResourcePathScalar(map.get(CND_KEY), parent, resourceInputProvider)
+            final ValueImpl cndPath = map.containsKey(CND_KEY)
+                    ? new ValueImpl(asResourcePathScalar(map.get(CND_KEY), parent, resourceInputProvider),
+                                    ValueType.STRING, true, false)
                     : null;
             parent.addNamespaceDefinition(prefix, uri, cndPath);
         }

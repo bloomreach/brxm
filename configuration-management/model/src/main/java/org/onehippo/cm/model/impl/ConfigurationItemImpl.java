@@ -70,7 +70,15 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
     }
 
     public void addDefinitionItem(final DefinitionItemImpl definitionItem) {
-        modifiableDefinitions.add(definitionItem);
+        if (modifiableDefinitions.isEmpty()) {
+            modifiableDefinitions.add(definitionItem);
+        }
+        else {
+            DefinitionItemImpl lastDef = modifiableDefinitions.get(modifiableDefinitions.size() - 1);
+            if (!lastDef.equals(definitionItem)) {
+                modifiableDefinitions.add(definitionItem);
+            }
+        }
     }
 
     @Override

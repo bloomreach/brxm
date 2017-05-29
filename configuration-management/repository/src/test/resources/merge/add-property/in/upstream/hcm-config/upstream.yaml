@@ -2,3 +2,4 @@ definitions:
   config:
     /topmost/upstream:
       jcr:primaryType: nt:unstructured
+      existingPropertyNewlyModified: "I'm a string!"

@@ -15,6 +15,10 @@
  */
 package org.onehippo.cm.engine;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
@@ -64,6 +68,16 @@ public final class VerifiedReferenceValue implements Value {
     @Override
     public boolean isPath() {
         return false;
+    }
+
+    @Override
+    public Definition getDefinition() {
+        return getParent().getDefinition();
+    }
+
+    @Override
+    public InputStream getResourceInputStream() throws IOException {
+        throw new UnsupportedOperationException("References do not have resource streams!");
     }
 
     @Override

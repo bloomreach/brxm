@@ -225,7 +225,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
                         resourceConsumer.accept(new BinaryItem(value, (ScalarNode) valueNode));
                     }
                     else if (exposeAsResource) {
-                        resourceConsumer.accept(new CopyItem(value.getString()));
+                        resourceConsumer.accept(new CopyItem(value));
                     }
                 }
 
@@ -237,7 +237,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     private void processSingleResource(Consumer<PostProcessItem> resourceConsumer, Value value, Node valueNode) {
-        final PostProcessItem postProcessItem = isBinaryEmbedded(value) ? new BinaryItem(value, (ScalarNode) valueNode) : new CopyItem(value.getString());
+        final PostProcessItem postProcessItem = isBinaryEmbedded(value) ? new BinaryItem(value, (ScalarNode) valueNode) : new CopyItem(value);
         resourceConsumer.accept(postProcessItem);
     }
 
@@ -350,7 +350,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         children.add(createStrStrTuple(URI_KEY, definition.getURI().toString()));
         if (definition.getCndPath() != null) {
             resourceConsumer.accept(new CopyItem(definition.getCndPath()));
-            children.add(createStrStrTuple(CND_KEY, definition.getCndPath()));
+            children.add(createStrStrTuple(CND_KEY, definition.getCndPath().getString()));
         }
         return new NodeTuple(createStrScalar(definition.getPrefix()), new MappingNode(Tag.MAP, children, false));
     }

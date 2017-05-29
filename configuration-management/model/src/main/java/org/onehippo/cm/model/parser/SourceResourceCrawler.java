@@ -82,7 +82,7 @@ public class SourceResourceCrawler {
 
     private void collectResourcesForNamespace(final NamespaceDefinition definition, final Set<String> resources) {
         if (definition.getCndPath() != null) {
-            resources.add(definition.getCndPath());
+            resources.add(definition.getCndPath().getString());
         }
     }
 }

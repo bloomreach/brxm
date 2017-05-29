@@ -115,6 +115,7 @@ class ConfigurationTreeBuilder {
             }
             node.setResidualNodeCategory(definitionNode.getResidualChildNodeCategory());
             node.setResidualNodeCategoryDefinitionItem(definitionNode);
+            node.addDefinitionItem(definitionNode);
         }
 
         if (definitionNode.getIgnoreReorderedChildren() != null) {
@@ -129,6 +130,7 @@ class ConfigurationTreeBuilder {
                 }
             }
             node.setIgnoreReorderedChildren(definitionNode.getIgnoreReorderedChildren());
+            node.addDefinitionItem(definitionNode);
         }
 
         final ConfigurationNodeImpl parent = node.getParent();
@@ -336,6 +338,9 @@ class ConfigurationTreeBuilder {
 
     private void mergeProperty(final ConfigurationNodeImpl parent,
                                final DefinitionPropertyImpl definitionProperty) {
+        // a node should have a back-reference to any definition that changes its properties
+        parent.addDefinitionItem(definitionProperty.getParent());
+
         final Map<String, ConfigurationPropertyImpl> properties = parent.getModifiableProperties();
         final String name = definitionProperty.getName();
         final PropertyOperation op = definitionProperty.getOperation();

@@ -1,7 +1,11 @@
 definitions:
   namespace:
-  - prefix: testEdit
-    uri: http://www.onehippo.org/jcr/testEdit/1.1
+    testEdit:
+      uri: http://www.onehippo.org/jcr/testEdit/1.1
+      cnd: testEdit.cnd
+    testCreate:
+      uri: http://www.onehippo.org/jcr/testCreate/1.0
+      cnd: testCreate.cnd
   config:
     /topmost/upstream/exportFirst:
       jcr:primaryType: nt:unstructured

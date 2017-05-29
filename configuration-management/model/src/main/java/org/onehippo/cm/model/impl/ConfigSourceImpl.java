@@ -29,8 +29,11 @@ public class ConfigSourceImpl extends SourceImpl {
         return SourceType.CONFIG;
     }
 
-    public NamespaceDefinitionImpl addNamespaceDefinition(final String prefix, final URI uri, final String cndPath) {
+    public NamespaceDefinitionImpl addNamespaceDefinition(final String prefix, final URI uri, final ValueImpl cndPath) {
         final NamespaceDefinitionImpl definition = new NamespaceDefinitionImpl(this, prefix, uri, cndPath);
+        if (cndPath != null) {
+            cndPath.setDefinition(definition);
+        }
         modifiableDefinitions.add(definition);
         return definition;
     }

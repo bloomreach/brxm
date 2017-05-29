@@ -17,13 +17,13 @@ package org.onehippo.cm.model;
 
 public final class CopyItem implements PostProcessItem {
 
-    private final String sourceLocation;
+    private final Value value;
 
-    public CopyItem(final String sourceLocation) {
-        this.sourceLocation = sourceLocation;
+    public CopyItem(final Value value) {
+        this.value = value;
     }
 
-    public String getSourceLocation() {
-        return sourceLocation;
+    public Value getValue() {
+        return value;
     }
 }

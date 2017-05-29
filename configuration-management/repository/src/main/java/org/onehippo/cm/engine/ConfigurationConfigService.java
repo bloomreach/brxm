@@ -194,7 +194,7 @@ public class ConfigurationConfigService {
             throws RepositoryException, IOException {
         for (NamespaceDefinition nsDefinition : nsDefinitions) {
             if (nsDefinition.getCndPath() != null) {
-                final String cndPath = nsDefinition.getCndPath();
+                final String cndPath = nsDefinition.getCndPath().getString();
                 if (logger.isDebugEnabled()) {
                     logger.debug(String.format("processing CND '%s' defined in %s.", cndPath, nsDefinition.getOrigin()));
                 }

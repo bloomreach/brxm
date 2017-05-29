@@ -1,0 +1,13 @@
+definitions:
+  config:
+    /topmost:
+      newPropertyWithNewLocalDef: Coming out of the blue
+    /topmost/upstream:
+      existingPropertyAddedInExport: '... but now I have a new value'
+      existingPropertyNewlyModified: I'm still a string!
+      newPropertyForUpstream: Howdy!
+    /topmost/upstream/exportFirst:
+      existingPropertyWithLocalDef: '... I''ve been here the whole time'
+      newPropertyForLocalDef: Hoi!
+    /topmost/upstream/exportSecond:
+      newPropertyToSecond: I'm also new

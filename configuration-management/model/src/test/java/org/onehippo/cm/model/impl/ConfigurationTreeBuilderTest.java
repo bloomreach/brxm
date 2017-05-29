@@ -441,6 +441,9 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl a = root.getNodes().get("a[1]");
         final ConfigurationNodeImpl b = a.getNodes().get("b[1]");
         assertEquals("[e[1], c[1], d[1]]", sortedCollectionToString(b.getNodes()));
+
+        assertEquals("a definition adding only child nodes should NOT be listed as a definition for the containing node",
+                1, b.getDefinitions().size());
     }
 
     @Test
@@ -467,7 +470,14 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl a = root.getNodes().get("a[1]");
         final ConfigurationNodeImpl b = a.getNodes().get("b[1]");
+        final ConfigurationNodeImpl d = b.getNodes().get("d[1]");
         assertEquals("[d[1], c[1]]", sortedCollectionToString(b.getNodes()));
+
+        assertEquals("a definition only reordering child nodes should NOT be listed as a definition for the containing node",
+                1, b.getDefinitions().size());
+
+        assertEquals("a definition reordering a node SHOULD be listed as a definition for the node",
+                1, d.getDefinitions().size());
     }
 
     @Test
@@ -895,6 +905,12 @@ public class ConfigurationTreeBuilderTest {
         assertEquals(PropertyType.SINGLE, property2.getType());
         assertEquals(ValueType.STRING, property2.getValueType());
         assertEquals("bla3", property2.getValue().getString());
+
+        assertEquals("a definition modifying a property should be listed as a definition for the containing node",
+                2, b.getDefinitions().size());
+
+        assertEquals("a definition modifying a property should be listed as a definition for the property",
+                2, property2.getDefinitions().size());
     }
 
     @Test
@@ -1111,6 +1127,9 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl b = a.getNodes().get("b[1]");
         assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(b.getProperties()));
         assertEquals("[bla1, bla2, bla3, bla2]", valuesToString(b.getProperties().get("property1")));
+
+        assertEquals("a definition modifying a property should be listed as a definition for the containing node",
+                2, b.getDefinitions().size());
     }
 
     @Test

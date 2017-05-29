@@ -15,6 +15,9 @@
  */
 package org.onehippo.cm.model;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 public interface Value {
     Object getObject();
     String getString();
@@ -28,11 +31,29 @@ public interface Value {
     boolean isResource();
 
     /**
+     * Uses a ResourceInputProvider to create an InputStream for this Value's content.
+     * @return an InputStream that must be closed when the caller is finished using it
+     * @throws IOException if there is any problem in creating the InputStream
+     * @throws IllegalStateException iff (this.isResource() == false)
+     */
+    InputStream getResourceInputStream() throws IOException;
+
+    /**
      * Returns whether this value represents a path to an item in the repository rather than its UUID, only applicable
      * for {@link ValueType#REFERENCE} and {@link ValueType#WEAKREFERENCE}
      * @return
      */
     boolean isPath();
 
+    /**
+     * The Property for which this object provides the value. NOTE: When Value is used in the context of a
+     * NamespaceDefinition, this will return null.
+     * @return the DefinitionProperty to which this Value belongs, or null in case this Value is used in a NamespaceDefinition
+     */
     DefinitionProperty getParent();
+
+    /**
+     * @return the overall Definition to which this Value contributes, which may be a ContentDefinition or a NamespaceDefinition
+     */
+    Definition getDefinition();
 }

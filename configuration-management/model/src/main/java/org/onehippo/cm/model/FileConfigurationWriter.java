@@ -108,10 +108,9 @@ public class FileConfigurationWriter {
 
     private void processCopyItem(Source source, CopyItem copyItem, ModuleContext moduleContext) throws IOException {
         try (
-                final InputStream resourceInputStream = moduleContext.getInputProvider(source)
-                        .getResourceInputStream(source, copyItem.getSourceLocation());
+                final InputStream resourceInputStream = copyItem.getValue().getResourceInputStream();
                 final OutputStream resourceOutputStream = moduleContext.getOutputProvider(source)
-                        .getResourceOutputStream(source, copyItem.getSourceLocation())
+                        .getResourceOutputStream(source, copyItem.getValue().getString())
         ) {
             IOUtils.copy(resourceInputStream, resourceOutputStream);
         }

@@ -18,7 +18,6 @@ package org.onehippo.cm.model.mapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.model.ValueType;
-import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
@@ -83,7 +82,7 @@ public class HippoImageFileMapperTest {
         ProjectImpl project = new ProjectImpl("dummyProject", group);
         ModuleImpl module = new ModuleImpl("dummyModule", project);
         SourceImpl source = new ConfigSourceImpl("somePath", module);
-        AbstractDefinitionImpl definition = new ConfigDefinitionImpl(source);
+        ConfigDefinitionImpl definition = new ConfigDefinitionImpl(source);
         DefinitionNodeImpl parentNode = new DefinitionNodeImpl("/path/to/", "parentNode", definition);
 
         DefinitionNodeImpl childNode1 = new DefinitionNodeImpl("pngImageNode", parentNode);

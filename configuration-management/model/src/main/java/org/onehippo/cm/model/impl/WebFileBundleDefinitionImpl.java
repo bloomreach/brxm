@@ -39,4 +39,9 @@ public class WebFileBundleDefinitionImpl extends AbstractDefinitionImpl implemen
         return name;
     }
 
+    @Override
+    public ConfigSourceImpl getSource() {
+        return (ConfigSourceImpl) super.getSource();
+    }
+
 }
