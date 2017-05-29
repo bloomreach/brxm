@@ -24,7 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.plugins.richtext.dialog.RichTextEditorAction;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorLink;
 import org.hippoecm.frontend.session.UserSession;
-import org.onehippo.cms7.services.processor.html.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

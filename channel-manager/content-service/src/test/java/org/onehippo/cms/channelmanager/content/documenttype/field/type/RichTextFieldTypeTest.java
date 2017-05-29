@@ -25,8 +25,6 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,16 +37,18 @@ import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
-import org.onehippo.cms7.services.processor.html.HtmlProcessor;
-import org.onehippo.cms7.services.processor.html.HtmlProcessorConfig;
-import org.onehippo.cms7.services.processor.html.HtmlProcessorFactory;
-import org.onehippo.cms7.services.processor.html.HtmlProcessorImpl;
+import org.onehippo.cms7.services.htmlprocessor.HtmlProcessor;
+import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorConfig;
+import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorFactory;
+import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorImpl;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.anyObject;

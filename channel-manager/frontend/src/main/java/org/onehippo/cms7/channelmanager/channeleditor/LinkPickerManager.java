@@ -28,9 +28,9 @@ import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextEditorLinkService;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorDocumentLink;
 import org.hippoecm.frontend.plugins.richtext.processor.WicketNodeFactory;
-import org.onehippo.cms7.services.processor.html.model.Model;
-import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactory;
-import org.onehippo.cms7.services.processor.richtext.link.RichTextLinkFactoryImpl;
+import org.onehippo.cms7.services.htmlprocessor.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.richtext.link.RichTextLinkFactory;
+import org.onehippo.cms7.services.htmlprocessor.richtext.link.RichTextLinkFactoryImpl;
 
 /**
  * Manages the picker dialog for internal links in rich text fields. The behavior can be called by the frontend to

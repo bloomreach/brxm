@@ -27,9 +27,9 @@ import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageS
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
 import org.hippoecm.frontend.plugins.richtext.processor.WicketNodeFactory;
 import org.hippoecm.frontend.plugins.richtext.processor.WicketURLEncoder;
-import org.onehippo.cms7.services.processor.html.model.Model;
-import org.onehippo.cms7.services.processor.richtext.image.RichTextImageFactory;
-import org.onehippo.cms7.services.processor.richtext.image.RichTextImageFactoryImpl;
+import org.onehippo.cms7.services.htmlprocessor.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageFactory;
+import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageFactoryImpl;
 
 /**
  * Manages the picker dialog for images in rich text fields. The behavior can be called by the frontend to
