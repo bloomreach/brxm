@@ -23,7 +23,6 @@
     <version>29-SNAPSHOT</version>
   </parent>
 
-
   <artifactId>hippo-addon-channel-manager</artifactId>
   <version>5.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
