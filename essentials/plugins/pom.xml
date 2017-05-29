@@ -59,6 +59,7 @@
     <module>taxonomy</module>
     <module>video</module>
     <module>google-maps</module>
+    <module>urlrewriter</module>
   </modules>
 
   <dependencyManagement>

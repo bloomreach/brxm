@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+  <bean id="contentPath" class="java.lang.String">
+    <constructor-arg type="java.lang.String" value="/content/urlrewriter"/>
+  </bean>
+  <bean id="configurationLocation" class="java.lang.String">
+    <constructor-arg type="java.lang.String" value="/hippo:configuration/hippo:modules/urlrewriter/hippo:moduleconfig"/>
+  </bean>
+
+  <!-- add RewritingManager -->
+  <bean id="org.onehippo.forge.rewriting.repo.RewritingManager" class="org.onehippo.forge.rewriting.repo.RewritingManager">
+    <property name="rewritingRulesExtractors">
+      <list>
+        <bean class="org.onehippo.forge.rewriting.repo.AdvancedRulesExtractor"/>
+        <bean class="org.onehippo.forge.rewriting.repo.RulesExtractor"/>
+        <bean class="org.onehippo.forge.rewriting.repo.XmlRulesExtractor"/>
+      </list>
+    </property>
+    <property name="repository" ref="javax.jcr.Repository"/>
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader"/>
+    <property name="rewriteRulesLocation" value="#{contentPath}"/>
+    <property name="configurationLocation" value="#{configurationLocation}"/>
+  </bean>
+
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="jcrObservationEventListenerItems"/>
+    <property name="targetMethod" value="add"/>
+    <property name="arguments">
+      <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+        <property name="nodeAddedEnabled" value="true"/>
+        <property name="nodeRemovedEnabled" value="true"/>
+        <property name="propertyAddedEnabled" value="true"/>
+        <property name="propertyChangedEnabled" value="true"/>
+        <property name="propertyRemovedEnabled" value="true"/>
+        <property name="absolutePath" value="#{contentPath}"/>
+        <property name="deep" value="true"/>
+        <property name="eventListener">
+          <bean class="org.onehippo.forge.rewriting.repo.UrlRewriteListener">
+            <property name="rewriteManager" ref="org.onehippo.forge.rewriting.repo.RewritingManager"/>
+          </bean>
+        </property>
+      </bean>
+    </property>
+  </bean>
+
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="jcrObservationEventListenerItems"/>
+    <property name="targetMethod" value="add"/>
+    <property name="arguments">
+      <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+        <property name="nodeAddedEnabled" value="false"/>
+        <property name="nodeRemovedEnabled" value="false"/>
+        <property name="propertyAddedEnabled" value="true"/>
+        <property name="propertyChangedEnabled" value="true"/>
+        <property name="propertyRemovedEnabled" value="true"/>
+        <property name="absolutePath" value="#{configurationLocation}"/>
+        <property name="deep" value="false"/>
+        <property name="eventListener">
+          <bean class="org.onehippo.forge.rewriting.repo.UrlRewriteListener">
+            <property name="rewriteManager" ref="org.onehippo.forge.rewriting.repo.RewritingManager"/>
+          </bean>
+        </property>
+      </bean>
+    </property>
+  </bean>
+
+</beans>

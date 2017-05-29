@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
 
     private String templateLanguage;
     private boolean useSamples;
+    private boolean enterprise;
     private boolean confirmParams;
     private boolean extraTemplates;
 
@@ -219,6 +220,16 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     @Override
     public void setUseSamples(final boolean useSamples) {
         this.useSamples = useSamples;
+    }
+
+    @Override
+    public boolean isEnterprise() {
+        return enterprise;
+    }
+
+    @Override
+    public void setEnterprise(final boolean enterprise) {
+        this.enterprise = enterprise;
     }
 
     @Override
