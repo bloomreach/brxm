@@ -20,13 +20,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.autoreload.AutoReloadService;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ProvidesService(types = { HtmlProcessorService.class })
+@ProvidesService(types = {HtmlProcessorService.class})
 public class HtmlProcessorServiceModule extends AbstractReconfigurableDaemonModule {
 
     public static final Logger log = LoggerFactory.getLogger(HtmlProcessorServiceModule.class);
@@ -53,7 +52,7 @@ public class HtmlProcessorServiceModule extends AbstractReconfigurableDaemonModu
     @Override
     protected void doShutdown() {
         if (service != null) {
-            HippoServiceRegistry.unregisterService(service, AutoReloadService.class);
+            HippoServiceRegistry.unregisterService(service, HtmlProcessorService.class);
         }
     }
 }
