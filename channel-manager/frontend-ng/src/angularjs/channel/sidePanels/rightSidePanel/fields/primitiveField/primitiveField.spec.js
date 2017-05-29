@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-fdescribe('PrimitiveField', () => {
+describe('PrimitiveField', () => {
   let $componentController;
 
   let $ctrl;
@@ -161,7 +161,7 @@ fdescribe('PrimitiveField', () => {
 
   it('assumes that a field without any value is valid', () => {
     $ctrl.fieldValues = [];
-    expect($ctrl.isValid(0)).toBe(true);
+    expect($ctrl.isValid()).toBe(true);
   });
 
   it('keeps track of the focused state', () => {
