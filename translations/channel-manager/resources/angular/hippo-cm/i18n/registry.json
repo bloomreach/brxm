@@ -129,10 +129,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "TOOLBAR_MENU_PAGE_CREATE" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE" : {
       "status" : "CLEAN",
       "locales" : null
@@ -146,10 +142,6 @@
       "locales" : null
     },
     "DELETE" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "SUBPAGE_PAGE_EDIT_TITLE" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -217,10 +209,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "TOOLBAR_MENU_PAGE_EDIT" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "COPY" : {
       "status" : "CLEAN",
       "locales" : null
@@ -238,10 +226,6 @@
       "locales" : null
     },
     "SUBPAGE_MENU_EDITOR_NO_LINK" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REMOVAL" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -353,10 +337,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "VIEWPORT_PHONE" : {
       "status" : "CLEAN",
       "locales" : null
@@ -393,15 +373,7 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "SUBPAGE_PAGE_EDIT_LABEL_PRIMARY_DOCUMENT" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "SUBPAGE_MENU_EDITOR_EMPTY_MENU" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REPOSITIONING" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -418,10 +390,6 @@
       "locales" : null
     },
     "ERROR_MENU_LOCKED_BY" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "TOOLBAR_MENU_PAGE_PAGE_NOT_EDITABLE" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -457,19 +425,11 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "TOOLBAR_MENU_PAGE_SITEMAP_NOT_EDITABLE" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED" : {
       "status" : "CLEAN",
       "locales" : null
     },
     "ERROR_SITEMAP_RETRIEVAL_FAILED" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "SUBPAGE_PAGE_EDIT_PRIMARY_DOCUMENT_VALUE_NONE" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -482,10 +442,6 @@
       "locales" : null
     },
     "PUBLISH_ALL" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "SUBPAGE_PAGE_CREATE_TITLE" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -992,6 +948,66 @@
       }
     },
     "SHOW_CONTENT" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REMOVAL" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REPOSITIONING" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_PROPERTIES_LABEL_ASSIGN_NEW_TEMPLATE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_PROPERTIES_LABEL_PRIMARY_DOCUMENT" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "SUBPAGE_PAGE_PROPERTIES_PRIMARY_DOCUMENT_VALUE_NONE" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "TOOLBAR_MENU_PAGE_PROPERTIES" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "SUBPAGE_PAGE_PROPERTIES_TITLE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "TOOLBAR_MENU_PAGE_NEW" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "SUBPAGE_PAGE_NEW_TITLE" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
