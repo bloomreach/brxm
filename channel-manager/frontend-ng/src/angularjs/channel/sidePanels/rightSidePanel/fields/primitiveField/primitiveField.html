@@ -13,7 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="field" layout="column">
+<div class="field"
+     layout="column"
+     ng-class="{'has-invalid-field': !$ctrl.isValid()}">
   <md-input-container class="qa-field"
                       md-no-float
                       ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
@@ -42,10 +44,10 @@
     <!-- editors per field type -->
     <input ng-switch-when="STRING"
            ng-model="fieldValue.value"
-           name="::$ctrl.getFieldName($index)"
+           name="{{::$ctrl.getFieldName($index)}}"
            placeholder=""
-           ng-attr-maxlength="::$ctrl.fieldType.maxLength"
-           aria-label="::$ctrl.fieldType.displayName"
+           ng-attr-maxlength="{{::$ctrl.fieldType.maxLength}}"
+           aria-label="{{::$ctrl.fieldType.displayName}}"
            ng-required="::$ctrl.fieldType.required"
            ng-focus="$ctrl.focusPrimitive()"
            ng-blur="$ctrl.blurPrimitive()">

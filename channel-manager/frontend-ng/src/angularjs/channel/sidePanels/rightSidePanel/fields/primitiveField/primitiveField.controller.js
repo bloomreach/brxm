@@ -32,6 +32,14 @@ class PrimitiveFieldCtrl {
     return combinedError;
   }
 
+  isValid() {
+    return !this.fieldValues.some((fieldValue, index) => {
+      const fieldName = this.getFieldName(index);
+      const field = this.form[fieldName];
+      return field && field.$invalid;
+    });
+  }
+
   focusPrimitive() {
     this.hasFocus = true;
     this.onFieldFocus();

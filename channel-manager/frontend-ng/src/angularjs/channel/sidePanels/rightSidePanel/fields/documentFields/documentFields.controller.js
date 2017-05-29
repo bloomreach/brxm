@@ -30,20 +30,6 @@ class DocumentFieldsCtrl {
     return `${fieldType.id}:${fieldType.validators}`;
   }
 
-  isValid(fieldType) {
-    const fieldValues = this.fieldValues[fieldType.id];
-    if (fieldValues) {
-      for (let i = 0, len = fieldValues.length; i < len; i += 1) {
-        const fieldName = this.getFieldName(fieldType, i);
-        const field = this.form[fieldName];
-        if (field && field.$invalid) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
   hasValue(field) {
     const values = this.fieldValues[field.id];
     return angular.isArray(values) && values.length > 0;

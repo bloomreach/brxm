@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('CompoundField', () => {
+describe('PrimitiveField', () => {
   let $componentController;
 
   let $ctrl;
@@ -115,5 +115,69 @@ describe('CompoundField', () => {
     });
 
     expect($ctrl.getFieldError()).toEqual(null);
+  });
+
+  it('knowns whether a single field is valid', () => {
+    $ctrl.form = {
+      'test-name/field:type': {
+        $invalid: false,
+      },
+    };
+    expect($ctrl.isValid()).toBe(true);
+  });
+
+  it('knowns whether a single field is invalid', () => {
+    $ctrl.form = {
+      'test-name/field:type': {
+        $invalid: true,
+      },
+    };
+    expect($ctrl.isValid()).toBe(false);
+  });
+
+  it('knowns whether a multiple field is valid', () => {
+    $ctrl.form = {
+      'test-name/field:type': {
+        $invalid: false,
+      },
+      'test-name/field:type[1]': {
+        $invalid: false,
+      },
+    };
+    expect($ctrl.isValid()).toBe(true);
+  });
+
+  it('knowns whether a multiple field is invalid', () => {
+    $ctrl.form = {
+      'test-name/field:type': {
+        $invalid: false,
+      },
+      'test-name/field:type[1]': {
+        $invalid: true,
+      },
+    };
+    expect($ctrl.isValid()).toBe(false);
+  });
+
+  it('assumes that a field without any value is valid', () => {
+    $ctrl.fieldValues = [];
+    expect($ctrl.isValid()).toBe(true);
+  });
+
+  it('keeps track of the focused state', () => {
+    expect($ctrl.hasFocus).toBeFalsy();
+
+    $ctrl.focusPrimitive();
+
+    expect($ctrl.hasFocus).toBeTruthy();
+    expect(onFieldFocus).toHaveBeenCalled();
+    expect(onFieldBlur).not.toHaveBeenCalled();
+    onFieldFocus.calls.reset();
+
+    $ctrl.blurPrimitive();
+
+    expect($ctrl.hasFocus).toBeFalsy();
+    expect(onFieldFocus).not.toHaveBeenCalled();
+    expect(onFieldBlur).toHaveBeenCalled();
   });
 });
