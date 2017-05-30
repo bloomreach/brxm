@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="foo"
          xmlns:esv="http://www.onehippo.org/jcr/xmlimport" esv:merge="combine">
   <sv:node sv:name="bar" esv:merge="combine">
-    <sv:property sv:name="baz" sv:type="String">
+    <sv:property sv:name="baz" sv:type="String" esv:merge="override">
       <sv:value>test</sv:value>
     </sv:property>
     <sv:node sv:name="baz">

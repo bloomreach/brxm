@@ -34,12 +34,8 @@ import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -171,10 +167,11 @@ public class ManagedUserSessionInvokerTest {
 
         EasyMock.replay(servletRequest, httpSession, context, systemSession, repository);
 
-        final Object result = invoker.invoke(exchange, "test");
-
-        EasyMock.verify(servletRequest, httpSession, context, systemSession, repository);
-        assertForbidden(result);
+        Log4jInterceptor.onWarn().deny(ManagedUserSessionInvoker.class).run( () -> {
+            final Object result = invoker.invoke(exchange, "test");
+            EasyMock.verify(servletRequest, httpSession, context, systemSession, repository);
+            assertForbidden(result);
+        });
     }
 
     @Test

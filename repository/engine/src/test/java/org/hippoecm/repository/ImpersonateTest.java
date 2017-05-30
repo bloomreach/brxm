@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -72,6 +72,8 @@ public class ImpersonateTest extends RepositoryTestCase {
         Session userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
         Session impersonateSession = userSession.impersonate(new SimpleCredentials("admin", new char[] {}));
         assertEquals("admin", impersonateSession.getUserID());
+        userSession.logout();
+        impersonateSession.logout();
     }
 
     @Test
@@ -83,6 +85,8 @@ public class ImpersonateTest extends RepositoryTestCase {
         SimpleCredentials userCredentials = new SimpleCredentials(TEST_USER_ID, TEST_USER_PASS.toCharArray());
         Session anotherSystemSession = systemSession.impersonate(userCredentials);
         assertEquals("system", anotherSystemSession.getUserID());
+        systemSession.logout();
+        anotherSystemSession.logout();
     }
 
     @Test
@@ -95,6 +99,8 @@ public class ImpersonateTest extends RepositoryTestCase {
         userCredentials.setAttribute(NO_SYSTEM_IMPERSONATION, Boolean.TRUE);
         Session userSession = systemSession.impersonate(userCredentials);
         assertEquals(TEST_USER_ID, userSession.getUserID());
+        systemSession.logout();
+        userSession.logout();
     }
 
     @Test
@@ -106,6 +112,8 @@ public class ImpersonateTest extends RepositoryTestCase {
             fail("User anonymous should not be allowed to impersonate.");
         } catch (LoginException e) {
             // correct
+        } finally {
+            userSession.logout();
         }
     }
 

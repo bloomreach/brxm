@@ -27,6 +27,7 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.io.SCXMLReader;
 import org.apache.commons.scxml2.model.Action;
 import org.apache.commons.scxml2.model.ModelException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -157,8 +158,8 @@ public class RepositorySCXMLRegistryTest {
         registry.addScxmlNode(scxmlConfigNode, "hello-nonexisting-initial", SCXML_HELLO_NONEXISTING_INITIAL);
         registry.addScxmlNode(scxmlConfigNode, "hello-wrong-execution-in-state", SCXML_HELLO_WRONG_EXECUTION_IN_STATE);
 
-        try (Log4jInterceptor ignored = Log4jInterceptor.onError()
-                .deny(RepositorySCXMLRegistry.class, SCXMLReader.class)
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn()
+                .trap(RepositorySCXMLRegistry.class, SCXMLReader.class)
                 .deny("org.apache.commons.scxml2.io.ModelUpdater")
                 .build()) {
             registry.setUp(scxmlConfigNode);
@@ -186,7 +187,7 @@ public class RepositorySCXMLRegistryTest {
         MockNode scxmlDefNode = registry.addScxmlNode(scxmlConfigNode, "hello-with-unknown-custom-actions", SCXML_HELLO_WITH_UNKNOWN_CUSTOM_ACTIONS);
         registry.addCustomAction(scxmlDefNode, "http://www.onehippo.org/cms7/repository/scxml", "known-custom-action", KnownAction.class.getName());
 
-        try (Log4jInterceptor ignored = Log4jInterceptor.onError()
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn()
                 .deny(RepositorySCXMLRegistry.class, SCXMLReader.class)
                 .build()) {
             registry.setUp(scxmlConfigNode);
@@ -209,7 +210,7 @@ public class RepositorySCXMLRegistryTest {
         final MockNode scxmlConfigNode = registry.createConfigNode();
         registry.addScxmlNode(scxmlConfigNode, "hello-with-unknown-custom-actions", SCXML_HELLO_WITH_UNKNOWN_CUSTOM_ACTIONS);
 
-        try (Log4jInterceptor ignored = Log4jInterceptor.onError()
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn()
                 .deny(RepositorySCXMLRegistry.class, SCXMLReader.class)
                 .build()) {
             registry.setUp(scxmlConfigNode);
@@ -232,7 +233,7 @@ public class RepositorySCXMLRegistryTest {
         final MockNode scxmlConfigNode = registry.createConfigNode();
         registry.addScxmlNode(scxmlConfigNode, "hello-with-unknown-ns-custom-actions", SCXML_HELLO_WITH_UNKNOWN_NS_CUSTOM_ACTIONS);
 
-        try (Log4jInterceptor ignored = Log4jInterceptor.onError()
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn()
                 .deny(RepositorySCXMLRegistry.class)
                 .build()) {
             registry.setUp(scxmlConfigNode);

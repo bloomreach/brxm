@@ -105,7 +105,7 @@ public class SCXMLWorkflowExecutorTest {
         assertTrue(workflowExecutor.getContext().getActions().get("hello"));
         assertEquals("Hello world!", message);
 
-        try (Log4jInterceptor ignored = Log4jInterceptor.onError().deny(SCXMLWorkflowExecutor.class).build()) {
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(SCXMLWorkflowExecutor.class).build()) {
             workflowExecutor.triggerAction("foo");
             fail("triggerAction foo should have failed");
         } catch (WorkflowException expected) {
@@ -141,7 +141,7 @@ public class SCXMLWorkflowExecutorTest {
 
         final SCXMLWorkflowExecutor workflowExecutor = new SCXMLWorkflowExecutor(new SCXMLWorkflowContext("scxml", new MockWorkflowContext("testuser")), null);
 
-        try (Log4jInterceptor ignored = Log4jInterceptor.onError().deny(SCXMLWorkflowExecutor.class).build()) {
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(SCXMLWorkflowExecutor.class).build()) {
             workflowExecutor.start();
             fail("triggerAction foo should have failed");
         } catch (WorkflowException expected) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.repository.xml.EnhancedSystemViewImporter;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -207,7 +209,9 @@ public class EnhancedExportImportTest extends RepositoryTestCase {
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW;
         try {
-            ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
+            try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(EnhancedSystemViewImporter.class).build()) {
+                ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
+            };
             fail("Import should fail.");
         } catch (RepositoryException e) {
             // expected
@@ -225,7 +229,9 @@ public class EnhancedExportImportTest extends RepositoryTestCase {
         testData.getNode("ref1").remove();
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
-        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(EnhancedSystemViewImporter.class).build()) {
+            ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
+        };
 
         Node node = testImport.getNode(TEST_EXPORT_NODE);
         assertNotNull(node);
@@ -243,7 +249,9 @@ public class EnhancedExportImportTest extends RepositoryTestCase {
         session.getRootNode().addMixin("mix:referenceable");
 
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT;
-        ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(EnhancedSystemViewImporter.class).build()) {
+            ((HippoSession) session).importEnhancedSystemViewXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, null);
+        };
 
         Node node = testImport.getNode(TEST_EXPORT_NODE);
         assertNotNull(node);

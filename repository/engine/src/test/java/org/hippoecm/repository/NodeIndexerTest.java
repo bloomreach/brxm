@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -84,6 +84,9 @@ public class NodeIndexerTest extends RepositoryTestCase {
     @After
     @Override
     public void tearDown() throws Exception {
+
+        userSession.logout();
+
         Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
         Node domains = config.getNode(HippoNodeType.DOMAINS_PATH);
         Node users = config.getNode(HippoNodeType.USERS_PATH);
