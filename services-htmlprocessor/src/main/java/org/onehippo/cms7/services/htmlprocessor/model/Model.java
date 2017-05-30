@@ -34,7 +34,7 @@ public interface Model<T> extends Serializable {
         T value;
 
         SimpleModel(final T o) {
-            this. value = o;
+            value = o;
         }
 
         @Override
