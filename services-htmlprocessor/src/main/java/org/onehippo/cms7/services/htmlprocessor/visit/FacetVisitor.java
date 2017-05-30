@@ -15,10 +15,14 @@
  */
 package org.onehippo.cms7.services.htmlprocessor.visit;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.onehippo.cms7.services.htmlprocessor.util.FacetUtil;
 import org.slf4j.Logger;
@@ -30,28 +34,57 @@ public abstract class FacetVisitor extends NodeVisitor {
 
     public static final String ATTRIBUTE_DATA_UUID = "data-uuid";
 
+    private Map<String, String> unmarkedFacets = Collections.emptyMap();
+
     protected FacetVisitor(final Model<Node> nodeModel) {
         super(nodeModel);
     }
 
     @Override
-    public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {
-        if (parent == null) {
-            // Remove all facetselects as they are no longer in use
-            try {
-                FacetUtil.removeFacets(getNode());
-            } catch (RepositoryException ex) {
-                log.error("Error removing unused links", ex);
-            }
+    public void before() {
+        try {
+            final Node node = getNode();
+            unmarkedFacets = FacetUtil.getFacets(node);
+        } catch (final RepositoryException e) {
+            log.error("Error loading facets from node", e);
+            unmarkedFacets = Collections.emptyMap();
         }
     }
 
-    protected String findOrCreateFacetNode(final String uuid) throws RepositoryException {
-        final Node node = getNode();
-        String name = FacetUtil.getChildFacetNameOrNull(node, uuid);
-        if (name == null) {
-            name = FacetUtil.createFacet(node, uuid);
+    @Override
+    public void after() {
+        // unmarked facets are no longer referenced from markup and can be removed
+        if (!unmarkedFacets.isEmpty()) {
+            final Node node = getNode();
+            unmarkedFacets.forEach((name, uuid) -> FacetUtil.removeFacet(node, name));
+            unmarkedFacets.clear();
         }
-        return name;
+    }
+
+    protected String getFacetId(final String name) {
+        return unmarkedFacets.get(name);
+    }
+
+    protected String getFacetName(final String uuid) {
+        return unmarkedFacets.entrySet()
+                .stream()
+                .filter(entry -> Objects.equals(entry.getValue(), uuid))
+                .map(Entry::getKey)
+                .findFirst()
+                .orElse(null);
+    }
+
+    protected void markVisited(final String name) {
+        unmarkedFacets.remove(name);
+    }
+
+    protected String findOrCreateFacetNode(final String uuid) throws RepositoryException {
+        final String name = getFacetName(uuid);
+        if (name != null) {
+            return name;
+        }
+
+        final Node node = getNode();
+        return FacetUtil.createFacet(node, uuid);
     }
 }

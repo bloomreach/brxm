@@ -22,7 +22,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
-import org.onehippo.cms7.services.htmlprocessor.util.FacetUtil;
 import org.onehippo.cms7.services.htmlprocessor.util.LinkUtil;
 import org.onehippo.cms7.services.htmlprocessor.visit.FacetVisitor;
 
@@ -44,7 +43,6 @@ public class LinkVisitor extends FacetVisitor {
 
     @Override
     public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {
-        super.onWrite(parent, tag);
         if (tag != null && StringUtils.equalsIgnoreCase(TAG_A, tag.getName())) {
             convertLinkForStorage(tag);
         }
@@ -60,13 +58,14 @@ public class LinkVisitor extends FacetVisitor {
             return;
         }
 
-        final Node node = getNode();
         final String name = NodeNameCodec.encode(href, true);
-        final String uuid = FacetUtil.getChildDocBaseOrNull(node, name);
+        final String uuid = getFacetId(name);
 
         if (uuid != null) {
             tag.addAttribute(ATTRIBUTE_HREF, LinkUtil.INTERNAL_LINK_DEFAULT_HREF);
             tag.addAttribute(ATTRIBUTE_DATA_UUID, uuid);
+
+            markVisited(name);
         }
     }
 
@@ -91,6 +90,7 @@ public class LinkVisitor extends FacetVisitor {
         final String name = findOrCreateFacetNode(uuid);
         if (name != null) {
             tag.addAttribute(ATTRIBUTE_HREF, name);
+            markVisited(name);
         } else {
             tag.removeAttribute(ATTRIBUTE_HREF);
         }
