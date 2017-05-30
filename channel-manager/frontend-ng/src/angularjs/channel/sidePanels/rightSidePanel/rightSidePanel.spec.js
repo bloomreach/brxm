@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-fdescribe('RightSidePanel', () => {
+describe('RightSidePanel', () => {
   let $componentController;
   let $q;
   let $rootScope;
