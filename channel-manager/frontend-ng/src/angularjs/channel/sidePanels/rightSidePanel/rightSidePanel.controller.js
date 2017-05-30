@@ -97,6 +97,13 @@ class RightSidePanelCtrl {
       this._onOpen();
     });
 
+    $element.on('keydown', (e) => {
+      if (e.which === 27) {
+        e.stopImmediatePropagation();
+        this.close();
+      }
+    });
+
     CmsService.subscribe('kill-editor', (documentId) => {
       if (this.documentId === documentId) {
         this._closePanel();
