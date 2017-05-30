@@ -1,11 +1,12 @@
+#set( $dollar = '$' )
 <?xml version="1.0" encoding="UTF-8" ?>
 <Configuration>
 
   <Appenders>
 
     <!-- hippo-cms.log -->
-    <RollingFile name="cms" fileName="${sys:catalina.base}/logs/hippo-cms.log"
-                 filePattern="${sys:catalina.base}/logs/hippo-cms.log.%d{yyyy-MM-dd}">
+    <RollingFile name="cms" fileName="${dollar}{sys:catalina.base}/logs/hippo-cms.log"
+                 filePattern="${dollar}{sys:catalina.base}/logs/hippo-cms.log.%d{yyyy-MM-dd}">
       <LookupFilter key="jndi:logging/contextName" value="cms" onMatch="ACCEPT"/>
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
       <Policies>
@@ -14,8 +15,8 @@
     </RollingFile>
 
     <!-- hippo-site.log -->
-    <RollingFile name="site" fileName="${sys:catalina.base}/logs/hippo-site.log"
-                 filePattern="${sys:catalina.base}/logs/hippo-site.log.%d{yyyy-MM-dd}">
+    <RollingFile name="site" fileName="${dollar}{sys:catalina.base}/logs/hippo-site.log"
+                 filePattern="${dollar}{sys:catalina.base}/logs/hippo-site.log.%d{yyyy-MM-dd}">
       <LookupFilter key="jndi:logging/contextName" value="site" onMatch="ACCEPT"/>
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
       <Policies>
@@ -24,8 +25,8 @@
     </RollingFile>
 
     <!-- hippo-audit.log -->
-    <RollingFile name="audit" fileName="${sys:catalina.base}/logs/hippo-audit.log"
-                 filePattern="${sys:catalina.base}/logs/hippo-audit.log.%d{yyyy-MM-dd}">
+    <RollingFile name="audit" fileName="${dollar}{sys:catalina.base}/logs/hippo-audit.log"
+                 filePattern="${dollar}{sys:catalina.base}/logs/hippo-audit.log.%d{yyyy-MM-dd}">
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
       <Policies>
         <TimeBasedTriggeringPolicy/>
@@ -120,6 +121,9 @@
     <Logger name="org.hippoecm.hst.core.container.WebFileValve" additivity="false" level="info">
       <AppenderRef ref="messages"/>
     </Logger>
+
+    <!-- project logging -->
+    <Logger name="${package}" level="debug"/>
 
     <Root level="warn">
       <AppenderRef ref="site"/>

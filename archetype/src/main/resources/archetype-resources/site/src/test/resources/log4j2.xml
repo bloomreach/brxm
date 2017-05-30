@@ -40,6 +40,9 @@
     <Logger name="org.hippoecm.repository.updater" level="info"/>
     <Logger name="org.hippoecm.repository.export" level="info"/>
 
+    <!-- project logging -->
+    <Logger name="${package}" level="debug"/>
+
     <Root level="warn">
       <AppenderRef ref="console"/>
     </Root>
