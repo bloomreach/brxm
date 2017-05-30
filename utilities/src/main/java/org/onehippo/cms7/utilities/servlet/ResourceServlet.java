@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
@@ -47,103 +48,100 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Serves resources from either web application or classpath.
- *
- * <p/>
+ * <p>
+ * </p>
  * A typical configuration is to set classpath resource path and map a servlet path to this servlet.
- *
+ * <p>
  * <xmp>
- *  <servlet>
- *    <servlet-name>ExampleResourceServlet</servlet-name>
- *    <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
- *    <init-param>
- *      <param-name>jarPathPrefix</param-name>
- *      <param-value>/META-INF/example/myapp/skin</param-value>
- *    </init-param>
- *  </servlet>
- *
- *  <servlet-mapping>
- *    <servlet-name>ExampleResourceServlet</servlet-name>
- *    <url-pattern>/myapp/skin/*</url-pattern>
- *  </servlet-mapping>
+ *     <servlet>
+ *         <servlet-name>ExampleResourceServlet</servlet-name>
+ *         <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
+ *         <init-param>
+ *             <param-name>jarPathPrefix</param-name>
+ *             <param-value>/META-INF/example/myapp/skin</param-value>
+ *         </init-param>
+ *     </servlet>
+ *     <servlet-mapping>
+ *         <servlet-name>ExampleResourceServlet</servlet-name>
+ *         <url-pattern>/myapp/skin/*</url-pattern>
+ *     </servlet-mapping>
  * </xmp>
- *
- * <p/>
- *
- * With the configuration above, requests by paths, "/myapp/skin/*", will be served by <CODE>ExampleResourceServlet</CODE>,
- * which reads the target resource from the configured classpath resource path, "/META-INF/example/myapp/skin".
- * For example, if the request path info is "/myapp/skin/example.png", then the servlet will find the corresponding
- * classpath resource, "classpath:META-INF/example/myapp/skin/example.png", to serve the request.
- *
- * <p/>
- *
+ * </p>
+ * <p>
+ * With the configuration above, requests by paths, "/myapp/skin/*", will be served by
+ * <CODE>ExampleResourceServlet</CODE>, which reads the target resource from the configured classpath resource path,
+ * "/META-INF/example/myapp/skin". For example, if the request path info is "/myapp/skin/example.png", then the servlet
+ * will find the corresponding classpath resource, "classpath:META-INF/example/myapp/skin/example.png", to serve the
+ * request.
+ * </p>
  * <p>The following init parameters are available:</p>
  * <table border="2">
- *   <tr>
- *     <th>Init parameter name</th>
- *     <th>Description</th>
- *     <th>Example value</th>
- *     <th>Default value</th>
- *   </tr>
- *   <tr>
- *     <td>jarPathPrefix</td>
- *     <td>Classpath resource path prefix</td>
- *     <td>META-INF/example/myapp/skin</td>
- *     <td>META-INF</td>
- *   </tr>
- *   <tr>
- *     <td>gzipEnabled</td>
- *     <td>Flag to enable/disable gzip encoded response for specified mimeTypes, which can be configured by 'compressedMimeTypes' init parameter.</td>
- *     <td>false</td>
- *     <td>true</td>
- *   </tr>
- *   <tr>
- *     <td>webResourceEnabled</td>
- *     <td>
- *       Flag to enable/disable to read resources from the servlet context on web application resources.
- *       If this is enabled, then the servlet will try to read a resource from the web application first by the request path info.
- *     </td>
- *     <td>false</td>
- *     <td>true</td>
- *   </tr>
- *   <tr>
- *     <td>jarResourceEnabled</td>
- *     <td>
- *       Flag to enable/disable to read resources from the classpath resources.
- *       If this is enabled, then the servlet will try to read a resource from the classpath.
- *     </td>
- *     <td>false</td>
- *     <td>true</td>
- *   </tr>
- *   <tr>
- *     <td>allowedResourcePaths</td>
- *     <td>Sets resource path regex patterns which are allowed to serve by this servlet.</td>
- *     <td><pre>
- * ^/.*\\.js,
- * ^/.*\\.css,
- * ^/.*\\.png,
- * ^/.*\\.gif,
- * ^/.*\\.ico,
- * ^/.*\\.jpg,
- * ^/.*\\.jpeg,
- * ^/.*\\.swf,
- * ^/.*\\.txt
- *     <pre></td>
- *     <td><pre>
- * ^/.*\\.js,
- * ^/.*\\.css,
- * ^/.*\\.png,
- * ^/.*\\.gif,
- * ^/.*\\.ico,
- * ^/.*\\.jpg,
- * ^/.*\\.jpeg,
- * ^/.*\\.eot,
- * ^/.*\\.otf,
- * ^/.*\\.svg,
- * ^/.*\\.swf,
- * ^/.*\\.ttf,
- * ^/.*\\.woff,
- * ^/.*\\.woff2
- *     <pre></td>
+ *     <tr>
+ *         <th>Init parameter name</th>
+ *         <th>Description</th>
+ *         <th>Example value</th>
+ *         <th>Default value</th>
+ *     </tr>
+ *     <tr>
+ *         <td>jarPathPrefix</td>
+ *         <td>Classpath resource path prefix</td>
+ *         <td>META-INF/example/myapp/skin</td>
+ *         <td>META-INF</td>
+ *     </tr>
+ *     <tr>
+ *         <td>gzipEnabled</td>
+ *         <td>Flag to enable/disable gzip encoded response for specified mimeTypes, which can be configured by
+ *          'compressedMimeTypes' init parameter.</td>
+ *         <td>false</td>
+ *         <td>true</td>
+ *     </tr>
+ *     <tr>
+ *         <td>webResourceEnabled</td>
+ *         <td>Flag to enable/disable to read resources from the servlet context on web application resources. If this is enabled,
+ * then the servlet will try to read a resource from the web application first by the request path info. </td>
+ *         <td>false</td>
+ *         <td>true</td>
+ *     </tr>
+ *     <tr>
+ *         <td>jarResourceEnabled</td>
+ *         <td> Flag to enable/disable to read resources from the classpath resources. If this is enabled, then the servlet will try to read a resource from the classpath.</td>
+ *         <td>false</td>
+ *         <td>true</td>
+ *     </tr>
+ *     <tr>
+ *         <td>allowedResourcePaths</td>
+ *         <td>Sets resource path regex patterns which are allowed to serve by this servlet.</td>
+ *         <td>
+ *             <pre>
+ *                 ^/.*\\.js,
+ *                 ^/.*\\.css,
+ *                 ^/.*\\.png,
+ *                 ^/.*\\.gif,
+ *                 ^/.*\\.ico,
+ *                 ^/.*\\.jpg,
+ *                 ^/.*\\.jpeg,
+ *                 ^/.*\\.swf,
+ *                 ^/.*\\.txt
+ *             </pre>
+ *         </td>
+ *         <td>
+ *             <pre>
+ *                 ^/.*\\.js,
+ *                 ^/.*\\.css,
+ *                 ^/.*\\.png,
+ *                 ^/.*\\.gif,
+ *                 ^/.*\\.ico,
+ *                 ^/.*\\.jpg,
+ *                 ^/.*\\.jpeg,
+ *                 ^/.*\\.eot,
+ *                 ^/.*\\.otf,
+ *                 ^/.*\\.svg,
+ *                 ^/.*\\.swf,
+ *                 ^/.*\\.ttf,
+ *                 ^/.*\\.woff,
+ *                 ^/.*\\.woff2
+ *             <pre>
+ *         </td>
  *   </tr>
  *   <tr>
  *     <td>mimeTypes</td>
@@ -183,7 +181,8 @@ import org.slf4j.LoggerFactory;
  *     <td>compressedMimeTypes</td>
  *     <td>
  *       Sets mimeTypes which can be compressed to serve the resource by this servlet.
- *       If a resource is in this kind of mimeTypes, then the servlet will write a compressed response in gzip encoding.
+ *       If a resource is in this kind of mimeTypes, then the servlet will write a compressed response in gzip
+ * encoding.
  *     </td>
  *     <td><pre>
  * text/.*,
@@ -194,11 +193,11 @@ import org.slf4j.LoggerFactory;
  *     </pre></td>
  *   </tr>
  * </table>
- * <p/>
+ * </p>
  */
 public class ResourceServlet extends HttpServlet {
 
-    private static Logger log = LoggerFactory.getLogger(ResourceServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(ResourceServlet.class);
 
     private static final String PROXY_FROM_TO_SEPARATOR = "@";
     private static final String PROXY_SEPARATOR = ",";
@@ -215,6 +214,7 @@ public class ResourceServlet extends HttpServlet {
     private static final int CACHE_TIME_OUT_1_YEAR_IN_SECONDS = 31556926;
 
     private static final Set<Pattern> DEFAULT_ALLOWED_RESOURCE_PATHS = new HashSet<>();
+
     static {
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.html"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.js"));
@@ -236,6 +236,7 @@ public class ResourceServlet extends HttpServlet {
     }
 
     private static final Map<String, String> DEFAULT_MIME_TYPES = new HashMap<>();
+
     static {
         DEFAULT_MIME_TYPES.put(".html", "text/html");
         DEFAULT_MIME_TYPES.put(".css", "text/css");
@@ -260,6 +261,7 @@ public class ResourceServlet extends HttpServlet {
     }
 
     private static final Set<Pattern> DEFAULT_COMPRESSED_MIME_TYPES = new HashSet<>();
+
     static {
         DEFAULT_COMPRESSED_MIME_TYPES.add(Pattern.compile("text/.*"));
     }
@@ -288,12 +290,12 @@ public class ResourceServlet extends HttpServlet {
         allowedResourcePaths = initPatterns("allowedResourcePaths", DEFAULT_ALLOWED_RESOURCE_PATHS);
         compressedMimeTypes = initPatterns("compressedMimeTypes", DEFAULT_COMPRESSED_MIME_TYPES);
 
-        String param = getInitParameter("mimeTypes", null);
+        final String param = getInitParameter("mimeTypes", null);
         if (StringUtils.isBlank(param)) {
             mimeTypes = new HashMap<>(DEFAULT_MIME_TYPES);
         } else {
             mimeTypes = new HashMap<>();
-            final String [] pairs = StringUtils.split(param, ",\t\r\n");
+            final String[] pairs = StringUtils.split(param, ",\t\r\n");
             for (final String pair : pairs) {
                 if (!StringUtils.isBlank(pair)) {
                     final String[] keyValue = StringUtils.split(pair, "=");
@@ -309,14 +311,14 @@ public class ResourceServlet extends HttpServlet {
 
     /**
      * Examples configurations and mapping
-     *  - jarPath=/angular
-     *  - from=angular/hippo-cm
-     *  - to=http://localhost:9090
+     * - jarPath=/angular
+     * - from=angular/hippo-cm
+     * - to=http://localhost:9090
      * Results in mapping "/hippo-cm/" -> "http://localhost:9090/"
-     *
-     *  - jarPath=/angular
-     *  - from=angular/hippo-cm
-     *  - to=http://localhost:9090/cms/angular/hippo-cm
+     * <p>
+     * - jarPath=/angular
+     * - from=angular/hippo-cm
+     * - to=http://localhost:9090/cms/angular/hippo-cm
      * Results in mapping "/hippo-cm/" -> "http://localhost:9090/cms/angular/hippo-cm/"
      */
     private static HashMap<String, String> initProxies(final String jarPathPrefix) {
@@ -354,27 +356,27 @@ public class ResourceServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
 
-        final String resourcePath = StringUtils.substringBefore(request.getPathInfo(), ";");
-        String queryParams = request.getQueryString();
-        queryParams = StringUtils.isEmpty(queryParams) ? "" :  "?" + queryParams;
+        final String resourcePath = StringUtils.substringBefore(req.getPathInfo(), ";");
+        String queryParams = req.getQueryString();
+        queryParams = StringUtils.isEmpty(queryParams) ? "" : "?" + queryParams;
 
         log.debug("Processing request for resource {}{}.", resourcePath, queryParams);
 
         final URL resource = getResourceURL(resourcePath, queryParams);
         if (resource == null) {
-            notFound(response, resourcePath);
+            notFound(resp, resourcePath);
             return;
         }
 
         final URLConnection conn = resource.openConnection();
         if (conn == null) {
-            notFound(response, resourcePath);
+            notFound(resp, resourcePath);
             return;
         }
 
-        final long modifiedSince = request.getDateHeader(HTTP_IF_MODIFIED_SINCE_HEADER);
+        final long modifiedSince = req.getDateHeader(HTTP_IF_MODIFIED_SINCE_HEADER);
 
         if (!proxies.isEmpty() && conn instanceof HttpURLConnection) {
 
@@ -385,10 +387,10 @@ public class ResourceServlet extends HttpServlet {
             final HttpURLConnection httpConn = (HttpURLConnection) conn;
             try {
                 if (httpConn.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                    notFound(response, resourcePath);
+                    notFound(resp, resourcePath);
                     return;
                 }
-            } catch (ConnectException e) {
+            } catch (final ConnectException e) {
                 log.error("Failed to connect to proxy URL {}", resource);
                 throw e;
             }
@@ -398,17 +400,17 @@ public class ResourceServlet extends HttpServlet {
 
         if (modifiedSince >= lastModified) {
             log.debug("Resource: {} Not Modified.", resourcePath);
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            resp.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
 
         final int contentLength = conn.getContentLength();
 
-        prepareResponse(response, resource, lastModified, contentLength);
+        prepareResponse(resp, resource, lastModified, contentLength);
 
-        try (OutputStream out = selectOutputStream(request, response)) {
+        try (OutputStream out = selectOutputStream(req, resp)) {
             try (InputStream is = conn.getInputStream()) {
-                byte[] buffer = new byte[1024];
+                final byte[] buffer = new byte[1024];
                 int bytesRead;
                 while ((bytesRead = is.read(buffer)) != -1) {
                     out.write(buffer, 0, bytesRead);
@@ -422,7 +424,7 @@ public class ResourceServlet extends HttpServlet {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
-    private Set<Pattern> initPatterns(final String paramName, Set<Pattern> defaultPatterns) {
+    private Set<Pattern> initPatterns(final String paramName, final Set<Pattern> defaultPatterns) {
         final String param = getInitParameter(paramName, null);
 
         if (StringUtils.isBlank(param)) {
@@ -430,7 +432,7 @@ public class ResourceServlet extends HttpServlet {
         }
 
         final Set<Pattern> set = new HashSet<>();
-        final String [] patterns = StringUtils.split(param, ", \t\r\n");
+        final String[] patterns = StringUtils.split(param, ", \t\r\n");
         for (final String pattern : patterns) {
             if (!StringUtils.isBlank(pattern)) {
                 set.add(Pattern.compile(pattern));
@@ -448,7 +450,7 @@ public class ResourceServlet extends HttpServlet {
             return null;
         }
 
-        for (Map.Entry<String, String> entry : proxies.entrySet()) {
+        for (final Entry<String, String> entry : proxies.entrySet()) {
             final String from = entry.getKey();
             final String to = entry.getValue();
 
@@ -476,12 +478,12 @@ public class ResourceServlet extends HttpServlet {
         return resource;
     }
 
-    private boolean isAllowed(String resourcePath) {
+    private boolean isAllowed(final String resourcePath) {
         if (webResourceEnabled && WEBAPP_PROTECTED_PATH.matcher(resourcePath).matches()) {
             return false;
         }
 
-        for (Pattern p : allowedResourcePaths) {
+        for (final Pattern p : allowedResourcePaths) {
             if (p.matcher(resourcePath).matches()) {
                 return true;
             }
@@ -490,7 +492,7 @@ public class ResourceServlet extends HttpServlet {
         return false;
     }
 
-    private URL getJarResource(String resourcePath) {
+    private URL getJarResource(final String resourcePath) {
         String jarResourcePath = jarPathPrefix + resourcePath;
 
         if (jarResourcePath.startsWith("/")) {
@@ -504,13 +506,13 @@ public class ResourceServlet extends HttpServlet {
         return getDefaultClassLoader().getResource(jarResourcePath);
     }
 
-    private void prepareResponse(HttpServletResponse response, URL resource, long lastModified, int contentLength) throws IOException {
+    private void prepareResponse(final HttpServletResponse response, final URL resource, final long lastModified, final int contentLength) throws IOException {
         final String resourcePath = resource.getPath();
         String mimeType = null;
 
         final int offset = resourcePath.lastIndexOf('.');
-        if (-1 != offset) {
-            String extension = resource.getPath().substring(offset);
+        if (offset != -1) {
+            final String extension = resource.getPath().substring(offset);
             mimeType = mimeTypes.get(extension);
         }
 
@@ -538,7 +540,7 @@ public class ResourceServlet extends HttpServlet {
         response.setHeader(HTTP_CACHE_CONTROL_HEADER, "max-age=" + CACHE_TIME_OUT_1_YEAR_IN_SECONDS);
     }
 
-    private OutputStream selectOutputStream(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private OutputStream selectOutputStream(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         if (gzipEnabled) {
             final String mimeType = response.getContentType();
             if (matchesCompressedMimeTypes(mimeType)) {
@@ -554,8 +556,8 @@ public class ResourceServlet extends HttpServlet {
         return response.getOutputStream();
     }
 
-    private boolean matchesCompressedMimeTypes(String mimeType) {
-        for (Pattern pattern : compressedMimeTypes) {
+    private boolean matchesCompressedMimeTypes(final String mimeType) {
+        for (final Pattern pattern : compressedMimeTypes) {
             if (pattern.matcher(mimeType).matches()) {
                 return true;
             }
@@ -563,7 +565,7 @@ public class ResourceServlet extends HttpServlet {
         return false;
     }
 
-    private String getInitParameter(String name, String defaultValue) {
+    private String getInitParameter(final String name, final String defaultValue) {
         String value = getServletConfig().getInitParameter(name);
         if (value == null) {
             value = defaultValue;
@@ -575,8 +577,7 @@ public class ResourceServlet extends HttpServlet {
         ClassLoader cl = null;
         try {
             cl = Thread.currentThread().getContextClassLoader();
-        }
-        catch (Throwable ex) {
+        } catch (final Throwable ignore) {
             // Cannot access thread context ClassLoader - falling back to system class loader...
         }
         if (cl == null) {
@@ -620,16 +621,15 @@ public class ResourceServlet extends HttpServlet {
 
     private class GZIPResponseStream extends ServletOutputStream {
 
-        private ByteArrayOutputStream byteStream = null;
-        private ServletOutputStream servletStream = null;
-        private GZIPOutputStream gzipStream = null;
+        private final ByteArrayOutputStream byteStream;
+        private final ServletOutputStream servletStream;
+        private final GZIPOutputStream gzipStream;
 
-        private HttpServletResponse response = null;
+        private final HttpServletResponse response;
 
-        private boolean closed = false;
+        private boolean closed;
 
-        GZIPResponseStream(HttpServletResponse response) throws IOException {
-            super();
+        GZIPResponseStream(final HttpServletResponse response) throws IOException {
             closed = false;
             this.response = response;
             servletStream = response.getOutputStream();
@@ -637,13 +637,14 @@ public class ResourceServlet extends HttpServlet {
             gzipStream = new GZIPOutputStream(byteStream);
         }
 
+        @Override
         public void close() throws IOException {
             if (closed) {
                 throw new IOException("This output stream has already been closed");
             }
             gzipStream.finish();
 
-            byte[] bytes = byteStream.toByteArray();
+            final byte[] bytes = byteStream.toByteArray();
 
             response.setContentLength(bytes.length);
             response.addHeader("Content-Encoding", "gzip");
@@ -653,6 +654,7 @@ public class ResourceServlet extends HttpServlet {
             closed = true;
         }
 
+        @Override
         public void flush() throws IOException {
             if (closed) {
                 throw new IOException("Cannot flush a closed output stream");
@@ -660,18 +662,21 @@ public class ResourceServlet extends HttpServlet {
             gzipStream.flush();
         }
 
-        public void write(int b) throws IOException {
+        @Override
+        public void write(final int b) throws IOException {
             if (closed) {
                 throw new IOException("Cannot write to a closed output stream");
             }
             gzipStream.write((byte) b);
         }
 
-        public void write(byte b[]) throws IOException {
+        @Override
+        public void write(final byte[] b) throws IOException {
             write(b, 0, b.length);
         }
 
-        public void write(byte b[], int off, int len) throws IOException {
+        @Override
+        public void write(final byte[] b, final int off, final int len) throws IOException {
             if (closed) {
                 throw new IOException("Cannot write to a closed output stream");
             }
