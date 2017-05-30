@@ -35,7 +35,7 @@ import static org.onehippo.cm.model.Constants.ACTION_LISTS_NODE;
  *
  * action-lists:
  * - 1.0:
- * /content/path1: append
+ * /content/path1: reload
  * /content/pathX: reload
  * - 1.1:
  * /content/path2: reload
@@ -80,6 +80,10 @@ public class ActionListParser extends AbstractBaseParser {
     private ActionItem createActionItem(final Map<String, Node> stringNodeMap, final String path) throws ParserException {
         Node actionNode = stringNodeMap.get(path);
         String action = asScalar(actionNode).getValue();
-        return new ActionItem(path, ActionType.valueOf(StringUtils.upperCase(action)));
+        ActionType type = ActionType.valueOf(StringUtils.upperCase(action));
+        if (type == ActionType.APPEND) {
+            throw new RuntimeException("APPEND action type can't be specified in action lists file");
+        }
+        return new ActionItem(path, type);
     }
 }

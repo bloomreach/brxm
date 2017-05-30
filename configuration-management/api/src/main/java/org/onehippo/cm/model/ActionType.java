@@ -21,7 +21,7 @@ package org.onehippo.cm.model;
 public enum ActionType {
 
     /**
-     * Append new nodes only
+     * Append new nodes only, Internal use only
      */
     APPEND,
 

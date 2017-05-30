@@ -47,7 +47,7 @@ public class ActionListParserTest extends AbstractBaseTest {
         assertTrue(actionsMap.size() == 3);
         Set<ActionItem> actionItemsV1 = actionsMap.get(1.0d);
         assertTrue(actionItemsV1.size() == 2);
-        assertEquals(ActionType.APPEND, actionItemsV1.iterator().next().getType());
+        assertEquals(ActionType.RELOAD, actionItemsV1.iterator().next().getType());
 
     }
 
