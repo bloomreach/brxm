@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +100,9 @@ public class DocumentWorkflowConcurrencyTest extends AbstractDocumentWorkflowInt
             try {
                 final WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 final DocumentWorkflow workflow = (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
-                workflow.publish();
+                try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(SCXMLWorkflowExecutor.class).build()) {
+                    workflow.publish();
+                };
             } catch (Exception e) {
                 log.debug("Publication failed", e);
             }

@@ -30,7 +30,7 @@ public class DocumentWorkflowRenameTest extends AbstractDocumentWorkflowIntegrat
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         workflow.publish();
         try (Log4jInterceptor ignored =
-                     Log4jInterceptor.onError().deny("org.onehippo.repository.scxml.SCXMLWorkflowExecutor").build()) {
+                     Log4jInterceptor.onWarn().deny("org.onehippo.repository.scxml.SCXMLWorkflowExecutor").build()) {
             workflow.rename("failure");
             fail("Shouldn't be able to rename live document");
         } catch (WorkflowException expected) {

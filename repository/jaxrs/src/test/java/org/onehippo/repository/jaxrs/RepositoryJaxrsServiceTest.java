@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.jcr.Node;
@@ -67,7 +68,16 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
     private Tomcat tomcat;
     private int portNumber;
 
-    static final List<Logger> loggerHolder = new LinkedList<Logger>();
+    private static final Logger[] silencedTomcatLoggers = new Logger[] {
+            Logger.getLogger("org.apache.tomcat.util.net.NioSelectorPool"),
+            Logger.getLogger("org.apache.catalina.util.SessionIdGeneratorBase")
+    };
+
+    static {
+        for (Logger l : silencedTomcatLoggers) {
+            l.setLevel(Level.WARNING);
+        }
+    }
 
     @Rule
     public TemporaryFolder tmpTomcatFolder = new TemporaryFolder();
@@ -78,6 +88,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
         // RepositoryJaxrsServlet is done through a separate call to make it possible to test adding endpoints before
         // RepositoryJaxrsService#init() is called.
         tomcat = new Tomcat();
+        tomcat.setSilent(true);
         tomcat.setBaseDir(getTmpTomcatFolderName());
         portNumber = PortUtil.getPortNumber(getClass());
         tomcat.setPort(portNumber);
@@ -127,7 +138,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
 
     private void expectCXFOK() {
         when()
-                .get("http://localhost:" + portNumber + "/cxf/")
+                .get("http://localhost:" + portNumber + "/META-INF/cxf/")
         .then()
                 .statusCode(200)
                 .content(equalTo("Hello world from CXF"));
@@ -162,9 +173,9 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
     // Passing in null for the userid will run the check without logging in
     private void expectStatusCode(String userid, String passwd, String path, int statusCode) {
         Log4jInterceptor.onWarn()
-            // Adding the following class unfortunately does not suppress the log messages ...
-            // org.apache.http.impl.auth.HttpAuthenticator.class
             .deny(org.apache.cxf.transport.servlet.ServletController.class)
+            // suppress: WARN [org.apache.http.impl.auth.HttpAuthenticator.handleAuthChallenge().167] Malformed challenge: Authentication challenge is empty
+            .deny(org.apache.http.impl.client.DefaultHttpClient.class)
             .run(() -> {
                 RequestSpecification client;
                 if (userid != null) {
@@ -183,7 +194,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
     }
 
     public void initializeCXF() {
-        Context context = tomcat.addContext("/cxf", getTmpTomcatFolderName());
+        Context context = tomcat.addContext("/META-INF/cxf", getTmpTomcatFolderName());
         Wrapper servlet = context.createWrapper();
         servlet.setName("embedCXF");
         servlet.setServletClass("org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet");

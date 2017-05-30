@@ -49,6 +49,12 @@
       <AppenderRef ref="console"/>
     </Logger>
 
+    <Logger additivity="false" name="org.hippoecm.repository.jackrabbit.RepositoryImpl" level="warn">
+      <AppenderRef ref="root"/>
+    </Logger>
+    <Logger additivity="false" name="org.hippoecm.repository.jackrabbit.MirrorVirtualProvider" level="warn">
+      <AppenderRef ref="root"/>
+    </Logger>
     <Logger additivity="false" name="org.hippoecm.repository.jackrabbit.HippoVirtualProvider" level="error">
       <AppenderRef ref="console"/>
     </Logger>

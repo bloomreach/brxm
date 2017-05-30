@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -89,6 +89,7 @@ public class ModuleManagerTest extends RepositoryTestCase {
             Thread.sleep(5);
         }
         moduleManager.cancelModule(registration);
+        moduleManager.stopModule(registration);
         assertTrue("Module was expected to be cancelled", module.cancelled);
         assertTrue("Module was expected to be executed", module.done);
     }
