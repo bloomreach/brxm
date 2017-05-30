@@ -16,6 +16,8 @@
 package org.onehippo.cm.engine;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,7 +38,9 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cm.model.ActionItem;
 import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.Module;
@@ -51,10 +55,10 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.MapUtils.isNotEmpty;
 import static org.onehippo.cm.engine.Constants.HCM_BASELINE;
-import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
-import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_SEQUENCE;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT;
+import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 
 /**
@@ -63,6 +67,7 @@ import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 public class ConfigurationContentService {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationContentService.class);
+    public static final String SEPARATOR = "/";
 
     private final ValueProcessor valueProcessor = new ValueProcessor();
     private final JcrContentProcessingService contentProcessingService = new JcrContentProcessingService(valueProcessor);
@@ -71,6 +76,7 @@ public class ConfigurationContentService {
      * TODO SS: model should be interface (ConfigurationModel) not ConfigurationModuleImpl, but
      * TODO     current operations cast to/require ModuleImpl, which first needs to be corrected
      * Apply content definitions from modules contained within configuration model
+     *
      * @param model
      * @param session
      * @throws RepositoryException
@@ -89,6 +95,7 @@ public class ConfigurationContentService {
 
     /**
      * Import ContentDefinition
+     *
      * @param definition
      * @param parentNode parent node
      * @param actionType action type
@@ -100,15 +107,17 @@ public class ConfigurationContentService {
 
     /**
      * Export node to module
+     *
      * @param node node to export
      * @return Module containing single content definition
      */
-    public Module exportNode(Node node) {
+    public Module exportNode(Node node) throws RepositoryException {
         return contentProcessingService.exportNode(node);
     }
 
     /**
      * Apply content definitions from module
+     *
      * @param module
      * @param session
      * @throws RepositoryException
@@ -124,62 +133,111 @@ public class ConfigurationContentService {
         final List<ActionItem> itemsToDelete = actionsToProcess.stream().filter(x -> x.getType() == ActionType.DELETE).collect(toList());
 
         validateDeleteActions(model, itemsToDelete);
-        processItemsToDelete(itemsToDelete, session); //TODO SS:, save processed actions to baseline (hcm:moduleActionsApplied) ?
+        processItemsToDelete(itemsToDelete, session);
         session.save();
 
         sortContentDefinitions(module);
 
         for (final ContentDefinitionImpl contentDefinition : module.getContentDefinitions()) {
             final DefinitionNode contentNode = contentDefinition.getNode();
-            final Optional<ActionType> actionType = findActionTypeToApply(contentNode.getPath(), actionsToProcess);
+
+            final Optional<ActionType> actionType = findLastActionToApply(contentNode.getPath(), actionsToProcess);
             final boolean nodeAlreadyProcessed = nodeAlreadyProcessed(contentNode, session);
-            if (actionType.isPresent() || !nodeAlreadyProcessed) {
+
+            if (actionType.isPresent() || !nodeAlreadyProcessed) {                                                                                                                                      //actiontype is present && action id is not processed yet, where id would be composite of module, version, path
+
+                validateContentNode(contentNode.getPath(), model, () -> {
+                    throw new RuntimeException(String.format("Content node '%s' creation is not allowed within configuration path", contentNode.getPath()));
+                });
+
                 log.debug("Processing {} action for node: {}", actionType, contentNode.getPath());
                 contentProcessingService.apply(contentNode, actionType.orElse(ActionType.APPEND), session);
+
                 if (!nodeAlreadyProcessed) {
-                    log.debug("Saving processed definition path: {}", contentNode.getPath());
                     updateProcessedDefinition(contentNode.getPath(), session);
                 }
-                session.save(); //TODO SS: add processed action to baseline
+
+                session.save();
             }
         }
 
         final Optional<Double> latestVersion = actionsMap.keySet().stream().max(Double::compareTo);
-        latestVersion.ifPresent(module::setSequenceNumber);
+        if (latestVersion.isPresent()) {
+            module.setSequenceNumber(latestVersion.get());
+            session.save();
+        }
+    }
+
+     void validateContentNode(final String contentNodePath, final ConfigurationModel model, Runnable runnable) {
+
+        final ConfigurationNode closestConfigNode = findClosestConfigNode(Paths.get(contentNodePath), model);
+
+        if (closestConfigNode != null) {
+            final String[] cfgPathsplit = closestConfigNode.getPath().split(SEPARATOR);
+            final String[] contentPathSplit = contentNodePath.split(SEPARATOR);
+
+            final Optional<String> nodeToCheck = Arrays.stream(contentPathSplit).limit(cfgPathsplit.length + 1).reduce((a, b) -> a + SEPARATOR + b);
+            if (nodeToCheck.isPresent()) {
+                final String nodeName = StringUtils.substringAfterLast(nodeToCheck.get(), SEPARATOR);
+                final ConfigurationItemCategory childNodeCategory = closestConfigNode.getChildNodeCategory(nodeName);
+                if (childNodeCategory != ConfigurationItemCategory.CONTENT) {
+                    runnable.run();
+                }
+            }
+        }
+    }
+
+    /**
+     * Find the deepest configuration node which shares the path with content node
+     * @param contentNodePath content node's path
+     * @param model reference to {@link ConfigurationModel}
+     * @return reference to configuration node or null if nodes do not have common root
+     */
+    private ConfigurationNode findClosestConfigNode(final Path contentNodePath, final ConfigurationModel model) {
+        if (contentNodePath == null) {
+            return null;
+        }
+
+        final ConfigurationNode configurationNode = model.resolveNode(contentNodePath.toString());
+        return configurationNode != null ? configurationNode : findClosestConfigNode(contentNodePath.getParent(), model);
     }
 
     /**
      * Validate if DELETE action is not related to configuration node
+     *
      * @param model
      * @param itemsToDelete
      */
-    private void validateDeleteActions(final ConfigurationModel model, final List<ActionItem> itemsToDelete) {
-        itemsToDelete.stream().filter(item -> model.resolveNode(item.getPath()) != null).findFirst().ifPresent((x) -> {
-            throw new RuntimeException(String.format("Config definitions are not allowed to be deleted: %s", x.getPath()));
+     void validateDeleteActions(final ConfigurationModel model, final List<ActionItem> itemsToDelete) {
+
+        final Runnable runnable = () -> {
+            throw new RuntimeException("Config definitions are not allowed to be deleted");
+        };
+        itemsToDelete.forEach(item -> {
+            validateContentNode(item.getPath(), model, runnable);
+            if (model.resolveNode(item.getPath()) != null) {
+                throw new RuntimeException(String.format("Config definitions are not allowed to be deleted: %s", item.getPath()));
+            }
         });
     }
 
     /**
      * Update processed definition lists (TODO SS: move to baseline service?)
+     *
      * @param path
      * @param session
      * @throws RepositoryException
      */
     private void updateProcessedDefinition(final String path, final Session session) throws RepositoryException {
 
-        final Node rootNode = session.getRootNode();
-        final boolean hcmNodeExisted = rootNode.hasNode(HCM_ROOT);
-        final Node hcmRootNode = createNodeIfNecessary(rootNode, HCM_ROOT, NT_HCM_ROOT, false);
-        if (!hcmNodeExisted) {
-            session.save();
-        }
+        log.debug("Saving processed definition path: {}", path);
+        final Node contentNode = createContentNodeIfNecessary(session);
 
-        final Node contentNode = createNodeIfNecessary(hcmRootNode, NT_HCM_CONTENT, NT_HCM_CONTENT, false);
         final List<Value> valueList = new ArrayList<>();
         final Value newValue = session.getValueFactory().createValue(path);
         valueList.add(newValue);
 
-        if(contentNode.hasProperty(HCM_CONTENT_PATHS_APPLIED)) {
+        if (contentNode.hasProperty(HCM_CONTENT_PATHS_APPLIED)) {
             final Value[] values = contentNode.getProperty(HCM_CONTENT_PATHS_APPLIED).getValues();
             valueList.addAll(Arrays.asList(values));
         }
@@ -187,9 +245,21 @@ public class ConfigurationContentService {
         contentNode.setProperty(HCM_CONTENT_PATHS_APPLIED, valueList.toArray(new Value[0]));
     }
 
+    private Node createContentNodeIfNecessary(final Session session) throws RepositoryException {
+        final Node rootNode = session.getRootNode();
+        final boolean hcmNodeExisted = rootNode.hasNode(HCM_ROOT);
+        final Node hcmRootNode = createNodeIfNecessary(rootNode, HCM_ROOT, NT_HCM_ROOT, false);
+        if (!hcmNodeExisted) {
+            session.save();
+        }
+
+        return createNodeIfNecessary(hcmRootNode, NT_HCM_CONTENT, NT_HCM_CONTENT, false);
+    }
+
 
     /**
      * TODO SS: this method should be used from baseline service
+     *
      * @param parent
      * @param name
      * @param type
@@ -209,18 +279,20 @@ public class ConfigurationContentService {
 
     /**
      * Collect new items that were not processed yet
+     *
      * @param currentVersion Latest sequence number that was processed
-     * @param actionsMap Action items per version map
+     * @param actionsMap     Action items per version map
      * @return New action items
      */
     private List<ActionItem> collectNewActions(final double currentVersion, final Map<Double, Set<ActionItem>> actionsMap) {
         return actionsMap.entrySet().stream().filter(e -> e.getKey() > currentVersion)
-                    .flatMap(e -> e.getValue().stream()).collect(toList());
+                .flatMap(e -> e.getValue().stream()).collect(toList());
     }
 
     /**
      * Sort content definitions in natural order of their root node paths,
      * i.e. node with a shortest hierarchy path goes first
+     *
      * @param module
      */
     private void sortContentDefinitions(final ModuleImpl module) {
@@ -229,6 +301,7 @@ public class ConfigurationContentService {
 
     /**
      * Check if node was already processed and it's path is saved withing baseline
+     *
      * @param contentNode
      * @param session
      * @return
@@ -258,6 +331,7 @@ public class ConfigurationContentService {
 
     /**
      * Delete nodes from action list
+     *
      * @param deleteItems
      * @param session
      * @throws RepositoryException
@@ -265,7 +339,7 @@ public class ConfigurationContentService {
     private void processItemsToDelete(final List<ActionItem> deleteItems, final Session session) throws RepositoryException {
 
         for (final ActionItem deleteItem : deleteItems) {
-            final DefinitionNode deleteNode = new DefinitionNodeImpl(deleteItem.getPath(), StringUtils.substringAfterLast(deleteItem.getPath(), "/"), null);
+            final DefinitionNode deleteNode = new DefinitionNodeImpl(deleteItem.getPath(), StringUtils.substringAfterLast(deleteItem.getPath(), SEPARATOR), null);
             log.debug("Processing delete action for node: {}", deleteItem.getPath());
             contentProcessingService.apply(deleteNode, ActionType.DELETE, session);
         }
@@ -273,7 +347,8 @@ public class ConfigurationContentService {
 
     /**
      * Get module's version from baseline
-     * @param module target module
+     *
+     * @param module  target module
      * @param session
      * @return Current module's version or MINIMAL value of double
      * @throws RepositoryException
@@ -283,21 +358,23 @@ public class ConfigurationContentService {
             final String moduleNodePath = String.format("/%s/%s/%s", HCM_ROOT, HCM_BASELINE, ((ModuleImpl) module).getFullName());
             Node node = session.getNode(moduleNodePath);
             return node.getProperty(HCM_MODULE_SEQUENCE).getDouble();
-        } catch (PathNotFoundException ignored) {}
+        } catch (PathNotFoundException ignored) {
+        }
 
         return Double.MIN_VALUE;
     }
 
     /**
-     * Find an action type for the node, DELETE action type is excluded
+     * Find last action for the path specified, DELETE action type is excluded
+     *
      * @param absolutePath full path of the node
-     * @param actions available actions
-     * @return If found, contains action type for specified node
+     * @param actions      available actions
+     * @return If found, contains last action for specified path
      */
-    private Optional<ActionType> findActionTypeToApply(final String absolutePath, List<ActionItem> actions) {
+    private Optional<ActionType> findLastActionToApply(final String absolutePath, final List<ActionItem> actions) {
         return actions.stream()
                 .filter(x -> x.getPath().equals(absolutePath) && x.getType() != ActionType.DELETE)
                 .map(ActionItem::getType)
-                .findFirst();
+                .reduce((__, second) -> second);
     }
 }

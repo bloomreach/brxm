@@ -85,7 +85,6 @@
 // Stores history of content processing
 [hcm:content] > hippo:skipindex
   - hcm:contentPathsApplied (string) multiple
-  - hcm:moduleActionsApplied (string) multiple
 
 // Root node for baseline and locking etc.
 [hcm:hcm] > mix:lockable, hippo:skipindex
