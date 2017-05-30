@@ -91,68 +91,75 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
      * @param other
      */
     public void updateFrom(final DefinitionPropertyImpl other) {
-        if (other.operation == PropertyOperation.REPLACE) {
-            this.propertyType = other.propertyType;
+        switch (other.operation) {
+            case REPLACE:
+                // replace operation does not change value type or property type
 
-            // replace operation does not change value type
+                // todo merge correctly with all operations, existing and new
+                // todo should override from old local def stay in place?
+                this.operation = PropertyOperation.REPLACE;
 
-            // todo merge correctly with all operations, existing and new
-            // todo should override from old local def stay in place?
-            this.operation = other.operation;
+                if (propertyType == PropertyType.SINGLE) {
+                    this.values = null;
+                    this.value = other.value.clone();
+                    value.setParent(this);
 
-            if (propertyType == PropertyType.SINGLE) {
+                    // migrate resources from old module to new module
+                    value.setForeignSource(other.getDefinition().getSource());
+                } else {
+                    this.value = null;
+                    this.values = other.cloneValues(this);
+                }
+                break;
+            case ADD:
+                // todo simplify this if add is not allowed to change multiplicity
+                if (this.propertyType == PropertyType.SINGLE) {
+                    if (other.propertyType == PropertyType.SINGLE) {
+                        ValueImpl[] tmp = new ValueImpl[2];
+                        tmp[0] = other.value.clone();
+                        tmp[1] = other.value.clone();
+                        tmp[1].setForeignSource(other.getDefinition().getSource());
+                        tmp[1].setParent(this);
+                        this.values = tmp;
+                    } else {
+                        ValueImpl[] tmp = new ValueImpl[1 + other.values.length];
+                        tmp[0] = this.value.clone();
+                        ValueImpl[] tmp2 = other.cloneValues(this);
+                        System.arraycopy(tmp2, 0, tmp, 1, tmp2.length);
+                        this.values = tmp;
+                    }
+
+                    // after an add, we always have a multi-value property
+                    this.propertyType = PropertyType.LIST;
+                    this.value = null;
+                } else {
+                    if (other.propertyType == PropertyType.SINGLE) {
+                        ValueImpl[] tmp = new ValueImpl[values.length + 1];
+                        System.arraycopy(this.values, 0, tmp, 0, values.length);
+                        tmp[tmp.length - 1] = other.value.clone();
+                        tmp[tmp.length - 1].setForeignSource(other.getDefinition().getSource());
+                        tmp[tmp.length - 1].setParent(this);
+                        this.values = tmp;
+                    } else {
+                        ValueImpl[] tmp = new ValueImpl[values.length + other.values.length];
+                        System.arraycopy(this.values, 0, tmp, 0, values.length);
+                        ValueImpl[] tmp2 = other.cloneValues(this);
+                        System.arraycopy(tmp2, 0, tmp, this.values.length, tmp2.length);
+                        this.values = tmp;
+                    }
+                }
+
+                // add operation does not change value type
+                // add operation does not change operation here
+                break;
+            case DELETE:
+                this.operation = PropertyOperation.DELETE;
                 this.values = null;
-                this.value = other.value.clone();
-                value.setParent(this);
-
-                // migrate resources from old module to new module
-                value.setForeignSource(other.getDefinition().getSource());
-            } else {
                 this.value = null;
-                this.values = other.cloneValues(this);
-            }
-        }
-        else if (other.operation == PropertyOperation.ADD) {
-            // todo simplify this if add is not allowed to change multiplicity
-            if (this.propertyType == PropertyType.SINGLE) {
-                if (other.propertyType == PropertyType.SINGLE) {
-                    ValueImpl[] tmp = new ValueImpl[2];
-                    tmp[0] = other.value.clone();
-                    tmp[1] = other.value.clone();
-                    tmp[1].setForeignSource(other.getDefinition().getSource());
-                    tmp[1].setParent(this);
-                    this.values = tmp;
-                } else {
-                    ValueImpl[] tmp = new ValueImpl[1 + other.values.length];
-                    tmp[0] = this.value.clone();
-                    ValueImpl[] tmp2 = other.cloneValues(this);
-                    System.arraycopy(tmp2, 0, tmp, 1, tmp2.length);
-                    this.values = tmp;
-                }
-
-                // after an add, we always have a multi-value property
-                this.propertyType = PropertyType.LIST;
-                this.value = null;
-            }
-            else {
-                if (other.propertyType == PropertyType.SINGLE) {
-                    ValueImpl[] tmp = new ValueImpl[values.length + 1];
-                    System.arraycopy(this.values, 0, tmp, 0, values.length);
-                    tmp[tmp.length - 1] = other.value.clone();
-                    tmp[tmp.length - 1].setForeignSource(other.getDefinition().getSource());
-                    tmp[tmp.length - 1].setParent(this);
-                    this.values = tmp;
-                } else {
-                    ValueImpl[] tmp = new ValueImpl[values.length + other.values.length];
-                    System.arraycopy(this.values, 0, tmp, 0, values.length);
-                    ValueImpl[] tmp2 = other.cloneValues(this);
-                    System.arraycopy(tmp2, 0, tmp, this.values.length, tmp2.length);
-                    this.values = tmp;
-                }
-            }
-
-            // add operation does not change value type
-            // add operation does not change operation here
+                break;
+            case OVERRIDE:
+                // todo
+                break;
         }
     }
 

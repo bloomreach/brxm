@@ -32,6 +32,7 @@ import org.onehippo.cm.model.ConfigDefinition;
 import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionItem;
+import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
@@ -570,14 +571,14 @@ public class DefinitionMergeService {
      * @param configNode the ConfigurationNode corresponding to the to-be-deleted node in the current config model
      * @param toExport
      */
-    protected void deleteNode(final DefinitionNodeImpl defNode, final ConfigurationNode configNode,
+    protected void deleteNode(final DefinitionNodeImpl defNode, final ConfigurationNodeImpl configNode,
                               final HashMap<String, ModuleImpl> toExport) {
         log.debug("Deleting node: {}", defNode.getPath());
 
-        List<? extends DefinitionItem> defsForNode = configNode.getDefinitions();
+        List<DefinitionItemImpl> defsForConfigNode = configNode.getDefinitions();
 
         // if last existing node def is upstream,
-        boolean lastDefIsUpstream = !isLastDefLocal(defsForNode, toExport);
+        boolean lastDefIsUpstream = !isLastDefLocal(defsForConfigNode, toExport);
 
         if (lastDefIsUpstream) {
             log.debug("Last def for node is upstream of export: {}", defNode.getPath());
@@ -592,22 +593,21 @@ public class DefinitionMergeService {
         else {
             // there are local node defs for this node
             // are there ONLY local node defs?
-            boolean onlyLocalDefs = areAllDefsLocal(defsForNode, toExport);
+            final List<DefinitionItemImpl> localDefs = getLocalDefs(defsForConfigNode, toExport);
+            boolean onlyLocalDefs = (localDefs.size() == defsForConfigNode.size());
 
             if (onlyLocalDefs) {
                 log.debug("Only local defs for node: {}", defNode.getPath());
 
                 // since there's only local defs, we want this node to disappear from the record completely
                 // i.e. "some" = "all" defs, in this case
-                removeSomeDefsAndDescendants(configNode, configNode.getDefinitions(), new ArrayList<>(), toExport);
+                removeSomeDefsAndDescendants(configNode, defsForConfigNode, new ArrayList<>(), toExport);
             }
             else {
                 log.debug("Both local and upstream defs for node: {}", defNode.getPath());
 
                 // since there's also an upstream def, we want to collapse all local references to a single delete def
                 // if exists, change one local def to delete and remove other properties and subnodes
-                final List<DefinitionItem> localDefs = defsForNode.stream()
-                        .filter(isLocalDef(toExport)).collect(Collectors.toList());
                 final DefinitionNodeImpl defToKeep = (DefinitionNodeImpl) localDefs.get(0);
 
                 // mark chosen node as a delete
@@ -619,7 +619,7 @@ public class DefinitionMergeService {
                 defToKeep.delete();
 
                 // remove all other defs and children (but not the first one, that we are keeping)
-                final List<DefinitionItem> localDefsExceptFirst = localDefs.subList(1, localDefs.size());
+                final List<DefinitionItemImpl> localDefsExceptFirst = localDefs.subList(1, localDefs.size());
                 removeSomeDefsAndDescendants(configNode, localDefsExceptFirst, new ArrayList<>(), toExport);
             }
         }
@@ -725,13 +725,19 @@ public class DefinitionMergeService {
                     ("Cannot change a definition from module that is not being merged: " + module.getFullName()
                             + " for node: " + definitionItem.getPath());
         }
-        log.debug("Removing definition item for node: {} from definition of: {} in source: {}",
+        log.debug("Removing definition item for: {} from definition of: {} in source: {}",
                 definitionItem.getPath(),
                 definition.getNode().getPath(), source.getPath());
 
-        // remove the node from its parent
         DefinitionNodeImpl parentNode = (DefinitionNodeImpl) definitionItem.getParent();
-        parentNode.getModifiableNodes().remove(definitionItem.getName());
+        if (definitionItem instanceof DefinitionNode) {
+            // remove the node from its parent
+            parentNode.getModifiableNodes().remove(definitionItem.getName());
+        }
+        else {
+            // remove the property from its parent
+            parentNode.getModifiableProperties().remove(definitionItem.getName());
+        }
 
         // if this was the last item in the parent node ...
         if (parentNode.isEmpty()) {
@@ -771,28 +777,22 @@ public class DefinitionMergeService {
     }
 
     protected void mergeProperty(final DefinitionPropertyImpl defProperty,
-                                 final ConfigurationNodeImpl rootConfigNode,
+                                 final ConfigurationNodeImpl configNode,
                                  final HashMap<String, ModuleImpl> toExport) {
 
         log.debug("Merging property: {} with operation: {}", defProperty.getPath(), defProperty.getOperation());
 
-        final boolean propertyExists = rootConfigNode.getProperties().containsKey(defProperty.getName());
+        final ConfigurationPropertyImpl configProperty = configNode.getProperties().get(defProperty.getName());
+        final boolean propertyExists = (configProperty != null);
 
         switch (defProperty.getOperation()) {
             case REPLACE:
             case ADD:
-                if (!propertyExists) {
-                    // this is a totally new property
-                    log.debug(".. which is totally new", defProperty.getPath());
-
-                    addLocalProperty(defProperty, rootConfigNode, toExport);
-                }
-                else {
+                if (propertyExists) {
                     // this is an existing property being replaced
                     log.debug(".. which already exists", defProperty.getPath());
 
                     // is there a local def for this specific property?
-                    final ConfigurationPropertyImpl configProperty = rootConfigNode.getProperties().get(defProperty.getName());
                     final Optional<DefinitionItemImpl> maybeLocalPropertyDef = getLastLocalDef(configProperty, toExport);
                     if (maybeLocalPropertyDef.isPresent()) {
                         // yes, there's a local def for the specific property
@@ -809,24 +809,53 @@ public class DefinitionMergeService {
                         // no, there's no local def for the specific property
                         log.debug("... but has no local def yet");
 
-                        addLocalProperty(defProperty, rootConfigNode, toExport);
+                        addLocalProperty(defProperty, configNode, toExport);
                     }
+                }
+                else {
+                    // this is a totally new property
+                    log.debug(".. which is totally new", defProperty.getPath());
+
+                    addLocalProperty(defProperty, configNode, toExport);
                 }
                 break;
             case DELETE:
+                if (!propertyExists) {
+                    throw new IllegalArgumentException("Cannot delete a property that doesn't exist in config model!");
+                }
+
+                final List<DefinitionItemImpl> defsForConfigProperty = configProperty.getDefinitions();
+                boolean lastDefIsUpstream = !isLastDefLocal(defsForConfigProperty, toExport);
+
+                // add local property
+                if (lastDefIsUpstream) {
+                    addLocalProperty(defProperty, configNode, toExport);
+                }
+                else {
+                    List<DefinitionItemImpl> localDefs = getLocalDefs(defsForConfigProperty, toExport);
+                    boolean onlyLocalDefs = (localDefs.size() == defsForConfigProperty.size());
+
+                    if (onlyLocalDefs) {
+                        // remove all defs
+                        for (DefinitionItemImpl localDef : localDefs) {
+                            removeFromParentDefinitionItem(localDef, new ArrayList<>(), toExport);
+                        }
+                    }
+                    else {
+                        // replace first local def with delete and remove others
+                        ((DefinitionPropertyImpl)localDefs.get(0)).updateFrom(defProperty);
+
+                        for (DefinitionItemImpl localDef : localDefs.subList(1, localDefs.size())) {
+                            removeFromParentDefinitionItem(localDef, new ArrayList<>(), toExport);
+                        }
+                    }
+                }
                 break;
             case OVERRIDE:
+                // todo
                 break;
         }
 
-//delete
-//    if existing property def is local, check if another def is upstream
-//        if another def is upstream, replace current local def with delete def
-//        if no other def is upstream, remove current local def
-//            if that was last property on node, remove node
-//            if that was last node in def, remove def
-//            if that was last def in source, remove source
-//
 //change type
 //change multiplicity
 //    if existing def is local, update that def (recompute if override is necessary)
@@ -885,6 +914,12 @@ public class DefinitionMergeService {
         return Lists.reverse(existingDefs).stream()
                 .filter(isLocalDef(toExport))
                 .findFirst();
+    }
+
+    protected List<DefinitionItemImpl> getLocalDefs(final List<DefinitionItemImpl> defsForNode,
+                                                final HashMap<String, ModuleImpl> toExport) {
+        return defsForNode.stream()
+                .filter(isLocalDef(toExport)).collect(Collectors.toList());
     }
 
     protected boolean isLastDefLocal(final List<? extends DefinitionItem> definitionItems,

@@ -77,11 +77,11 @@ public class DefinitionMergeTest {
         new MergeTest("append-property").test();
     }
 
-//    @Test
-//    public void delete_property() throws Exception {
-//        new MergeTest("delete-property").test();
-//    }
-//
+    @Test
+    public void delete_property() throws Exception {
+        new MergeTest("delete-property").test();
+    }
+
 //    @Test
 //    public void change_property_type_or_multiplicity() throws Exception {
 //        new MergeTest("change-property-type-or-multiplicity").test();
