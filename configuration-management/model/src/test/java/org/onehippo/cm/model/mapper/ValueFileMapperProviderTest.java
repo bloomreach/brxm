@@ -18,7 +18,9 @@ package org.onehippo.cm.model.mapper;
 import java.util.List;
 
 import org.junit.Test;
+import org.onehippo.cm.model.JcrBinaryValueImpl;
 import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
@@ -63,7 +65,7 @@ class DummyValueFileMapper implements ValueFileMapper{
 
     @Override
     public String apply(Value value) {
-        return value.getString();
+        return value.getType() == ValueType.BINARY && value instanceof JcrBinaryValueImpl ? null : value.getString();
     }
 }
 

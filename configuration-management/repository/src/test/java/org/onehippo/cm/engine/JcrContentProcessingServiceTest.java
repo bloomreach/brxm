@@ -15,20 +15,32 @@
  */
 package org.onehippo.cm.engine;
 
+import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
+import javax.jcr.Binary;
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.ValueFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.ExportModuleContext;
+import org.onehippo.cm.model.FileConfigurationWriter;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
@@ -37,6 +49,8 @@ import org.onehippo.cm.model.impl.ModelTestUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import com.google.common.io.Files;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.onehippo.cm.model.impl.ModelTestUtils.parseNoSort;
@@ -44,7 +58,6 @@ import static org.onehippo.cm.model.impl.ModelTestUtils.parseNoSort;
 public class JcrContentProcessingServiceTest extends RepositoryTestCase {
 
     private final ValueProcessor valueProcessor = new ValueProcessor();
-
 
     private final String source =
             "/test:\n" +
@@ -170,6 +183,28 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
         Node importedNode = session.getNode("/test/node1/node2");
         assertEquals(6, importedNode.getProperties().getSize());
 
+    }
+
+    @Test
+    public void export_content() throws Exception {
+        import_content_append();
+        Node importedNode = session.getNode("/test");
+
+        InputStream contentStream = IOUtils.toInputStream("SomeContentGoesHere", Charset.defaultCharset());
+        final ValueFactory factory = session.getValueFactory();
+        Binary binary = factory.createBinary(contentStream);
+        importedNode.setProperty("binary", binary);
+        session.save();
+
+        final JcrContentProcessingService processingService = new JcrContentProcessingService(valueProcessor);
+        Module module = processingService.exportNode(importedNode);
+
+        File tempDir = Files.createTempDir();
+        Path moduleRootPath = Paths.get(tempDir.getPath());
+
+        ModuleContext moduleContext = new ExportModuleContext(module, moduleRootPath);
+        new FileConfigurationWriter().writeModule(module, org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
+        tempDir.delete();
     }
 
     @Test

@@ -27,11 +27,11 @@ import org.onehippo.cm.model.ValueType;
 
 public class ValueImpl implements Value, Cloneable {
 
-    private final Object value;
-    private final ValueType valueType;
-    private final boolean isResource;
-    private final boolean isPath;
-    private DefinitionPropertyImpl parent = null;
+    protected final Object value;
+    protected final ValueType valueType;
+    protected final boolean isResource;
+    protected final boolean isPath;
+    protected DefinitionPropertyImpl parent = null;
 
     private SourceImpl foreignSource;
     private NamespaceDefinitionImpl namespaceDefinition;

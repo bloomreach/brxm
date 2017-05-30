@@ -30,9 +30,24 @@ import javax.jcr.ValueFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.JcrBinaryValueImpl;
 import org.onehippo.cm.model.ModelItem;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.ValueImpl;
+
+import static javax.jcr.PropertyType.BINARY;
+import static javax.jcr.PropertyType.BOOLEAN;
+import static javax.jcr.PropertyType.DATE;
+import static javax.jcr.PropertyType.DECIMAL;
+import static javax.jcr.PropertyType.DOUBLE;
+import static javax.jcr.PropertyType.LONG;
+import static javax.jcr.PropertyType.NAME;
+import static javax.jcr.PropertyType.PATH;
+import static javax.jcr.PropertyType.REFERENCE;
+import static javax.jcr.PropertyType.STRING;
+import static javax.jcr.PropertyType.URI;
+import static javax.jcr.PropertyType.WEAKREFERENCE;
 
 /**
  * Config {@link Value} -> JCR {@link javax.jcr.Value} converter
@@ -215,6 +230,37 @@ public class ValueProcessor {
 
     private InputStream getBinaryInputStream(final Value modelValue) throws IOException {
         return modelValue.isResource() ? modelValue.getResourceInputStream() : new ByteArrayInputStream((byte[]) modelValue.getObject());
+    }
+
+    public ValueImpl valueFrom(final javax.jcr.Value jcrValue) throws RepositoryException {
+
+        switch (jcrValue.getType()) {
+            case STRING:
+                return new ValueImpl(jcrValue.getString());
+            case BINARY:
+                return new JcrBinaryValueImpl(jcrValue);
+            case LONG:
+                return new ValueImpl(jcrValue.getLong());
+            case DOUBLE:
+                return new ValueImpl(jcrValue.getDouble());
+            case DATE:
+                return new ValueImpl(jcrValue.getDate());
+            case BOOLEAN:
+                return new ValueImpl(jcrValue.getBoolean());
+            case URI:
+            case NAME:
+            case PATH:
+            case REFERENCE:
+            case WEAKREFERENCE:
+                // REFERENCE and WEAKREFERENCE type values already are resolved to hold a validated uuid
+                return new ValueImpl(jcrValue.getString());
+            case DECIMAL:
+                return new ValueImpl(jcrValue.getDecimal());
+            default:
+                final String msg = String.format("Unsupported jcrValue type '%s'.", jcrValue.getType());
+                throw new RuntimeException(msg);
+        }
+
     }
 
 }

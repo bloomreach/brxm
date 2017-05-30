@@ -98,12 +98,19 @@ public class FileConfigurationWriter {
     private void processBinaryItem(Source source, BinaryItem binaryItem, ModuleContext moduleContext) throws IOException {
 
         final String finalName = binaryItem.getNode().getValue();
-        final byte[] content = (byte[]) binaryItem.getValue().getObject();
+        final InputStream inputStream;
+        if (binaryItem.getValue() instanceof JcrBinaryValueImpl) {
+            inputStream = binaryItem.getValue().getResourceInputStream();
+        } else {
+            final byte[] content = (byte[]) binaryItem.getValue().getObject();
+            inputStream = new ByteArrayInputStream(content);
+        }
 
-        try (final OutputStream resourceOutputStream = moduleContext.getOutputProvider(source).getResourceOutputStream(source, finalName);
-             final ByteArrayInputStream inputStream = new ByteArrayInputStream(content)) {
+        try (final OutputStream resourceOutputStream = moduleContext.getOutputProvider(source).getResourceOutputStream(source, finalName)) {
             IOUtils.copy(inputStream, resourceOutputStream);
         }
+
+        IOUtils.closeQuietly(inputStream);
     }
 
     private void processCopyItem(Source source, CopyItem copyItem, ModuleContext moduleContext) throws IOException {

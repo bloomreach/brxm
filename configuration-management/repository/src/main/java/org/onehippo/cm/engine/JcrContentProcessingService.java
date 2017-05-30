@@ -38,6 +38,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.DefinitionNode;
@@ -46,6 +48,14 @@ import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.SnsUtils;
 import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.ContentSourceImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,13 +108,53 @@ public class JcrContentProcessingService {
      * @param node
      * @return
      */
-    public synchronized Module exportNode(final Node node) {
-        //TODO Placeholder for export node functionality
-        return null;
+    public synchronized Module exportNode(final Node node) throws RepositoryException {
+        final ModuleImpl module = new ModuleImpl("export-module", new ProjectImpl("export-project", new GroupImpl("export-group")));
+        final ContentSourceImpl contentSource = module.addContentSource("content.yaml");
+        final ContentDefinitionImpl contentDefinition = contentSource.addContentDefinition();
+
+        final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(node.getPath(), createNodeName(node), contentDefinition);
+        contentDefinition.setNode(definitionNode);
+
+        processProperties(node, definitionNode);
+
+        for (final Node childNode : new NodeIterable(node.getNodes())) {
+            exportNode(childNode, definitionNode);
+        }
+
+        return module;
+    }
+
+    private void exportNode(final Node sourceNode, final DefinitionNodeImpl parentNode) throws RepositoryException {
+
+        final DefinitionNodeImpl definitionNode = parentNode.addNode(createNodeName(sourceNode));
+
+        processProperties(sourceNode, definitionNode);
+
+        for (final Node childNode : new NodeIterable(sourceNode.getNodes())) {
+            exportNode(childNode, definitionNode);
+        }
+    }
+
+    private String createNodeName(final Node sourceNode) throws RepositoryException {
+        return sourceNode.getName(); //TODO SS deal with SNS SnsUtils.createIndexedName(sourceNode);
+    }
+
+    private void processProperties(final Node sourceNode, final DefinitionNodeImpl definitionNode) throws RepositoryException {
+        for (final Property property : new PropertyIterable(sourceNode.getProperties())) {
+            if (property.isMultiple()) {
+                //TODO SS: process multiple value property
+            } else {
+                final ValueImpl value = valueProcessor.valueFrom(property.getValue());
+                final DefinitionPropertyImpl targetProperty = definitionNode.addProperty(property.getName(), value);
+                value.setParent(targetProperty);
+            }
+        }
     }
 
     /**
      * Append definition node using specified action strategy
+     *
      * @param definitionNode
      * @param actionType
      * @throws RepositoryException
@@ -117,8 +167,7 @@ public class JcrContentProcessingService {
         try {
             applyNode(definitionNode, actionType, session);
             applyUnprocessedReferences();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error(String.format("Content definition processing failes: %s", definitionNode.getName()), e);
             if (e instanceof RepositoryException) {
                 throw (RepositoryException) e;
@@ -154,7 +203,7 @@ public class JcrContentProcessingService {
         final boolean nodeExists = session.nodeExists(nodePath);
 
         if (nodeExists) {
-            switch(actionType) {
+            switch (actionType) {
                 case APPEND:
                     throw new ItemExistsException(String.format("Node already exists at path %s", nodePath));
                 case RELOAD:
