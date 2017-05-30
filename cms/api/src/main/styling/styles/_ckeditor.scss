@@ -1,4 +1,4 @@
-// Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,80 +25,30 @@
 // override default CKEditor styling
 .hippo-root {
 
-  .cke {
-    border-color: $editor-subfield-border;
-    box-shadow: none;
-
-    a, span {
-      -moz-box-shadow: none;
-      -webkit-box-shadow: none;
-      box-shadow: none;
-    }
-  }
-
+  // use same border color as other fields
+  .cke,
   .cke_top,
   .cke_bottom {
-    background: $editor-toolbar-bgcolor none;
+    border-color: $editor-subfield-border;
+  }
+
+  // use custom background color and fonts in the toolbars
+  .cke_top,
+  .cke_bottom {
+    background: $ckeditor-toolbar-bgcolor;
 
     * {
       font-family: $font-family-base;
     }
   }
 
-  .cke_top {
-    border-bottom: none;
-    padding: 8px 8px 3px 8px;
+  // align left side of the text in the 'Styles' dropdown with left side of the icons below it
+  .cke_combo_text {
+    padding-left: 6px;
   }
 
-  .cke_toolgroup,
-  .cke_combo_button {
-    margin-right: 8px;
-    margin-bottom: 8px;
-    background: $ckeditor-button-off-color none;
-    border-color: $ckeditor-button-border-color;
-  }
-
-  .cke_button_off:hover,
-  .cke_button_disabled:hover,
-  .cke_combo_off a.cke_combo_button:hover {
-    background: $ckeditor-button-off-hover-color none;
-    box-shadow: none;
-  }
-
-  .cke_button_on {
-    background: $ckeditor-button-on-color none;
-    border-color: $ckeditor-button-border-color;
-    box-shadow: none;
-    &:hover {
-      background-color: $ckeditor-button-on-hover-color;
-      box-shadow: none;
-    }
-  }
-
-  .cke_combo_on a.cke_combo_button,
-  .cke_combo_on a.cke_combo_button:focus {
-    background: $ckeditor-button-off-color none;
-    border-color: $ckeditor-button-border-color;
-    box-shadow: none;
-  }
-
-  .cke_combo_on a.cke_combo_button:hover,
-  .cke_combo_off a.cke_combo_button:active {
-    background: $ckeditor-button-off-hover-color none;
-    border-color: $ckeditor-button-border-color;
-    box-shadow: none;
-  }
-
+  // use same margin in the editing area as other input fields
   .cke_wysiwyg_div.cke_editable {
     padding: 8px;
-  }
-
-  .cke_bottom {
-    border-top: none;
-    padding-left: 4px;
-  }
-
-  .cke_panel {
-    border-color: $dark-gray;
   }
 }
