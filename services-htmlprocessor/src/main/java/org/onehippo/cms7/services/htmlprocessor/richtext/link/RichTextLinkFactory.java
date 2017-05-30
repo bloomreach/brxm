@@ -27,8 +27,6 @@ public interface RichTextLinkFactory extends Serializable {
 
     Set<String> getLinkUuids();
 
-    void cleanup(Set<String> uuids);
-
     boolean isValid(Model<Node> targetModel);
 
     RichTextLink createLink(Model<Node> targetModel) throws RichTextException;
