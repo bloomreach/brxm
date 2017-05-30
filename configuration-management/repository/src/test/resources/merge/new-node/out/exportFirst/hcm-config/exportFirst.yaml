@@ -1,15 +1,17 @@
 definitions:
   config:
-    /topmost/upstream/exportFirst:
-      jcr:primaryType: nt:unstructured
-      /newAsRoot:
-        jcr:primaryType: nt:unstructured
-      /existingChild:
-        jcr:primaryType: nt:unstructured
-        /newChildOfChild:
+    /topmost:
+      /upstream:
+        /exportFirst:
           jcr:primaryType: nt:unstructured
-      /newAsChild1:
-        jcr:primaryType: nt:unstructured
+          /newAsRoot:
+            jcr:primaryType: nt:unstructured
+          /existingChild:
+            jcr:primaryType: nt:unstructured
+            /newChildOfChild:
+              jcr:primaryType: nt:unstructured
+          /newAsChild1:
+            jcr:primaryType: nt:unstructured
     /exportFirstExistingRoot:
       jcr:primaryType: nt:unstructured
       /shouldAddToDef:

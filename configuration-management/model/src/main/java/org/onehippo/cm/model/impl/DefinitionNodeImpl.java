@@ -141,14 +141,17 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
      * @return the new property
      */
     public DefinitionPropertyImpl addProperty(final DefinitionPropertyImpl other) {
-        // TODO copy resources from old module to new module
         if (other.getType() == PropertyType.SINGLE) {
             DefinitionPropertyImpl newProp = addProperty(other.getName(), other.getValue().clone());
             newProp.setOperation(other.getOperation());
+
+            // migrate resources from old module to new module
+            newProp.getValue().setForeignSource(other.getDefinition().getSource());
             return newProp;
         }
         else {
-            DefinitionPropertyImpl newProp = addProperty(other.getName(), other.getValueType(), other.cloneValues(null));
+            DefinitionPropertyImpl newProp =
+                    addProperty(other.getName(), other.getValueType(), other.cloneValues(null));
             newProp.setOperation(other.getOperation());
             return newProp;
         }

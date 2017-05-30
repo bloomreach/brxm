@@ -52,7 +52,6 @@ public class DefinitionMergeTest {
         new MergeTest("template").test();
     }
 
-    // TODO Re-enable once resource handling is figured out
     @Test
     public void create_and_update_namespaces() throws Exception {
         new MergeTest("namespace").test();
@@ -73,11 +72,11 @@ public class DefinitionMergeTest {
         new MergeTest("add-property").test();
     }
 
-//    @Test
-//    public void append_property() throws Exception {
-//        new MergeTest("append-property").test();
-//    }
-//
+    @Test
+    public void append_property() throws Exception {
+        new MergeTest("append-property").test();
+    }
+
 //    @Test
 //    public void delete_property() throws Exception {
 //        new MergeTest("delete-property").test();

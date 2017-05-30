@@ -8,3 +8,6 @@ definitions:
       jcr:primaryType: nt:unstructured
       existingPropertyWithLocalDef: '... I''ve been here the whole time'
       newPropertyForLocalDef: Hoi!
+      newPropertyWithResource:
+        type: binary
+        resource: testResource.bin

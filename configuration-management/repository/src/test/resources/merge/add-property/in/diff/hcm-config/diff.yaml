@@ -6,8 +6,11 @@ definitions:
       existingPropertyAddedInExport: '... but now I have a new value'
       existingPropertyNewlyModified: I'm still a string!
       newPropertyForUpstream: Howdy!
-    /topmost/upstream/exportFirst:
-      existingPropertyWithLocalDef: '... I''ve been here the whole time'
-      newPropertyForLocalDef: Hoi!
+      /exportFirst:
+        existingPropertyWithLocalDef: '... I''ve been here the whole time'
+        newPropertyForLocalDef: Hoi!
+        newPropertyWithResource:
+          type: binary
+          resource: testResource.bin
     /topmost/upstream/exportSecond:
       newPropertyToSecond: I'm also new

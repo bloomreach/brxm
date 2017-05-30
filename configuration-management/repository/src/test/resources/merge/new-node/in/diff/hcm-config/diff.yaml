@@ -12,9 +12,9 @@ definitions:
     /topmost/upstream/exportFirst:
       /newAsChild1:
         jcr:primaryType: nt:unstructured
-    /topmost/upstream/exportFirst/existingChild:
-      /newChildOfChild:
-        jcr:primaryType: nt:unstructured
+      /existingChild:
+        /newChildOfChild:
+          jcr:primaryType: nt:unstructured
     /topmost/upstream/exportFirst/newAsRoot:
       .meta:order-before: existingChild
       jcr:primaryType: nt:unstructured

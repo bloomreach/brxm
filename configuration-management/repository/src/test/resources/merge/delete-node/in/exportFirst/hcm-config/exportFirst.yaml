@@ -1,8 +1,12 @@
 definitions:
   config:
-    /topmost/upstream/exportFirst:
-      jcr:primaryType: nt:unstructured
-      /childNode1:
+    /topmost:
+      /anotherNodeNotBeingDeleted:
         jcr:primaryType: nt:unstructured
+      /upstream:
+        /exportFirst:
+          jcr:primaryType: nt:unstructured
+          /childNode1:
+            jcr:primaryType: nt:unstructured
     /exportFirstExistingRoot:
       jcr:primaryType: nt:unstructured
