@@ -108,31 +108,32 @@ public class ConfigurationConfigService {
     }
 
     void writeWebfiles(final ConfigurationModel model, final Session session) throws IOException {
-        final WebFilesService service = HippoServiceRegistry.getService(WebFilesService.class);
-        if (service == null) {
-            final String msg = String.format("Failed to import web file bundles: missing service for '%s'",
-                    WebFilesService.class.getName());
-            throw new ConfigurationRuntimeException(msg);
-        }
+        if (!model.getWebFileBundleDefinitions().isEmpty()) {
+            final WebFilesService service = HippoServiceRegistry.getService(WebFilesService.class);
+            if (service == null) {
+                logger.warn(String.format("Skipping import web file bundles: service '%s' not available.",
+                        WebFilesService.class.getName()));
+                return;
+            }
+            for (WebFileBundleDefinition webFileBundleDefinition : model.getWebFileBundleDefinitions()) {
+                final String bundleName = webFileBundleDefinition.getName();
+                logger.debug(String.format("processing web file bundle '%s' defined in %s.", bundleName,
+                        webFileBundleDefinition.getOrigin()));
 
-        for (WebFileBundleDefinition webFileBundleDefinition : model.getWebFileBundleDefinitions()) {
-            final String bundleName = webFileBundleDefinition.getName();
-            logger.debug(String.format("processing web file bundle '%s' defined in %s.", bundleName,
-                    webFileBundleDefinition.getOrigin()));
-
-            final ResourceInputProvider resourceInputProvider =
-                    webFileBundleDefinition.getSource().getModule().getConfigResourceInputProvider();
-            final URL baseURL = resourceInputProvider.getBaseURL();
-            if (baseURL.toString().contains("jar!")) {
-                try {
-                    final PartialZipFile bundleZipFile = new PartialZipFile(getBaseZipFileFromURL(baseURL), bundleName);
-                    service.importJcrWebFileBundle(session, bundleZipFile, true);
-                } catch (URISyntaxException e) {
-                    throw new ConfigurationRuntimeException(e);
+                final ResourceInputProvider resourceInputProvider =
+                        webFileBundleDefinition.getSource().getModule().getConfigResourceInputProvider();
+                final URL baseURL = resourceInputProvider.getBaseURL();
+                if (baseURL.toString().contains("jar!")) {
+                    try {
+                        final PartialZipFile bundleZipFile = new PartialZipFile(getBaseZipFileFromURL(baseURL), bundleName);
+                        service.importJcrWebFileBundle(session, bundleZipFile, true);
+                    } catch (URISyntaxException e) {
+                        throw new ConfigurationRuntimeException(e);
+                    }
+                } else if (baseURL.toString().startsWith("file:")) {
+                    final File bundleDir = new File(FileUtils.toFile(baseURL), bundleName);
+                    service.importJcrWebFileBundle(session, bundleDir, true);
                 }
-            } else if (baseURL.toString().startsWith("file:")) {
-                final File bundleDir = new File(FileUtils.toFile(baseURL), bundleName);
-                service.importJcrWebFileBundle(session, bundleDir, true);
             }
         }
     }
