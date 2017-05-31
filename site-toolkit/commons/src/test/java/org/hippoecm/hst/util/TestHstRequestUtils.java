@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -118,6 +119,20 @@ public class TestHstRequestUtils {
     }
 
     @Test
+    public void testParseQueryStringFromRequestContainingChinese() throws Exception {
+        String queryString = "key-%E4%BA%BA=value-%E4%BA%BA"; // %E4%BA%BA == 人
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getQueryString()).andReturn(queryString).anyTimes();
+        replay(request);
+
+        Map<String, String[]> parsedQueryStringMap = HstRequestUtils.parseQueryString(request);
+
+        assertTrue("parsedQueryStringMap must contain 'key-人'.", parsedQueryStringMap.containsKey("key-人"));
+        assertTrue("parsedQueryStringMap must have 1 value for 'key-人'.", parsedQueryStringMap.get("key-人").length == 1);
+        assertEquals("value-人", parsedQueryStringMap.get("key-人")[0]);
+    }
+
+    @Test
     public void testParseQueryStringFromURI() throws Exception {
         URI uri = URI.create("http://www.example.com/?foo=bar&lux=bar&foo=foo+bar");
         Map<String, String[]> parsedQueryStringMap = HstRequestUtils.parseQueryString(uri, "UTF-8");
@@ -129,6 +144,26 @@ public class TestHstRequestUtils {
         assertTrue("parsedQueryStringMap must contain lux.", parsedQueryStringMap.containsKey("lux"));
         assertTrue("parsedQueryStringMap must have 1 value for lux.", parsedQueryStringMap.get("lux").length == 1);
         assertEquals("bar", parsedQueryStringMap.get("lux")[0]);
+    }
+
+    @Test
+    public void testParseQueryStringFromURIContainingChinese() throws Exception {
+        URI uri = URI.create("http://www.example.com/?key-%E4%BA%BA=value-%E4%BA%BA"); // %E4%BA%BA == 人
+        Map<String, String[]> parsedQueryStringMap = HstRequestUtils.parseQueryString(uri, "UTF-8");
+
+        assertTrue("parsedQueryStringMap must contain 'key-人'.", parsedQueryStringMap.containsKey("key-人"));
+        assertTrue("parsedQueryStringMap must have 1 value for 'key-人'.", parsedQueryStringMap.get("key-人").length == 1);
+        assertEquals("value-人", parsedQueryStringMap.get("key-人")[0]);
+    }
+
+    @Test
+    public void testParseQueryStringFromURIUsingISO8859dash1() throws Exception {
+        URI uri = URI.create("http://www.example.com/?key-%E4=value-%E4"); // %E4 == ä
+        Map<String, String[]> parsedQueryStringMap = HstRequestUtils.parseQueryString(uri, "ISO-8859-1");
+
+        assertTrue("parsedQueryStringMap must contain 'key-ä'.", parsedQueryStringMap.containsKey("key-ä"));
+        assertTrue("parsedQueryStringMap must have 1 value for 'key-ä'.", parsedQueryStringMap.get("key-ä").length == 1);
+        assertEquals("value-ä", parsedQueryStringMap.get("key-ä")[0]);
     }
 
     @Test
@@ -235,9 +270,11 @@ public class TestHstRequestUtils {
     public void testGetRemoteAddrsWithDefaultForwardedForHeader() {
         httpForwardedForHeaderValue = DEFAULT_X_FORWARDED_FOR_HEADER_VALUE;
         HttpServletRequest request = setupMocks();
-        assertArrayEquals(StringUtils.split(DEFAULT_X_FORWARDED_FOR_HEADER_VALUE, ", "),
-                HstRequestUtils.getRemoteAddrs(request));
-        assertEquals(StringUtils.split(DEFAULT_X_FORWARDED_FOR_HEADER_VALUE, ", ")[0], HstRequestUtils.getFarthestRemoteAddr(request));
+        String[] split = StringUtils.split(DEFAULT_X_FORWARDED_FOR_HEADER_VALUE, ", ");
+        String[] remoteAddrs = HstRequestUtils.getRemoteAddrs(request);
+        assertArrayEquals(String.format("Arrays '%s' and '%s' are not equal", ArrayUtils.toString(split), ArrayUtils.toString(remoteAddrs)),
+                split, remoteAddrs);
+        assertEquals(split[0], HstRequestUtils.getFarthestRemoteAddr(request));
     }
 
     @Test

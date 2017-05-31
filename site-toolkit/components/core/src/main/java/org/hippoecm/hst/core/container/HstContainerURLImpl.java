@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import java.util.Map;
 public class HstContainerURLImpl implements HstContainerURL, Cloneable {
 
     protected String characterEncoding;
+    protected String uriEncoding;
     protected String contextPath;
     protected String hostName;
     protected String requestPath;
@@ -71,7 +72,6 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
         this.portNumber = portNumber;
     }
 
-    
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }
@@ -237,11 +237,20 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
         return this.characterEncoding;
     }
     
+    public void setURIEncoding(String uriEncoding) {
+        this.uriEncoding = uriEncoding;
+    }
+
+    public String getURIEncoding() {
+        return this.uriEncoding;
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         HstContainerURLImpl cloned = (HstContainerURLImpl) super.clone();
         
         cloned.characterEncoding = this.characterEncoding;
+        cloned.uriEncoding = this.uriEncoding;
         cloned.contextPath = this.contextPath;
         cloned.hostName = this.hostName;
         cloned.requestPath = this.requestPath;

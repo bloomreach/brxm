@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,7 @@ public class TestHstLinkTag {
         resolvedMount = EasyMock.createNiceMock(ResolvedMount.class);
         final HstContainerURLImpl baseURL = new HstContainerURLImpl();
         baseURL.setCharacterEncoding("utf-8");
+        baseURL.setURIEncoding("utf-8");
         mockHstRequestContext.setBaseURL(baseURL);
         mockHstRequestContext.setResolvedMount(resolvedMount);
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, mockHstRequestContext);
@@ -273,5 +274,25 @@ public class TestHstLinkTag {
         verify(linkCreator);
     }
 
+    @Test
+    public void test_hst_link_with_param_with_unicode_name_and_value() throws Exception {
+        final String testPath = "/css/style.css";
+        init(testPath);
+
+        expect(linkCreator.create(eq("/css/style.css"), isNull())).andReturn(hstLink).once();
+        replay(resolvedMount, linkCreator);
+
+        ParamTag paramTag = new ParamTag();
+        paramTag.setParent(linkTag);
+        paramTag.setName("name-人");
+        paramTag.setValue("value-人");
+        paramTag.doStartTag();
+        paramTag.doEndTag();
+
+        linkTag.doEndTag();
+        String link = (String) pageContext.getAttribute("result");
+        assertEquals("/css/style.css?name-%E4%BA%BA=value-%E4%BA%BA", link);
+        verify(linkCreator);
+    }
 
 }

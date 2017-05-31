@@ -53,9 +53,11 @@ import org.slf4j.LoggerFactory;
  *     &lt;/bean&gt;
  *
  *     &lt;!--below inject the valve in the  DefaultSitePipeline --&gt;
- *     &lt;bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"&gt;
+ *     &lt;bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean"&gt;
+ *          &lt;constructor-arg value="java.lang.Void" /&gt;
  *          &lt;property name="targetObject"&gt;
- *              &lt;bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"&gt;
+ *              &lt;bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean"&gt;
+ *                  &lt;constructor-arg value="org.hippoecm.hst.core.container.Pipeline" /&gt;
  *                  &lt;property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" /&gt;
  *                  &lt;property name="targetMethod" value="getPipeline"/&gt;
  *                  &lt;property name="arguments"&gt;

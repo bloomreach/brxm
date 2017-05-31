@@ -52,7 +52,8 @@
     </property>
   </bean>
 
-  <bean id="jaxrsRestAllEntityProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="jaxrsRestAllEntityProviders" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
     <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
     <property name="targetMethod" value="union" />
     <property name="arguments">

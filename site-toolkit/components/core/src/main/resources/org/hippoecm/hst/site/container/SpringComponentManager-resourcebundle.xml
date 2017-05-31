@@ -19,21 +19,15 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
   <bean id="org.hippoecm.hst.resourcebundle.internal.ResourceBundleFamilyFactory"
-        class="org.hippoecm.hst.resourcebundle.internal.HippoRepositoryResourceBundleFamilyFactory">
+        class="org.hippoecm.hst.resourcebundle.internal.ResourceBundleFamilyFactory">
     <constructor-arg ref="javax.jcr.Repository" />
     <constructor-arg ref="javax.jcr.Credentials.default" />
     <constructor-arg ref="javax.jcr.Credentials.preview" />
   </bean>
 
   <bean id="org.hippoecm.hst.resourcebundle.ResourceBundleRegistry"
-        class="org.hippoecm.hst.resourcebundle.internal.DefaultMutableResourceBundleRegistry">
-    <property name="resourceBundleFamilyFactory" ref="org.hippoecm.hst.resourcebundle.internal.ResourceBundleFamilyFactory" />
-  </bean>
-
-  <bean class="org.hippoecm.hst.resourcebundle.internal.ResourceBundleWorkflowEventListener"
-        init-method="init" destroy-method="destroy">
-    <constructor-arg ref="org.hippoecm.hst.resourcebundle.ResourceBundleRegistry"/>
-    <constructor-arg  value="#{servletContext.contextPath}"/>
+        class="org.hippoecm.hst.resourcebundle.internal.ResourceBundleRegistryImpl">
+    <constructor-arg ref="org.hippoecm.hst.resourcebundle.internal.ResourceBundleFamilyFactory" />
   </bean>
 
 </beans>

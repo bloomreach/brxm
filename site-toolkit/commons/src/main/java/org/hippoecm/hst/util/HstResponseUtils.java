@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.hippoecm.hst.util;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -139,26 +138,18 @@ public class HstResponseUtils {
         if (queryParams != null && !queryParams.isEmpty()) {
             try {
                 if (characterEncoding == null) {
-                    characterEncoding = "ISO-8859-1";
+                    characterEncoding = HstRequestUtils.getURIEncoding(request.getRequestContext().getServletRequest());
                 }
                 
-                StringBuilder urlBuilder = new StringBuilder(80).append(urlString);
-                boolean firstParamDone = (urlBuilder.indexOf("?") >= 0);
-                
+                QueryStringBuilder queryStringBuilder = new QueryStringBuilder(characterEncoding);
                 for (Map.Entry<String, String[]> entry : queryParams.entrySet()) {
                     String name = entry.getKey();
-                    
                     for (String value : entry.getValue()) {
-                        urlBuilder.append(firstParamDone ? "&" : "?")
-                        .append(name)
-                        .append("=")
-                        .append(URLEncoder.encode(value, characterEncoding));
-                        
-                        firstParamDone = true;
+                        queryStringBuilder.append(name, value);
                     }
                 }
                 
-                urlString = urlBuilder.toString();
+                urlString += queryStringBuilder.toString();
             } catch (UnsupportedEncodingException e) {
                 throw new HstComponentException(e);
             }
