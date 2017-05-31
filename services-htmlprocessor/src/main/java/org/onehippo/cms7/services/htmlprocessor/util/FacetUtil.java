@@ -147,7 +147,7 @@ public class FacetUtil {
                 }
             }
         } catch (final RepositoryException e) {
-            log.error("Failed to remove facet {} from node", name, e);
+            log.warn("Failed to remove child facet node '{}' below node '{}'", name, JcrUtils.getNodePathQuietly(node), e);
         }
     }
 }
