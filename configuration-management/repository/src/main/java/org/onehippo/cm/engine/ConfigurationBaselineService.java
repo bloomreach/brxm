@@ -91,14 +91,14 @@ import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
 import static org.onehippo.cm.model.Constants.HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
 
-public class ConfigBaselineService {
+public class ConfigurationBaselineService {
 
-    private static final Logger log = LoggerFactory.getLogger(ConfigBaselineService.class);
+    private static final Logger log = LoggerFactory.getLogger(ConfigurationBaselineService.class);
 
     private final Session configurationServiceSession;
     private final ConfigurationLockManager configurationLockManager;
 
-    public ConfigBaselineService(final Session configurationServiceSession, final ConfigurationLockManager configurationLockManager) {
+    public ConfigurationBaselineService(final Session configurationServiceSession, final ConfigurationLockManager configurationLockManager) {
         this.configurationServiceSession = configurationServiceSession;
         this.configurationLockManager = configurationLockManager;
     }

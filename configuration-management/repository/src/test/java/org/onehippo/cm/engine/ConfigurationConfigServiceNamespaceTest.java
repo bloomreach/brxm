@@ -45,24 +45,24 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
         final String source
                 = "definitions:\n"
                 + "  namespace:\n"
-                + "    test:\n"
+                + "    test1:\n"
                 + "      uri: http://www.onehippo.org/test/nt/1.0";
 
         configurationModel = applyDefinitions(source);
 
-        assertTrue(getNamespacePrefixes().contains("test"));
-        assertEquals(getNamespaceURIForPrefix("test"), "http://www.onehippo.org/test/nt/1.0");
+        assertTrue(getNamespacePrefixes().contains("test1"));
+        assertEquals(getNamespaceURIForPrefix("test1"), "http://www.onehippo.org/test/nt/1.0");
 
         final String source2
                 = "definitions:\n"
                 + "  namespace:\n"
-                + "    test:\n"
+                + "    test1:\n"
                 + "      uri: http://www.onehippo.org/test/nt/1.0";
 
         applyDefinitions(source2, configurationModel);
 
-        assertTrue(getNamespacePrefixes().contains("test"));
-        assertEquals(getNamespaceURIForPrefix("test"), "http://www.onehippo.org/test/nt/1.0");
+        assertTrue(getNamespacePrefixes().contains("test1"));
+        assertEquals(getNamespaceURIForPrefix("test1"), "http://www.onehippo.org/test/nt/1.0");
     }
 
     @Test
@@ -252,7 +252,7 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
         final String source
                 = "definitions:\n"
                 + "  namespace:\n"
-                + "    test:\n"
+                + "    test1:\n"
                 + "      uri: http://www.onehippo.org/test/nt/1.0\n"
                 + "      cnd: unknown.cnd\n"
                 + "  config:\n"

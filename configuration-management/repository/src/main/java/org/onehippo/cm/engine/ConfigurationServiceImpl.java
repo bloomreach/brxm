@@ -50,7 +50,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     private final Session session;
     private final ConfigurationLockManager lockManager;
-    private final ConfigBaselineService baselineService;
+    private final ConfigurationBaselineService baselineService;
     private final ConfigurationConfigService configService;
     private final ConfigurationContentService contentService;
 
@@ -73,7 +73,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public ConfigurationServiceImpl(final Session session) throws RepositoryException {
         this.session = session;
         this.lockManager = new ConfigurationLockManager(session);
-        baselineService = new ConfigBaselineService(session, lockManager);
+        baselineService = new ConfigurationBaselineService(session, lockManager);
         configService = new ConfigurationConfigService();
         contentService = new ConfigurationContentService();
     }
