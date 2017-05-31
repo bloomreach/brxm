@@ -624,6 +624,29 @@
             <sv:value>hippogallerypicker:imagelink</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="video">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>demosite:video</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
       <sv:node sv:name="hipposysedit:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -757,6 +780,29 @@
             <sv:value>hippogallerypicker:imagelink</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="video">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>demosite:video</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
     </sv:node>
     <sv:node sv:name="hipposysedit:prototypes">
@@ -832,6 +878,14 @@
           <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
           <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
         </sv:node>
+        <sv:node sv:name="demosite:video">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
       <sv:node sv:name="hipposysedit:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -904,6 +958,14 @@
           <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true"/>
           <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
           <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
+        </sv:node>
+        <sv:node sv:name="demosite:video">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
         </sv:node>
       </sv:node>
     </sv:node>
@@ -1046,6 +1108,34 @@
           <sv:node sv:name="cluster.options">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+        <sv:node sv:name="video">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Video</sv:value>
+          </sv:property>
+          <sv:property sv:name="field" sv:type="String">
+            <sv:value>video</sv:value>
+          </sv:property>
+          <sv:property sv:name="hint" sv:type="String">
+            <sv:value/>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>${cluster.id}.field</sv:value>
+          </sv:property>
+          <sv:node sv:name="cluster.options">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="base.path" sv:type="String">
+              <sv:value>/content/assets</sv:value>
             </sv:property>
           </sv:node>
         </sv:node>
