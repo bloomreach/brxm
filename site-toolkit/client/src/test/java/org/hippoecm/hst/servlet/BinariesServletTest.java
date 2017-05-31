@@ -77,6 +77,7 @@ public class BinariesServletTest extends AbstractTestBinariesServlet {
         expect(servletConfig.getInitParameter("forceContentDispositionRequestParamName")).andReturn("download");
         expect(servletConfig.getInitParameter("set-expires-headers")).andReturn("false");
         expect(servletConfig.getInitParameter("set-content-length-header")).andReturn("false");
+        expect(servletConfig.getInitParameter("use-accept-ranges-header")).andReturn("false");
 
         replay(servletConfig);
         binariesServlet.init(servletConfig);
