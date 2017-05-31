@@ -33,6 +33,7 @@ import static java.math.BigDecimal.ONE;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -99,10 +100,10 @@ public class SingleValueGetterImplTest {
 
         final Boolean v7 = Boolean.valueOf(singleValueGetter.getValue(value).toString());
         assertThat(v7, is(Boolean.FALSE));
-        assertThat(singleValueGetter.getValue(value), is(Calendar.class));
-        assertThat(singleValueGetter.getValue(value), is(BigDecimal.class));
-        assertThat(singleValueGetter.getValue(value), is(Double.class));
-        assertThat(singleValueGetter.getValue(value), is(Binary.class));
+        assertThat(singleValueGetter.getValue(value), instanceOf(Calendar.class));
+        assertThat(singleValueGetter.getValue(value), instanceOf(BigDecimal.class));
+        assertThat(singleValueGetter.getValue(value), instanceOf(Double.class));
+        assertThat(singleValueGetter.getValue(value), instanceOf(Binary.class));
     }
 
     @Test(expected = RepositoryException.class)
