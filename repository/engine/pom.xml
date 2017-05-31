@@ -207,7 +207,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <systemPropertyVariables>
-            <org.onehippo.repository.test.keepserver>false</org.onehippo.repository.test.keepserver>
+            <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
           </systemPropertyVariables>
         </configuration>
       </plugin>
