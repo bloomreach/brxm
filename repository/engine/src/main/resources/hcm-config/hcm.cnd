@@ -1,0 +1,92 @@
+/*
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+<'hcm'='http://www.onehippo.org/jcr/hcm/1.0'>
+<'jcr'='http://www.jcp.org/jcr/1.0'>
+<'mix'='http://www.jcp.org/jcr/mix/1.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+
+// Provides cryptographic digest of primary node content
+[hcm:digested] mixin
+  - hcm:digest (string)
+
+// Stores the root definition path for a content source file
+[hcm:contentsource]
+  - hcm:contentpath (string) primary mandatory
+
+// Used for storing content in a hierarchy
+[hcm:contentfolder]
+  + * (hcm:contentfolder)
+  + * (hcm:contentsource)
+
+// Stores an actions file with content processing directives
+[hcm:actions]
+  - hcm:yaml (string) primary mandatory
+
+// Stores a module descriptor file with name, project, group, and dependencies
+[hcm:descriptor]
+  - hcm:yaml (string) primary mandatory
+
+// Stores a config definitions file
+[hcm:definitions]
+  - hcm:yaml (string) primary mandatory
+
+// Stores a CND resource file as referenced from a namespace definition
+[hcm:cnd]
+  - hcm:cnd (string) primary mandatory
+
+// Stores a binary resource file as referenced from a config or content definition
+[hcm:binary]
+  - jcr:data (binary) primary mandatory
+
+// Used for storing config sources in a hierarchy
+[hcm:configfolder]
+  + * (hcm:configfolder)
+  + * (hcm:definitions)
+  + * (hcm:cnd)
+  + * (hcm:binary)
+
+// Stores a module, including descriptor, actions, and definition sources
+[hcm:module]
+  + 'hcm-module.yaml' (hcm:descriptor) primary mandatory
+  - hcm:lastexecutedaction (string)
+  - hcm:seqnumber (double)
+  + 'hcm-actions.yaml' (hcm:actions)
+  + 'hcm-config' (hcm:configfolder)
+  + 'hcm-content' (hcm:contentfolder)
+
+// Stores a project
+[hcm:project]
+  + * (hcm:module)
+
+// Stores a configuration group
+[hcm:group]
+  + * (hcm:project)
+
+// Stores an entire configuration baseline with multiple groups, projects, and modules
+[hcm:baseline] > mix:lockable, hcm:digested
+  - hcm:lastupdated (date)
+  + * (hcm:group)
+
+// Stores history of content processing
+[hcm:content]
+  - hcm:contentPathsApplied (string) multiple
+
+// Root node for baseline and locking etc.
+[hcm:hcm]
+  + hcm:baseline (hcm:baseline)
+  + hcm:content (hcm:content)
+  + hippo:lock (hippo:lock)

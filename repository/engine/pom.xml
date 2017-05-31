@@ -47,6 +47,15 @@
       <artifactId>jackrabbit-spi-commons</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.cms</groupId>
+      <artifactId>hippo-configuration-management-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms</groupId>
+      <artifactId>hippo-configuration-management-model</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <version>${project.version}</version>
@@ -60,12 +69,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-connector</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-testutils</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -149,6 +152,14 @@
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
       <version>${cxf.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+    </dependency>
 
     <!-- test -->
     <dependency>
@@ -167,6 +178,25 @@
       <version>${hippo.jcrdiff.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-testutils</artifactId>
+      <version>${hippo.testutils.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-testutils</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms</groupId>
+      <artifactId>hippo-configuration-management-model</artifactId>
+      <version>${hippo.hcm.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
   </dependencies>
 
   <build>
@@ -177,7 +207,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <systemPropertyVariables>
-            <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
+            <org.onehippo.repository.test.keepserver>false</org.onehippo.repository.test.keepserver>
           </systemPropertyVariables>
         </configuration>
       </plugin>

@@ -1,0 +1,23 @@
+definitions:
+  namespace:
+    hippo:
+      uri: http://www.onehippo.org/jcr/hippo/nt/2.0.4
+      cnd: hippo.cnd
+    hippofacnav:
+      uri: http://www.onehippo.org/jcr/hippofacnav/nt/1.0.1
+      cnd: hippofacnav.cnd
+    hipposched:
+      uri: http://www.hippoecm.org/hipposched/nt/1.3
+      cnd: hipposched.cnd
+    hipposys:
+      uri: http://www.onehippo.org/jcr/hipposys/nt/1.0
+      cnd: hipposys.cnd
+    hipposysedit:
+      uri: http://www.onehippo.org/jcr/hipposysedit/nt/1.2
+      cnd: hipposysedit.cnd
+    hcm:
+      uri: http://www.onehippo.org/jcr/hcm/1.0
+      cnd: hcm.cnd
+    autoexport:
+      uri: http://www.onehippo.org/autoexport/1.1
+      cnd: autoexport.cnd

@@ -1,0 +1,97 @@
+definitions:
+  config:
+    /hippo:configuration:
+      jcr:primaryType: hipposys:configuration
+      /hippo:derivatives:
+        jcr:primaryType: hipposys:derivativesfolder
+        /hippo:corederivatives:
+          jcr:primaryType: hipposys:deriveddefinition
+          hipposys:classname: org.hippoecm.repository.deriveddata.CoreDerivedDataFunction
+          hipposys:nodetype: hippo:document
+          hipposys:serialver: 1
+          /hipposys:accessed:
+            jcr:primaryType: hipposys:propertyreferences
+            /ancestors:
+              jcr:primaryType: hipposys:builtinpropertyreference
+              hipposys:method: ancestors
+          /hipposys:derived:
+            jcr:primaryType: hipposys:propertyreferences
+            /ancestors:
+              jcr:primaryType: hipposys:relativepropertyreference
+              hipposys:relPath: hippo:paths
+      /hippo:temporary:
+        jcr:primaryType: hipposys:temporaryfolder
+      /hippo:queries:
+        jcr:primaryType: hipposys:queryfolder
+      /hippo:workflows:
+        jcr:primaryType: hipposys:workflowfolder
+        jcr:uuid: c89f56e5-5e9d-4967-9850-7b6254d1791c
+      /hippo:domains:
+        jcr:primaryType: hipposys:domainfolder
+        /everywhere:
+          jcr:primaryType: hipposys:domain
+          /all-nodes:
+            jcr:primaryType: hipposys:domainrule
+            /match-all-types:
+              jcr:primaryType: hipposys:facetrule
+              hipposys:equals: true
+              hipposys:facet: jcr:primaryType
+              hipposys:filter: false
+              hipposys:type: Name
+              hipposys:value: '*'
+          /admin:
+            jcr:primaryType: hipposys:authrole
+            hipposys:groups: [admin]
+            hipposys:role: admin
+      /hippo:security:
+        jcr:primaryType: hipposys:securityfolder
+        hipposys:domainspath: hippo:configuration/hippo:domains
+        hipposys:groupspath: hippo:configuration/hippo:groups
+        hipposys:rolespath: hippo:configuration/hippo:roles
+        hipposys:userspath: hippo:configuration/hippo:users
+        /internal:
+          jcr:primaryType: hipposys:securityprovider
+          hipposys:classname: org.hippoecm.repository.security.RepositorySecurityProvider
+          /hipposys:userprovider:
+            jcr:primaryType: hipposys:userprovider
+            hipposys:dirlevels: 0
+          /hipposys:groupprovider:
+            jcr:primaryType: hipposys:groupprovider
+            hipposys:dirlevels: 0
+        /hipposys:accessmanager:
+          jcr:primaryType: hipposys:accessmanager
+          hipposys:permissioncachesize: 20000
+      /hippo:users:
+        jcr:primaryType: hipposys:userfolder
+        /admin:
+          jcr:primaryType: hipposys:user
+          hipposys:active: true
+          hipposys:password: $SHA-256$HIlytXwnqSU=$NqCi2sJoM4qAwQ8136GYueUVA/TSyidpAI3Evn+y/hc=
+          hipposys:securityprovider: internal
+        /workflowuser:
+          jcr:primaryType: hipposys:user
+          hipposys:active: true
+          hipposys:system: true
+          hipposys:password: $SHA-256$*
+          hipposys:securityprovider: internal
+      /hippo:groups:
+        jcr:primaryType: hipposys:groupfolder
+        /admin:
+          jcr:primaryType: hipposys:group
+          hipposys:members: [admin, workflowuser]
+          hipposys:securityprovider: internal
+      /hippo:roles:
+        jcr:primaryType: hipposys:rolefolder
+        /admin:
+          jcr:primaryType: hipposys:role
+          hipposys:privileges: ['jcr:all', 'hippo:admin']
+          hipposys:roles: [editor]
+      /hippo:frontend:
+        jcr:primaryType: hipposys:applicationfolder
+      /hippo:initialize:
+        jcr:primaryType: hippo:initializefolder
+        hippo:version: []
+        /hippo:lock:
+          jcr:primaryType: hippo:lock
+      /hippo:modules:
+        jcr:primaryType: hipposys:modulefolder

@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /topmost/upstream/exportFirst:
+      jcr:primaryType: nt:unstructured
+      template: template

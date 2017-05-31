@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /a1:
+      jcr:primaryType: foo
+      /a2:
+        jcr:primaryType: foo
+        /a3:
+          jcr:primaryType: foo

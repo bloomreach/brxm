@@ -379,12 +379,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         for(String cndName : new String[] { "hippo.cnd", "hipposys.cnd", "hipposysedit.cnd", "hippofacnav.cnd", "hipposched.cnd" }) {
             InputStream cndStream = null;
             try {
-                cndStream = getClass().getClassLoader().getResourceAsStream(cndName);
+                final String cndPath = "hcm-config/"+cndName;
+                cndStream = getClass().getClassLoader().getResourceAsStream(cndPath);
                 final String checksum = getChecksum(cndStream);
                 cndStream.close();
                 if (!checksum.equals(checksumProperties.getProperty(cndName))) {
                     log.info("Initializing nodetypes from: " + cndName);
-                    cndStream = getClass().getClassLoader().getResourceAsStream(cndName);
+                    cndStream = getClass().getClassLoader().getResourceAsStream(cndPath);
                     BootstrapUtils.initializeNodetypes(syncSession, cndStream, cndName);
                     syncSession.save();
                     checksumProperties.setProperty(cndName, checksum);

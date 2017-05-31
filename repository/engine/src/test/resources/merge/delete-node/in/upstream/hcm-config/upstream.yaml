@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /topmost/upstream:
+      jcr:primaryType: nt:unstructured
+    /topmost/upstreamToDelete:
+      jcr:primaryType: nt:unstructured
