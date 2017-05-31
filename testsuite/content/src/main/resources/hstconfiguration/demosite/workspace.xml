@@ -1,21 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-
-    Copyright (C) 2013-2017 Hippo B.V.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<sv:node sv:name="hst:workspace" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:workspace">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:workspace</sv:value>
   </sv:property>
@@ -41,10 +24,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#921CFF</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -61,10 +44,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#F1F399</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -81,10 +64,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#1199FF</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -109,10 +92,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#19CCFF</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -129,10 +112,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#FFAF99</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -149,10 +132,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#C399FF</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -177,10 +160,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#FFCC99</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -197,10 +180,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#CCFFFF</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -225,10 +208,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#99CCFF</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -245,10 +228,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#FFFF99</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -265,10 +248,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#CC99FF</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -293,10 +276,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#91CCFF</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -313,10 +296,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#F1FF99</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -333,10 +316,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>bgcolor</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>#CA99FF</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -366,10 +349,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>ExampleComponentWindowCreationFilter.hide</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>true</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -386,10 +369,10 @@
           <sv:property sv:name="hst:componentclassname" sv:type="String">
             <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>ExampleComponentWindowCreationFilter.hide</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>true</sv:value>
           </sv:property>
           <sv:property sv:name="hst:template" sv:type="String">
@@ -534,5 +517,15 @@
         <sv:value>Some prop</sv:value>
       </sv:property>
     </sv:node>
+  </sv:node>
+  <sv:node sv:name="hst:pages">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:pages</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hst:sitemap">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemap</sv:value>
+    </sv:property>
   </sv:node>
 </sv:node>
