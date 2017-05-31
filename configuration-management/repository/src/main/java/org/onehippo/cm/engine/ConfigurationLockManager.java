@@ -29,12 +29,11 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
 import static org.hippoecm.repository.util.RepoUtils.getClusterNodeId;
-import static org.onehippo.cm.engine.Constants.HCM_LOCK_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
 
 /**
  * The ConfigurationLockManager is used to create and release a persistent {@Link HippoLock} for accessing
- * and modifying the ConfigurationModel in the repository, on lock path {@link Constants#HCM_LOCK_PATH}.
+ * and modifying the ConfigurationModel in the repository, on LOCK_PATH.
  * <p>
  * Note the persistent lock management will be done with a separate/dedicated Session, impersonated from the Session
  * passed into the constructor, which otherwise will not be used any further.</p>
@@ -69,6 +68,7 @@ public class ConfigurationLockManager {
 
     private static final long LOCK_ATTEMPT_INTERVAL = 500;
     private static final long LOCK_TIMEOUT = Long.getLong("hcm.lock.timeout", 30);
+    public static final String LOCK_PATH = HCM_ROOT_PATH + "/" + HIPPO_LOCK;
 
     private final ReentrantLock reentrantLock = new ReentrantLock();
     private final Session lockSession;
@@ -85,7 +85,7 @@ public class ConfigurationLockManager {
     }
 
     private void ensureIsLockable() throws RepositoryException {
-        if (!lockSession.nodeExists(HCM_LOCK_PATH)) {
+        if (!lockSession.nodeExists(LOCK_PATH)) {
             lockSession.getNode(HCM_ROOT_PATH).addNode(HIPPO_LOCK, HIPPO_LOCK);
             lockSession.save();
         }
@@ -97,7 +97,7 @@ public class ConfigurationLockManager {
                 log.debug("Attempting to release lock");
                 lock.stopKeepAlive();
                 lockSession.refresh(false);
-                hippoLockManager.unlock(HCM_LOCK_PATH);
+                hippoLockManager.unlock(LOCK_PATH);
                 log.debug("Lock successfully released");
             } catch (LockException e) {
                 log.warn("Current session no longer holds a lock");
@@ -119,7 +119,7 @@ public class ConfigurationLockManager {
                 while (true) {
                     log.debug("Attempting to obtain lock");
                     try {
-                        hippoLock = hippoLockManager.lock(HCM_LOCK_PATH, false, false, LOCK_TIMEOUT, lockOwnerId);
+                        hippoLock = hippoLockManager.lock(LOCK_PATH, false, false, LOCK_TIMEOUT, lockOwnerId);
                         log.debug("Lock successfully obtained");
                         try {
                             hippoLock.startKeepAlive();
@@ -148,7 +148,7 @@ public class ConfigurationLockManager {
             locked = true;
         } finally {
             if (!locked) {
-                // In Exception context: don't hold onto the reentrantLock
+                // In Exception context: don't hold on to the reentrantLock
                 reentrantLock.unlock();
             }
         }

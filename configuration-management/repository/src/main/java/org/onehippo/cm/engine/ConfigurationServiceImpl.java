@@ -72,7 +72,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     public ConfigurationServiceImpl(final Session session) throws RepositoryException {
         this.session = session;
-        this.lockManager = new ConfigurationLockManager(session);
+        lockManager = new ConfigurationLockManager(session);
         baselineService = new ConfigurationBaselineService(session, lockManager);
         configService = new ConfigurationConfigService();
         contentService = new ConfigurationContentService();
@@ -105,20 +105,20 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             // don't fail starting up the repository storing the baseline or content
             try {
                 baselineService.storeBaseline(configurationModel);
-                try {
-                    contentService.apply(configurationModel, session);
-                } catch (RepositoryException|ConfigurationRuntimeException e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Failed to apply all content", e);
-                    } else {
-                        log.error("Failed to apply all content", e.getMessage());
-                    }
-                }
             } catch (RepositoryException|IOException|ConfigurationRuntimeException e) {
                 if (log.isDebugEnabled()) {
                     log.debug("Failed to store the Configuration baseline", e);
                 } else {
                     log.error("Failed to store the Configuration baseline", e.getMessage());
+                }
+            }
+            try {
+                contentService.apply(configurationModel, session);
+            } catch (RepositoryException|ConfigurationRuntimeException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to apply all content", e);
+                } else {
+                    log.error("Failed to apply all content", e.getMessage());
                 }
             }
             started = true;

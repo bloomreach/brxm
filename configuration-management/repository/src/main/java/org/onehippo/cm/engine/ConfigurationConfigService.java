@@ -124,9 +124,8 @@ public class ConfigurationConfigService {
                     webFileBundleDefinition.getSource().getModule().getConfigResourceInputProvider();
             final URL baseURL = resourceInputProvider.getBaseURL();
             if (baseURL.toString().contains("jar!")) {
-                final PartialZipFile bundleZipFile;
                 try {
-                    bundleZipFile = new PartialZipFile(getBaseZipFileFromURL(baseURL), bundleName);
+                    final PartialZipFile bundleZipFile = new PartialZipFile(getBaseZipFileFromURL(baseURL), bundleName);
                     service.importJcrWebFileBundle(session, bundleZipFile, true);
                 } catch (URISyntaxException e) {
                     throw new ConfigurationRuntimeException(e);

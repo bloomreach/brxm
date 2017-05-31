@@ -16,7 +16,6 @@
 
 package org.onehippo.cm.engine;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
 
@@ -58,5 +57,4 @@ public final class Constants {
 
     public static final String HCM_ROOT_PATH = "/" + HCM_ROOT;
     public static final String HCM_BASELINE_PATH = HCM_ROOT_PATH + "/" + HCM_BASELINE;
-    public static final String HCM_LOCK_PATH = HCM_ROOT_PATH + "/" + HIPPO_LOCK;
 }
