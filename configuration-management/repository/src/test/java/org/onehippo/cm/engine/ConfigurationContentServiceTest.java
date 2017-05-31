@@ -10,6 +10,11 @@ import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModelTestUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /*
  *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
@@ -26,11 +31,7 @@ import org.onehippo.cm.model.impl.ModuleImpl;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-public class ConfigurationContentServiceTest {
-
-    private Runnable runnable = () -> {
-        throw new RuntimeException();
-    };
+public class ConfigurationContentServiceTest extends RepositoryTestCase {
 
     @Test
     public void validateContentNode() throws Exception {
@@ -44,10 +45,10 @@ public class ConfigurationContentServiceTest {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/content.yaml", m1, false);
 
         ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
-        configurationContentService.validateContentNode(model.getContentDefinitions().get(0).getModifiableNode().getPath(), model, runnable);
+        assertTrue(configurationContentService.isContentNodePathValid(model.getContentDefinitions().get(0).getModifiableNode().getPath(), model));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void validateContentNode_strict() throws Exception {
 
         final ConfigurationContentService configurationContentService = new ConfigurationContentService();
@@ -59,7 +60,7 @@ public class ConfigurationContentServiceTest {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/content.yaml", m1, false);
 
         final ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
-        configurationContentService.validateContentNode(model.getContentDefinitions().get(0).getModifiableNode().getPath(), model, runnable);
+        assertFalse(configurationContentService.isContentNodePathValid(model.getContentDefinitions().get(0).getModifiableNode().getPath(), model));
     }
 
     @Test
@@ -90,11 +91,37 @@ public class ConfigurationContentServiceTest {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/config-strict.yaml", m1);
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/content.yaml", m1, false);
 
-        List<ActionItem> actionItems = new ArrayList<>();
+        final List<ActionItem> actionItems = new ArrayList<>();
         actionItems.add(new ActionItem("/a1/a2/a3", ActionType.DELETE));
 
         ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
         configurationContentService.validateDeleteActions(model, actionItems);
 
     }
+
+    @Test
+    public void validateDeleteActions_delete_config_node() throws Exception {
+
+        final ConfigurationContentService configurationContentService = new ConfigurationContentService();
+
+        final GroupImpl c1 = new GroupImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/config-strict.yaml", m1);
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/content.yaml", m1, false);
+
+        final List<ActionItem> actionItems = new ArrayList<>();
+        actionItems.add(new ActionItem("/a1/a2/a3/a4/b", ActionType.DELETE));
+
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
+
+        try {
+            configurationContentService.validateDeleteActions(model, actionItems);
+            fail("Exception should be thrown");
+
+        } catch(ConfigurationRuntimeException ignored) {}
+
+
+    }
+
 }

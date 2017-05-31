@@ -41,7 +41,6 @@ import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ConfigurationNode;
-import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -73,13 +72,11 @@ public class ConfigurationContentService {
     private final JcrContentProcessingService contentProcessingService = new JcrContentProcessingService(valueProcessor);
 
     /**
-     * TODO SS: model should be interface (ConfigurationModel) not ConfigurationModuleImpl, but
      * TODO     current operations cast to/require ModuleImpl, which first needs to be corrected
      * Apply content definitions from modules contained within configuration model
      *
-     * @param model
-     * @param session
-     * @throws RepositoryException
+     * @param model {@link ConfigurationModel}
+     * @param session active {@link Session}
      */
     public void apply(final ConfigurationModelImpl model, final Session session) throws RepositoryException {
 
@@ -96,13 +93,12 @@ public class ConfigurationContentService {
     /**
      * Import ContentDefinition
      *
-     * @param definition
+     * @param node {@link DefinitionNode} to import
      * @param parentNode parent node
      * @param actionType action type
-     * @throws Exception
      */
-    public void importNode(ContentDefinition definition, Node parentNode, ActionType actionType) throws RepositoryException, IOException {
-        contentProcessingService.importNode(definition.getNode(), parentNode, actionType);
+    public void importNode(DefinitionNode node, Node parentNode, ActionType actionType) throws RepositoryException, IOException {
+        contentProcessingService.importNode(node, parentNode, actionType);
     }
 
     /**
@@ -118,9 +114,8 @@ public class ConfigurationContentService {
     /**
      * Apply content definitions from module
      *
-     * @param module
-     * @param session
-     * @throws RepositoryException
+     * @param module target {@link Module}
+     * @param session active {@link Session}
      */
     private void apply(final ModuleImpl module, final ConfigurationModel model, final Session session) throws RepositoryException {
 
@@ -144,11 +139,11 @@ public class ConfigurationContentService {
             final Optional<ActionType> actionType = findLastActionToApply(contentNode.getPath(), actionsToProcess);
             final boolean nodeAlreadyProcessed = nodeAlreadyProcessed(contentNode, session);
 
-            if (actionType.isPresent() || !nodeAlreadyProcessed) {                                                                                                                                      //actiontype is present && action id is not processed yet, where id would be composite of module, version, path
+            if (actionType.isPresent() || !nodeAlreadyProcessed) {
 
-                validateContentNode(contentNode.getPath(), model, () -> {
+                if (isContentNodePathValid(contentNode.getPath(), model)) {
                     throw new ConfigurationRuntimeException(String.format("Content node '%s' creation is not allowed within configuration path", contentNode.getPath()));
-                });
+                };
 
                 log.debug("Processing {} action for node: {}", actionType, contentNode.getPath());
                 contentProcessingService.apply(contentNode, actionType.orElse(ActionType.APPEND), session);
@@ -168,23 +163,29 @@ public class ConfigurationContentService {
         }
     }
 
-     void validateContentNode(final String contentNodePath, final ConfigurationModel model, Runnable runnable) {
+    /**
+     * Check if content node is allowed to be within configuration path
+     * @param contentNodePath node's path
+     * @param model {@link ConfigurationModel}
+     */
+    boolean isContentNodePathValid(final String contentNodePath, final ConfigurationModel model) {
 
         final ConfigurationNode closestConfigNode = findClosestConfigNode(Paths.get(contentNodePath), model);
 
         if (closestConfigNode != null) {
-            final String[] cfgPathsplit = closestConfigNode.getPath().split(SEPARATOR);
+            final String[] configPathSplit = closestConfigNode.getPath().split(SEPARATOR);
             final String[] contentPathSplit = contentNodePath.split(SEPARATOR);
 
-            final Optional<String> nodeToCheck = Arrays.stream(contentPathSplit).limit(cfgPathsplit.length + 1).reduce((a, b) -> a + SEPARATOR + b);
+            final Optional<String> nodeToCheck = Arrays.stream(contentPathSplit).limit(configPathSplit.length + 1).reduce((a, b) -> a + SEPARATOR + b);
             if (nodeToCheck.isPresent()) {
                 final String nodeName = StringUtils.substringAfterLast(nodeToCheck.get(), SEPARATOR);
                 final ConfigurationItemCategory childNodeCategory = closestConfigNode.getChildNodeCategory(nodeName);
                 if (childNodeCategory != ConfigurationItemCategory.CONTENT) {
-                    runnable.run();
+                    return false;
                 }
             }
         }
+        return true;
     }
 
     /**
@@ -205,17 +206,13 @@ public class ConfigurationContentService {
     /**
      * Validate if DELETE action is not related to configuration node
      *
-     * @param model
-     * @param itemsToDelete
+     * @param model {@link ConfigurationModel}
+     * @param itemsToDelete collection of action items to delete
      */
      void validateDeleteActions(final ConfigurationModel model, final List<ActionItem> itemsToDelete) {
 
-        final Runnable runnable = () -> {
-            throw new ConfigurationRuntimeException("Config definitions are not allowed to be deleted");
-        };
         itemsToDelete.forEach(item -> {
-            validateContentNode(item.getPath(), model, runnable);
-            if (model.resolveNode(item.getPath()) != null) {
+            if (!isContentNodePathValid(item.getPath(), model)) {
                 throw new ConfigurationRuntimeException(String.format("Config definitions are not allowed to be deleted: %s", item.getPath()));
             }
         });
@@ -224,9 +221,8 @@ public class ConfigurationContentService {
     /**
      * Update processed definition lists (TODO SS: move to baseline service?)
      *
-     * @param path
-     * @param session
-     * @throws RepositoryException
+     * @param path node path
+     * @param session active {@link Session}
      */
     private void updateProcessedDefinition(final String path, final Session session) throws RepositoryException {
 
@@ -293,7 +289,7 @@ public class ConfigurationContentService {
      * Sort content definitions in natural order of their root node paths,
      * i.e. node with a shortest hierarchy path goes first
      *
-     * @param module
+     * @param module target module
      */
     private void sortContentDefinitions(final ModuleImpl module) {
         module.getContentDefinitions().sort(Comparator.comparing(o -> o.getNode().getPath()));
@@ -302,10 +298,9 @@ public class ConfigurationContentService {
     /**
      * Check if node was already processed and it's path is saved withing baseline
      *
-     * @param contentNode
-     * @param session
-     * @return
-     * @throws RepositoryException
+     * @param contentNode {@link DefinitionNode}
+     * @param session active {@link Session}
+     * @return true if node was already processed, false otherwise
      */
     private boolean nodeAlreadyProcessed(final DefinitionNode contentNode, final Session session) throws RepositoryException {
 
@@ -332,9 +327,8 @@ public class ConfigurationContentService {
     /**
      * Delete nodes from action list
      *
-     * @param deleteItems
-     * @param session
-     * @throws RepositoryException
+     * @param deleteItems items to delete
+     * @param session active {@link Session}
      */
     private void processItemsToDelete(final List<ActionItem> deleteItems, final Session session) throws RepositoryException {
 
@@ -349,9 +343,8 @@ public class ConfigurationContentService {
      * Get module's version from baseline
      *
      * @param module  target module
-     * @param session
+     * @param session Active session
      * @return Current module's version or MINIMAL value of double
-     * @throws RepositoryException
      */
     private double getModuleVersion(final Module module, final Session session) throws RepositoryException {
         try {
