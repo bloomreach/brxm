@@ -242,6 +242,7 @@
 // properties of the channel
 + hst:channelinfo (hst:channelinfo)
 
+// hst:channels is deprecated and not to be used any more since 5.0.0 (CMS 12.0)
 [hst:channels] > nt:base, mix:referenceable, mix:versionable
 + * (hst:channel)
 

@@ -262,7 +262,6 @@ public class ChannelServiceImpl implements ChannelService {
     public void deleteChannel(Session session, Channel channel, List<Mount> mountsOfChannel) throws RepositoryException, ChannelException {
         removeConfigurationNodes(session, channel);
         removeSiteNode(session, channel);
-        removeChannelNodes(session, channel.getChannelPath());
         removeMountNodes(session, mountsOfChannel);
     }
 
@@ -275,7 +274,7 @@ public class ChannelServiceImpl implements ChannelService {
         try {
             hstConfigurationService.delete(session, hstConfigPath);
         } catch (HstConfigurationException e) {
-            log.warn("Cannot delete configuration node '{}': {}", hstConfigPath, e.getMessage());
+            log.info("configuration node '{}' won't be deleted because : {}", hstConfigPath, e.getMessage());
         }
     }
 
@@ -323,17 +322,6 @@ public class ChannelServiceImpl implements ChannelService {
             }
         }
         return allMounts;
-    }
-
-    /**
-     * Remove both the hst config node and its '-preview' node if it exists
-     */
-    private void removeChannelNodes(final Session session, final String nodePath) throws RepositoryException {
-        session.removeItem(nodePath);
-        final String previewNodePath = nodePath + PREVIEW_SUFFIX;
-        if (session.nodeExists(previewNodePath)) {
-            session.removeItem(previewNodePath);
-        }
     }
 
     /**

@@ -52,7 +52,13 @@ public interface HstNodeTypes {
     String NODETYPE_HST_TEMPLATES = "hst:templates";
     String NODETYPE_HST_CHANNELINFO = "hst:channelinfo";
     String NODETYPE_HST_CHANNEL = "hst:channel";
+
+    /**
+     * @deprecated since 5.0.0 (CMS 12.0)
+     */
+    @Deprecated
     String NODETYPE_HST_CHANNELS = "hst:channels";
+
     String NODETYPE_HST_BLUEPRINT = "hst:blueprint";
     String NODETYPE_HST_BLUEPRINTS = "hst:blueprints";
     String NODETYPE_HST_CONTAINERCOMPONENTSFOLDER = "hst:containercomponentfolder";

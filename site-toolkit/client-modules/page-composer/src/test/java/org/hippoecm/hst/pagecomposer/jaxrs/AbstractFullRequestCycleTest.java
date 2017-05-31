@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs;
 import java.io.IOException;
 
 import javax.jcr.Credentials;
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -76,7 +77,7 @@ public class AbstractFullRequestCycleTest {
         // assert admin has hippo:admin privilege
         Session admin = createSession("admin", "admin");
         assertTrue(admin.hasPermission("/hst:hst", "jcr:write"));
-        assertTrue(admin.hasPermission("/hst:hst/hst:channels", "hippo:admin"));
+        assertTrue(admin.hasPermission("/hst:hst", "hippo:admin"));
         admin.logout();
 
         // assert editor is part of webmaster group
@@ -233,6 +234,16 @@ public class AbstractFullRequestCycleTest {
         public Object get(final String key) {
             return CmsSessionContext.REPOSITORY_CREDENTIALS.equals(key) ? credentials : null;
         }
+    }
+
+    protected void setPrivilegePropsForSecurityModel() throws RepositoryException {
+        final Session admin = createSession("admin", "admin");
+        final Node mount = admin.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        // make sure that users that have 'hippo:admin' role on /hst:hst can publish other ones their changes
+        mount.setProperty("manage.changes.privileges","hippo:admin");
+        mount.setProperty("manage.changes.privileges.path","/hst:hst");
+        admin.save();
+        admin.logout();
     }
 }
 

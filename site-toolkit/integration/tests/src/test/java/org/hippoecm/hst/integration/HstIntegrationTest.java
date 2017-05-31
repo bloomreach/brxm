@@ -134,7 +134,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                 final VirtualHosts hostsBefore = hstManager.getVirtualHosts();
                 {
                     ContextualizableMount mount = (ContextualizableMount)hostsBefore.matchMount("localhost", "/site", "/").getMount();
-                    assertEquals("/hst:hst/hst:channels/testchannel", mount.getChannelPath());
+                    assertEquals("/hst:hst/hst:configurations/unittestproject/hst:channel", mount.getChannel().getChannelPath());
 
                     validateMount(mount, false);
 
@@ -142,7 +142,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
 
                     // copy live config to preview and also for channel node
                     JcrUtils.copy(remoteSession, mount.getHstSite().getConfigurationPath(), mount.getHstSite().getConfigurationPath() + "-preview");
-                    JcrUtils.copy(remoteSession, mount.getChannelPath(), mount.getChannelPath() + "-preview");
+                    JcrUtils.copy(remoteSession, mount.getChannel().getChannelPath(), mount.getChannel().getChannelPath() + "-preview");
                     remoteSession.save();
                 }
 
@@ -164,7 +164,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                     validatePreviewConfiguration(mount, true);
                     // clean up preview again
                     remoteSession.getNode(mount.getPreviewHstSite().getConfigurationPath()).remove();
-                    remoteSession.getNode(mount.getChannelPath() + "-preview").remove();
+                    remoteSession.getNode(mount.getChannel().getChannelPath() + "-preview").remove();
                     remoteSession.save();
 
                     localSession.refresh(false);
@@ -303,7 +303,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
             VirtualHosts currentHosts = hstManager.getVirtualHosts();
             {
                 ContextualizableMount mount = (ContextualizableMount)currentHosts.matchMount("localhost", "/site", "/").getMount();
-                assertEquals("/hst:hst/hst:channels/testchannel", mount.getChannelPath());
+                assertEquals("/hst:hst/hst:configurations/unittestproject/hst:channel", mount.getChannel().getChannelPath());
 
                 validateMount(mount, false);
 
@@ -312,7 +312,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                 rootPreviewConfigurationPath = mount.getHstSite().getConfigurationPath() + "-preview";
                 // copy live config to preview and also for channel node
                 JcrUtils.copy(remoteSession, mount.getHstSite().getConfigurationPath(), rootPreviewConfigurationPath);
-                JcrUtils.copy(remoteSession, mount.getChannelPath(), mount.getChannelPath() + "-preview");
+                JcrUtils.copy(remoteSession, mount.getChannel().getChannelPath(), mount.getChannel().getChannelPath() + "-preview");
                 remoteSession.save();
             }
 

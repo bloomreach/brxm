@@ -286,16 +286,6 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         }
     }
 
-    protected void setPrivilegePropsForSecurityModel() throws RepositoryException {
-        final Session admin = createSession("admin", "admin");
-        final Node mount = admin.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
-        // make sure that users that have 'hippo:admin' role on /hst:hst/hst:channels can publish other ones their changes
-        mount.setProperty("manage.changes.privileges","hippo:admin");
-        mount.setProperty("manage.changes.privileges.path","/hst:hst/hst:channels");
-        admin.save();
-        admin.logout();
-    }
-
     @Test
     public void discard_userswithchanges_as_admin_fails_if_security_model_cannot_be_loaded() throws Exception {
         discardAssertions(ADMIN_CREDENTIALS, EDITOR_CREDENTIALS, false);

@@ -426,9 +426,11 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         int numberOfChannerBeforeAddingAnOrphanOne = channels.size();
 
-        Node channelsNode = session.getNode("/hst:hst/hst:channels");
-        Node newChannel = channelsNode.addNode("cmit-test-channel", "hst:channel");
-        newChannel.setProperty("hst:name", "CMIT Test Channel");
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject",
+                "/hst:hst/hst:configurations/foo");
+
+        Node newChannelNode = session.getNode("/hst:hst/hst:configurations/foo/hst:channel");
+        newChannelNode.setProperty("hst:name", "CMIT Test Channel");
 
         // for direct jcr node changes, we need to trigger an invalidation event ourselves
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
@@ -439,15 +441,14 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
 
         assertEquals(numberOfChannerBeforeAddingAnOrphanOne, channels.size());
-        junit.framework.Assert.assertFalse(channels.containsKey("cmit-test-channel"));
+        junit.framework.Assert.assertFalse(channels.containsKey("foo"));
 
     }
 
     @Test
     public void channels_for_current_contextpath_slashsite_only_are_loaded() throws Exception {
         // default context path is in superclass set to /site, hence for dev-localhost the mount 'intranet'
-        // with contextpath '/site2' and channelpath '/hst:hst/hst:channels/intranettestchannel' won't be part of
-        // dev-localhost channels when contextpath is /site
+        // with contextpath '/site2' won't be part of dev-localhost channels when contextpath is /site
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertTrue("unittestproject should be part of channels since has wrong contextpath",
                 channels.containsKey("unittestproject"));
