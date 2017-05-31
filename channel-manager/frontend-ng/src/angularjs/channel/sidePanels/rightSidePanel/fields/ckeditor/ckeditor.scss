@@ -15,125 +15,65 @@
 // sass-lint:disable class-name-format, no-qualifying-elements
 @import 'variables';
 
-// Editor
-$editor-bgcolor:                     #f7f7f7;
-$editor-color:                       #22272f;
-$editor-body-border-color:           #e8e8ea;
-$editor-subfield-bg:                 #fff;
-$editor-field-title-color:           #39434c;
-$editor-subfield-border:             #d4d6d8;
-$editor-compound-field-border:       #d4d6d8;
-$editor-padding:                     32px;
-$editor-field-bgs:                   (#ebeced, #e8e8ea, #d4d6d8, #b8bcbf, #9ba0a5);
-
-// Editor preview
-$editor-preview-field-bgcolor:       #f7f7f7;
-$rich-text-preview-link-hover-color: #0877d1;
-
-// Editor toolbar
-$editor-toolbar-border-color:        #b8bcbf;
-$editor-toolbar-fontsize:            15px;
-$editor-toolbar-color:               #39434c;
-$editor-toolbar-hover-color:         #0877d1;
-$editor-toolbar-active-color:        #39434c;
-$editor-toolbar-active-bgcolor:      #f7f7f7;
-$editor-toolbar-bgcolor:             #e8e8ea;
-
-// CKEditor
-$ckeditor-button-off-color:          #f7f7f7;
-$ckeditor-button-off-hover-color:    #d4d6d8;
-$ckeditor-button-on-color:           #9ba0a5;
-$ckeditor-button-on-hover-color:     #b8bcbf;
-$ckeditor-button-border-color:       #b8bcbf;
-
 ckeditor {
   textarea {
+    // Material fields have a 1px bottom border
     + .cke {
-      border-bottom-width: 2px;
+      border-bottom-width: 1px;
     }
 
+    // Invalid fields have a 2px red bottom border
     &.ng-invalid + .cke {
       border-bottom-color: $red-500;
-    }
+      border-bottom-width: 2px;
 
-    &.focussed + .cke {
-      border-bottom-color: $blue-500;
-    }
-  }
-
-  .cke {
-    border-color: $editor-subfield-border;
-    box-shadow: none;
-
-    a,
-    span {
-      box-shadow: none;
-    }
-
-    .cke_top,
-    .cke_bottom {
-      background: $editor-toolbar-bgcolor none;
-    }
-
-
-    .cke_top {
-      border-bottom: 0;
-      padding-bottom: 8px;
-      padding-left: 8px;
-      padding-right: 3px;
-      padding-top: 8px;
-    }
-
-    .cke_toolgroup,
-    .cke_combo_button {
-      background: $ckeditor-button-off-color none;
-      border-color: $ckeditor-button-border-color;
-      margin-bottom: 8px;
-      margin-right: 8px;
-    }
-
-    .cke_button_off:hover,
-    .cke_button_disabled:hover,
-    .cke_combo_off a.cke_combo_button:hover {
-      background: $ckeditor-button-off-hover-color none;
-      box-shadow: none;
-    }
-
-    .cke_button_on {
-      background: $ckeditor-button-on-color none;
-      border-color: $ckeditor-button-border-color;
-      box-shadow: none;
-      &:hover {
-        background-color: $ckeditor-button-on-hover-color;
-        box-shadow: none;
+      // ...but should not push the remaining fields 1px down, so reduce the padding of the bottom toolbar by 1px
+      .cke_bottom {
+        padding-bottom: 1px;
       }
     }
 
-    .cke_combo_on a.cke_combo_button,
-    .cke_combo_on a.cke_combo_button:focus {
-      background: $ckeditor-button-off-color none;
-      border-color: $ckeditor-button-border-color;
-      box-shadow: none;
-    }
+    // Focused fields have a 2px blue bottom border
+    &.focussed + .cke {
+      border-bottom-color: $blue-500;
+      border-bottom-width: 2px;
 
-    .cke_combo_on a.cke_combo_button:hover,
-    .cke_combo_off {
-      background: none;
-      border-color: $ckeditor-button-border-color;
-      box-shadow: none;
+      // ...but should not push the remaining fields 1px down, so reduce the padding of the bottom toolbar by 1px
+      .cke_bottom {
+        padding-bottom: 1px;
+      }
     }
+  }
 
-    .cke_wysiwyg_div.cke_editable {
-      padding: 8px;
-    }
+  // use similar border color as other fields
+  .cke,
+  .cke_top,
+  .cke_bottom {
+    border-color: $grey-300;
+  }
 
-    .cke_bottom {
-      border-top: 0;
-      padding-left: 4px;
-    }
+  // use custom background color and font in the toolbars
+  .cke_top,
+  .cke_bottom {
+    background: $grey-50;
 
-    .cke_panel {
-      border-color: $editor-toolbar-border-color;
+    * {
+      font-family: $font-family;
     }
+  }
+
+  // use a darker background for 'on' toolbar buttons to increase visibility on the custom toolbar background color
+  a.cke_button_on {
+    background-color: $grey-200;
+  }
+
+  // align left side of the text in the 'Styles' dropdown with left side of the icons below it
+  .cke_combo_text {
+    padding-left: 6px;
+  }
+
+  // use same margin in the editing area as other input fields
+  .cke_wysiwyg_div.cke_editable {
+    padding: 8px;
   }
 }
