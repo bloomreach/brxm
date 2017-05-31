@@ -58,6 +58,7 @@ class RightSidePanelCtrl {
   constructor(
     $scope,
     $element,
+    $mdConstant,
     $timeout,
     $translate,
     $q,
@@ -95,6 +96,15 @@ class RightSidePanelCtrl {
     SidePanelService.initialize('right', $element.find('.right-side-panel'), (documentId) => {
       this.openDocument(documentId);
       this._onOpen();
+    });
+
+    // Prevent the default closing action bound to the escape key by Angular Material.
+    // We should show the "unsaved changes" dialog first.
+    $element.on('keydown', (e) => {
+      if (e.which === $mdConstant.KEY_CODE.ESCAPE) {
+        e.stopImmediatePropagation();
+        this.close();
+      }
     });
 
     CmsService.subscribe('kill-editor', (documentId) => {

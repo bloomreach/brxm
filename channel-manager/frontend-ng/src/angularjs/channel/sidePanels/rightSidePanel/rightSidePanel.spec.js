@@ -122,6 +122,48 @@ describe('RightSidePanel', () => {
     $rootScope.$apply();
   });
 
+  it('should set full width mode on and off', () => {
+    $ctrl.setFullWidth(true);
+    expect($ctrl.$element.hasClass('fullwidth')).toBe(true);
+    expect($ctrl.isFullWidth).toBe(true);
+
+    $ctrl.setFullWidth(false);
+    expect($ctrl.$element.hasClass('fullwidth')).toBe(false);
+    expect($ctrl.isFullWidth).toBe(false);
+  });
+
+  it('should update local storage on resize', () => {
+    $ctrl.onResize(800);
+
+    expect($ctrl.lastSavedWidth).toBe('800px');
+    expect($ctrl.localStorageService.get('rightSidePanelWidth')).toBe('800px');
+  });
+
+  it('should detect ESC keypress', () => {
+    const e = angular.element.Event('keydown');
+    e.which = 27;
+
+    spyOn($ctrl, 'close');
+    $ctrl.$element.trigger(e);
+    expect($ctrl.close).toHaveBeenCalled();
+  });
+
+  it('should load last saved width of right side panel', () => {
+    spyOn($ctrl.localStorageService, 'get').and.callFake(() => '800px');
+
+    $ctrl.$onInit();
+
+    expect($ctrl.localStorageService.get).toHaveBeenCalledWith('rightSidePanelWidth');
+    expect($ctrl.lastSavedWidth).toBe('800px');
+
+    $ctrl.localStorageService.get.and.callFake(() => null);
+
+    $ctrl.$onInit();
+
+    expect($ctrl.localStorageService.get).toHaveBeenCalledWith('rightSidePanelWidth');
+    expect($ctrl.lastSavedWidth).toBe('440px');
+  });
+
   it('initializes the channel right side panel service upon instantiation', () => {
     expect(SidePanelService.initialize).toHaveBeenCalled();
     expect($ctrl.doc).not.toBeDefined();
