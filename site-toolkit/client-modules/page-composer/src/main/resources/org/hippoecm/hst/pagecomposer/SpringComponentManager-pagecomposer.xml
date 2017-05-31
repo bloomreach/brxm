@@ -38,7 +38,8 @@
     </constructor-arg>
   </bean>
 
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="com.fasterxml.jackson.databind.ObjectMapper" />
     <property name="targetObject" ref="jaxrsRestJacksonObjectMapper" />
     <property name="targetMethod" value="registerModule" />
     <property name="arguments">
@@ -232,7 +233,8 @@
     <constructor-arg ref="jaxrsHstConfigService"/>
   </bean>
 
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="org.hippoecm.hst.core.container.Pipeline" />
     <property name="targetObject">
       <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
         <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines"/>
@@ -268,7 +270,8 @@
     </property>
   </bean>
 
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.lang.Void" />
     <property name="targetObject" ref="org.hippoecm.hst.configuration.model.HstManager"/>
     <property name="targetMethod" value="addHstConfigurationAugmenter"/>
     <property name="arguments">
@@ -282,7 +285,8 @@
 
   <!-- Inject the templatecomposer configuration invalidation listener to the EventListenersContainer -->
   <bean id="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel#SecurityModelEventListener"
-        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.lang.Boolean" />
     <property name="targetObject" ref="jcrObservationEventListenerItems"/>
     <property name="targetMethod" value="add"/>
     <property name="arguments">
