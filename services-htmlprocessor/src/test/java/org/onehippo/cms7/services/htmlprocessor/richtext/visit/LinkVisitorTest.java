@@ -304,12 +304,16 @@ public class LinkVisitorTest {
 
     private void read(final Tag link) throws RepositoryException {
         final LinkVisitor visitor = new LinkVisitor(documentModel);
+        visitor.before();
         visitor.onRead(null, link);
+        visitor.after();
     }
 
     private void write(final Tag link) throws RepositoryException {
         final LinkVisitor visitor = new LinkVisitor(documentModel);
+        visitor.before();
         visitor.onWrite(null, link);
+        visitor.after();
     }
 
     private void assertNoChanges(final String href) throws RepositoryException {

@@ -283,7 +283,9 @@ public class ImageVisitorTest {
         final RichTextImageURLProvider urlProvider = new RichTextImageURLProvider(mockImageFactory, mockLinkFactory, documentModel);
         final Tag imageTag = createImage("image.jpg/{_document}/hippogallery:original");
         final ImageVisitor visitor = new ImageVisitor(documentModel, urlProvider);
+        visitor.before();
         visitor.onRead(null, imageTag);
+        visitor.after();
 
         assertImage(imageTag, "binaries/path/image.jpg/image.jpg/hippogallery:original", image.getIdentifier(), "hippogallery:original");
         verify(mockImageFactory, mockLinkFactory);
@@ -296,7 +298,9 @@ public class ImageVisitorTest {
 
     private void read(final Tag image, final URLProvider urlProvider) throws RepositoryException {
         final ImageVisitor visitor = new ImageVisitor(documentModel, urlProvider);
+        visitor.before();
         visitor.onRead(null, image);
+        visitor.after();
     }
 
     private void write(final Tag imageTag) throws RepositoryException {
@@ -305,7 +309,9 @@ public class ImageVisitorTest {
 
     private void write(final Tag imageTag, final URLProvider urlProvider) throws RepositoryException {
         final ImageVisitor visitor = new ImageVisitor(documentModel, urlProvider);
+        visitor.before();
         visitor.onWrite(null, imageTag);
+        visitor.after();
     }
 
     private static Tag createImage(final String imageSrc) {

@@ -15,6 +15,9 @@
  */
 package org.onehippo.cms7.services.htmlprocessor.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -123,13 +126,28 @@ public class FacetUtil {
         }
     }
 
-    public static void removeFacets(final Node node) throws RepositoryException {
+    public static Map<String, String> getFacets(final Node node) throws RepositoryException {
+        final Map<String, String> facets = new HashMap<>();
         final NodeIterator iter = node.getNodes();
         while (iter.hasNext()) {
             final Node child = iter.nextNode();
             if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                child.remove();
+                facets.put(child.getName(), JcrUtils.getStringProperty(child, HippoNodeType.HIPPO_DOCBASE, null));
             }
+        }
+        return facets;
+    }
+
+    public static void removeFacet(final Node node, final String name) {
+        try {
+            if (node.hasNode(name)) {
+                final Node child = node.getNode(name);
+                if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    child.remove();
+                }
+            }
+        } catch (final RepositoryException e) {
+            log.warn("Failed to remove child facet node '{}' below node '{}'", name, JcrUtils.getNodePathQuietly(node), e);
         }
     }
 }

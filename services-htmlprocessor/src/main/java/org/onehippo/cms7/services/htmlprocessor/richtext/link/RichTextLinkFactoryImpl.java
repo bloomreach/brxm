@@ -120,32 +120,6 @@ public class RichTextLinkFactoryImpl implements RichTextLinkFactory {
         return links;
     }
 
-    /**
-     * Remove any facetselects that are no longer used.
-     *
-     * @param uuids the current list of link UUIDs
-     */
-    @Override
-    public void cleanup(final Set<String> uuids) {
-        try {
-            final Set<String> uuidsWithChildFacet = new TreeSet<>();
-            final NodeIterator iter = nodeModel.get().getNodes();
-            while (iter.hasNext()) {
-                final Node child = iter.nextNode();
-                if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    final String uuid = child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                    if (!uuids.contains(uuid) || uuidsWithChildFacet.contains(uuid)) {
-                        child.remove();
-                    } else {
-                        uuidsWithChildFacet.add(uuid);
-                    }
-                }
-            }
-        } catch (final RepositoryException ex) {
-            log.error("Error removing unused links", ex);
-        }
-    }
-
     @Override
     public void release() {
         nodeModel.release();

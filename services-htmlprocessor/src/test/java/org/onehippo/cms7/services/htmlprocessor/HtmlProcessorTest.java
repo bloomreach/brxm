@@ -250,6 +250,14 @@ public class HtmlProcessorTest {
         }
 
         @Override
+        public void before() {
+        }
+
+        @Override
+        public void after() {
+        }
+
+        @Override
         public void release() {
         }
     }

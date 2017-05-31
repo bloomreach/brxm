@@ -88,6 +88,7 @@ public class HtmlProcessorImpl implements HtmlProcessor {
 
     private void visit(final TagNode node, final List<TagVisitor> visitors, final Visit visit) {
         if (visitors != null && !visitors.isEmpty()) {
+            visitors.forEach(TagVisitor::before);
             node.traverse((parentNode, htmlNode) -> {
                 final Tag parent = HtmlTag.from(parentNode);
                 final Tag tag = HtmlTag.from(htmlNode);
@@ -100,6 +101,7 @@ public class HtmlProcessorImpl implements HtmlProcessor {
                 });
                 return true;
             });
+            visitors.forEach(TagVisitor::after);
         }
     }
 

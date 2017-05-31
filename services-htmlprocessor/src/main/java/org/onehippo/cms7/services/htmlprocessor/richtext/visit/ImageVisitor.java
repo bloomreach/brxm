@@ -21,13 +21,12 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
-import org.onehippo.cms7.services.htmlprocessor.util.FacetUtil;
+import org.onehippo.cms7.services.htmlprocessor.richtext.URLProvider;
 import org.onehippo.cms7.services.htmlprocessor.util.LinkUtil;
 import org.onehippo.cms7.services.htmlprocessor.visit.FacetVisitor;
-import org.onehippo.cms7.services.htmlprocessor.richtext.URLProvider;
 
-import static org.onehippo.cms7.services.htmlprocessor.util.JcrUtil.PATH_SEPARATOR;
 import static org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImage.DOCUMENT_PATH_PLACEHOLDER;
+import static org.onehippo.cms7.services.htmlprocessor.util.JcrUtil.PATH_SEPARATOR;
 
 public class ImageVisitor extends FacetVisitor {
 
@@ -51,7 +50,6 @@ public class ImageVisitor extends FacetVisitor {
 
     @Override
     public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {
-        super.onWrite(parent, tag);
         if (tag != null && StringUtils.equalsIgnoreCase(TAG_IMG, tag.getName())) {
             convertImageForStorage(tag);
         }
@@ -65,9 +63,8 @@ public class ImageVisitor extends FacetVisitor {
         }
 
         final String[] parts = src.split(PATH_SEPARATOR);
-        final Node node = getNode();
         final String name = parts.length >= 1 ? parts[0] : null;
-        final String uuid = FacetUtil.getChildDocBaseOrNull(node, name);
+        final String uuid = getFacetId(name);
 
         if (uuid != null) {
             tag.addAttribute(ATTRIBUTE_SRC, imageURLProvider.getURL(src));
@@ -77,6 +74,8 @@ public class ImageVisitor extends FacetVisitor {
             if (type != null) {
                 tag.addAttribute(ATTRIBUTE_DATA_TYPE, type);
             }
+
+            markVisited(name);
         }
     }
 
@@ -104,5 +103,7 @@ public class ImageVisitor extends FacetVisitor {
             src += PATH_SEPARATOR + DOCUMENT_PATH_PLACEHOLDER + PATH_SEPARATOR + type;
         }
         tag.addAttribute(ATTRIBUTE_SRC, src);
+
+        markVisited(name);
     }
 }
