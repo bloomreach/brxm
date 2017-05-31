@@ -236,6 +236,11 @@ public interface VirtualHosts {
     Map<String, Channel> getChannels(String hostGroup);
 
     /**
+     * @return The map of all {@code hostGroup} names to the map of all the channels for that hostgroup
+     */
+    Map<String, Map<String, Channel>> getChannels();
+
+    /**
      * @param hostGroup the name of the host group to get channel for
      * @return the channel configured at the given <code>channelPath</code> and <code>null</code> if no such channel exists
      * @throws IllegalArgumentException in case of invalid <code>channelPath</code>

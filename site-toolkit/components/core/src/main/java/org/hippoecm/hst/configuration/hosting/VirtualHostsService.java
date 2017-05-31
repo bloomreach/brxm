@@ -849,6 +849,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
+    public Map<String, Map<String, Channel>> getChannels()  {
+        return channelsByHostGroup;
+    }
+
+    @Override
     public Channel getChannelByJcrPath(final String hostGroup, final String channelPath) {
         final Map<String, Channel> channels = channelsByHostGroup.get(hostGroup);
         if (channels == null) {

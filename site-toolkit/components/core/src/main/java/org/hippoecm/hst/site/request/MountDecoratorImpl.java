@@ -751,6 +751,11 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        public Map<String, Map<String, Channel>> getChannels() {
+            return delegatee.getChannels();
+        }
+
+        @Override
         public Channel getChannelByJcrPath(final String hostGroup, final String channelPath) {
             return delegatee.getChannelByJcrPath(hostGroup, channelPath);
         }
