@@ -15,22 +15,20 @@
  */
 
 class SidePanelService {
-  constructor($mdSidenav, $q, OverlayService, $rootScope) {
+  constructor($mdSidenav, $q, OverlayService) {
     'ngInject';
 
     this.$mdSidenav = $mdSidenav;
     this.$q = $q;
-    this.$rootScope = $rootScope;
     this.OverlayService = OverlayService;
     this.panels = { };
   }
 
-  initialize(side, jQueryElement, onOpenCallback, onCloseCallback) {
+  initialize(side, jQueryElement, onOpenCallback) {
     const panel = {
       jQueryElement,
       sideNavComponentId: jQueryElement.attr('md-component-id'),
       onOpenCallback: onOpenCallback || angular.noop,
-      onCloseCallback: onCloseCallback || angular.noop,
     };
 
     this.panels[side] = panel;
