@@ -15,10 +15,14 @@
  */
 package org.onehippo.cms7.utilities.servlet;
 
+import javax.servlet.http.HttpSession;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletConfig;
 
 import static junit.framework.Assert.assertEquals;
@@ -33,12 +37,14 @@ public class ResourceServletTest {
         defaultServlet = new ResourceServlet();
         MockServletConfig servletConfig = new MockServletConfig();
         servletConfig.addInitParameter("jarPathPrefix", "META-INF/test");
+        servletConfig.addInitParameter("requireAuthentication", "false");
         defaultServlet.init(servletConfig);
 
         moreServingServlet = new ResourceServlet();
         servletConfig = new MockServletConfig();
         servletConfig.addInitParameter("jarPathPrefix", "META-INF/test");
-        String customAllowedResourcePaths = 
+        servletConfig.addInitParameter("requireAuthentication", "false");
+        final String customAllowedResourcePaths =
             "^/.*\\.js, \n" + 
             "^/.*\\.css, \n" + 
             "^/.*\\.png, \n" + 
@@ -49,7 +55,7 @@ public class ResourceServletTest {
             "^/.*\\.swf, \n" +
             "^/.*\\.properties\n";
         servletConfig.addInitParameter("allowedResourcePaths", customAllowedResourcePaths);
-        String mimeTypes =
+        final String mimeTypes =
             ".css = text/css,\n" +
             ".js = text/javascript,\n" +
             ".gif = image/gif,\n" +
@@ -66,18 +72,12 @@ public class ResourceServletTest {
     
     @Test
     public void testDefaultServlet() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        
-        request.addHeader("Accept", "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,video/x-mng,image/png,image/jpeg,image/gif;q=0.2,*/*;q=0.1");
-        request.addHeader("Accept-Encoding", "gzip,deflate");
-        request.setMethod("GET");
-        request.setServletPath("/resources");
-        request.setPathInfo("/onehippo.gif");
+        MockHttpServletRequest request = getMockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         defaultServlet.service(request, response);
         assertEquals(200, response.getStatus());
         assertEquals("image/gif", response.getContentType());
-        
+
         request = new MockHttpServletRequest();
         request.addHeader("Accept", "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,video/x-mng,image/png,image/jpeg,image/gif;q=0.2,*/*;q=0.1");
         request.addHeader("Accept-Encoding", "gzip,deflate");
@@ -88,7 +88,7 @@ public class ResourceServletTest {
         defaultServlet.service(request, response);
         assertEquals(404, response.getStatus());
     }
-    
+
     @Test
     public void testMoreServingServlet() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -101,7 +101,7 @@ public class ResourceServletTest {
         moreServingServlet.service(request, response);
         assertEquals(200, response.getStatus());
         assertEquals("image/gif", response.getContentType());
-        
+
         request = new MockHttpServletRequest();
         request.addHeader("Accept", "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,video/x-mng,image/png,image/jpeg,image/gif;q=0.2,*/*;q=0.1");
         request.addHeader("Accept-Encoding", "gzip,deflate");
@@ -114,4 +114,79 @@ public class ResourceServletTest {
         assertEquals("text/plain", response.getContentType());
         assertEquals("gzip", response.getHeader("Content-Encoding"));
     }
+
+    @Test
+    public void testUnauthorizedServlet() throws Exception {
+        final MockHttpServletRequest request = getMockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        moreServingServlet = new ResourceServlet();
+        final MockServletConfig servletConfig = new MockServletConfig();
+        servletConfig.addInitParameter("jarPathPrefix", "META-INF/test");
+        servletConfig.addInitParameter("requireAuthentication", "true");
+        final String customAllowedResourcePaths =
+                "^/.*\\.gif\n";
+        servletConfig.addInitParameter("allowedResourcePaths", customAllowedResourcePaths);
+        final String mimeTypes =
+                ".gif = image/gif\n";
+
+        servletConfig.addInitParameter("mimeTypes", mimeTypes);
+        moreServingServlet.init(servletConfig);
+        moreServingServlet.service(request, response);
+        assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void testAuthorizedServlet() throws Exception {
+        final MockHttpServletRequest request = getMockHttpServletRequest();
+        final HttpSession mockedSession = new MockHttpSession();
+        mockedSession.setAttribute(CmsSessionContext.class.getName(), getSessionContext());
+        request.setSession(mockedSession);
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        moreServingServlet = new ResourceServlet();
+        final MockServletConfig servletConfig = new MockServletConfig();
+        servletConfig.addInitParameter("jarPathPrefix", "META-INF/test");
+        servletConfig.addInitParameter("requireAuthentication", "true");
+        final String customAllowedResourcePaths =
+                        "^/.*\\.gif\n";
+        servletConfig.addInitParameter("allowedResourcePaths", customAllowedResourcePaths);
+        final String mimeTypes =
+                        ".gif = image/gif\n";
+
+        servletConfig.addInitParameter("mimeTypes", mimeTypes);
+        moreServingServlet.init(servletConfig);
+        moreServingServlet.service(request, response);
+        assertEquals(200, response.getStatus());
+        assertEquals("image/gif", response.getContentType());
+    }
+
+    private CmsSessionContext getSessionContext() {
+        return new CmsSessionContext() {
+            @Override
+            public String getId() {
+                return null;
+            }
+
+            @Override
+            public String getCmsContextServiceId() {
+                return null;
+            }
+
+            @Override
+            public Object get(final String s) {
+                return null;
+            }
+        };
+    }
+
+    private MockHttpServletRequest getMockHttpServletRequest() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+
+        request.addHeader("Accept", "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,video/x-mng,image/png,image/jpeg,image/gif;q=0.2,*/*;q=0.1");
+        request.addHeader("Accept-Encoding", "gzip,deflate");
+        request.setMethod("GET");
+        request.setServletPath("/resources");
+        request.setPathInfo("/onehippo.gif");
+        return request;
+    }
+
 }

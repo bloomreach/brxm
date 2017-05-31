@@ -41,8 +41,10 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -270,6 +272,7 @@ public class ResourceServlet extends HttpServlet {
     private boolean gzipEnabled;
     private boolean webResourceEnabled;
     private boolean jarResourceEnabled;
+    private boolean requireAuthentication;
 
     private Set<Pattern> allowedResourcePaths;
     private Set<Pattern> compressedMimeTypes;
@@ -286,6 +289,7 @@ public class ResourceServlet extends HttpServlet {
         gzipEnabled = Boolean.parseBoolean(getInitParameter("gzipEnabled", "true"));
         webResourceEnabled = Boolean.parseBoolean(getInitParameter("webResourceEnabled", "true"));
         jarResourceEnabled = Boolean.parseBoolean(getInitParameter("jarResourceEnabled", "true"));
+        requireAuthentication = Boolean.parseBoolean(getInitParameter("requireAuthentication", "true"));
 
         allowedResourcePaths = initPatterns("allowedResourcePaths", DEFAULT_ALLOWED_RESOURCE_PATHS);
         compressedMimeTypes = initPatterns("compressedMimeTypes", DEFAULT_COMPRESSED_MIME_TYPES);
@@ -364,7 +368,7 @@ public class ResourceServlet extends HttpServlet {
 
         log.debug("Processing request for resource {}{}.", resourcePath, queryParams);
 
-        final URL resource = getResourceURL(resourcePath, queryParams);
+        final URL resource = getResourceURL(resourcePath, queryParams, req);
         if (resource == null) {
             notFound(resp, resourcePath);
             return;
@@ -441,8 +445,8 @@ public class ResourceServlet extends HttpServlet {
         return set;
     }
 
-    private URL getResourceURL(final String resourcePath, final String queryParams) throws MalformedURLException {
-        if (!isAllowed(resourcePath)) {
+    private URL getResourceURL(final String resourcePath, final String queryParams, final HttpServletRequest request) throws MalformedURLException {
+        if (!isAllowed(resourcePath, request)) {
             if (log.isWarnEnabled()) {
                 log.warn("An attempt to access a protected resource at {} was disallowed.", resourcePath);
             }
@@ -478,8 +482,12 @@ public class ResourceServlet extends HttpServlet {
         return resource;
     }
 
-    private boolean isAllowed(final String resourcePath) {
+    private boolean isAllowed(final String resourcePath, final HttpServletRequest servletRequest) {
         if (webResourceEnabled && WEBAPP_PROTECTED_PATH.matcher(resourcePath).matches()) {
+            return false;
+        }
+
+        if(requireAuthentication && !isUserLoggedIn(servletRequest)) {
             return false;
         }
 
@@ -490,6 +498,17 @@ public class ResourceServlet extends HttpServlet {
         }
 
         return false;
+    }
+
+    private static boolean isUserLoggedIn(final HttpServletRequest servletRequest) {
+        final HttpSession httpSession = servletRequest.getSession(false);
+
+        if (httpSession == null) {
+            return false;
+        }
+
+        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+        return cmsSessionContext != null;
     }
 
     private URL getJarResource(final String resourcePath) {
