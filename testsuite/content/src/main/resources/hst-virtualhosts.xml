@@ -80,9 +80,6 @@
         <sv:property sv:name="hst:mountpoint" sv:type="String">
           <sv:value>/hst:hst/hst:sites/demosite</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:channelpath" sv:type="String">
-          <sv:value>/hst:hst/hst:channels/demosite</sv:value>
-        </sv:property>
         <sv:property sv:name="hst:mountrest" sv:type="String">
           <sv:value>restapi</sv:value>
         </sv:property>
@@ -98,9 +95,6 @@
           </sv:property>
           <sv:property sv:name="hst:mountpoint" sv:type="String">
             <sv:value>/hst:hst/hst:sites/demosite_fr</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:channelpath" sv:type="String">
-            <sv:value>/hst:hst/hst:channels/demosite-fr</sv:value>
           </sv:property>
           <sv:property sv:name="hst:alias" sv:type="String">
             <sv:value>fr_site</sv:value>
@@ -266,9 +260,6 @@
           <sv:property sv:name="hst:alias" sv:type="String">
             <sv:value>site</sv:value>
           </sv:property>
-          <sv:property sv:name="hst:channelpath" sv:type="String">
-            <sv:value>/hst:hst/hst:channels/demosite</sv:value>
-          </sv:property>
           <sv:property sv:name="hst:mountpoint" sv:type="String">
             <sv:value>/hst:hst/hst:sites/demosite</sv:value>
           </sv:property>
@@ -288,9 +279,6 @@
           <sv:node sv:name="demosite_fr">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hst:mount</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:channelpath" sv:type="String">
-              <sv:value>/hst:hst/hst:channels/demosite-fr</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/hst:hst/hst:sites/demosite_fr</sv:value>

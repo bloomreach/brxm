@@ -82,21 +82,11 @@ public class SitesOverview extends BaseHstComponent {
                     Node host = localHost.addNode("com" + tryToAdd, "hst:virtualhost");
                     Node mount = host.addNode("hst:root", "hst:mount");
                     mount.setProperty("hst:mountpoint", "/hst:hst/hst:sites/demosite-test-many"+tryToAdd);
-                    mount.setProperty("hst:channelpath", "/hst:hst/hst:channels/demosite-test-many"+tryToAdd);
                     mount.setProperty("hst:alias", "mount"+tryToAdd);
 
                     // add a new hst:site
                     Node site = writableSession.getNode("/hst:hst/hst:sites").addNode("demosite-test-many"+tryToAdd, "hst:site");
                     site.setProperty("hst:content", "/content/documents/demosite");
-
-                    // add a new hst:channel
-                    Node channel = writableSession.getNode("/hst:hst/hst:channels").addNode("demosite-test-many"+tryToAdd, "hst:channel");
-                    channel.setProperty("hst:channelinfoclass", "org.hippoecm.hst.demo.channel.DemoChannelInfo");
-                    channel.setProperty("hst:defaultdevice", "default");
-                    channel.setProperty("hst:name", "Test Many Site " + tryToAdd);
-                    channel.setProperty("hst:type", "website");
-                    Node channelInfo = channel.addNode("hst:channelinfo", "hst:channelinfo");
-                    channelInfo.setProperty("exampleValue", "example " + tryToAdd);
 
                     // now copy the hst:configurations
 
@@ -106,6 +96,13 @@ public class SitesOverview extends BaseHstComponent {
 
                     JcrUtils.copy(writableSession, "/hst:hst/hst:configurations/demosite-test-many/hst:sitemap", config.getPath() + "/hst:sitemap");
                     JcrUtils.copy(writableSession,"/hst:hst/hst:configurations/demosite-test-many/hst:sitemenus", config.getPath() + "/hst:sitemenus");
+                    JcrUtils.copy(writableSession,"/hst:hst/hst:configurations/demosite-test-many/hst:channel", config.getPath() + "/hst:channel");
+
+                    // update channel
+                    Node channel = config.getNode("/hst:channel");
+                    channel.setProperty("hst:name", "Test Many Site " + tryToAdd);
+                    Node channelInfo = channel.getNode("hst:channelinfo");
+                    channelInfo.setProperty("exampleValue", "example " + tryToAdd);
 
                     if (copyComponents) {
                         JcrUtils.copy(writableSession, "/hst:hst/hst:configurations/demosite-test-many/hst:pages", config.getPath() + "/hst:pages");
