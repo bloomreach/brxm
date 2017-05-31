@@ -87,6 +87,7 @@
   - hcm:contentPathsApplied (string) multiple
 
 // Root node for baseline and locking etc.
-[hcm:hcm] > mix:lockable, hippo:skipindex
+[hcm:hcm] > hippo:skipindex
   + hcm:baseline (hcm:baseline)
   + hcm:content (hcm:content)
+  + hippo:lock (hippo:lock)

@@ -147,7 +147,7 @@ public class ConfigurationContentService {
             if (actionType.isPresent() || !nodeAlreadyProcessed) {                                                                                                                                      //actiontype is present && action id is not processed yet, where id would be composite of module, version, path
 
                 validateContentNode(contentNode.getPath(), model, () -> {
-                    throw new RuntimeException(String.format("Content node '%s' creation is not allowed within configuration path", contentNode.getPath()));
+                    throw new ConfigurationRuntimeException(String.format("Content node '%s' creation is not allowed within configuration path", contentNode.getPath()));
                 });
 
                 log.debug("Processing {} action for node: {}", actionType, contentNode.getPath());
@@ -211,12 +211,12 @@ public class ConfigurationContentService {
      void validateDeleteActions(final ConfigurationModel model, final List<ActionItem> itemsToDelete) {
 
         final Runnable runnable = () -> {
-            throw new RuntimeException("Config definitions are not allowed to be deleted");
+            throw new ConfigurationRuntimeException("Config definitions are not allowed to be deleted");
         };
         itemsToDelete.forEach(item -> {
             validateContentNode(item.getPath(), model, runnable);
             if (model.resolveNode(item.getPath()) != null) {
-                throw new RuntimeException(String.format("Config definitions are not allowed to be deleted: %s", item.getPath()));
+                throw new ConfigurationRuntimeException(String.format("Config definitions are not allowed to be deleted: %s", item.getPath()));
             }
         });
     }

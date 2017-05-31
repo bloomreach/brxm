@@ -16,11 +16,14 @@
 
 package org.onehippo.cm.engine;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
 
 public final class Constants {
 
+    public static final String HIPPO_NAMESPACE = "http://www.onehippo.org/jcr/hippo/nt/2.0.4";
+    public static final String HIPPO_PREFIX = "hippo";
     public static final String HCM_NAMESPACE = "http://www.onehippo.org/jcr/hcm/1.0";
     public static final String HCM_PREFIX = "hcm";
 
@@ -46,11 +49,14 @@ public final class Constants {
     public static final String HCM_MODULE_SEQUENCE = "hcm:seqnumber";
     public static final String HCM_ACTIONS = ACTIONS_YAML;
     public static final String HCM_CONTENT_PATHS_APPLIED = "hcm:contentPathsApplied";
-    public static final String HCM_MODULE_ACTIONS_APPLIED = "hcm:moduleActionsApplied";
     public static final String HCM_PROCESSED = "hcm:processed";
     public static final String HCM_CONTENT_PATH = "hcm:contentpath";
     public static final String HCM_YAML = "hcm:yaml";
     public static final String HCM_CND = "hcm:cnd";
     // This should be one of the required digest algorithms (MD5, SHA-1, or SHA-256)
     public static final String HCM_DIGEST = "hcm:digest";
+
+    public static final String HCM_ROOT_PATH = "/" + HCM_ROOT;
+    public static final String HCM_BASELINE_PATH = HCM_ROOT_PATH + "/" + HCM_BASELINE;
+    public static final String HCM_LOCK_PATH = HCM_ROOT_PATH + "/" + HIPPO_LOCK;
 }

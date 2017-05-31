@@ -64,6 +64,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.HCM_ACTIONS;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ACTIONS;
 import static org.onehippo.cm.engine.Constants.HCM_BASELINE;
 import static org.onehippo.cm.engine.Constants.NT_HCM_BASELINE;
@@ -77,7 +78,6 @@ import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT_SOURCE;
 import static org.onehippo.cm.engine.Constants.NT_HCM_DEFINITIONS;
 import static org.onehippo.cm.engine.Constants.HCM_DIGEST;
 import static org.onehippo.cm.engine.Constants.NT_HCM_GROUP;
-import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.HCM_LAST_UPDATED;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
 import static org.onehippo.cm.engine.Constants.NT_HCM_DESCRIPTOR;
@@ -85,7 +85,6 @@ import static org.onehippo.cm.engine.Constants.HCM_MODULE_SEQUENCE;
 import static org.onehippo.cm.engine.Constants.NT_HCM_MODULE;
 import static org.onehippo.cm.engine.Constants.NT_HCM_PROJECT;
 import static org.onehippo.cm.engine.Constants.HCM_YAML;
-import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
@@ -96,10 +95,12 @@ public class ConfigBaselineService {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigBaselineService.class);
 
-    private final Session session;
+    private final Session configurationServiceSession;
+    private final ConfigurationLockManager configurationLockManager;
 
-    public ConfigBaselineService(final Session session) {
-        this.session = session;
+    public ConfigBaselineService(final Session configurationServiceSession, final ConfigurationLockManager configurationLockManager) {
+        this.configurationServiceSession = configurationServiceSession;
+        this.configurationLockManager = configurationLockManager;
     }
 
     /**
@@ -107,81 +108,60 @@ public class ConfigBaselineService {
      * The provided ConfigurationModel is assumed to be fully formed and validated.
      * @param model the configuration model to store as the new baseline
      */
-    public void storeBaseline(final ConfigurationModel model) throws Exception {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+    public void storeBaseline(final ConfigurationModel model) throws RepositoryException, IOException {
+        configurationLockManager.lock();
         try {
-            // TODO determine what possible race conditions exist here, perhaps during clean bootstrap
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            final Node hcmRootNode = configurationServiceSession.getNode(HCM_ROOT_PATH);
 
-            // find baseline root node, or create if necessary
-            final Node rootNode = session.getRootNode();
-            boolean hcmNodeExisted = rootNode.hasNode(HCM_ROOT);
-            final Node hcmRootNode = createNodeIfNecessary(rootNode, HCM_ROOT, NT_HCM_ROOT, false);
+            Node baseline = createNodeIfNecessary(hcmRootNode, HCM_BASELINE, NT_HCM_BASELINE, false);
 
-            // if the baseline node didn't exist before, save it before attempting to lock it
-            if (!hcmNodeExisted) {
-                session.save();
+            // TODO: implement a smarter partial-update process instead of brute-force removal
+            // clear existing group nodes before creating new ones
+            for (NodeIterator nodes = baseline.getNodes(); nodes.hasNext();) {
+                Node groupNode = nodes.nextNode();
+                groupNode.remove();
             }
 
-            // lock hcm root
-            session.getWorkspace().getLockManager()
-                    .lock(hcmRootNode.getPath(), false, true, Long.MAX_VALUE, "HCM baseline");
-            session.save();
+            // set lastupdated date to now
+            baseline.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
 
-            try {
-                Node baseline = createNodeIfNecessary(hcmRootNode, HCM_BASELINE, NT_HCM_BASELINE, false);
+            // compute and store digest from model manifest
+            // Note: we've decided not to worry about processing data twice, since we don't expect large files
+            //       in the config portion, and content is already optimized to use content path instead of digest
+            String modelDigestString = model.getDigest();
+            baseline.setProperty(HCM_DIGEST, modelDigestString);
 
-                // TODO: implement a smarter partial-update process instead of brute-force removal
-                // clear existing group nodes before creating new ones
-                for (NodeIterator nodes = baseline.getNodes(); nodes.hasNext();) {
-                    Node groupNode = nodes.nextNode();
-                    groupNode.remove();
-                }
+            // create group, project, and module nodes, if necessary
+            // foreach group
+            for (Group group : model.getSortedGroups()) {
+                Node groupNode = createNodeIfNecessary(baseline, group.getName(), NT_HCM_GROUP, true);
 
-                // set lastupdated date to now
-                baseline.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
+                // foreach project
+                for (Project project : group.getProjects()) {
+                    Node projectNode = createNodeIfNecessary(groupNode, project.getName(), NT_HCM_PROJECT, true);
 
-                // compute and store digest from model manifest
-                // Note: we've decided not to worry about processing data twice, since we don't expect large files
-                //       in the config portion, and content is already optimized to use content path instead of digest
-                String modelDigestString = model.getDigest();
-                baseline.setProperty(HCM_DIGEST, modelDigestString);
+                    // foreach module
+                    for (Module module : project.getModules()) {
+                        Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
 
-                // create group, project, and module nodes, if necessary
-                // foreach group
-                for (Group group : model.getSortedGroups()) {
-                    Node groupNode = createNodeIfNecessary(baseline, group.getName(), NT_HCM_GROUP, true);
-
-                    // foreach project
-                    for (Project project : group.getProjects()) {
-                        Node projectNode = createNodeIfNecessary(groupNode, project.getName(), NT_HCM_PROJECT, true);
-
-                        // foreach module
-                        for (Module module : project.getModules()) {
-                            Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
-
-                            // process each module in detail
-                            storeBaselineModule(module, moduleNode);
-                        }
+                        // process each module in detail
+                        storeBaselineModule(module, moduleNode);
                     }
                 }
-
-                // Save the session within the try block, unlock in a finally
-                session.save();
             }
-            finally {
-                // unlock baseline root
-                session.refresh(false);
-                session.getWorkspace().getLockManager().unlock(hcmRootNode.getPath());
-                session.save();
 
-                stopWatch.stop();
-                log.info("ConfigurationModel stored as baseline configuration in {}", stopWatch.toString());
-            }
+            configurationServiceSession.save();
+            stopWatch.stop();
+            log.info("ConfigurationModel stored as baseline configuration in {}", stopWatch.toString());
         }
-        catch (Exception e) {
+        catch (RepositoryException|IOException e) {
             log.error("Failed to store baseline configuration", e);
             throw e;
+        }
+        finally {
+            configurationLockManager.unlock();
         }
     }
 
@@ -443,7 +423,7 @@ public class ConfigBaselineService {
     protected void storeBinary(InputStream is, Node resourceNode) throws IOException, RepositoryException {
         // store content as Binary
         BufferedInputStream bis = new BufferedInputStream(is);
-        Binary bin = session.getValueFactory().createBinary(bis);
+        Binary bin = configurationServiceSession.getValueFactory().createBinary(bis);
         resourceNode.setProperty(JcrConstants.JCR_DATA, bin);
     }
 
@@ -465,63 +445,50 @@ public class ConfigBaselineService {
     }
 
     /**
-     * Helper to check if the baseline node exists where we expect it.
-     * @param rootNode the JCR root node
-     */
-    protected boolean baselineExists(final Node rootNode) throws RepositoryException {
-        try {
-            // TODO: remove the try-catch when the hcm namespace is registered in an earlier stage
-            return rootNode.hasNode(HCM_ROOT) || !rootNode.getNode(HCM_ROOT).hasNode(HCM_BASELINE);
-        } catch (RepositoryException e) {
-            return false;
-        }
-    }
-
-    /**
-     * Helper to load the baseline node, if it exists.
-     * @param rootNode the JCR root node
-     */
-    protected Node getBaselineNode(final Node rootNode) throws RepositoryException {
-        return rootNode.getNode(HCM_ROOT).getNode(HCM_BASELINE);
-    }
-
-    /**
      * Load a (partial) ConfigurationModel from the stored configuration baseline in the JCR. This model will not contain
      * content definitions, which are not stored in the baseline.
      * @throws Exception
      */
-    public ConfigurationModel loadBaseline() throws Exception {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-
-        final Node rootNode = session.getRootNode();
+    public ConfigurationModel loadBaseline() throws RepositoryException, ParserException, IOException {
         ConfigurationModel result;
 
+        final Node hcmRootNode = configurationServiceSession.getNode(HCM_ROOT_PATH);
         // if the baseline node doesn't exist yet...
-        if (!baselineExists(rootNode)) {
+        if (!hcmRootNode.hasNode(HCM_BASELINE)) {
             // ... there's nothing to load
             result = null;
         }
         else {
-            // otherwise, if the baseline node DOES exist...
-            final Node baselineNode = getBaselineNode(rootNode);
-            final ConfigurationModelImpl model = new ConfigurationModelImpl();
-            final List<GroupImpl> groups = new ArrayList<>();
+            configurationLockManager.lock();
+            try {
+                StopWatch stopWatch = new StopWatch();
+                stopWatch.start();
 
-            // First phase: load and parse module descriptors
-            parseDescriptors(baselineNode, groups);
+                // otherwise, if the baseline node DOES exist...
+                final Node baselineNode = hcmRootNode.getNode(HCM_BASELINE);
+                final ConfigurationModelImpl model = new ConfigurationModelImpl();
+                final List<GroupImpl> groups = new ArrayList<>();
 
-            // Second phase: load and parse config Sources, load and mockup content Sources
-            parseSources(groups);
+                // First phase: load and parse module descriptors
+                parseDescriptors(baselineNode, groups);
 
-            // build the final merged model
-            groups.forEach(model::addGroup);
-            result = model.build();
+                // Second phase: load and parse config Sources, load and mockup content Sources
+                parseSources(groups);
+
+                // build the final merged model
+                groups.forEach(model::addGroup);
+                result = model.build();
+                stopWatch.stop();
+                log.info("ConfigurationModel loaded from baseline configuration in {}", stopWatch.toString());
+            }
+            catch (RepositoryException|ParserException|IOException e) {
+                log.error("Failed to load baseline configuration", e);
+                throw e;
+            }
+            finally {
+                configurationLockManager.unlock();
+            }
         }
-
-        stopWatch.stop();
-        log.info("ConfigurationModel loaded from baseline configuration in {}", stopWatch.toString());
-
         return result;
     }
 
@@ -561,7 +528,7 @@ public class ConfigBaselineService {
             }
             else {
                 // this should no longer happen, since we generate dummy descriptors when saving the baseline
-                throw new RuntimeException("Module found in baseline with empty descriptor: " + moduleNode.getPath());
+                throw new ConfigurationRuntimeException("Module found in baseline with empty descriptor: " + moduleNode.getPath());
             }
 
             // store RIPs for later use
@@ -710,34 +677,38 @@ public class ConfigBaselineService {
     /**
      * Compare a ConfigurationModel against the baseline by comparing manifests produced by model.getDigest()
      */
-    public boolean matchesBaselineManifest(ConfigurationModel model) throws Exception {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-
-        final Node rootNode = session.getRootNode();
+    public boolean matchesBaselineManifest(ConfigurationModel model) throws RepositoryException {
         boolean result;
 
+        final Node hcmRootNode = configurationServiceSession.getNode(HCM_ROOT_PATH);
         // if the baseline node doesn't exist yet...
-        if (!baselineExists(rootNode)) {
+        if (!hcmRootNode.hasNode(HCM_BASELINE)) {
             // ... there's a trivial mismatch, regardless of the model
             result = false;
         }
         else {
-            // otherwise, if the baseline node DOES exist...
-            // ... load the digest directly from the baseline JCR node
-            String baselineDigestString = getBaselineNode(rootNode).getProperty(HCM_DIGEST).getString();
-            log.debug("baseline digest:\n" + baselineDigestString);
+            configurationLockManager.lock();
+            try {
+                StopWatch stopWatch = new StopWatch();
+                stopWatch.start();
 
-            // compute a digest from the model manifest
-            String modelDigestString = model.getDigest();
+                // otherwise, if the baseline node DOES exist...
+                // ... load the digest directly from the baseline JCR node
+                String baselineDigestString = hcmRootNode.getNode(HCM_BASELINE).getProperty(HCM_DIGEST).getString();
+                log.debug("baseline digest:\n" + baselineDigestString);
 
-            // compare the baseline digest with the model manifest digest
-            result = modelDigestString.equals(baselineDigestString);
+                // compute a digest from the model manifest
+                String modelDigestString = model.getDigest();
+
+                // compare the baseline digest with the model manifest digest
+                result = modelDigestString.equals(baselineDigestString);
+                stopWatch.stop();
+                log.info("ConfigurationModel compared against baseline configuration in {}", stopWatch.toString());
+            }
+            finally {
+                configurationLockManager.unlock();
+            }
         }
-
-        stopWatch.stop();
-        log.info("ConfigurationModel compared against baseline configuration in {}", stopWatch.toString());
-
         return result;
     }
 }

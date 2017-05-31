@@ -16,6 +16,12 @@
 
 package org.onehippo.cm.engine;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.jcr.NamespaceException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -23,15 +29,30 @@ import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
+import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
+import static org.onehippo.cm.engine.Constants.HCM_PREFIX;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
+import static org.onehippo.cm.engine.Constants.HIPPO_NAMESPACE;
+import static org.onehippo.cm.engine.Constants.HIPPO_PREFIX;
+import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
+import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
 
 public class ConfigurationServiceImpl implements ConfigurationService {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
     private final Session session;
+    private final ConfigurationLockManager lockManager;
     private final ConfigBaselineService baselineService;
+    private final ConfigurationConfigService configService;
+    private final ConfigurationContentService contentService;
 
     /* TODO refactor after HCM-55
      * For now, storing the read result and merged model in an instance variable. This should be refactored for a
@@ -49,22 +70,30 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      */
     private ConfigurationModelImpl configurationModel;
 
-    public ConfigurationServiceImpl(final Session session) {
+    public ConfigurationServiceImpl(final Session session) throws RepositoryException {
         this.session = session;
-        baselineService = new ConfigBaselineService(session);
+        this.lockManager = new ConfigurationLockManager(session);
+        baselineService = new ConfigBaselineService(session, lockManager);
+        configService = new ConfigurationConfigService();
+        contentService = new ConfigurationContentService();
+    }
+
+    public boolean isNew() throws RepositoryException {
+        return !(session.getWorkspace().getNodeTypeManager().hasNodeType(NT_HCM_ROOT) && session.nodeExists(HCM_ROOT_PATH));
     }
 
     /**
      * Perform initial repository configuration, including creating (claiming) a Repository initialization scope
-     * lock, which only will be released through {@link #finishConfigureRepository(Session)}
-     * @param lockSession the session for creating/claiming the Repository initialization scope lock
+     * lock, which only will be released through {@link #finishConfigureRepository()}
      */
-    public void startConfigureRepository(final Session lockSession) {
+    public void startConfigureRepository() throws RepositoryException {
+        boolean started = false;
+        ensureInitialized();
+        lockManager.lock();
         try {
             // TODO when merging this code into LocalHippoRepository, use verifyOnly=false parameter
             configurationModel = new ClasspathConfigurationModelReader().read(Thread.currentThread().getContextClassLoader(), true);
 
-            // TODO this should probably happen in contentBootstrap() instead of here, so that it is protected by the repo lock
             apply(configurationModel);
 
             if (Boolean.getBoolean("repo.yaml.verify")) {
@@ -73,23 +102,43 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 log.info("YAML verification complete");
             }
 
-            final ConfigurationContentService configurationContentService = new ConfigurationContentService();
-            configurationContentService.apply(configurationModel, session);
-
-            // update the stored baseline after fully applying the configurationModel
-            // this could result in the baseline becoming out of sync if the second phase of the apply fails
-            // NOTE: We may prefer to use a two-phase commit style process, where the new baseline is stored in a
-            //       separate node, the apply() is completed, and then the old baseline is swapped for new.
-            baselineService.storeBaseline(configurationModel);
-
-        } catch (RuntimeException e) {
-            // TODO: ensure proper logging is done upstream
-            log.debug("Bootstrap failed!", e);
-            throw e;
+            // don't fail starting up the repository storing the baseline or content
+            try {
+                baselineService.storeBaseline(configurationModel);
+                try {
+                    contentService.apply(configurationModel, session);
+                } catch (RepositoryException|ConfigurationRuntimeException e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Failed to apply all content", e);
+                    } else {
+                        log.error("Failed to apply all content", e.getMessage());
+                    }
+                }
+            } catch (RepositoryException|IOException|ConfigurationRuntimeException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to store the Configuration baseline", e);
+                } else {
+                    log.error("Failed to store the Configuration baseline", e.getMessage());
+                }
+            }
+            started = true;
         } catch (Exception e) {
-            // TODO: ensure proper logging is done upstream
-            log.debug("Bootstrap failed!", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Bootstrap configuration failed!", e);
+            } else {
+                log.error("Bootstrap configuration failed!", e.getMessage());
+            }
+            if (e instanceof RepositoryException) {
+                throw (RepositoryException)e;
+            }
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException)e;
+            }
             throw new RuntimeException(e);
+        } finally {
+            if (!started) {
+                lockManager.unlock();
+            }
         }
     }
 
@@ -97,10 +146,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
      * Execute additional tasks (if any) after the Repository has been started (virtual layer, Modules, security, etc.)
      */
     public void postStartRepository() {
+        ensureInitialized();
         try {
-            final ConfigurationConfigService service = new ConfigurationConfigService();
-            service.writeWebfiles(configurationModel, session);
-        } catch (Exception e) {
+            configService.writeWebfiles(configurationModel, session);
+        } catch (IOException e) {
             if (log.isDebugEnabled()) {
                 log.error("Error initializing webfiles", e);
             } else {
@@ -118,16 +167,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     /**
      * Execute cleanup tasks (if any) after the Repository has been initialized, and at least release the lock
-     * created by {@link #startConfigureRepository(Session)}.
-     * @param lockSession the session which was used for {@link #startConfigureRepository(Session)} to create the lock
+     * created by {@link #startConfigureRepository()}.
      */
-    public void finishConfigureRepository(final Session lockSession) {
-
+    public void finishConfigureRepository() {
+        try {
+            lockManager.unlock();
+        } catch (Exception e) {
+            log.error("Failed to release the Bootstrap configuration lock", e);
+        }
     }
 
     @Override
     public void apply(final ConfigurationModel model)
-            throws Exception {
+            throws RepositoryException, ParserException, IOException {
+        ensureInitialized();
+        lockManager.lock();
         try {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
@@ -137,38 +191,83 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 baseline = new ConfigurationModelImpl().build();
             }
 
-            final ConfigurationConfigService service = new ConfigurationConfigService();
-            service.computeAndWriteDelta(baseline, model, session, false);
+            configService.computeAndWriteDelta(baseline, model, session, false);
             session.save();
 
             stopWatch.stop();
             log.info("ConfigurationModel applied in {}", stopWatch.toString());
         }
-        catch (Exception e) {
+        catch (RepositoryException|ParserException|IOException e) {
             log.warn("Failed to apply configuration", e);
             throw e;
+        } finally {
+            lockManager.unlock();
         }
     }
 
     @Override
-    public ConfigurationModel loadBaseline() throws Exception {
+    public ConfigurationModel loadBaseline() throws RepositoryException, ParserException, IOException {
+        ensureInitialized();
         return baselineService.loadBaseline();
     }
 
     @Override
-    public boolean matchesBaselineManifest(final ConfigurationModel model) throws Exception {
+    public boolean matchesBaselineManifest(final ConfigurationModel model) throws RepositoryException, IOException {
+        ensureInitialized();
         return baselineService.matchesBaselineManifest(model);
     }
 
     public void shutdown() {
         if (configurationModel != null) {
             try {
-                // We're completely done with the configurationModel at this point, so clean up its resources
+                // Ensure configurationModel resources are cleaned up (if any)
                 configurationModel.close();
             }
             catch (Exception e) {
                 log.error("Error closing configuration ConfigurationModel", e);
             }
+        }
+        lockManager.shutdown();
+        if (session != null && session.isLive()) {
+            session.logout();
+        }
+    }
+
+    private boolean isNamespaceRegistered(final String prefix) throws RepositoryException {
+        try {
+            session.getNamespaceURI(prefix);
+            return true;
+        } catch (NamespaceException e) {
+            return false;
+        }
+    }
+
+    private synchronized void ensureInitialized() {
+        try {
+            if (isNew()) {
+                if (!isNamespaceRegistered(HIPPO_PREFIX)) {
+                    session.getWorkspace().getNamespaceRegistry().registerNamespace(HIPPO_PREFIX, HIPPO_NAMESPACE);
+                }
+                if (!isNamespaceRegistered(HCM_PREFIX)) {
+                    session.getWorkspace().getNamespaceRegistry().registerNamespace(HCM_PREFIX, HCM_NAMESPACE);
+                }
+                if (!session.getWorkspace().getNodeTypeManager().hasNodeType(HIPPO_LOCK)) {
+                    // TODO: fix location to /hcm-config/hippo.cnd
+                    try (InputStream is = getClass().getResourceAsStream("/hippo.cnd")) {
+                        BootstrapUtils.initializeNodetypes(session, is, "hippo.cnd");
+                    }
+                }
+                if (!session.getWorkspace().getNodeTypeManager().hasNodeType(NT_HCM_ROOT)) {
+                    try (InputStream is = getClass().getResourceAsStream("/"+HCM_CONFIG_FOLDER+"/hcm.cnd")) {
+                        BootstrapUtils.initializeNodetypes(session, is, "hcm.cnd");
+                    }
+                }
+                Node hcmRootNode = session.getRootNode().addNode(HCM_ROOT, NT_HCM_ROOT);
+                hcmRootNode.addNode(HIPPO_LOCK, HIPPO_LOCK);
+                session.save();
+            }
+        } catch (IOException|RepositoryException e) {
+            throw new ConfigurationRuntimeException(e);
         }
     }
 }

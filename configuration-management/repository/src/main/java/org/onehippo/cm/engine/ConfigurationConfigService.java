@@ -19,6 +19,7 @@ package org.onehippo.cm.engine;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,12 +107,12 @@ public class ConfigurationConfigService {
         }
     }
 
-    void writeWebfiles(final ConfigurationModel model, final Session session) throws Exception {
+    void writeWebfiles(final ConfigurationModel model, final Session session) throws IOException {
         final WebFilesService service = HippoServiceRegistry.getService(WebFilesService.class);
         if (service == null) {
             final String msg = String.format("Failed to import web file bundles: missing service for '%s'",
                     WebFilesService.class.getName());
-            throw new RuntimeException(msg);
+            throw new ConfigurationRuntimeException(msg);
         }
 
         for (WebFileBundleDefinition webFileBundleDefinition : model.getWebFileBundleDefinitions()) {
@@ -123,9 +124,13 @@ public class ConfigurationConfigService {
                     webFileBundleDefinition.getSource().getModule().getConfigResourceInputProvider();
             final URL baseURL = resourceInputProvider.getBaseURL();
             if (baseURL.toString().contains("jar!")) {
-                final PartialZipFile bundleZipFile =
-                        new PartialZipFile(getBaseZipFileFromURL(baseURL), bundleName);
-                service.importJcrWebFileBundle(session, bundleZipFile, true);
+                final PartialZipFile bundleZipFile;
+                try {
+                    bundleZipFile = new PartialZipFile(getBaseZipFileFromURL(baseURL), bundleName);
+                    service.importJcrWebFileBundle(session, bundleZipFile, true);
+                } catch (URISyntaxException e) {
+                    throw new ConfigurationRuntimeException(e);
+                }
             } else if (baseURL.toString().startsWith("file:")) {
                 final File bundleDir = new File(FileUtils.toFile(baseURL), bundleName);
                 service.importJcrWebFileBundle(session, bundleDir, true);
@@ -182,7 +187,7 @@ public class ConfigurationConfigService {
                                     "namespace with prefix '%s' already exists in repository with different URI. " +
                                     "Existing: '%s', target: '%s'. Changing existing namespaces is not supported. Aborting.",
                             namespaceDefinition.getOrigin(), prefix, repositoryURI, uriString);
-                    throw new RuntimeException(msg);
+                    throw new ConfigurationRuntimeException(msg);
                 }
             } else {
                 session.getWorkspace().getNamespaceRegistry().registerNamespace(prefix, uriString);
@@ -658,7 +663,7 @@ public class ConfigurationConfigService {
             String msg = String.format(
                     "Failed to process property '%s' defined in %s: %s",
                     updateProperty.getPath(), updateProperty.getOrigin(), e.getMessage());
-            throw new RuntimeException(msg, e);
+            throw new ConfigurationRuntimeException(msg, e);
         }
     }
 

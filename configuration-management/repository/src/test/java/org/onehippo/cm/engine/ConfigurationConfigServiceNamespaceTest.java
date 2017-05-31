@@ -136,14 +136,14 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
         final String source
                 = "definitions:\n"
                 + "  namespace:\n"
-                + "    test:\n"
+                + "    test1:\n"
                 + "      uri: http://www.onehippo.org/test/nt/1.0\n"
-                + "      cnd: test.cnd\n"
+                + "      cnd: test1.cnd\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
                 + "      /node:\n"
-                + "        jcr:primaryType: test:type\n"
+                + "        jcr:primaryType: test1:type\n"
                 + "";
 
         final ExpectedEvents expectedEvents = new ExpectedEvents()
@@ -152,7 +152,7 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
         applyDefinitions(source, expectedEvents);
 
         expectNode("/test/node", "[]", "[jcr:primaryType]");
-        expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test:type");
+        expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test1:type");
     }
 
     @Test
@@ -259,7 +259,7 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
                 + "      /node:\n"
-                + "        jcr:primaryType: test:type\n"
+                + "        jcr:primaryType: test1:type\n"
                 + "";
 
         try {
