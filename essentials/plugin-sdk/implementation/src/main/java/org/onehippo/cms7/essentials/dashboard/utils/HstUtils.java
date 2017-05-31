@@ -83,11 +83,6 @@ public final class HstUtils {
                 configurations.getNode(preview).remove();
             }
 
-            final Node channels = session.getNode("/hst:hst/hst:channels");
-            if (channels.hasNode(preview)) {
-                channels.getNode(preview).remove();
-            }
-
             session.save();
         } catch (RepositoryException ex) {
             log.warn("Unable to delete preview configuration", ex);
