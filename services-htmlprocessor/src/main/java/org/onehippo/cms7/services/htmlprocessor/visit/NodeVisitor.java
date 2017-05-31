@@ -29,14 +29,6 @@ public abstract class NodeVisitor implements TagVisitor {
     }
 
     @Override
-    public void before() {
-    }
-
-    @Override
-    public void after() {
-    }
-
-    @Override
     public void release() {
         nodeModel.release();
     }
