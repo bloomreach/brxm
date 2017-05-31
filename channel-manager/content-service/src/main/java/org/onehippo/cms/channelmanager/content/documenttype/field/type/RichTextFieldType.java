@@ -25,6 +25,9 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -45,9 +48,6 @@ import org.onehippo.cms7.services.htmlprocessor.richtext.model.RichTextProcessor
 import org.onehippo.cms7.services.htmlprocessor.richtext.visit.ImageVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * A document field of type hippostd:html.
@@ -273,6 +273,12 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
 
         @Override
         public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {}
+
+        @Override
+        public void before() {}
+
+        @Override
+        public void after() {}
 
         @Override
         public void release() {}
