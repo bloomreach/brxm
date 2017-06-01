@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -96,6 +97,9 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
     // store marker here to indicate whether this came from a filesystem mvn path at startup
     private String mvnPath;
+
+    // set of resource paths that should be removed during auto-export write step
+    private Set<String> removedResources = new HashSet<>();
 
     public ModuleImpl(final String name, final ProjectImpl project) {
         if (name == null) {
@@ -268,6 +272,10 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     public ModuleImpl setMvnPath(final String mvnPath) {
         this.mvnPath = mvnPath;
         return this;
+    }
+
+    public void addResourceToRemove(final String resourcePath) {
+        removedResources.add(resourcePath);
     }
 
     public ModuleImpl build() {
