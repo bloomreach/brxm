@@ -15,9 +15,13 @@
  */
 package org.onehippo.cms7.utilities.servlet;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
-import org.junit.Before;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -25,160 +29,121 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletConfig;
 
-import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.core.Is.is;
 
 public class ResourceServletTest {
-    
-    private ResourceServlet defaultServlet;
-    private ResourceServlet moreServingServlet;
-    
-    @Before
-    public void setUp() throws Exception {
-        defaultServlet = new ResourceServlet();
-        MockServletConfig servletConfig = new MockServletConfig();
-        servletConfig.addInitParameter("jarPathPrefix", "META-INF/test");
-        servletConfig.addInitParameter("requireAuthentication", "false");
-        defaultServlet.init(servletConfig);
 
-        moreServingServlet = new ResourceServlet();
-        servletConfig = new MockServletConfig();
-        servletConfig.addInitParameter("jarPathPrefix", "META-INF/test");
-        servletConfig.addInitParameter("requireAuthentication", "false");
-        final String customAllowedResourcePaths =
-            "^/.*\\.js, \n" + 
-            "^/.*\\.css, \n" + 
-            "^/.*\\.png, \n" + 
-            "^/.*\\.gif, \n" + 
-            "^/.*\\.ico, \n" + 
-            "^/.*\\.jpg, \n" + 
-            "^/.*\\.jpeg, \n" + 
-            "^/.*\\.swf, \n" +
-            "^/.*\\.properties\n";
-        servletConfig.addInitParameter("allowedResourcePaths", customAllowedResourcePaths);
-        final String mimeTypes =
-            ".css = text/css,\n" +
-            ".js = text/javascript,\n" +
-            ".gif = image/gif,\n" +
-            ".png = image/png,\n" +
-            ".ico = image/vnd.microsoft.icon,\n" +
-            ".jpg = image/jpeg,\n" +
-            ".jpeg = image/jpeg,\n" +
-            ".swf = application/x-shockwave-flash,\n" +
-            ".properties = text/plain\n";
-        
-        servletConfig.addInitParameter("mimeTypes", mimeTypes);
-        moreServingServlet.init(servletConfig);
-    }
-    
+    private static final String GIF_RESOURCE_PATH = "^/.*\\\\.gif\\n";
+    private static final String PROPERTIES_RESOURCE_PATH = "^/.*\\.properties\n";
+    private static final String GIF_RESOURCE_MIME = ".gif = image/gif\\n";
+    private static final String PROPERTIES_RESOURCE_MIME = ".properties = text/plain\n";
+
     @Test
-    public void testDefaultServlet() throws Exception {
-        MockHttpServletRequest request = getMockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        defaultServlet.service(request, response);
-        assertEquals(200, response.getStatus());
-        assertEquals("image/gif", response.getContentType());
-
-        request = new MockHttpServletRequest();
-        request.addHeader("Accept", "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,video/x-mng,image/png,image/jpeg,image/gif;q=0.2,*/*;q=0.1");
-        request.addHeader("Accept-Encoding", "gzip,deflate");
-        request.setMethod("GET");
-        request.setServletPath("/resources");
-        request.setPathInfo("/internal.properties");
-        response = new MockHttpServletResponse();
-        defaultServlet.service(request, response);
-        assertEquals(404, response.getStatus());
+    public void testDefaultServlet() throws ServletException, IOException {
+        final MockHttpServletRequest servletRequest = getMockHttpServletRequest();
+        final MockHttpServletResponse validResponse = new MockHttpServletResponse();
+        final ResourceServlet servlet = initializeServlet(false, null, null);
+        servlet.service(servletRequest, validResponse);
+        Assert.assertThat("Default servlet should allow any request.", validResponse.getStatus(), is(200));
+        Assert.assertThat("Response should be of type image/gif.", validResponse.getContentType(), is("image/gif"));
     }
 
     @Test
-    public void testMoreServingServlet() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Accept", "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,video/x-mng,image/png,image/jpeg,image/gif;q=0.2,*/*;q=0.1");
-        request.addHeader("Accept-Encoding", "gzip,deflate");
-        request.setMethod("GET");
-        request.setServletPath("/resources");
-        request.setPathInfo("/onehippo.gif");
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        moreServingServlet.service(request, response);
-        assertEquals(200, response.getStatus());
-        assertEquals("image/gif", response.getContentType());
-
-        request = new MockHttpServletRequest();
-        request.addHeader("Accept", "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,video/x-mng,image/png,image/jpeg,image/gif;q=0.2,*/*;q=0.1");
-        request.addHeader("Accept-Encoding", "gzip,deflate");
-        request.setMethod("GET");
-        request.setServletPath("/resources");
-        request.setPathInfo("/internal.properties");
-        response = new MockHttpServletResponse();
-        moreServingServlet.service(request, response);
-        assertEquals(200, response.getStatus());
-        assertEquals("text/plain", response.getContentType());
-        assertEquals("gzip", response.getHeader("Content-Encoding"));
+    public void testDefaultServletWithInvalidRequest() throws ServletException, IOException {
+        final MockHttpServletRequest servletRequest = new MockHttpServletRequest();
+        servletRequest.addHeader("Accept", "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,video/x-mng,image/png,image/jpeg,image/gif;q=0.2,*/*;q=0.1");
+        servletRequest.addHeader("Accept-Encoding", "gzip,deflate");
+        servletRequest.setMethod("GET");
+        servletRequest.setServletPath("/resources");
+        servletRequest.setPathInfo("/internal.properties");
+        final MockHttpServletResponse invalidResponse = new MockHttpServletResponse();
+        final ResourceServlet resourceServlet = initializeServlet(false, null, null);
+        resourceServlet.service(servletRequest, invalidResponse);
+        Assert.assertThat("Should give 404 since internal.properties is not accepted.", invalidResponse.getStatus(), is(404));
     }
 
     @Test
-    public void testUnauthorizedServlet() throws Exception {
+    public void testResourcePaths() throws ServletException, IOException {
+        final MockHttpServletRequest servletRequest = getMockHttpServletRequest();
+        final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
+        final ResourceServlet servlet = initializeServlet(false, GIF_RESOURCE_PATH, GIF_RESOURCE_MIME);
+        servlet.service(servletRequest, servletResponse);
+        Assert.assertThat("Servlet should allow requests for image/gif.", servletResponse.getStatus(), is(200));
+        Assert.assertThat("Response should be of type image/gif.", servletResponse.getContentType(), is("image/gif"));
+    }
+
+    @Test
+    public void testCustomAllowedResourcePaths() throws ServletException, IOException {
+        final MockHttpServletRequest request = getMockHttpServletRequest();
+        final MockHttpServletResponse validResponse = new MockHttpServletResponse();
+        final ResourceServlet servlet = initializeServlet(false, PROPERTIES_RESOURCE_PATH, PROPERTIES_RESOURCE_MIME);
+        servlet.service(request, validResponse);
+        Assert.assertThat("Servlet should allow requests for text/plain.", validResponse.getStatus(), is(200));
+        Assert.assertThat("Response should be of type text/plain.", validResponse.getContentType(), is("text/plain"));
+        Assert.assertThat("Response content should be encoded.", validResponse.getHeader("Content-Encoding"), is("gzip"));
+    }
+
+    @Test
+    public void testUnauthorizedServlet() throws ServletException, IOException {
         final MockHttpServletRequest request = getMockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        moreServingServlet = new ResourceServlet();
-        final MockServletConfig servletConfig = new MockServletConfig();
-        servletConfig.addInitParameter("jarPathPrefix", "META-INF/test");
-        servletConfig.addInitParameter("requireAuthentication", "true");
-        final String customAllowedResourcePaths =
-                "^/.*\\.gif\n";
-        servletConfig.addInitParameter("allowedResourcePaths", customAllowedResourcePaths);
-        final String mimeTypes =
-                ".gif = image/gif\n";
-
-        servletConfig.addInitParameter("mimeTypes", mimeTypes);
-        moreServingServlet.init(servletConfig);
-        moreServingServlet.service(request, response);
-        assertEquals(404, response.getStatus());
+        final ResourceServlet servlet = initializeServlet(true, GIF_RESOURCE_PATH, GIF_RESOURCE_MIME);
+        servlet.service(request, response);
+        Assert.assertThat("Unauthorized request should give 404.", response.getStatus(), is(404));
     }
 
     @Test
-    public void testAuthorizedServlet() throws Exception {
+    public void testAuthorizedServlet() throws ServletException, IOException {
         final MockHttpServletRequest request = getMockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final ResourceServlet servlet = initializeServlet(true, GIF_RESOURCE_PATH, GIF_RESOURCE_MIME);
+        fakeLoggedinUser(request);
+        servlet.service(request, response);
+        Assert.assertThat("Authorized request should give resource.", response.getStatus(), is(200));
+        Assert.assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
+    }
+
+    private ResourceServlet initializeServlet(final boolean requireAuthentication, final String allowedResourcePaths, final String mimeTypes) throws ServletException {
+        final ResourceServlet servlet = new ResourceServlet();
+        final MockServletConfig servletConfig = new MockServletConfig();
+        servletConfig.addInitParameter("jarPathPrefix", "META-INF/test");
+        servletConfig.addInitParameter("requireAuthentication", requireAuthentication ? "true" : "false");
+        if (!StringUtils.isEmpty(allowedResourcePaths)) {
+            servletConfig.addInitParameter("allowedResourcePaths", allowedResourcePaths);
+        }
+
+        if (!StringUtils.isEmpty(mimeTypes)) {
+            servletConfig.addInitParameter("mimeTypes", mimeTypes);
+        }
+        servlet.init(servletConfig);
+        return servlet;
+    }
+
+    private void fakeLoggedinUser(final MockHttpServletRequest request) {
         final HttpSession mockedSession = new MockHttpSession();
-        mockedSession.setAttribute(CmsSessionContext.class.getName(), getSessionContext());
+        mockedSession.setAttribute(CmsSessionContext.class.getName(), new MockSessionContext());
         request.setSession(mockedSession);
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        moreServingServlet = new ResourceServlet();
-        final MockServletConfig servletConfig = new MockServletConfig();
-        servletConfig.addInitParameter("jarPathPrefix", "META-INF/test");
-        servletConfig.addInitParameter("requireAuthentication", "true");
-        final String customAllowedResourcePaths =
-                        "^/.*\\.gif\n";
-        servletConfig.addInitParameter("allowedResourcePaths", customAllowedResourcePaths);
-        final String mimeTypes =
-                        ".gif = image/gif\n";
-
-        servletConfig.addInitParameter("mimeTypes", mimeTypes);
-        moreServingServlet.init(servletConfig);
-        moreServingServlet.service(request, response);
-        assertEquals(200, response.getStatus());
-        assertEquals("image/gif", response.getContentType());
     }
 
-    private CmsSessionContext getSessionContext() {
-        return new CmsSessionContext() {
-            @Override
-            public String getId() {
-                return null;
-            }
+    class MockSessionContext implements CmsSessionContext {
 
-            @Override
-            public String getCmsContextServiceId() {
-                return null;
-            }
+        @Override
+        public String getId() {
+            return null;
+        }
 
-            @Override
-            public Object get(final String s) {
-                return null;
-            }
-        };
+        @Override
+        public String getCmsContextServiceId() {
+            return null;
+        }
+
+        @Override
+        public Object get(final String s) {
+            return null;
+        }
     }
 
-    private MockHttpServletRequest getMockHttpServletRequest() {
+    private static MockHttpServletRequest getMockHttpServletRequest() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         request.addHeader("Accept", "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,video/x-mng,image/png,image/jpeg,image/gif;q=0.2,*/*;q=0.1");
