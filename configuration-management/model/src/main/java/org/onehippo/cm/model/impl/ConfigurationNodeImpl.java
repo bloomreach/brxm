@@ -173,10 +173,6 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
 
     @Override
     public ConfigurationItemCategory getChildPropertyCategory(final String propertyName) {
-        if (modifiableProperties.containsKey(propertyName)) {
-            return ConfigurationItemCategory.CONFIGURATION;
-        }
-
         if (childPropertyCategorySettings.containsKey(propertyName)) {
             return childPropertyCategorySettings.get(propertyName).getLeft();
         }
@@ -184,20 +180,28 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
         return ConfigurationItemCategory.CONFIGURATION;
     }
 
+    public Pair<ConfigurationItemCategory, DefinitionItemImpl> getChildNodeCategorySettings(final String name) {
+        return childNodeCategorySettings.get(name);
+    }
+
     public void setChildNodeCategorySettings(final String name, final ConfigurationItemCategory category, final DefinitionItemImpl definitionItem) {
         childNodeCategorySettings.put(SnsUtils.getUnindexedName(name), Pair.of(category, definitionItem));
     }
 
-    public Pair<ConfigurationItemCategory, DefinitionItemImpl> getChildNodeCategorySettings(final String name) {
-        return childNodeCategorySettings.get(name);
+    public Pair<ConfigurationItemCategory, DefinitionItemImpl> clearChildNodeCategorySettings(final String name) {
+        return childNodeCategorySettings.remove(name);
+    }
+
+    public Pair<ConfigurationItemCategory, DefinitionItemImpl> getChildPropertyCategorySettings(final String name) {
+        return childPropertyCategorySettings.get(name);
     }
 
     public void setChildPropertyCategorySettings(final String name, final ConfigurationItemCategory category, final DefinitionItemImpl definitionItem) {
         childPropertyCategorySettings.put(name, Pair.of(category, definitionItem));
     }
 
-    public Pair<ConfigurationItemCategory, DefinitionItemImpl> getChildPropertyCategorySettings(final String name) {
-        return childPropertyCategorySettings.get(name);
+    public Pair<ConfigurationItemCategory, DefinitionItemImpl> clearChildPropertyCategorySettings(final String name) {
+        return childPropertyCategorySettings.remove(name);
     }
 
     public ConfigurationItemCategory getResidualNodeCategory() {

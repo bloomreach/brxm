@@ -119,15 +119,16 @@ public class ConfigSourceParser extends SourceParser {
                 final boolean delete = asNodeDeleteValue(tupleValue);
                 definitionNode.setDelete(delete);
             } else if (key.equals(META_CATEGORY_KEY)) {
-                if (tuples.size() > 1) {
-                    throw new ParserException("Node cannot contain '" + META_CATEGORY_KEY + "' and other keys", node);
+                final ConfigurationItemCategory category = constructCategory(tupleValue);
+                if (tuples.size() > 1 && category != ConfigurationItemCategory.CONFIGURATION) {
+                    throw new ParserException("Nodes that specify '" + META_CATEGORY_KEY + ": " + category
+                            + "' cannot contain other keys", node);
                 }
-                final Pair<String, Integer> parsedName = SnsUtils.splitIndexedName(definitionNode.getName());
-                if (parsedName.getRight() > 0) {
+                final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(definitionNode.getName());
+                if (nameAndIndex.getRight() > 0) {
                     throw new ParserException("'" + META_CATEGORY_KEY
                             + "' cannot be configured for explicitly indexed same-name siblings", node);
                 }
-                final ConfigurationItemCategory category = constructCategory(tupleValue);
                 definitionNode.setCategory(category);
             } else if (key.equals(META_RESIDUAL_CHILD_NODE_CATEGORY_KEY)) {
                 final Pair<String, Integer> parsedName = SnsUtils.splitIndexedName(definitionNode.getName());

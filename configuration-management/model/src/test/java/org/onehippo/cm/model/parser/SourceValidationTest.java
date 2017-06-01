@@ -1115,21 +1115,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void metaCategoryConfigurationCannotBeUsed() {
-        final String yaml = "definitions:\n"
-                + "  config:\n"
-                + "    /path/to/node:\n"
-                + "      .meta:category: configuration\n";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node nodeMap = firstConfigTuple(root).getValueNode();
-        final Node metaCategoryValue = firstTuple(nodeMap).getValueNode();
-
-        assertParserException(root, metaCategoryValue, ".meta:category value 'configuration' is not allowed");
-    }
-
-    @Test
-    public void metaCategoryMustBeSoleStatementForNode() {
+    public void metaCategoryMustBeSoleStatementForNonConfigurationNode() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -1139,11 +1125,11 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node nodeMap = firstConfigTuple(root).getValueNode();
 
-        assertParserException(root, nodeMap, "Node cannot contain '.meta:category' and other keys");
+        assertParserException(root, nodeMap, "Nodes that specify '.meta:category: runtime' cannot contain other keys");
     }
 
     @Test
-    public void metaCategoryMustBeSoleStatementForProperty() {
+    public void metaCategoryMustBeSoleStatementForNonConfigurationProperty() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -1155,7 +1141,8 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node nodeMap = firstConfigTuple(root).getValueNode();
         final Node propertyMap = firstTuple(nodeMap).getValueNode();
 
-        assertParserException(root, propertyMap, "Property map cannot contain '.meta:category' and other keys");
+        assertParserException(root, propertyMap,
+                "Properties that specify '.meta:category: runtime' cannot contain other keys");
     }
 
     @Test

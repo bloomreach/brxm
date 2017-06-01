@@ -219,18 +219,27 @@ public abstract class SourceParser extends AbstractBaseParser {
         final Map<String, Node> map = asMapping(value, new String[0],
                 new String[]{META_CATEGORY_KEY,OPERATION_KEY,TYPE_KEY,VALUE_KEY,RESOURCE_KEY,PATH_KEY});
 
+        int expectedMapSize = 1; // the 'value', 'resource', or 'path' key
+
+        final ConfigurationItemCategory category;
         if (map.keySet().contains(META_CATEGORY_KEY)) {
-            if (map.size() != 1) {
-                throw new ParserException(
-                        "Property map cannot contain '" + META_CATEGORY_KEY + "' and other keys",
-                        value);
+            category = constructCategory(map.get(META_CATEGORY_KEY));
+            if (map.size() == 1) {
+                property = parent.addProperty(name, ValueType.STRING, new ValueImpl[0]);
+                property.setCategory(category);
+                return property;
+            } else {
+                if (category != ConfigurationItemCategory.CONFIGURATION) {
+                    throw new ParserException(
+                            "Properties that specify '" + META_CATEGORY_KEY + ": " + category + "' cannot contain other keys",
+                            value);
+                }
             }
-            property = parent.addProperty(name, ValueType.STRING, new ValueImpl[0]);
-            property.setCategory(constructCategory(map.get(META_CATEGORY_KEY)));
-            return property;
+            expectedMapSize++;
+        } else {
+            category = null;
         }
 
-        int expectedMapSize = 1; // the 'value', 'resource', or 'path' key
         final PropertyOperation operation;
         if (map.keySet().contains(OPERATION_KEY)) {
             operation = constructPropertyOperation(map.get(OPERATION_KEY));
@@ -284,19 +293,15 @@ public abstract class SourceParser extends AbstractBaseParser {
         }
 
         property.setOperation(operation);
+        property.setCategory(category);
+
         return property;
     }
 
     protected ConfigurationItemCategory constructCategory(final Node node) throws ParserException {
         final String categoryString = asStringScalar(node);
         try {
-            final ConfigurationItemCategory category = ConfigurationItemCategory.valueOf(categoryString.toUpperCase());
-            if (category == ConfigurationItemCategory.CONFIGURATION) {
-                throw new ParserException(
-                        META_CATEGORY_KEY + " value '" + ConfigurationItemCategory.CONFIGURATION + "' is not allowed",
-                        node);
-            }
-            return category;
+            return ConfigurationItemCategory.valueOf(categoryString.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new ParserException("Unrecognized category: '" + categoryString + "'", node);
         }

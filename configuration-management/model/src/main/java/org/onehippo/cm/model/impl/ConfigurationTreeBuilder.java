@@ -34,9 +34,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.MIX_REFERENCEABLE;
-import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
 import static org.onehippo.cm.model.Constants.META_IGNORE_REORDERED_CHILDREN;
-import static org.onehippo.cm.model.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
 import static org.onehippo.cm.model.PropertyOperation.ADD;
 import static org.onehippo.cm.model.PropertyOperation.DELETE;
 import static org.onehippo.cm.model.PropertyOperation.OVERRIDE;
@@ -107,12 +105,17 @@ class ConfigurationTreeBuilder {
         }
 
         if (definitionNode.getCategory() != null) {
-            signalUnsupportedCategoryOverride(definitionNode, node);
-        }
-        if (definitionNode.getResidualChildNodeCategory() != null) {
-            if (node.getResidualNodeCategory() != null) {
-                signalUnsupportedResidualCategoryOverride(definitionNode, node);
+            if (definitionNode.getCategory() == ConfigurationItemCategory.CONFIGURATION) {
+                node.getParent().clearChildNodeCategorySettings(node.getName());
+            } else {
+                keepOnlyFirstSns(node.getParent(), node.getName());
+                markNodeAsDeletedBy(node, definitionNode);
+                node.getParent().setChildNodeCategorySettings(node.getName(), definitionNode.getCategory(), definitionNode);
+                return;
             }
+        }
+
+        if (definitionNode.getResidualChildNodeCategory() != null) {
             node.setResidualNodeCategory(definitionNode.getResidualChildNodeCategory());
             node.setResidualNodeCategoryDefinitionItem(definitionNode);
             node.addDefinitionItem(definitionNode);
@@ -206,6 +209,10 @@ class ConfigurationTreeBuilder {
                     continue;
                 }
             } else {
+                if (isAndRemainsNonConfigurationNode(node, indexedName, definitionChild.getCategory())) {
+                    logger.warn("Trying to modify non-configuration node '{}', skipping.", definitionChild.getPath());
+                    continue;
+                }
                 child = createChildNode(node, indexedName, definitionChild);
                 if (child == null) {
                     continue;
@@ -215,26 +222,50 @@ class ConfigurationTreeBuilder {
         }
     }
 
+    private void keepOnlyFirstSns(final ConfigurationNodeImpl node, final String indexedName) {
+        if (SnsUtils.hasSns(indexedName, node.getNodes().keySet())) {
+            final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(indexedName);
+            final List<String> namesToDelete = new ArrayList<>();
+            for (String siblingIndexedName : node.getNodes().keySet()) {
+                final Pair<String, Integer> siblingNameAndIndex = SnsUtils.splitIndexedName(siblingIndexedName);
+                if (siblingNameAndIndex.getLeft().equals(nameAndIndex.getLeft()) && siblingNameAndIndex.getRight() > 1) {
+                    namesToDelete.add(siblingIndexedName);
+                }
+            }
+            for (String nameToDelete : namesToDelete) {
+                node.removeNode(nameToDelete, false);
+            }
+        }
+    }
+
+    private boolean isAndRemainsNonConfigurationNode(final ConfigurationNodeImpl node,
+                                                     final String indexedChildNodeName,
+                                                     final ConfigurationItemCategory override) {
+        final Pair<ConfigurationItemCategory, DefinitionItemImpl> categoryAndDefinition =
+                node.getChildNodeCategorySettings(SnsUtils.getUnindexedName(indexedChildNodeName));
+
+        return categoryAndDefinition != null
+                && categoryAndDefinition.getLeft() != ConfigurationItemCategory.CONFIGURATION
+                && override != ConfigurationItemCategory.CONFIGURATION;
+    }
+
+    private boolean isAndRemainsNonConfigurationProperty(final ConfigurationNodeImpl node,
+                                                         final String propertyName,
+                                                         final ConfigurationItemCategory override) {
+        final Pair<ConfigurationItemCategory, DefinitionItemImpl> categoryAndDefinition =
+                node.getChildPropertyCategorySettings(propertyName);
+
+        return categoryAndDefinition != null
+                && categoryAndDefinition.getLeft() != ConfigurationItemCategory.CONFIGURATION
+                && override != ConfigurationItemCategory.CONFIGURATION;
+    }
+
     private void markNodeAsDeletedBy(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
         node.setDeleted(true);
         node.addDefinitionItem(definitionNode);
         node.clearNodes();
         node.clearProperties();
-    }
-
-    private void signalUnsupportedCategoryOverride(final DefinitionItemImpl definitionItem, final ConfigurationItemImpl configurationItem) {
-        String msg = String.format(
-                "%s: overriding %s is not supported; '%s' was contributed as configuration by %s.",
-                definitionItem.getOrigin(), META_CATEGORY_KEY, definitionItem.getPath(), configurationItem.getOrigin());
-        throw new IllegalStateException(msg);
-    }
-
-    private void signalUnsupportedResidualCategoryOverride(final DefinitionNodeImpl definitionNode, final ConfigurationNodeImpl configurationNode) {
-        String msg = String.format(
-                "%s: overriding %s is not supported; node '%s' was set to %s by %s.",
-                definitionNode.getOrigin(), META_RESIDUAL_CHILD_NODE_CATEGORY_KEY, definitionNode.getPath(),
-                configurationNode.getResidualNodeCategory(), configurationNode.getResidualNodeCategoryDefinitionItem().getOrigin());
-        throw new IllegalStateException(msg);
+        node.getParent().clearChildNodeCategorySettings(node.getName());
     }
 
     private ConfigurationNodeImpl getOrCreateRootForDefinition(final ContentDefinitionImpl definition) {
@@ -266,7 +297,13 @@ class ConfigurationTreeBuilder {
         }
 
         if (pathSegments.length > segmentsConsumed) {
-            rootForDefinition = createChildNode(rootForDefinition, pathSegments[segmentsConsumed], definition.getModifiableNode());
+            final String nodeName = pathSegments[segmentsConsumed];
+            if (isAndRemainsNonConfigurationNode(rootForDefinition, nodeName, definition.getNode().getCategory())) {
+                logger.warn("Trying to modify non-configuration node '{}', skipping.", definition.getNode().getPath());
+                return null;
+            }
+            rootForDefinition =
+                    createChildNode(rootForDefinition, nodeName, definition.getModifiableNode());
         } else {
             if (rootForDefinition == root && definitionNode.isDelete()) {
                 throw new IllegalArgumentException("Deleting the root node is not supported.");
@@ -289,17 +326,22 @@ class ConfigurationTreeBuilder {
             }
         }
 
-        final Pair<String, Integer> parsedName = SnsUtils.splitIndexedName(name);
-
-        failOnPriorCategorySettings(parent.getChildNodeCategorySettings(parsedName.getLeft()), definitionNode);
+        final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(name);
 
         if (definitionNode.getCategory() != null) {
-            parent.setChildNodeCategorySettings(parsedName.getLeft(), definitionNode.getCategory(), definitionNode);
-            return null;
+            if (definitionNode.getCategory() == ConfigurationItemCategory.CONFIGURATION) {
+                parent.clearChildNodeCategorySettings(nameAndIndex.getLeft());
+                if (definitionNode.getNodes().size() == 0 && definitionNode.getProperties().size() == 0) {
+                    return null;
+                }
+            } else {
+                parent.setChildNodeCategorySettings(nameAndIndex.getLeft(), definitionNode.getCategory(), definitionNode);
+                return null;
+            }
         }
 
-        if (parsedName.getRight() > 1) {
-            final String expectedSibling = SnsUtils.createIndexedName(parsedName.getLeft(), parsedName.getRight() - 1);
+        if (nameAndIndex.getRight() > 1) {
+            final String expectedSibling = SnsUtils.createIndexedName(nameAndIndex.getLeft(), nameAndIndex.getRight() - 1);
             if (!parent.getNodes().containsKey(expectedSibling)) {
                 final String msg = String.format("%s defines node '%s', but no sibling named '%s' was found",
                         definitionNode.getOrigin(), definitionNode.getPath(), expectedSibling);
@@ -316,26 +358,6 @@ class ConfigurationTreeBuilder {
         return node;
     }
 
-    private void failOnPriorCategorySettings(
-            final Pair<ConfigurationItemCategory, DefinitionItemImpl> priorSettings,
-            final DefinitionItemImpl definitionItem) {
-        if (priorSettings != null) {
-            if (definitionItem.getCategory() != null) {
-                String msg = String.format("%s: overriding %s is not supported; was set to %s on %s by %s.",
-                        definitionItem.getOrigin(), META_CATEGORY_KEY, priorSettings.getLeft(), definitionItem.getPath(),
-                        priorSettings.getRight().getOrigin());
-                throw new IllegalStateException(msg);
-            } else {
-                String msg = String.format(
-                        "%s: trying to add configuration on path %s while it had set '%s: %s' by %s.",
-                        definitionItem.getOrigin(), definitionItem.getPath(), META_CATEGORY_KEY, priorSettings.getLeft(),
-                        priorSettings.getRight().getOrigin());
-                throw new IllegalStateException(msg);
-            }
-        }
-
-    }
-
     private void mergeProperty(final ConfigurationNodeImpl parent,
                                final DefinitionPropertyImpl definitionProperty) {
         // a node should have a back-reference to any definition that changes its properties
@@ -349,18 +371,24 @@ class ConfigurationTreeBuilder {
         if (properties.containsKey(name)) {
             property = properties.get(name);
 
-            if (definitionProperty.getCategory() != null) {
-                signalUnsupportedCategoryOverride(definitionProperty, property);
-            }
-
             if (property.isDeleted()) {
                 logger.warn("Property '{}' defined in '{}' has already been deleted. This property is not re-created.",
                         property.getPath(), definitionProperty.getOrigin());
             }
 
+            // property already exists, so its parent has this property registered as configuration
+            final ConfigurationItemCategory category = definitionProperty.getCategory();
+            if (category != null && category != ConfigurationItemCategory.CONFIGURATION) {
+                property.setDeleted(true);
+                property.addDefinitionItem(definitionProperty);
+                parent.setChildPropertyCategorySettings(name, category, definitionProperty);
+                return;
+            }
+
             if (op == DELETE) {
                 property.setDeleted(true);
                 property.addDefinitionItem(definitionProperty);
+                // no need to clear category on parent
                 return;
             }
 
@@ -375,11 +403,18 @@ class ConfigurationTreeBuilder {
             requireOverrideOperationForPrimaryType(definitionProperty, property, op == OVERRIDE);
             requireOverrideOperationForMixinTypes(definitionProperty, property, op);
         } else {
-            failOnPriorCategorySettings(parent.getChildPropertyCategorySettings(name), definitionProperty);
-
-            if (definitionProperty.getCategory() != null) {
-                parent.setChildPropertyCategorySettings(name, definitionProperty.getCategory(), definitionProperty);
+            final ConfigurationItemCategory category = definitionProperty.getCategory();
+            if (isAndRemainsNonConfigurationProperty(parent, definitionProperty.getName(), category)) {
+                logger.warn("Trying to modify non-configuration property '{}', skipping.", definitionProperty.getPath());
                 return;
+            }
+            if (category != null) {
+                if (category == ConfigurationItemCategory.CONFIGURATION) {
+                    parent.clearChildPropertyCategorySettings(name);
+                } else {
+                    parent.setChildPropertyCategorySettings(name, definitionProperty.getCategory(), definitionProperty);
+                    return;
+                }
             }
 
             if (op == DELETE) {
