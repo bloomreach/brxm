@@ -15,7 +15,7 @@
  */
 
 class CKEditorController {
-  constructor($scope, $element, $window, CKEditorService, CmsService, ConfigService, DomService) {
+  constructor($scope, $element, $window, CKEditorService, CmsService, ConfigService, DomService, SharedSpaceToolbarService) {
     'ngInject';
 
     this.$scope = $scope;
@@ -25,6 +25,7 @@ class CKEditorController {
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
+    this.SharedSpaceToolbarService = SharedSpaceToolbarService;
   }
 
   $onInit() {
@@ -32,6 +33,14 @@ class CKEditorController {
 
     this.CKEditorService.loadCKEditor().then((CKEDITOR) => {
       const editorConfig = angular.copy(this.config);
+      editorConfig.sharedSpaces = {
+        top: 'ckeditor-shared-space-top',
+        bottom: 'ckeditor-shared-space-bottom',
+      };
+
+      editorConfig.plugins += ',sharedspace';
+      editorConfig.extraPlugins = 'sourcedialog,autogrow,resize';
+      editorConfig.removePlugins += 'sourcearea';
 
       editorConfig.language = this.ConfigService.locale;
 
@@ -81,16 +90,20 @@ class CKEditorController {
 
   onEditorFocus() {
     this.$scope.$apply(() => {
-      this.textAreaElement.addClass('focussed');
+      this.textAreaElement.addClass('focused');
       this.onFocus();
     });
+
+    this.SharedSpaceToolbarService.showToolbar();
   }
 
   onEditorBlur() {
     this.$scope.$apply(() => {
-      this.textAreaElement.removeClass('focussed');
+      this.textAreaElement.removeClass('focused');
       this.onBlur();
     });
+
+    this.SharedSpaceToolbarService.hideToolbar();
   }
 
   _openLinkPicker(selectedLink) {

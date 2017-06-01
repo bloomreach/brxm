@@ -15,47 +15,24 @@
 // sass-lint:disable class-name-format, no-qualifying-elements
 @import 'variables';
 
-.cke {
-  .cke_button__source {
-    display: none;
-  }
-
-  .cke_wysiwyg_div {
-    padding: 8px !important;
-  }
-
-  .md-resize-handle {
-    display: none !important;
-  }
+sharedspace-toolbar {
+  border-bottom: 1px solid $grey-200;
 }
 
-// CKEditor input area (:not is required to exclude toolbars)
-div[class*="cke_editor_input_"]:not(.cke_shared) {
-  margin-bottom: 1px;
+.ckeditor-shared-space {
+  border-bottom: 0 !important;
+  height: 90px !important;
+  margin-top: -100% !important;
+  max-height: 90px !important;
+  min-height: auto !important;
+  padding: 0;
+  transition: margin-top .2s ease-in-out !important;
+  z-index: 998 !important;
 
-  &.cke_focus {
-    margin-bottom: 0;
-    border-bottom: 2px solid $blue-500;
+  &.visible {
+    height: auto !important;
+    margin-top: 0 !important;
+    max-height: unset !important;
+    min-height: auto !important;
   }
-}
-
-.cke_shared {
-  border: none !important;
-  box-shadow: none !important;
-}
-
-.cke_top {
-  border-bottom: none !important;
-}
-
-.cke_bottom {
-  border: none !important;
-
-  &:empty {
-    padding: 0 !important;
-  }
-}
-
-.cke_resizer {
-  display: none;
 }
