@@ -45,7 +45,6 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     private Map<String, Pair<ConfigurationItemCategory, DefinitionItemImpl>> childNodeCategorySettings = new HashMap<>();
     private Map<String, Pair<ConfigurationItemCategory, DefinitionItemImpl>> childPropertyCategorySettings = new HashMap<>();
     private ConfigurationItemCategory residualNodeCategory;
-    private DefinitionItemImpl residualNodeCategoryDefinitionItem;
 
     @Override
     public Map<String, ConfigurationNodeImpl> getNodes() {
@@ -210,14 +209,6 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
 
     public void setResidualNodeCategory(final ConfigurationItemCategory residualNodeCategory) {
         this.residualNodeCategory = residualNodeCategory;
-    }
-
-    public DefinitionItemImpl getResidualNodeCategoryDefinitionItem() {
-        return residualNodeCategoryDefinitionItem;
-    }
-
-    public void setResidualNodeCategoryDefinitionItem(final DefinitionItemImpl residualNodeCategoryDefinitionItem) {
-        this.residualNodeCategoryDefinitionItem = residualNodeCategoryDefinitionItem;
     }
 
 }

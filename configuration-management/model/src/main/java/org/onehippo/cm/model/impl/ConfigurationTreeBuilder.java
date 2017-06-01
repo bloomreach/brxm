@@ -117,7 +117,6 @@ class ConfigurationTreeBuilder {
 
         if (definitionNode.getResidualChildNodeCategory() != null) {
             node.setResidualNodeCategory(definitionNode.getResidualChildNodeCategory());
-            node.setResidualNodeCategoryDefinitionItem(definitionNode);
             node.addDefinitionItem(definitionNode);
         }
 
