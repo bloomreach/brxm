@@ -72,11 +72,15 @@ public class Channel implements Serializable {
     private boolean isPreview;
     private String channelNodeLockedBy;
     private String lastModifiedBy;
+    // when the channel node got locked
     private Calendar lockedOn;
     private Calendar lastModified;
 
     private String branchId;
     private String branchOf;
+
+    // if true the entire configuration is locked
+    private boolean configurationLocked;
 
     /**
      * {@link Channel} default constructor it is required for REST de/serialization
@@ -99,6 +103,7 @@ public class Channel implements Serializable {
         id = channel.id;
         name = channel.name;
         channelSettingsEditable = channel.channelSettingsEditable;
+        configurationLocked = channel.configurationLocked;
         type = channel.type;
         hostname = channel.hostname;
         contextPath = channel.contextPath;
@@ -161,6 +166,14 @@ public class Channel implements Serializable {
 
     public void setChannelSettingsEditable(final boolean channelSettingsEditable) {
         this.channelSettingsEditable = channelSettingsEditable;
+    }
+
+    public boolean isConfigurationLocked() {
+        return configurationLocked;
+    }
+
+    public void setConfigurationLocked(final boolean configurationLocked) {
+        this.configurationLocked = configurationLocked;
     }
 
     public String getContentRoot() {
@@ -496,6 +509,7 @@ public class Channel implements Serializable {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", channelSettingsEditable=" + channelSettingsEditable +
+                ", configurationLocked=" + configurationLocked +
                 ", type='" + type + '\'' +
                 ", hostname='" + hostname + '\'' +
                 ", contextPath='" + contextPath + '\'' +
