@@ -259,7 +259,6 @@
 [hst:branch] mixin
 - hst:branchof (string) mandatory
 - hst:branchid (string) mandatory
-- hst:locked (boolean)
 + hst:upstream (hst:workspace) = hst:workspace
 
 [hst:configuration] > nt:base, mix:referenceable, mix:versionable
@@ -268,6 +267,8 @@
 - hst:lockedby (string)
 // deprecated : not used any more as only fine grained locking
 - hst:lockedon (date)
+// true if the entire configuration is locked
+- hst:locked (boolean)
 + hst:components (hst:components) = hst:components
 + hst:abstractpages (hst:pages) = hst:pages
 + hst:pages (hst:pages) = hst:pages

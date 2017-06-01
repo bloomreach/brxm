@@ -69,11 +69,12 @@ public interface HstNodeTypes {
     String MIXINTYPE_HST_BRANCH = "hst:branch";
     String BRANCH_PROPERTY_BRANCH_OF = "hst:branchof";
     String BRANCH_PROPERTY_BRANCH_ID = "hst:branchid";
-    String BRANCH_PROPERTY_LOCKED = "hst:locked";
 
     String MIXINTYPE_HST_PROTOTYPE_META = "hst:prototypemeta";
     String PROTOTYPE_META_PROPERTY_DISPLAY_NAME = "hst:displayname";
     String PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER = "hst:primarycontainer";
+
+    String CONFIGURATION_PROPERTY_LOCKED = "hst:locked";
 
     String GENERAL_PROPERTY_INHERITS_FROM = "hst:inheritsfrom";
     String GENERAL_PROPERTY_LOCKED_BY = "hst:lockedby";

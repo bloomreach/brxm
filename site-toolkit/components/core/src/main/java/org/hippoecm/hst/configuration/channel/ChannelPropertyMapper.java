@@ -43,6 +43,9 @@ import org.hippoecm.hst.core.parameters.HstValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.channel.ChannelException.Type.CHANNEL_LOCKED;
@@ -59,13 +62,19 @@ public class ChannelPropertyMapper {
         return readChannel(channelNode, null, false);
     }
 
-    public static Channel readChannel(final HstNode channelNode, final String configurationPath) {
-        // the hst:configuration node name is unique
-        final String channelId = StringUtils.substringAfterLast(configurationPath, "/");
+    public static Channel readChannel(final HstNode channelNode, final HstNode configurationNode) {
+        final String configurationPath;
+        if (configurationNode == null) {
+            configurationPath = null;
+        } else {
+            configurationPath = configurationNode.getValueProvider().getPath();
+        }
+
         final boolean channelSettingsEditable;
         if (NODENAME_HST_WORKSPACE.equals(channelNode.getParent().getNodeTypeName())) {
-            HstNode configurationNode = channelNode.getParent().getParent();
-            if (configurationNode.getValueProvider().getPath().equals(configurationPath)) {
+            // channel node can be inherited from other configuration node
+            HstNode configurationNodeOfChannelNode = channelNode.getParent().getParent();
+            if (configurationNodeOfChannelNode.getValueProvider().getPath().equals(configurationPath)) {
                 log.debug("'{}' node is a child node of '{}' and is not inherited but directly below '{}' hence " +
                         "the channel settings are editable.", NODENAME_HST_CHANNEL, NODENAME_HST_WORKSPACE, configurationPath);
                 channelSettingsEditable = true;
@@ -76,13 +85,26 @@ public class ChannelPropertyMapper {
             // channel not in workspace, hence not channelSettingsEditable
             channelSettingsEditable = false;
         }
-        return readChannel(channelNode, channelId, channelSettingsEditable);
+        return readChannel(channelNode, configurationNode, channelSettingsEditable);
     }
 
-    static Channel readChannel(final HstNode channelNode, final String channelId, final boolean channelSettingsEditable) {
+    static Channel readChannel(final HstNode channelNode, final HstNode configurationNode, final boolean channelSettingsEditable) {
+
+        // the hst:configuration node name is unique
+        final String channelId;
+        if (configurationNode == null) {
+            channelId = null;
+        } else {
+            channelId = configurationNode.getName();
+        }
         Channel channel = new Channel(channelId);
         channel.setName(channelId);
         channel.setChannelSettingsEditable(channelSettingsEditable);
+
+        if (configurationNode != null && configurationNode.getValueProvider().hasProperty(CONFIGURATION_PROPERTY_LOCKED)) {
+            channel.setConfigurationLocked(configurationNode.getValueProvider().getBoolean(CONFIGURATION_PROPERTY_LOCKED));
+        }
+
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME)) {
             channel.setName(channelNode.getValueProvider().getString(HstNodeTypes.CHANNEL_PROPERTY_NAME));
         }
@@ -104,8 +126,8 @@ public class ChannelPropertyMapper {
             channel.setDeletable(channelNode.getValueProvider().getBoolean(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE));
         }
 
-        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-            channel.setChannelNodeLockedBy(channelNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        if (channelNode.getValueProvider().hasProperty(GENERAL_PROPERTY_LOCKED_BY)) {
+            channel.setChannelNodeLockedBy(channelNode.getValueProvider().getString(GENERAL_PROPERTY_LOCKED_BY));
         }
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY)) {
             channel.setLastModifiedBy(channelNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY));
@@ -115,8 +137,8 @@ public class ChannelPropertyMapper {
             channel.setLastModified(channelNode.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
         }
 
-        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-            channel.setLockedOn(channelNode.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON));
+        if (channelNode.getValueProvider().hasProperty(GENERAL_PROPERTY_LOCKED_ON)) {
+            channel.setLockedOn(channelNode.getValueProvider().getDate(GENERAL_PROPERTY_LOCKED_ON));
         }
 
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS)) {
@@ -409,10 +431,10 @@ public class ChannelPropertyMapper {
     }
 
     public static String getLockedBy(Node configurationNode) throws RepositoryException {
-        if (!configurationNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+        if (!configurationNode.hasProperty(GENERAL_PROPERTY_LOCKED_BY)) {
             return null;
         }
-        return configurationNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
+        return configurationNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString();
     }
 
     /**
@@ -446,10 +468,10 @@ public class ChannelPropertyMapper {
             }
         }
         log.info("Node '{}' gets a lock for user '{}'.", nodeToLock.getPath(), session.getUserID());
-        nodeToLock.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, session.getUserID());
+        nodeToLock.setProperty(GENERAL_PROPERTY_LOCKED_BY, session.getUserID());
         Calendar now = Calendar.getInstance();
-        if (!nodeToLock.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-            nodeToLock.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, now);
+        if (!nodeToLock.hasProperty(GENERAL_PROPERTY_LOCKED_ON)) {
+            nodeToLock.setProperty(GENERAL_PROPERTY_LOCKED_ON, now);
         }
         nodeToLock.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
         nodeToLock.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, Calendar.getInstance());

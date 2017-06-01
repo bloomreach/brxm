@@ -45,6 +45,7 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
@@ -386,7 +387,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             final HstNode newConfigNodeInstance = hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject-new");
             assertTrue(configNodeInstanceBefore == configNodeInstanceAfter1);
 
-            session.getNode("/hst:hst/hst:configurations/unittestproject-new").setProperty("hst:lockedby", "foo");
+            session.getNode("/hst:hst/hst:configurations/unittestproject-new").setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
             session.save();
             Thread.sleep(200);
             hstEventsDispatcher.dispatchHstEvents();
@@ -398,7 +399,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
             final HstNode newConfigNodeInstanceAfter = hstNodeLoadingCache.getNode("/hst:hst/hst:configurations/unittestproject-new");
             // unittestproject-new changed only a property, so instance should still be the same!!
             assertTrue(newConfigNodeInstance == newConfigNodeInstanceAfter);
-            assertEquals("foo", newConfigNodeInstanceAfter.getValueProvider().getString("hst:lockedby"));
+            assertTrue(newConfigNodeInstanceAfter.getValueProvider().getBoolean(CONFIGURATION_PROPERTY_LOCKED));
 
             session.getNode("/hst:hst/hst:configurations/unittestproject-new").remove();
             session.save();

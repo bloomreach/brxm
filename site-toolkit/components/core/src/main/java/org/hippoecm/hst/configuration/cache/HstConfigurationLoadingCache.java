@@ -163,7 +163,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
             log.debug("No channel node present for '{}'. Return null", configurationPath);
             return null;
         }
-        channel = ChannelPropertyMapper.readChannel(channelNode, configurationPath);
+        channel = ChannelPropertyMapper.readChannel(channelNode, rootConfigNode);
         channel.setChannelPath(channelNode.getValueProvider().getPath());
         List<String> events = ccn.getCompositeConfigurationDependencyPaths();
         if (isPreviewSite && !configurationPath.endsWith("-preview")) {
