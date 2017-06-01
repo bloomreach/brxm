@@ -43,5 +43,15 @@ public interface TagVisitor extends Serializable {
      */
     void onWrite(Tag parent, Tag tag) throws RepositoryException;
 
+    /**
+     * Called before the visitor is applied to the DOM tree.
+     */
+    void before();
+
+    /**
+     * Called after the visitor is applied to the DOM tree.
+     */
+    void after();
+
     void release();
 }
