@@ -27,6 +27,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -68,6 +69,11 @@ public class TestHstRequestUtils {
     public void setUp() throws Exception {
         servletContext = createNiceMock(ServletContext.class);
         replay(servletContext);
+    }
+
+    @After
+    public void tearDown() {
+        HstRequestUtils.resetForwardedForHeaderName();
     }
 
     @Test

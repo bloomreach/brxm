@@ -704,4 +704,8 @@ public class HstRequestUtils {
         return forwardedForHeader;
     }
 
+    // for unit tests only
+    static void resetForwardedForHeaderName() {
+        httpForwardedForHeader = null;
+    }
 }
