@@ -34,7 +34,7 @@ class SharedSpaceToolbar {
   }
 
   setToolbarVisible(state) {
-    this.isVisible = true;
+    this.isVisible = state;
 
     const mdContent = this.$element.parent('.right-side-panel').find('md-content');
     const scroll = mdContent.scrollTop();
