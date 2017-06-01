@@ -40,6 +40,11 @@ import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.fs.FileSystemException;
 import org.hippoecm.repository.nodetypes.NodeTypesChangeTracker;
+import org.onehippo.cm.ConfigurationService;
+import org.onehippo.cm.engine.ConfigurationServiceImpl;
+import org.onehippo.cm.engine.InternalConfigurationService;
+import org.onehippo.cm.engine.StartRepositoryServicesTask;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.bootstrap.InitializationProcessor;
 import org.onehippo.repository.bootstrap.PostStartupTask;
 import org.hippoecm.repository.api.ReferenceWorkspace;
@@ -87,6 +92,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     private String repoPath;
     private String repoConfig;
+
+    private Session configurationServiceSession;
+    private ConfigurationServiceImpl configurationService;
 
     private ModuleManager moduleManager;
 
@@ -265,42 +273,52 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         repository = new DecoratorFactoryImpl().getRepositoryDecorator(jackrabbitRepository);
         final Session rootSession =  jackrabbitRepository.getRootSession(null);
-        bootstrap(rootSession);
-    }
-
-    protected void bootstrap(final Session rootSession) throws RepositoryException {
         final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
-        boolean locked = false;
         Session bootstrapSession = null, lockSession = null;
+        boolean locked = false;
+
         try {
             ensureRootIsReferenceable(rootSession);
 
-            final boolean initializedBefore = initializedBefore(rootSession);
-            List<PostStartupTask> postStartupTasks = Collections.emptyList();
+            final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
+            bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
 
-            if (!initializedBefore || isContentBootstrapEnabled()) {
-                final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
-                bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
-                lockSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
-                initializeRepositoryConfiguration(initializationProcessor, bootstrapSession);
-                initializationProcessor.lock(lockSession);
-                locked = true;
-                postStartupTasks = contentBootstrap(initializationProcessor, bootstrapSession);
+            final StartRepositoryServicesTask startRepositoryServicesTask = () -> start(rootSession);
+
+            if (Boolean.getBoolean("repo.yaml")) {
+                configurationServiceSession = bootstrapSession;
+                bootstrapSession = null;
+                configurationService = new ConfigurationServiceImpl().start(configurationServiceSession, startRepositoryServicesTask);
+                HippoServiceRegistry.registerService(configurationService, new Class[]{ConfigurationService.class, InternalConfigurationService.class});
             }
+            else {
+                List<PostStartupTask> postStartupTasks = Collections.emptyList();
 
-            start(rootSession);
+                if (!initializedBefore(rootSession) || isContentBootstrapEnabled()) {
+                    lockSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
+                    initializeRepositoryConfiguration(initializationProcessor, bootstrapSession);
+                    initializationProcessor.lock(lockSession);
+                    locked = true;
+                    postStartupTasks = contentBootstrap(initializationProcessor, bootstrapSession);
+                }
 
-            log.debug("Executing post-startup tasks");
-            for (PostStartupTask task : postStartupTasks) {
-                task.execute();
+                startRepositoryServicesTask.execute();
+
+                log.debug("Executing post-startup tasks");
+                for (PostStartupTask task : postStartupTasks) {
+                    task.execute();
+                }
             }
-
         } finally {
             if (lockSession != null) {
                 if (locked) {
                     initializationProcessor.unlock(lockSession);
                 }
                 lockSession.logout();
+            }
+            if (configurationService == null && configurationServiceSession != null) {
+                configurationServiceSession.logout();
+                configurationServiceSession = null;
             }
             if (bootstrapSession != null) {
                 bootstrapSession.logout();
@@ -442,6 +460,14 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         if (nodeTypesChangeTracker != null) {
             nodeTypesChangeTracker.stop();
             nodeTypesChangeTracker = null;
+        }
+        if (configurationService != null) {
+            HippoServiceRegistry.unregisterService(configurationService, ConfigurationService.class);
+            configurationService.stop();
+        }
+        if (configurationServiceSession != null && configurationServiceSession.isLive()) {
+            configurationServiceSession.logout();
+            configurationServiceSession = null;
         }
         if (jackrabbitRepository != null) {
             try {
