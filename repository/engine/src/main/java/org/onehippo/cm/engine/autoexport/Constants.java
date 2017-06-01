@@ -39,6 +39,8 @@ public final class Constants {
     public static final String CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME = "autoexport:ntrlastmodified";
     public static final String SYSTEM_NODETYPES_PATH = "/jcr:system/jcr:nodeTypes/";
 
+    public static final String DEFAULT_MAIN_CONFIG_FILE = "main.yaml";
+
     public static final String LOGGER_NAME = "org.onehippo.cms.autoexport";
 
     private static final Map<Integer, String> eventTypeMap =

@@ -57,6 +57,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.onehippo.cm.engine.autoexport.Constants.DEFAULT_MAIN_CONFIG_FILE;
 import static org.onehippo.cm.model.Constants.YAML_EXT;
 import static org.onehippo.cm.model.DefinitionType.NAMESPACE;
 import static org.onehippo.cm.model.PropertyOperation.OVERRIDE;
@@ -173,7 +174,6 @@ public class DefinitionMergeService {
 
     /**
      * Merge a single namespace definition into the appropriate toExport module.
-     * TODO should this abort the merge process completely with an exception if merge is unsuccessful?
      * @param nsd the definition to merge
      * @param toExport modules that may be merged into
      * @param baseline a complete ConfigurationModel baseline for context
@@ -197,9 +197,8 @@ public class DefinitionMergeService {
             final ModuleImpl newModule = toExport.get(((ModuleImpl)oldSource.getModule()).getMvnPath());
 
             // short-circuit this loop iteration if we cannot create a valid merged definition
-            // TODO should this abort the merge process completely with an exception?
             if (newModule == null) {
-                log.error("Cannot merge a namespace {} that belongs to an upstream module", nsd.getPrefix());
+                log.error("Cannot merge a namespace: {} that belongs to an upstream module", nsd.getPrefix());
                 return;
             }
 
@@ -223,8 +222,7 @@ public class DefinitionMergeService {
         }
         else {
             // this is a new namespace def -- pretend that it is a node under /hippo:namespaces for sake of file mapping
-            // TODO is this the right "magic path" for mapping new namespaces to modules?
-            final String incomingPath = "/hippo:namespaces/jcr-namespaces";
+            final String incomingPath = "/hippo:namespaces/" + nsd.getPrefix();
 
             // what module should we put it in?
             ModuleImpl newModule = getModuleByAutoExportConfig(incomingPath, toExport);
@@ -233,7 +231,7 @@ public class DefinitionMergeService {
             ConfigSourceImpl newSource;
             if (newModule.getNamespaceDefinitions().isEmpty()) {
                 // We don't have any namespaces yet, so we can generate a new source and put it there
-                newSource = getSourceForNewDefinition(incomingPath, newModule);
+                newSource = createSourceIfNecessary(DEFAULT_MAIN_CONFIG_FILE, newModule);
             }
             else {
                 // if we have any existing namespace definitions in the destination module, we have to keep all
@@ -421,7 +419,16 @@ public class DefinitionMergeService {
     protected ConfigSourceImpl getSourceForNewDefinition(final String path, final ModuleImpl module) {
         // what does LocationMapper say?
         final String sourcePath = getFilePathByLocationMapper(path, true);
+        return createSourceIfNecessary(sourcePath, module);
+    }
 
+    /**
+     * Get a source within a given module to use when adding a new node definition, creating it if necessary.
+     * @param sourcePath the desired module-config-root-relative path
+     * @param module the module where we want this definition to live
+     * @return
+     */
+    protected ConfigSourceImpl createSourceIfNecessary(final String sourcePath, final ModuleImpl module) {
         // does this Source already exist?
         final Optional<ConfigSourceImpl> maybeSource =
                 module.getConfigSources().stream()
@@ -690,6 +697,10 @@ public class DefinitionMergeService {
 
         log.debug("Removing one def item for node: {} with exceptions: {}", definitionItem.getPath(), alreadyRemoved);
 
+        // TODO remove referenced resources?
+        // collect all resource references below this item
+        // add to new ModuleImpl collection of removedResources
+
         // remove the node itself
         // if this node is the root
         if (definitionItem.isRoot()) {
@@ -703,7 +714,6 @@ public class DefinitionMergeService {
             removeFromParentDefinitionItem(definitionItem, alreadyRemoved, toExport);
         }
 
-        // TODO remove referenced resources?
     }
 
     /**
