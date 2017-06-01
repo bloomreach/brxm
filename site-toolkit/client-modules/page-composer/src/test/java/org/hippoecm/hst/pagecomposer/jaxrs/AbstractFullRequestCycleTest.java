@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.ForbiddenException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -47,6 +48,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
 
+import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
 import static org.junit.Assert.assertTrue;
 
@@ -125,7 +127,12 @@ public class AbstractFullRequestCycleTest {
             requestResponse.getRequest().setSession(session);
         }
         session.setAttribute(CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
-        return render(requestResponse, authenticatedCmsUser);
+        MockHttpServletResponse response = render(requestResponse, authenticatedCmsUser);
+
+        if (response.getStatus() == SC_FORBIDDEN) {
+            throw new ConfigurationLockTestException(response);
+        }
+        return response;
     }
 
     public MockHttpServletResponse render(final RequestResponseMock requestResponse, final Credentials authenticatedCmsUser) throws IOException, ServletException {
@@ -149,6 +156,12 @@ public class AbstractFullRequestCycleTest {
                 super.doGet(req, resp);
             }
         }, filter));
+
+
+//        if (response.getStatus() == SC_FORBIDDEN) {
+//            throw new ForbiddenException();
+//        }
+
         return response;
     }
 
@@ -244,6 +257,20 @@ public class AbstractFullRequestCycleTest {
         mount.setProperty("manage.changes.privileges.path","/hst:hst");
         admin.save();
         admin.logout();
+    }
+
+
+    public static class ConfigurationLockTestException extends RuntimeException {
+        private MockHttpServletResponse response;
+
+        public ConfigurationLockTestException(final MockHttpServletResponse response) {
+
+            this.response = response;
+        }
+
+        public MockHttpServletResponse getResponse() {
+            return response;
+        }
     }
 }
 

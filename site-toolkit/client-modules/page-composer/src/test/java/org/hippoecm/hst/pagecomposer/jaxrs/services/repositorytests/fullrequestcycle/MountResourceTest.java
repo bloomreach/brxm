@@ -24,7 +24,9 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.ForbiddenException;
 
+import org.apache.jackrabbit.util.Locked;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
@@ -37,6 +39,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 
 import static java.util.Collections.singletonList;
+import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 import static org.junit.Assert.assertEquals;
@@ -45,7 +48,7 @@ import static org.junit.Assert.assertTrue;
 
 public class MountResourceTest extends AbstractFullRequestCycleTest {
 
-    private static final SimpleCredentials ADMIN_CREDENTIALS = new SimpleCredentials("admin", "admin".toCharArray());
+    protected static final SimpleCredentials ADMIN_CREDENTIALS = new SimpleCredentials("admin", "admin".toCharArray());
     private final SimpleCredentials EDITOR_CREDENTIALS = new SimpleCredentials("editor", "editor".toCharArray());
 
     @Before
@@ -284,7 +287,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
             assertEquals(Boolean.TRUE, responseMap.get("success"));
             assertEquals("Site is published", responseMap.get("message"));
         } else {
-            assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
+            assertEquals(SC_FORBIDDEN, response.getStatus());
         }
     }
 
@@ -336,7 +339,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
             assertEquals(Boolean.TRUE, responseMap.get("success"));
             assertTrue(responseMap.get("message").toString().contains("discarded"));
         } else {
-            assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
+            assertEquals(SC_FORBIDDEN, response.getStatus());
         }
     }
 

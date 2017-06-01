@@ -139,6 +139,9 @@
         <bean class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.HstConfigSecurityAnnotationInvokerPreprocessor">
           <property name="securityModel" ref="org.hippoecm.hst.channelmanager.security.SecurityModel"/>
         </bean>
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.HstConfigLockedCheckInvokerPreprocessor">
+          <property name="pageComposerContextService" ref="pageComposerContextService"/>
+        </bean>
       </list>
     </property>
     <property name="invokerPostprocessors">

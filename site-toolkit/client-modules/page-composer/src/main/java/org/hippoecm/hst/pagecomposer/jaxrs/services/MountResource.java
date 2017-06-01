@@ -56,6 +56,7 @@ import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.NewPageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
@@ -196,6 +197,7 @@ public class MountResource extends AbstractConfigResource {
         return ok("Current branch id:", mountToBranchIdMap.get(mount.getIdentifier()));
     }
 
+    @IgnoreLock
     @PUT
     @Path("/selectbranch/{branchId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -206,6 +208,7 @@ public class MountResource extends AbstractConfigResource {
         return ok("Branch selected successfully");
     }
 
+    @IgnoreLock
     @PUT
     @Path("/selectmaster")
     @Produces(MediaType.APPLICATION_JSON)
