@@ -58,9 +58,8 @@ public interface ConfigurationModel extends Closeable {
     /**
      * When processing of this model is complete, this method must be closed to free up resources used by
      * ResourceInputProviders to access raw data streams from underlying storage.
-     * @throws IOException
      */
-    void close() throws IOException;
+    void close();
 
     /**
      * Find a ConfigurationNode by its absolute path.

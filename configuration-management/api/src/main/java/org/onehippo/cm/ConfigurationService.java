@@ -20,27 +20,15 @@ import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cms7.services.SingletonService;
 
 /**
- * Service providing access to the current repository ConfigurationModel (baseline) and allowing applying and
- * new/updated ConfigurationModel at runtime.
+ * Service providing access to the current runtime ConfigurationModel
  */
 @SingletonService
 public interface ConfigurationService {
 
     /**
-     * Apply the whole or a part of a merged configuration model to the JCR as the new active configuration.
-     * @param model the configuration model to apply
-     */
-    void apply(final ConfigurationModel model) throws Exception;
-
-    /**
-     * Load a (partial) ConfigurationModel from the stored configuration baseline in the JCR. This model will not contain
-     * content definitions, which are not stored in the baseline.
+     * Retrieve the current (partial) runtime ConfigurationModel This model will not contain
+     * content definitions, which are not stored/retained in the runtime ConfigurationModel.
      * @throws Exception
      */
-    ConfigurationModel loadBaseline() throws Exception;
-
-    /**
-     * Compare a ConfigurationModel against the baseline by comparing manifests produced by model.getDigest()
-     */
-    boolean matchesBaselineManifest(ConfigurationModel model) throws Exception;
+    ConfigurationModel getRuntimeConfigurationModel();
 }

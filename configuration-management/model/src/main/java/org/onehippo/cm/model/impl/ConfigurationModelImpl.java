@@ -285,23 +285,16 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     /**
      * Closes open FileSystems used by ResourceInputProviders.
-     * @throws IOException
      */
-    public void close() throws IOException {
-        IOException firstIOException = null;
+    public void close() {
         for (FileSystem fs : filesystems) {
             try {
                 fs.close();
             } catch (IOException e) {
-                if (firstIOException != null) {
-                    firstIOException = e;
-                }
+                log.warn("Failed to close ConfigurationModel file system", e);
             }
         }
         filesystems.clear();
-        if (firstIOException != null) {
-            throw firstIOException;
-        }
     }
 
     private void ensureUniqueBundleName(final WebFileBundleDefinitionImpl newDefinition) {
