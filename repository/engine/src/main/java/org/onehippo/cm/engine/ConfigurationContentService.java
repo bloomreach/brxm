@@ -16,11 +16,10 @@
 package org.onehippo.cm.engine;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,13 +28,13 @@ import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.apache.commons.collections4.iterators.IteratorIterable;
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cm.model.ActionItem;
 import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ConfigurationItemCategory;
@@ -43,6 +42,7 @@ import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.SnsUtils;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
@@ -67,12 +67,12 @@ public class ConfigurationContentService {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationContentService.class);
     public static final String SEPARATOR = "/";
+    private static final String HCM_CONTENT_NODE_PATH = String.format("/%s/%s", HCM_ROOT, NT_HCM_CONTENT);
 
     private final ValueProcessor valueProcessor = new ValueProcessor();
     private final JcrContentProcessingService contentProcessingService = new JcrContentProcessingService(valueProcessor);
 
     /**
-     * TODO     current operations cast to/require ModuleImpl, which first needs to be corrected
      * Apply content definitions from modules contained within configuration model
      *
      * @param model {@link ConfigurationModel}
@@ -118,104 +118,66 @@ public class ConfigurationContentService {
      * @param session active {@link Session}
      */
     private void apply(final ModuleImpl module, final ConfigurationModel model, final Session session) throws RepositoryException {
-
         final double currentVersion = getModuleVersion(module, session);
 
-        final Map<Double, Set<ActionItem>> actionsMap = module.getActionsMap();
-
-        final List<ActionItem> actionsToProcess = collectNewActions(currentVersion, actionsMap);
-
-        final List<ActionItem> itemsToDelete = actionsToProcess.stream().filter(x -> x.getType() == ActionType.DELETE).collect(toList());
-
-        validateDeleteActions(model, itemsToDelete);
-        processItemsToDelete(itemsToDelete, session);
+        final List<ActionItem> actionsToProcess = collectNewActions(currentVersion, module.getActionsMap());
+        processItemsToDelete(actionsToProcess, model, session);
         session.save();
 
         sortContentDefinitions(module);
-
         for (final ContentDefinitionImpl contentDefinition : module.getContentDefinitions()) {
             final DefinitionNode contentNode = contentDefinition.getNode();
-
-            final Optional<ActionType> actionType = findLastActionToApply(contentNode.getPath(), actionsToProcess);
+            final String baseNodePath = contentNode.getPath();
+            final Optional<ActionType> optionalAction = findLastActionToApply(baseNodePath, actionsToProcess);
             final boolean nodeAlreadyProcessed = nodeAlreadyProcessed(contentNode, session);
 
-            if (actionType.isPresent() || !nodeAlreadyProcessed) {
+            if (optionalAction.isPresent() || !nodeAlreadyProcessed) {
+                final ActionType action = optionalAction.orElse(ActionType.APPEND);
 
-                if (!isContentNodePathValid(contentNode.getPath(), model)) {
-                    throw new ConfigurationRuntimeException(String.format("Content node '%s' creation is not allowed within configuration path", contentNode.getPath()));
-                };
+                if (isContentAtPath(baseNodePath, model)) {
+                    log.debug("Processing {} action for node: {}", action, baseNodePath);
+                    contentProcessingService.apply(contentNode, action, session);
 
-                log.debug("Processing {} action for node: {}", actionType, contentNode.getPath());
-                contentProcessingService.apply(contentNode, actionType.orElse(ActionType.APPEND), session);
-
-                if (!nodeAlreadyProcessed) {
-                    updateProcessedDefinition(contentNode.getPath(), session);
-                }
-
-                session.save();
-            }
-        }
-
-        final Optional<Double> latestVersion = actionsMap.keySet().stream().max(Double::compareTo);
-        if (latestVersion.isPresent()) {
-            module.setSequenceNumber(latestVersion.get());
-            session.save();
-        }
-    }
-
-    /**
-     * Check if content node is allowed to be within configuration path
-     * @param contentNodePath node's path
-     * @param model {@link ConfigurationModel}
-     */
-    boolean isContentNodePathValid(final String contentNodePath, final ConfigurationModel model) {
-
-        final ConfigurationNode closestConfigNode = findClosestConfigNode(Paths.get(contentNodePath), model);
-
-        if (closestConfigNode != null) {
-            final String[] configPathSplit = closestConfigNode.getPath().split(SEPARATOR);
-            final String[] contentPathSplit = contentNodePath.split(SEPARATOR);
-
-            final Optional<String> nodeToCheck = Arrays.stream(contentPathSplit).limit(configPathSplit.length + 1).reduce((a, b) -> a + SEPARATOR + b);
-            if (nodeToCheck.isPresent()) {
-                final String nodeName = StringUtils.substringAfterLast(nodeToCheck.get(), SEPARATOR);
-                final ConfigurationItemCategory childNodeCategory = closestConfigNode.getChildNodeCategory(nodeName);
-                if (childNodeCategory != ConfigurationItemCategory.CONTENT) {
-                    return false;
+                    if (!nodeAlreadyProcessed) {
+                        updateProcessedDefinition(contentNode.getPath(), session);
+                    }
+                    session.save();
+                } else {
+                    log.warn(String.format("Base node '%s' is not categorized as content, skipping action '%s'.",
+                            baseNodePath, action));
                 }
             }
         }
-        return true;
+
+        updateModuleVersion(module, session);
     }
 
     /**
-     * Find the deepest configuration node which shares the path with content node
-     * @param contentNodePath content node's path
-     * @param model reference to {@link ConfigurationModel}
-     * @return reference to configuration node or null if nodes do not have common root
-     */
-    private ConfigurationNode findClosestConfigNode(final Path contentNodePath, final ConfigurationModel model) {
-        if (contentNodePath == null) {
-            return null;
-        }
-
-        final ConfigurationNode configurationNode = model.resolveNode(contentNodePath.toString());
-        return configurationNode != null ? configurationNode : findClosestConfigNode(contentNodePath.getParent(), model);
-    }
-
-    /**
-     * Validate if DELETE action is not related to configuration node
+     * Check if a node path is categorized as content by the configuration model
      *
+     * TODO: should we implement this logic in the ConfigurationModel instead?
+     *
+     * @param nodePath node's path
      * @param model {@link ConfigurationModel}
-     * @param itemsToDelete collection of action items to delete
      */
-     void validateDeleteActions(final ConfigurationModel model, final List<ActionItem> itemsToDelete) {
+    boolean isContentAtPath(final String nodePath, final ConfigurationModel model) {
+        final Iterator<String> nodeNameIterator = Arrays.stream(nodePath.split(SEPARATOR)).iterator();
+        ConfigurationNode modelNode = model.getConfigurationRootNode();
 
-        itemsToDelete.forEach(item -> {
-            if (!isContentNodePathValid(item.getPath(), model)) {
-                throw new ConfigurationRuntimeException(String.format("Config definitions are not allowed to be deleted: %s", item.getPath()));
+        if (nodeNameIterator.hasNext()) {
+            nodeNameIterator.next(); // skip root node
+        }
+
+        while (nodeNameIterator.hasNext()) {
+            final String childName = nodeNameIterator.next();
+            final String indexedChildName = SnsUtils.createIndexedName(childName);
+            if (!modelNode.getNodes().containsKey(indexedChildName)) {
+                return modelNode.getChildNodeCategory(indexedChildName) == ConfigurationItemCategory.CONTENT;
             }
-        });
+            modelNode = modelNode.getNodes().get(indexedChildName);
+        }
+
+        return false;
     }
 
     /**
@@ -225,52 +187,35 @@ public class ConfigurationContentService {
      * @param session active {@link Session}
      */
     private void updateProcessedDefinition(final String path, final Session session) throws RepositoryException {
-
         log.debug("Saving processed definition path: {}", path);
-        final Node contentNode = createContentNodeIfNecessary(session);
 
         final List<Value> valueList = new ArrayList<>();
-        final Value newValue = session.getValueFactory().createValue(path);
-        valueList.add(newValue);
 
+        final Node contentNode = getOrCreateContentNode(session);
         if (contentNode.hasProperty(HCM_CONTENT_PATHS_APPLIED)) {
             final Value[] values = contentNode.getProperty(HCM_CONTENT_PATHS_APPLIED).getValues();
             valueList.addAll(Arrays.asList(values));
         }
 
+        valueList.add(session.getValueFactory().createValue(path));
+
         contentNode.setProperty(HCM_CONTENT_PATHS_APPLIED, valueList.toArray(new Value[0]));
     }
 
-    private Node createContentNodeIfNecessary(final Session session) throws RepositoryException {
-        final Node rootNode = session.getRootNode();
-        final boolean hcmNodeExisted = rootNode.hasNode(HCM_ROOT);
-        final Node hcmRootNode = createNodeIfNecessary(rootNode, HCM_ROOT, NT_HCM_ROOT, false);
-        if (!hcmNodeExisted) {
-            session.save();
-        }
-
-        return createNodeIfNecessary(hcmRootNode, NT_HCM_CONTENT, NT_HCM_CONTENT, false);
-    }
-
-
     /**
-     * TODO SS: this method should be used from baseline service
+     * Look-up of create the baseline content node
      *
-     * @param parent
-     * @param name
-     * @param type
-     * @param encode
-     * @return
-     * @throws RepositoryException
+     * @param session JCR session for looking up or creating the content node
+     * @return        baseline content node
      */
-    private Node createNodeIfNecessary(Node parent, String name, String type, boolean encode) throws RepositoryException {
-        if (encode) {
-            name = NodeNameCodec.encode(name);
-        }
-        if (!parent.hasNode(name)) {
-            parent.addNode(name, type);
-        }
-        return parent.getNode(name);
+    private Node getOrCreateContentNode(final Session session) throws RepositoryException {
+        final Node rootNode = session.getRootNode();
+        final Node hcmRootNode = rootNode.hasNode(HCM_ROOT)
+                ? rootNode.getNode(HCM_ROOT)
+                : rootNode.addNode(HCM_ROOT, NT_HCM_ROOT);
+        return hcmRootNode.hasNode(NT_HCM_CONTENT)
+                ? hcmRootNode.getNode(NT_HCM_CONTENT)
+                : hcmRootNode.addNode(NT_HCM_CONTENT, NT_HCM_CONTENT);
     }
 
     /**
@@ -303,39 +248,42 @@ public class ConfigurationContentService {
      * @return true if node was already processed, false otherwise
      */
     private boolean nodeAlreadyProcessed(final DefinitionNode contentNode, final Session session) throws RepositoryException {
-
-        try {
-            final String hcmContentNodePath = String.format("/%s/%s", HCM_ROOT, NT_HCM_CONTENT);
-            if (!session.nodeExists(hcmContentNodePath)) {
-                return false;
-            }
-            final Node node = session.getNode(hcmContentNodePath);
-            final Value[] values = node.getProperty(HCM_CONTENT_PATHS_APPLIED).getValues();
-            for (final Value value : values) {
-                final String strValue = value.getString();
-                if (contentNode.getPath().equals(strValue)) {
-                    return true;
+        if (session.nodeExists(HCM_CONTENT_NODE_PATH)) {
+            final Node hcmContentRoot = session.getNode(HCM_CONTENT_NODE_PATH);
+            if (hcmContentRoot.hasProperty(HCM_CONTENT_PATHS_APPLIED)) {
+                final Property pathsApplied = hcmContentRoot.getProperty(HCM_CONTENT_PATHS_APPLIED);
+                for (final Value value : pathsApplied.getValues()) {
+                    if (contentNode.getPath().equals(value.getString())) {
+                        return true;
+                    }
                 }
             }
-        } catch (PathNotFoundException e) {
-            log.debug("Error while accessing to content node", e);
         }
-
         return false;
     }
 
     /**
      * Delete nodes from action list
      *
-     * @param deleteItems items to delete
+     * @param items items to delete
      * @param session active {@link Session}
      */
-    private void processItemsToDelete(final List<ActionItem> deleteItems, final Session session) throws RepositoryException {
+    private void processItemsToDelete(final List<ActionItem> items, final ConfigurationModel model,
+                                      final Session session) throws RepositoryException {
+        for (final ActionItem item : items) {
+            if (item.getType() == ActionType.DELETE) {
+                final String baseNodePath = item.getPath();
+                if (isContentAtPath(baseNodePath, model)) {
+                    log.debug("Processing delete action for node: {}", baseNodePath);
 
-        for (final ActionItem deleteItem : deleteItems) {
-            final DefinitionNode deleteNode = new DefinitionNodeImpl(deleteItem.getPath(), StringUtils.substringAfterLast(deleteItem.getPath(), SEPARATOR), null);
-            log.debug("Processing delete action for node: {}", deleteItem.getPath());
-            contentProcessingService.apply(deleteNode, ActionType.DELETE, session);
+                    final DefinitionNode deleteNode = new DefinitionNodeImpl(baseNodePath,
+                            StringUtils.substringAfterLast(baseNodePath, SEPARATOR), null);
+                    contentProcessingService.apply(deleteNode, ActionType.DELETE, session);
+                } else {
+                    log.warn(String.format("Base node '%s' is not categorized as content, skipping delete action.",
+                            baseNodePath));
+                }
+            }
         }
     }
 
@@ -355,6 +303,18 @@ public class ConfigurationContentService {
         }
 
         return Double.MIN_VALUE;
+    }
+
+    // TODO Move to ConfigurationBaselineService.
+    private void updateModuleVersion(final ModuleImpl module, final Session session) throws RepositoryException {
+        final Optional<Double> latestVersion = module.getActionsMap().keySet().stream().max(Double::compareTo);
+        if (latestVersion.isPresent()) {
+            module.setSequenceNumber(latestVersion.get());
+
+            final String moduleNodePath = String.format("/%s/%s/%s", HCM_ROOT, HCM_BASELINE, module.getFullName());
+            session.getNode(moduleNodePath).setProperty(HCM_MODULE_SEQUENCE, latestVersion.get());
+            session.save();
+        }
     }
 
     /**

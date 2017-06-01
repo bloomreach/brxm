@@ -1,11 +1,6 @@
 package org.onehippo.cm.engine;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
-import org.onehippo.cm.model.ActionItem;
-import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModelTestUtils;
@@ -14,7 +9,6 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /*
  *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
@@ -45,7 +39,7 @@ public class ConfigurationContentServiceTest extends RepositoryTestCase {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/content.yaml", m1, false);
 
         ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
-        assertTrue(configurationContentService.isContentNodePathValid(model.getContentDefinitions().get(0).getModifiableNode().getPath(), model));
+        assertTrue(configurationContentService.isContentAtPath(model.getContentDefinitions().get(0).getModifiableNode().getPath(), model));
     }
 
     @Test
@@ -60,7 +54,7 @@ public class ConfigurationContentServiceTest extends RepositoryTestCase {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/content.yaml", m1, false);
 
         final ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
-        assertFalse(configurationContentService.isContentNodePathValid(model.getContentDefinitions().get(0).getModifiableNode().getPath(), model));
+        assertFalse(configurationContentService.isContentAtPath(model.getContentDefinitions().get(0).getModifiableNode().getPath(), model));
     }
 
     @Test
@@ -73,15 +67,11 @@ public class ConfigurationContentServiceTest extends RepositoryTestCase {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/config.yaml", m1);
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/content.yaml", m1, false);
 
-        List<ActionItem> actionItems = new ArrayList<>();
-        actionItems.add(new ActionItem("/a1/a2/a3/a4", ActionType.DELETE));
-
         ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
-        configurationContentService.validateDeleteActions(model, actionItems);
-
+        assertTrue(configurationContentService.isContentAtPath("/a1/a2/a3/a4", model));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void validateDeleteActions_delete_config() throws Exception {
         final ConfigurationContentService configurationContentService = new ConfigurationContentService();
 
@@ -91,12 +81,8 @@ public class ConfigurationContentServiceTest extends RepositoryTestCase {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/config-strict.yaml", m1);
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/content.yaml", m1, false);
 
-        final List<ActionItem> actionItems = new ArrayList<>();
-        actionItems.add(new ActionItem("/a1/a2/a3", ActionType.DELETE));
-
         ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
-        configurationContentService.validateDeleteActions(model, actionItems);
-
+        assertFalse(configurationContentService.isContentAtPath("/a1/a2/a3", model));
     }
 
     @Test
@@ -110,18 +96,8 @@ public class ConfigurationContentServiceTest extends RepositoryTestCase {
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/config-strict.yaml", m1);
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/content.yaml", m1, false);
 
-        final List<ActionItem> actionItems = new ArrayList<>();
-        actionItems.add(new ActionItem("/a1/a2/a3/a4/b", ActionType.DELETE));
-
         ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
-
-        try {
-            configurationContentService.validateDeleteActions(model, actionItems);
-            fail("Exception should be thrown");
-
-        } catch(ConfigurationRuntimeException ignored) {}
-
-
+        assertFalse(configurationContentService.isContentAtPath("/a1/a2/a3/a4/b", model));
     }
 
 }
