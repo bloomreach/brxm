@@ -82,20 +82,10 @@ public class DefinitionMergeTest {
         new MergeTest("delete-property").test();
     }
 
-//    @Test
-//    public void change_property_type_or_multiplicity() throws Exception {
-//        new MergeTest("change-property-type-or-multiplicity").test();
-//    }
-//
-//    @Test
-//    public void override_primary_type() throws Exception {
-//        new MergeTest("override-primary-type").test();
-//    }
-//
-//    @Test
-//    public void override_mixin_types() throws Exception {
-//        new MergeTest("override-mixin-types").test();
-//    }
+    @Test
+    public void override_property() throws Exception {
+        new MergeTest("override-property").test();
+    }
 
 
     public class MergeTest extends SerializerTest {

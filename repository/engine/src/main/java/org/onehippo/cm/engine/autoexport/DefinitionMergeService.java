@@ -34,6 +34,7 @@ import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionItem;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.NamespaceDefinition;
+import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
@@ -788,6 +789,7 @@ public class DefinitionMergeService {
         switch (defProperty.getOperation()) {
             case REPLACE:
             case ADD:
+            case OVERRIDE:
                 if (propertyExists) {
                     // this is an existing property being replaced
                     log.debug(".. which already exists", defProperty.getPath());
@@ -802,7 +804,45 @@ public class DefinitionMergeService {
                                 localPropDef.getDefinition().getNode().getPath(),
                                 localPropDef.getDefinition().getSource().getPath());
 
-                        // change it to reflect new state
+                        final List<DefinitionItemImpl> defsForConfigProperty = configProperty.getDefinitions();
+
+                        // cases:
+                        // 1. local is replace and only def, diff is override => replace
+                        if (localPropDef.getOperation() == PropertyOperation.REPLACE
+                                && defProperty.getOperation() == PropertyOperation.OVERRIDE
+                                && defsForConfigProperty.size() == 1) {
+                            defProperty.setOperation(PropertyOperation.REPLACE);
+                        }
+                        // 2. local is replace and not only def, diff is override => override (do nothing)
+
+                        if (localPropDef.getOperation() == PropertyOperation.OVERRIDE) {
+                            // 3. local is override, diff is replace => override
+                            if (defProperty.getOperation() == PropertyOperation.REPLACE) {
+                                defProperty.setOperation(PropertyOperation.OVERRIDE);
+                            }
+
+                            if (defProperty.getOperation() == PropertyOperation.OVERRIDE) {
+                                final DefinitionPropertyImpl nextUpDefProperty = (DefinitionPropertyImpl)
+                                        defsForConfigProperty.get(defsForConfigProperty.size() - 2);
+                                final boolean diffMatchesNextUp =
+                                        defProperty.getType() == nextUpDefProperty.getType()
+                                                && defProperty.getValueType() == nextUpDefProperty.getValueType();
+                                if (diffMatchesNextUp) {
+                                    // 4. local is override, diff is override, upstream is same as diff => replace
+                                    defProperty.setOperation(PropertyOperation.REPLACE);
+                                }
+                                // 5. local is override, diff is override, upstream is still different => override (do nothing)
+                            }
+                        }
+
+                        // 6. local is add, diff is replace => replace (do nothing)
+                        // 7. local is add, diff is override => override (do nothing)
+                        // 8. local is add, diff is add => add (do nothing)
+                        // 9. local is replace, diff is replace => replace (do nothing)
+                        // 10. local is replace, diff is add => replace (updateFrom handles)
+                        // 11. local is override, diff is add => override (updateFrom handles)
+
+                        // change local def to reflect new state
                         localPropDef.updateFrom(defProperty);
                     }
                     else {
@@ -814,6 +854,7 @@ public class DefinitionMergeService {
                 }
                 else {
                     // this is a totally new property
+                    // note: this is effectively unreachable for case: OVERRIDE
                     log.debug(".. which is totally new", defProperty.getPath());
 
                     addLocalProperty(defProperty, configNode, toExport);
@@ -851,35 +892,16 @@ public class DefinitionMergeService {
                     }
                 }
                 break;
-            case OVERRIDE:
-                // todo
-                break;
         }
-
-//change type
-//change multiplicity
-//    if existing def is local, update that def (recompute if override is necessary)
-//    if existing def is upstream,
-//        check for local node def,
-//            if exists, add property def w/ override
-//            if doesn't exist, create new node def and property def w/ override
-//
-//override primary type
-//    if existing jcr:primaryType def is local, update that def (recompute if override is necessary)
-//    if existing jcr:primaryType def is upstream
-//        check for local node def,
-//            if exists, add jcr:primaryType def w/ override
-//            if doesn't exist, create new node def and jcr:primaryType def w/ override
-//
-//change mixin types
-//    if existing jcr:mixinTypes def is local, update that def
-//        check if add or override is still needed
-//    if existing jcr:mixinTypes def is upstream,
-//        check for local node def,
-//             if exists, create new jcr:mixinTypes def (keep add or override as present)
-//             if doesn't exist, create new node def and jcr:mixinTypes def
     }
 
+    /**
+     * Add a local definition of a given property, either by adding to an existing definition for the
+     * containing node, or by creating a new definition for the containing node and adding to that.
+     * @param defProperty the property to add
+     * @param configNode the ConfigurationNode for the containing node
+     * @param toExport
+     */
     protected void addLocalProperty(final DefinitionPropertyImpl defProperty,
                                     final ConfigurationNodeImpl configNode,
                                     final HashMap<String, ModuleImpl> toExport) {
@@ -925,11 +947,6 @@ public class DefinitionMergeService {
     protected boolean isLastDefLocal(final List<? extends DefinitionItem> definitionItems,
                                      final HashMap<String, ModuleImpl> toExport) {
         return isLocalDef(toExport).test(definitionItems.get(definitionItems.size()-1));
-    }
-
-    protected boolean areAllDefsLocal(final List<? extends DefinitionItem> definitionItems,
-                                      final HashMap<String, ModuleImpl> toExport) {
-        return definitionItems.stream().allMatch(isLocalDef(toExport));
     }
 
     protected Predicate<DefinitionItem> isLocalDef(final HashMap<String, ModuleImpl> toExport) {
