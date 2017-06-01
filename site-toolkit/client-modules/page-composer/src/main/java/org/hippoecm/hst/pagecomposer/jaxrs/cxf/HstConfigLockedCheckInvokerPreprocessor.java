@@ -22,6 +22,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.Response;
@@ -92,6 +93,12 @@ public class HstConfigLockedCheckInvokerPreprocessor implements InvokerPreproces
         HEAD head = method.getAnnotation(HEAD.class);
         if (head != null) {
             log.debug("HEAD operation is allowed for locked hst configuration");
+            return false;
+        }
+
+        OPTIONS options = method.getAnnotation(OPTIONS.class);
+        if (options != null) {
+            log.debug("OPTIONS operation is allowed for locked hst configuration");
             return false;
         }
 
