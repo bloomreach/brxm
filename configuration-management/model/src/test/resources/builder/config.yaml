@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /a:
+      jcr:primaryType: foo
+      /b:
+        jcr:primaryType: foo
+        /c:
+          jcr:primaryType: foo
+          p:
+            .meta:category: runtime
+        /c-content:
+          jcr:primaryType: foo
+          .meta:residual-child-node-category: content
+        /c-runtime:
+          .meta:category: runtime
