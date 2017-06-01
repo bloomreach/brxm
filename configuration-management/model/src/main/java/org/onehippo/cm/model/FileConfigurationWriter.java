@@ -32,6 +32,8 @@ import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 import org.onehippo.cm.model.serializer.SourceSerializer;
 import org.yaml.snakeyaml.nodes.Node;
 
+import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+
 public class FileConfigurationWriter {
 
     void write(final Path destination,
@@ -56,7 +58,11 @@ public class FileConfigurationWriter {
         }
     }
 
-    public void writeModule(final Module module, final boolean explicitSequencing,
+    public void writeModule(final Module module, final ModuleContext moduleContext) throws IOException {
+        writeModule(module, DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
+    }
+
+        public void writeModule(final Module module, final boolean explicitSequencing,
                             final ModuleContext moduleContext) throws IOException {
 
         moduleContext.addExistingFilesToKnownList();

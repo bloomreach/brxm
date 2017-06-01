@@ -23,6 +23,10 @@ import java.nio.file.Path;
  */
 public class ExportModuleContext extends ModuleContext {
 
+    public ExportModuleContext(Module module) throws IOException {
+        super(module, null, false);
+    }
+
     public ExportModuleContext(Module module, Path moduleDescriptorPath) throws IOException {
         super(module, moduleDescriptorPath, false);
         createOutputProviders(moduleDescriptorPath);

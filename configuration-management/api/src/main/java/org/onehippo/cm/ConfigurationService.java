@@ -16,6 +16,12 @@
 
 package org.onehippo.cm;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cms7.services.SingletonService;
 
@@ -28,7 +34,20 @@ public interface ConfigurationService {
     /**
      * Retrieve the current (partial) runtime ConfigurationModel This model will not contain
      * content definitions, which are not stored/retained in the runtime ConfigurationModel.
-     * @throws Exception
      */
     ConfigurationModel getRuntimeConfigurationModel();
+
+    /**
+     * Export node and it's binaries to zip file.
+     * @param nodeToExport {@link Node}
+     * @return Zip {@link File} containing content wit binaries. File must be deleted by caller
+     */
+    File exportZippedContent(Node nodeToExport) throws RepositoryException, IOException;
+
+    /**
+     * Export node text only
+     * @param nodeToExport {@link Node}
+     * @return Textual representation of the node
+     */
+    String exportContent(Node nodeToExport) throws RepositoryException, IOException;
 }
