@@ -31,13 +31,10 @@ function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $transla
           prefix: 'i18n/',
           suffix: `.json?antiCache=${ConfigService.antiCache}`,
         });
-        return $translate.use(ConfigService.locale)
-          .catch(() => {
-            $translate.use($translate.fallbackLanguage());
-          });
+        return $translate.use(ConfigService.locale || $translate.fallbackLanguage())
+          .catch(() => $translate.use($translate.fallbackLanguage()));
       },
     },
-    abstract: true,
   });
 
   $translateProvider
@@ -134,7 +131,9 @@ function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $transla
     .warnPalette('hippo-red')
     .backgroundPalette('hippo-grey');
 
-  $compileProvider.debugInfoEnabled(false);
+  // only enable Angular debug information when the CMS runs in 'Wicket development mode'
+  const devMode = angular.element(window.parent.document.documentElement).hasClass('wicket-development-mode');
+  $compileProvider.debugInfoEnabled(devMode);
 }
 
 export default config;

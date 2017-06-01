@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -51,12 +51,12 @@
                ng-required="$ctrl.required"
                ng-model="$ctrl.value"
                ng-hide="$ctrl.value"
-               ng-click="$ctrl.showPicker()"
+               ng-click="$ctrl.showPathPicker()"
                ng-disabled="$ctrl.readOnly">
         <img ng-class="{ 'readonly': $ctrl.readOnly }"
              ng-if="$ctrl.value"
              ng-src="{{ $ctrl.getImageVariantPath() }}"
-             ng-click="$ctrl.readOnly || $ctrl.showPicker()">
+             ng-click="$ctrl.readOnly || $ctrl.showPathPicker()">
       </div>
       <md-button class="md-icon-button"
                  ng-if="$ctrl.value"
@@ -65,7 +65,7 @@
         <md-icon class="material-icons">clear</md-icon>
       </md-button>
       <md-button class="md-icon-button"
-                 ng-click="$ctrl.showPicker()"
+                 ng-click="$ctrl.showPathPicker()"
                  ng-disabled="$ctrl.readOnly">
         <md-icon class="material-icons">search</md-icon>
       </md-button>
@@ -87,7 +87,7 @@
              ng-disabled="$ctrl.readOnly"
              ng-model="$ctrl.getSetPath"
              ng-model-options="{ getterSetter: true }"
-             ng-click="$ctrl.showPicker()">
+             ng-click="$ctrl.showPathPicker()">
       <md-button class="md-icon-button"
                  ng-if="$ctrl.value"
                  ng-click="$ctrl.value = ''"
@@ -95,7 +95,7 @@
         <md-icon class="material-icons">clear</md-icon>
       </md-button>
       <md-button class="md-icon-button"
-                 ng-click="$ctrl.showPicker()"
+                 ng-click="$ctrl.showPathPicker()"
                  ng-disabled="$ctrl.readOnly">
         <md-icon class="material-icons">search</md-icon>
       </md-button>

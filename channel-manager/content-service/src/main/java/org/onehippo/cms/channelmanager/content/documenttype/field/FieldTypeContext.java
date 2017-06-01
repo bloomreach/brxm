@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,16 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.jcr.Node;
 
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.FieldScanningContext;
+import org.onehippo.cms.channelmanager.content.documenttype.util.JcrBooleanReader;
+import org.onehippo.cms.channelmanager.content.documenttype.util.JcrMultipleStringReader;
+import org.onehippo.cms.channelmanager.content.documenttype.util.JcrStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -55,7 +59,7 @@ public class FieldTypeContext {
         return context.getFieldScanningContexts()
                 .stream()
                 .map(scanningContext -> createForParentType(scanningContext, fieldName, context, editorFieldConfigNode))
-                .filter(fieldContext -> fieldContext != null)
+                .filter(Objects::nonNull)
                 .findFirst();
     }
 
@@ -103,5 +107,17 @@ public class FieldTypeContext {
     public Optional<ContentTypeContext> createContextForCompound() {
         final String id = getContentTypeItem().getItemType();
         return ContentTypeContext.createFromParent(id, getParentContext());
+    }
+
+    public Optional<Boolean> getBooleanConfig(final String propertyName) {
+        return NamespaceUtils.getConfigProperty(this, propertyName, JcrBooleanReader.get());
+    }
+
+    public Optional<String> getStringConfig(final String propertyName) {
+        return NamespaceUtils.getConfigProperty(this, propertyName, JcrStringReader.get());
+    }
+
+    public Optional<String[]> getMultipleStringConfig(final String propertyName) {
+        return NamespaceUtils.getConfigProperty(this, propertyName, JcrMultipleStringReader.get());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,11 @@ import ChannelActionsCtrl from './channelActions.controller';
 import channelSettingsDirective from './settings/settings.directive';
 import ChannelSettingsCtrl from './settings/settings.controller';
 import propertyField from './settings/propertyField/propertyField.component';
-import helpIconDirective from './settings/helpIcon/helpIcon.directive';
+import channelPropertyDirective from './settings/property/property.directive';
+import ChannelPropertyCtrl from './settings/property/property.controller';
+import helpIconDirective from './settings/property/helpIcon/helpIcon.directive';
+import changeManagementDirective from './manageChanges/manageChanges.directive';
+import ChangeManagementCtrl from './manageChanges/manageChanges.controller';
 
 const channelActionsModule = angular
   .module('hippo-cm.channel.actions', [
@@ -32,6 +36,10 @@ const channelActionsModule = angular
   .controller('ChannelSettingsCtrl', ChannelSettingsCtrl)
   .directive('channelSettings', channelSettingsDirective)
   .component('propertyField', propertyField)
-  .directive('helpIcon', helpIconDirective);
+  .controller('ChannelPropertyCtrl', ChannelPropertyCtrl)
+  .directive('channelProperty', channelPropertyDirective)
+  .directive('helpIcon', helpIconDirective)
+  .controller('ChangeManagementCtrl', ChangeManagementCtrl)
+  .directive('changeManagement', changeManagementDirective);
 
 export default channelActionsModule;

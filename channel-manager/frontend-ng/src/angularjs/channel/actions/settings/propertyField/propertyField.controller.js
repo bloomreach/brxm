@@ -49,13 +49,13 @@ class PropertyFieldCtrl {
     this.required = this.definition && this.definition.isRequired;
 
     if (this._isPickerField()) {
-      this.CmsService.subscribe('picked', this._onPicked, this);
+      this.CmsService.subscribe('path-picked', this._onPathPicked, this);
     }
   }
 
   $onDestroy() {
     if (this._isPickerField()) {
-      this.CmsService.unsubscribe('picked', this._onPicked, this);
+      this.CmsService.unsubscribe('path-picked', this._onPathPicked, this);
     }
   }
 
@@ -82,8 +82,8 @@ class PropertyFieldCtrl {
     return `${cmsProtocol}//${cmsHost}${binaryPath}`;
   }
 
-  showPicker() {
-    this.CmsService.publish('show-picker', this.field, this.value, {
+  showPathPicker() {
+    this.CmsService.publish('show-path-picker', this.field, this.value, {
       configuration: this.annotation.pickerConfiguration,
       initialPath: this.annotation.pickerInitialPath,
       isRelativePath: this.annotation.isRelative,
@@ -93,7 +93,7 @@ class PropertyFieldCtrl {
     });
   }
 
-  _onPicked(field, path) {
+  _onPathPicked(field, path) {
     if (this.field === field) {
       this.getSetPath(path);
       this.$scope.$digest();

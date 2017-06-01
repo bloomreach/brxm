@@ -1,0 +1,80 @@
+<!--
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<subpage-toolbar flex="none"
+                 data-title="{{ $ctrl.subpageTitle }}"
+                 on-back="$ctrl.onDone()"
+                 mode="cancel">
+</subpage-toolbar>
+
+<subpage-content flex layout="row" class="qa-page-properties">
+  <form name="form"
+        flex="initial"
+        class="qa-subpage"
+        ng-submit="form.$valid && $ctrl.save()"
+        novalidate>
+    <md-input-container class="md-block">
+      <label class="md-required">{{ 'SUBPAGE_PAGE_LABEL_TITLE' | translate }}</label>
+      <input type="text" name="title" class="qa-title"
+             required
+             focus-if
+             ng-disabled="!$ctrl.isEditable"
+             ng-model="$ctrl.title">
+      <div ng-messages="form.title.$error">
+        <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
+      </div>
+    </md-input-container>
+    <md-input-container class="md-block">
+      <label>{{ 'SUBPAGE_PAGE_PROPERTIES_LABEL_PRIMARY_DOCUMENT' | translate }}</label>
+      <md-select name="prototype" class="qa-primary-document"
+                 ng-disabled="!$ctrl.isEditable"
+                 ng-model="$ctrl.primaryDocument"
+                 ng-model-options="{trackBy: '$value.path'}">
+        <md-option ng-repeat="document in $ctrl.availableDocuments" ng-value="{{document}}">
+          {{ document.displayName }}
+        </md-option>
+      </md-select>
+    </md-input-container>
+    <md-switch class="qa-assign-new-template"
+               ng-disabled="!$ctrl.isEditable || !$ctrl.hasPrototypes()"
+               ng-model="$ctrl.isAssigningNewTemplate"
+               aria-label="{{ 'SUBPAGE_PAGE_PROPERTIES_LABEL_ASSIGN_NEW_TEMPLATE' | translate }}">
+      {{ 'SUBPAGE_PAGE_PROPERTIES_LABEL_ASSIGN_NEW_TEMPLATE' | translate }}
+    </md-switch>
+    <md-input-container ng-if="$ctrl.isAssigningNewTemplate" class="md-block">
+      <label>{{ 'SUBPAGE_PAGE_LABEL_TEMPLATE' | translate }}</label>
+      <md-select name="prototype" class="qa-template"
+                 ng-model="$ctrl.prototype"
+                 ng-change="$ctrl.evaluatePrototype()"
+                 ng-model-options="{trackBy: '$value.id'}">
+        <md-option ng-repeat="prototype in $ctrl.prototypes" ng-value="{{prototype}}">
+          {{ prototype.displayName }}
+        </md-option>
+      </md-select>
+    </md-input-container>
+    <div layout="row" layout-align="end center">
+      <md-button type="button"
+                 class="qa-discard"
+                 ng-click="$ctrl.onDone()">
+        {{ 'CANCEL' | translate }}
+      </md-button>
+      <md-button type="submit"
+                 class="md-raised md-primary qa-action">
+        {{ 'SAVE' | translate }}
+      </md-button>
+    </div>
+  </form>
+</subpage-content>

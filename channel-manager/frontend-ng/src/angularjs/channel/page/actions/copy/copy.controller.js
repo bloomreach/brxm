@@ -69,7 +69,7 @@ class PageCopyCtrl {
       .then((data) => {
         this._returnToNewUrl(data.renderPathInfo);
       })
-      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_COPY_FAILED', this.errorMap));
+      .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_PAGE_COPY_FAILED', this.errorMap));
   }
 
   _returnToNewUrl(renderPathInfo) {
@@ -105,7 +105,7 @@ class PageCopyCtrl {
           this.location = this.locations[0];
         }
       })
-      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED'));
+      .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED'));
   }
 }
 

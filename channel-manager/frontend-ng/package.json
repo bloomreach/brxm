@@ -18,6 +18,7 @@
     "angular": "1.5.11",
     "angular-animate": "1.5.11",
     "angular-aria": "1.5.11",
+    "angular-local-storage": "0.5.2",
     "angular-material": "1.1.3",
     "angular-messages": "1.5.11",
     "angular-translate": "2.15.1",
@@ -30,12 +31,12 @@
     "mutation-summary": "0.1.1",
     "ng-device-detector": "4.0.3",
     "ng-focus-if": "1.0.7",
-    "open-sans-fontface": "git+https://github.com/FontFaceKit/open-sans.git#1.4.2"
+    "open-sans-fontface": "FontFaceKit/open-sans#2285c0300e6a4c8b102b98fb030fb38c26aa081c"
   },
   "devDependencies": {
     "angular-mocks": "1.5.11",
-    "frontend-build": "5.0.4",
-    "gulp": "gulpjs/gulp#4.0",
-    "gulp-hub": "frankwallis/gulp-hub#4.1.0"
+    "frontend-build": "5.0.6",
+    "gulp": "gulpjs/gulp#38246c3f8b6dbb8d4ef657183e92d90c8299e22f",
+    "gulp-hub": "frankwallis/gulp-hub#292f8ab005165c3267accb01a51f31719970d443"
   }
 }

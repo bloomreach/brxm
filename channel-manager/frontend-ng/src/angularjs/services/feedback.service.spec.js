@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,58 +58,40 @@ describe('FeedbackService', () => {
     expect(toast.textContent).toHaveBeenCalledWith(message);
     expect(toast.position).toHaveBeenCalledWith('top right');
     expect(toast.hideDelay).toHaveBeenCalledWith(3000);
-    expect(toast.parent).toHaveBeenCalled();
-  });
-
-  it('handles an explicit parent element', () => {
-    const parent = { trans: 'parent' };
-    FeedbackService.showError(undefined, undefined, parent);
-
-    expect($translate.instant).toHaveBeenCalledWith(undefined, undefined);
-    expect(toast.parent).toHaveBeenCalledWith(parent);
-  });
-
-  it('shows a translated error on a subpage', () => {
-    FeedbackService.showErrorOnSubpage('key', 'params');
-
-    expect($translate.instant).toHaveBeenCalledWith('key', 'params');
-    expect(toast.parent.calls.mostRecent().args[0]).toBeDefined();
+    expect(toast.parent).not.toHaveBeenCalled();
   });
 
   it('handles undefined error responses', () => {
-    FeedbackService.showErrorResponseOnSubpage(undefined, 'defaultKey');
+    FeedbackService.showErrorResponse(undefined, 'defaultKey');
     expect($log.info).not.toHaveBeenCalled();
     expect($translate.instant).toHaveBeenCalledWith('defaultKey', undefined);
-    expect(toast.parent.calls.mostRecent().args[0]).toBeDefined();
 
     FeedbackService.showErrorResponse(undefined, 'defaultKey');
     expect($log.info).not.toHaveBeenCalled();
     expect($translate.instant).toHaveBeenCalledWith('defaultKey', undefined);
-    expect(toast.parent.calls.mostRecent().args[0]).toBeDefined();
   });
 
   it('handles null error responses', () => {
-    FeedbackService.showErrorResponseOnSubpage(null, 'defaultKey');
+    FeedbackService.showErrorResponse(null, 'defaultKey');
 
     expect($log.info).not.toHaveBeenCalled();
     expect($translate.instant).toHaveBeenCalledWith('defaultKey', undefined);
-    expect(toast.parent.calls.mostRecent().args[0]).toBeDefined();
   });
 
   it('logs messages at info level', () => {
     let response = { message: 'test log message' };
-    FeedbackService.showErrorResponseOnSubpage(response, 'defaultKey');
+    FeedbackService.showErrorResponse(response, 'defaultKey');
     expect($log.info).toHaveBeenCalledWith('test log message');
 
     response = { parameterMap: { errorReason: 'another message' } };
-    FeedbackService.showErrorResponseOnSubpage(response, 'defaultKey');
+    FeedbackService.showErrorResponse(response, 'defaultKey');
     expect($log.info).toHaveBeenCalledWith('another message');
   });
 
   it('maps ExtResponse error codes using the error map', () => {
     const map = { a: 'A' };
     const response = { errorCode: 'a' };
-    FeedbackService.showErrorResponseOnSubpage(response, 'defaultKey', map);
+    FeedbackService.showErrorResponse(response, 'defaultKey', map);
     expect($translate.instant).toHaveBeenCalledWith('A', undefined);
 
     $translate.instant.calls.reset();
@@ -119,7 +101,7 @@ describe('FeedbackService', () => {
     const params = { trans: 'parent' };
     response.data = params;
     response.errorCode = 'c';
-    FeedbackService.showErrorResponseOnSubpage(response, 'defaultKey', map);
+    FeedbackService.showErrorResponse(response, 'defaultKey', map);
     expect($translate.instant).toHaveBeenCalledWith('defaultKey', params);
 
     $translate.instant.calls.reset();
@@ -145,7 +127,7 @@ describe('FeedbackService', () => {
 
   it('bypasses translation when provided with a userMessage', () => {
     const response = { data: { userMessage: 'Message intended for {{subs}}', subs: 'Tester' } };
-    FeedbackService.showErrorResponseOnSubpage(response, 'defaultKey');
+    FeedbackService.showErrorResponse(response, 'defaultKey');
     expect($translate.instant).not.toHaveBeenCalled();
     expect(toast.textContent).toHaveBeenCalledWith('Message intended for Tester');
   });

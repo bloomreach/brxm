@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,34 +14,124 @@
  * limitations under the License.
  */
 
+import './channelActions.scss';
 import deleteProgressTemplate from './delete/delete-channel-progress.html';
 
 class ChannelActionsCtrl {
-  constructor($translate, ChannelService, CmsService, DialogService, FeedbackService, SessionService) {
+  constructor(
+    $log,
+    $translate,
+    ChannelService,
+    CmsService,
+    ConfigService,
+    DialogService,
+    FeedbackService,
+    HippoIframeService,
+    SessionService,
+    SiteMapService,
+  ) {
     'ngInject';
 
+    this.$log = $log;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.ConfigService = ConfigService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
+    this.HippoIframeService = HippoIframeService;
     this.SessionService = SessionService;
+    this.SiteMapService = SiteMapService;
   }
+
+  // Settings
 
   isChannelSettingsAvailable() {
-    return this.ChannelService.getChannel().hasCustomProperties;
-  }
-
-  isChannelDeletionAvailable() {
-    return this.SessionService.canDeleteChannel();
-  }
-
-  hasMenuOptions() {
-    return this.isChannelSettingsAvailable() || this.isChannelDeletionAvailable();
+    return this.ChannelService.isEditable() && this.ChannelService.getChannel().hasCustomProperties;
   }
 
   openSettings() {
     this.onActionSelected({ subpage: 'channel-settings' });
+  }
+
+  // Changes
+
+  isChangesAvailable() {
+    return this.hasOwnChanges() || this.hasChangesToManage();
+  }
+
+  hasOwnChanges() {
+    return this._getChangedBySet().indexOf(this.ConfigService.cmsUser) !== -1;
+  }
+
+  _getChangedBySet() {
+    return this.ChannelService.getChannel().changedBySet || [];
+  }
+
+  canManageChanges() {
+    return this.SessionService.canManageChanges();
+  }
+
+  hasChangesToManage() {
+    return this.canManageChanges() && this._getChangedBySet().length > 0;
+  }
+
+  isManageChangesEnabled() {
+    return this.hasChangesToManage() && !this._hasOnlyOwnChanges();
+  }
+
+  _hasOnlyOwnChanges() {
+    return this.hasOwnChanges() && this._getChangedBySet().length === 1;
+  }
+
+  publish() {
+    this.ChannelService.publishOwnChanges()
+      .then(() => {
+        this.CmsService.publish('channel-changed-in-angular');
+        this.HippoIframeService.reload();
+      })
+      .catch((response) => {
+        response = response || { };
+
+        this.$log.info(response.message);
+        this.FeedbackService.showError('ERROR_CHANGE_PUBLICATION_FAILED', response.data);
+      });
+  }
+
+  discardChanges() {
+    this._confirmDiscard().then(() => {
+      this.ChannelService.discardOwnChanges()
+        .then(() => {
+          this.CmsService.publish('channel-changed-in-angular');
+          this.HippoIframeService.reload();
+          this.SiteMapService.load(this.ChannelService.getSiteMapId());
+        })
+        .catch((response) => {
+          response = response || { };
+
+          this.$log.info(response.message);
+          this.FeedbackService.showError('ERROR_CHANGE_DISCARD_FAILED', response.data);
+        });
+    });
+  }
+
+  _confirmDiscard() {
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE'))
+      .ok(this.$translate.instant('DISCARD'))
+      .cancel(this.$translate.instant('CANCEL'));
+
+    return this.DialogService.show(confirm);
+  }
+
+  manageChanges() {
+    this.onActionSelected({ subpage: 'manage-changes' });
+  }
+
+  // Delete
+
+  isChannelDeletionAvailable() {
+    return this.SessionService.canDeleteChannel();
   }
 
   deleteChannel() {
@@ -101,6 +191,12 @@ class ChannelActionsCtrl {
       .ok(this.$translate.instant('OK'));
 
     this.DialogService.show(alert);
+  }
+
+  // Close
+
+  closeChannel() {
+    this.CmsService.publish('close-channel');
   }
 }
 

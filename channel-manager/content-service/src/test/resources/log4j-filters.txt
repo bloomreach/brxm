@@ -14,6 +14,7 @@
 #  limitations under the License.
 #
 
+Cannot read config of field
 Empty contextPath
 No Server set for org.apache.cxf.transport.http_jetty.JettyHTTPServerEngine
 Failed to determine editing info for node 'bla'
@@ -49,3 +50,6 @@ Failed to retrieve child node 'fieldName' of node '/bla'.
 Failed to retrieve hints for workflow
 Failed to obtain draft for user 'bla'.
 Failed to commit changes for user 'bla'.
+Failed to read rich text field 'test:richtextfield'
+Failed to write rich text field 'test:richtextfield'
+Failed to read property 'prop' from node '/'

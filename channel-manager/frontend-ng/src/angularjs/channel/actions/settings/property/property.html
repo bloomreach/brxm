@@ -1,0 +1,120 @@
+<!--
+  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div ng-switch="channelProperty.type">
+  <md-input-container ng-switch-when="CheckBox" class="{{channelProperty.qaClass}}" layout="row">
+    <md-checkbox flex
+                 ng-model="channelProperty.value"
+                 ng-disabled="channelProperty.readOnly"
+                 aria-label="channelProperty.label">
+      {{ channelProperty.label }}
+    </md-checkbox>
+    <help-icon text="{{ channelProperty.help }}"></help-icon>
+  </md-input-container>
+
+  <md-input-container ng-switch-when="DropDownList" class="md-block {{channelProperty.qaClass}}" flex>
+    <label ng-class="{ 'md-required': channelProperty.required }">{{ channelProperty.label }}</label>
+    <md-select name="{{channelProperty.field}}"
+               ng-required="channelProperty.required"
+               ng-model="channelProperty.value"
+               ng-disabled="channelProperty.readOnly">
+      <md-option ng-repeat="choice in channelProperty.getDropDownListValues()" value="{{choice}}">
+        {{choice}}
+      </md-option>
+    </md-select>
+    <div ng-messages="channelProperty.error">
+      <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
+    </div>
+    <help-icon text="{{ channelProperty.help }}"></help-icon>
+  </md-input-container>
+
+  <md-input-container ng-switch-when="ImageSetPath" class="md-block input-container-picker {{channelProperty.qaClass}}">
+    <label ng-class="{ 'md-required': channelProperty.required }">{{ channelSettings.getLabel(field) }}</label>
+    <div layout="row">
+      <div flex>
+        <input type="text"
+               readonly="readonly"
+               name="{{channelProperty.field}}"
+               ng-required="channelProperty.required"
+               ng-model="channelProperty.value"
+               ng-hide="channelProperty.value"
+               ng-click="channelProperty.showPathPicker()"
+               ng-disabled="channelProperty.readOnly">
+        <img ng-class="{ 'readonly': channelProperty.readOnly }"
+             ng-if="channelProperty.value"
+             ng-src="{{ channelProperty.getImageVariantPath() }}"
+             ng-click="channelProperty.readOnly || channelProperty.showPathPicker()">
+      </div>
+      <md-button class="md-icon-button"
+                 ng-if="channelProperty.value"
+                 ng-click="channelProperty.value = ''"
+                 ng-disabled="channelProperty.readOnly">
+        <md-icon class="material-icons">clear</md-icon>
+      </md-button>
+      <md-button class="md-icon-button"
+                 ng-click="channelProperty.showPathPicker()"
+                 ng-disabled="channelProperty.readOnly">
+        <md-icon class="material-icons">search</md-icon>
+      </md-button>
+    </div>
+    <div ng-messages="channelProperty.error">
+      <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
+    </div>
+    <help-icon text="{{ channelProperty.help }}"></help-icon>
+  </md-input-container>
+
+  <md-input-container ng-switch-when="JcrPath" class="md-block input-container-picker {{channelProperty.qaClass}}">
+    <label ng-class="{ 'md-required': channelProperty.required }">{{ channelSettings.getLabel(field) }}</label>
+    <div layout="row">
+      <input type="text"
+             name="{{channelProperty.field}}"
+             readonly="readonly"
+             flex
+             ng-required="channelProperty.required"
+             ng-disabled="channelProperty.readOnly"
+             ng-model="channelProperty.getSetPath"
+             ng-model-options="{ getterSetter: true }"
+             ng-click="channelProperty.showPathPicker()">
+      <md-button class="md-icon-button"
+                 ng-if="channelProperty.value"
+                 ng-click="channelProperty.value = ''"
+                 ng-disabled="channelProperty.readOnly">
+        <md-icon class="material-icons">clear</md-icon>
+      </md-button>
+      <md-button class="md-icon-button"
+                 ng-click="channelProperty.showPathPicker()"
+                 ng-disabled="channelProperty.readOnly">
+        <md-icon class="material-icons">search</md-icon>
+      </md-button>
+    </div>
+    <div ng-messages="channelProperty.error">
+      <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
+    </div>
+    <help-icon text="{{ channelProperty.help }}"></help-icon>
+  </md-input-container>
+
+  <md-input-container ng-switch-default class="md-block {{channelProperty.qaClass}}" flex>
+    <label ng-class="{ 'md-required': channelProperty.required }">{{ channelProperty.label }}</label>
+    <input type="text" name="{{channelProperty.field}}"
+           ng-required="channelProperty.required"
+           ng-model="channelProperty.value"
+           ng-disabled="channelProperty.readOnly">
+    <div ng-messages="channelProperty.error">
+      <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
+    </div>
+    <help-icon text="{{ channelProperty.help }}"></help-icon>
+  </md-input-container>
+</div>

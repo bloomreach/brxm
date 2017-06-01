@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import MultiActionDialogCtrl from './multiActionDialog.controller';
-import multiActionDialogTemplate from './multiActionDialog.html';
+import MultiActionDialogCtrl from './multiActionDialog/multiActionDialog.controller';
+import multiActionDialogTemplate from './multiActionDialog/multiActionDialog.html';
 
 const ERROR_MAP = {
   NO_CONTENT: {
     title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
     messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
-    linkToFullEditor: true,
+    linkToContentEditor: true,
   },
   NOT_A_DOCUMENT: {
     title: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
-    linkToFullEditor: true,
+    linkToContentEditor: true,
     messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
   },
   NOT_FOUND: {
@@ -44,13 +44,13 @@ const ERROR_MAP = {
   },
   UNAVAILABLE: { // default catch-all
     title: 'FEEDBACK_DEFAULT_TITLE',
-    linkToFullEditor: true,
+    linkToContentEditor: true,
     messageKey: 'FEEDBACK_DEFAULT_MESSAGE',
   },
   UNKNOWN_VALIDATOR: {
-    title: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_TITLE',
-    linkToFullEditor: true,
-    messageKey: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_MESSAGE',
+    title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
+    linkToContentEditor: true,
+    messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
   },
 };
 
@@ -58,6 +58,7 @@ class RightSidePanelCtrl {
   constructor(
     $scope,
     $element,
+    $mdConstant,
     $timeout,
     $translate,
     $q,
@@ -67,6 +68,7 @@ class RightSidePanelCtrl {
     DialogService,
     HippoIframeService,
     FeedbackService,
+    localStorageService,
     ) {
     'ngInject';
 
@@ -82,13 +84,27 @@ class RightSidePanelCtrl {
     this.DialogService = DialogService;
     this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
+    this.localStorageService = localStorageService;
 
     this.defaultTitle = $translate.instant('EDIT_CONTENT');
     this.closeLabel = $translate.instant('CLOSE');
     this.cancelLabel = $translate.instant('CANCEL');
 
+    this.lastSavedWidth = null;
+    this.isFullWidth = false;
+
     SidePanelService.initialize('right', $element.find('.right-side-panel'), (documentId) => {
       this.openDocument(documentId);
+      this._onOpen();
+    });
+
+    // Prevent the default closing action bound to the escape key by Angular Material.
+    // We should show the "unsaved changes" dialog first.
+    $element.on('keydown', (e) => {
+      if (e.which === $mdConstant.KEY_CODE.ESCAPE) {
+        e.stopImmediatePropagation();
+        this.close();
+      }
     });
 
     CmsService.subscribe('kill-editor', (documentId) => {
@@ -96,6 +112,10 @@ class RightSidePanelCtrl {
         this._closePanel();
       }
     });
+  }
+
+  $onInit() {
+    this.lastSavedWidth = this.localStorageService.get('rightSidePanelWidth') || '440px';
   }
 
   openDocument(documentId) {
@@ -130,8 +150,7 @@ class RightSidePanelCtrl {
     this.documentId = id;
     this.loading = true;
     this.CmsService.closeDocumentWhenValid(id)
-      .then(() => {
-        this.ContentService.createDraft(id)
+      .then(() => this.ContentService.createDraft(id)
           .then((doc) => {
             if (this._hasFields(doc)) {
               return this.ContentService.getDocumentType(doc.info.type.id)
@@ -139,8 +158,7 @@ class RightSidePanelCtrl {
             }
             return this.$q.reject(this._noContentResponse(doc));
           })
-          .catch(response => this._onLoadFailure(response));
-      })
+          .catch(response => this._onLoadFailure(response)))
       .catch(() => this._showFeedbackDraftInvalid())
       .finally(() => delete this.loading);
   }
@@ -149,7 +167,7 @@ class RightSidePanelCtrl {
     this.feedback = {
       title: 'FEEDBACK_DRAFT_INVALID_TITLE',
       message: this.$translate.instant('FEEDBACK_DRAFT_INVALID_MESSAGE'),
-      linkToFullEditor: true,
+      linkToContentEditor: true,
     };
   }
 
@@ -214,7 +232,7 @@ class RightSidePanelCtrl {
       this.feedback = {
         title: error.title,
         message: this.$translate.instant(error.messageKey, params),
-        linkToFullEditor: error.linkToFullEditor,
+        linkToContentEditor: error.linkToContentEditor,
       };
       this.disableContentButtons = error.disableContentButtons;
     }
@@ -251,7 +269,7 @@ class RightSidePanelCtrl {
           this._reloadDocumentType();
         }
 
-        this.FeedbackService.showError(errorKey, params, this.$element);
+        this.FeedbackService.showError(errorKey, params);
 
         return this.$q.reject(); // tell the caller that saving has failed.
       });
@@ -275,10 +293,10 @@ class RightSidePanelCtrl {
       });
   }
 
-  openFullContent(mode) {
+  openContentEditor(mode) {
     const messageKey = mode === 'view'
       ? 'SAVE_CHANGES_ON_PUBLISH_MESSAGE'
-      : 'SAVE_CHANGES_ON_SWITCH_TO_FULL_EDITOR_MESSAGE';
+      : 'SAVE_CHANGES_ON_SWITCH_TO_CONTENT_EDITOR_MESSAGE';
 
     this._dealWithPendingChanges(messageKey, () => {
       if (mode === 'view') {
@@ -346,11 +364,22 @@ class RightSidePanelCtrl {
     return this.form && this.form.$dirty;
   }
 
+  _onOpen() {
+    this.$element.addClass('sidepanel-open');
+    this.$element.css('width', this.lastSavedWidth);
+    this.$element.css('max-width', this.lastSavedWidth);
+  }
+
   close() {
     this._confirmDiscardChanges().then(() => {
       this._deleteDraft();
       this._closePanel();
     });
+  }
+
+  onResize(newWidth) {
+    this.lastSavedWidth = `${newWidth}px`;
+    this.localStorageService.set('rightSidePanelWidth', this.lastSavedWidth);
   }
 
   _confirmDiscardChanges() {
@@ -377,7 +406,20 @@ class RightSidePanelCtrl {
 
   _closePanel() {
     this.SidePanelService.close('right')
-      .then(() => this._resetState());
+      .then(() => this._resetState())
+      .finally(() => {
+        this.$element.removeClass('sidepanel-open');
+        this.$element.css('max-width', '0px');
+      });
+  }
+
+  setFullWidth(state) {
+    if (state === true) {
+      this.$element.addClass('fullwidth');
+    } else {
+      this.$element.removeClass('fullwidth');
+    }
+    this.isFullWidth = state;
   }
 }
 

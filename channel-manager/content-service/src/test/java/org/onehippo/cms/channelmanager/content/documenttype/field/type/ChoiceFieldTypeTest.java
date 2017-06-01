@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.onehippo.cms.channelmanager.content.error.InternalServerErrorExceptio
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.repository.mock.MockNode;
 import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -54,6 +55,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore("javax.management.*")
 @PrepareForTest({FieldTypeUtils.class, LocalizationUtils.class, ChoiceFieldUtils.class})
 public class ChoiceFieldTypeTest {
 
@@ -134,7 +136,7 @@ public class ChoiceFieldTypeTest {
         final Node choiceNode = node.addNode("choice", "compound2");
         final FieldValue value = new FieldValue("bla");
 
-        expect(compound2.readSingleFrom(choiceNode)).andReturn(value);
+        expect(compound2.readValue(choiceNode)).andReturn(value);
         replayAll();
 
         List<FieldValue> valueList = choice.readFrom(node).get();
@@ -154,8 +156,8 @@ public class ChoiceFieldTypeTest {
         final FieldValue value1 = new FieldValue("bla");
         final FieldValue value2 = new FieldValue("bla");
 
-        expect(compound2.readSingleFrom(choiceNode1)).andReturn(value1);
-        expect(compound1.readSingleFrom(choiceNode2)).andReturn(value2);
+        expect(compound2.readValue(choiceNode1)).andReturn(value1);
+        expect(compound1.readValue(choiceNode2)).andReturn(value2);
         replayAll();
 
         List<FieldValue> valueList = choice.readFrom(node).get();
@@ -177,8 +179,8 @@ public class ChoiceFieldTypeTest {
         final FieldValue value2 = new FieldValue("bla");
 
         choice.setMaxValues(Integer.MAX_VALUE);
-        expect(compound2.readSingleFrom(choiceNode1)).andReturn(value1);
-        expect(compound1.readSingleFrom(choiceNode2)).andReturn(value2);
+        expect(compound2.readValue(choiceNode1)).andReturn(value1);
+        expect(compound1.readValue(choiceNode2)).andReturn(value2);
         replayAll();
 
         List<FieldValue> valueList = choice.readFrom(node).get();
@@ -217,7 +219,7 @@ public class ChoiceFieldTypeTest {
         node.addNode("choice", "unsupported"); // invalid, remove
         node.addNode("choice", "compound1"); // excess, remove
 
-        compound2.writeSingleTo(choiceNode, compoundValue);
+        compound2.writeValue(choiceNode, compoundValue);
         expectLastCall();
         replayAll();
 
@@ -345,9 +347,9 @@ public class ChoiceFieldTypeTest {
 
         choice.setMaxValues(Integer.MAX_VALUE);
 
-        compound1.writeSingleTo(choiceNode2, compoundValue2);
+        compound1.writeValue(choiceNode2, compoundValue2);
         expectLastCall();
-        compound2.writeSingleTo(choiceNode1, compoundValue1);
+        compound2.writeValue(choiceNode1, compoundValue1);
         expectLastCall();
         replayAll();
 
@@ -391,8 +393,8 @@ public class ChoiceFieldTypeTest {
         final FieldValue compoundValue2 = new FieldValue("value of compound 1");
         final FieldValue choiceValue2 = new FieldValue("compound1", compoundValue2);
 
-        expect(compound2.validateSingle(compoundValue1)).andReturn(true);
-        expect(compound1.validateSingle(compoundValue2)).andReturn(true);
+        expect(compound2.validateValue(compoundValue1)).andReturn(true);
+        expect(compound1.validateValue(compoundValue2)).andReturn(true);
         replayAll();
 
         assertTrue(choice.validate(Arrays.asList(choiceValue1, choiceValue2)));
@@ -406,8 +408,8 @@ public class ChoiceFieldTypeTest {
         final FieldValue compoundValue2 = new FieldValue("value of compound 1");
         final FieldValue choiceValue2 = new FieldValue("compound1", compoundValue2);
 
-        expect(compound2.validateSingle(compoundValue1)).andReturn(false);
-        expect(compound1.validateSingle(compoundValue2)).andReturn(true);
+        expect(compound2.validateValue(compoundValue1)).andReturn(false);
+        expect(compound1.validateValue(compoundValue2)).andReturn(true);
         replayAll();
 
         assertFalse(choice.validate(Arrays.asList(choiceValue1, choiceValue2)));
@@ -421,8 +423,8 @@ public class ChoiceFieldTypeTest {
         final FieldValue compoundValue2 = new FieldValue("value of compound 1");
         final FieldValue choiceValue2 = new FieldValue("compound1", compoundValue2);
 
-        expect(compound2.validateSingle(compoundValue1)).andReturn(true);
-        expect(compound1.validateSingle(compoundValue2)).andReturn(false);
+        expect(compound2.validateValue(compoundValue1)).andReturn(true);
+        expect(compound1.validateValue(compoundValue2)).andReturn(false);
         replayAll();
 
         assertFalse(choice.validate(Arrays.asList(choiceValue1, choiceValue2)));
@@ -436,8 +438,8 @@ public class ChoiceFieldTypeTest {
         final FieldValue compoundValue2 = new FieldValue("value of compound 1");
         final FieldValue choiceValue2 = new FieldValue("compound1", compoundValue2);
 
-        expect(compound2.validateSingle(compoundValue1)).andReturn(false);
-        expect(compound1.validateSingle(compoundValue2)).andReturn(false);
+        expect(compound2.validateValue(compoundValue1)).andReturn(false);
+        expect(compound1.validateValue(compoundValue2)).andReturn(false);
         replayAll();
 
         assertFalse(choice.validate(Arrays.asList(choiceValue1, choiceValue2)));

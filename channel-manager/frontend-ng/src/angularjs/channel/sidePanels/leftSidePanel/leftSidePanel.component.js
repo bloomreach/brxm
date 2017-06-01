@@ -19,7 +19,7 @@ import LeftSidePanelCtrl from './leftSidePanel.controller';
 
 const leftSidePanelComponent = {
   bindings: {
-    editMode: '=',
+    componentsVisible: '=',
   },
   controller: LeftSidePanelCtrl,
   template,

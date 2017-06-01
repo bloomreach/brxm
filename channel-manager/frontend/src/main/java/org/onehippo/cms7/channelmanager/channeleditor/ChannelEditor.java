@@ -41,6 +41,7 @@ import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
+import org.onehippo.cms7.ckeditor.CKEditorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
@@ -58,6 +59,7 @@ public class ChannelEditor extends ExtPanel {
 
     private static final String OPEN_DOCUMENT_EVENT = "open-document";
     private static final String CLOSE_DOCUMENT_EVENT = "close-document";
+    private static final String OPEN_LINK_PICKER_EVENT = "open-link-picker";
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -101,9 +103,19 @@ public class ChannelEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
+    private final String ckeditorUrl;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private final String ckeditorTimestamp;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
     private static final String ANTI_CACHE = WebApplicationHelper.APPLICATION_HASH;
 
     private ExtStoreFuture<Object> channelStoreFuture;
+    private final LinkPickerManager linkPickerManager;
+    private final ImagePickerManager imagePickerManager;
     private final EditorOpenListener EDITOR_OPEN_LISTENER = new EditorOpenListener();
 
     public ChannelEditor(final IPluginContext context, final IPluginConfig config, final String apiUrlPrefix,
@@ -115,6 +127,8 @@ public class ChannelEditor extends ExtPanel {
         this.locale = Session.get().getLocale().toString();
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
+        this.ckeditorUrl = CKEditorConstants.getCKEditorJsReference().getUrl().toString();
+        this.ckeditorTimestamp = CKEditorConstants.CKEDITOR_TIMESTAMP;
 
         String variantsPath = null;
         if (config != null) {
@@ -135,6 +149,12 @@ public class ChannelEditor extends ExtPanel {
 
         addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
         addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context, getMarkupId()));
+
+        linkPickerManager = new LinkPickerManager(context, getMarkupId());
+        add(linkPickerManager.getBehavior());
+
+        imagePickerManager = new ImagePickerManager(context, getMarkupId());
+        add(imagePickerManager.getBehavior());
     }
 
     @Override
@@ -161,6 +181,8 @@ public class ChannelEditor extends ExtPanel {
     protected void onRenderProperties(final JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
         properties.put("channelStoreFuture", new JSONIdentifier(this.channelStoreFuture.getJsObjectId()));
+        properties.put("linkPickerWicketUrl", this.linkPickerManager.getBehavior().getCallbackUrl().toString());
+        properties.put("imagePickerWicketUrl", this.imagePickerManager.getBehavior().getCallbackUrl().toString());
     }
 
     @Override
@@ -170,6 +192,8 @@ public class ChannelEditor extends ExtPanel {
                 return OpenDocumentEditorEventListener.getExtEventBehavior();
             case CLOSE_DOCUMENT_EVENT:
                 return CloseDocumentEditorEventListener.getExtEventBehavior();
+            case OPEN_LINK_PICKER_EVENT:
+                return OpenLinkPickerEventListener.getExtEventBehavior();
             default:
                 return super.newExtEventBehavior(event);
         }
@@ -178,7 +202,7 @@ public class ChannelEditor extends ExtPanel {
     public void viewChannel(final String channelId, final String initialPath) {
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
-            final String loadChannelScript = String.format("Ext.getCmp('%1s').loadChannel('%2s', '%3s');",
+            final String loadChannelScript = String.format("Ext.getCmp('%s').loadChannel('%s', '%s');",
                     getMarkupId(), channelId, initialPath);
             target.appendJavaScript(loadChannelScript);
         }
@@ -242,7 +266,7 @@ public class ChannelEditor extends ExtPanel {
             AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
                 try {
-                    final String killEditorScript = String.format("Ext.getCmp('%1s').killEditor('%2s');",
+                    final String killEditorScript = String.format("Ext.getCmp('%s').killEditor('%s');",
                             getMarkupId(), model.getObject().getIdentifier());
                     target.appendJavaScript(killEditorScript);
                 } catch (RepositoryException e) {

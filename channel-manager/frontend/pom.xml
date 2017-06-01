@@ -23,7 +23,6 @@
     <version>5.0.0-wpm-SNAPSHOT</version>
   </parent>
 
-
   <artifactId>hippo-addon-channel-manager-frontend</artifactId>
   <packaging>jar</packaging>
 
@@ -116,6 +115,20 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-richtext-ckeditor-frontend</artifactId>
+      <version>${hippo.cms.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-richtext-ckeditor-resources</artifactId>
+      <version>${hippo.cms.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
     </dependency>
 
@@ -180,6 +193,7 @@
             HST,
             jQuery,
             YAHOO,
+            Wicket,
             window
           </predefinedVars>
           <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>

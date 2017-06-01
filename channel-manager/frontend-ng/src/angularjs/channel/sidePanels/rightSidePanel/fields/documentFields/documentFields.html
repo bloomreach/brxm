@@ -1,0 +1,47 @@
+<!--
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License")
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<div class="field-wrapper"
+     ng-repeat="fieldType in $ctrl.fieldTypes track by $ctrl.getFieldTypeHash(fieldType)"
+     ng-switch="fieldType.type">
+
+  <compound-field ng-switch-when="COMPOUND"
+                  ng-if="$ctrl.hasValue(fieldType)"
+                  ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id] track by $index"
+                  name="$ctrl.getFieldName(fieldType, $index)"
+                  field-type="fieldType"
+                  field-values="fieldValue.fields"
+                  on-field-focus="$ctrl.onFieldFocus()"
+                  on-field-blur="$ctrl.onFieldBlur()">
+  </compound-field>
+
+  <choice-field ng-switch-when="CHOICE"
+                ng-if="$ctrl.hasValue(fieldType)"
+                name="$ctrl.getFieldName(fieldType)"
+                field-type="fieldType"
+                field-values="$ctrl.fieldValues[fieldType.id]"
+                on-field-focus="$ctrl.onFieldFocus()"
+                on-field-blur="$ctrl.onFieldBlur()">
+  </choice-field>
+
+  <primitive-field ng-switch-default
+                   ng-if="$ctrl.hasValue(fieldType)"
+                   name="$ctrl.name"
+                   field-type="fieldType"
+                   field-values="$ctrl.fieldValues[fieldType.id]"
+                   on-field-focus="$ctrl.onFieldFocus()"
+                   on-field-blur="$ctrl.onFieldBlur()">
+  </primitive-field>
+</div>

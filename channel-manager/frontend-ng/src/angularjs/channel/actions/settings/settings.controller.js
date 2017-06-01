@@ -39,10 +39,10 @@ class ChannelSettingsCtrl {
       .then((channelInfoDescription) => {
         this.channelInfoDescription = channelInfoDescription;
         if (this.isLockedByOther()) {
-          this.FeedbackService.showErrorOnSubpage('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: channelInfoDescription.lockedBy });
+          this.FeedbackService.showError('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: channelInfoDescription.lockedBy });
         }
         if (!this.isEditable()) {
-          this.FeedbackService.showErrorOnSubpage('ERROR_CHANNEL_SETTINGS_NOT_EDITABLE');
+          this.FeedbackService.showError('ERROR_CHANNEL_SETTINGS_NOT_EDITABLE');
         }
       })
       .catch(() => {
@@ -90,7 +90,7 @@ class ChannelSettingsCtrl {
           this.onSuccess({ key: 'CHANNEL_PROPERTIES_SAVE_SUCCESS' });
         })
         .catch((response) => {
-          this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
+          this.FeedbackService.showErrorResponse(response, 'ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
         });
     }
   }

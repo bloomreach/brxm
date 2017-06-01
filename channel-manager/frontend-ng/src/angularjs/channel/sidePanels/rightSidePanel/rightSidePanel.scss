@@ -1,4 +1,4 @@
-// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,44 @@
 
 @import 'variables';
 
-.right-side-panel form {
-  padding-right: $form-dense-distance;
-  padding-top: $form-dense-distance;
+right-side-panel {
+  max-width: 0;
+
+  &.sidepanel-open {
+    max-width: 50% !important;
+
+    md-sidenav {
+      margin-left: auto;
+      width: 100%;
+    }
+
+    &.fullwidth {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+  }
+
+  .btn-fullwidth,
+  .btn-normalwidth {
+    margin: 0 !important;
+  }
+
+  &.in-resize {
+    user-select: none;
+  }
+}
+
+.right-side-panel {
+  max-width: 100%;
+
+  form {
+    padding-right: $form-dense-distance;
+    padding-top: $form-dense-distance;
+  }
+}
+
+.feedback > :last-child {
+  margin-bottom: 0;
 }
 
 primitive-field,
@@ -27,7 +62,10 @@ choice-field {
   > .field {
     padding-left: $form-dense-distance;
   }
+}
 
+primitive-field,
+compound-field {
   primitive-field > .field {
     padding-left: 0;
   }
@@ -71,7 +109,7 @@ md-input-container:not(:last-child) .md-errors-spacer {
 .has-focused-field {
   border-color: $blue-500 !important;
 
-  & > h5 {
+  & > .field-title {
     color: $blue-500 !important;
 
     md-icon {
@@ -90,7 +128,8 @@ md-input-container:not(:last-child) .md-errors-spacer {
 
 .has-invalid-field {
   label,
-  md-icon {
+  md-icon,
+  > .has-focused-field > .field-title {
     color: $red-a700 !important;
   }
 
@@ -104,4 +143,3 @@ md-input-container:not(:last-child) .md-errors-spacer {
     opacity: 1;
   }
 }
-

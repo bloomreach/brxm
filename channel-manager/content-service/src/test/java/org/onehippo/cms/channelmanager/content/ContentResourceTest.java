@@ -30,15 +30,15 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
-import org.onehippo.cms.channelmanager.content.error.NotFoundException;
-import org.onehippo.cms.channelmanager.content.error.BadRequestException;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
-import org.onehippo.cms.channelmanager.content.document.model.Document;
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
-import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
+import org.onehippo.cms.channelmanager.content.document.model.Document;
+import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
+import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.jaxrs.cxf.CXFTest;
 import org.onehippo.repository.jaxrs.api.SessionDataProvider;
 import org.powermock.api.easymock.PowerMock;
@@ -48,13 +48,15 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.net.ssl.*")
+@PowerMockIgnore({"javax.management.*","javax.net.ssl.*"})
 @PrepareForTest({DocumentsService.class, DocumentTypesService.class})
 public class ContentResourceTest extends CXFTest {
 
@@ -166,6 +168,27 @@ public class ContentResourceTest extends CXFTest {
                 .post("/documents/" + requestedUuid + "/draft")
         .then()
                 .statusCode(404);
+    }
+
+    @Test
+    public void updateDraft() throws Exception {
+        final String requestedUuid = "requested-uuid";
+        final String uuid = "returned-uuid";
+        final Document testDocument = createDocument(uuid);
+
+        expect(documentsService.updateDraft(eq(requestedUuid), isA(Document.class), eq(userSession), eq(locale))).andReturn(testDocument);
+        replay(documentsService);
+
+        final String expectedBody = normalizeJsonResource("/empty-document.json");
+
+        given()
+                .body(expectedBody)
+                .contentType("application/json")
+        .when()
+                .put("/documents/" + requestedUuid + "/draft")
+        .then()
+                .statusCode(200)
+                .body(equalTo(expectedBody));
     }
 
     @Test

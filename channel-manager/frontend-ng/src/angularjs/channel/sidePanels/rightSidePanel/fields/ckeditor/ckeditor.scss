@@ -1,0 +1,79 @@
+// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// sass-lint:disable class-name-format, no-qualifying-elements
+@import 'variables';
+
+ckeditor {
+  textarea {
+    // Material fields have a 1px bottom border
+    + .cke {
+      border-bottom-width: 1px;
+    }
+
+    // Invalid fields have a 2px red bottom border
+    &.ng-invalid + .cke {
+      border-bottom-color: $red-500;
+      border-bottom-width: 2px;
+
+      // ...but should not push the remaining fields 1px down, so reduce the padding of the bottom toolbar by 1px
+      .cke_bottom {
+        padding-bottom: 1px;
+      }
+    }
+
+    // Focused fields have a 2px blue bottom border
+    &.focussed + .cke {
+      border-bottom-color: $blue-500;
+      border-bottom-width: 2px;
+
+      // ...but should not push the remaining fields 1px down, so reduce the padding of the bottom toolbar by 1px
+      .cke_bottom {
+        padding-bottom: 1px;
+      }
+    }
+  }
+
+  // use similar border color as other fields
+  .cke,
+  .cke_top,
+  .cke_bottom {
+    border-color: $grey-300;
+  }
+
+  // use custom background color and font in the toolbars
+  .cke_top,
+  .cke_bottom {
+    background: $grey-50;
+
+    * {
+      font-family: $font-family;
+    }
+  }
+
+  // use a darker background for 'on' toolbar buttons to increase visibility on the custom toolbar background color
+  a.cke_button_on {
+    background-color: $grey-200;
+  }
+
+  // align left side of the text in the 'Styles' dropdown with left side of the icons below it
+  .cke_combo_text {
+    padding-left: 6px;
+  }
+
+  // use same margin in the editing area as other input fields
+  .cke_wysiwyg_div.cke_editable {
+    padding: 8px;
+  }
+}

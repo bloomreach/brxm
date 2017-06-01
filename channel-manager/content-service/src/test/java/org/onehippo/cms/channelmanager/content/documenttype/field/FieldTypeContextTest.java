@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.FieldScanningContext;
+import org.onehippo.cms.channelmanager.content.documenttype.util.JcrBooleanReader;
+import org.onehippo.cms.channelmanager.content.documenttype.util.JcrMultipleStringReader;
+import org.onehippo.cms.channelmanager.content.documenttype.util.JcrStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -43,6 +47,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore("javax.management.*")
 @PrepareForTest({ContentTypeContext.class, NamespaceUtils.class})
 public class FieldTypeContextTest {
 
@@ -216,5 +221,41 @@ public class FieldTypeContextTest {
 
         verify(contentTypeItem);
         PowerMock.verifyAll();
+    }
+
+    @Test
+    public void getBooleanConfig() {
+        final FieldTypeContext context = new FieldTypeContext(null, null);
+        final Optional<Boolean> value = Optional.of(true);
+
+        expect(NamespaceUtils.getConfigProperty(context, "test", JcrBooleanReader.get())).andReturn(value);
+
+        PowerMock.replayAll();
+
+        assertThat(context.getBooleanConfig("test"), equalTo(value));
+    }
+
+    @Test
+    public void getStringConfig() {
+        final FieldTypeContext context = new FieldTypeContext(null, null);
+        final Optional<String> value = Optional.of("value");
+
+        expect(NamespaceUtils.getConfigProperty(context, "test", JcrStringReader.get())).andReturn(value);
+
+        PowerMock.replayAll();
+
+        assertThat(context.getStringConfig("test"), equalTo(value));
+    }
+
+    @Test
+    public void getMultipleStringConfig() {
+        final FieldTypeContext context = new FieldTypeContext(null, null);
+        final Optional<String[]> values = Optional.of(new String[]{"a", "b"});
+
+        expect(NamespaceUtils.getConfigProperty(context, "test", JcrMultipleStringReader.get())).andReturn(values);
+
+        PowerMock.replayAll();
+
+        assertThat(context.getMultipleStringConfig("test"), equalTo(values));
     }
 }

@@ -19,6 +19,7 @@ import ngAnimate from 'angular-animate';
 import ngMaterial from 'angular-material';
 import ngMessages from 'angular-messages';
 import ngTranslate from 'angular-translate';
+import ngLocalStorage from 'angular-local-storage';
 import 'angular-translate-loader-static-files';
 import uiRouter from 'angular-ui-router';
 import ngDeviceDetector from 'ng-device-detector';
@@ -56,6 +57,7 @@ const hippoCmng = angular
     ngMaterial,
     ngTranslate,
     ngAnimate,
+    ngLocalStorage,
     uiRouter,
     channelModule.name,
     ngDeviceDetector,

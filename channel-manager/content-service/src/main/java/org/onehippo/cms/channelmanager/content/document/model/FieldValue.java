@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Val
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FieldValue {
     private String value;                         // Stringified value for primitive fields
+    private String id;                            // UUID of the field, if needed
     private Map<String, List<FieldValue>> fields; // Subfields of compound
     private String chosenId;                      // ID of a choice in case of a choice field
     private FieldValue chosenValue;               // Singular value of a choice field
@@ -61,6 +62,10 @@ public class FieldValue {
         return Optional.ofNullable(value);
     }
 
+    public boolean hasValue() {
+        return value != null;
+    }
+
     // use for serialization and testing only, to avoid NPE.
     public String getValue() {
         return value;
@@ -68,6 +73,14 @@ public class FieldValue {
 
     public void setValue(final String value) {
         this.value = value;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(final String id) {
+        this.id = id;
     }
 
     public Optional<Map<String, List<FieldValue>>> findFields() {

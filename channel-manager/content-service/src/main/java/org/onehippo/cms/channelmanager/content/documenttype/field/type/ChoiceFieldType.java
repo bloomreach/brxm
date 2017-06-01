@@ -31,8 +31,7 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.error.BadRequestException;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
@@ -42,17 +41,17 @@ import org.slf4j.LoggerFactory;
  * The ChoiceFieldType represents the Content Blocks functionality, which allows users to choose from a list of
  * compound types to create instances in a document.
  */
-public class ChoiceFieldType extends FieldType {
+public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType {
     private static final Logger log = LoggerFactory.getLogger(ChoiceFieldType.class);
 
     // The order of the entries in the choice map matters, so we use a *linked* hash map.
-    private final Map<String, CompoundFieldType> choices = new LinkedHashMap<>();
+    private final Map<String, NodeFieldType> choices = new LinkedHashMap<>();
 
     public ChoiceFieldType() {
         setType(Type.CHOICE);
     }
 
-    public Map<String, CompoundFieldType> getChoices() {
+    public Map<String, NodeFieldType> getChoices() {
         return choices;
     }
 
@@ -86,7 +85,7 @@ public class ChoiceFieldType extends FieldType {
                 final String choiceId = child.getPrimaryNodeType().getName();
 
                 findChoice(choiceId).ifPresent(choice -> {
-                    final FieldValue choiceValue = choice.readSingleFrom(child);
+                    final FieldValue choiceValue = choice.readValue(child);
                     values.add(new FieldValue(choiceId, choiceValue));
                 });
 
@@ -99,37 +98,27 @@ public class ChoiceFieldType extends FieldType {
     }
 
     @Override
+    public FieldValue readValue(final Node node) {
+        throw new UnsupportedOperationException("Nested choices are not supported");
+    }
+
+    @Override
     public void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues) throws ErrorWithPayloadException {
         final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
         checkCardinality(values);
 
         try {
             removeInvalidChoices(node); // This is symmetric to ignoring them in #readValues.
-
-            final NodeIterator iterator = node.getNodes(getId());
-            long numberOfNodes = iterator.getSize();
-
-            // Additional cardinality check due to not yet being able to create new
-            // (or remove a subset of the old) compound nodes, unless there are more nodes than allowed
-            if (!values.isEmpty() && values.size() != numberOfNodes && !(numberOfNodes > getMaxValues())) {
-                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
-            }
-
-            for (FieldValue value : values) {
-                writeSingleTo(iterator.nextNode(), value);
-            }
-
-            // delete excess nodes to match field type
-            while (iterator.hasNext()) {
-                iterator.nextNode().remove();
-            }
+            final NodeIterator children = node.getNodes(getId());
+            FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
         } catch (RepositoryException e) {
             log.warn("Failed to write value for choice type '{}'", getId(), e);
             throw new InternalServerErrorException();
         }
     }
 
-    private void writeSingleTo(final Node node, final FieldValue value) throws ErrorWithPayloadException, RepositoryException {
+    @Override
+    public void writeValue(final Node node, final FieldValue value) throws ErrorWithPayloadException, RepositoryException {
         // each value must specify a chosen ID
         final String chosenId = value.findChosenId().orElseThrow(INVALID_DATA);
 
@@ -140,12 +129,12 @@ public class ChoiceFieldType extends FieldType {
         }
 
         // each chosenId must be a valid choice
-        final CompoundFieldType compound = findChoice(chosenId).orElseThrow(INVALID_DATA);
+        final NodeFieldType choice = findChoice(chosenId).orElseThrow(INVALID_DATA);
 
         // each value must specify a choice value
         final FieldValue chosenValue = value.findChosenValue().orElseThrow(INVALID_DATA);
 
-        compound.writeSingleTo(node, chosenValue);
+        choice.writeValue(node, chosenValue);
     }
 
 
@@ -160,20 +149,21 @@ public class ChoiceFieldType extends FieldType {
 
     @Override
     public boolean validate(final List<FieldValue> valueList) {
-        return validateValues(valueList, this::validateSingle);
+        return validateValues(valueList, this::validateValue);
     }
 
-    private boolean validateSingle(final FieldValue value) {
+    @Override
+    public boolean validateValue(final FieldValue value) {
         // dispatch validation of the values to the corresponding compound fields
         // #readValues guarantees that the value has a valid chosenId, and a choiceValue
         final String chosenId = value.findChosenId().get();
-        final CompoundFieldType compound = findChoice(chosenId).get();
+        final NodeFieldType choice = findChoice(chosenId).get();
         final FieldValue choiceValue = value.findChosenValue().get();
 
-        return compound.validateSingle(choiceValue);
+        return choice.validateValue(choiceValue);
     }
 
-    private Optional<CompoundFieldType> findChoice(final String chosenId) {
+    private Optional<NodeFieldType> findChoice(final String chosenId) {
         return Optional.ofNullable(choices.get(chosenId));
     }
 }

@@ -104,7 +104,7 @@ describe('PageActionCopy', () => {
     spyOn(ChannelService, 'recordOwnChange');
     spyOn(ChannelService, 'getId').and.returnValue('channelB');
     spyOn(FeedbackService, 'showError');
-    spyOn(FeedbackService, 'showErrorResponseOnSubpage');
+    spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HippoIframeService, 'load');
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
@@ -183,7 +183,7 @@ describe('PageActionCopy', () => {
 
     expect(PageCopyCtrl.locations).toEqual([]);
     expect(PageCopyCtrl.location).toBeUndefined();
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED');
   });
 
@@ -332,14 +332,14 @@ describe('PageActionCopy', () => {
     SiteMapService.copy.and.returnValue($q.reject());
     PageCopyCtrl.copy();
     $rootScope.$digest();
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_COPY_FAILED', PageCopyCtrl.errorMap);
 
     const response = { key: 'value' };
     SiteMapService.copy.and.returnValue($q.reject(response));
     PageCopyCtrl.copy();
     $rootScope.$digest();
-    expect(FeedbackService.showErrorResponseOnSubpage)
+    expect(FeedbackService.showErrorResponse)
       .toHaveBeenCalledWith(response, 'ERROR_PAGE_COPY_FAILED', PageCopyCtrl.errorMap);
   });
 });

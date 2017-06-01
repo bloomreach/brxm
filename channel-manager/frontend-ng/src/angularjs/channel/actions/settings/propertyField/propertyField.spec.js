@@ -213,9 +213,9 @@ describe('Property field component', () => {
     spyOn(window.APP_TO_CMS, 'publish');
     initComponentController();
 
-    $ctrl.showPicker();
+    $ctrl.showPathPicker();
 
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-picker', 'testField', 'testValue', {
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
       configuration: 'testPickerConfiguration',
       initialPath: 'testInitialPath',
       isRelativePath: 'testIsRelative',
@@ -235,9 +235,9 @@ describe('Property field component', () => {
     spyOn(ChannelService, 'getContentRootPath').and.returnValue('testChannelContentRootPath');
     initComponentController();
 
-    $ctrl.showPicker();
+    $ctrl.showPathPicker();
 
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-picker', 'testField', 'testValue', {
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
       configuration: undefined,
       initialPath: undefined,
       isRelativePath: undefined,
@@ -255,7 +255,7 @@ describe('Property field component', () => {
     };
     initComponentController();
 
-    window.CMS_TO_APP.publish('picked', 'testField', '/picked/path');
+    window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path');
 
     expect($ctrl.value).toEqual('/picked/path');
   });
@@ -268,7 +268,7 @@ describe('Property field component', () => {
     };
     initComponentController();
 
-    window.CMS_TO_APP.publish('picked', 'otherField', '/picked/path');
+    window.CMS_TO_APP.publish('path-picked', 'otherField', '/picked/path');
 
     expect($ctrl.value).toEqual('testValue');
   });
@@ -281,9 +281,9 @@ describe('Property field component', () => {
     };
     initComponentController();
 
-    window.CMS_TO_APP.publish('picked', 'testField', '/picked/path/one');
+    window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/one');
     $ctrl.$onDestroy();
-    window.CMS_TO_APP.publish('picked', 'testField', '/picked/path/two');
+    window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/two');
     expect($ctrl.value).toEqual('/picked/path/one');
   });
 
@@ -362,9 +362,9 @@ describe('Property field component', () => {
 
     initComponentController();
 
-    $ctrl.showPicker();
+    $ctrl.showPathPicker();
 
-    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-picker', 'testField', 'testValue', {
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
       configuration: 'testPickerConfiguration',
       initialPath: 'testInitialPath',
       isRelativePath: undefined,
