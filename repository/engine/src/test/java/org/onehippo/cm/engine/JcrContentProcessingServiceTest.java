@@ -83,6 +83,8 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
             "  decimal-multi-value:\n" +
             "       type: decimal\n" +
             "       value: ['42', '31415926535897932384626433832795028841971', '4.2E+314159265']\n"+
+            "  jcr:mixinTypes:\n" +
+            "       value: ['mix:shareable', 'mix:referenceable']\n"+
             "  longAsInt: 42\n" +
             "  longAsLong: 4200000000\n" +
             "  string: hello world";
@@ -141,7 +143,8 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
         applyAndSaveDefinitions(new String[]{source2, source3});
 
         Node node1 = session.getNode("/test/node1");
-        assertEquals(8, node1.getProperties().getSize());
+        PropertyIterator properties = node1.getProperties();
+        assertEquals(10, properties.getSize());
         Node node2 = session.getNode("/test/node2");
         assertEquals(6, node2.getProperties().getSize());
         Node node3 = session.getNode("/test/node3");
@@ -214,7 +217,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
 
         final Node originalNode = session.getNode("/test/node1");
 
-        assertEquals(8, originalNode.getProperties().getSize());
+        assertEquals(10, originalNode.getProperties().getSize());
 
         final boolean boolValue = getPropertyByName("boolean", originalNode).getBoolean();
         final String stringValue = getPropertyByName("string", originalNode).getString();
@@ -249,7 +252,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
 
     }
 
-        private Property getPropertyByName(final String name, final Node node) throws RepositoryException {
+    private Property getPropertyByName(final String name, final Node node) throws RepositoryException {
         for(PropertyIterator iterator = node.getProperties(); iterator.hasNext();) {
             Property property = iterator.nextProperty();
             if (property.getName().equals(name)) {

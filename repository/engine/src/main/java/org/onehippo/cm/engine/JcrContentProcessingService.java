@@ -36,6 +36,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -48,6 +49,7 @@ import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.SnsUtils;
 import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.ContentSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
@@ -109,6 +111,12 @@ public class JcrContentProcessingService {
      * @return
      */
     public synchronized Module exportNode(final Node node) throws RepositoryException {
+
+        final HippoNode hippoNode = (HippoNode) node;
+        if (hippoNode.isVirtual()) {
+            throw new ConfigurationRuntimeException(String.format("Virtual node cannot be exported: %s", node.getPath()));
+        }
+
         final ModuleImpl module = new ModuleImpl("export-module", new ProjectImpl("export-project", new GroupImpl("export-group")));
         final ContentSourceImpl contentSource = module.addContentSource("content.yaml");
         final ContentDefinitionImpl contentDefinition = contentSource.addContentDefinition();
@@ -132,7 +140,9 @@ public class JcrContentProcessingService {
         processProperties(sourceNode, definitionNode);
 
         for (final Node childNode : new NodeIterable(sourceNode.getNodes())) {
-            exportNode(childNode, definitionNode);
+            if (!((HippoNode)childNode).isVirtual()) {
+                exportNode(childNode, definitionNode);
+            }
         }
     }
 
@@ -141,13 +151,53 @@ public class JcrContentProcessingService {
     }
 
     private void processProperties(final Node sourceNode, final DefinitionNodeImpl definitionNode) throws RepositoryException {
+
+        processPrimaryTypeAndMixins(sourceNode, definitionNode);
+
         for (final Property property : new PropertyIterable(sourceNode.getProperties())) {
+            if (property.getName().equals(JCR_PRIMARYTYPE) || property.getName().equals(JCR_MIXINTYPES)) {
+                continue; //Already processed those properties
+            }
+
+            if (isKnownDerivedPropertyName(property.getName())) {
+                continue;
+            }
+
             if (property.isMultiple()) {
-                //TODO SS: process multiple value property
+
+                final javax.jcr.Value[] values = property.getValues();
+                if (values != null && values.length > 0) {
+                    final List<ValueImpl> valueList = new ArrayList<>();
+
+                    for (final javax.jcr.Value value : values) {
+                        valueList.add(valueProcessor.valueFrom(value));
+                    }
+
+                    definitionNode.addProperty(property.getName(), valueList.get(0).getType(), valueList.toArray(new ValueImpl[valueList.size()]));
+                }
             } else {
                 final ValueImpl value = valueProcessor.valueFrom(property.getValue());
                 final DefinitionPropertyImpl targetProperty = definitionNode.addProperty(property.getName(), value);
                 value.setParent(targetProperty);
+            }
+        }
+    }
+
+    private void processPrimaryTypeAndMixins(final Node sourceNode, final DefinitionNodeImpl definitionNode) throws RepositoryException {
+
+        final Property primaryTypeProperty = sourceNode.getProperty(JCR_PRIMARYTYPE);
+        final ValueImpl value = valueProcessor.valueFrom(primaryTypeProperty.getValue());
+        definitionNode.addProperty(primaryTypeProperty.getName(), value);
+
+        if (sourceNode.hasProperty(JCR_MIXINTYPES)) {
+            final NodeType[] mixinNodeTypes = sourceNode.getMixinNodeTypes();
+            if (mixinNodeTypes.length > 0) {
+                final List<ValueImpl> values = new ArrayList<>();
+                for (final NodeType mixinNodeType : mixinNodeTypes) {
+                    values.add(new ValueImpl(mixinNodeType.getName()));
+                }
+
+                definitionNode.addProperty(JCR_MIXINTYPES, ValueType.STRING, values.toArray(new ValueImpl[values.size()]));
             }
         }
     }
@@ -168,7 +218,7 @@ public class JcrContentProcessingService {
             applyNode(definitionNode, actionType, session);
             applyUnprocessedReferences();
         } catch (Exception e) {
-            logger.error(String.format("Content definition processing failes: %s", definitionNode.getName()), e);
+            logger.error(String.format("Content definition processing failed: %s", definitionNode.getName()), e);
             if (e instanceof RepositoryException) {
                 throw (RepositoryException) e;
             } else {

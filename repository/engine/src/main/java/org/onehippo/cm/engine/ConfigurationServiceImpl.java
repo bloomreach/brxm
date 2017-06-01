@@ -16,25 +16,38 @@
 
 package org.onehippo.cm.engine;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
+import org.onehippo.cm.engine.impl.ZipCompressor;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ExportModuleContext;
+import org.onehippo.cm.model.FileConfigurationWriter;
+import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.Files;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
 import static org.onehippo.cm.engine.Constants.HCM_BASELINE_PATH;
@@ -199,6 +212,43 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         } finally {
             lockManager.unlock();
         }
+    }
+
+    public File exportZippedContent(Node nodeToExport) throws RepositoryException, IOException {
+
+        final Module module = contentService.exportNode(nodeToExport);
+
+        final File dirToZip = Files.createTempDir();
+
+        final Path modulePath = Paths.get(dirToZip.getPath());
+
+        final ModuleContext moduleContext = new ExportModuleContext(module, modulePath);
+        try {
+            new FileConfigurationWriter().writeModule(module, moduleContext);
+            File file = File.createTempFile("export", "zip");
+            final ZipCompressor zipCompressor = new ZipCompressor();
+            zipCompressor.zipDirectory(dirToZip.toPath(), file.getAbsolutePath());
+            return file;
+        }
+        finally {
+            FileUtils.deleteQuietly(dirToZip);
+        }
+
+
+    }
+
+    public String exportContent(Node nodeToExport) throws RepositoryException, IOException {
+
+        final Module module = contentService.exportNode(nodeToExport);
+
+        final ModuleContext moduleContext = new ExportModuleContext(module);
+        final ContentSourceSerializer contentSourceSerializer = new ContentSourceSerializer(moduleContext, module.getContentSources().iterator().next(), false);
+
+        final org.yaml.snakeyaml.nodes.Node node = contentSourceSerializer.representSource(postProcessItem -> {
+        });
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        contentSourceSerializer.serializeNode(out, node);
+        return new String(out.toByteArray());
     }
 
     private boolean isNew() throws RepositoryException {
