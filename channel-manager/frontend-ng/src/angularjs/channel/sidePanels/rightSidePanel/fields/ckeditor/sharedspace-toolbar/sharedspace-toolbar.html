@@ -19,6 +19,12 @@
             ng-class="{
               'visible': $ctrl.isVisible
             }">
+
+  <!--
+    CKEditor initialization expects an ID selector for the toolbars.
+    In the other hand, Sasslint does not allow ID selectors, therefore we use both
+    classes and IDs.
+  -->
   <div class="ckeditor-shared-space-top" id="ckeditor-shared-space-top"></div>
   <div ng-show="$ctrl.showBottomToolbar" class="ckeditor-shared-space-bottom" id="ckeditor-shared-space-bottom"></div>
 </md-toolbar>

@@ -18,7 +18,7 @@ class SharedSpaceToolbarService {
   constructor() {
     'ngInject';
 
-    this.triggerCallback = null;
+    this.triggerCallback = angular.noop;
   }
 
   registerTriggerCallback(fn) {
