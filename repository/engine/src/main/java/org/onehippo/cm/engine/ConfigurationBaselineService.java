@@ -23,12 +23,16 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -64,27 +68,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.HCM_ACTIONS;
-import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
-import static org.onehippo.cm.engine.Constants.NT_HCM_ACTIONS;
 import static org.onehippo.cm.engine.Constants.HCM_BASELINE;
-import static org.onehippo.cm.engine.Constants.NT_HCM_BASELINE;
-import static org.onehippo.cm.engine.Constants.NT_HCM_BINARY;
+import static org.onehippo.cm.engine.Constants.HCM_BASELINE_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_CND;
-import static org.onehippo.cm.engine.Constants.NT_HCM_CND;
-import static org.onehippo.cm.engine.Constants.NT_HCM_CONFIG_FOLDER;
-import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT_FOLDER;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_NODE_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATH;
-import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT_SOURCE;
-import static org.onehippo.cm.engine.Constants.NT_HCM_DEFINITIONS;
+import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
 import static org.onehippo.cm.engine.Constants.HCM_DIGEST;
-import static org.onehippo.cm.engine.Constants.NT_HCM_GROUP;
 import static org.onehippo.cm.engine.Constants.HCM_LAST_UPDATED;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
-import static org.onehippo.cm.engine.Constants.NT_HCM_DESCRIPTOR;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_SEQUENCE;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT;
+import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
+import static org.onehippo.cm.engine.Constants.HCM_YAML;
+import static org.onehippo.cm.engine.Constants.NT_HCM_ACTIONS;
+import static org.onehippo.cm.engine.Constants.NT_HCM_BASELINE;
+import static org.onehippo.cm.engine.Constants.NT_HCM_BINARY;
+import static org.onehippo.cm.engine.Constants.NT_HCM_CND;
+import static org.onehippo.cm.engine.Constants.NT_HCM_CONFIG_FOLDER;
+import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT;
+import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT_FOLDER;
+import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT_SOURCE;
+import static org.onehippo.cm.engine.Constants.NT_HCM_DEFINITIONS;
+import static org.onehippo.cm.engine.Constants.NT_HCM_DESCRIPTOR;
+import static org.onehippo.cm.engine.Constants.NT_HCM_GROUP;
 import static org.onehippo.cm.engine.Constants.NT_HCM_MODULE;
 import static org.onehippo.cm.engine.Constants.NT_HCM_PROJECT;
-import static org.onehippo.cm.engine.Constants.HCM_YAML;
+import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
@@ -523,6 +533,11 @@ public class ConfigurationBaselineService {
                         .flatMap(p -> p.getModules().stream())
                         .findFirst().get();
 
+                final double sequenceNumber = moduleNode.hasProperty(HCM_MODULE_SEQUENCE)
+                        ? moduleNode.getProperty(HCM_MODULE_SEQUENCE).getDouble()
+                        : 0.0;
+                module.setSequenceNumber(sequenceNumber);
+
                 log.debug("Building module from descriptor: {}/{}/{}",
                         module.getProject().getGroup().getName(), module.getProject().getName(), module.getName());
             }
@@ -672,5 +687,61 @@ public class ConfigurationBaselineService {
 
         log.debug("Found {} modules in baseline", moduleNodes.size());
         return moduleNodes;
+    }
+
+    /**
+     * Obtain a flat set of all content paths applied in the past
+     */
+    Set<String> getAppliedContentPaths() throws RepositoryException {
+        final Set<String> appliedContentPaths = new LinkedHashSet<>();
+
+        if (configurationServiceSession.nodeExists(HCM_CONTENT_NODE_PATH)) {
+            final Node hcmContentRoot = configurationServiceSession.getNode(HCM_CONTENT_NODE_PATH);
+            if (hcmContentRoot.hasProperty(HCM_CONTENT_PATHS_APPLIED)) {
+                final Property pathsApplied = hcmContentRoot.getProperty(HCM_CONTENT_PATHS_APPLIED);
+                for (final javax.jcr.Value value : pathsApplied.getValues()) {
+                    appliedContentPaths.add(value.getString());
+                }
+            }
+        }
+        return appliedContentPaths;
+    }
+
+    /**
+     * Add a content path to (the end of) the set of all content paths applied
+     */
+    void addAppliedContentPath(final String path) throws RepositoryException {
+        final Set<String> appliedPaths = getAppliedContentPaths();
+        if (!appliedPaths.contains(path)) {
+            appliedPaths.add(path);
+            final String[] newPaths = appliedPaths.toArray(new String[appliedPaths.size()]);
+            getOrCreateContentNode().setProperty(HCM_CONTENT_PATHS_APPLIED, newPaths);
+            configurationServiceSession.save();
+        }
+    }
+
+    private Node getOrCreateContentNode() throws RepositoryException {
+        final Node rootNode = configurationServiceSession.getRootNode();
+        final Node hcmRootNode = rootNode.hasNode(HCM_ROOT)
+                ? rootNode.getNode(HCM_ROOT)
+                : rootNode.addNode(HCM_ROOT, NT_HCM_ROOT);
+        return hcmRootNode.hasNode(NT_HCM_CONTENT)
+                ? hcmRootNode.getNode(NT_HCM_CONTENT)
+                : hcmRootNode.addNode(NT_HCM_CONTENT, NT_HCM_CONTENT);
+    }
+
+    /**
+     * Update a module's stored sequence number to indicate that all content actions have been processed
+     */
+    void updateModuleSequenceNumber(final ModuleImpl module) throws RepositoryException {
+        final Optional<Double> latestVersion = module.getActionsMap().keySet().stream().max(Double::compareTo);
+        if (latestVersion.isPresent()) {
+            final String moduleNodePath = HCM_BASELINE_PATH + "/" + module.getFullName();
+
+            module.setSequenceNumber(latestVersion.get());
+
+            configurationServiceSession.getNode(moduleNodePath).setProperty(HCM_MODULE_SEQUENCE, latestVersion.get());
+            configurationServiceSession.save();
+        }
     }
 }

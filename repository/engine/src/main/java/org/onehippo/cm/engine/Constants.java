@@ -57,4 +57,5 @@ public final class Constants {
 
     public static final String HCM_ROOT_PATH = "/" + HCM_ROOT;
     public static final String HCM_BASELINE_PATH = HCM_ROOT_PATH + "/" + HCM_BASELINE;
+    public static final String HCM_CONTENT_NODE_PATH = HCM_ROOT_PATH + "/" + NT_HCM_CONTENT;
 }

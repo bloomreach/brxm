@@ -16,8 +16,6 @@
 package org.onehippo.cm.engine;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +24,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 
 import org.apache.commons.collections4.iterators.IteratorIterable;
 import org.apache.commons.lang.StringUtils;
@@ -51,24 +46,22 @@ import org.slf4j.LoggerFactory;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.MapUtils.isNotEmpty;
-import static org.onehippo.cm.engine.Constants.HCM_BASELINE;
-import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
-import static org.onehippo.cm.engine.Constants.HCM_MODULE_SEQUENCE;
-import static org.onehippo.cm.engine.Constants.HCM_ROOT;
-import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT;
-import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 
 /**
- * Applies content definitions to repository
+ * Applies content definitions to the repository
  */
 public class ConfigurationContentService {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationContentService.class);
     public static final String SEPARATOR = "/";
-    private static final String HCM_CONTENT_NODE_PATH = String.format("/%s/%s", HCM_ROOT, NT_HCM_CONTENT);
 
     private final ValueProcessor valueProcessor = new ValueProcessor();
     private final JcrContentProcessingService contentProcessingService = new JcrContentProcessingService(valueProcessor);
+    private final ConfigurationBaselineService configurationBaselineService;
+
+    ConfigurationContentService(final ConfigurationBaselineService configurationBaselineService) {
+        this.configurationBaselineService = configurationBaselineService;
+    }
 
     /**
      * Apply content definitions from modules contained within configuration model
@@ -116,9 +109,7 @@ public class ConfigurationContentService {
      * @param session active {@link Session}
      */
     private void apply(final ModuleImpl module, final ConfigurationModel model, final Session session) throws RepositoryException {
-        final double currentVersion = getModuleVersion(module, session);
-
-        final List<ActionItem> actionsToProcess = collectNewActions(currentVersion, module.getActionsMap());
+        final List<ActionItem> actionsToProcess = collectNewActions(module.getSequenceNumber(), module.getActionsMap());
         processItemsToDelete(actionsToProcess, model, session);
         session.save();
 
@@ -127,7 +118,7 @@ public class ConfigurationContentService {
             final DefinitionNode contentNode = contentDefinition.getNode();
             final String baseNodePath = contentNode.getPath();
             final Optional<ActionType> optionalAction = findLastActionToApply(baseNodePath, actionsToProcess);
-            final boolean nodeAlreadyProcessed = nodeAlreadyProcessed(contentNode, session);
+            final boolean nodeAlreadyProcessed = configurationBaselineService.getAppliedContentPaths().contains(baseNodePath);
 
             if (optionalAction.isPresent() || !nodeAlreadyProcessed) {
                 final ActionType action = optionalAction.orElse(ActionType.APPEND);
@@ -137,7 +128,7 @@ public class ConfigurationContentService {
                     contentProcessingService.apply(contentNode, action, session);
 
                     if (!nodeAlreadyProcessed) {
-                        updateProcessedDefinition(contentNode.getPath(), session);
+                        configurationBaselineService.addAppliedContentPath(baseNodePath);
                     }
                     session.save();
                 } else {
@@ -147,45 +138,7 @@ public class ConfigurationContentService {
             }
         }
 
-        updateModuleVersion(module, session);
-    }
-
-    /**
-     * Update processed definition lists (TODO SS: move to baseline service?)
-     *
-     * @param path node path
-     * @param session active {@link Session}
-     */
-    private void updateProcessedDefinition(final String path, final Session session) throws RepositoryException {
-        log.debug("Saving processed definition path: {}", path);
-
-        final List<Value> valueList = new ArrayList<>();
-
-        final Node contentNode = getOrCreateContentNode(session);
-        if (contentNode.hasProperty(HCM_CONTENT_PATHS_APPLIED)) {
-            final Value[] values = contentNode.getProperty(HCM_CONTENT_PATHS_APPLIED).getValues();
-            valueList.addAll(Arrays.asList(values));
-        }
-
-        valueList.add(session.getValueFactory().createValue(path));
-
-        contentNode.setProperty(HCM_CONTENT_PATHS_APPLIED, valueList.toArray(new Value[0]));
-    }
-
-    /**
-     * Look-up of create the baseline content node
-     *
-     * @param session JCR session for looking up or creating the content node
-     * @return        baseline content node
-     */
-    private Node getOrCreateContentNode(final Session session) throws RepositoryException {
-        final Node rootNode = session.getRootNode();
-        final Node hcmRootNode = rootNode.hasNode(HCM_ROOT)
-                ? rootNode.getNode(HCM_ROOT)
-                : rootNode.addNode(HCM_ROOT, NT_HCM_ROOT);
-        return hcmRootNode.hasNode(NT_HCM_CONTENT)
-                ? hcmRootNode.getNode(NT_HCM_CONTENT)
-                : hcmRootNode.addNode(NT_HCM_CONTENT, NT_HCM_CONTENT);
+        configurationBaselineService.updateModuleSequenceNumber(module);
     }
 
     /**
@@ -211,28 +164,6 @@ public class ConfigurationContentService {
     }
 
     /**
-     * Check if node was already processed and it's path is saved withing baseline
-     *
-     * @param contentNode {@link DefinitionNode}
-     * @param session active {@link Session}
-     * @return true if node was already processed, false otherwise
-     */
-    private boolean nodeAlreadyProcessed(final DefinitionNode contentNode, final Session session) throws RepositoryException {
-        if (session.nodeExists(HCM_CONTENT_NODE_PATH)) {
-            final Node hcmContentRoot = session.getNode(HCM_CONTENT_NODE_PATH);
-            if (hcmContentRoot.hasProperty(HCM_CONTENT_PATHS_APPLIED)) {
-                final Property pathsApplied = hcmContentRoot.getProperty(HCM_CONTENT_PATHS_APPLIED);
-                for (final Value value : pathsApplied.getValues()) {
-                    if (contentNode.getPath().equals(value.getString())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
      * Delete nodes from action list
      *
      * @param items items to delete
@@ -254,36 +185,6 @@ public class ConfigurationContentService {
                             baseNodePath));
                 }
             }
-        }
-    }
-
-    /**
-     * Get module's version from baseline
-     *
-     * @param module  target module
-     * @param session Active session
-     * @return Current module's version or MINIMAL value of double
-     */
-    private double getModuleVersion(final Module module, final Session session) throws RepositoryException {
-        try {
-            final String moduleNodePath = String.format("/%s/%s/%s", HCM_ROOT, HCM_BASELINE, ((ModuleImpl) module).getFullName());
-            Node node = session.getNode(moduleNodePath);
-            return node.getProperty(HCM_MODULE_SEQUENCE).getDouble();
-        } catch (PathNotFoundException ignored) {
-        }
-
-        return Double.MIN_VALUE;
-    }
-
-    // TODO Move to ConfigurationBaselineService.
-    private void updateModuleVersion(final ModuleImpl module, final Session session) throws RepositoryException {
-        final Optional<Double> latestVersion = module.getActionsMap().keySet().stream().max(Double::compareTo);
-        if (latestVersion.isPresent()) {
-            module.setSequenceNumber(latestVersion.get());
-
-            final String moduleNodePath = String.format("/%s/%s/%s", HCM_ROOT, HCM_BASELINE, module.getFullName());
-            session.getNode(moduleNodePath).setProperty(HCM_MODULE_SEQUENCE, latestVersion.get());
-            session.save();
         }
     }
 

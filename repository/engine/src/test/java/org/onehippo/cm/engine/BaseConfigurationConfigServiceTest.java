@@ -187,8 +187,6 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
             final ModuleImpl module = definitions.get(0).getSource().getModule();
             module.setConfigResourceInputProvider(new TestResourceInputProvider());
             module.setContentResourceInputProvider(new TestResourceInputProvider());
-//            module.setConfigResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
-//            module.setContentResourceInputProvider(ModelTestUtils.getTestResourceInputProvider());
             final GroupImpl group = module.getProject().getGroup();
             configurationModelImpl.addGroup(group);
         }
