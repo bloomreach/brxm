@@ -39,6 +39,10 @@ right-side-panel {
   &.in-resize {
     user-select: none;
   }
+
+  .edit-title-toolbar {
+    z-index: 2 !important;
+  }
 }
 
 .right-side-panel {

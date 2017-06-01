@@ -26,8 +26,8 @@ sharedspace-toolbar {
   max-height: 90px !important;
   min-height: auto !important;
   padding: 0;
-  transition: margin-top .2s ease-in-out !important;
-  z-index: 998 !important;
+  transition: margin-top .4s !important;
+  z-index: 1 !important;
 
   &.visible {
     height: auto !important;

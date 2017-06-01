@@ -27,29 +27,29 @@
   .md-resize-handle {
     display: none !important;
   }
-}
 
-// CKEditor input area (:not is required to exclude toolbars)
-div[class*="cke_editor_input_"]:not(.cke_shared) {
-  margin-bottom: 1px;
+  // CKEditor input area (:not is required to exclude toolbars)
+  &[class*='cke_editor_input_']:not(.cke_shared) {
+    margin-bottom: 1px;
 
-  &.cke_focus {
-    margin-bottom: 0;
-    border-bottom: 2px solid $blue-500;
+    &.cke_focus {
+      border-bottom: 2px solid $blue-500;
+      margin-bottom: 0;
+    }
   }
 }
 
 .cke_shared {
-  border: none !important;
-  box-shadow: none !important;
+  border: 0 !important;
+  box-shadow: 0 !important;
 }
 
 .cke_top {
-  border-bottom: none !important;
+  border-bottom: 0 !important;
 }
 
 .cke_bottom {
-  border: none !important;
+  border: 0 !important;
 
   &:empty {
     padding: 0 !important;
