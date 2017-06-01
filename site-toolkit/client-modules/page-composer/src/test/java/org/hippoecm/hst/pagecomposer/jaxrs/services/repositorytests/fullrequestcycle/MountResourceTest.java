@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.jcr.Credentials;
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -35,10 +34,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 
 import static java.util.Collections.singletonList;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class MountResourceTest extends AbstractFullRequestCycleTest {
@@ -337,4 +339,43 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
             assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
         }
     }
+
+    @Test
+    public void select_branch_and_select_master_again() throws Exception {
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/"+ mountId + "./selectbranch/foo", null, "PUT");
+        MockHttpServletResponse response = render(mountId, requestResponse, ADMIN_CREDENTIALS);
+        final String restResponse = response.getContentAsString();
+        final Map<String, Object> responseMap = mapper.reader(Map.class).readValue(restResponse);
+        assertEquals(Boolean.TRUE, responseMap.get("success"));
+        final Map<String, String> mountToBranchMap = (Map<String, String>)requestResponse.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        assertTrue(mountToBranchMap.containsKey(mountId));
+        assertEquals("foo", mountToBranchMap.get(mountId));
+        final RequestResponseMock requestResponse2 = mockGetRequestResponse(
+                "http", "localhost", "/_rp/"+ mountId + "./selectmaster", null, "PUT");
+        final MockHttpSession session = new MockHttpSession();
+        session.setAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY, mountToBranchMap);
+        requestResponse2.getRequest().setSession(session);
+        MockHttpServletResponse response2 = render(mountId, requestResponse2, ADMIN_CREDENTIALS);
+        final String restResponse2 = response2.getContentAsString();
+        final Map<String, Object> responseMap2 = mapper.reader(Map.class).readValue(restResponse2);
+
+        assertEquals(Boolean.TRUE, responseMap2.get("success"));
+        final Map<String, String> mountToBranchMap2 = (Map<String, String>)requestResponse2.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        assertFalse(mountToBranchMap2.containsKey(mountId));
+    }
+
+    @Test
+    public void select_non_existing_branch_does_not_return_error() throws Exception {
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/"+ mountId + "./selectbranch/foo", null, "PUT");
+        MockHttpServletResponse response = render(mountId, requestResponse, ADMIN_CREDENTIALS);
+        final String restResponse = response.getContentAsString();
+        final Map<String, Object> responseMap = mapper.reader(Map.class).readValue(restResponse);
+        assertEquals(Boolean.TRUE, responseMap.get("success"));
+        assertFalse(((Map)requestResponse.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY)).isEmpty());
+    }
+
 }
