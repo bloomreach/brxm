@@ -51,6 +51,10 @@ public class HstConfigLockedCheckInvokerPreprocessor implements InvokerPreproces
 
     @Override
     public Object preprocoess(final Exchange exchange, final Object request) {
+        if (!pageComposerContextService.isRenderingMountSet()) {
+            log.debug("Not yet a rendering mount set.");
+            return null;
+        }
         final Channel channel = pageComposerContextService.getEditingPreviewChannel();
         if (channel == null) {
             return null;
