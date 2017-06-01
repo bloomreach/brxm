@@ -173,7 +173,7 @@ public class ConfigurationLockManager {
         }
     }
 
-    public void shutdown() {
+    public void stop() {
         try {
             if (lockSession != null && lockSession.isLive()) {
                 unlockHippoLock(hippoLock);
@@ -181,7 +181,7 @@ public class ConfigurationLockManager {
                 lockSession.logout();
             }
         } catch (RepositoryException e) {
-            log.warn("Failed to unlock or logout during shutdown", e);
+            log.warn("Failed to unlock or logout during stop", e);
         }
     }
 }

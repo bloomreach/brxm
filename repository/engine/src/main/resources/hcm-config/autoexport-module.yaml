@@ -2,7 +2,6 @@ definitions:
   config:
     /hippo:configuration/hippo:modules/autoexport:
       jcr:primaryType: hipposys:module
-      hipposys:className: org.onehippo.cm.engine.autoexport.AutoExportModule
       /hippo:moduleconfig:
         jcr:primaryType: autoexport:config
         autoexport:enabled: true

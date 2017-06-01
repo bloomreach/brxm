@@ -78,7 +78,7 @@ public class EventJournalProcessor {
                 processEvents();
             } catch (Exception e) {
                 taskFailed = true;
-                AutoExportModule.log.error(e.getClass().getName() + " : " + e.getMessage(), e);
+                AutoExportServiceImpl.log.error(e.getClass().getName() + " : " + e.getMessage(), e);
                 if (future != null && (!future.isCancelled() || !future.isDone())) {
                     future.cancel(true);
                 }
@@ -93,7 +93,7 @@ public class EventJournalProcessor {
         this.configuration = configuration;
 
         try {
-            this.currentModel = configurationService.loadBaseline();
+            this.currentModel = configurationService.getRuntimeConfigurationModel();
         } catch (Exception e) {
             // TODO needs better ConfigurationService exception management
             if (e instanceof RepositoryException) {
@@ -165,9 +165,9 @@ public class EventJournalProcessor {
                     continue;
                 }
                 for (String path : processEvent(event)) {
-                    if (AutoExportModule.log.isDebugEnabled()) {
+                    if (AutoExportServiceImpl.log.isDebugEnabled()) {
                         final String eventPath = event.getPath();
-                        AutoExportModule.log.debug(String.format("event %d: %s under parent: [%s] at: [%s] for user: [%s]",
+                        AutoExportServiceImpl.log.debug(String.format("event %d: %s under parent: [%s] at: [%s] for user: [%s]",
                                 event.getRevision(), Constants.getJCREventTypeName(event.getType()), path,
                                 eventPath.startsWith(path) ? eventPath.substring(path.length()) : eventPath,
                                 event.getUserID()));
@@ -175,12 +175,12 @@ public class EventJournalProcessor {
                 }
             }
             if (count > 0) {
-                AutoExportModule.log.debug("Read {} events up to {}", count, lastRevision);
+                AutoExportServiceImpl.log.debug("Read {} events up to {}", count, lastRevision);
             }
             if (currentChangeLog != null && currentChangeLog.hasChanges()) {
                 if (pendingChangeLog != null) {
                     pendingChangeLog.getChangedNodePaths().addAll(currentChangeLog.getChangedNodePaths());
-                    AutoExportModule.log.debug("Adding new changes to pending changes");
+                    AutoExportServiceImpl.log.debug("Adding new changes to pending changes");
                 } else if (isReadyForProcessing(currentChangeLog)) {
                     pendingChangeLog = currentChangeLog;
                 }
@@ -200,7 +200,7 @@ public class EventJournalProcessor {
             }
         } catch (Exception e) {
             // catch all exceptions, not just RepositoryException
-            AutoExportModule.log.error("Processing events failed: ", e);
+            AutoExportServiceImpl.log.error("Processing events failed: ", e);
         }
     }
 
@@ -219,7 +219,7 @@ public class EventJournalProcessor {
                         if (nodeTypeRegistryLastModifiedPropertyPath.equals(event.getPath())) {
                             if (event.getUserData() != null) {
                                 String[] changedNamespacePrefixes = event.getUserData().split("\\|");
-                                AutoExportModule.log.debug("detected change event for nodetype prefix(es) [{}]", event.getUserData());
+                                AutoExportServiceImpl.log.debug("detected change event for nodetype prefix(es) [{}]", event.getUserData());
                                 for (String changedNamespacePrefix : changedNamespacePrefixes) {
                                     final String path = Constants.SYSTEM_NODETYPES_PATH+changedNamespacePrefix;
                                     currentChangeLog.getChangedNodePaths().add(path);

@@ -81,12 +81,12 @@ class NodeTypeChangesMonitor implements NodeTypeRegistryListener {
                 }
                 moduleConfigNode.setProperty(Constants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME, System.currentTimeMillis());
                 monitorSession.save();
-                AutoExportModule.log.debug("journal logging changed nodetype prefix(es): [{}]",userData);
+                AutoExportServiceImpl.log.debug("journal logging changed nodetype prefix(es): [{}]",userData);
             } finally {
                 observationManager.setUserData(null);
             }
         } catch (RepositoryException e) {
-            AutoExportModule.log.error("Failed to generate journal event for NodeTypeRegistry change.", e);
+            AutoExportServiceImpl.log.error("Failed to generate journal event for NodeTypeRegistry change.", e);
         }
     }
 

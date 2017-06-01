@@ -26,15 +26,19 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.ConfigurationService;
+import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
+import static org.onehippo.cm.engine.Constants.HCM_BASELINE_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HCM_PREFIX;
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
@@ -48,189 +52,147 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
-    private final Session session;
-    private final ConfigurationLockManager lockManager;
-    private final ConfigurationBaselineService baselineService;
-    private final ConfigurationConfigService configService;
-    private final ConfigurationContentService contentService;
+    private Session session;
+    private ConfigurationLockManager lockManager;
+    private ConfigurationBaselineService baselineService;
+    private ConfigurationConfigService configService;
+    private ConfigurationContentService contentService;
+    private AutoExportServiceImpl autoExportService;
 
-    /* TODO refactor after HCM-55
-     * For now, storing the read result and merged model in an instance variable. This should be refactored for a
-     * couple of reasons .
-     *
-     * The code in #initializeRepositoryConfiguration should really be in #contentBootstrap, but that is not possible
-     * now, as then then the code trips on deleting the property lock that is set in
-     * org.hippoecm.repository.LocalHippoRepository#initialize; line 283: initializationProcessor.lock(lockSession);
-     * HCM-55 will likely introduce a mechanism so that locked property can be ignored.
-     *
-     * See also https://issues.onehippo.com/browse/REPO-1236
-     *
-     * Once the code is moved, the model will likely be loaded in #contentBootstrap and the need for these instance
-     * variables will be gone.
-     */
-    private ConfigurationModelImpl configurationModel;
+    private ConfigurationModelImpl runtimeConfigurationModel;
 
-    public ConfigurationServiceImpl(final Session session) throws RepositoryException {
+    public ConfigurationServiceImpl start(final Session session, final StartRepositoryServicesTask startRepositoryServicesTask)
+            throws RepositoryException {
         this.session = session;
         lockManager = new ConfigurationLockManager(session);
         baselineService = new ConfigurationBaselineService(session, lockManager);
         configService = new ConfigurationConfigService();
         contentService = new ConfigurationContentService();
-    }
 
-    public boolean isNew() throws RepositoryException {
-        return !(session.getWorkspace().getNodeTypeManager().hasNodeType(NT_HCM_ROOT) && session.nodeExists(HCM_ROOT_PATH));
-    }
-
-    /**
-     * Perform initial repository configuration, including creating (claiming) a Repository initialization scope
-     * lock, which only will be released through {@link #finishConfigureRepository()}
-     */
-    public void startConfigureRepository() throws RepositoryException {
-        boolean started = false;
+        log.info("ConfigurationService: start");
         ensureInitialized();
         lockManager.lock();
         try {
-            // TODO when merging this code into LocalHippoRepository, use verifyOnly=false parameter
-            configurationModel = new ClasspathConfigurationModelReader().read(Thread.currentThread().getContextClassLoader(), true);
+            final boolean fullConfigure = "full".equalsIgnoreCase(System.getProperty("repo.bootstrap", "false"));
+            final boolean configure = fullConfigure || Boolean.getBoolean("repo.bootstrap");
+            final boolean first = isNew();
+            final boolean mustConfigure = first || configure;
+            final boolean verify = Boolean.getBoolean("repo.bootstrap.verify");
+            final boolean autoExportAllowed = Boolean.getBoolean(org.onehippo.cm.engine.autoexport.Constants.SYSTEM_ALLOWED_PROPERTY_NAME);
 
-            apply(configurationModel);
-
-            if (Boolean.getBoolean("repo.yaml.verify")) {
-                log.info("starting YAML verification");
-                apply(configurationModel);
-                log.info("YAML verification complete");
-            }
-
-            // don't fail starting up the repository storing the baseline or content
-            try {
-                baselineService.storeBaseline(configurationModel);
-            } catch (RepositoryException|IOException|ConfigurationRuntimeException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Failed to store the Configuration baseline", e);
-                } else {
-                    log.error("Failed to store the Configuration baseline", e.getMessage());
+            ConfigurationModelImpl baselineModel = loadBaselineModel();
+            ConfigurationModelImpl bootstrapModel = null;
+            boolean success;
+            if (mustConfigure) {
+                log.info("ConfigurationService: start configuring {}", first ? "(first time)" : fullConfigure ? "(full)" : "");
+                try {
+                    log.info("ConfigurationService: load bootstrap model");
+                    bootstrapModel = loadBootstrapModel();
+                    final boolean startAutoExportService = configure && autoExportAllowed; // TODO: && hasSourceModules(baselineModel);
+                    log.info("ConfigurationService: apply bootstrap config");
+                    success = applyConfig(baselineModel, bootstrapModel, verify, fullConfigure, !first);
+                    if (success) {
+                        // TODO: applyConfig should (probably) update/replace baselineModel, which then can/must
+                        //       serve as runtimeConfigurationModel
+                        runtimeConfigurationModel = bootstrapModel;
+                        log.info("ConfigurationService: store bootstrap config");
+                        success = storeBaselineModel(bootstrapModel);
+                    }
+                    if (success) {
+                        // TODO: probably also should pass in baselineModel (or runtimeConfigurationModel, if updated, see above)
+                        //       applied changes then should also be applied to/updated in runtimeConfigurationModel
+                        //       furthermore, ContentService should use BaselineService to do the updates, not directly to JCR
+                        log.info("ConfigurationService: apply bootstrap content");
+                        success = applyContent(bootstrapModel);
+                    }
+                    if (startAutoExportService) {
+                        log.info("ConfigurationService: start autoexport service");
+                        startAutoExportService();
+                    }
+                    log.info("ConfigurationService: start repository services");
+                    startRepositoryServicesTask.execute();
+                    if (success) {
+                        log.info("ConfigurationService: start post-startup tasks");
+                        postStartupTasks();
+                    }
+                } finally {
+                    if (bootstrapModel != null) {
+                        try {
+                            bootstrapModel.close();
+                        } catch (Exception e) {
+                            log.error("Error closing bootstrap configuration", e);
+                        }
+                    }
                 }
             }
-            try {
-                contentService.apply(configurationModel, session);
-            } catch (RepositoryException|ConfigurationRuntimeException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Failed to apply all content", e);
-                } else {
-                    log.error("Failed to apply all content", e.getMessage());
-                }
+            else {
+                log.info("ConfigurationService: start repository services");
+                startRepositoryServicesTask.execute();
             }
-            started = true;
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Bootstrap configuration failed!", e);
-            } else {
-                log.error("Bootstrap configuration failed!", e.getMessage());
-            }
-            if (e instanceof RepositoryException) {
-                throw (RepositoryException)e;
-            }
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException)e;
-            }
-            throw new RuntimeException(e);
         } finally {
-            if (!started) {
+            try {
                 lockManager.unlock();
+            } catch (Exception e) {
+                log.error("Failed to release the configuration lock", e);
             }
         }
+        log.info("ConfigurationService: started");
+        return this;
     }
 
-    /**
-     * Execute additional tasks (if any) after the Repository has been started (virtual layer, Modules, security, etc.)
-     */
-    public void postStartRepository() {
-        ensureInitialized();
-        try {
-            configService.writeWebfiles(configurationModel, session);
-        } catch (IOException e) {
-            if (log.isDebugEnabled()) {
-                log.error("Error initializing webfiles", e);
-            } else {
-                log.error("Error initializing webfiles", e.getMessage());
-            }
+    public void stop() {
+        if (autoExportService != null) {
+            autoExportService.close();
+            autoExportService = null;
         }
-        try {
-            // We're completely done with the configurationModel at this point, so clean up its resources
-            configurationModel.close();
+        if (lockManager == null) {
+            return;
         }
-        catch (Exception e) {
-            log.error("Error closing configuration ConfigurationModel", e);
-        }
-    }
-
-    /**
-     * Execute cleanup tasks (if any) after the Repository has been initialized, and at least release the lock
-     * created by {@link #startConfigureRepository()}.
-     */
-    public void finishConfigureRepository() {
+        log.info("ConfigurationService: stop");
+        boolean locked = false;
         try {
-            lockManager.unlock();
+            lockManager.lock();
+            locked = true;
         } catch (Exception e) {
-            log.error("Failed to release the Bootstrap configuration lock", e);
+            log.error("Failed to claim the configuration lock", e);
         }
-    }
-
-    @Override
-    public void apply(final ConfigurationModel model)
-            throws RepositoryException, ParserException, IOException {
-        ensureInitialized();
-        lockManager.lock();
         try {
-            StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
-
-            ConfigurationModel baseline = loadBaseline();
-            if (baseline == null) {
-                baseline = new ConfigurationModelImpl().build();
+            if (runtimeConfigurationModel != null) {
+                try {
+                    // Ensure configurationModel resources are cleaned up (if any)
+                    runtimeConfigurationModel.close();
+                }
+                catch (Exception e) {
+                    log.error("Error closing runtime configuration", e);
+                }
             }
-
-            configService.computeAndWriteDelta(baseline, model, session, false);
-            session.save();
-
-            stopWatch.stop();
-            log.info("ConfigurationModel applied in {}", stopWatch.toString());
-        }
-        catch (RepositoryException|ParserException|IOException e) {
-            log.warn("Failed to apply configuration", e);
-            throw e;
+            runtimeConfigurationModel = null;
         } finally {
-            lockManager.unlock();
+            if (locked) {
+                try {
+                    lockManager.unlock();
+                } catch (Exception e) {
+                    log.error("Failed to release the configuration lock", e);
+                }
+            }
         }
+        lockManager.stop();
+        lockManager = null;
+        contentService = null;
+        configService = null;
+        baselineService = null;
+        session = null;
+        log.info("ConfigurationService: stopped");
     }
 
     @Override
-    public ConfigurationModel loadBaseline() throws RepositoryException, ParserException, IOException {
-        ensureInitialized();
-        return baselineService.loadBaseline();
+    public ConfigurationModel getRuntimeConfigurationModel() {
+        return runtimeConfigurationModel;
     }
 
-    @Override
-    public boolean matchesBaselineManifest(final ConfigurationModel model) throws RepositoryException, IOException {
-        ensureInitialized();
-        return baselineService.matchesBaselineManifest(model);
-    }
-
-    public void shutdown() {
-        if (configurationModel != null) {
-            try {
-                // Ensure configurationModel resources are cleaned up (if any)
-                configurationModel.close();
-            }
-            catch (Exception e) {
-                log.error("Error closing configuration ConfigurationModel", e);
-            }
-        }
-        lockManager.shutdown();
-        if (session != null && session.isLive()) {
-            session.logout();
-        }
+    private boolean isNew() throws RepositoryException {
+        return !(session.getWorkspace().getNodeTypeManager().hasNodeType(NT_HCM_ROOT)
+                && session.nodeExists(HCM_ROOT_PATH) && session.nodeExists(HCM_BASELINE_PATH));
     }
 
     private boolean isNamespaceRegistered(final String prefix) throws RepositoryException {
@@ -242,7 +204,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
     }
 
-    private synchronized void ensureInitialized() {
+    private void ensureInitialized() throws RepositoryException {
         try {
             if (isNew()) {
                 if (!isNamespaceRegistered(HIPPO_PREFIX)) {
@@ -265,8 +227,129 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 hcmRootNode.addNode(HIPPO_LOCK, HIPPO_LOCK);
                 session.save();
             }
-        } catch (IOException|RepositoryException e) {
-            throw new ConfigurationRuntimeException(e);
+        } catch (RepositoryException|RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private ConfigurationModelImpl loadBootstrapModel() throws RepositoryException {
+        try {
+            return new ClasspathConfigurationModelReader().read(Thread.currentThread().getContextClassLoader(), true);
+        } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException)e;
+            }
+            throw new RepositoryException(e);
+        }
+    }
+
+    private boolean hasSourceModules(final ConfigurationModelImpl model) {
+        for (GroupImpl g : model.getSortedGroups()) {
+            for (ProjectImpl p : g.getProjects()) {
+                for (ModuleImpl m : p.getModules()) {
+                    if (m.getMvnPath() != null) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private ConfigurationModelImpl loadBaselineModel() throws RepositoryException {
+        try {
+            ConfigurationModelImpl model = baselineService.loadBaseline();
+            if (model == null) {
+                model = new ConfigurationModelImpl().build();
+            }
+            return model;
+        } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException)e;
+            }
+            if (e instanceof RepositoryException) {
+                throw (RepositoryException)e;
+            }
+            throw new RepositoryException(e);
+        }
+    }
+
+    private boolean applyConfig(final ConfigurationModel baseline, final ConfigurationModelImpl config,
+                             final boolean verify, final boolean forceApply, final boolean mayFail)
+            throws RepositoryException {
+        try {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+
+            configService.computeAndWriteDelta(baseline, config, session, forceApply);
+            if (verify) {
+                configService.computeAndWriteDelta(baseline, config, session, forceApply);
+            }
+            session.save();
+
+            stopWatch.stop();
+            log.info("ConfigurationModel {}applied {}in {}",
+                    forceApply ? "fully " : "",
+                    verify ? "and verified " : "",
+                    stopWatch.toString());
+            return true;
+        }
+        catch (Exception e) {
+            log.error("Failed to apply config", e);
+            if (mayFail) {
+                return false;
+            }
+            if (e instanceof ConfigurationRuntimeException) {
+                throw (ConfigurationRuntimeException)e;
+            }
+            if (e instanceof RepositoryException) {
+                throw (RepositoryException)e;
+            }
+            throw new RepositoryException(e);
+        }
+    }
+
+    private boolean storeBaselineModel(final ConfigurationModelImpl model) {
+        try {
+            baselineService.storeBaseline(model);
+            session.save();
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to store the Configuration baseline", e);
+            return false;
+        }
+    }
+
+    private boolean applyContent(final ConfigurationModelImpl model) {
+        try {
+            contentService.apply(model, session);
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to apply all content", e);
+            return false;
+        }
+    }
+
+    private void startAutoExportService() {
+        try {
+            autoExportService = new AutoExportServiceImpl(session, this);
+        } catch (Exception e) {
+            log.error("Faileed to start autoexport service");
+        }
+    }
+
+    private void postStartupTasks() {
+        try {
+            // webfiles
+            try {
+                configService.writeWebfiles(runtimeConfigurationModel, session);
+            } catch (IOException e) {
+                log.error("Error initializing webfiles", e);
+            }
+        } catch (Exception e) {
+            log.error("Failed to complete post-startup tasks", e);
         }
     }
 }

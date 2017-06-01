@@ -449,8 +449,8 @@ public class ConfigurationBaselineService {
      * content definitions, which are not stored in the baseline.
      * @throws Exception
      */
-    public ConfigurationModel loadBaseline() throws RepositoryException, ParserException, IOException {
-        ConfigurationModel result;
+    public ConfigurationModelImpl loadBaseline() throws RepositoryException, ParserException, IOException {
+        ConfigurationModelImpl result;
 
         final Node hcmRootNode = configurationServiceSession.getNode(HCM_ROOT_PATH);
         // if the baseline node doesn't exist yet...
@@ -672,43 +672,5 @@ public class ConfigurationBaselineService {
 
         log.debug("Found {} modules in baseline", moduleNodes.size());
         return moduleNodes;
-    }
-
-    /**
-     * Compare a ConfigurationModel against the baseline by comparing manifests produced by model.getDigest()
-     */
-    public boolean matchesBaselineManifest(ConfigurationModel model) throws RepositoryException {
-        boolean result;
-
-        final Node hcmRootNode = configurationServiceSession.getNode(HCM_ROOT_PATH);
-        // if the baseline node doesn't exist yet...
-        if (!hcmRootNode.hasNode(HCM_BASELINE)) {
-            // ... there's a trivial mismatch, regardless of the model
-            result = false;
-        }
-        else {
-            configurationLockManager.lock();
-            try {
-                StopWatch stopWatch = new StopWatch();
-                stopWatch.start();
-
-                // otherwise, if the baseline node DOES exist...
-                // ... load the digest directly from the baseline JCR node
-                String baselineDigestString = hcmRootNode.getNode(HCM_BASELINE).getProperty(HCM_DIGEST).getString();
-                log.debug("baseline digest:\n" + baselineDigestString);
-
-                // compute a digest from the model manifest
-                String modelDigestString = model.getDigest();
-
-                // compare the baseline digest with the model manifest digest
-                result = modelDigestString.equals(baselineDigestString);
-                stopWatch.stop();
-                log.info("ConfigurationModel compared against baseline configuration in {}", stopWatch.toString());
-            }
-            finally {
-                configurationLockManager.unlock();
-            }
-        }
-        return result;
     }
 }

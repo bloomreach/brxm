@@ -30,6 +30,7 @@ public final class Constants {
 
     public static final String SYSTEM_ALLOWED_PROPERTY_NAME = "repo.autoexport.allowed";
     public static final String SYSTEM_ENABLED_PROPERTY_NAME = "repo.autoexport.enabled";
+    public static final String SERVICE_CONFIG_PATH = "/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig";
     public static final String CONFIG_ENABLED_PROPERTY_NAME = "autoexport:enabled";
     public static final String CONFIG_MODULES_PROPERTY_NAME = "autoexport:modules";
     public static final String CONFIG_EXCLUDED_PROPERTY_NAME = "autoexport:excluded";

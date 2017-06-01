@@ -30,7 +30,7 @@ import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
 
-import static org.onehippo.cm.engine.autoexport.AutoExportModule.log;
+import static org.onehippo.cm.engine.autoexport.AutoExportServiceImpl.log;
 import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_EXCLUDED_PROPERTY_NAME;
 import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME;
 import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_MODULES_PROPERTY_NAME;
@@ -166,6 +166,11 @@ class Configuration {
         return filterUuidPaths;
     }
 
+    public synchronized boolean checkEnabled() {
+        enabled = null;
+        return isEnabled();
+    }
+
     public synchronized boolean isEnabled() {
         if (enabled == null) {
             if ("false".equals(System.getProperty(Constants.SYSTEM_ENABLED_PROPERTY_NAME))) {
@@ -174,7 +179,7 @@ class Configuration {
                 try {
                     enabled = JcrUtils.getBooleanProperty(node, Constants.CONFIG_ENABLED_PROPERTY_NAME, false);
                 } catch (RepositoryException e) {
-                    AutoExportModule.log.error("Failed to read AutoExport configuration", e);
+                    AutoExportServiceImpl.log.error("Failed to read AutoExport configuration", e);
                     enabled = false;
                 }
             }
