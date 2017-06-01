@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,14 +38,13 @@ import org.onehippo.cm.model.ActionItem;
 import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.SnsUtils;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.util.ConfigurationModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,7 +132,7 @@ public class ConfigurationContentService {
             if (optionalAction.isPresent() || !nodeAlreadyProcessed) {
                 final ActionType action = optionalAction.orElse(ActionType.APPEND);
 
-                if (isContentAtPath(baseNodePath, model)) {
+                if (ConfigurationModelUtils.getCategoryForNode(baseNodePath, model) == ConfigurationItemCategory.CONTENT) {
                     log.debug("Processing {} action for node: {}", action, baseNodePath);
                     contentProcessingService.apply(contentNode, action, session);
 
@@ -150,34 +148,6 @@ public class ConfigurationContentService {
         }
 
         updateModuleVersion(module, session);
-    }
-
-    /**
-     * Check if a node path is categorized as content by the configuration model
-     *
-     * TODO: should we implement this logic in the ConfigurationModel instead?
-     *
-     * @param nodePath node's path
-     * @param model {@link ConfigurationModel}
-     */
-    boolean isContentAtPath(final String nodePath, final ConfigurationModel model) {
-        final Iterator<String> nodeNameIterator = Arrays.stream(nodePath.split(SEPARATOR)).iterator();
-        ConfigurationNode modelNode = model.getConfigurationRootNode();
-
-        if (nodeNameIterator.hasNext()) {
-            nodeNameIterator.next(); // skip root node
-        }
-
-        while (nodeNameIterator.hasNext()) {
-            final String childName = nodeNameIterator.next();
-            final String indexedChildName = SnsUtils.createIndexedName(childName);
-            if (!modelNode.getNodes().containsKey(indexedChildName)) {
-                return modelNode.getChildNodeCategory(indexedChildName) == ConfigurationItemCategory.CONTENT;
-            }
-            modelNode = modelNode.getNodes().get(indexedChildName);
-        }
-
-        return false;
     }
 
     /**
@@ -273,7 +243,7 @@ public class ConfigurationContentService {
         for (final ActionItem item : items) {
             if (item.getType() == ActionType.DELETE) {
                 final String baseNodePath = item.getPath();
-                if (isContentAtPath(baseNodePath, model)) {
+                if (ConfigurationModelUtils.getCategoryForNode(baseNodePath, model) == ConfigurationItemCategory.CONTENT) {
                     log.debug("Processing delete action for node: {}", baseNodePath);
 
                     final DefinitionNode deleteNode = new DefinitionNodeImpl(baseNodePath,
