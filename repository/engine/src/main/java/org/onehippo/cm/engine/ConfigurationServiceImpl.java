@@ -25,7 +25,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.ConfigurationModel;
@@ -48,7 +47,7 @@ import static org.onehippo.cm.engine.Constants.HIPPO_PREFIX;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
 
-public class ConfigurationServiceImpl implements ConfigurationService {
+public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
@@ -90,7 +89,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     bootstrapModel = loadBootstrapModel();
                     final boolean startAutoExportService = configure && autoExportAllowed; // TODO: && hasSourceModules(baselineModel);
                     log.info("ConfigurationService: apply bootstrap config");
-                    success = applyConfig(baselineModel, bootstrapModel, verify, fullConfigure, !first);
+                    success = applyConfig(baselineModel, bootstrapModel, false, verify, fullConfigure, !first);
                     if (success) {
                         // TODO: applyConfig should (probably) update/replace baselineModel, which then can/must
                         //       serve as runtimeConfigurationModel
@@ -190,6 +189,18 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         return runtimeConfigurationModel;
     }
 
+    /** INTERNAL USAGE ONLY **/
+    @Override
+    public boolean verifyConfigurationModel() throws RepositoryException {
+        lockManager.lock();
+        try {
+            log.info("ConfigurationService: verify config");
+            return applyConfig(new ConfigurationModelImpl().build(), loadBootstrapModel(), true, false, true, false);
+        } finally {
+            lockManager.unlock();
+        }
+    }
+
     private boolean isNew() throws RepositoryException {
         return !(session.getWorkspace().getNodeTypeManager().hasNodeType(NT_HCM_ROOT)
                 && session.nodeExists(HCM_ROOT_PATH) && session.nodeExists(HCM_BASELINE_PATH));
@@ -276,8 +287,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
     }
 
-    private boolean applyConfig(final ConfigurationModel baseline, final ConfigurationModelImpl config,
-                             final boolean verify, final boolean forceApply, final boolean mayFail)
+    private boolean applyConfig(final ConfigurationModel baseline, final ConfigurationModelImpl config, final boolean verifyOnly,
+                                final boolean verify, final boolean forceApply, final boolean mayFail)
             throws RepositoryException {
         try {
             StopWatch stopWatch = new StopWatch();
@@ -287,7 +298,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             if (verify) {
                 configService.computeAndWriteDelta(baseline, config, session, forceApply);
             }
-            session.save();
+            if (!verifyOnly) {
+                session.save();
+            }
 
             stopWatch.stop();
             log.info("ConfigurationModel {}applied {}in {}",
