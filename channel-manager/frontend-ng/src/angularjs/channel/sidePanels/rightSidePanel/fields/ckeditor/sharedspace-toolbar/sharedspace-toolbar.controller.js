@@ -22,7 +22,7 @@ class SharedSpaceToolbar {
     this.$element = $element;
     this.isVisible = this.isVisible || false;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
-    this.sharedSpaceHeight = 100;
+    this.showBottomToolbar = null;
   }
 
   $onInit() {
@@ -33,18 +33,10 @@ class SharedSpaceToolbar {
     this.isVisible = false;
   }
 
-  setToolbarVisible(state) {
+  setToolbarVisible(state, options = {}) {
     this.isVisible = state;
-
-    const mdContent = this.$element.parent('.right-side-panel').find('md-content');
-    const scroll = mdContent.scrollTop();
+    this.showBottomToolbar = options.hasBottomToolbar || false;
     this.$rootScope.$apply();
-
-    if (state === true) {
-      mdContent.animate({
-        scrollTop: scroll + this.sharedSpaceHeight,
-      }, 200, 'swing');
-    }
   }
 }
 

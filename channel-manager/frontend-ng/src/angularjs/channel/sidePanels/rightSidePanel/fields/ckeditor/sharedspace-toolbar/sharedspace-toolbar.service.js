@@ -25,8 +25,10 @@ class SharedSpaceToolbarService {
     this.triggerCallback = fn;
   }
 
-  showToolbar() {
-    this.triggerCallback(true);
+  showToolbar(options) {
+    this.triggerCallback(true, {
+      hasBottomToolbar: options.hasBottomToolbar,
+    });
   }
 
   hideToolbar() {

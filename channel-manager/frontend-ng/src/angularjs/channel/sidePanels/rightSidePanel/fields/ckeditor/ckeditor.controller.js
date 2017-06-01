@@ -33,14 +33,14 @@ class CKEditorController {
 
     this.CKEditorService.loadCKEditor().then((CKEDITOR) => {
       const editorConfig = angular.copy(this.config);
+
       editorConfig.sharedSpaces = {
         top: 'ckeditor-shared-space-top',
         bottom: 'ckeditor-shared-space-bottom',
       };
 
-      editorConfig.plugins += ',sharedspace';
-      editorConfig.extraPlugins = 'sourcedialog,autogrow,resize';
-      editorConfig.removePlugins += 'sourcearea';
+      editorConfig.extraPlugins = 'sharedspace,sourcedialog,autogrow';
+      editorConfig.removePlugins += 'sourcearea,resize';
 
       editorConfig.language = this.ConfigService.locale;
 
@@ -94,7 +94,9 @@ class CKEditorController {
       this.onFocus();
     });
 
-    this.SharedSpaceToolbarService.showToolbar();
+    this.SharedSpaceToolbarService.showToolbar({
+      hasBottomToolbar: this.config.hasBottomToolbar,
+    });
   }
 
   onEditorBlur() {
