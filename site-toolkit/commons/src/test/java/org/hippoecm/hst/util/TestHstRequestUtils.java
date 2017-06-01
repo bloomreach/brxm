@@ -73,7 +73,7 @@ public class TestHstRequestUtils {
 
     @After
     public void tearDown() {
-        HstRequestUtils.resetForwardedForHeaderName();
+        HstRequestUtils.httpForwardedForHeader = null;
     }
 
     @Test
