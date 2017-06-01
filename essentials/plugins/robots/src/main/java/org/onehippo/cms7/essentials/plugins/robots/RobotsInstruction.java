@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +16,29 @@
 
 package org.onehippo.cms7.essentials.plugins.robots;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Map;
 
+import javax.xml.bind.JAXBException;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebXml;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.WebXmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version "$Id$"
+ * Add a bean mapping to the Site's web.xml file.
  */
 public class RobotsInstruction implements Instruction {
 
     private static Logger log = LoggerFactory.getLogger(RobotsInstruction.class);
-    private static final String BEANS_MAPPINGS = "classpath*:org/onehippo/forge/**/*.class";
+    private static final String BEANS_MAPPING = "classpath*:org/onehippo/forge/**/*.class";
 
     @Override
     public String getMessage() {
-        return "Adding bean mappings to web.xml: " + BEANS_MAPPINGS;
+        return "Adding bean mapping to web.xml: " + BEANS_MAPPING;
     }
 
     @Override
@@ -61,23 +58,16 @@ public class RobotsInstruction implements Instruction {
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
-        final String webXmlPath = ProjectUtils.getWebXmlPath(context, TargetPom.SITE);
-        final WebXml webXml = ProjectUtils.readWebXmlFile(webXmlPath);
         try {
-            final String hstBeanContextValue = webXml.getHstBeanContextValue();
-            if(hstBeanContextValue.contains(BEANS_MAPPINGS)){
-                log.info("HST bean mappings for robot.txt are already added");
+            if (WebXmlUtils.addHstBeanMapping(context, BEANS_MAPPING)) {
+                return InstructionStatus.SUCCESS;
+            } else {
                 return InstructionStatus.SKIPPED;
             }
-            final String newContent = webXml.addToHstBeanContextValue(new FileInputStream(webXmlPath), BEANS_MAPPINGS);
-            GlobalUtils.writeToFile(newContent, new File(webXmlPath).toPath());
-            log.debug("Added new content to {}", webXmlPath);
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | JAXBException e) {
             log.error("Error executing robots plugin instruction", e);
-            return InstructionStatus.FAILED;
         }
-
-        return InstructionStatus.SUCCESS;
+        return InstructionStatus.FAILED;
     }
 
     @Override

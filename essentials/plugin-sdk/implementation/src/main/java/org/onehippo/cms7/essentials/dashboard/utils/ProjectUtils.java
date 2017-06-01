@@ -213,25 +213,6 @@ public final class ProjectUtils {
     }
 
     /**
-     * Read web.xml file content
-     *
-     * @param path path of XMl file
-     * @return
-     */
-    public static WebXml readWebXmlFile(final String path) {
-        try {
-            final JAXBContext context = JAXBContext.newInstance(WebXml.class);
-            final Marshaller m = context.createMarshaller();
-            final Unmarshaller unmarshaller = context.createUnmarshaller();
-            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            return (WebXml) unmarshaller.unmarshal(new File(path));
-        } catch (JAXBException e) {
-            log.error("Error reading web.xml:" + path, e);
-        }
-        return null;
-    }
-
-    /**
      * Return full pom.xml file path for given dependency targetPom
      *
      * @param targetPom targetPom of dependency

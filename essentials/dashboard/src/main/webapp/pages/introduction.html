@@ -42,8 +42,15 @@
             <h3>Project Settings</h3>
             <p>
                 The setup application will apply several settings by default. You can set the desired values below.
-                We recommend using the default settings.
             </p>
+            <div class="form-group">
+                <label class="control-label">Enterprise features</label>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="projectSettings.enterprise"/> Make use of Enterprise features (requires an Enterprise license)
+                    </label>
+                </div>
+            </div>
             <div class="form-group">
                 <label class="control-label">Please select templating language</label>
                 <div class="radio">

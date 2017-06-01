@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,20 @@
 
 package org.onehippo.cms7.essentials.dashboard.generated.jaxb;
 
-import java.io.InputStream;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-
-/**
- * @version "$Id$"
- */
 @XmlRootElement(name = "web-app", namespace = WebXml.NS)
 public class WebXml {
-
-    public static final String NS = "http://java.sun.com/xml/ns/javaee";
+    static final String NS = "http://java.sun.com/xml/ns/javaee";
 
     private List<WebContextParam> parameters;
+    private List<WebFilter> filters;
+    private List<WebFilterMapping> filterMappings;
 
-    @XmlElement(namespace = WebXml.NS, name = "context-param")
+    @XmlElement(name = "context-param", namespace = NS)
     public List<WebContextParam> getParameters() {
         return parameters;
     }
@@ -43,55 +38,29 @@ public class WebXml {
         this.parameters = parameters;
     }
 
-    //############################################
-    // UTILS
-    //############################################
-
-    /**
-     * Get HST {@code hst-beans-annotated-classes} web.xml context value
-     *
-     * @return null if not defined
-     */
-    public String getHstBeanContextValue() {
-        if (parameters == null) {
-            return null;
-        }
-        for (WebContextParam parameter : parameters) {
-            if ("hst-beans-annotated-classes".equals(parameter.getParamName())) {
-                return parameter.getParamValue();
-            }
-        }
-        return null;
+    @XmlElement(name = "filter", namespace = NS)
+    public List<WebFilter> getFilters() {
+        return filters;
     }
 
-
-    /**
-     * Sets hst beans context value
-     *
-     * @param stream     content stream of web.xml file
-     * @param valueToAdd new context param value
-     * @return all content of web.xml (with replaced param value)
-     */
-    public String addToHstBeanContextValue(final InputStream stream, final String valueToAdd) {
-
-        final String webXmlContent = GlobalUtils.readStreamAsText(stream);
-        final String hstBeanContextValue = getHstBeanContextValue();
-        // extract first part
-        final int startIndex = webXmlContent.indexOf(hstBeanContextValue);
-        final String firstPart = webXmlContent.substring(0, startIndex);
-        // extract second part
-        final int endIndex = startIndex + hstBeanContextValue.length();
-        final String secondPart = webXmlContent.substring(endIndex, webXmlContent.length());
-        // just add first values
-        return firstPart + hstBeanContextValue + ',' + valueToAdd + secondPart;
-
+    public void setFilters(final List<WebFilter> filters) {
+        this.filters = filters;
     }
 
+    @XmlElement(name = "filter-mapping", namespace = NS)
+    public List<WebFilterMapping> getFilterMappings() {
+        return filterMappings;
+    }
+
+    public void setFilterMappings(final List<WebFilterMapping> filterMappings) {
+        this.filterMappings = filterMappings;
+    }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("WebXml{");
         sb.append("parameters=").append(parameters);
+        sb.append(",filters=").append(filters);
         sb.append('}');
         return sb.toString();
     }

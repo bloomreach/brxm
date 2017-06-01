@@ -1,0 +1,56 @@
+{
+  "@type": "plugin",
+  "id": "urlrewriterPlugin",
+  "name": "URL Rewriter",
+  "icon": "/essentials/images/icons/bundle.png",
+  "introduction": "The Enterprise URL Rewriter add-on adds the capability to manage URL forwarding rules in the CMS to your project.",
+  "description": "Please note that this component is a BloomReach Experience only component, it does not work in the community edition of Hippo CMS. Adding this component to the community version will convert your project to an Enterprise project and might result in unexpected and unsupported behaviour of the project if you do not have an Enterprise license.",
+  "imageUrls": [
+    "/essentials/images/screenshots/urlrewriter01.png"
+  ],
+  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/url-rewriter/about.html",
+  "restClasses": [],
+  "packageFile": "/META-INF/urlrewriter_plugin_instructions.xml",
+  "type": "feature",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "content"
+    ],
+    "type": [
+      "feature"
+    ],
+    "license": [
+      "enterprise"
+    ]
+  },
+  "libraries": [
+  ],
+  "dependencies": [
+    {
+      "@type": "dependency",
+      "groupId": "com.onehippo.cms7",
+      "artifactId": "hippo-addon-urlrewriter-module-cms",
+      "scope": "compile",
+      "targetPom": "cms"
+    },
+    {
+      "@type": "dependency",
+      "groupId": "com.onehippo.cms7",
+      "artifactId": "hippo-addon-urlrewriter-module-repository",
+      "scope": "compile",
+      "targetPom": "cms"
+    },
+    {
+      "@type": "dependency",
+      "groupId": "com.onehippo.cms7",
+      "artifactId": "hippo-addon-urlrewriter-module-hst",
+      "scope": "compile",
+      "targetPom": "site"
+    }
+  ]
+}

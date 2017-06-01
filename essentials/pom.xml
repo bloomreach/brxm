@@ -233,11 +233,13 @@
                 <exclude>**/*.woff*</exclude>
                 <exclude>**/*.ttf</exclude>
                 <exclude>jar-dependencies.txt</exclude>
+                <exclude>**/src/test/resources/**</exclude>
                 <exclude>plugins/skeleton-package/src/main/resources/instructions/bootstrap/**</exclude>
                 <exclude>plugins/skeleton-package/src/main/resources/instructions/js/bootstrap*.js</exclude>
                 <exclude>plugins/skeleton-package/src/main/resources/instructions/js/jquery*.js</exclude>
                 <exclude>plugins/**/*.ftl</exclude>
                 <exclude>plugins/**/*.jsp</exclude>
+                <exclude>plugins/urlrewriter/src/main/resources/instructions/xml/webxml/**</exclude>
                 <exclude>plugins/rest-services/src/main/resources/BeanNameResource.txt</exclude>
                 <exclude>plugins/rest-services/src/main/resources/spring-plain-rest-api.xml</exclude>
               </excludes>

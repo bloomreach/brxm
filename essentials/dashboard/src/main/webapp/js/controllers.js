@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,20 +90,27 @@
                     // TODO: ugly. If this needs to be on the rootScope, it should be put there during initialization
                     // of the angular app.
                     $rootScope.projectSettings = data;
+
+                    if ($rootScope.pluginsCache) {
+                        processItems($rootScope.pluginsCache);
+                    } else {
+                        $http.get($rootScope.REST.plugins).success(function (data) {
+                            $rootScope.pluginsCache = data.items;
+                            processItems($rootScope.pluginsCache);
+                        });
+                    }
                 });
 
-                if ($rootScope.pluginsCache) {
-                    processItems($rootScope.pluginsCache);
-                } else {
-                    $http.get($rootScope.REST.plugins).success(function (data) {
-                        var items = data.items;
-                        $rootScope.pluginsCache = items;
-                        processItems(items);
-                    });
+                function processItems(items) {
+                    $scope.plugins = items.filter(showPlugin);
                 }
 
-                function processItems(items) {
-                    $scope.plugins = items;
+                function showPlugin(descriptor) {
+                    var isEnterprisePlugin = descriptor.categories &&
+                        descriptor.categories.license &&
+                        descriptor.categories.license.indexOf("enterprise") >= 0;
+
+                    return $rootScope.projectSettings.enterprise || !isEnterprisePlugin;
                 }
             };
             $scope.init();
