@@ -325,20 +325,19 @@ class ConfigurationTreeBuilder {
             }
         }
 
-        final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(name);
-
         if (definitionNode.getCategory() != null) {
             if (definitionNode.getCategory() == ConfigurationItemCategory.CONFIGURATION) {
-                parent.clearChildNodeCategorySettings(nameAndIndex.getLeft());
+                parent.clearChildNodeCategorySettings(name);
                 if (definitionNode.getNodes().size() == 0 && definitionNode.getProperties().size() == 0) {
                     return null;
                 }
             } else {
-                parent.setChildNodeCategorySettings(nameAndIndex.getLeft(), definitionNode.getCategory(), definitionNode);
+                parent.setChildNodeCategorySettings(name, definitionNode.getCategory(), definitionNode);
                 return null;
             }
         }
 
+        final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(name);
         if (nameAndIndex.getRight() > 1) {
             final String expectedSibling = SnsUtils.createIndexedName(nameAndIndex.getLeft(), nameAndIndex.getRight() - 1);
             if (!parent.getNodes().containsKey(expectedSibling)) {

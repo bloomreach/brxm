@@ -40,8 +40,8 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
 
     private Boolean ignoreReorderedChildren;
 
-    // Category settings are not supported for individual same-name siblings, when configuring a certain node name
-    // with a category, all SNS should have that category, hence childNodeCategorySettings does not use indexed names
+    // Category settings are not supported for individual same-name siblings. When configuring a certain node name
+    // with a category, all SNS have that category, hence childNodeCategorySettings does not use indexed names.
     private Map<String, Pair<ConfigurationItemCategory, DefinitionItemImpl>> childNodeCategorySettings = new HashMap<>();
     private Map<String, Pair<ConfigurationItemCategory, DefinitionItemImpl>> childPropertyCategorySettings = new HashMap<>();
     private ConfigurationItemCategory residualNodeCategory;
@@ -153,12 +153,12 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     }
 
     @Override
-    public ConfigurationItemCategory getChildNodeCategory(final String indexNodeName) {
-        if (modifiableNodes.containsKey(indexNodeName)) {
+    public ConfigurationItemCategory getChildNodeCategory(final String indexedNodeName) {
+        if (modifiableNodes.containsKey(indexedNodeName)) {
             return ConfigurationItemCategory.CONFIGURATION;
         }
 
-        final String unindexedName = SnsUtils.getUnindexedName(indexNodeName);
+        final String unindexedName = SnsUtils.getUnindexedName(indexedNodeName);
         if (childNodeCategorySettings.containsKey(unindexedName)) {
             return childNodeCategorySettings.get(unindexedName).getLeft();
         }
@@ -180,7 +180,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     }
 
     public Pair<ConfigurationItemCategory, DefinitionItemImpl> getChildNodeCategorySettings(final String name) {
-        return childNodeCategorySettings.get(name);
+        return childNodeCategorySettings.get(SnsUtils.getUnindexedName(name));
     }
 
     public void setChildNodeCategorySettings(final String name, final ConfigurationItemCategory category, final DefinitionItemImpl definitionItem) {
@@ -188,7 +188,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     }
 
     public Pair<ConfigurationItemCategory, DefinitionItemImpl> clearChildNodeCategorySettings(final String name) {
-        return childNodeCategorySettings.remove(name);
+        return childNodeCategorySettings.remove(SnsUtils.getUnindexedName(name));
     }
 
     public Pair<ConfigurationItemCategory, DefinitionItemImpl> getChildPropertyCategorySettings(final String name) {
