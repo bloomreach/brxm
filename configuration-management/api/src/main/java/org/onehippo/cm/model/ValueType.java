@@ -32,6 +32,10 @@ public enum ValueType {
     URI,
     DECIMAL;
 
+    public static final ValueType fromJcrType(final int jcrType) {
+        return values()[jcrType];
+    }
+
     public final String toString() {
         return name().toLowerCase();
     }

@@ -199,7 +199,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                 if (property.isMergeAppend()) {
                     if (prop.getValueType().ordinal() != property.getType()) {
                         throw new EsvParseException("Invalid esv:merge=\"append\" for property " + prop.getPath() + " with different type " +
-                                ValueType.values()[property.getType()].name() + " at " + property.getSourceLocation() +
+                                ValueType.fromJcrType(property.getType()).name() + " at " + property.getSourceLocation() +
                                 " (from " + prop.getValueType().toString() + " at " + prop.getSourceLocation() + ")");
                     }
                     op = PropertyOperation.ADD;

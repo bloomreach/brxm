@@ -212,7 +212,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                 // check same type and valueType
                                 if (prop.getValueType().ordinal() != property.getType()) {
                                     throw new EsvParseException("Unsupported " + getType().getPropertyName() +
-                                            " " + prop.getPath() + " type change to " + ValueType.values()[property.getType()].name() +
+                                            " " + prop.getPath() + " type change to " + ValueType.fromJcrType(property.getType()).name() +
                                             " at " + property.getSourceLocation() + " (from " + prop.getValueType().toString() +
                                             " at " + prop.getSourceLocation() + ")");
                                 }
@@ -262,7 +262,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                                  final PropertyOperation op, final boolean isPathReference)
             throws EsvParseException {
         DefinitionPropertyImpl prop;
-        ValueType valueType = isPathReference ? ValueType.REFERENCE : ValueType.values()[property.getType()];
+        ValueType valueType = isPathReference ? ValueType.REFERENCE : ValueType.fromJcrType(property.getType());
         ValueImpl[] newValues = property.isMultiple() ? new ValueImpl[property.getValues().size()] : new ValueImpl[1];
         for (int i = 0; i < newValues.length; i++) {
             EsvValue value = property.getValues().get(i);
