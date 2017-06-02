@@ -55,21 +55,21 @@ public class ActionListParser extends AbstractBaseParser {
         for (final Node versionNode : asSequence(sourceMap.get(ACTION_LISTS_NODE))) {
 
             final MappingNode mappingNode = (MappingNode) versionNode;
-            final NodeTuple nodeTuple= mappingNode.getValue().get(0);
+            final NodeTuple nodeTuple = mappingNode.getValue().get(0);
 
             final String strVersion = asScalar(nodeTuple.getKeyNode()).getValue();
             final Double version = Double.parseDouble(strVersion);
 
-            final Set<ActionItem> actionItems = collectActionItems(nodeTuple);
+            final Set<ActionItem> actionItems = collectActionItems(nodeTuple.getValueNode());
             module.getActionsMap().put(version, actionItems);
         }
     }
 
-    private Set<ActionItem> collectActionItems(final NodeTuple nodeTuple) throws ParserException {
+    private Set<ActionItem> collectActionItems(final Node node) throws ParserException {
         final Set<ActionItem> actionItems = new LinkedHashSet<>();
-        final Map<String, Node> actionItemsMap = asMapping(nodeTuple.getValueNode(), null, null);
-        for (final String path : actionItemsMap.keySet()) {
-            final ActionItem actionItem = createActionItem(actionItemsMap, path);
+        for (NodeTuple tuple : asTuples(node)) {
+            final String path = asPathScalar(tuple.getKeyNode(), true, false);
+            final ActionItem actionItem = asActionItem(tuple.getValueNode(), path);
             if (!actionItems.add(actionItem)) {
                 throw new RuntimeException(String.format("Duplicate items are not allowed: %s", actionItem));
             }
@@ -77,9 +77,8 @@ public class ActionListParser extends AbstractBaseParser {
         return actionItems;
     }
 
-    private ActionItem createActionItem(final Map<String, Node> stringNodeMap, final String path) throws ParserException {
-        Node actionNode = stringNodeMap.get(path);
-        String action = asScalar(actionNode).getValue();
+    private ActionItem asActionItem(final Node node, final String path) throws ParserException {
+        String action = asStringScalar(node);
         ActionType type = ActionType.valueOf(StringUtils.upperCase(action));
         if (type == ActionType.APPEND) {
             throw new RuntimeException("APPEND action type can't be specified in action lists file");

@@ -199,23 +199,6 @@ public abstract class AbstractBaseParser {
         return path;
     }
 
-    protected String validatePath(final String path, final boolean requireAbsolutePath) throws ParserException {
-
-        if (requireAbsolutePath && !path.startsWith("/")) {
-            throw new ParserException("Path must start with a slash");
-        }
-
-        if (path.contains("//")) {
-            throw new ParserException("Path must not contain double slashes");
-        }
-
-        if (path.endsWith("/") && !isRootNodePath(path)) {
-            throw new ParserException("Path must not end with a slash");
-        }
-
-        return path;
-    }
-
     private boolean isRootNodePath(final String nodePath) {
         return "/".equals(nodePath);
     }

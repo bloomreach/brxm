@@ -16,9 +16,11 @@
 package org.onehippo.cm.model.parser;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.ActionItem;
@@ -29,26 +31,65 @@ import org.onehippo.cm.model.impl.ProjectImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 public class ActionListParserTest extends AbstractBaseTest {
 
     @Test
     public void testLoad() throws ParserException {
+        InputStream stream = this.getClass().getResourceAsStream("/parser/value_test/hcm-actions.yaml");
+        Map<Double, Set<ActionItem>> actionsMap = parseActionMap(stream);
+
+        assertTrue(actionsMap.size() == 3);
+        Set<ActionItem> actionItemsV1 = actionsMap.get(1.0d);
+        assertTrue(actionItemsV1.size() == 2);
+        assertEquals(ActionType.RELOAD, actionItemsV1.iterator().next().getType());
+    }
+
+    @Test
+    public void expect_error_when_using_sns_in_path() {
+        final String yaml =
+                "action-lists:\n" +
+                "- 1.0:\n" +
+                "    /content/sns[1]: reload\n";
+
+        try {
+            parseActionMap(yaml);
+            fail("Expected exception");
+        } catch (ParserException e) {
+            assertEquals("Path must not contain name indices", e.getMessage());
+        }
+    }
+
+    @Test
+    public void expect_error_when_using_not_absolute_path() {
+        final String yaml =
+                "action-lists:\n" +
+                "- 1.0:\n" +
+                "    content/node: reload\n";
+
+        try {
+            parseActionMap(yaml);
+            fail("Expected exception");
+        } catch (ParserException e) {
+            assertEquals("Path must start with a slash", e.getMessage());
+        }
+    }
+
+    private Map<Double, Set<ActionItem>> parseActionMap(final String yaml) throws ParserException {
+        return parseActionMap(IOUtils.toInputStream(yaml, StandardCharsets.UTF_8));
+    }
+
+    private Map<Double, Set<ActionItem>> parseActionMap(final InputStream inputStream) throws ParserException {
         ActionListParser parser = new ActionListParser();
         GroupImpl group = new GroupImpl("group");
         ProjectImpl project = new ProjectImpl("project", group);
         ModuleImpl module = new ModuleImpl("module", project);
 
-        InputStream stream = this.getClass().getResourceAsStream("/parser/value_test/hcm-actions.yaml");
-        parser.parse(stream, "test", module);
+        parser.parse(inputStream, "test", module);
 
-        Map<Double, Set<ActionItem>> actionsMap = module.getActionsMap();
-        assertTrue(actionsMap.size() == 3);
-        Set<ActionItem> actionItemsV1 = actionsMap.get(1.0d);
-        assertTrue(actionItemsV1.size() == 2);
-        assertEquals(ActionType.RELOAD, actionItemsV1.iterator().next().getType());
-
+        return module.getActionsMap();
     }
 
 }

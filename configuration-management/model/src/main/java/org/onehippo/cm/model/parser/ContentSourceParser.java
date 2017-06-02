@@ -51,13 +51,15 @@ public class ContentSourceParser extends SourceParser {
 
     @Override
     protected void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException {
+        final List<NodeTuple> tuples = asTuples(src);
+        if (tuples.size() > 1) {
+            throw new ParserException("Content definitions can only contain single root node");
+        }
 
         final ContentSourceImpl source = parent.addContentSource(path);
-        final Map<String, Node> contentNode = asMapping(src, null, null);
-
         final ContentDefinitionImpl definition = source.addContentDefinition();
-        final String key = validatePath(contentNode.keySet().iterator().next(), true);
-        constructDefinitionNode(key, contentNode.values().iterator().next(), definition);
+        final String key = asPathScalar(tuples.get(0).getKeyNode(), true, false);
+        constructDefinitionNode(key, tuples.get(0).getValueNode(), definition);
     }
 
     @Override
