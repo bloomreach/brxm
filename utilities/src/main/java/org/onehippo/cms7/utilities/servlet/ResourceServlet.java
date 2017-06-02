@@ -62,6 +62,10 @@ import org.slf4j.LoggerFactory;
  *             <param-name>jarPathPrefix</param-name>
  *             <param-value>/META-INF/example/myapp/skin</param-value>
  *         </init-param>
+ *         <init-param>
+ *             <param-name>requireAuthentication</param-name>
+ *             <param-value>false</param-value>
+ *         </init-param>
  *     </servlet>
  *     <servlet-mapping>
  *         <servlet-name>ExampleResourceServlet</servlet-name>
@@ -111,6 +115,12 @@ import org.slf4j.LoggerFactory;
  *         <td>true</td>
  *     </tr>
  *     <tr>
+ *         <td>requireAuthentication</td>
+ *         <td> Flag to enable/disable to read resources from the classpath resources when logged in. If this is enabled, then the servlet will check if the user is logged in and only provide the requested resource when the user is logged in.</td>
+ *         <td>false</td>
+ *         <td>true</td>
+ *     </tr>
+ *     <tr>
  *         <td>allowedResourcePaths</td>
  *         <td>Sets resource path regex patterns which are allowed to serve by this servlet.</td>
  *         <td>
@@ -143,6 +153,26 @@ import org.slf4j.LoggerFactory;
  *                 ^/.*\\.woff,
  *                 ^/.*\\.woff2
  *             <pre>
+ *         </td>
+ *   </tr>
+ *   <tr>
+ *         <td>whitelistedResourcePaths</td>
+ *         <td>Sets resource path regex patterns which are allowed to serve by this servlet when the requester is not logged in.</td>
+ *         <td>
+ *             <pre>
+ *                 ^/.*\\.js,
+ *                 ^/.*\\.css,
+ *                 ^/.*\\.png,
+ *                 ^/.*\\.gif,
+ *                 ^/.*\\.ico,
+ *                 ^/.*\\.jpg,
+ *                 ^/.*\\.jpeg,
+ *                 ^/.*\\.swf,
+ *                 ^/.*\\.txt
+ *             </pre>
+ *         </td>
+ *         <td>
+ *             <i>empty</i>
  *         </td>
  *   </tr>
  *   <tr>
@@ -275,6 +305,7 @@ public class ResourceServlet extends HttpServlet {
     private boolean requireAuthentication;
 
     private Set<Pattern> allowedResourcePaths;
+    private Set<Pattern> whitelistedResourcePaths;
     private Set<Pattern> compressedMimeTypes;
     private Map<String, String> mimeTypes;
 
@@ -292,6 +323,7 @@ public class ResourceServlet extends HttpServlet {
         requireAuthentication = Boolean.parseBoolean(getInitParameter("requireAuthentication", "true"));
 
         allowedResourcePaths = initPatterns("allowedResourcePaths", DEFAULT_ALLOWED_RESOURCE_PATHS);
+        whitelistedResourcePaths = initPatterns("whitelistedResourcePaths", new HashSet<>());
         compressedMimeTypes = initPatterns("compressedMimeTypes", DEFAULT_COMPRESSED_MIME_TYPES);
 
         final String param = getInitParameter("mimeTypes", null);
@@ -487,8 +519,17 @@ public class ResourceServlet extends HttpServlet {
             return false;
         }
 
-        if(requireAuthentication && !isUserLoggedIn(servletRequest)) {
-            return false;
+        if(requireAuthentication) {
+            boolean whiteListed = false;
+            for (final Pattern p : whitelistedResourcePaths) {
+                if (p.matcher(resourcePath).matches()) {
+                    whiteListed = true;
+                }
+            }
+
+            if(!whiteListed && !isUserLoggedIn(servletRequest)) {
+                return false;
+            }
         }
 
         for (final Pattern p : allowedResourcePaths) {
