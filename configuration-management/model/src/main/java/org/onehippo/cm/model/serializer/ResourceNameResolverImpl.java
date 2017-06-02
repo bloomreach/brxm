@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.FileConfigurationUtils;
+import org.onehippo.cm.model.util.FileConfigurationUtils;
 
 /**
  * Unique file name generator

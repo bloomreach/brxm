@@ -26,8 +26,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.PropertyType;
-import org.onehippo.cm.model.SnsUtils;
 import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.util.SnsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

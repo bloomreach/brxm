@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.util.FileConfigurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

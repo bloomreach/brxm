@@ -45,7 +45,6 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.ActionItem;
-import org.onehippo.cm.model.FileConfigurationUtils;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.SourceType;

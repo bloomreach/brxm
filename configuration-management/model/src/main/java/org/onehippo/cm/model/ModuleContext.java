@@ -23,6 +23,7 @@ import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.parser.SourceResourceCrawler;
 import org.onehippo.cm.model.serializer.ResourceNameResolver;
 import org.onehippo.cm.model.serializer.ResourceNameResolverImpl;
+import org.onehippo.cm.model.util.FileConfigurationUtils;
 
 /**
  * Incapsulates module's input/output providers and unique name resolver

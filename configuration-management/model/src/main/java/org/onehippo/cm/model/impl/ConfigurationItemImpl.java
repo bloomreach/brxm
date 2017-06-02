@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationItem;
-import org.onehippo.cm.model.SnsUtils;
+import org.onehippo.cm.model.util.SnsUtils;
 
 public abstract class ConfigurationItemImpl implements ConfigurationItem {
 

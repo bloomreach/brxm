@@ -21,6 +21,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.onehippo.cm.model.util.FileConfigurationUtils;
+
 public class FileResourceOutputProvider implements ResourceOutputProvider {
     private final Path modulePath;
 

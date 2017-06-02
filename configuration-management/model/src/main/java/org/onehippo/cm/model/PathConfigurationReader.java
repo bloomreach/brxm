@@ -35,6 +35,7 @@ import org.onehippo.cm.model.parser.ContentSourceParser;
 import org.onehippo.cm.model.parser.ModuleDescriptorParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.SourceParser;
+import org.onehippo.cm.model.util.FileConfigurationUtils;
 
 public class PathConfigurationReader {
 

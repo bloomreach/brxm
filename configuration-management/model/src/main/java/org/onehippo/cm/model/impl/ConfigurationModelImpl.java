@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.model.Constants.DEFAULT_DIGEST;
-import static org.onehippo.cm.model.SnsUtils.createIndexedName;
+import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 
 public class ConfigurationModelImpl implements ConfigurationModel {
 

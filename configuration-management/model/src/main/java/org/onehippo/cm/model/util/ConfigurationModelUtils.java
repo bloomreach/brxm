@@ -22,7 +22,6 @@ import java.util.Iterator;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ConfigurationNode;
-import org.onehippo.cm.model.SnsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

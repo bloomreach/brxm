@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationNode;
-import org.onehippo.cm.model.SnsUtils;
+import org.onehippo.cm.model.util.SnsUtils;
 
 public class ConfigurationNodeImpl extends ConfigurationItemImpl implements ConfigurationNode {
 
