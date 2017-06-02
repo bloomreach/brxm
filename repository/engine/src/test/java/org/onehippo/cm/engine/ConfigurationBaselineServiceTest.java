@@ -29,7 +29,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.parser.ActionListParser;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
@@ -156,7 +155,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
         final ConfigurationModel baseline = applyDefinitions(baselineSource);
         final ModuleImpl module = (ModuleImpl)baseline.getSortedGroups().get(0).getProjects().get(0).getModules().get(0);
 
-        assertEquals(Double.valueOf(0.0), module.getSequenceNumber());
+        assertEquals(null, module.getSequenceNumber());
 
         baselineService.updateModuleSequenceNumber(module);
     }
@@ -192,7 +191,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
                 + "    /content/path2: reload";
         actionListParser.parse(new ByteArrayInputStream(actionList.getBytes()), "String", module);
 
-        assertEquals(Double.valueOf(0.0), module.getSequenceNumber());
+        assertEquals(null, module.getSequenceNumber());
 
         baselineService.updateModuleSequenceNumber(module);
 
