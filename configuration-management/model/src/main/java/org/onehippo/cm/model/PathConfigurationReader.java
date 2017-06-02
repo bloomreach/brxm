@@ -95,21 +95,31 @@ public class PathConfigurationReader {
                 for (Module module : project.getModules()) {
 
                     final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath, hasMultipleModules);
-
-                    // Set the input providers on the Module directly, so it doesn't need to be held in a Map on ConfigurationModel
-                    ((ModuleImpl) module).setConfigResourceInputProvider(moduleContext.getConfigInputProvider());
-                    ((ModuleImpl) module).setContentResourceInputProvider(moduleContext.getContentInputProvider());
-
                     moduleContexts.put(module, moduleContext);
 
-                    processConfigSources(verifyOnly, (ModuleImpl) module, moduleContext);
-                    processContentSources(verifyOnly, (ModuleImpl) module, moduleContext);
-                    processActionsList((ModuleImpl) module, moduleContext);
+                    // Set the input providers on the Module directly, so it doesn't need to be held in a Map on ConfigurationModel
+                    readModule((ModuleImpl) module, moduleContext, verifyOnly);
                 }
             }
         }
 
         return new ReadResult(groups, moduleContexts);
+    }
+
+    /**
+     * Reads the single module config/content definitions
+     * @param module
+     * @param moduleContext
+     * @param verifyOnly
+     * @throws IOException
+     * @throws ParserException
+     */
+    public void readModule(final ModuleImpl module, final ModuleContext moduleContext, final boolean verifyOnly) throws IOException, ParserException {
+        module.setConfigResourceInputProvider(moduleContext.getConfigInputProvider());
+        module.setContentResourceInputProvider(moduleContext.getContentInputProvider());
+        processConfigSources(verifyOnly, module, moduleContext);
+        processContentSources(verifyOnly, module, moduleContext);
+        processActionsList(module, moduleContext);
     }
 
     private void processActionsList(final ModuleImpl module, final ModuleContext moduleContext) throws ParserException, IOException {

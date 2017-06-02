@@ -50,4 +50,11 @@ public interface ConfigurationService {
      * @return Textual representation of the node
      */
     String exportContent(Node nodeToExport) throws RepositoryException, IOException;
+
+    /**
+     * Import node and it's binaries into parent node
+     * @param zipFile zip {@link File}
+     * @param parentNode parent {@link Node}
+     */
+    void importZippedContent(File zipFile, Node parentNode) throws RepositoryException, IOException;
 }
