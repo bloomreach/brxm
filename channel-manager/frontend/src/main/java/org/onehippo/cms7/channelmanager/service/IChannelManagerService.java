@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,5 +30,15 @@ public interface IChannelManagerService extends IClusterable {
      * @param channelPath The location inside the channel
      */
     void viewChannel(String channelId, String channelPath);
+
+    /**
+     * Opens the channel with the given id and then selects the given branch of that channel. The path can point to
+     * any location in a channel, e.g. the home page or a specific detail page.
+     *
+     * @param channelId   The identifier of the channel
+     * @param channelPath The location inside the channel
+     * @param branchId    The branchId of the channel to select
+     */
+    void viewChannel(String channelId, String channelPath, String branchId);
 
 }

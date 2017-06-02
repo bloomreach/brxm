@@ -199,11 +199,11 @@ public class ChannelEditor extends ExtPanel {
         }
     }
 
-    public void viewChannel(final String channelId, final String initialPath) {
+    public void viewChannel(final String channelId, final String initialPath, final String branchId) {
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
-            final String loadChannelScript = String.format("Ext.getCmp('%s').loadChannel('%s', '%s');",
-                    getMarkupId(), channelId, initialPath);
+            final String loadChannelScript = String.format("Ext.getCmp('%s').loadChannel('%s', '%s', '%s');",
+                    getMarkupId(), channelId, initialPath, branchId);
             target.appendJavaScript(loadChannelScript);
         }
     }

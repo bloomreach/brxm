@@ -62,10 +62,10 @@
       this.addEvents('show-channel-overview');
     },
 
-    loadChannel: function(channelId, initialPath) {
+    loadChannel: function(channelId, initialPath, branchId) {
       this._clearChannel();
       this._setChannel(channelId).when(function(channelRecord) {
-        this.hostToIFrame.publish('load-channel', channelRecord.json, initialPath);
+        this.hostToIFrame.publish('load-channel', channelRecord.json, initialPath, branchId);
       }.bind(this));
     },
 
