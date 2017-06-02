@@ -83,9 +83,10 @@ describe('ProjectService', () => {
     const currentBranch = branches[0];
     $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, branches);
     HstService.doGet.and.returnValue($q.when({ data: currentBranch.id }));
+    HstService.doPut.and.returnValue($q.when({ data: 'master' }));
     ProjectService.load({ mountId });
     $httpBackend.flush();
-    ProjectService.selectProject({ id: 'master' });
+    ProjectService.selectProject('master');
     expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectmaster');
   });
 
@@ -93,9 +94,10 @@ describe('ProjectService', () => {
     const currentBranch = branches[0];
     $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, branches);
     HstService.doGet.and.returnValue($q.when({ data: currentBranch.id }));
+    HstService.doPut.and.returnValue($q.when({ data: currentBranch.id }));
     ProjectService.load({ mountId });
     $httpBackend.flush();
-    ProjectService.selectProject(branches[1]);
+    ProjectService.selectProject(branches[1].id);
     expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectbranch', branches[1].id);
   });
 });
