@@ -23,19 +23,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.onehippo.cm.model.ConfigDefinition;
-import org.onehippo.cm.model.ConfigurationNode;
+import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionItem;
 import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.FileConfigurationUtils;
 import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.SourceType;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
@@ -65,8 +72,6 @@ import static org.onehippo.cm.model.PropertyOperation.OVERRIDE;
 public class DefinitionMergeService {
 
     private static final Logger log = LoggerFactory.getLogger(DefinitionMergeService.class);
-
-    private final Configuration autoExportConfig;
 
     private static class ModuleMapping {
         String mvnPath;
@@ -98,8 +103,6 @@ public class DefinitionMergeService {
      * @param autoExportConfig the current auto-export module config, which includes module:path mappings and exclusions
      */
     public DefinitionMergeService(final Configuration autoExportConfig) {
-        this.autoExportConfig = autoExportConfig;
-
         // preprocess config mapping paths to moduleMapping objects
         // note: this is very similar to the old auto-export EventProcessor init
         for (Map.Entry<String, Collection<String>> entry : autoExportConfig.getModules().entrySet()) {
@@ -159,15 +162,7 @@ public class DefinitionMergeService {
             model = mergeConfigDefinitionNode(change.getNode(), toExport, model);
         }
 
-        // sort all ContentDefinitions by root path
-        changes.getContentDefinitions().sort(Comparator.naturalOrder());
-
-        // for each ContentDefinition
-        for (final ContentDefinitionImpl change : changes.getContentDefinitions()) {
-            // todo run the full and complex merge logic
-//            model =
-                    mergeContentDefinition(change, toExport, baseline);
-        }
+        mergeContentDefinitions(changes, toExport);
 
         return toExport.values();
     }
@@ -202,7 +197,11 @@ public class DefinitionMergeService {
                 return;
             }
 
-            final SourceImpl newSource = newModule.getSourceByPath(oldSource.getPath());
+            final String oldSourcePath = oldSource.getPath();
+            final SourceImpl newSource = newModule.getModifiableSources().stream()
+                    .filter(SourceType.CONFIG::isOfType)
+                    .filter(source -> source.getPath().equals(oldSourcePath))
+                    .findFirst().get();
 
             log.debug("Merging namespace definition: {} to module: {} aka {} in file {}",
                     nsd.getPrefix(), newModule.getMvnPath(), newModule.getFullName(), newSource.getPath());
@@ -217,6 +216,7 @@ public class DefinitionMergeService {
                     final NamespaceDefinitionImpl newNsd =
                             new NamespaceDefinitionImpl(newSource, nsd.getPrefix(), nsd.getURI(), cndPath);
                     defs.set(i, newNsd);
+                    newSource.markChanged();
                 }
             }
         }
@@ -231,7 +231,7 @@ public class DefinitionMergeService {
             ConfigSourceImpl newSource;
             if (newModule.getNamespaceDefinitions().isEmpty()) {
                 // We don't have any namespaces yet, so we can generate a new source and put it there
-                newSource = createSourceIfNecessary(DEFAULT_MAIN_CONFIG_FILE, newModule);
+                newSource = createConfigSourceIfNecessary(DEFAULT_MAIN_CONFIG_FILE, newModule);
             }
             else {
                 // if we have any existing namespace definitions in the destination module, we have to keep all
@@ -416,30 +416,25 @@ public class DefinitionMergeService {
      * @param module the module where we want this definition to live
      * @return a new or existing ConfigSourceImpl
      */
-    protected ConfigSourceImpl getSourceForNewDefinition(final String path, final ModuleImpl module) {
+    protected ConfigSourceImpl getSourceForNewConfig(final String path, final ModuleImpl module) {
         // what does LocationMapper say?
-        final String sourcePath = getFilePathByLocationMapper(path, true);
-        return createSourceIfNecessary(sourcePath, module);
+        final String sourcePath = getFilePathByLocationMapper(path);
+        return createConfigSourceIfNecessary(sourcePath, module);
     }
 
     /**
      * Get a source within a given module to use when adding a new node definition, creating it if necessary.
      * @param sourcePath the desired module-config-root-relative path
      * @param module the module where we want this definition to live
-     * @return
+     * @return a Source that can be used to create new definitions
      */
-    protected ConfigSourceImpl createSourceIfNecessary(final String sourcePath, final ModuleImpl module) {
+    protected ConfigSourceImpl createConfigSourceIfNecessary(final String sourcePath, final ModuleImpl module) {
         // does this Source already exist?
         final Optional<ConfigSourceImpl> maybeSource =
                 module.getConfigSources().stream()
                         .filter(source -> source.getPath().equals(sourcePath))
                         .findFirst();
-        if (maybeSource.isPresent()) {
-            return maybeSource.get();
-        }
-        else {
-            return module.addConfigSource(sourcePath);
-        }
+        return maybeSource.orElseGet(() -> module.addConfigSource(sourcePath));
     }
 
     /**
@@ -455,11 +450,10 @@ public class DefinitionMergeService {
      * Lookup the file path that the old AutoExport LocationMapper class would recommend for the given JCR path,
      * then adjust it to use a YAML extension instead of an XML extension.
      * @param path the JCR path for which we want to generate a new source file
-     * @param isNode does the path represent a node (true) or a property (false)?
-     * @return a config-root-relative path with no leading slash for a potentially new yaml source file
+     * @return a module-base-relative path with no leading slash for a potentially new yaml source file
      */
-    protected String getFilePathByLocationMapper(String path, boolean isNode) {
-        String xmlFile = LocationMapper.fileForPath(path, isNode);
+    protected String getFilePathByLocationMapper(String path) {
+        String xmlFile = LocationMapper.fileForPath(path, true);
         return StringUtils.removeEnd(xmlFile, ".xml") + YAML_EXT;
     }
 
@@ -481,7 +475,7 @@ public class DefinitionMergeService {
         ModuleImpl destModule = getModuleByAutoExportConfig(incomingPath, toExport);
 
         // what source should we put it in?
-        ConfigSourceImpl destSource = getSourceForNewDefinition(incomingPath, destModule);
+        ConfigSourceImpl destSource = getSourceForNewConfig(incomingPath, destModule);
 
         log.debug("... stored in {}/hcm-config/{}", destModule.getName(), destSource.getPath());
 
@@ -513,6 +507,9 @@ public class DefinitionMergeService {
                                            final HashMap<String, ModuleImpl> toExport) {
         log.debug("Adding new node definition to existing definition: {}", from.getPath());
 
+        // mark source changed
+        toParent.getDefinition().getSource().markChanged();
+
         // if order-before is set, we need to do an insert, not an add-at-end
         DefinitionNodeImpl to;
         if (from.getOrderBefore() != null) {
@@ -538,9 +535,8 @@ public class DefinitionMergeService {
     /**
      * Recursively copy all properties and descendants of the from-node to the to-node.
      * Creates new definitions as required by LocationMapper.
-     * @param from
-     * @param to
-     * @param toExport
+     * @param from the definition we want to copy
+     * @param to the definition we are copying into
      */
     protected void recursiveCopy(final DefinitionNodeImpl from, final DefinitionNodeImpl to,
                                  final HashMap<String, ModuleImpl> toExport) {
@@ -577,7 +573,6 @@ public class DefinitionMergeService {
      * Handle a diff entry indicating that a single node should be deleted.
      * @param defNode a DefinitionNode from the diff, describing a single to-be-deleted node
      * @param configNode the ConfigurationNode corresponding to the to-be-deleted node in the current config model
-     * @param toExport
      */
     protected void deleteNode(final DefinitionNodeImpl defNode, final ConfigurationNodeImpl configNode,
                               final HashMap<String, ModuleImpl> toExport) {
@@ -619,12 +614,13 @@ public class DefinitionMergeService {
                 final DefinitionNodeImpl defToKeep = (DefinitionNodeImpl) localDefs.get(0);
 
                 // mark chosen node as a delete
-                final ConfigDefinition defToKeepDefinition = (ConfigDefinition) defToKeep.getDefinition();
+                final ConfigDefinitionImpl defToKeepDefinition = (ConfigDefinitionImpl) defToKeep.getDefinition();
                 log.debug("Marking delete on node: {} from definition of: {} in source: {}",
                         defToKeep.getPath(),
                         defToKeepDefinition.getNode().getPath(),
                         defToKeepDefinition.getSource().getPath());
                 defToKeep.delete();
+                defToKeepDefinition.getSource().markChanged();
 
                 // remove all other defs and children (but not the first one, that we are keeping)
                 final List<DefinitionItemImpl> localDefsExceptFirst = localDefs.subList(1, localDefs.size());
@@ -637,25 +633,26 @@ public class DefinitionMergeService {
      * Remove some (perhaps all) definitions associated with configNode, plus all definitions associated with
      * descendants of configNode. Recurs down the ConfigurationNode tree and up the DefinitionItem tree(s).
      * Call this method to start the entire removal process, possibly preserving one or more existing definitions.
-     * @param configNode
-     * @param defsToRemove
-     * @param alreadyRemovedFrom
-     * @param toExport
+     * @param configNode the configNode whose descendants we're deleting
+     * @param defsToRemove the subset of configNode.getDefinitions() that we want to delete
+     * @param alreadyRemoved an accumulator for Definitions whose children we don't have to check,
+     *                           because the root is already gone
+     * @param toExport modules we're merging/exporting -- changes should stay inside this scope
      */
-    protected void removeSomeDefsAndDescendants(final ConfigurationNode configNode,
-                                                final List<? extends DefinitionItem> defsToRemove,
-                                                final List<Definition> alreadyRemovedFrom,
+    protected void removeSomeDefsAndDescendants(final ConfigurationNodeImpl configNode,
+                                                final List<DefinitionItemImpl> defsToRemove,
+                                                final List<AbstractDefinitionImpl> alreadyRemoved,
                                                 final HashMap<String, ModuleImpl> toExport) {
-        log.debug("Removing defs and children for node: {} with exceptions: {}", configNode.getPath(), alreadyRemovedFrom);
+        log.debug("Removing defs and children for node: {} with exceptions: {}", configNode.getPath(), alreadyRemoved);
 
-        for (DefinitionItem definitionItem : defsToRemove) {
-            removeOneDefinitionItem(definitionItem, alreadyRemovedFrom, toExport);
+        for (DefinitionItemImpl definitionItem : defsToRemove) {
+            removeOneDefinitionItem(definitionItem, alreadyRemoved, toExport);
         }
 
         // we don't need to handle properties specifically, because we will remove all the nodes that contain them
 
         // scan downwards for child definitions, which could be rooted on the children directly
-        removeDescendantDefinitions(configNode, alreadyRemovedFrom, toExport);
+        removeDescendantDefinitions(configNode, alreadyRemoved, toExport);
     }
 
     /**
@@ -663,18 +660,19 @@ public class DefinitionMergeService {
      * This method recurs down the ConfigurationNode tree, and then recurs up the DefinitionNode tree(s) to clean up
      * any parent DefinitionNodes, Definitions, or Sources that may have been made empty.
      * @param configNode the node being deleted
-     * @param alreadyRemoved keep track of the definitions that we've already completely deleted
+     * @param alreadyRemoved an accumulator for Definitions whose children we don't have to check,
+     *                           because the root is already gone
      * @param toExport modules we're merging/exporting -- changes should stay inside this scope
      */
-    protected void removeDescendantDefinitions(final ConfigurationNode configNode,
-                                               final List<Definition> alreadyRemoved,
+    protected void removeDescendantDefinitions(final ConfigurationNodeImpl configNode,
+                                               final List<AbstractDefinitionImpl> alreadyRemoved,
                                                final HashMap<String, ModuleImpl> toExport) {
         log.debug("Removing child defs for node: {} with exceptions: {}", configNode.getPath(), alreadyRemoved);
 
-        for (ConfigurationNode childConfigNode : configNode.getNodes().values()) {
-            for (DefinitionItem childDefItem : childConfigNode.getDefinitions()) {
+        for (ConfigurationNodeImpl childConfigNode : configNode.getNodes().values()) {
+            for (DefinitionItemImpl childDefItem : childConfigNode.getDefinitions()) {
                 // if child's DefinitionNode was part of a parent Definition, it may have already been removed
-                final Definition childDefinition = childDefItem.getDefinition();
+                final AbstractDefinitionImpl childDefinition = childDefItem.getDefinition();
                 if (!alreadyRemoved.contains(childDefinition)) {
                     // otherwise, remove it now
                     removeOneDefinitionItem(childDefItem, alreadyRemoved, toExport);
@@ -687,25 +685,22 @@ public class DefinitionMergeService {
     /**
      * Remove one definition item, either by removing it from its parent or (if root) removing the entire definition.
      * Recurs up the DefinitionItem tree to clean up newly-emptied items.
-     * @param definitionItem
-     * @param alreadyRemoved
-     * @param toExport
+     * @param definitionItem the node or property to remove
+     * @param alreadyRemoved an accumulator for Definitions whose children we don't have to check,
+     *                           because the root is already gone
+     * @param toExport modules we're merging/exporting -- changes should stay inside this scope
      */
-    protected void removeOneDefinitionItem(final DefinitionItem definitionItem,
-                                           final List<Definition> alreadyRemoved,
+    protected void removeOneDefinitionItem(final DefinitionItemImpl definitionItem,
+                                           final List<AbstractDefinitionImpl> alreadyRemoved,
                                            final HashMap<String, ModuleImpl> toExport) {
 
         log.debug("Removing one def item for node: {} with exceptions: {}", definitionItem.getPath(), alreadyRemoved);
-
-        // TODO remove referenced resources?
-        // collect all resource references below this item
-        // add to new ModuleImpl collection of removedResources
 
         // remove the node itself
         // if this node is the root
         if (definitionItem.isRoot()) {
             // remove the definition
-            final ConfigDefinition definition = (ConfigDefinition) definitionItem.getDefinition();
+            final ConfigDefinitionImpl definition = (ConfigDefinitionImpl) definitionItem.getDefinition();
             removeDefinition(definition, toExport);
             alreadyRemoved.add(definition);
         }
@@ -719,15 +714,16 @@ public class DefinitionMergeService {
     /**
      * Remove a DefinitionItem from its parent. This method assumes that you've already checked that the parent exists.
      * Recurs up the DefinitionItem tree to clean up newly-emptied items.
-     * @param definitionItem
-     * @param alreadyRemoved
-     * @param toExport
+     * @param definitionItem the node or property to remove
+     * @param alreadyRemoved an accumulator for Definitions whose children we don't have to check,
+     *                           because the root is already gone
+     * @param toExport modules we're merging/exporting -- changes should stay inside this scope
      */
-    protected void removeFromParentDefinitionItem(final DefinitionItem definitionItem,
-                                                  final List<Definition> alreadyRemoved,
+    protected void removeFromParentDefinitionItem(final DefinitionItemImpl definitionItem,
+                                                  final List<AbstractDefinitionImpl> alreadyRemoved,
                                                   final HashMap<String, ModuleImpl> toExport) {
-        final ConfigDefinition definition = (ConfigDefinition) definitionItem.getDefinition();
-        final SourceImpl source = (SourceImpl) definition.getSource();
+        final ConfigDefinitionImpl definition = (ConfigDefinitionImpl) definitionItem.getDefinition();
+        final SourceImpl source = definition.getSource();
         final ModuleImpl module = source.getModule();
 
         // check if the definition is in one of the toExport modules -- if not, we can't change it
@@ -740,15 +736,22 @@ public class DefinitionMergeService {
                 definitionItem.getPath(),
                 definition.getNode().getPath(), source.getPath());
 
-        DefinitionNodeImpl parentNode = (DefinitionNodeImpl) definitionItem.getParent();
+        DefinitionNodeImpl parentNode = definitionItem.getParent();
         if (definitionItem instanceof DefinitionNode) {
             // remove the node from its parent
             parentNode.getModifiableNodes().remove(definitionItem.getName());
+
+            // remove referenced resources
+            removeResources((DefinitionNodeImpl) definitionItem);
         }
         else {
             // remove the property from its parent
             parentNode.getModifiableProperties().remove(definitionItem.getName());
+
+            // remove referenced resources
+            removeResources((DefinitionPropertyImpl) definitionItem);
         }
+        source.markChanged();
 
         // if this was the last item in the parent node ...
         if (parentNode.isEmpty()) {
@@ -759,12 +762,12 @@ public class DefinitionMergeService {
 
     /**
      * Remove an entire Definition, and if it is the last Definition in its Source, also remove the Source.
-     * @param definition
-     * @param toExport
+     * @param definition the definition to remove
+     * @param toExport modules we're merging/exporting -- changes should stay inside this scope
      */
-    protected void removeDefinition(final ConfigDefinition definition, final HashMap<String, ModuleImpl> toExport) {
+    protected void removeDefinition(final ConfigDefinitionImpl definition, final HashMap<String, ModuleImpl> toExport) {
         // remove the definition from its source and from its module
-        final SourceImpl source = (SourceImpl) definition.getSource();
+        final SourceImpl source = definition.getSource();
         final ModuleImpl module = source.getModule();
 
         // check if the definition is in one of the toExport modules -- if not, we can't change it
@@ -775,8 +778,11 @@ public class DefinitionMergeService {
         }
         log.debug("Removing definition for node: {} from source: {}", definition.getNode().getPath(), source.getPath());
 
-        source.getModifiableDefinitions().remove(definition);
+        source.removeDefinition(definition);
         module.getConfigDefinitions().remove(definition);
+
+        // remove referenced resources
+        removeResources(definition.getNode());
 
         // if the definition was the last one from its source
         if (source.getModifiableDefinitions().size() == 0) {
@@ -784,9 +790,16 @@ public class DefinitionMergeService {
 
             // remove the source from its module
             module.getModifiableSources().remove(source);
+            module.addConfigResourceToRemove("/"+source.getPath());
         }
     }
 
+    /**
+     * Merge an incoming property change into toExport modules.
+     * @param defProperty the incoming property change
+     * @param configNode the ConfigurationNode representing the parent node of defProperty
+     * @param toExport modules we're merging/exporting -- changes should stay inside this scope
+     */
     protected void mergeProperty(final DefinitionPropertyImpl defProperty,
                                  final ConfigurationNodeImpl configNode,
                                  final HashMap<String, ModuleImpl> toExport) {
@@ -854,6 +867,8 @@ public class DefinitionMergeService {
 
                         // change local def to reflect new state
                         localPropDef.updateFrom(defProperty);
+
+                        localPropDef.getDefinition().getSource().markChanged();
                     }
                     else {
                         // no, there's no local def for the specific property
@@ -894,7 +909,10 @@ public class DefinitionMergeService {
                     }
                     else {
                         // replace first local def with delete and remove others
-                        ((DefinitionPropertyImpl)localDefs.get(0)).updateFrom(defProperty);
+                        final DefinitionPropertyImpl firstLocalDef = (DefinitionPropertyImpl) localDefs.get(0);
+                        firstLocalDef.updateFrom(defProperty);
+
+                        firstLocalDef.getDefinition().getSource().markChanged();
 
                         for (DefinitionItemImpl localDef : localDefs.subList(1, localDefs.size())) {
                             removeFromParentDefinitionItem(localDef, new ArrayList<>(), toExport);
@@ -910,7 +928,7 @@ public class DefinitionMergeService {
      * containing node, or by creating a new definition for the containing node and adding to that.
      * @param defProperty the property to add
      * @param configNode the ConfigurationNode for the containing node
-     * @param toExport
+     * @param toExport modules we're merging/exporting -- changes should stay inside this scope
      */
     protected void addLocalProperty(final DefinitionPropertyImpl defProperty,
                                     final ConfigurationNodeImpl configNode,
@@ -927,6 +945,8 @@ public class DefinitionMergeService {
                     definitionNode.getDefinition().getSource().getPath());
 
             definitionNode.addProperty(defProperty);
+
+            definitionNode.getDefinition().getSource().markChanged();
         }
         else {
             // no, there's no local def for parent node -- create a new local definition with this property
@@ -967,129 +987,145 @@ public class DefinitionMergeService {
         return ((ModuleImpl)item.getDefinition().getSource().getModule()).getMvnPath();
     }
 
-    protected void mergeContentDefinition(final ContentDefinitionImpl change, final HashMap<String, ModuleImpl> toExport,
-                                final ConfigurationModelImpl model) {
-        // TODO!!!!
-//         is this root path already a root path of an existing ContentDefinition?
-//             yes, we have an exactly matching path for an existing ContentDefinition
-//             is the existing definition part of a toMerge module?
-//                 yes, existing matching definition is in a toMerge module
-//                 root DefinitionNode.isDelete()?
-//                     yes, root DefinitionNode.isDelete()
-//                     remove the Source containing this definition from the module
-//                     add a DELETE action for this path
-//
-//                     no, root DefinitionNode is a regular node, not delete
-//                     TODO should we check if the existing definition is the module that matches current auto-export config?
-//                     replace existing DefinitionNode with a clone from changes
-//                         apply file-splitting rules from LocationMapper
-//                         check for separate content definitions for subnodes
-//                     TODO do we need a REPLACE action for the sake of upstream environments? (we don't need one here)
-//
-//                 no, existing definition is deeper in the baseline
-//                 root DefinitionNode.isDelete()?
-//                     yes, we're deleting a content node originally defined in the baseline
-//                     add a DELETE action for this path in the appropriate toMerge module
-//
-//                     no, this is a regular node on a path already defined in the baseline
-//                     createContentSource()
-//                     TODO which action should we use? APPEND-PROPERTIES, UPDATE, or REPLACE?
-//                     add the appropriate action
-//
-//             no exactly matching ContentDefinition
-//             is this root path a subpath of an existing ContentDefinition?
-//                 yes, existing ancestor ContentDefinition (this should be the closest/deepest available ancestor)
-//                 is the ancestor part of a toMerge module?
-//                     yes, ancestor is from a toMerge module
-//                     is the new root path defined in the toMerge ancestor definition?
-//                         yes, the new root path overlaps an existing toMerge ancestor
-//                         root definitionNode.isDelete()?
-//                             yes, deleting an existing part of a toMerge definition
-//                             remove the existing definitionNode from the toMerge definition
-//
-//                             no, not a delete
-//                             TODO merge changes property-by-property and recursively into existing definition
-//
-//                         no, the new root path isn't available in the toMerge ancestor
-//                         is the parent of the new root path defined in the toMerge ancestor definition?
-//                             yes, the new root path can be attached under an existing toMerge ancestor parent DefinitionNode
-//
-//                             TODO apply file splitting rules
-//                             clone definition into the existing ancestor definition at the appropriate DefinitionNode
-//                                 apply file-splitting rules from LocationMapper
-//                                 check for separate content definitions for subnodes
-//
-//                             no, the parent isn't available in the toMerge ancestor
-//                             THROW EXCEPTION! this should be impossible, and the diff that generated changes must be broken!
-//                             (diff should have intermediate nodes)
-//
-//                     no, ancestor is from deeper in the baseline
-//                     is the new root path defined in the deep-baseline ancestor definition?
-//                         yes, the new root path overlaps an existing deep-baseline ancestor
-//                         root definitionNode.isDelete()?
-//                             yes, deleting a path from within a deep-baseline ancestor
-//                             create a DELETE action for this path in the appropriate toMerge module
-//
-//                             no, not a delete
-//                             createContentSource()
-//                             TODO which action should we use? APPEND-PROPERTIES, UPDATE, or REPLACE?
-//                             add the appropriate action
-//
-//                         no, the new root path isn't available in the deep-baseline ancestor
-//                         is the parent of the new root path defined?
-//                             yes, the parent is already defined in the deep-baseline ancestor, but the changes root is not defined yet
-//                             root definitionNode.isDelete()?
-//                                 yes, we're trying to delete a node that should never have existed
-//                                 THROW EXCEPTION! this should be impossible, and the diff that generated changes must be broken!
-//                                 (this just shouldn't have been mentioned)
-//
-//                                 no, this is a regular node with an existing deep-baseline parent, but not already defined
-//                                 createContentSource()
-//
-//                             no, the parent is not defined yet anywhere
-//                             THROW EXCEPTION! this should be impossible, and the diff that generated changes must be broken!
-//                             (diff should have intermediate nodes)
-//
-//                 no existing ancestor ContentDefinition
-//                 ... look for a ConfigDefinition with the parent node
-//                 is the root path a subpath of an existing ConfigDefinition?
-//                     yes, part of an existing ConfigDefinition
-//                     is the parent of the root path defined in this ConfigDefinition?
-//                         yes, the parent is defined
-//                         is the changes root node a delete?
-//                             yes, a delete on a child of an existing config node but not existing content node
-//                             THROW EXCEPTION! this should be impossible, and the diff that generated changes must be broken!
-//                             (should be a config change or not mentioned)
-//
-//                             no, not a delete
-//                             is the changes root node defined?
-//                                 yes, changes root is defined in config
-//                                 THROW EXCEPTION! this should be impossible, and the diff that generated changes must be broken!
-//                                 (a diff should not remap a config node to content)
-//
-//                                 no, changes root is not already defined anywhere
-//                                 createContentSource() (this is a new content as a child of a config)
-//
-//                         no, the parent of the root path isn't defined
-//                         THROW EXCEPTION! this should be impossible, and the diff that generated changes must be broken!
-//                         (diff should have intermediate nodes)
-//
-//                     no, not part of any existing ConfigDefinition
-//                     THIS SHOULD BE IMPOSSIBLE! (there should be a root "/" DefinitionNode at the least)
+    protected void mergeContentDefinitions(final ModuleImpl changes,
+                                           final HashMap<String, ModuleImpl> toExport) {
+
+        // set of content change paths in lexical order, so that shorter common sub-paths come first
+        final Function<ContentDefinitionImpl, String> cdPath = cd -> cd.getModifiableNode().getPath();
+        TreeSet<String> contentChangesByPath = changes.getContentDefinitions().stream().map(cdPath)
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        // set of existing sources in reverse lexical order, so that longer paths come first
+        final BinaryOperator<ContentDefinitionImpl> pickOne = (l, r) -> l;
+        final Supplier<TreeMap<String, ContentDefinitionImpl>> reverseTreeMapper =
+                () -> new TreeMap<>(Comparator.reverseOrder());
+        SortedMap<String, ContentDefinitionImpl> existingSourcesByPath = toExport.values().stream()
+                .flatMap(m -> Lists.reverse(m.getContentDefinitions()).stream())
+                .collect(Collectors.toMap(cdPath, Function.identity(), pickOne, reverseTreeMapper));
+
+        for (final String changePath : contentChangesByPath) {
+            // if LocationMapper tells us we should have a new source file...
+            if (shouldPathCreateNewSource(changePath)) {
+                // create a new source file
+                createNewContentSource(changePath, toExport);
+            }
+            else {
+                // check if there's an existing file that is an ancestor of the changed path
+                // find the source with the longest matching substring of the changed path
+                final Optional<ContentDefinitionImpl> maybeDef = existingSourcesByPath.entrySet().stream()
+                        .filter(e -> changePath.startsWith(e.getKey()))
+                        .map(Map.Entry::getValue)
+                        .findFirst();
+                if (maybeDef.isPresent()) {
+                    // there's an existing matching source, so just mark it changed for later re-export
+                    maybeDef.get().getSource().markChanged();
+                }
+                else {
+                    // otherwise, create a new source file
+                    createNewContentSource(changePath, toExport);
+                }
+            }
+        }
+
+        // process deletes, including resource removal
+        changes.getActionsMap().values().stream().flatMap(Set::stream)
+                .filter(actionItem -> actionItem.getType() == ActionType.DELETE)
+                .forEach(actionItem -> {
+                    final String deletePath = actionItem.getPath();
+
+                    // for now, we only care about deletes that exactly match a content root
+                    if (existingSourcesByPath.containsKey(deletePath)) {
+                        final ContentDefinitionImpl contentDef = existingSourcesByPath.get(deletePath);
+                        final SourceImpl source = contentDef.getSource();
+                        final ModuleImpl module = source.getModule();
+
+                        // mark all referenced resources for delete
+                        removeResources(contentDef.getNode());
+
+                        // remove the source from its module
+                        module.getModifiableSources().remove(source);
+                        module.addContentResourceToRemove("/"+source.getPath());
+                    }
+        });
     }
 
-    void createContentSource() {
-        // TODO!!!
-        // double-check translations handling in LocationMapper
+    /**
+     * Recursively find all resource paths in this node or descendants, then tell the containing module to remove
+     * the resources at those paths.
+     */
+    protected void removeResources(final DefinitionNodeImpl node) {
+        // find resource values
+        for (DefinitionPropertyImpl dp : node.getProperties().values()) {
+            removeResources(dp);
+        }
 
-        // figure out which mvn path corresponds to which module name
-
-        // assert: this is a regular node, not a delete!
-        // create a new Source in the appropriate toMerge Module
-        // use LocationMapper to generate a default filename, except use .yaml extension instead of .xml
-            // String contextPath = LocationMapper.contextNodeForPath("/", true);
-        // clone the ContentDefinition from changes into this Source
-
-        // check for separate content definitions for subnodes
+        // recursively visit child definition nodes
+        for (DefinitionNodeImpl childNode : node.getNodes().values()) {
+            removeResources(childNode);
+        }
     }
+
+    /**
+     * Find all resource paths in this property, then tell the containing module to remove
+     * the resources at those paths.
+     */
+    protected void removeResources(final DefinitionPropertyImpl dp) {
+        switch (dp.getType()) {
+            case SINGLE:
+                removeResourceIfNecessary(dp.getValue());
+                break;
+            case SET:
+            case LIST:
+                for (ValueImpl value : dp.getValues()) {
+                    removeResourceIfNecessary(value);
+                }
+                break;
+        }
+    }
+
+    /**
+     * If the given value represents a resource, tell the containing module to remove the resource at the path
+     * represented by value.getString().
+     */
+    protected void removeResourceIfNecessary(final ValueImpl value) {
+        if (value.isResource()) {
+            final SourceImpl source = value.getDefinition().getSource();
+            final String resourcePath = source.toModulePath(value.getString());
+
+            if (source.getType() == SourceType.CONFIG) {
+                source.getModule().addConfigResourceToRemove(resourcePath);
+            }
+            else {
+                source.getModule().addContentResourceToRemove(resourcePath);
+            }
+        }
+    }
+
+    /**
+     * Create a new ContentSourceImpl within one of the toExport modules to store content for the provided contentPath.
+     * @param changePath the path whose content we want to store in the new source
+     * @param toExport the set of modules that are being exported, which may contain the new source
+     */
+    protected void createNewContentSource(final String changePath, final HashMap<String, ModuleImpl> toExport) {
+        // there's no existing source, so we need to create one
+        final ModuleImpl module = getModuleByAutoExportConfig(changePath, toExport);
+        final String sourcePath = getFilePathByLocationMapper(changePath);
+
+        // TODO should we export the changePath into this new source, or the LocationMapper contextPath?
+        // TODO ... we want the source root def to match the node expected from the source file name, right?
+
+        final Predicate<String> sourceExists = s -> {
+            return module.getModifiableSources().stream()
+                    .filter(SourceType.CONTENT::isOfType)
+                    .anyMatch(source -> source.getPath().equals(s));
+        };
+
+        // if there's already a source with this path, generate a unique name
+        final String uniqueSourcePath =
+                FileConfigurationUtils.generateUniquePath(sourcePath, sourceExists, 0);
+
+        // create a new source and content definition with change path
+        module.addContentSource(uniqueSourcePath).addContentDefinition(changePath);
+    }
+
 }

@@ -636,17 +636,12 @@ public class ConfigurationBaselineService {
                             log.debug("Building content def from {} in {}/{}/{}", sourcePath,
                                     group.getName(), project.getName(), module.getName());
 
-                            // create Source
-                            ContentSourceImpl source = new ContentSourceImpl(sourcePath, (ModuleImpl) module);
-
                             // get content path from JCR Node
                             String contentPath = contentNode.getProperty(HCM_CONTENT_PATH).getString();
 
+                            // create Source
                             // create ContentDefinition with a single definition node and just the node path
-                            ContentDefinitionImpl cd = source.addContentDefinition();
-                            final String name = StringUtils.substringAfterLast(contentPath, "/");
-                            DefinitionNodeImpl defNode = new DefinitionNodeImpl(contentPath, name, cd);
-                            cd.setNode(defNode);
+                            module.addContentSource(sourcePath).addContentDefinition(contentPath);
                         }
                     }
                 }
