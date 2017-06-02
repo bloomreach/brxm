@@ -40,7 +40,7 @@ class resizeHandleController {
         const diff = initialX - moveEvent.pageX;
         newWidth = initialWidth + diff;
 
-        if (newWidth >= 440 && newWidth <= this.maxWidth) {
+        if (manipulatedElement.width() >= 440 && manipulatedElement.width() <= this.maxWidth) {
           manipulatedElement.css('width', newWidth);
           manipulatedElement.css('max-width', newWidth);
           this.onResize({ newWidth });
