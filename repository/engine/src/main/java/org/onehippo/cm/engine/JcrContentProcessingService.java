@@ -67,6 +67,7 @@ import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
+import static org.onehippo.cm.model.ActionType.APPEND;
 import static org.onehippo.cm.model.ActionType.DELETE;
 import static org.onehippo.cm.model.ValueType.REFERENCE;
 import static org.onehippo.cm.model.ValueType.WEAKREFERENCE;
@@ -101,7 +102,50 @@ public class JcrContentProcessingService {
         if (actionType == DELETE) {
             throw new IllegalArgumentException("DELETE action is not supported for import operation");
         }
-        applyNode(modelNode, parentNode, actionType);
+
+        final DefinitionNodeImpl newNode = constructNewParentNode(modelNode, parentNode.getPath());
+
+        final Session session = parentNode.getSession();
+        validateAppendAction(newNode.getPath(), actionType, session);
+
+        applyNode(newNode, parentNode, actionType);
+    }
+
+    /**
+     * Validate if node exists and current action type is APPEND
+     * @param nodePath Node path
+     * @param actionType current action type
+     * @param session current session
+     * @throws RepositoryException if node exists and action type is APPEND
+     */
+    private void validateAppendAction(final String nodePath, final ActionType actionType, final Session session) throws RepositoryException {
+        final boolean nodeExists = session.nodeExists(nodePath);
+        if (nodeExists && actionType == APPEND) {
+            throw new ItemExistsException(String.format("Node already exists at path %s", nodePath));
+        }
+    }
+
+    /**
+     * Create new definition node under given path path
+     * @param modelNode {@link DefinitionNode} source node
+     * @param path new path
+     * @return Node under the new path
+     */
+    private DefinitionNodeImpl constructNewParentNode(final DefinitionNode modelNode, final String path) throws RepositoryException {
+
+        final String newPath = constructNodePath(path, modelNode.getName());
+
+        final DefinitionNodeImpl node = (DefinitionNodeImpl) modelNode;
+        final DefinitionNodeImpl newNode = new DefinitionNodeImpl(newPath, modelNode.getName(), node.getDefinition());
+        newNode.getModifiableNodes().putAll(node.getModifiableNodes());
+        newNode.getModifiableProperties().putAll(node.getModifiableProperties());
+        newNode.setOrderBefore(node.getOrderBefore());
+        newNode.setIgnoreReorderedChildren(node.getIgnoreReorderedChildren());
+        return newNode;
+    }
+
+    private String constructNodePath(final String path, final String nodeName) {
+        return path.equals("/") ? "/" + nodeName : path + "/" + nodeName;
     }
 
     /**
@@ -233,7 +277,13 @@ public class JcrContentProcessingService {
         }
 
         try {
-            applyNode(definitionNode, actionType, session);
+            validateAppendAction(definitionNode.getPath(), actionType, session);
+            if (actionType == DELETE && !session.nodeExists(definitionNode.getPath())) {
+                return;
+            }
+
+            final Node parentNode = calculateParentNode(definitionNode, session);
+            applyNode(definitionNode, parentNode, actionType);
             applyUnprocessedReferences();
         } catch (Exception e) {
             logger.error(String.format("Content definition processing failed: %s", definitionNode.getName()), e);
@@ -245,21 +295,7 @@ public class JcrContentProcessingService {
         }
     }
 
-    private void applyNode(final DefinitionNode definitionNode, final ActionType actionType, final Session session) throws Exception {
-        if (itemToDeleteDoesNotExist(definitionNode, actionType, session)) {
-            return;
-        }
-        final Node parentNode = calculateRootNode(definitionNode, session);
-        applyNode(definitionNode, parentNode, actionType);
-    }
-
-    private boolean itemToDeleteDoesNotExist(final DefinitionNode definitionNode,
-                                             final ActionType actionType,
-                                             final Session session) throws RepositoryException {
-        return actionType == DELETE && !session.nodeExists(definitionNode.getPath());
-    }
-
-    private Node calculateRootNode(DefinitionNode definitionNode, final Session session) throws RepositoryException {
+    private Node calculateParentNode(DefinitionNode definitionNode, final Session session) throws RepositoryException {
         String path = Paths.get(definitionNode.getPath()).getParent().toString();
         return session.getNode(path);
     }
@@ -267,13 +303,13 @@ public class JcrContentProcessingService {
     private void applyNode(final DefinitionNode definitionNode, final Node parentNode, final ActionType actionType) throws RepositoryException, IOException {
 
         final Session session = parentNode.getSession();
-        final String nodePath = definitionNode.getPath();
+        final String nodePath = constructNodePath(parentNode.getPath(), definitionNode.getName());
         final boolean nodeExists = session.nodeExists(nodePath);
 
         if (nodeExists) {
             switch (actionType) {
                 case APPEND:
-                    throw new ItemExistsException(String.format("Node already exists at path %s", nodePath));
+                    //Happens only in case when subnode is autocreated
                 case RELOAD:
                     session.getNode(nodePath).remove();
                     break;
@@ -413,12 +449,12 @@ public class JcrContentProcessingService {
         }
 
         try {
-            if (modelValues.size() > 0) {
-                if (modelProperty.getType() == PropertyType.SINGLE) {
+            if (modelProperty.getType() == PropertyType.SINGLE) {
+                if (modelValues.size() > 0) {
                     jcrNode.setProperty(modelProperty.getName(), valueProcessor.valueFrom(modelValues.get(0), jcrNode.getSession()));
-                } else {
-                    jcrNode.setProperty(modelProperty.getName(), valueProcessor.valuesFrom(modelValues, jcrNode.getSession()));
                 }
+            } else {
+                jcrNode.setProperty(modelProperty.getName(), valueProcessor.valuesFrom(modelValues, jcrNode.getSession()));
             }
         } catch (RepositoryException e) {
             String msg = String.format(

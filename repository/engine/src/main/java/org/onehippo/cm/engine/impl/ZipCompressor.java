@@ -18,11 +18,17 @@ package org.onehippo.cm.engine.impl;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -35,12 +41,30 @@ import org.apache.commons.io.IOUtils;
 public class ZipCompressor {
 
     /**
+     * Create {@link com.sun.nio.zipfs.ZipFileSystem} from file
+     * @param zipFilename absolute path to zip file
+     * @param create create new or reuse existing
+     * @return {@link com.sun.nio.zipfs.ZipFileSystem}
+     */
+    public static FileSystem createZipFileSystem(final String zipFilename, final boolean create) throws IOException {
+
+        final Path path = Paths.get(zipFilename);
+        final URI uri = URI.create("jar:file:" + path.toUri().getPath());
+
+        final Map<String, String> env = new HashMap<>();
+        if (create) {
+            env.put("create", "true");
+        }
+        return FileSystems.newFileSystem(uri, env);
+    }
+
+    /**
      * Zip directory's contents
      *
      * @param dir directory to compress
      * @param targetZip target path of the zip file
      */
-    public void zipDirectory(Path dir, String targetZip) throws IOException {
+    public void zipDirectory(final Path dir, final String targetZip) throws IOException {
         final List<String> paths = getFilesInDirectory(dir);
         try (final FileOutputStream fos = new FileOutputStream(targetZip);
              final ZipOutputStream zos = new ZipOutputStream(fos)) {
@@ -61,7 +85,6 @@ public class ZipCompressor {
      * Collect all the files in a directory and its subdirectories
      *
      * @param dir directory
-     * @throws IOException
      */
     private List<String> getFilesInDirectory(final Path dir) throws IOException {
         final List<String> paths = new ArrayList<>();

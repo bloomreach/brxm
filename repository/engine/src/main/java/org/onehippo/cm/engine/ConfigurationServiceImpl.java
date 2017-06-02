@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -32,16 +33,21 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
 import org.onehippo.cm.engine.impl.ZipCompressor;
+import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.ExportModuleContext;
 import org.onehippo.cm.model.FileConfigurationWriter;
+import org.onehippo.cm.model.ImportModuleContext;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.ModuleContext;
+import org.onehippo.cm.model.PathConfigurationReader;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
@@ -214,7 +220,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         }
     }
 
-    public File exportZippedContent(Node nodeToExport) throws RepositoryException, IOException {
+    public File exportZippedContent(final Node nodeToExport) throws RepositoryException, IOException {
 
         final Module module = contentService.exportNode(nodeToExport);
 
@@ -233,11 +239,26 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         finally {
             FileUtils.deleteQuietly(dirToZip);
         }
+    }
 
+    public void importZippedContent(final File zipFile, final Node parentNode) throws RepositoryException, IOException {
+
+        final FileSystem zipFileSystem = ZipCompressor.createZipFileSystem(zipFile.getAbsolutePath(), false);
+        final Path zipRootPath = zipFileSystem.getPath("/");
+
+        final ModuleImpl module = new ModuleImpl("import-module", new ProjectImpl("import-project", new GroupImpl("import-group")));
+        final ModuleContext moduleContext = new ImportModuleContext(module, zipRootPath);
+        try {
+            new PathConfigurationReader().readModule(module, moduleContext, false);
+            final ContentDefinition contentDefinition = (ContentDefinition) module.getContentSources().iterator().next().getDefinitions().get(0);
+            contentService.importNode(contentDefinition.getNode(), parentNode, ActionType.RELOAD);
+        } catch (ParserException e) {
+            throw new RuntimeException("Import failed", e);
+        }
 
     }
 
-    public String exportContent(Node nodeToExport) throws RepositoryException, IOException {
+    public String exportContent(final Node nodeToExport) throws RepositoryException, IOException {
 
         final Module module = contentService.exportNode(nodeToExport);
 
