@@ -109,7 +109,8 @@ public class ConfigurationContentService {
      * @param session active {@link Session}
      */
     private void apply(final ModuleImpl module, final ConfigurationModel model, final Session session) throws RepositoryException {
-        final List<ActionItem> actionsToProcess = collectNewActions(module.getSequenceNumber(), module.getActionsMap());
+        final double moduleSequenceNumber = module.getSequenceNumber() != null ? module.getSequenceNumber() : Double.MIN_VALUE;
+        final List<ActionItem> actionsToProcess = collectNewActions(moduleSequenceNumber, module.getActionsMap());
         processItemsToDelete(actionsToProcess, model, session);
         session.save();
 
