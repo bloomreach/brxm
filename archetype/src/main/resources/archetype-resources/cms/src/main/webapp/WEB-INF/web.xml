@@ -148,6 +148,10 @@
         ^/.*\..*
       </param-value>
     </init-param>
+    <init-param>
+      <param-name>whitelistedResourcePaths</param-name>
+      <param-value>.*/hippo-cms-theme.min.css</param-value>
+    </init-param>
   </servlet>
 
   <servlet>
