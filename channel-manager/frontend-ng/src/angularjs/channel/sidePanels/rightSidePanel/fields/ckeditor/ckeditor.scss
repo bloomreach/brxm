@@ -59,3 +59,12 @@
 .cke_resizer {
   display: none;
 }
+
+.cke_dialog_contents {
+  .cke_dialog_ui_textarea {
+    * {
+      font-family: monospace !important;
+      font-size: 12px;
+    }
+  }
+}
