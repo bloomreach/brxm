@@ -15,11 +15,10 @@
  */
 
 class SharedSpaceToolbar {
-  constructor(SharedSpaceToolbarService, $rootScope, $element) {
+  constructor(SharedSpaceToolbarService, $rootScope) {
     'ngInject';
 
     this.$rootScope = $rootScope;
-    this.$element = $element;
     this.isVisible = this.isVisible || false;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
     this.showBottomToolbar = null;
