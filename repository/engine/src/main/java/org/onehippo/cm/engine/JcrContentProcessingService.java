@@ -110,16 +110,20 @@ public class JcrContentProcessingService {
      * @param node
      * @return
      */
-    public synchronized Module exportNode(final Node node) throws RepositoryException {
-
-        final HippoNode hippoNode = (HippoNode) node;
-        if (hippoNode.isVirtual()) {
-            throw new ConfigurationRuntimeException(String.format("Virtual node cannot be exported: %s", node.getPath()));
-        }
-
+    public Module exportNode(final Node node) throws RepositoryException {
         final ModuleImpl module = new ModuleImpl("export-module", new ProjectImpl("export-project", new GroupImpl("export-group")));
         final ContentSourceImpl contentSource = module.addContentSource("content.yaml");
         final ContentDefinitionImpl contentDefinition = contentSource.addContentDefinition();
+
+        exportNode(node, contentDefinition);
+
+        return module;
+    }
+
+    public DefinitionNodeImpl exportNode(final Node node, final ContentDefinitionImpl contentDefinition) throws RepositoryException {
+        if (isVirtual(node)) {
+            throw new ConfigurationRuntimeException("Virtual node cannot be exported: " + node.getPath());
+        }
 
         final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(node.getPath(), createNodeName(node), contentDefinition);
         contentDefinition.setNode(definitionNode);
@@ -129,25 +133,30 @@ public class JcrContentProcessingService {
         for (final Node childNode : new NodeIterable(node.getNodes())) {
             exportNode(childNode, definitionNode);
         }
-
-        return module;
+        return definitionNode;
     }
 
-    private void exportNode(final Node sourceNode, final DefinitionNodeImpl parentNode) throws RepositoryException {
+    public DefinitionNodeImpl exportNode(final Node sourceNode, final DefinitionNodeImpl parentNode) throws RepositoryException {
 
-        final DefinitionNodeImpl definitionNode = parentNode.addNode(createNodeName(sourceNode));
+        if (!isVirtual(sourceNode)) {
+            final DefinitionNodeImpl definitionNode = parentNode.addNode(createNodeName(sourceNode));
 
-        processProperties(sourceNode, definitionNode);
+            processProperties(sourceNode, definitionNode);
 
-        for (final Node childNode : new NodeIterable(sourceNode.getNodes())) {
-            if (!((HippoNode)childNode).isVirtual()) {
+            for (final Node childNode : new NodeIterable(sourceNode.getNodes())) {
                 exportNode(childNode, definitionNode);
             }
+            return definitionNode;
         }
+        return null;
+    }
+
+    private boolean isVirtual(final Node node) throws RepositoryException {
+        return ((HippoNode)node).isVirtual();
     }
 
     private String createNodeName(final Node sourceNode) throws RepositoryException {
-        return sourceNode.getName(); //TODO SS deal with SNS SnsUtils.createIndexedName(sourceNode);
+        return sourceNode.getName() + (sourceNode.getIndex() > 1 ? "["+sourceNode.getIndex()+"]" : "");
     }
 
     private void processProperties(final Node sourceNode, final DefinitionNodeImpl definitionNode) throws RepositoryException {
@@ -166,15 +175,15 @@ public class JcrContentProcessingService {
             if (property.isMultiple()) {
 
                 final javax.jcr.Value[] values = property.getValues();
+                final List<ValueImpl> valueList = new ArrayList<>();
                 if (values != null && values.length > 0) {
-                    final List<ValueImpl> valueList = new ArrayList<>();
 
                     for (final javax.jcr.Value value : values) {
                         valueList.add(valueProcessor.valueFrom(value));
                     }
-
-                    definitionNode.addProperty(property.getName(), valueList.get(0).getType(), valueList.toArray(new ValueImpl[valueList.size()]));
                 }
+                definitionNode.addProperty(property.getName(), ValueType.fromJcrType(property.getType()),
+                        valueList.toArray(new ValueImpl[valueList.size()]));
             } else {
                 final ValueImpl value = valueProcessor.valueFrom(property.getValue());
                 final DefinitionPropertyImpl targetProperty = definitionNode.addProperty(property.getName(), value);
