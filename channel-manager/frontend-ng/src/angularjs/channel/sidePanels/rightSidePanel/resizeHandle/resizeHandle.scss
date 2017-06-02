@@ -17,13 +17,12 @@
 @import 'variables';
 
 resize-handle {
-  $handle-width: 14px;
-  $handle-height: 60px;
+  $handle-width: 20px;
+  $handle-height: 100%;
 
   height: $handle-height;
-  left: -5px;
+  left: -7px;
   position: absolute;
-  top: calc(50vh - 70px);
   width: $handle-width;
   z-index: 20000;
 
@@ -33,9 +32,9 @@ resize-handle {
 
   .handle-inner {
     background-image: url('../../../../../images/resize-handle.svg');
-    background-position: 5px;
+    background-position: -5px;
     background-repeat: no-repeat;
-    background-size: 12px;
+    background-size: 34px;
     height: 100%;
     width: $handle-width;
   }
