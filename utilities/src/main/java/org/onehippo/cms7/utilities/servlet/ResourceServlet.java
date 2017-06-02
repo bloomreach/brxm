@@ -156,26 +156,6 @@ import org.slf4j.LoggerFactory;
  *         </td>
  *   </tr>
  *   <tr>
- *         <td>whitelistedResourcePaths</td>
- *         <td>Sets resource path regex patterns which are allowed to serve by this servlet when the requester is not logged in.</td>
- *         <td>
- *             <pre>
- *                 ^/.*\\.js,
- *                 ^/.*\\.css,
- *                 ^/.*\\.png,
- *                 ^/.*\\.gif,
- *                 ^/.*\\.ico,
- *                 ^/.*\\.jpg,
- *                 ^/.*\\.jpeg,
- *                 ^/.*\\.swf,
- *                 ^/.*\\.txt
- *             </pre>
- *         </td>
- *         <td>
- *             <i>empty</i>
- *         </td>
- *   </tr>
- *   <tr>
  *     <td>mimeTypes</td>
  *     <td>
  *       Sets mimeType mappings to override (or add) from the default mimeType mappings of the web application.
@@ -305,7 +285,6 @@ public class ResourceServlet extends HttpServlet {
     private boolean requireAuthentication;
 
     private Set<Pattern> allowedResourcePaths;
-    private Set<Pattern> whitelistedResourcePaths;
     private Set<Pattern> compressedMimeTypes;
     private Map<String, String> mimeTypes;
 
@@ -323,7 +302,6 @@ public class ResourceServlet extends HttpServlet {
         requireAuthentication = Boolean.parseBoolean(getInitParameter("requireAuthentication", "true"));
 
         allowedResourcePaths = initPatterns("allowedResourcePaths", DEFAULT_ALLOWED_RESOURCE_PATHS);
-        whitelistedResourcePaths = initPatterns("whitelistedResourcePaths", new HashSet<>());
         compressedMimeTypes = initPatterns("compressedMimeTypes", DEFAULT_COMPRESSED_MIME_TYPES);
 
         final String param = getInitParameter("mimeTypes", null);
@@ -519,17 +497,8 @@ public class ResourceServlet extends HttpServlet {
             return false;
         }
 
-        if(requireAuthentication) {
-            boolean whiteListed = false;
-            for (final Pattern p : whitelistedResourcePaths) {
-                if (p.matcher(resourcePath).matches()) {
-                    whiteListed = true;
-                }
-            }
-
-            if(!whiteListed && !isUserLoggedIn(servletRequest)) {
-                return false;
-            }
+        if(requireAuthentication && !isUserLoggedIn(servletRequest)) {
+            return false;
         }
 
         for (final Pattern p : allowedResourcePaths) {

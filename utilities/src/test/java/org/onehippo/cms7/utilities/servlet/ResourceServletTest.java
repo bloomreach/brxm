@@ -113,34 +113,11 @@ public class ResourceServletTest {
         Assert.assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
     }
 
-    @Test
-    public void testWhitelistedServlet() throws ServletException, IOException {
-        final MockHttpServletRequest request = getMockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeServlet(true, GIF_RESOURCE_PATH, GIF_RESOURCE_MIME, "/onehippo.gif");
-        servlet.service(request, response);
-        Assert.assertThat("Whitelisted request should give resource.", response.getStatus(), is(200));
-        Assert.assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
-    }
-
-    @Test
-    public void testMisconfiguredWhitelistedServlet() throws ServletException, IOException {
-        final MockHttpServletRequest request = getMockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeServlet(true, PROPERTIES_RESOURCE_PATH, PROPERTIES_RESOURCE_MIME, "/onehippo.gif");
-        servlet.service(request, response);
-        Assert.assertThat("Misconfigured request should give 404.", response.getStatus(), is(404));
-    }
-
     private ResourceServlet initializeServlet(final boolean requireAuthentication) throws ServletException {
         return initializeServlet(requireAuthentication, null, null);
     }
 
     private ResourceServlet initializeServlet(final boolean requireAuthentication, final String allowedResourcePaths, final String mimeTypes) throws ServletException {
-        return initializeServlet(requireAuthentication, allowedResourcePaths, mimeTypes, null);
-    }
-
-    private ResourceServlet initializeServlet(final boolean requireAuthentication, final String allowedResourcePaths, final String mimeTypes, final String whitelistedResourcePaths) throws ServletException {
         final ResourceServlet servlet = new ResourceServlet();
         final MockServletConfig servletConfig = new MockServletConfig();
         servletConfig.addInitParameter("jarPathPrefix", "META-INF/test");
@@ -153,9 +130,6 @@ public class ResourceServletTest {
             servletConfig.addInitParameter("mimeTypes", mimeTypes);
         }
 
-        if (!StringUtils.isEmpty(whitelistedResourcePaths)) {
-            servletConfig.addInitParameter("whitelistedResourcePaths", whitelistedResourcePaths);
-        }
         servlet.init(servletConfig);
         return servlet;
     }
