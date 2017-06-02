@@ -47,7 +47,6 @@ import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.PropertyType;
-import org.onehippo.cm.model.SnsUtils;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
@@ -58,6 +57,7 @@ import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.util.SnsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -38,7 +38,6 @@ import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionItem;
 import org.onehippo.cm.model.DefinitionNode;
-import org.onehippo.cm.model.FileConfigurationUtils;
 import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.Source;
@@ -58,6 +57,7 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.util.FileConfigurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -38,7 +38,7 @@ import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ConfigurationNode;
-import org.onehippo.cm.model.SnsUtils;
+import org.onehippo.cm.model.util.SnsUtils;
 
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 
