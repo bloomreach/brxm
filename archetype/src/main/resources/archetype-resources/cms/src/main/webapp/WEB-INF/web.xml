@@ -149,8 +149,8 @@
       </param-value>
     </init-param>
     <init-param>
-      <param-name>whitelistedResourcePaths</param-name>
-      <param-value>.*/hippo-cms-theme.min.css</param-value>
+      <param-name>requireAuthentication</param-name>
+      <param-value>false</param-value>
     </init-param>
   </servlet>
 
