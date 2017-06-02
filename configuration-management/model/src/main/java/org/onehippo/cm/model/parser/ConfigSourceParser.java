@@ -119,6 +119,9 @@ public class ConfigSourceParser extends SourceParser {
                 final boolean delete = asNodeDeleteValue(tupleValue);
                 definitionNode.setDelete(delete);
             } else if (key.equals(META_CATEGORY_KEY)) {
+                if (definitionNode.getPath().equals("/")) {
+                    throw new ParserException("Overriding '" + META_CATEGORY_KEY + "' on the root node is not supported", node);
+                }
                 final ConfigurationItemCategory category = constructCategory(tupleValue);
                 if (tuples.size() > 1 && category != ConfigurationItemCategory.CONFIGURATION) {
                     throw new ParserException("Nodes that specify '" + META_CATEGORY_KEY + ": " + category

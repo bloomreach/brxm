@@ -1115,6 +1115,19 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
+    public void metaCategoryOnRootNotAllowed() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /:\n"
+                + "      .meta:category: runtime\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+
+        assertParserException(root, nodeMap, "Overriding '.meta:category' on the root node is not supported");
+    }
+
+    @Test
     public void metaCategoryMustBeSoleStatementForNonConfigurationNode() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
