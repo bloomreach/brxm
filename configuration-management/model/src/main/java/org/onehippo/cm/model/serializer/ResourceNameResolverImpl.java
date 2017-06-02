@@ -17,13 +17,13 @@ package org.onehippo.cm.model.serializer;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.model.FileConfigurationUtils;
 
 /**
  * Unique file name generator
@@ -93,7 +93,7 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
         final Set<String> knownFiles = knownFileEntries.stream().filter(p -> p.getPath().toLowerCase().equals(folderPath.toLowerCase()))
                 .map(FileEntry::getFileName).collect(Collectors.toSet());
 
-        final String generatedName = generateUniqueName(filename, knownFiles, 0);
+        final String generatedName = FileConfigurationUtils.generateUniquePath(filename, knownFiles::contains, 0);
 
         final String finalPath = Paths.get(folderPath, generatedName).toString();
 
@@ -102,16 +102,4 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
         return finalPath;
     }
 
-    private String generateUniqueName(String candidate, Collection<String> knownFiles, int sequence) {
-
-        String name = StringUtils.substringBeforeLast(candidate, SEPARATOR);
-        String extension = StringUtils.substringAfterLast(candidate, SEPARATOR);
-
-        final String newName = name + calculateNameSuffix(sequence) + (!StringUtils.isEmpty(extension) ? SEPARATOR + extension : StringUtils.EMPTY);
-        return knownFiles.contains(newName) ? generateUniqueName(candidate, knownFiles, sequence + 1) : newName;
-    }
-
-    private String calculateNameSuffix(int sequence) {
-        return sequence == 0 ? StringUtils.EMPTY : SEQ_PREFIX + Integer.toString(sequence);
-    }
 }

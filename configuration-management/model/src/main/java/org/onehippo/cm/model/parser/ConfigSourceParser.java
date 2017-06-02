@@ -81,6 +81,8 @@ public class ConfigSourceParser extends SourceParser {
                     break;
             }
         }
+
+        source.markUnchanged();
     }
 
     private void constructNamespaceDefinitions(final Node src, final ConfigSourceImpl parent) throws ParserException {

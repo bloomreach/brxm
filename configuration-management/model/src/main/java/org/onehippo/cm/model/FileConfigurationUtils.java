@@ -18,9 +18,11 @@ package org.onehippo.cm.model;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.serializer.ResourceNameResolverImpl;
 
 public class FileConfigurationUtils {
 
@@ -69,5 +71,29 @@ public class FileConfigurationUtils {
 
     public static boolean hasMultipleModules(Map<String, GroupImpl> groups) {
         return groups.values().stream().flatMap(p -> p.getProjects().stream()).mapToInt(p -> p.getModules().size()).sum() > 1;
+    }
+
+    /**
+     * Use a simple numbering convention to generate a unique path given a candidate path and a test of uniqueness.
+     * TODO move to a utilities class?
+     * @param candidate a path that might be used directly, if it is already unique, or modified to create a unique path
+     * @param isNotUnique a test of uniqueness for a proposed path
+     * @param sequence the number of the current attempt, used for loop control -- callers typically pass 0
+     * @return a path, based on candidate, that is unique according to isNotUnique
+     */
+    public static String generateUniquePath(String candidate, Predicate<String> isNotUnique, int sequence) {
+
+        String name = StringUtils.substringBeforeLast(candidate, ResourceNameResolverImpl.SEPARATOR);
+        String extension = StringUtils.substringAfterLast(candidate, ResourceNameResolverImpl.SEPARATOR);
+
+        final String newName = name + calculateNameSuffix(sequence) + (!StringUtils.isEmpty(extension) ? ResourceNameResolverImpl.SEPARATOR + extension : StringUtils.EMPTY);
+        return isNotUnique.test(newName) ? generateUniquePath(candidate, isNotUnique, sequence + 1) : newName;
+    }
+
+    /**
+     * Helper for {@link #generateUniquePath(String, Predicate, int)}.
+     */
+    private static String calculateNameSuffix(int sequence) {
+        return sequence == 0 ? StringUtils.EMPTY : ResourceNameResolverImpl.SEQ_PREFIX + Integer.toString(sequence);
     }
 }

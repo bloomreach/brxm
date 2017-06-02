@@ -35,18 +35,21 @@ public class ConfigSourceImpl extends SourceImpl {
             cndPath.setDefinition(definition);
         }
         modifiableDefinitions.add(definition);
+        markChanged();
         return definition;
     }
 
     public WebFileBundleDefinitionImpl addWebFileBundleDefinition(final String name) {
         final WebFileBundleDefinitionImpl definition = new WebFileBundleDefinitionImpl(this, name);
         modifiableDefinitions.add(definition);
+        markChanged();
         return definition;
     }
 
     public ConfigDefinitionImpl addConfigDefinition() {
         final ConfigDefinitionImpl definition = new ConfigDefinitionImpl(this);
         modifiableDefinitions.add(definition);
+        markChanged();
         return definition;
     }
 

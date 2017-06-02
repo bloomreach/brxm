@@ -29,6 +29,12 @@ public abstract class SourceImpl implements Source {
     List<AbstractDefinitionImpl> modifiableDefinitions = new ArrayList<>();
     private List<AbstractDefinitionImpl> definitions = Collections.unmodifiableList(modifiableDefinitions);
 
+    /**
+     * Tracking boolean used for optimizing FileConfigurationWriter.write().
+     * Defaults to true, because newly created Sources are trivially changed from their saved state (none).
+     */
+    private boolean hasChangedSinceLoad = true;
+
     public SourceImpl(final String path, final ModuleImpl module) {
         if (path == null) {
             throw new IllegalArgumentException("Parameter 'path' cannot be null");
@@ -58,6 +64,45 @@ public abstract class SourceImpl implements Source {
 
     public List<AbstractDefinitionImpl> getModifiableDefinitions() {
         return modifiableDefinitions;
+    }
+
+    public void removeDefinition(AbstractDefinitionImpl definition) {
+        if (getModifiableDefinitions().remove(definition)) {
+            markChanged();
+        }
+    }
+
+    /**
+     * Convert a resource path which may be relative to this Source to a module-base-relative path.
+     * @param resourcePath the resource path
+     * @return a path relative to the appropriate module base and starting with '/'
+     */
+    public String toModulePath(final String resourcePath) {
+        if (resourcePath.startsWith("/")) {
+            return resourcePath;
+        }
+        else {
+            final String path = "/" + this.getPath() + resourcePath;
+            return path;
+        }
+    }
+
+    /**
+     * Reset flag indicating that this Source has changed since being loaded.
+     */
+    public void markUnchanged() {
+        hasChangedSinceLoad = false;
+    }
+
+    /**
+     * Mark this Source as having been changed since being loaded.
+     */
+    public void markChanged() {
+        hasChangedSinceLoad = true;
+    }
+
+    public boolean hasChangedSinceLoad() {
+        return hasChangedSinceLoad;
     }
 
     @Override

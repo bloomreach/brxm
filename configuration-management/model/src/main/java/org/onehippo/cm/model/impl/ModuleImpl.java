@@ -45,6 +45,7 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.ActionItem;
+import org.onehippo.cm.model.FileConfigurationUtils;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.SourceType;
@@ -99,7 +100,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     private String mvnPath;
 
     // set of resource paths that should be removed during auto-export write step
-    private Set<String> removedResources = new HashSet<>();
+    private Set<String> removedConfigResources = new HashSet<>();
+    private Set<String> removedContentResources = new HashSet<>();
 
     public ModuleImpl(final String name, final ProjectImpl project) {
         if (name == null) {
@@ -274,8 +276,20 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         return this;
     }
 
-    public void addResourceToRemove(final String resourcePath) {
-        removedResources.add(resourcePath);
+    /**
+     * Track a resource that should be removed when this module is serialized.
+     * @param resourcePath a resource path relative to the config root (should start with '/')
+     */
+    public void addConfigResourceToRemove(final String resourcePath) {
+        removedConfigResources.add(resourcePath);
+    }
+
+    /**
+     * Track a resource that should be removed when this module is serialized.
+     * @param resourcePath a resource path relative to the content root (should start with '/')
+     */
+    public void addContentResourceToRemove(final String resourcePath) {
+        removedContentResources.add(resourcePath);
     }
 
     public ModuleImpl build() {
@@ -307,6 +321,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
         // sort the content/config definitions, all other remain in insertion order
         configDefinitions.sort(new ContentDefinitionComparator());
+        contentDefinitions.sort(new ContentDefinitionComparator());
 
         return this;
     }
@@ -559,10 +574,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         catch (IOException e) {
             throw new RuntimeException("Problem compiling dummy descriptor", e);
         }
-    }
-
-    public SourceImpl getSourceByPath(String path) {
-        return sortedSources.stream().filter(source -> source.getPath().equals(path)).findFirst().get();
     }
 
     // TODO why is this defined here and not as natural order of ContentDefinitionImpl?
