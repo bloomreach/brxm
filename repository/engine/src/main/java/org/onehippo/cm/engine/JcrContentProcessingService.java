@@ -156,7 +156,16 @@ public class JcrContentProcessingService {
     }
 
     private String createNodeName(final Node sourceNode) throws RepositoryException {
-        return sourceNode.getName() + (sourceNode.getIndex() > 1 ? "["+sourceNode.getIndex()+"]" : "");
+        final String name = sourceNode.getName();
+        if (sourceNode.getIndex() > 1) {
+            return name+"["+sourceNode.getIndex()+"]";
+        } else {
+            final Node parent = sourceNode.getParent();
+            if (parent.getDefinition().allowsSameNameSiblings() && parent.hasNode(name+"[2]")) {
+                return name+"[1]";
+            }
+        }
+        return name;
     }
 
     private void processProperties(final Node sourceNode, final DefinitionNodeImpl definitionNode) throws RepositoryException {
