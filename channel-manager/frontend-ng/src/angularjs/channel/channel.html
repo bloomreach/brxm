@@ -65,7 +65,9 @@
       on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>
 
-    <right-side-panel layout="row"></right-side-panel>
+    <right-side-panel layout="row"
+                      ng-show="channelCtrl.isChannelLoaded()">
+    </right-side-panel>
   </md-content>
 </div>
 
