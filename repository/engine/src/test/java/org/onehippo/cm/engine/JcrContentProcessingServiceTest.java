@@ -31,6 +31,8 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFactory;
 
+import com.google.common.io.Files;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,12 +49,13 @@ import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModelTestUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.repository.testutils.RepositoryTestCase;
-
-import com.google.common.io.Files;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
 import static org.onehippo.cm.model.impl.ModelTestUtils.parseNoSort;
 
 public class JcrContentProcessingServiceTest extends RepositoryTestCase {
@@ -128,6 +131,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
             "  longAsInt: 42\n" +
             "  longAsLong: 4200000000\n" +
             "  string: hello world";
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -250,6 +254,62 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
         final DefinitionNodeImpl nonExistingNode = new DefinitionNodeImpl("/not_existing_path/node", "node", null);
         processingService.apply(nonExistingNode, ActionType.DELETE, session);
 
+    }
+
+    @Test
+    public void apply_sns() throws Exception {
+        final String yaml =
+                "/test/sns:\n" +
+                "  jcr:primaryType: nt:unstructured\n" +
+                "  /a:\n" +
+                "    jcr:primaryType: nt:unstructured\n" +
+                "  /sns[1]:\n" +
+                "    jcr:primaryType: nt:unstructured\n" +
+                "    property: value1\n" +
+                "  /b:\n" +
+                "    jcr:primaryType: nt:unstructured\n" +
+                "  /sns[2]:\n" +
+                "    jcr:primaryType: nt:unstructured\n" +
+                "    property: value2\n" +
+                "  /c:\n" +
+                "    jcr:primaryType: nt:unstructured\n";
+
+        applyAndSaveDefinitions(new String[]{yaml});
+
+        Node snsNode = session.getNode("/test/sns");
+        assertEquals("[a, sns, b, sns, c]", createChildNodesString(snsNode));
+        assertEquals("value1", session.getNode("/test/sns/sns[1]").getProperty("property").getValue().getString());
+        assertEquals("value2", session.getNode("/test/sns/sns[2]").getProperty("property").getValue().getString());
+    }
+
+    @Test
+    public void expect_error_when_using_root_with_sns_index() throws Exception {
+        final String yaml =
+                "/test/sns[2]:\n" +
+                "  jcr:primaryType: nt:unstructured\n";
+
+        try {
+            applyAndSaveDefinitions(new String[]{yaml});
+            fail("Should have thrown exception");
+        } catch (ParserException e) {
+            assertEquals("Path must not contain name indices", e.getMessage());
+        }
+    }
+
+    @Test
+    public void expect_error_when_multiple_roots() throws Exception {
+        final String yaml =
+                "/one:\n" +
+                "  jcr:primaryType: nt:unstructured\n" +
+                "/two:\n" +
+                "  jcr:primaryType: nt:unstructured\n";
+
+        try {
+            applyAndSaveDefinitions(new String[]{yaml});
+            fail("Should have thrown exception");
+        } catch (ParserException e) {
+            assertEquals("Content definitions can only contain single root node", e.getMessage());
+        }
     }
 
     private Property getPropertyByName(final String name, final Node node) throws RepositoryException {

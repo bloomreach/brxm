@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -28,8 +27,6 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Before;
 import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.ConfigurationModel;
@@ -45,6 +42,8 @@ import org.onehippo.testutils.jcr.event.ExpectedEvents;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
+import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildPropertiesString;
 import static org.onehippo.cm.model.impl.ModelTestUtils.parseNoSort;
 
 /**
@@ -219,23 +218,4 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
         assertEquals(expectedValue, actualValue);
     }
 
-    private String createChildNodesString(final Node node) throws RepositoryException {
-        final List<String> names = new ArrayList<>();
-        for (Node child : new NodeIterable(node.getNodes())) {
-            names.add(child.getName());
-        }
-        if (!node.getPrimaryNodeType().hasOrderableChildNodes()) {
-            Collections.sort(names);
-        }
-        return names.toString();
-    }
-
-    private String createChildPropertiesString(final Node node) throws RepositoryException {
-        final List<String> names = new ArrayList<>();
-        for (Property property : new PropertyIterable(node.getProperties())) {
-            names.add(property.getName());
-        }
-        Collections.sort(names);
-        return names.toString();
-    }
 }
