@@ -366,7 +366,7 @@ public class ConfigurationConfigService {
         if (forceApply) {
             for (String propertyName : getPropertyNames(targetNode)) {
                 if (!updateProperties.containsKey(propertyName)
-                        && updateNode.getChildPropertyCategory(propertyName) == ConfigurationItemCategory.CONFIGURATION) {
+                        && updateNode.getChildPropertyCategory(propertyName) == ConfigurationItemCategory.CONFIG) {
                     removeProperty(propertyName, baselineProperties.get(propertyName), targetNode, updateNode);
                 }
             }
@@ -461,7 +461,7 @@ public class ConfigurationConfigService {
             for (Node childNode : new NodeIterable(targetNode.getNodes())) {
                 final String indexedChildName = SnsUtils.createIndexedName(childNode);
                 if (!updateChildren.containsKey(indexedChildName)) {
-                    if (updateNode.getChildNodeCategory(indexedChildName) == ConfigurationItemCategory.CONFIGURATION) {
+                    if (updateNode.getChildNodeCategory(indexedChildName) == ConfigurationItemCategory.CONFIG) {
                         indexedNamesOfToBeRemovedChildren.add(indexedChildName);
                     }
                 }
