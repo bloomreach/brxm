@@ -16,9 +16,6 @@
 
 package org.onehippo.cm.model.util;
 
-import java.util.Arrays;
-import java.util.Iterator;
-
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ConfigurationNode;
@@ -39,28 +36,49 @@ public class ConfigurationModelUtils {
      * @return                 category of the node pointed to
      */
     public static ConfigurationItemCategory getCategoryForNode(final String absoluteNodePath, final ConfigurationModel model) {
-        if (absoluteNodePath.equals(SEPARATOR)) {
+        return getCategoryForItem(absoluteNodePath, false, model);
+    }
+
+    /**
+     * Determine the category of a property at the specified absolute path.
+     *
+     * @param absolutePropertyPath absolute path to property
+     * @param model                configuration model to check against
+     * @return                     category of the property pointed to
+     */
+    public static ConfigurationItemCategory getCategoryForProperty(final String absolutePropertyPath, final ConfigurationModel model) {
+        return getCategoryForItem(absolutePropertyPath, true, model);
+    }
+
+    public static ConfigurationItemCategory getCategoryForItem(final String absoluteItemPath, final boolean propertyPath, ConfigurationModel model) {
+        if (absoluteItemPath.equals(SEPARATOR)) {
             return ConfigurationItemCategory.CONFIGURATION; // special treatment for root node
         }
 
-        if (!absoluteNodePath.startsWith(SEPARATOR)) {
-            logger.warn("{} is not a valid absolute path to a node");
+        if (!absoluteItemPath.startsWith(SEPARATOR)) {
+            logger.warn("{} is not a valid absolute path");
             return ConfigurationItemCategory.CONFIGURATION;
         }
 
-        final String[] pathElements = absoluteNodePath.split(SEPARATOR);
-        final int skipRoot = 1;
-        final Iterator<String> nodeNameIterator = Arrays.stream(pathElements, skipRoot, pathElements.length).iterator();
+        final String[] pathSegments = absoluteItemPath.substring(1).split(SEPARATOR);
 
         ConfigurationNode modelNode = model.getConfigurationRootNode();
-        while (nodeNameIterator.hasNext()) {
-            final String childName = nodeNameIterator.next();
-            final String indexedChildName = SnsUtils.createIndexedName(childName);
-            if (!modelNode.getNodes().containsKey(indexedChildName)) {
-                return modelNode.getChildNodeCategory(indexedChildName);
+        for (int i = 0; i < pathSegments.length; i++) {
+            final String childName = pathSegments[i];
+            if (i == pathSegments.length-1) {
+                return propertyPath
+                        ? modelNode.getChildPropertyCategory(childName)
+                        : modelNode.getChildNodeCategory(SnsUtils.createIndexedName(childName));
+            } else {
+                final String indexedChildName = SnsUtils.createIndexedName(childName);
+                if (modelNode.getNodes().containsKey(indexedChildName)) {
+                    modelNode = modelNode.getNodes().get(indexedChildName);
+                } else {
+                    return modelNode.getChildNodeCategory(indexedChildName);
+                }
             }
-            modelNode = modelNode.getNodes().get(indexedChildName);
         }
-        return ConfigurationItemCategory.CONFIGURATION;
+        // will never reach this but compiler needs to be kept happy
+        throw new IllegalStateException("unexpected");
     }
 }

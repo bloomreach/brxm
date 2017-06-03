@@ -6,10 +6,14 @@ definitions:
         jcr:primaryType: foo
         /c:
           jcr:primaryType: foo
-          p:
+          d: configuration
+          e:
             .meta:category: runtime
         /c-content:
-          jcr:primaryType: foo
+          .meta:category: content
+        /c-residual-content:
           .meta:residual-child-node-category: content
+          jcr:primaryType: foo
+          d: configuration
         /c-runtime:
           .meta:category: runtime

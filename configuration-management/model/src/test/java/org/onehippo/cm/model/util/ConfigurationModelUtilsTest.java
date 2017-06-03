@@ -28,25 +28,39 @@ import static org.junit.Assert.assertEquals;
 public class ConfigurationModelUtilsTest {
 
     @Test
-    public void validateNodeCategory() throws Exception {
+    public void validateItemCategory() throws Exception {
         final GroupImpl c1 = new GroupImpl("c1");
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/config.yaml", m1);
         final ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
 
-        assertEquals(ConfigurationModelUtils.getCategoryForNode("/", model), ConfigurationItemCategory.CONFIGURATION);
-        assertEquals(ConfigurationModelUtils.getCategoryForNode("/a", model), ConfigurationItemCategory.CONFIGURATION);
-        assertEquals(ConfigurationModelUtils.getCategoryForNode("/a/b", model), ConfigurationItemCategory.CONFIGURATION);
-        assertEquals(ConfigurationModelUtils.getCategoryForNode("/a/b/c", model), ConfigurationItemCategory.CONFIGURATION);
-        assertEquals(ConfigurationModelUtils.getCategoryForNode("/a/b/c/d", model), ConfigurationItemCategory.CONFIGURATION);
-        assertEquals(ConfigurationModelUtils.getCategoryForNode("/a/b/c/d/e", model), ConfigurationItemCategory.CONFIGURATION);
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, ConfigurationModelUtils.getCategoryForNode("/", model));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, ConfigurationModelUtils.getCategoryForNode("/a", model));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, ConfigurationModelUtils.getCategoryForNode("/a/b", model));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, ConfigurationModelUtils.getCategoryForNode("/a/b/c", model));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, ConfigurationModelUtils.getCategoryForNode("/a/b/c/d", model));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, ConfigurationModelUtils.getCategoryForProperty("/a/b/c/d", model));
+        assertEquals(ConfigurationItemCategory.RUNTIME,       ConfigurationModelUtils.getCategoryForProperty("/a/b/c/e", model));
 
-        assertEquals(ConfigurationModelUtils.getCategoryForNode("/a/b/c-content/d/e", model), ConfigurationItemCategory.CONTENT);
-        assertEquals(ConfigurationModelUtils.getCategoryForNode("/a/b/c-content/d", model), ConfigurationItemCategory.CONTENT);
-        assertEquals(ConfigurationModelUtils.getCategoryForNode("/a/b/c-content", model), ConfigurationItemCategory.CONFIGURATION);
+        assertEquals(ConfigurationItemCategory.CONTENT, ConfigurationModelUtils.getCategoryForNode("/a/b/c-content", model));
+        assertEquals(ConfigurationItemCategory.CONTENT, ConfigurationModelUtils.getCategoryForNode("/a/b/c-content/d", model));
+        assertEquals(ConfigurationItemCategory.CONTENT, ConfigurationModelUtils.getCategoryForProperty("/a/b/c-content/d", model));
 
-        assertEquals(ConfigurationModelUtils.getCategoryForNode("/a/b/c-runtime", model), ConfigurationItemCategory.RUNTIME);
-        assertEquals(ConfigurationModelUtils.getCategoryForNode("/a/b/c-absent", model), ConfigurationItemCategory.CONFIGURATION);
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, ConfigurationModelUtils.getCategoryForNode("/a/b/c-residual-content", model));
+        assertEquals(ConfigurationItemCategory.CONTENT,       ConfigurationModelUtils.getCategoryForNode("/a/b/c-residual-content/d", model));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, ConfigurationModelUtils.getCategoryForProperty("/a/b/c-residual-content/d", model));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, ConfigurationModelUtils.getCategoryForProperty("/a/b/c-residual-content/e", model));
+
+        assertEquals(ConfigurationItemCategory.RUNTIME, ConfigurationModelUtils.getCategoryForNode("/a/b/c-runtime", model));
+        assertEquals(ConfigurationItemCategory.RUNTIME, ConfigurationModelUtils.getCategoryForNode("/a/b/c-runtime/d", model));
+        assertEquals(ConfigurationItemCategory.RUNTIME, ConfigurationModelUtils.getCategoryForNode("/a/b/c-runtime/d/e", model));
+        assertEquals(ConfigurationItemCategory.RUNTIME, ConfigurationModelUtils.getCategoryForProperty("/a/b/c-runtime/e", model));
+
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, ConfigurationModelUtils.getCategoryForNode("/a/b/c-absent", model));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, ConfigurationModelUtils.getCategoryForProperty("/a/b/c-absent/d", model));
+
+        assertEquals(ConfigurationItemCategory.RUNTIME,       ConfigurationModelUtils.getCategoryForNode("/absent", model));
+        assertEquals(ConfigurationItemCategory.CONFIGURATION, ConfigurationModelUtils.getCategoryForProperty("/absent", model));
     }
 }
