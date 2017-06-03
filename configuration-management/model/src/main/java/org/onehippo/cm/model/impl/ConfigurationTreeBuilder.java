@@ -105,7 +105,7 @@ class ConfigurationTreeBuilder {
         }
 
         if (definitionNode.getCategory() != null) {
-            if (definitionNode.getCategory() == ConfigurationItemCategory.CONFIGURATION) {
+            if (definitionNode.getCategory() == ConfigurationItemCategory.CONFIG) {
                 node.getParent().clearChildNodeCategorySettings(node.getName());
             } else {
                 keepOnlyFirstSns(node.getParent(), node.getName());
@@ -244,8 +244,8 @@ class ConfigurationTreeBuilder {
                 node.getChildNodeCategorySettings(SnsUtils.getUnindexedName(indexedChildNodeName));
 
         return categoryAndDefinition != null
-                && categoryAndDefinition.getLeft() != ConfigurationItemCategory.CONFIGURATION
-                && override != ConfigurationItemCategory.CONFIGURATION;
+                && categoryAndDefinition.getLeft() != ConfigurationItemCategory.CONFIG
+                && override != ConfigurationItemCategory.CONFIG;
     }
 
     private boolean isAndRemainsNonConfigurationProperty(final ConfigurationNodeImpl node,
@@ -255,8 +255,8 @@ class ConfigurationTreeBuilder {
                 node.getChildPropertyCategorySettings(propertyName);
 
         return categoryAndDefinition != null
-                && categoryAndDefinition.getLeft() != ConfigurationItemCategory.CONFIGURATION
-                && override != ConfigurationItemCategory.CONFIGURATION;
+                && categoryAndDefinition.getLeft() != ConfigurationItemCategory.CONFIG
+                && override != ConfigurationItemCategory.CONFIG;
     }
 
     private void markNodeAsDeletedBy(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
@@ -326,7 +326,7 @@ class ConfigurationTreeBuilder {
         }
 
         if (definitionNode.getCategory() != null) {
-            if (definitionNode.getCategory() == ConfigurationItemCategory.CONFIGURATION) {
+            if (definitionNode.getCategory() == ConfigurationItemCategory.CONFIG) {
                 parent.clearChildNodeCategorySettings(name);
                 if (definitionNode.getNodes().size() == 0 && definitionNode.getProperties().size() == 0) {
                     return null;
@@ -376,7 +376,7 @@ class ConfigurationTreeBuilder {
 
             // property already exists, so its parent has this property registered as configuration
             final ConfigurationItemCategory category = definitionProperty.getCategory();
-            if (category != null && category != ConfigurationItemCategory.CONFIGURATION) {
+            if (category != null && category != ConfigurationItemCategory.CONFIG) {
                 property.setDeleted(true);
                 property.addDefinitionItem(definitionProperty);
                 parent.setChildPropertyCategorySettings(name, category, definitionProperty);
@@ -407,7 +407,7 @@ class ConfigurationTreeBuilder {
                 return;
             }
             if (category != null) {
-                if (category == ConfigurationItemCategory.CONFIGURATION) {
+                if (category == ConfigurationItemCategory.CONFIG) {
                     parent.clearChildPropertyCategorySettings(name);
                 } else {
                     parent.setChildPropertyCategorySettings(name, definitionProperty.getCategory(), definitionProperty);

@@ -155,7 +155,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     @Override
     public ConfigurationItemCategory getChildNodeCategory(final String indexedNodeName) {
         if (modifiableNodes.containsKey(indexedNodeName)) {
-            return ConfigurationItemCategory.CONFIGURATION;
+            return ConfigurationItemCategory.CONFIG;
         }
 
         final String unindexedName = SnsUtils.getUnindexedName(indexedNodeName);
@@ -167,7 +167,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
             return residualNodeCategory;
         }
 
-        return ConfigurationItemCategory.CONFIGURATION;
+        return ConfigurationItemCategory.CONFIG;
     }
 
     @Override
@@ -176,7 +176,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
             return childPropertyCategorySettings.get(propertyName).getLeft();
         }
 
-        return ConfigurationItemCategory.CONFIGURATION;
+        return ConfigurationItemCategory.CONFIG;
     }
 
     public Pair<ConfigurationItemCategory, DefinitionItemImpl> getChildNodeCategorySettings(final String name) {

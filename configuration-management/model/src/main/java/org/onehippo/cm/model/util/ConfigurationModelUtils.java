@@ -52,12 +52,12 @@ public class ConfigurationModelUtils {
 
     public static ConfigurationItemCategory getCategoryForItem(final String absoluteItemPath, final boolean propertyPath, ConfigurationModel model) {
         if (absoluteItemPath.equals(SEPARATOR)) {
-            return ConfigurationItemCategory.CONFIGURATION; // special treatment for root node
+            return ConfigurationItemCategory.CONFIG; // special treatment for root node
         }
 
         if (!absoluteItemPath.startsWith(SEPARATOR)) {
             logger.warn("{} is not a valid absolute path");
-            return ConfigurationItemCategory.CONFIGURATION;
+            return ConfigurationItemCategory.CONFIG;
         }
 
         final String[] pathSegments = absoluteItemPath.substring(1).split(SEPARATOR);

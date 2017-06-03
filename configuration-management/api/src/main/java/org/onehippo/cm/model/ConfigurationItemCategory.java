@@ -16,7 +16,7 @@
 package org.onehippo.cm.model;
 
 public enum ConfigurationItemCategory {
-    CONFIGURATION,
+    CONFIG,
     CONTENT,
     RUNTIME;
 

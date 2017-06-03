@@ -125,7 +125,7 @@ public class ConfigSourceParser extends SourceParser {
                     throw new ParserException("Overriding '" + META_CATEGORY_KEY + "' on the root node is not supported", node);
                 }
                 final ConfigurationItemCategory category = constructCategory(tupleValue);
-                if (tuples.size() > 1 && category != ConfigurationItemCategory.CONFIGURATION) {
+                if (tuples.size() > 1 && category != ConfigurationItemCategory.CONFIG) {
                     throw new ParserException("Nodes that specify '" + META_CATEGORY_KEY + ": " + category
                             + "' cannot contain other keys", node);
                 }

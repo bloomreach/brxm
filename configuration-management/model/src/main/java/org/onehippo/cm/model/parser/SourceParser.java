@@ -229,7 +229,7 @@ public abstract class SourceParser extends AbstractBaseParser {
                 property.setCategory(category);
                 return property;
             } else {
-                if (category != ConfigurationItemCategory.CONFIGURATION) {
+                if (category != ConfigurationItemCategory.CONFIG) {
                     throw new ParserException(
                             "Properties that specify '" + META_CATEGORY_KEY + ": " + category + "' cannot contain other keys",
                             value);
