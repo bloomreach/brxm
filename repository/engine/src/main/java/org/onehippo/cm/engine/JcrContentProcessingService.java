@@ -204,8 +204,7 @@ public class JcrContentProcessingService {
         if (sourceNode.getIndex() > 1) {
             return name+"["+sourceNode.getIndex()+"]";
         } else {
-            final Node parent = sourceNode.getParent();
-            if (parent.getDefinition().allowsSameNameSiblings() && parent.hasNode(name+"[2]")) {
+            if (sourceNode.getDefinition().allowsSameNameSiblings() && sourceNode.getParent().hasNode(name+"[2]")) {
                 return name+"[1]";
             }
         }
