@@ -31,12 +31,10 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
 
     // Nodes names must always be indexed names, e.g. node[1]
     private final Map<String, ConfigurationNodeImpl> modifiableNodes = new LinkedHashMap<>();
-    private final Map<String, ConfigurationNodeImpl> unmodifiableMapWithModifiableNodes = Collections.unmodifiableMap(modifiableNodes);
-    private final Map<String, ConfigurationNodeImpl> unmodifiableNodes = Collections.unmodifiableMap(modifiableNodes);
+    private final Map<String, ConfigurationNodeImpl> nodes = Collections.unmodifiableMap(modifiableNodes);
 
     private final Map<String, ConfigurationPropertyImpl> modifiableProperties = new LinkedHashMap<>();
-    private final Map<String, ConfigurationPropertyImpl> unmodifiableMapWithModifiableProperties = Collections.unmodifiableMap(modifiableProperties);
-    private final Map<String, ConfigurationPropertyImpl> unmodifiableProperties = Collections.unmodifiableMap(modifiableProperties);
+    private final Map<String, ConfigurationPropertyImpl> properties = Collections.unmodifiableMap(modifiableProperties);
 
     private Boolean ignoreReorderedChildren;
 
@@ -48,11 +46,11 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
 
     @Override
     public Map<String, ConfigurationNodeImpl> getNodes() {
-        return unmodifiableNodes;
+        return nodes;
     }
 
     public Map<String, ConfigurationNodeImpl> getModifiableNodes() {
-        return unmodifiableMapWithModifiableNodes;
+        return modifiableNodes;
     }
 
     public void addNode(final String name, final ConfigurationNodeImpl node) {
@@ -124,11 +122,11 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
 
     @Override
     public Map<String, ConfigurationPropertyImpl> getProperties() {
-        return unmodifiableProperties;
+        return properties;
     }
 
     public Map<String, ConfigurationPropertyImpl> getModifiableProperties() {
-        return unmodifiableMapWithModifiableProperties;
+        return modifiableProperties;
     }
 
     public void addProperty(final String name, final ConfigurationPropertyImpl property) {
