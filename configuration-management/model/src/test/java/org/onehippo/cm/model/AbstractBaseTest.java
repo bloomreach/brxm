@@ -155,7 +155,7 @@ public abstract class AbstractBaseTest {
                               final int nodeCount,
                               final int propertyCount)
     {
-        final DefinitionNodeImpl node = parent.getNodes().get(name);
+        final DefinitionNodeImpl node = parent.getNode(name);
         validateNode(node, path, name, parent, false, definition, isDelete, orderBefore, nodeCount, propertyCount);
         return node;
     }
@@ -261,7 +261,7 @@ public abstract class AbstractBaseTest {
                                       final boolean valueIsResource,
                                       final boolean valueIsPath)
     {
-        final DefinitionPropertyImpl property = parent.getProperties().get(name);
+        final DefinitionPropertyImpl property = parent.getProperty(name);
         validateItem(property, path, name, parent, false, definition);
         assertEquals(operation, property.getOperation());
         try {
@@ -305,7 +305,7 @@ public abstract class AbstractBaseTest {
                                       final boolean valuesAreResource,
                                       final boolean valuesArePath)
     {
-        final DefinitionPropertyImpl property = parent.getProperties().get(name);
+        final DefinitionPropertyImpl property = parent.getProperty(name);
         validateItem(property, path, name, parent, false, definition);
         assertEquals(operation, property.getOperation());
         assertEquals(valueType, property.getValueType());

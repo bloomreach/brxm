@@ -132,7 +132,7 @@ public class ResourcebundlesInitializeInstruction extends InitializeInstruction 
             }
             // for all parents, add them if not yet added already
             for (String parentName : parentPaths) {
-                DefinitionNodeImpl parentNode = translationsParentNode.getModifiableNodes().get(parentName);
+                DefinitionNodeImpl parentNode = translationsParentNode.getNode(parentName);
                 if (parentNode == null) {
                     parentNode = translationsParentNode.addNode(parentName);
                     parentNode.addProperty(JcrConstants.JCR_PRIMARYTYPE,

@@ -132,7 +132,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                         // skip adding delete property
                         node = null;
                     } else {
-                        DefinitionPropertyImpl prop = node.getModifiableProperties().get(name);
+                        DefinitionPropertyImpl prop = node.getProperty(name);
                         if (prop != null) {
                             if (PropertyOperation.DELETE == prop.getOperation()) {
                                 log.warn("Ignoring hippo:contentpropdelete " + getName() + " for property " + getContentPath() +
@@ -204,7 +204,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                         // skip adding delete property
                         node = null;
                     } else {
-                        prop = node.getModifiableProperties().get(name);
+                        prop = node.getProperty(name);
                         if (prop != null) {
                             if (PropertyOperation.DELETE == prop.getOperation()) {
                                 prop = null;

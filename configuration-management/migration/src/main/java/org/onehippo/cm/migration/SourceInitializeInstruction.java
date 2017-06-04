@@ -140,7 +140,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                     defNode.setOrderBefore(node.getMergeLocation());
                 } else {
                     boolean hasAfter = parentNode.getModifiableNodes().size() > 1 &&
-                            (node.getMergeLocation().equals("") || parentNode.getModifiableNodes().containsKey(node.getMergeLocation()));
+                            (node.getMergeLocation().equals("") || parentNode.getNode(node.getMergeLocation()) != null);
                     if (hasAfter) {
                         LinkedHashMap<String, DefinitionNodeImpl> childNodes = new LinkedHashMap<>(parentNode.getModifiableNodes());
                         childNodes.remove(defNode.getName());
@@ -185,7 +185,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
             throws EsvParseException {
         final boolean isPathReference = property.getName().endsWith(PATH_REFERENCE_POSTFIX);
         final String propertyName = isPathReference ? StringUtils.substringBefore(property.getName(), PATH_REFERENCE_POSTFIX) : property.getName();
-        DefinitionPropertyImpl prop = defNode.getModifiableProperties().get(propertyName);
+        DefinitionPropertyImpl prop = defNode.getProperty(propertyName);
         PropertyOperation op = PropertyOperation.REPLACE;
         if (prop != null) {
             if (PropertyOperation.DELETE == prop.getOperation()) {

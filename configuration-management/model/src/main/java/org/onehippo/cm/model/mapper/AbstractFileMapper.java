@@ -45,7 +45,7 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
             .collect(entriesToMap()));
 
     protected String getFileExtension(DefinitionNode node) {
-        return node.getProperties().containsKey(JCR_MIME_TYPE) ? mimeTypesToExtMap.getOrDefault(node.getProperties().get(JCR_MIME_TYPE).getValue().getString(), DEFAULT_EXTENSION)
+        return node.getProperty(JCR_MIME_TYPE) != null ? mimeTypesToExtMap.getOrDefault(node.getProperty(JCR_MIME_TYPE).getValue().getString(), DEFAULT_EXTENSION)
                 : DEFAULT_EXTENSION;
     }
 
@@ -59,7 +59,7 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
     }
 
     protected boolean isType(DefinitionNode node, String nodeType) {
-        return node != null && node.getProperties().containsKey(JCR_PRIMARY_TYPE) && node.getProperties().get(JCR_PRIMARY_TYPE).getValue().getString().equals(nodeType);
+        return node != null && node.getProperty(JCR_PRIMARY_TYPE) != null && node.getProperty(JCR_PRIMARY_TYPE).getValue().getString().equals(nodeType);
     }
 
 

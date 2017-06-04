@@ -55,7 +55,7 @@ public class HippoImageFileMapper extends AbstractFileMapper {
 
         final DefinitionNode imageSetNode = imageNode.getParent();
         if (isType(imageSetNode, HIPPOGALLERY_IMAGESET)) {
-            final DefinitionProperty fileNameProperty = imageSetNode.getProperties().get(HIPPOGALLERY_FILENAME);
+            final DefinitionProperty fileNameProperty = imageSetNode.getProperty(HIPPOGALLERY_FILENAME);
             final String fileName = fileNameProperty != null ? fileNameProperty.getValue().getString() : mapNodeNameToFileName(imageSetNode.getName());
             final String baseName = StringUtils.substringBeforeLast(fileName, DOT_SEPARATOR);
             final String suffix = mapNodeNameToFileName(imageNode.getName());

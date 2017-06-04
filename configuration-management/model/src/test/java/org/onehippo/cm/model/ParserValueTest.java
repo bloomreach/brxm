@@ -147,9 +147,9 @@ public class ParserValueTest extends AbstractBaseTest {
         final DefinitionNodeImpl categoryTreeNode = assertNode(categoryDefinition, "/categories", "categories", categoryDefinition, 2, 2);
         assertNull(categoryTreeNode.getCategory());
         assertNull(categoryTreeNode.getResidualChildNodeCategory());
-        final DefinitionPropertyImpl regularProperty = categoryTreeNode.getProperties().get("regular-property");
+        final DefinitionPropertyImpl regularProperty = categoryTreeNode.getProperty("regular-property");
         assertNull(regularProperty.getCategory());
-        final DefinitionPropertyImpl categoryProperty = categoryTreeNode.getProperties().get("runtime-property");
+        final DefinitionPropertyImpl categoryProperty = categoryTreeNode.getProperty("runtime-property");
         assertEquals("runtime", categoryProperty.getCategory().toString());
 
         final DefinitionNodeImpl runtimeCategoryNode = assertNode(categoryTreeNode, "/categories/category", "category", categoryDefinition, 0, 0);

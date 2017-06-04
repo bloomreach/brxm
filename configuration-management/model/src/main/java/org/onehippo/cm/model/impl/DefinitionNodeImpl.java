@@ -48,6 +48,11 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         return nodes;
     }
 
+    @Override
+    public DefinitionNodeImpl getNode(final String name) {
+        return modifiableNodes.get(name);
+    }
+
     public LinkedHashMap<String, DefinitionNodeImpl> getModifiableNodes() {
         return modifiableNodes;
     }
@@ -55,6 +60,11 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     @Override
     public Map<String, DefinitionPropertyImpl> getProperties() {
         return properties;
+    }
+
+    @Override
+    public DefinitionPropertyImpl getProperty(final String name) {
+        return modifiableProperties.get(name);
     }
 
     public Map<String, DefinitionPropertyImpl> getModifiableProperties() {

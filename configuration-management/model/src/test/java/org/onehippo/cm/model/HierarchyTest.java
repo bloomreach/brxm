@@ -75,8 +75,8 @@ public class HierarchyTest extends AbstractBaseTest {
         assertProperty(subNode, "/node-with-sub-node/sub-node/property", "property", source1definition1, ValueType.STRING, "sub-node-value");
         assertNode(rootDefinition1, "/node-delete", "node-delete", source1definition1, true, null, 0, 0);
         assertNode(rootDefinition1, "/node-order-before", "node-order-before", source1definition1, false, "node", 1, 1);
-        assertNull(rootDefinition1.getNodes().get("node-order-before").getIgnoreReorderedChildren());
-        assertTrue(rootDefinition1.getNodes().get("node-ignore-reordered-children").getIgnoreReorderedChildren());
+        assertNull(rootDefinition1.getNode("node-order-before").getIgnoreReorderedChildren());
+        assertTrue(rootDefinition1.getNode("node-ignore-reordered-children").getIgnoreReorderedChildren());
 
         final ConfigDefinitionImpl source1definition2 = assertDefinition(source1, 2, ConfigDefinitionImpl.class);
         assertNode(source1definition2, "/path/to/node-delete", "node-delete", source1definition2, true, null, 0, 0);

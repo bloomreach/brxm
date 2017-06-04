@@ -27,11 +27,23 @@ public interface DefinitionNode extends DefinitionItem {
     Map<String, ? extends DefinitionNode> getNodes();
 
     /**
+     * @param name the indexed name of the child node
+     * @return the child {@link DefinitionNode node} requested, or null if not configured
+     */
+    DefinitionNode getNode(final String name);
+
+    /**
      * @return The <strong>ordered</strong> map of {@link DefinitionProperty}s by name for this {@link DefinitionNode} as an immutable map
      * and empty immutable map if none present. Note the ordering is according to serialized yaml format and not in
      * model processing order.
      */
     Map<String, ? extends DefinitionProperty> getProperties();
+
+    /**
+     * @param name the name of the property
+     * @return the {@link DefinitionProperty} requested, or null if not configured
+     */
+    DefinitionProperty getProperty(final String name);
 
     boolean isDelete();
 

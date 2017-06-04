@@ -53,6 +53,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
         return modifiableNodes;
     }
 
+    @Override
     public ConfigurationNodeImpl getNode(final String name) {
         return modifiableNodes.get(name);
     }
@@ -133,6 +134,7 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
         return modifiableProperties;
     }
 
+    @Override
     public ConfigurationPropertyImpl getProperty(final String name) {
         return modifiableProperties.get(name);
     }
