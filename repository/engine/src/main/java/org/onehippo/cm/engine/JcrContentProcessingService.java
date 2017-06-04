@@ -37,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -69,6 +70,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
 import static org.onehippo.cm.model.ActionType.APPEND;
 import static org.onehippo.cm.model.ActionType.DELETE;
+import static org.onehippo.cm.model.Constants.YAML_EXT;
 import static org.onehippo.cm.model.ValueType.REFERENCE;
 import static org.onehippo.cm.model.ValueType.WEAKREFERENCE;
 
@@ -156,7 +158,7 @@ public class JcrContentProcessingService {
      */
     public Module exportNode(final Node node) throws RepositoryException {
         final ModuleImpl module = new ModuleImpl("export-module", new ProjectImpl("export-project", new GroupImpl("export-group")));
-        final ContentSourceImpl contentSource = module.addContentSource("content.yaml");
+        final ContentSourceImpl contentSource = module.addContentSource(NodeNameCodec.decode(node.getName())+YAML_EXT);
         final ContentDefinitionImpl contentDefinition = contentSource.addContentDefinition();
 
         exportNode(node, contentDefinition);
@@ -169,7 +171,8 @@ public class JcrContentProcessingService {
             throw new ConfigurationRuntimeException("Virtual node cannot be exported: " + node.getPath());
         }
 
-        final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(node.getPath(), createNodeName(node), contentDefinition);
+        // Creating a definition with path 'rooted' at the node itself, without possible SNS index: we're not supporting indexed path elements
+        final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl("/"+node.getName(), node.getName(), contentDefinition);
         contentDefinition.setNode(definitionNode);
 
         processProperties(node, definitionNode);
