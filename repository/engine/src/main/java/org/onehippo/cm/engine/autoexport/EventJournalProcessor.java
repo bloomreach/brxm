@@ -298,7 +298,7 @@ public class EventJournalProcessor {
                 if (ConfigurationItemCategory.RUNTIME == node.getChildNodeCategory(indexedName)) {
                     return true;
                 }
-                node = node.getNodes().get(indexedName);
+                node = node.getNode(indexedName);
                 if (node == null) {
                     return false;
                 }

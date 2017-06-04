@@ -231,11 +231,11 @@ public class ConfigurationConfigService {
                                                  final boolean forceApply)
             throws RepositoryException {
 
-        final Map<String, ? extends ConfigurationProperty> updateProperties = updateNode.getProperties();
-        final Map<String, ? extends ConfigurationProperty> baselineProperties = baselineNode.getProperties();
+        final ConfigurationProperty baselinePrimaryTypeProperty = baselineNode.getProperty(JCR_PRIMARYTYPE);
+        final ConfigurationProperty updatePrimaryTypeProperty = updateNode.getProperty(JCR_PRIMARYTYPE);
 
-        final String updatePrimaryType = updateProperties.get(JCR_PRIMARYTYPE).getValue().getString();
-        final String baselinePrimaryType = baselineProperties.get(JCR_PRIMARYTYPE).getValue().getString();
+        final String updatePrimaryType = updatePrimaryTypeProperty.getValue().getString();
+        final String baselinePrimaryType = baselinePrimaryTypeProperty.getValue().getString();
 
         if (forceApply || !updatePrimaryType.equals(baselinePrimaryType)) {
             final String jcrPrimaryType = targetNode.getPrimaryNodeType().getName();
@@ -247,11 +247,11 @@ public class ConfigurationConfigService {
                 final String msg = forceApply
                         ? String.format("[OVERRIDE] Primary type '%s' of node '%s' is adjusted to '%s' as defined in %s.",
                                 jcrPrimaryType, updateNode.getPath(), updatePrimaryType,
-                                updateProperties.get(JCR_PRIMARYTYPE).getOrigin())
+                        updatePrimaryTypeProperty.getOrigin())
                         : String.format("[OVERRIDE] Primary type '%s' of node '%s' has been changed from '%s'."
                                 + "Overriding to type '%s', defined in %s.",
                                 jcrPrimaryType, updateNode.getPath(), baselinePrimaryType, updatePrimaryType,
-                                updateProperties.get(JCR_PRIMARYTYPE).getOrigin());
+                        updatePrimaryTypeProperty.getOrigin());
                 logger.info(msg);
             }
             targetNode.setPrimaryType(updatePrimaryType);
@@ -263,14 +263,12 @@ public class ConfigurationConfigService {
                                                 final Node targetNode,
                                                 final boolean forceApply) throws RepositoryException {
 
-        final Map<String, ? extends ConfigurationProperty> updateProperties = updateNode.getProperties();
-        final Map<String, ? extends ConfigurationProperty> baselineProperties = baselineNode.getProperties();
+        final ConfigurationProperty baselineMixinProperty = baselineNode.getProperty(JCR_MIXINTYPES);
+        final ConfigurationProperty updateMixinProperty = updateNode.getProperty(JCR_MIXINTYPES);
 
         // Update the mixin types, if needed
-        final Value[] updateMixinValues = updateProperties.containsKey(JCR_MIXINTYPES)
-                ? updateProperties.get(JCR_MIXINTYPES).getValues() : new Value[0];
-        final Value[] baselineMixinValues = baselineProperties.containsKey((JCR_MIXINTYPES))
-                ? baselineProperties.get(JCR_MIXINTYPES).getValues() : new Value[0];
+        final Value[] updateMixinValues = updateMixinProperty != null ? updateMixinProperty.getValues() : new Value[0];
+        final Value[] baselineMixinValues = baselineMixinProperty != null ? baselineMixinProperty.getValues() : new Value[0];
 
         // Add / restore mixin types
         for (Value mixinValue : updateMixinValues) {
@@ -280,7 +278,7 @@ public class ConfigurationConfigService {
                     if (hasMixin(baselineMixinValues, mixin)) {
                         final String msg = String.format("[OVERRIDE] Mixin '%s' has been removed from node '%s', " +
                                         "but is re-added because it is defined at %s.",
-                                mixin, updateNode.getPath(), updateProperties.get(JCR_MIXINTYPES).getOrigin());
+                                mixin, updateNode.getPath(), updateMixinProperty.getOrigin());
                         logger.info(msg);
                     }
                     targetNode.addMixin(mixin);
@@ -413,7 +411,7 @@ public class ConfigurationConfigService {
 
             if (existingChildNode == null) {
                 // need to add node
-                final String childPrimaryType = updateChild.getProperties().get(JCR_PRIMARYTYPE).getValue().getString();
+                final String childPrimaryType = updateChild.getProperty(JCR_PRIMARYTYPE).getValue().getString();
                 final String childName = nameAndIndex.getLeft();
 
                 if (baselineChild == null) {
@@ -510,7 +508,7 @@ public class ConfigurationConfigService {
 
     private Node addNode(final Node parentNode, final String childName, final String childPrimaryType,
                          final ConfigurationNode childModelNode) throws RepositoryException {
-        final ConfigurationProperty uuidProperty = childModelNode.getProperties().get(JCR_UUID);
+        final ConfigurationProperty uuidProperty = childModelNode.getProperty(JCR_UUID);
         if (uuidProperty != null) {
             final String uuid = uuidProperty.getValue().getString();
             if (!isUuidInUse(uuid, parentNode.getSession())) {

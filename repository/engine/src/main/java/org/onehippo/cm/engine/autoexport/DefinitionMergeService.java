@@ -806,7 +806,7 @@ public class DefinitionMergeService {
 
         log.debug("Merging property: {} with operation: {}", defProperty.getPath(), defProperty.getOperation());
 
-        final ConfigurationPropertyImpl configProperty = configNode.getProperties().get(defProperty.getName());
+        final ConfigurationPropertyImpl configProperty = configNode.getProperty(defProperty.getName());
         final boolean propertyExists = (configProperty != null);
 
         switch (defProperty.getOperation()) {
