@@ -150,7 +150,7 @@ class ConfigurationTreeBuilder {
                             orderBeforeIndexedName, node.getPath(), definitionNode.getOrigin());
                     throw new IllegalArgumentException(msg);
                 }
-                if (!parent.getNodes().containsKey(orderBeforeIndexedName)) {
+                if (parent.getNode(orderBeforeIndexedName) == null) {
                     final String msg = String.format("Invalid orderBefore: '%s' for node '%s' defined in '%s': no sibling named '%s'.",
                             orderBeforeIndexedName, node.getPath(), definitionNode.getOrigin(), orderBeforeIndexedName);
                     throw new IllegalArgumentException(msg);
@@ -275,8 +275,8 @@ class ConfigurationTreeBuilder {
 
         ConfigurationNodeImpl rootForDefinition = root;
         while (segmentsConsumed < pathSegments.length
-                && rootForDefinition.getNodes().containsKey(pathSegments[segmentsConsumed])) {
-            rootForDefinition = rootForDefinition.getModifiableNodes().get(pathSegments[segmentsConsumed]);
+                && rootForDefinition.getNode(pathSegments[segmentsConsumed]) != null) {
+            rootForDefinition = rootForDefinition.getNode(pathSegments[segmentsConsumed]);
             segmentsConsumed++;
         }
 
@@ -340,7 +340,7 @@ class ConfigurationTreeBuilder {
         final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(name);
         if (nameAndIndex.getRight() > 1) {
             final String expectedSibling = SnsUtils.createIndexedName(nameAndIndex.getLeft(), nameAndIndex.getRight() - 1);
-            if (!parent.getNodes().containsKey(expectedSibling)) {
+            if (parent.getNode(expectedSibling) == null) {
                 final String msg = String.format("%s defines node '%s', but no sibling named '%s' was found",
                         definitionNode.getOrigin(), definitionNode.getPath(), expectedSibling);
                 throw new IllegalStateException(msg);
@@ -515,7 +515,7 @@ class ConfigurationTreeBuilder {
     }
 
     private void requirePrimaryType(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
-        if (!node.getProperties().containsKey(JCR_PRIMARYTYPE)) {
+        if (node.getProperty(JCR_PRIMARYTYPE) == null) {
             final String msg = String.format("Node '%s' defined at '%s' is missing the required %s property.",
                     definitionNode.getPath(), definitionNode.getOrigin(), JCR_PRIMARYTYPE);
             throw new IllegalStateException(msg);

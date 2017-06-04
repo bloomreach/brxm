@@ -27,10 +27,22 @@ public interface ConfigurationNode extends ConfigurationItem {
     Map<String, ? extends ConfigurationNode> getNodes();
 
     /**
+     * @param name the indexed name of the child node
+     * @return the child {@link ConfigurationNode node} requested, or null if not configured
+     */
+    ConfigurationNode getNode(final String name);
+
+    /**
      * @return The <strong>ordered</strong> map of {@link ConfigurationProperty}s by name for this
      * {@link ConfigurationNode} as an immutable map and empty immutable map if none present.
      */
     Map<String, ? extends ConfigurationProperty> getProperties();
+
+    /**
+     * @param name the name of the property
+     * @return the {@link ConfigurationProperty} requested, or null if not configured
+     */
+    ConfigurationProperty getProperty(final String name);
 
     /**
      * @return Boolean.TRUE if for this node the order of its children can be ignored on detecting changes,

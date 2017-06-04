@@ -316,7 +316,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
         ConfigurationNodeImpl currentNode = getConfigurationRootNode();
         for (String segment : segments) {
-            currentNode = currentNode.getNodes().get(createIndexedName(segment));
+            currentNode = currentNode.getNode(createIndexedName(segment));
             if (currentNode == null) {
                 return null;
             }
@@ -331,7 +331,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
             return null;
         }
         else {
-            return node.getProperties().get(StringUtils.substringAfterLast(path, "/"));
+            return node.getProperty(StringUtils.substringAfterLast(path, "/"));
         }
     }
 

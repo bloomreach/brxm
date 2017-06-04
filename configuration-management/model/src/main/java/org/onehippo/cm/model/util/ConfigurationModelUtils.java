@@ -71,8 +71,8 @@ public class ConfigurationModelUtils {
                         : modelNode.getChildNodeCategory(SnsUtils.createIndexedName(childName));
             } else {
                 final String indexedChildName = SnsUtils.createIndexedName(childName);
-                if (modelNode.getNodes().containsKey(indexedChildName)) {
-                    modelNode = modelNode.getNodes().get(indexedChildName);
+                if (modelNode.getNode(indexedChildName) != null) {
+                    modelNode = modelNode.getNode(indexedChildName);
                 } else {
                     return modelNode.getChildNodeCategory(indexedChildName);
                 }

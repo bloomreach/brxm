@@ -53,6 +53,10 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
         return modifiableNodes;
     }
 
+    public ConfigurationNodeImpl getNode(final String name) {
+        return modifiableNodes.get(name);
+    }
+
     public void addNode(final String name, final ConfigurationNodeImpl node) {
         modifiableNodes.put(name, node);
     }
@@ -127,6 +131,10 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
 
     public Map<String, ConfigurationPropertyImpl> getModifiableProperties() {
         return modifiableProperties;
+    }
+
+    public ConfigurationPropertyImpl getProperty(final String name) {
+        return modifiableProperties.get(name);
     }
 
     public void addProperty(final String name, final ConfigurationPropertyImpl property) {
