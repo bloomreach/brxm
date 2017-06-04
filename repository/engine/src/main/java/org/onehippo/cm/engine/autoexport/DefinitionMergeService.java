@@ -333,8 +333,8 @@ public class DefinitionMergeService {
     protected boolean isNewNodeDefinition(final DefinitionNodeImpl defNode) {
         // the node is a new node iff a jcr:primaryType is defined here and it's not an override or delete
         return !defNode.isDelete()
-                && defNode.getProperties().containsKey(JCR_PRIMARYTYPE)
-                && !defNode.getProperties().get(JCR_PRIMARYTYPE).getOperation().equals(OVERRIDE);
+                && defNode.getProperty(JCR_PRIMARYTYPE) != null
+                && !defNode.getProperty(JCR_PRIMARYTYPE).getOperation().equals(OVERRIDE);
     }
 
     /**

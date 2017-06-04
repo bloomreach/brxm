@@ -331,7 +331,7 @@ public class JcrContentProcessingService {
     private void applyChildNodes(final DefinitionNode modelNode, final Node jcrNode, final ActionType actionType) throws RepositoryException, IOException {
         logger.debug(String.format("processing node '%s' defined in %s.", modelNode.getPath(), modelNode.getOrigin()));
         for (final String name : modelNode.getNodes().keySet()) {
-            final DefinitionNode modelChild = modelNode.getNodes().get(name);
+            final DefinitionNode modelChild = modelNode.getNode(name);
             applyNode(modelChild, jcrNode, actionType);
         }
     }
@@ -350,7 +350,7 @@ public class JcrContentProcessingService {
     private Node addNode(final Node parentNode, final DefinitionNode modelNode) throws RepositoryException {
         final String name = SnsUtils.getUnindexedName(modelNode.getName());
         final String primaryType = getPrimaryType(modelNode);
-        final DefinitionProperty uuidProperty = modelNode.getProperties().get(JCR_UUID);
+        final DefinitionProperty uuidProperty = modelNode.getProperty(JCR_UUID);
         if (uuidProperty != null) {
             final String uuid = uuidProperty.getValue().getString();
             if (!isUuidInUse(uuid, parentNode.getSession())) {
@@ -376,14 +376,14 @@ public class JcrContentProcessingService {
     }
 
     private String getPrimaryType(final DefinitionNode modelNode) {
-        if (!modelNode.getProperties().containsKey(JCR_PRIMARYTYPE)) {
+        if (modelNode.getProperty(JCR_PRIMARYTYPE) == null) {
             final String msg = String.format(
                     "Failed to process node '%s' defined in %s: cannot add child node '%s': %s property missing.",
                     modelNode.getPath(), modelNode.getOrigin(), modelNode.getPath(), JCR_PRIMARYTYPE);
             throw new RuntimeException(msg);
         }
 
-        return modelNode.getProperties().get(JCR_PRIMARYTYPE).getValue().getString();
+        return modelNode.getProperty(JCR_PRIMARYTYPE).getValue().getString();
     }
 
     private void applyProperties(final DefinitionNode source, final Node targetNode) throws RepositoryException, IOException {
@@ -404,7 +404,7 @@ public class JcrContentProcessingService {
                 .collect(Collectors.toList());
 
         final List<String> modelMixinTypes = new ArrayList<>();
-        final DefinitionProperty modelProperty = source.getProperties().get(JCR_MIXINTYPES);
+        final DefinitionProperty modelProperty = source.getProperty(JCR_MIXINTYPES);
         if (modelProperty != null) {
             for (Value value : modelProperty.getValues()) {
                 modelMixinTypes.add(value.getString());
@@ -419,7 +419,7 @@ public class JcrContentProcessingService {
             }
         }
 
-        final String modelPrimaryType = source.getProperties().get(JCR_PRIMARYTYPE).getValue().getString();
+        final String modelPrimaryType = source.getProperty(JCR_PRIMARYTYPE).getValue().getString();
         final String jcrPrimaryType = target.getPrimaryNodeType().getName();
         if (!jcrPrimaryType.equals(modelPrimaryType)) {
             target.setPrimaryType(modelPrimaryType);
