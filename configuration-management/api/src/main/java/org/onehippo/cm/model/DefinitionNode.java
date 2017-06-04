@@ -27,7 +27,7 @@ public interface DefinitionNode extends DefinitionItem {
     Map<String, ? extends DefinitionNode> getNodes();
 
     /**
-     * @param name the indexed name of the child node
+     * @param name the name of the child node
      * @return the child {@link DefinitionNode node} requested, or null if not configured
      */
     DefinitionNode getNode(final String name);
