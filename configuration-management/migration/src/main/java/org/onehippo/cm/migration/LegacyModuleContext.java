@@ -20,8 +20,8 @@ import java.nio.file.Path;
 
 import org.onehippo.cm.model.FileResourceInputProvider;
 import org.onehippo.cm.model.FileResourceOutputProvider;
-import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.ModuleContext;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.util.FileConfigurationUtils;
 
 /**
@@ -29,7 +29,7 @@ import org.onehippo.cm.model.util.FileConfigurationUtils;
  */
 public class LegacyModuleContext extends ModuleContext {
 
-    LegacyModuleContext(Module module, Path moduleDescriptorPath, boolean multiModule) throws IOException {
+    LegacyModuleContext(ModuleImpl module, Path moduleDescriptorPath, boolean multiModule) throws IOException {
 
         super(module, moduleDescriptorPath, multiModule);
         this.configInputProvider = this.contentInputProvider = new FileResourceInputProvider(moduleDescriptorPath);

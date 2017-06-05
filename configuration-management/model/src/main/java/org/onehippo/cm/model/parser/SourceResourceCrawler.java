@@ -15,17 +15,20 @@
  */
 package org.onehippo.cm.model.parser;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.onehippo.cm.model.ContentDefinition;
-import org.onehippo.cm.model.Definition;
-import org.onehippo.cm.model.DefinitionNode;
-import org.onehippo.cm.model.DefinitionProperty;
-import org.onehippo.cm.model.NamespaceDefinition;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
 
 /**
  * Collect a list of (YAML-)external resource files referred to by a {@link Source}.
@@ -36,18 +39,18 @@ public class SourceResourceCrawler {
     /**
      * Build list of resources referred to by a {@link Source}
      */
-    public Set<String> collect(final Source source) {
+    public List<Pair<ValueImpl, String>> collect(final SourceImpl source) {
 
-        final Set<String> resources = new HashSet<>();
+        final List<Pair<ValueImpl, String>> resources = new ArrayList<>();
 
-        for (Definition definition : source.getDefinitions()) {
+        for (AbstractDefinitionImpl definition : source.getDefinitions()) {
             switch (definition.getType()) {
                 case CONFIG:
                 case CONTENT:
-                    collectResourcesForNode(((ContentDefinition)definition).getNode(), resources);
+                    collectResourcesForNode(((ContentDefinitionImpl)definition).getNode(), resources);
                     break;
                 case NAMESPACE:
-                    collectResourcesForNamespace((NamespaceDefinition) definition, resources);
+                    collectResourcesForNamespace((NamespaceDefinitionImpl) definition, resources);
                     break;
             }
         }
@@ -55,34 +58,34 @@ public class SourceResourceCrawler {
         return resources;
     }
 
-    private void collectResourcesForNode(final DefinitionNode node, final Set<String> resources) {
-        for (DefinitionProperty childProperty : node.getProperties().values()) {
+    private void collectResourcesForNode(final DefinitionNodeImpl node, final List<Pair<ValueImpl, String>> resources) {
+        for (DefinitionPropertyImpl childProperty : node.getProperties().values()) {
             collectResourcesForProperty(childProperty, resources);
         }
 
-        for (DefinitionNode childNode : node.getNodes().values()) {
+        for (DefinitionNodeImpl childNode : node.getNodes().values()) {
             collectResourcesForNode(childNode, resources);
         }
     }
 
-    private void collectResourcesForProperty(final DefinitionProperty property, final Set<String> resources) {
+    private void collectResourcesForProperty(final DefinitionPropertyImpl property, final List<Pair<ValueImpl, String>> resources) {
         if (property.getType() == PropertyType.SINGLE) {
-            final Value value = property.getValue();
+            final ValueImpl value = property.getValue();
             if (value.isResource()) {
-                resources.add(value.getString());
+                resources.add(new MutablePair<>(value, value.getString()));
             }
         } else {
-            for (Value value : property.getValues()) {
+            for (ValueImpl value : property.getValues()) {
                 if (value.isResource()) {
-                    resources.add(value.getString());
+                    resources.add(new MutablePair<>(value, value.getString()));
                 }
             }
         }
     }
 
-    private void collectResourcesForNamespace(final NamespaceDefinition definition, final Set<String> resources) {
+    private void collectResourcesForNamespace(final NamespaceDefinitionImpl definition, List<Pair<ValueImpl, String>> resources) {
         if (definition.getCndPath() != null) {
-            resources.add(definition.getCndPath().getString());
+            resources.add(new MutablePair<>(definition.getCndPath(), definition.getCndPath().getString()));
         }
     }
 }

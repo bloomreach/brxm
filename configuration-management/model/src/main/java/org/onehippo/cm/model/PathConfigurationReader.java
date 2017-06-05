@@ -29,6 +29,7 @@ import java.util.function.BiPredicate;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.parser.ActionListParser;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
@@ -91,15 +92,15 @@ public class PathConfigurationReader {
         final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(groups);
         final Map<Module, ModuleContext> moduleContexts = new HashMap<>();
 
-        for (Group group : groups.values()) {
-            for (Project project : group.getProjects()) {
-                for (Module module : project.getModules()) {
+        for (GroupImpl group : groups.values()) {
+            for (ProjectImpl project : group.getProjects()) {
+                for (ModuleImpl module : project.getModules()) {
 
                     final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath, hasMultipleModules);
                     moduleContexts.put(module, moduleContext);
 
                     // Set the input providers on the Module directly, so it doesn't need to be held in a Map on ConfigurationModel
-                    readModule((ModuleImpl) module, moduleContext, verifyOnly);
+                    readModule(module, moduleContext, verifyOnly);
                 }
             }
         }

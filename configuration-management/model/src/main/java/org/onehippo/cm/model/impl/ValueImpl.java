@@ -27,13 +27,20 @@ import org.onehippo.cm.model.ValueType;
 
 public class ValueImpl implements Value, Cloneable {
 
-    protected final Object value;
+    protected Object value;
     protected final ValueType valueType;
     protected final boolean isResource;
     protected final boolean isPath;
     protected DefinitionPropertyImpl parent = null;
 
-    private SourceImpl foreignSource;
+    /**
+     * Retained value resource Source reference after {@link #clone()} cloning) ValueImpl, which is needed when exporting
+     * resource values into a different context.
+     */
+    private SourceImpl resourceSource;
+    private String internalResourcePath;
+    private boolean isNewResource;
+
     private NamespaceDefinitionImpl namespaceDefinition;
 
     public ValueImpl(final BigDecimal value) {
@@ -107,6 +114,34 @@ public class ValueImpl implements Value, Cloneable {
     }
 
     @Override
+    public boolean isNewResource() {
+        return isNewResource;
+    }
+
+    public void setNewResource(final boolean isNewResource) {
+        this.isNewResource = isNewResource;
+    }
+
+    public void setResourceValue(final String resourceValue) {
+        if (isResource) {
+            value = resourceValue;
+            isNewResource = false;
+        } else {
+            throw new IllegalStateException("Not allowed to set resource value: not a resource");
+        }
+    }
+
+    /**
+     * Detaches a {@link #clone() cloned} resource Value from its original Source. Should be called after
+     * retrieving and processing (serializing) through {@link #getResourceInputStream()}.
+     */
+    public void detach() {
+        internalResourcePath = null;
+        resourceSource = null;
+        isNewResource = false;
+    }
+
+    @Override
     public DefinitionPropertyImpl getParent() {
         return parent;
     }
@@ -136,12 +171,12 @@ public class ValueImpl implements Value, Cloneable {
     }
 
     /**
-     * Set a "foreign" Source for use when this value is a resource belonging to another Module, and
-     * we want to delay actual data copying until the ultimate destination can be computed.
-     * @param foreignSource a SourceImpl, typically originating from a different Module
+     * Optional internal resource path for resources requiring a different resource path mapping for accessing their
+     * actual data through {@link #getResourceInputStream()} like in case of a JCR backed ResourceInputProvider.
+     * @param internalResourcePath
      */
-    public void setForeignSource(final SourceImpl foreignSource) {
-        this.foreignSource = foreignSource;
+    public void setInternalResourcePath(final String internalResourcePath) {
+        this.internalResourcePath = internalResourcePath;
     }
 
     @Override
@@ -154,18 +189,20 @@ public class ValueImpl implements Value, Cloneable {
 
         // If we have a "foreign" source, use that to find the RIP instead of the local Source
         SourceImpl source = definition.getSource();
-        if (foreignSource != null) {
-            source = foreignSource;
+        if (resourceSource != null) {
+            source = resourceSource;
         }
 
+        String resourcePath = internalResourcePath != null ? internalResourcePath : getString();
+
         if (definition.getType() == DefinitionType.CONTENT) {
-            return source.getModule().getContentResourceInputProvider().getResourceInputStream(source, getString());
+            return source.getModule().getContentResourceInputProvider().getResourceInputStream(source, resourcePath);
         }
         else {
             return source
                     .getModule()
                     .getConfigResourceInputProvider()
-                    .getResourceInputStream(source, getString());
+                    .getResourceInputStream(source, resourcePath);
         }
     }
 
@@ -204,7 +241,12 @@ public class ValueImpl implements Value, Cloneable {
     @Override
     public ValueImpl clone() {
         try {
-            return (ValueImpl) super.clone();
+            ValueImpl clone = (ValueImpl)super.clone();
+            // for resources retain their original Source reference needed to access their inputstream
+            if (isResource) {
+                clone.resourceSource = getDefinition().getSource();
+            }
+            return clone;
         }
         catch (CloneNotSupportedException e) {
             // this should be impossible

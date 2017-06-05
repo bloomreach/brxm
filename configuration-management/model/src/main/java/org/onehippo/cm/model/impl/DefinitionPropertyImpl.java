@@ -107,13 +107,10 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
                     this.values = null;
                     this.value = other.value.clone();
                     value.setParent(this);
-
-                    // migrate resources from old module to new module
-                    value.setForeignSource(other.getDefinition().getSource());
                 } else {
                     this.value = null;
 
-                    // cloneValues() sets parent and foreign source for us
+                    // cloneValues() sets parent and retains value source for us
                     this.values = other.cloneValues(this);
                 }
                 break;
@@ -127,7 +124,6 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
                     ValueImpl[] tmp = new ValueImpl[values.length + 1];
                     System.arraycopy(this.values, 0, tmp, 0, values.length);
                     tmp[tmp.length - 1] = other.value.clone();
-                    tmp[tmp.length - 1].setForeignSource(other.getDefinition().getSource());
                     tmp[tmp.length - 1].setParent(this);
                     this.values = tmp;
                 }
@@ -158,9 +154,6 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
         for (int i = 0; i < values.length; i++) {
             cloned[i] = values[i].clone();
             cloned[i].setParent(newParent);
-
-            // migrate resources from old module to new module
-            cloned[i].setForeignSource(getDefinition().getSource());
         }
         return cloned;
     }

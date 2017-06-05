@@ -17,9 +17,16 @@ package org.onehippo.cm.model;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cm.model.parser.SourceResourceCrawler;
 import org.onehippo.cm.model.serializer.ResourceNameResolver;
 import org.onehippo.cm.model.serializer.ResourceNameResolverImpl;
@@ -35,7 +42,7 @@ public class ModuleContext {
     protected ResourceOutputProvider configOutputProvider;
     protected ResourceOutputProvider contentOutputProvider;
 
-    protected final Module module;
+    protected final ModuleImpl module;
     protected final boolean multiModule;
     private final Path moduleDescriptorPath;
 
@@ -46,13 +53,13 @@ public class ModuleContext {
     private ResourceNameResolver configNameResolver = new ResourceNameResolverImpl();
     private ResourceNameResolver contentNameResolver = new ResourceNameResolverImpl();
 
-    public ModuleContext(Module module, Path moduleRootPath) {
+    public ModuleContext(ModuleImpl module, Path moduleRootPath) {
         this.module = module;
         this.multiModule = false;
         this.moduleDescriptorPath = moduleRootPath.resolve(Constants.HCM_MODULE_YAML);
     }
 
-    public ModuleContext(Module module, Path moduleDescriptorPath, boolean multiModule) throws IOException {
+    public ModuleContext(ModuleImpl module, Path moduleDescriptorPath, boolean multiModule) throws IOException {
         this.module = module;
         this.moduleDescriptorPath = moduleDescriptorPath;
         this.multiModule = multiModule;
@@ -126,18 +133,41 @@ public class ModuleContext {
      * Adds predefined resource files to known files list. Should be invoked only after OutputProvider had been created
      * @throws IOException
      */
-    public void addExistingFilesToKnownList() throws IOException {
+    public void collectExistingFilesAndResolveNewResources() throws IOException {
 
         if (configOutputProvider == null || contentOutputProvider == null) {
             throw new IOException(String.format("Output provider should be initialized for module: %s", module));
         }
 
         final SourceResourceCrawler crawler = new SourceResourceCrawler();
-        for (final Source source : module.getSources()) {
-            final Set<String> resources = crawler.collect(source);
-            for (final String resource : resources) {
-                final Path resourcePath = getOutputProvider(source).getResourceOutputPath(source, resource);
-                generateUniqueName(source, resourcePath.toString());
+        LinkedHashMap<SourceImpl, List<Pair<ValueImpl, String>>> allNewResources = new LinkedHashMap<>();
+        for (final SourceImpl source : module.getSources()) {
+            final List<Pair<ValueImpl, String>> resources = crawler.collect(source);
+            for (final Pair<ValueImpl, String> pair : resources) {
+                if (pair.getLeft().isNewResource()) {
+                    List<Pair<ValueImpl, String>> newResources = allNewResources.get(source);
+                    if (newResources == null) {
+                        // postpone mapping new resources until existing files are all known (to prevent clashes)
+                        newResources = new ArrayList<>();
+                        allNewResources.put(source, newResources);
+                    }
+                    newResources.add(pair);
+                } else {
+                    final Path resourcePath = getOutputProvider(source).getResourceOutputPath(source, pair.getRight());
+                    generateUniqueName(source, resourcePath.toString());
+                }
+            }
+        }
+        // now generate file mappings for new resources and set their resource file path to the actual value
+        for (final Map.Entry<SourceImpl, List<Pair<ValueImpl, String>>> sourceEntry : allNewResources.entrySet()) {
+            final SourceImpl source = sourceEntry.getKey();
+            for (final Pair<ValueImpl, String> pair : sourceEntry.getValue()) {
+                // TODO: tricky cast or always valid? In the latter case the APIs should reflect that
+                FileResourceOutputProvider outputProvider = (FileResourceOutputProvider)getOutputProvider(source);
+                final Path resourceFilePath = outputProvider.getResourceOutputPath(source, pair.getRight());
+                final String filePath  = generateUniqueName(source, resourceFilePath.toString());
+                final String resourcePath = filePath.substring(outputProvider.getModulePath().toString().length());
+                pair.getLeft().setResourceValue(resourcePath);
             }
         }
     }

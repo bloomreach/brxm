@@ -31,6 +31,15 @@ public interface Value {
     boolean isResource();
 
     /**
+     * When this {@link #isResource() resource} value represents a (possible) new resource, the resource
+     * path provided through {@link #getString()} must be considered a <em>candidate</em> resource path, possibly clashing
+     * with existing resource paths. The actual resource path needs to be uniquified before serialization.
+     * @return true when this {@link #isResource() resource} its {@link #getString() path} must be treated as
+     * a <em>candidate</em> path only.
+     */
+    boolean isNewResource();
+
+    /**
      * Uses a ResourceInputProvider to create an InputStream for this Value's content.
      * @return an InputStream that must be closed when the caller is finished using it
      * @throws IOException if there is any problem in creating the InputStream

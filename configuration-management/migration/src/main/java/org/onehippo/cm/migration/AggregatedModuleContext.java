@@ -19,13 +19,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import org.onehippo.cm.model.FileResourceOutputProvider;
-import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.impl.ModuleImpl;
 
 /**
  * Aggregated modules support
  */
 public class AggregatedModuleContext extends LegacyModuleContext {
-    public AggregatedModuleContext(Module module, Path moduleDescriptorPath, boolean multiModule) throws IOException {
+    public AggregatedModuleContext(ModuleImpl module, Path moduleDescriptorPath, boolean multiModule) throws IOException {
         super(module, moduleDescriptorPath, multiModule);
     }
 
