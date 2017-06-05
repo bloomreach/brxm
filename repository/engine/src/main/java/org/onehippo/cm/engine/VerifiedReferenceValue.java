@@ -26,7 +26,7 @@ import org.onehippo.cm.model.ValueType;
 /**
  * VerifiedReferenceValue is a placeholder implementation/decorator for resolved and validated {@link ValueType#REFERENCE}
  * and {@link ValueType#WEAKREFERENCE} {@link Value} instances to make it easier to compare and apply such properties
- * in the {@link ConfigService}.
+ * in the {@link ConfigurationConfigService}.
  */
 public final class VerifiedReferenceValue implements Value {
 
@@ -62,6 +62,11 @@ public final class VerifiedReferenceValue implements Value {
 
     @Override
     public boolean isResource() {
+        return false;
+    }
+
+    @Override
+    public boolean isNewResource() {
         return false;
     }
 

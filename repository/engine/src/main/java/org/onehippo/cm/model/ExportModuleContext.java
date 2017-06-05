@@ -18,16 +18,18 @@ package org.onehippo.cm.model;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.onehippo.cm.model.impl.ModuleImpl;
+
 /**
  * Module Context export implementation. Omits generating hcm-content folder.
  */
 public class ExportModuleContext extends ModuleContext {
 
-    public ExportModuleContext(Module module) throws IOException {
+    public ExportModuleContext(ModuleImpl module) throws IOException {
         super(module, null, false);
     }
 
-    public ExportModuleContext(Module module, Path moduleDescriptorPath) throws IOException {
+    public ExportModuleContext(ModuleImpl module, Path moduleDescriptorPath) throws IOException {
         super(module, moduleDescriptorPath, false);
         createOutputProviders(moduleDescriptorPath);
     }

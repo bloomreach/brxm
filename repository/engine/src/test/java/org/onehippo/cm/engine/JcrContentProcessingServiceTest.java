@@ -204,7 +204,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
         session.save();
 
         final JcrContentProcessingService processingService = new JcrContentProcessingService(valueProcessor);
-        Module module = processingService.exportNode(importedNode);
+        ModuleImpl module = processingService.exportNode(importedNode);
 
         File tempDir = Files.createTempDir();
         Path moduleRootPath = Paths.get(tempDir.getPath());

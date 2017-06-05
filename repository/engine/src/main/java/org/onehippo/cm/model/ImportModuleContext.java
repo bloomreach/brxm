@@ -18,11 +18,12 @@ package org.onehippo.cm.model;
 import java.nio.file.Path;
 
 import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.impl.ModuleImpl;
 
 public class ImportModuleContext extends ModuleContext {
 
     private Path moduleRoot;
-    public ImportModuleContext(final Module module, final Path moduleRootPath) {
+    public ImportModuleContext(final ModuleImpl module, final Path moduleRootPath) {
         super(module, moduleRootPath);
         moduleRoot = moduleRootPath;
     }

@@ -46,7 +46,6 @@ import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.DefinitionProperty;
-import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
@@ -156,8 +155,10 @@ public class JcrContentProcessingService {
      * @param node
      * @return
      */
-    public Module exportNode(final Node node) throws RepositoryException {
+    public ModuleImpl exportNode(final Node node) throws RepositoryException {
         final ModuleImpl module = new ModuleImpl("export-module", new ProjectImpl("export-project", new GroupImpl("export-group")));
+        module.setConfigResourceInputProvider(new JcrResourceInputProvider(node.getSession()));
+        module.setContentResourceInputProvider(module.getConfigResourceInputProvider());
         final ContentSourceImpl contentSource = module.addContentSource(NodeNameCodec.decode(node.getName())+YAML_EXT);
         final ContentDefinitionImpl contentDefinition = contentSource.addContentDefinition();
 
@@ -228,19 +229,10 @@ public class JcrContentProcessingService {
             }
 
             if (property.isMultiple()) {
-
-                final javax.jcr.Value[] values = property.getValues();
-                final List<ValueImpl> valueList = new ArrayList<>();
-                if (values != null && values.length > 0) {
-
-                    for (final javax.jcr.Value value : values) {
-                        valueList.add(valueProcessor.valueFrom(value));
-                    }
-                }
                 definitionNode.addProperty(property.getName(), ValueType.fromJcrType(property.getType()),
-                        valueList.toArray(new ValueImpl[valueList.size()]));
+                        valueProcessor.valuesFrom(property, definitionNode));
             } else {
-                final ValueImpl value = valueProcessor.valueFrom(property.getValue());
+                final ValueImpl value = valueProcessor.valueFrom(property, definitionNode);
                 final DefinitionPropertyImpl targetProperty = definitionNode.addProperty(property.getName(), value);
                 value.setParent(targetProperty);
             }
@@ -250,19 +242,16 @@ public class JcrContentProcessingService {
     private void processPrimaryTypeAndMixins(final Node sourceNode, final DefinitionNodeImpl definitionNode) throws RepositoryException {
 
         final Property primaryTypeProperty = sourceNode.getProperty(JCR_PRIMARYTYPE);
-        final ValueImpl value = valueProcessor.valueFrom(primaryTypeProperty.getValue());
+        final ValueImpl value = valueProcessor.valueFrom(primaryTypeProperty, definitionNode);
         definitionNode.addProperty(primaryTypeProperty.getName(), value);
 
-        if (sourceNode.hasProperty(JCR_MIXINTYPES)) {
-            final NodeType[] mixinNodeTypes = sourceNode.getMixinNodeTypes();
-            if (mixinNodeTypes.length > 0) {
-                final List<ValueImpl> values = new ArrayList<>();
-                for (final NodeType mixinNodeType : mixinNodeTypes) {
-                    values.add(new ValueImpl(mixinNodeType.getName()));
-                }
-
-                definitionNode.addProperty(JCR_MIXINTYPES, ValueType.STRING, values.toArray(new ValueImpl[values.size()]));
+        final NodeType[] mixinNodeTypes = sourceNode.getMixinNodeTypes();
+        if (mixinNodeTypes.length > 0) {
+            final List<ValueImpl> values = new ArrayList<>();
+            for (final NodeType mixinNodeType : mixinNodeTypes) {
+                values.add(new ValueImpl(mixinNodeType.getName()));
             }
+            definitionNode.addProperty(JCR_MIXINTYPES, ValueType.STRING, values.toArray(new ValueImpl[values.size()]));
         }
     }
 

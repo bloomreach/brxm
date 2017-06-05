@@ -179,9 +179,8 @@ public class DefinitionMergeService {
                 .filter(namespaceDefinition -> namespaceDefinition.getPrefix().equals(nsd.getPrefix()))
                 .findFirst();
 
-        // clone the CndPath Value and set a "foreign source" back-reference for use later when copying data
+        // clone the CndPath Value which retains a "foreign source" back-reference for use later when copying data
         final ValueImpl cndPath = nsd.getCndPath().clone();
-        cndPath.setForeignSource(nsd.getSource());
 
         if (found.isPresent()) {
             // this is an update to an existing namespace def

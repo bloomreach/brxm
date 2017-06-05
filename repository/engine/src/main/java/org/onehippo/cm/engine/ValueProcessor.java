@@ -24,16 +24,18 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.jcr.Binary;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.model.DefinitionProperty;
-import org.onehippo.cm.model.JcrBinaryValueImpl;
 import org.onehippo.cm.model.ModelItem;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
 
 import static javax.jcr.PropertyType.BINARY;
@@ -232,13 +234,39 @@ public class ValueProcessor {
         return modelValue.isResource() ? modelValue.getResourceInputStream() : new ByteArrayInputStream((byte[]) modelValue.getObject());
     }
 
-    public ValueImpl valueFrom(final javax.jcr.Value jcrValue) throws RepositoryException {
+    public ValueImpl[] valuesFrom(final Property property, final DefinitionNodeImpl definitionNode) throws RepositoryException {
+        final javax.jcr.Value[] jcrValues = property.getValues();
+        final ValueImpl[] values = new ValueImpl[jcrValues.length];
+        for (int i = 0; i < jcrValues.length; i++) {
+            values[i] = valueFrom(property, jcrValues[i], i, definitionNode);
+        }
+        return values;
+    }
 
+    public ValueImpl valueFrom(final Property property, final DefinitionNodeImpl definitionNode) throws RepositoryException {
+        return valueFrom(property, property.getValue(), 0, definitionNode);
+    }
+
+    private ValueImpl valueFrom(final Property property, final javax.jcr.Value jcrValue, final int valueIndex,
+                                final DefinitionNodeImpl definitionNode) throws RepositoryException {
+
+        String indexPostfix = "";
+        if (property.isMultiple()) {
+            indexPostfix = Integer.toString(valueIndex);
+        }
         switch (jcrValue.getType()) {
             case STRING:
                 return new ValueImpl(jcrValue.getString());
             case BINARY:
-                return new JcrBinaryValueImpl(jcrValue);
+                // TODO: we need a JCR based ValueFileMapper to derive a sensible resource path *here*
+                // TODO: without we only can do a dumb default mapping, using 'data.bin' or 'data[valueIndex].bin'
+                ValueImpl valueImpl = new ValueImpl("data"+indexPostfix+".bin", ValueType.BINARY, true, false);
+                SourceImpl source = definitionNode.getDefinition().getSource();
+                JcrResourceInputProvider jcrResourceInputProvider =
+                        (JcrResourceInputProvider)source.getModule().getConfigResourceInputProvider();
+                valueImpl.setInternalResourcePath(jcrResourceInputProvider.createResourcePath(property, valueIndex));
+                valueImpl.setNewResource(true);
+                return valueImpl;
             case LONG:
                 return new ValueImpl(jcrValue.getLong());
             case DOUBLE:
@@ -260,7 +288,5 @@ public class ValueProcessor {
                 final String msg = String.format("Unsupported jcrValue type '%s'.", jcrValue.getType());
                 throw new RuntimeException(msg);
         }
-
     }
-
 }

@@ -40,7 +40,6 @@ import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.ExportModuleContext;
 import org.onehippo.cm.model.FileConfigurationWriter;
 import org.onehippo.cm.model.ImportModuleContext;
-import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.PathConfigurationReader;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -222,7 +221,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     public File exportZippedContent(final Node nodeToExport) throws RepositoryException, IOException {
 
-        final Module module = contentService.exportNode(nodeToExport);
+        final ModuleImpl module = contentService.exportNode(nodeToExport);
 
         final File dirToZip = Files.createTempDir();
 
@@ -260,7 +259,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     public String exportContent(final Node nodeToExport) throws RepositoryException, IOException {
 
-        final Module module = contentService.exportNode(nodeToExport);
+        final ModuleImpl module = contentService.exportNode(nodeToExport);
 
         final ModuleContext moduleContext = new ExportModuleContext(module);
         final ContentSourceSerializer contentSourceSerializer = new ContentSourceSerializer(moduleContext, module.getContentSources().iterator().next(), false);
