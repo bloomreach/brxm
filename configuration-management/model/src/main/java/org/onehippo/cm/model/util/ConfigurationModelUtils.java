@@ -56,7 +56,7 @@ public class ConfigurationModelUtils {
         }
 
         if (!absoluteItemPath.startsWith(SEPARATOR)) {
-            logger.warn("{} is not a valid absolute path");
+            logger.warn("{} is not a valid absolute path", absoluteItemPath);
             return ConfigurationItemCategory.CONFIG;
         }
 
