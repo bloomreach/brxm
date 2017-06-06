@@ -23,7 +23,8 @@ const modeToggleComponent = {
   controller,
   bindings: {
     state: '=',
-    icon: '@',
+    iconName: '@?',
+    iconSrc: '@?',
     tooltip: '@?',
   },
 };

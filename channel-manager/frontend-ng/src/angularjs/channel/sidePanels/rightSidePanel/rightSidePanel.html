@@ -39,14 +39,14 @@
                  ng-click="$ctrl.setFullWidth(true)"
                  ng-show="!$ctrl.isFullWidth">
         <md-tooltip md-delay="500">{{ 'FULL_WIDTH' | translate }}</md-tooltip>
-        <md-icon>fullscreen</md-icon>
+        <md-icon md-svg-src="images/maximize-sidepanel.svg"></md-icon>
       </md-button>
       <md-button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
                  aria-label="{{ 'NORMAL_WIDTH' | translate }}"
                  ng-click="$ctrl.setFullWidth(false)"
                  ng-show="$ctrl.isFullWidth">
         <md-tooltip md-delay="500">{{ 'NORMAL_WIDTH' | translate }}</md-tooltip>
-        <md-icon>fullscreen_exit</md-icon>
+        <md-icon md-svg-src="images/un-maximize-sidepanel.svg"></md-icon>
       </md-button>
       <md-button class="md-icon-button qa-publish-in-content-perspective"
                  aria-label="{{ 'PUBLISH' | translate }}"

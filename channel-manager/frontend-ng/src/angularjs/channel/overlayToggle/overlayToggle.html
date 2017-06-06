@@ -19,6 +19,8 @@
            title="{{ $ctrl.tooltip }}">
   <md-icon ng-class="{
             'active': $ctrl.state
-           }">{{ $ctrl.icon }}
+           }"
+           md-svg-src="{{ $ctrl.iconSrc }}">
+    {{ $ctrl.iconName }}
   </md-icon>
 </md-button>
