@@ -73,7 +73,7 @@ public class JcrResourceInputProvider implements ResourceInputProvider {
                 if (valueIndex == 0) {
                     return property.getValue().getBinary().getStream();
                 } else {
-                    throw new IOException(String.format("Invalid JCR property {} value index {}: property is single value",
+                    throw new IOException(String.format("Invalid JCR property %s value index %s: property is single value",
                             propertyPath, valueIndex));
                 }
             } else {
@@ -81,7 +81,7 @@ public class JcrResourceInputProvider implements ResourceInputProvider {
                 if (valueIndex >= 0 && valueIndex < values.length) {
                     return values[valueIndex].getBinary().getStream();
                 } else {
-                    throw new IOException(String.format("Invalid JCR property {} value index {}.",
+                    throw new IOException(String.format("Invalid JCR property %s value index %s.",
                             propertyPath, valueIndex));
                 }
             }
