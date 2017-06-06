@@ -15,9 +15,13 @@
  */
 package org.onehippo.cm.engine.autoexport;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -25,6 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -35,17 +40,30 @@ import javax.jcr.observation.ObservationManager;
 import org.hippoecm.repository.api.RevisionEvent;
 import org.hippoecm.repository.api.RevisionEventJournal;
 import org.onehippo.cm.ConfigurationService;
+import org.onehippo.cm.engine.ConfigurationServiceImpl;
+import org.onehippo.cm.engine.JcrContentProcessingService;
+import org.onehippo.cm.engine.JcrResourceInputProvider;
+import org.onehippo.cm.engine.ValueProcessor;
 import org.onehippo.cm.model.ConfigurationItemCategory;
-import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.ConfigurationNode;
-import org.onehippo.cm.model.util.SnsUtils;
+import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.util.ConfigurationModelUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 
 public class EventJournalProcessor {
 
+    static final Logger log = LoggerFactory.getLogger(EventJournalProcessor.class);
+
     private static final String[] builtinIgnoredEventPaths = new String[] {
-            Constants.SYSTEM_NODETYPES_PATH,
             "/hippo:log",
             "/content/attic",
             "/formdata",
@@ -57,6 +75,61 @@ public class EventJournalProcessor {
             "/" + HCM_ROOT
     };
 
+    private static final int MAX_REPEAT_PROCESS_EVENTS = 3;
+
+    protected static class Changes {
+        private Set<String> changedNsPrefixes = new HashSet<>();
+        private TreeSet<String> addedConfig = new TreeSet<>();
+        private TreeSet<String> changedConfig = new TreeSet<>();
+        private TreeSet<String> addedContent = new TreeSet<>();
+        private TreeSet<String> changedContent = new TreeSet<>();
+        private TreeSet<String> deletedContent = new TreeSet<>();
+        private long creationTime;
+
+        private Changes() {
+            this.creationTime = System.currentTimeMillis();
+        }
+
+        private boolean isEmpty() {
+            return changedNsPrefixes.isEmpty() && changedConfig.isEmpty() && changedContent.isEmpty() && deletedContent.isEmpty();
+        }
+
+        protected Set<String> getChangedNsPrefixes() {
+            return changedNsPrefixes;
+        }
+
+        protected TreeSet<String> getAddedConfig() {
+            return addedConfig;
+        }
+
+        protected TreeSet<String> getChangedConfig() {
+            return changedConfig;
+        }
+
+        protected TreeSet<String> getAddedContent() {
+            return addedContent;
+        }
+
+        protected TreeSet<String> getChangedContent() {
+            return changedContent;
+        }
+
+        protected TreeSet<String> getDeletedContent() {
+            return deletedContent;
+        }
+
+        protected long getCreationTime() {
+            return creationTime;
+        }
+
+        protected void addCurrentChanges(Changes currentChanges) {
+            changedNsPrefixes.addAll(currentChanges.getChangedNsPrefixes());
+            changedConfig.addAll(currentChanges.getChangedConfig());
+            changedContent.addAll(currentChanges.getChangedContent());
+            deletedContent.addAll(currentChanges.getDeletedContent());
+        }
+    }
+
     private final Configuration configuration;
     private final TreeSet<String> ignoredEventPaths;
     private final ConfigurationService configurationService;
@@ -65,17 +138,18 @@ public class EventJournalProcessor {
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private final long minChangeLogAge = 250;
     private long lastRevision = -1;
-    private ChangeLog pendingChangeLog;
-    private ChangeLog currentChangeLog;
+    private Changes pendingChanges;
+    private Changes currentChanges;
     private RevisionEventJournal eventJournal;
-    private ConfigurationModel currentModel;
+    private ConfigurationModelImpl currentModel;
+    private PatternSet exclusionContext;
 
     private ScheduledFuture<?> future;
     private volatile boolean taskFailed;
     private final Runnable task = () -> {
         if (!taskFailed) {
             try {
-                processEvents();
+                tryProcessEvents();
             } catch (Exception e) {
                 taskFailed = true;
                 AutoExportServiceImpl.log.error(e.getClass().getName() + " : " + e.getMessage(), e);
@@ -86,22 +160,12 @@ public class EventJournalProcessor {
         }
     };
 
-    public EventJournalProcessor(final ConfigurationService configurationService,
+    public EventJournalProcessor(final ConfigurationServiceImpl configurationService,
                                  final Configuration configuration, final Set<String> extraIgnoredEventPaths)
             throws RepositoryException {
         this.configurationService = configurationService;
         this.configuration = configuration;
-
-        try {
-            this.currentModel = configurationService.getRuntimeConfigurationModel();
-        } catch (Exception e) {
-            // TODO needs better ConfigurationService exception management
-            if (e instanceof RepositoryException) {
-                throw (RepositoryException)e;
-            }
-            throw new RepositoryException(e.getMessage(), e);
-        }
-
+        this.currentModel = configurationService.getRuntimeConfigurationModel();
         ignoredEventPaths = new TreeSet<>(Arrays.asList(builtinIgnoredEventPaths));
         ignoredEventPaths.addAll(extraIgnoredEventPaths);
 
@@ -113,6 +177,7 @@ public class EventJournalProcessor {
     }
 
     public void start() {
+        exclusionContext = configuration.getExclusionContext();
         synchronized (executor) {
             if (future == null || future.isCancelled() || future.isDone()) {
                 future = executor.scheduleWithFixedDelay(task, 0, minChangeLogAge, TimeUnit.MILLISECONDS);
@@ -145,7 +210,17 @@ public class EventJournalProcessor {
         eventProcessorSession.logout();
     }
 
-    private void processEvents() throws RepositoryException {
+    private void tryProcessEvents() throws RepositoryException {
+        // try processEvents max MAX_REPEAT_PROCESS_EVENTS in a row until success (for one task run)
+        for (int i = 0; i < MAX_REPEAT_PROCESS_EVENTS; i++) {
+            if (processEvents()) {
+                break;
+            }
+            // processEvents unsuccessful: new events arrived before it could export already collected changes
+        }
+    }
+
+    private boolean processEvents() throws RepositoryException {
         if (eventJournal == null) {
             final ObservationManager observationManager = eventProcessorSession.getWorkspace().getObservationManager();
             eventJournal = (RevisionEventJournal)observationManager.getEventJournal();
@@ -155,8 +230,8 @@ public class EventJournalProcessor {
             eventJournal.skipToRevision(lastRevision);
             int count = 0;
             while (eventJournal.hasNext()) {
-                if (currentChangeLog == null) {
-                    currentChangeLog = new ChangeLog();
+                if (currentChanges == null) {
+                    currentChanges = new Changes();
                 }
                 count++;
                 RevisionEvent event = eventJournal.nextEvent();
@@ -164,147 +239,144 @@ public class EventJournalProcessor {
                 if (event.getType() == Event.PERSIST) {
                     continue;
                 }
-                for (String path : processEvent(event)) {
-                    if (AutoExportServiceImpl.log.isDebugEnabled()) {
-                        final String eventPath = event.getPath();
-                        AutoExportServiceImpl.log.debug(String.format("event %d: %s under parent: [%s] at: [%s] for user: [%s]",
-                                event.getRevision(), Constants.getJCREventTypeName(event.getType()), path,
-                                eventPath.startsWith(path) ? eventPath.substring(path.length()) : eventPath,
-                                event.getUserID()));
-                    }
-                }
+                processEvent(event);
             }
             if (count > 0) {
                 AutoExportServiceImpl.log.debug("Read {} events up to {}", count, lastRevision);
             }
-            if (currentChangeLog != null && currentChangeLog.hasChanges()) {
-                if (pendingChangeLog != null) {
-                    pendingChangeLog.getChangedNodePaths().addAll(currentChangeLog.getChangedNodePaths());
+            if (currentChanges != null && !currentChanges.isEmpty()) {
+                if (pendingChanges != null) {
+                    pendingChanges.addCurrentChanges(currentChanges);
                     AutoExportServiceImpl.log.debug("Adding new changes to pending changes");
-                } else if (isReadyForProcessing(currentChangeLog)) {
-                    pendingChangeLog = currentChangeLog;
+                } else if (isReadyForProcessing(currentChanges)) {
+                    pendingChanges = currentChanges;
                 }
             }
-            if (pendingChangeLog != null) {
-                currentChangeLog = null;
-                // TODO: dummy
-                Object configurationDelta = createConfigurationDelta();
+            if (pendingChanges != null) {
+                currentChanges = null;
+                ModuleImpl changesModule = createChangesModule();
                 if (eventJournal.hasNext()) {
-                    // rewind
-                    processEvents();
+                    // new events arrived before we could export the pending changes!
+                    // rewind and let tryProcessEvents() repeat until success
+                    return false;
                 } else {
-                    // TODO
-                    // configurationService.mergeDelta(configurationDelta);
-                    // configuration.setLastRevision(lastRevision);
+                    exportChangesModule(changesModule);
+                    pendingChanges = null;
                 }
             }
         } catch (Exception e) {
             // catch all exceptions, not just RepositoryException
             AutoExportServiceImpl.log.error("Processing events failed: ", e);
         }
+        return true;
     }
 
-    private boolean isReadyForProcessing(final ChangeLog changeLog) {
-        return System.currentTimeMillis() - changeLog.getCreationTime() > minChangeLogAge;
+    private boolean isReadyForProcessing(final Changes changedNodes) {
+        return System.currentTimeMillis() - changedNodes.getCreationTime() > minChangeLogAge;
     }
 
-    private Set<String> processEvent(final Event event) {
-        HashSet<String> changedNodePaths = new HashSet<>();
+    private void processEvent(final RevisionEvent event) {
         try {
-            if (!event.getPath().startsWith(Constants.SYSTEM_NODETYPES_PATH)) {
-                switch (event.getType()) {
-                    case Event.PROPERTY_ADDED:
-                    case Event.PROPERTY_CHANGED:
-                    case Event.PROPERTY_REMOVED:
-                        if (nodeTypeRegistryLastModifiedPropertyPath.equals(event.getPath())) {
-                            if (event.getUserData() != null) {
-                                String[] changedNamespacePrefixes = event.getUserData().split("\\|");
-                                AutoExportServiceImpl.log.debug("detected change event for nodetype prefix(es) [{}]", event.getUserData());
-                                for (String changedNamespacePrefix : changedNamespacePrefixes) {
-                                    final String path = Constants.SYSTEM_NODETYPES_PATH+changedNamespacePrefix;
-                                    currentChangeLog.getChangedNodePaths().add(path);
-                                    changedNodePaths.add(path);
-                                }
+            switch (event.getType()) {
+                case Event.PROPERTY_ADDED:
+                case Event.PROPERTY_CHANGED:
+                case Event.PROPERTY_REMOVED:
+                    if (nodeTypeRegistryLastModifiedPropertyPath.equals(event.getPath())) {
+                        if (event.getUserData() != null) {
+                            String[] changedNamespacePrefixes = event.getUserData().split("\\|");
+                            for (String changedNamespacePrefix : changedNamespacePrefixes) {
+                                currentChanges.getChangedNsPrefixes().add(changedNamespacePrefix);
                             }
-                        } else {
-                            checkAddEventChangedNodePath(event.getPath(), false, false, true, changedNodePaths);
+                            if (log.isDebugEnabled()) {
+                                AutoExportServiceImpl.log.debug(String.format("event %d: namespace prefixes %s updated",
+                                        event.getRevision(), Arrays.toString(changedNamespacePrefixes)));
+                            }
                         }
-                        break;
-                    case Event.NODE_ADDED:
-                        checkAddEventChangedNodePath(event.getPath(), true, false, false, changedNodePaths);
-                        break;
-                    case Event.NODE_REMOVED:
-                        checkAddEventChangedNodePath(event.getPath(), false, true, false, changedNodePaths);
-                        break;
-                    case Event.NODE_MOVED:
-                        final String srcAbsPath = (String)event.getInfo().get("srcAbsPath");
-                        if (srcAbsPath != null) {
-                            // not an order-before
-                            checkAddEventChangedNodePath(event.getPath(), true, false, false, changedNodePaths);
-                            checkAddEventChangedNodePath(srcAbsPath, false, true, false, changedNodePaths);
-                        } else {
-                            checkAddEventChangedNodePath(event.getPath(), false, false, false, changedNodePaths);
-                        }
-                        break;
-                }
+                    } else {
+                        checkAddEventPath(event, event.getPath(), false, false, true);
+                    }
+                    break;
+                case Event.NODE_ADDED:
+                    checkAddEventPath(event, event.getPath(), true, false, false);
+                    break;
+                case Event.NODE_REMOVED:
+                    checkAddEventPath(event, event.getPath(), false, true, false);
+                    break;
+                case Event.NODE_MOVED:
+                    final String srcAbsPath = (String)event.getInfo().get("srcAbsPath");
+                    if (srcAbsPath != null) {
+                        // not an order-before
+                        checkAddEventPath(event, event.getPath(), true, false, false);
+                        checkAddEventPath(event, srcAbsPath, false, true, false);
+                    } else {
+                        checkAddEventPath(event, event.getPath(), false, false, false);
+                    }
+                    break;
             }
         } catch (RepositoryException e) {
             // ignore: return empty set
         }
-        return changedNodePaths;
     }
 
-    private void checkAddEventChangedNodePath(final String eventPath, final boolean addedNode, final boolean deletedNode,
-                                              final boolean propertyPath, final Set<String> changedNodePaths) {
-        if (!overlaps(eventPath, ignoredEventPaths) && !isExcludedInModel(eventPath, propertyPath) &&
-                !overlaps(eventPath, currentChangeLog.getAddedNodePaths())) {
-            if (addedNode) {
-                boolean childPathAddedBefore = removeChildPaths(eventPath, currentChangeLog.getAddedNodePaths());
-                currentChangeLog.getAddedNodePaths().add(eventPath);
-                if (childPathAddedBefore) {
-                    removeChildPaths(eventPath, currentChangeLog.getChangedNodePaths());
+    private void checkAddEventPath(final RevisionEvent event, final String eventPath, final boolean addedNode,
+                                   final boolean deletedNode, final boolean propertyPath) throws RepositoryException {
+        if (!overlaps(eventPath, ignoredEventPaths) && !exclusionContext.matches(eventPath)) {
+
+            final ConfigurationItemCategory category =
+                    ConfigurationModelUtils.getCategoryForItem(eventPath, propertyPath, currentModel);
+
+            if (category == ConfigurationItemCategory.CONFIG && !overlaps(eventPath, currentChanges.getAddedConfig())) {
+                if (addedNode) {
+                    boolean childPathAddedBefore = removeChildPaths(eventPath, currentChanges.getAddedConfig());
+                    currentChanges.getAddedConfig().add(eventPath);
+                    if (childPathAddedBefore) {
+                        removeChildPaths(eventPath, currentChanges.getChangedConfig());
+                    }
+                    currentChanges.getChangedConfig().remove(eventPath);
+                } else if (deletedNode) {
+                    removeChildPaths(eventPath, currentChanges.getAddedConfig());
+                    currentChanges.getAddedConfig().remove(eventPath);
+                    removeChildPaths(eventPath, currentChanges.getChangedConfig());
+                    currentChanges.getChangedConfig().remove(eventPath);
                 }
-                currentChangeLog.getChangedNodePaths().remove(eventPath);
-            } else if (deletedNode) {
-                removeChildPaths(eventPath, currentChangeLog.getAddedNodePaths());
-                currentChangeLog.getAddedNodePaths().remove(eventPath);
-                removeChildPaths(eventPath, currentChangeLog.getChangedNodePaths());
-                currentChangeLog.getChangedNodePaths().remove(eventPath);
+                String parentPath = getParentPath(eventPath);
+                if (currentChanges.getChangedConfig().add(parentPath)) {
+                    logEvent(event, parentPath);
+                }
             }
-            String parentPath = getParentPath(eventPath);
-            if (currentChangeLog.getChangedNodePaths().add(parentPath)) {
-                changedNodePaths.add(parentPath);
-            }
-        }
-    }
-
-    private boolean isExcludedInModel(final String eventPath, final boolean propertyPath) {
-        String[] segments;
-        if ("/".equals(eventPath)) {
-            segments = new String[0];
-        } else {
-            segments = eventPath.substring(1).split("/");
-        }
-        ConfigurationNode node = currentModel.getConfigurationRootNode();
-        for (int i = 0; i < segments.length; i++) {
-            if (propertyPath && i == segments.length-1) {
-                if (ConfigurationItemCategory.RUNTIME == node.getChildPropertyCategory(segments[i])) {
-                    return true;
+            else if (category == ConfigurationItemCategory.CONTENT && !overlaps(eventPath, currentChanges.getAddedContent())) {
+                if (addedNode) {
+                    boolean childPathAddedBefore = removeChildPaths(eventPath, currentChanges.getAddedContent());
+                    currentChanges.getAddedContent().add(eventPath);
+                    if (childPathAddedBefore) {
+                        removeChildPaths(eventPath, currentChanges.getChangedContent());
+                    }
+                    currentChanges.getChangedContent().remove(eventPath);
+                } else if (deletedNode) {
+                    removeChildPaths(eventPath, currentChanges.getAddedContent());
+                    currentChanges.getAddedContent().remove(eventPath);
+                    removeChildPaths(eventPath, currentChanges.getChangedContent());
+                    currentChanges.getChangedContent().remove(eventPath);
+                    removeChildPaths(eventPath, currentChanges.getDeletedContent());
+                    currentChanges.getDeletedContent().add(eventPath);
                 } else {
-                    return false;
-                }
-            } else {
-                String indexedName = SnsUtils.createIndexedName(segments[i]);
-                if (ConfigurationItemCategory.RUNTIME == node.getChildNodeCategory(indexedName)) {
-                    return true;
-                }
-                node = node.getNode(indexedName);
-                if (node == null) {
-                    return false;
+                    final String changedPath = propertyPath ? getParentPath(eventPath) : eventPath;
+                    if (currentChanges.getChangedContent().add(changedPath)) {
+                        logEvent(event, changedPath);
+                    }
                 }
             }
         }
-        return false;
+    }
+
+    private void logEvent(final RevisionEvent event, final String path) throws RepositoryException {
+        if (log.isDebugEnabled()) {
+            final String eventPath = event.getPath();
+            AutoExportServiceImpl.log.debug(String.format("event %d: %s under parent: [%s] at: [%s] for user: [%s]",
+                    event.getRevision(), Constants.getJCREventTypeName(event.getType()), path,
+                    eventPath.startsWith(path) ? eventPath.substring(path.length()) : eventPath,
+                    event.getUserID()));
+        }
     }
 
     private boolean overlaps(final String path, final SortedSet<String> collectedPaths) {
@@ -340,7 +412,75 @@ public class EventJournalProcessor {
     }
 
     // TODO
-    private Object createConfigurationDelta() {
-        return null;
+    private ModuleImpl createChangesModule() throws RepositoryException {
+        final ModuleImpl module = new ModuleImpl("autoexport-module",
+                new ProjectImpl("autoexport-project",
+                        new GroupImpl("autoexport-group")));
+        final JcrResourceInputProvider jcrResourceInputProvider = new JcrResourceInputProvider(eventProcessorSession);
+        module.setConfigResourceInputProvider(jcrResourceInputProvider);
+        module.setContentResourceInputProvider(jcrResourceInputProvider);
+        final ConfigSourceImpl configSource = module.addConfigSource("autoexport.yaml");
+
+        if (!pendingChanges.changedNsPrefixes.isEmpty()) {
+            Set<String> nsPrefixes = new HashSet<>(pendingChanges.getChangedNsPrefixes());
+            List<NamespaceDefinitionImpl> modifiedNsDefs = currentModel.getNamespaceDefinitions().stream()
+                    .filter(d -> nsPrefixes.remove(d.getPrefix()))
+                    .collect(Collectors.toList());
+            for (NamespaceDefinitionImpl nsDef : modifiedNsDefs) {
+                ValueImpl cndPath = new ValueImpl(nsDef.getCndPath().getString(), ValueType.STRING, true, false);
+                cndPath.setInternalResourcePath(jcrResourceInputProvider.createCndResourcePath(nsDef.getPrefix()));
+                cndPath.setDefinition(configSource.addNamespaceDefinition(nsDef.getPrefix(), nsDef.getURI(), cndPath));
+            }
+            for (String newNsPrefix : nsPrefixes) {
+                ValueImpl cndPath = new ValueImpl(newNsPrefix+".cnd", ValueType.STRING, true, false);
+                cndPath.setNewResource(true);
+                cndPath.setInternalResourcePath(jcrResourceInputProvider.createCndResourcePath(newNsPrefix));
+                try {
+                    cndPath.setDefinition(configSource.addNamespaceDefinition(newNsPrefix,
+                            new URI(eventProcessorSession.getNamespaceURI(newNsPrefix)), cndPath));
+                } catch (URISyntaxException e) {
+                    // not going to happen
+                }
+            }
+        }
+        JcrContentProcessingService jcrInputProcessor = new JcrContentProcessingService(new ValueProcessor());
+
+        // TODO: use Configuration.filterUuidPaths during delta computation (suppressing export of jcr:uuid)
+
+        for (String path : pendingChanges.getChangedConfig()) {
+            // TODO
+            // jcrInputProcessor.exportConfigNodeDelta(eventProcessorSession, path, configSource, currentModel);
+        }
+        for (String path : pendingChanges.getChangedContent()) {
+            // TODO
+        }
+        for (String path : pendingChanges.getDeletedContent()) {
+            // TODO
+        }
+
+        return module;
+    }
+
+    private void exportChangesModule(ModuleImpl changesModule) throws RepositoryException {
+        Set<ModuleImpl> exportModules = new HashSet<>();
+        for (GroupImpl g : currentModel.getSortedGroups()) {
+            for (ProjectImpl p : g.getProjects()) {
+                for (ModuleImpl m : p.getModules()) {
+                    if (m.getMvnPath() != null) {
+                        exportModules.add(m);
+                    }
+                }
+            }
+        }
+
+        DefinitionMergeService mergeService = new DefinitionMergeService(configuration);
+        Collection<ModuleImpl> result =
+                mergeService.mergeChangesToModules(changesModule, exportModules, currentModel);
+
+        // TODO: 1) export result to filesystem
+        // TODO  2) configuration.setLastRevision(lastRevision)
+        // TODO  3) save result to baseline (which should do Session.save() thereby also saving the lastRevision update
+        // TODO  4) update or reload ConfigurationService.currentRuntimeModel
+        // TODO  5) update/set EventJournalProcessor.currentModel
     }
 }

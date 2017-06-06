@@ -25,7 +25,7 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
-import org.onehippo.cm.ConfigurationService;
+import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +49,7 @@ public final class AutoExportServiceImpl implements EventListener {
     private EventJournalProcessor eventJournalProcessor;
 
 
-    public AutoExportServiceImpl(final Session configurationSession, final ConfigurationService configurationService)
+    public AutoExportServiceImpl(final Session configurationSession, final ConfigurationServiceImpl configurationService)
             throws RepositoryException {
         final SimpleCredentials credentials = new SimpleCredentials(configurationSession.getUserID(), new char[]{});
         autoExportSession = configurationSession.impersonate(credentials);

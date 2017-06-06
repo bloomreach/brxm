@@ -203,7 +203,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     }
 
     @Override
-    public ConfigurationModel getRuntimeConfigurationModel() {
+    public ConfigurationModelImpl getRuntimeConfigurationModel() {
         return runtimeConfigurationModel;
     }
 

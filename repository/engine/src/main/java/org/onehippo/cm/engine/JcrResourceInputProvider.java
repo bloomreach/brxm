@@ -18,17 +18,22 @@ package org.onehippo.cm.engine;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.Source;
 
 public class JcrResourceInputProvider implements ResourceInputProvider {
+
+    private static final String CND_RESOURCE_PATH_PREFIX = "cnd:";
 
     private final Session session;
 
@@ -45,8 +50,21 @@ public class JcrResourceInputProvider implements ResourceInputProvider {
         return property.getPath()+"["+valueIndex+"]";
     }
 
+    public String createCndResourcePath(final String prefix) throws RepositoryException {
+        return CND_RESOURCE_PATH_PREFIX + prefix;
+    }
+
     @Override
     public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
+        if (resourcePath.startsWith(CND_RESOURCE_PATH_PREFIX)) {
+            final String nsPrefix = resourcePath.substring(CND_RESOURCE_PATH_PREFIX.length());
+            try {
+                final String resource = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(session.getWorkspace(), nsPrefix);
+                return IOUtils.toInputStream(resource, StandardCharsets.UTF_8);
+            } catch (RepositoryException e) {
+                throw new IOException("Failed to export cnd for namespace prefix: "+nsPrefix, e);
+            }
+        }
         final String propertyPath = StringUtils.substringBeforeLast(resourcePath, "[");
         final int valueIndex = Integer.parseInt(resourcePath.substring(propertyPath.length()+1, resourcePath.length()-1));
         try {

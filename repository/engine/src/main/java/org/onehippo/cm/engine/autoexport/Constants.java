@@ -37,7 +37,6 @@ public final class Constants {
     public static final String CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME = "autoexport:filteruuidpaths";
     public static final String CONFIG_LAST_REVISION_PROPERTY_NAME = "autoexport:lastrevision";
     public static final String CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME = "autoexport:ntrlastmodified";
-    public static final String SYSTEM_NODETYPES_PATH = "/jcr:system/jcr:nodeTypes/";
 
     public static final String DEFAULT_MAIN_CONFIG_FILE = "main.yaml";
 

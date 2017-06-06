@@ -20,7 +20,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.jcr.ItemExistsException;
@@ -43,12 +45,21 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.DefinitionType;
+import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
+import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
+import org.onehippo.cm.model.impl.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.ContentSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
@@ -72,6 +83,7 @@ import static org.onehippo.cm.model.ActionType.DELETE;
 import static org.onehippo.cm.model.Constants.YAML_EXT;
 import static org.onehippo.cm.model.ValueType.REFERENCE;
 import static org.onehippo.cm.model.ValueType.WEAKREFERENCE;
+import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 
 /**
  * Applies definition nodes to JCR
@@ -228,14 +240,18 @@ public class JcrContentProcessingService {
                 continue;
             }
 
-            if (property.isMultiple()) {
-                definitionNode.addProperty(property.getName(), ValueType.fromJcrType(property.getType()),
-                        valueProcessor.valuesFrom(property, definitionNode));
-            } else {
-                final ValueImpl value = valueProcessor.valueFrom(property, definitionNode);
-                final DefinitionPropertyImpl targetProperty = definitionNode.addProperty(property.getName(), value);
-                value.setParent(targetProperty);
-            }
+            exportProperty(property, definitionNode);
+        }
+    }
+
+    private void exportProperty(final Property property, DefinitionNodeImpl definitionNode) throws RepositoryException {
+        if (property.isMultiple()) {
+            definitionNode.addProperty(property.getName(), ValueType.fromJcrType(property.getType()),
+                    valueProcessor.valuesFrom(property, definitionNode));
+        } else {
+            final ValueImpl value = valueProcessor.valueFrom(property, definitionNode);
+            final DefinitionPropertyImpl targetProperty = definitionNode.addProperty(property.getName(), value);
+            value.setParent(targetProperty);
         }
     }
 
@@ -253,6 +269,212 @@ public class JcrContentProcessingService {
             }
             definitionNode.addProperty(JCR_MIXINTYPES, ValueType.STRING, values.toArray(new ValueImpl[values.size()]));
         }
+    }
+
+    public void exportConfigNodeDelta(final Session session, final String jcrPath, final ConfigSourceImpl configSource,
+                                final ConfigurationModelImpl model) throws RepositoryException {
+
+        ConfigurationNodeImpl configNode = model.getConfigurationRootNode();
+        Node jcrNode = session.getRootNode();
+
+        boolean deletedNode = false;
+        final String[] pathSegments = jcrPath.substring(1).split("/");
+        int pathIndex = 0;
+        for (; pathIndex < pathSegments.length; pathIndex++) {
+            final String childName = pathSegments[pathIndex];
+
+            if (childName.contains("[")) {
+                // we cannot create a definition path for an indexed name
+                break;
+            }
+
+            final String indexedChildName = createIndexedName(childName);
+            if (!jcrNode.hasNode(indexedChildName)) {
+                deletedNode = true;
+                break;
+            }
+
+            configNode = configNode.getNode(indexedChildName);
+            if (configNode == null) {
+                // not a delta: no config defined yet
+                break;
+            }
+
+            jcrNode = jcrNode.getNode(indexedChildName);
+        }
+        final String definitionNodePath = jcrNode.getPath() + (deletedNode ? "/" + pathSegments[pathIndex] : "");
+        DefinitionNodeImpl definitionNode = getOrCreateConfigDefinitionNodeForPath(definitionNodePath, configSource);
+
+        if (deletedNode) {
+            definitionNode.setDelete(true);
+            return;
+        }
+
+        if (configNode != null) {
+            for (; pathIndex < pathSegments.length; pathIndex++) {
+                final String childName = pathSegments[pathIndex];
+
+                DefinitionNodeImpl childDefNode = definitionNode.getNodes().get(childName);
+                if (childDefNode == null) {
+                    childDefNode = definitionNode.addNode(childName);
+                }
+                definitionNode = childDefNode;
+
+                final String indexedChildName = createIndexedName(childName);
+                if (!jcrNode.hasNode(indexedChildName)) {
+                    deletedNode = true;
+                    break;
+                }
+
+                configNode = configNode.getNode(indexedChildName);
+                if (configNode == null) {
+                    // not a delta: no config defined yet
+                    break;
+                }
+            }
+        }
+        if (deletedNode) {
+            definitionNode.setDelete(true);
+            return;
+        }
+
+        if (configNode == null) {
+            processProperties(jcrNode, definitionNode);
+            for (final Node childNode : new NodeIterable(jcrNode.getNodes())) {
+                exportNode(childNode, definitionNode);
+            }
+        } else {
+            exportConfigNodeDelta(jcrNode, definitionNode, configNode);
+        }
+        if (definitionNode.isEmpty()) {
+            // TODO: remove empty delta definitionNode as the change seemingly was a false positive
+        }
+    }
+
+    private DefinitionNodeImpl getOrCreateConfigDefinitionNodeForPath(final String path, final ConfigSourceImpl configSource) {
+        ConfigDefinitionImpl definition = null;
+        for (AbstractDefinitionImpl def : configSource.getModifiableDefinitions()) {
+            if (def.getType() == DefinitionType.CONFIG) {
+                ConfigDefinitionImpl configDef = (ConfigDefinitionImpl)def;
+                if (path.startsWith(configDef.getNode().getPath())) {
+                    if (definition == null) {
+                        definition = configDef;
+                    } else if (configDef.getNode().getPath().length() > definition.getNode().getPath().length()) {
+                        definition = configDef;
+                    }
+                }
+            }
+        }
+        if (definition == null) {
+            definition = configSource.addConfigDefinition();
+            definition.setNode(new DefinitionNodeImpl(path, StringUtils.substringAfterLast(path, "/"), definition));
+        }
+        return definition.getNode();
+    }
+
+    private void exportPropertiesDelta(final Node jcrNode, final DefinitionNodeImpl definitionNode,
+                                       final ConfigurationNodeImpl configNode) throws RepositoryException {
+
+        exportPrimaryTypeDelta(jcrNode, definitionNode, configNode);
+        exportMixinsDelta(jcrNode, definitionNode, configNode);
+
+        for (final Property jcrProperty : new PropertyIterable(jcrNode.getProperties())) {
+            if (jcrProperty.getName().equals(JCR_PRIMARYTYPE) || jcrProperty.getName().equals(JCR_MIXINTYPES)) {
+                continue;
+            }
+            if (isKnownDerivedPropertyName(jcrProperty.getName())) {
+                continue;
+            }
+            if (configNode.getChildPropertyCategory(jcrProperty.getName()) != ConfigurationItemCategory.CONFIG) {
+                // skip RUNTIME property
+                continue;
+            }
+            ConfigurationPropertyImpl configProperty = configNode.getProperty(jcrProperty.getName());
+            if (configProperty == null) {
+                // full export
+                exportProperty(jcrProperty, definitionNode);
+            } else {
+                exportPropertyDelta(jcrProperty, configProperty, definitionNode);
+            }
+        }
+    }
+
+    private void exportPrimaryTypeDelta(final Node jcrNode, final DefinitionNodeImpl definitionNode,
+                                        final ConfigurationNodeImpl configNode) throws RepositoryException {
+        if (!jcrNode.getPrimaryNodeType().getName().equals(configNode)) {
+            final Property primaryTypeProperty = jcrNode.getProperty(JCR_PRIMARYTYPE);
+            final ValueImpl value = valueProcessor.valueFrom(primaryTypeProperty, definitionNode);
+            definitionNode.addProperty(primaryTypeProperty.getName(), value).setOperation(PropertyOperation.OVERRIDE);
+        }
+    }
+
+    private void exportMixinsDelta(final Node jcrNode, final DefinitionNodeImpl definitionNode,
+                                   final ConfigurationNodeImpl configNode) throws RepositoryException {
+        final ConfigurationPropertyImpl mixinsProperty = configNode.getProperty(JCR_MIXINTYPES);
+        final NodeType[] mixinNodeTypes = jcrNode.getMixinNodeTypes();
+        if (mixinNodeTypes.length > 0) {
+            final Set<String> jcrMixins = new HashSet<>();
+            for (final NodeType mixinNodeType : mixinNodeTypes) {
+                jcrMixins.add(mixinNodeType.getName());
+            }
+            PropertyOperation op = null;
+            if (mixinsProperty != null) {
+                if (Arrays.stream(mixinsProperty.getValues()).anyMatch(v -> !jcrMixins.contains(v.getString()))) {
+                    op = PropertyOperation.OVERRIDE;
+                } else {
+                    Arrays.stream(mixinsProperty.getValues()).forEach(v->jcrMixins.remove(v.getString()));
+                    if (!jcrMixins.isEmpty()) {
+                        op = PropertyOperation.ADD;
+                    }
+                }
+            }
+            if (!jcrMixins.isEmpty()) {
+                DefinitionPropertyImpl propertyDef = definitionNode .addProperty(JCR_MIXINTYPES,
+                        ValueType.STRING,jcrMixins.stream().map(ValueImpl::new).toArray(ValueImpl[]::new));
+                if (op != null) {
+                    propertyDef.setOperation(op);
+                }
+            }
+        } else if (mixinsProperty != null) {
+            definitionNode.addProperty(JCR_MIXINTYPES, ValueType.STRING, new ValueImpl[0])
+                    .setOperation(PropertyOperation.DELETE);
+        }
+    }
+
+    private void exportPropertyDelta(final Property property, final ConfigurationPropertyImpl configProperty,
+                                     DefinitionNodeImpl definitionNode) throws RepositoryException {
+        // TODO: export property delta (replace or add)
+    }
+
+    private void exportConfigNodeDelta(final Node jcrNode, final DefinitionNodeImpl parentDefinitionNode,
+                                       final ConfigurationNodeImpl configNode) throws RepositoryException {
+
+        // TODO: depth-first export of delta, to prevent creating unnecessary empty children when the change is only
+        // TODO  on a high(er) path
+
+//        final DefinitionNodeImpl definitionNode = parentDefinitionNode.addNode(createNodeName(jcrNode));
+
+        // TODO: create 'dummy' wrapper definitionNode which only creates the real definitionNode (and possible
+        // TODO  intermediate parents 'on demand', when needed
+        final DefinitionNodeImpl wrapperDefinitionNode = null;
+
+        exportPropertiesDelta(jcrNode, wrapperDefinitionNode, configNode);
+
+        // TODO: compute child nodes delta first, see also the 'inverse' at ConfigurationConfigService.computeAndWriteChildNodesDelta(...)
+        //       ...
+        // TODO  then recursing into child processing itself, something like below
+        //       ...
+        /*
+        for (final Node childNode : new NodeIterable(jcrNode.getNodes())) {
+            final ConfigurationNodeImpl childConfigNode = configNode.getNode(createIndexedName(childNode));
+            if (childConfigNode == null) {
+                processProperties(childNode, wrapperDefinitionNode);
+                exportNode(childNode, definitionNode);
+            } else {
+                exportConfigNodeDelta(childNode, wrapperDefinitionNode, childConfigNode);
+            }
+        }
+        */
     }
 
     /**
