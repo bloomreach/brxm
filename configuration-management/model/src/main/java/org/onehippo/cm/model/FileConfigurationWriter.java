@@ -23,12 +23,13 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
-import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
+import org.onehippo.cm.model.serializer.AggregatedModulesDescriptorSerializer;
 import org.onehippo.cm.model.serializer.SourceSerializer;
 import org.yaml.snakeyaml.nodes.Node;
 
@@ -37,17 +38,17 @@ import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 public class FileConfigurationWriter {
 
     void write(final Path destination,
-               final Map<String, ? extends Group> groups,
+               final Collection<? extends Group> groups,
                final Map<Module, ModuleContext> moduleContextMap,
                final boolean explicitSequencing) throws IOException {
-        final ModuleDescriptorSerializer moduleDescriptorSerializer = new ModuleDescriptorSerializer(explicitSequencing);
+        final AggregatedModulesDescriptorSerializer moduleDescriptorSerializer = new AggregatedModulesDescriptorSerializer(explicitSequencing);
         final Path moduleDescriptorPath = destination.resolve(Constants.HCM_MODULE_YAML);
 
         try (final OutputStream moduleDescriptorOutputStream = new FileOutputStream(moduleDescriptorPath.toFile())) {
             moduleDescriptorSerializer.serialize(moduleDescriptorOutputStream, groups);
         }
 
-        for (Group group : groups.values()) {
+        for (Group group : groups) {
             for (Project project : group.getProjects()) {
                 for (Module module : project.getModules()) {
                     final ModuleContext moduleContext = moduleContextMap.get(module);

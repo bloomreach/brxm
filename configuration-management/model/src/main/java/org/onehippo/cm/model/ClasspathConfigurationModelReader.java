@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -122,12 +121,12 @@ public class ClasspathConfigurationModelReader {
                         new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
 
                 // store mvnSourcePath on each module for later use by auto-export
-                result.getGroups().values().stream()
+                result.getGroups().stream()
                         .flatMap(g -> g.getProjects().stream())
                         .flatMap(p -> p.getModules().stream())
                         .forEach(m -> m.setMvnPath(mvnModulePath));
 
-                groupsFromSourceFiles.addAll(result.getGroups().values());
+                groupsFromSourceFiles.addAll(result.getGroups());
             }
 
         }
@@ -170,7 +169,7 @@ public class ClasspathConfigurationModelReader {
                 // Hang onto a reference to this FS, so we can close it later with ConfigurationModel.close()
                 groups.getLeft().add(fs);
 
-                groups.getRight().addAll(result.getGroups().values());
+                groups.getRight().addAll(result.getGroups());
             }
             else {
                 // if part of the classpath is a raw dir on the native filesystem, just use the default FileSystem
@@ -180,7 +179,7 @@ public class ClasspathConfigurationModelReader {
                 final PathConfigurationReader.ReadResult result =
                         new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
 
-                groups.getRight().addAll(result.getGroups().values());
+                groups.getRight().addAll(result.getGroups());
             }
         }
         return groups;

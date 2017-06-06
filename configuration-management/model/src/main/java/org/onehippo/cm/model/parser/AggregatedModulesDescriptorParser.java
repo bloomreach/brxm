@@ -16,6 +16,8 @@
 package org.onehippo.cm.model.parser;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -32,17 +34,16 @@ import static org.onehippo.cm.model.Constants.MODULE_KEY;
 import static org.onehippo.cm.model.Constants.PROJECTS_KEY;
 import static org.onehippo.cm.model.Constants.PROJECT_KEY;
 
-public class ModuleDescriptorParser extends AbstractBaseParser {
+public class AggregatedModulesDescriptorParser extends AbstractBaseParser {
 
-    public ModuleDescriptorParser(final boolean explicitSequencing) {
+    public AggregatedModulesDescriptorParser(final boolean explicitSequencing) {
         super(explicitSequencing);
     }
 
-    // TODO: this return value is super annoying -- why not just return a List<GroupImpl>?
-    public Map<String, GroupImpl> parse(final InputStream inputStream, final String location) throws ParserException {
+    public Collection<GroupImpl> parse(final InputStream inputStream, final String location) throws ParserException {
         final Node node = composeYamlNode(inputStream, location);
 
-        final Map<String, GroupImpl> result = new LinkedHashMap<>();
+        final Collection<GroupImpl> result = new ArrayList<>();
         final Map<String, Node> sourceMap = asMapping(node, new String[]{GROUPS_KEY}, null);
 
         for (Node groupNode : asSequence(sourceMap.get(GROUPS_KEY))) {
@@ -52,12 +53,12 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
         return result;
     }
 
-    private void constructGroup(final Node src, final Map<String, GroupImpl> parent) throws ParserException {
+    private void constructGroup(final Node src, final Collection<GroupImpl> parent) throws ParserException {
         final Map<String, Node> groupMap = asMapping(src, new String[]{GROUP_KEY, PROJECTS_KEY}, new String[]{AFTER_KEY});
         final String name = asStringScalar(groupMap.get(GROUP_KEY));
         final GroupImpl group = new GroupImpl(name);
         group.addAfter(asSingleOrSetOfStrScalars(groupMap.get(AFTER_KEY)));
-        parent.put(name, group);
+        parent.add(group);
 
         for (Node projectNode : asSequence(groupMap.get(PROJECTS_KEY))) {
             constructProject(projectNode, group);

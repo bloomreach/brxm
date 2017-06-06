@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,25 +34,32 @@ import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.parser.ActionListParser;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
-import org.onehippo.cm.model.parser.ModuleDescriptorParser;
+import org.onehippo.cm.model.parser.AggregatedModulesDescriptorParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.SourceParser;
 import org.onehippo.cm.model.util.FileConfigurationUtils;
+
+import com.google.common.collect.Maps;
 
 public class PathConfigurationReader {
 
     private final boolean explicitSequencing;
 
     public static class ReadResult {
-        private final Map<String, GroupImpl> groups;
+        private final Collection<GroupImpl> groups;
         private final Map<Module, ModuleContext> moduleContexts;
 
-        public ReadResult(Map<String, GroupImpl> groups, Map<Module, ModuleContext> moduleContexts) {
+        public ReadResult(Collection<GroupImpl> groups, Map<Module, ModuleContext> moduleContexts) {
             this.groups = groups;
             this.moduleContexts = moduleContexts;
         }
 
-        public Map<String, GroupImpl> getGroups() {
+        // note: this method is currently only used for testing purposes
+        public Map<String, GroupImpl> getGroupsMap() {
+            return Maps.uniqueIndex(groups, GroupImpl::getName);
+        }
+
+        public Collection<GroupImpl> getGroups() {
             return groups;
         }
 
@@ -85,14 +93,15 @@ public class PathConfigurationReader {
     public ReadResult read(final Path moduleDescriptorPath, final boolean verifyOnly) throws IOException, ParserException {
         final InputStream moduleDescriptorInputStream = moduleDescriptorPath.toUri().toURL().openStream();
 
-        final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
-        final Map<String, GroupImpl> groups =
-                moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
+        // todo switch to single-module alternate parser
+        final AggregatedModulesDescriptorParser moduleDescriptorParser = new AggregatedModulesDescriptorParser(explicitSequencing);
+        final Collection<GroupImpl> groups = moduleDescriptorParser
+                .parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
 
         final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(groups);
         final Map<Module, ModuleContext> moduleContexts = new HashMap<>();
 
-        for (GroupImpl group : groups.values()) {
+        for (GroupImpl group : groups) {
             for (ProjectImpl project : group.getProjects()) {
                 for (ModuleImpl module : project.getModules()) {
 

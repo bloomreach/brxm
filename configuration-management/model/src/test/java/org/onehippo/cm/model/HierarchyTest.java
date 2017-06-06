@@ -38,7 +38,7 @@ public class HierarchyTest extends AbstractBaseTest {
     @Test
     public void expect_hierarchy_test_loads() throws IOException, ParserException {
         final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/hierarchy_test/"+ Constants.HCM_MODULE_YAML);
-        final Map<String, GroupImpl> groups = result.getGroups();
+        final Map<String, GroupImpl> groups = result.getGroupsMap();
         assertEquals(2, groups.size());
 
         final GroupImpl base = assertGroup(groups, "base", new String[0], 1);

@@ -17,6 +17,7 @@ package org.onehippo.cm.model.util;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -74,8 +75,8 @@ public class FileConfigurationUtils {
         }
     }
 
-    public static boolean hasMultipleModules(Map<String, GroupImpl> groups) {
-        return groups.values().stream().flatMap(p -> p.getProjects().stream()).mapToInt(p -> p.getModules().size()).sum() > 1;
+    public static boolean hasMultipleModules(Collection<GroupImpl> groups) {
+        return groups.stream().flatMap(p -> p.getProjects().stream()).mapToInt(p -> p.getModules().size()).sum() > 1;
     }
 
     /**

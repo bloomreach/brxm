@@ -52,7 +52,7 @@ import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.SourceParser;
-import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
+import org.onehippo.cm.model.serializer.AggregatedModulesDescriptorSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -548,7 +548,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      */
     public String compileDummyDescriptor() {
         // serialize a dummy module descriptor for this module
-        final ModuleDescriptorSerializer moduleDescriptorSerializer = new ModuleDescriptorSerializer(DEFAULT_EXPLICIT_SEQUENCING);
+        final AggregatedModulesDescriptorSerializer moduleDescriptorSerializer = new AggregatedModulesDescriptorSerializer(DEFAULT_EXPLICIT_SEQUENCING);
 
         // create a dummy group->project->module setup with just the data relevant to this Module
         GroupImpl group = new GroupImpl(getProject().getGroup().getName());
@@ -561,13 +561,11 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         log.debug("Creating dummy module descriptor for {}/{}/{}",
                 group.getName(), project.getName(), getName());
 
-        HashMap<String, GroupImpl> groups = new HashMap<>();
-        groups.put(group.getName(), group);
-
         // serialize that dummy group
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            moduleDescriptorSerializer.serialize(baos, groups);
+            // todo switch to single-module alternate serializer
+            moduleDescriptorSerializer.serialize(baos, Collections.singleton(group));
             return baos.toString(StandardCharsets.UTF_8.name());
         }
         catch (IOException e) {

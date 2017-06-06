@@ -48,7 +48,7 @@ public class ParserValueTest extends AbstractBaseTest {
     @Test
     public void expect_value_test_loads() throws IOException, ParserException, URISyntaxException {
         final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/value_test/"+ Constants.HCM_MODULE_YAML);
-        final Map<String, GroupImpl> groups = result.getGroups();
+        final Map<String, GroupImpl> groups = result.getGroupsMap();
 
         assertEquals(1, groups.size());
 

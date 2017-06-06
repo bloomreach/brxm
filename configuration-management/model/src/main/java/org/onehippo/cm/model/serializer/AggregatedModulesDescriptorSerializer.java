@@ -18,6 +18,7 @@ package org.onehippo.cm.model.serializer;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,21 +44,21 @@ import static org.onehippo.cm.model.Constants.PROJECTS_KEY;
 import static org.onehippo.cm.model.Constants.PROJECT_KEY;
 
 
-public class ModuleDescriptorSerializer extends AbstractBaseSerializer {
+public class AggregatedModulesDescriptorSerializer extends AbstractBaseSerializer {
 
-    public ModuleDescriptorSerializer(final boolean explicitSequencing) {
+    public AggregatedModulesDescriptorSerializer(final boolean explicitSequencing) {
         super(explicitSequencing);
     }
 
-    public void serialize(final OutputStream outputStream, final Map<String, ? extends Group> groups) throws IOException {
+    public void serialize(final OutputStream outputStream, final Collection<? extends Group> groups) throws IOException {
         final Node node = representGroups(groups);
         serializeNode(outputStream, node);
     }
 
-    private Node representGroups(final Map<String, ? extends Group> groups) {
+    private Node representGroups(final Collection<? extends Group> groups) {
         final List<NodeTuple> rootTuples = new ArrayList<>();
 
-        final List<Node> groupNodes = groups.values().stream().map(this::representGroup)
+        final List<Node> groupNodes = groups.stream().map(this::representGroup)
                 .collect(Collectors.toList());
         rootTuples.add(createStrSeqTuple(GROUPS_KEY, groupNodes));
 
