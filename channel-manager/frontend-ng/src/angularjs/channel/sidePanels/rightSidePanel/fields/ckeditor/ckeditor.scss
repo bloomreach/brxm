@@ -46,6 +46,17 @@
 
 .cke_top {
   border-bottom: 0 !important;
+
+  /* Remove codemirror buttons in CKEditor toolbar */
+  .cke_button {
+    &.cke_button__searchcode,
+    &.cke_button__autoformat,
+    &.cke_button__commentselectedrange,
+    &.cke_button__uncommentselectedrange,
+    &.cke_button__autocomplete {
+       display: none;
+    }
+  }
 }
 
 .cke_bottom {
@@ -65,6 +76,12 @@
     * {
       font-family: monospace !important;
       font-size: 12px;
+    }
+  }
+
+  .cke_dialog_ui_button {
+    &.UncommentSelectedRange {
+      margin-top: 0 !important;
     }
   }
 }
