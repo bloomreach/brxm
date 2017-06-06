@@ -65,6 +65,7 @@ public class FileConfigurationWriter {
         public void writeModule(final Module module, final boolean explicitSequencing,
                             final ModuleContext moduleContext) throws IOException {
 
+        // TODO: remove deleted resources first
         moduleContext.collectExistingFilesAndResolveNewResources();
 
         for (final Source source : module.getSources()) {
