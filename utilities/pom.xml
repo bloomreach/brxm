@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -60,11 +60,6 @@
       <artifactId>spring-web</artifactId>
       <version>${spring.version}</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-services</artifactId>
-      <version>4.0.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

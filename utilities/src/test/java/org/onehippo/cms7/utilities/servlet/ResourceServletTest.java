@@ -21,15 +21,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Assert;
 import org.junit.Test;
-import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletConfig;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 public class ResourceServletTest {
 
@@ -44,8 +43,8 @@ public class ResourceServletTest {
         final MockHttpServletResponse validResponse = new MockHttpServletResponse();
         final ResourceServlet servlet = initializeServlet(false, null, null);
         servlet.service(servletRequest, validResponse);
-        Assert.assertThat("Default servlet should allow any request.", validResponse.getStatus(), is(200));
-        Assert.assertThat("Response should be of type image/gif.", validResponse.getContentType(), is("image/gif"));
+        assertThat("Default servlet should allow any request.", validResponse.getStatus(), is(200));
+        assertThat("Response should be of type image/gif.", validResponse.getContentType(), is("image/gif"));
     }
 
     @Test
@@ -59,7 +58,7 @@ public class ResourceServletTest {
         final MockHttpServletResponse invalidResponse = new MockHttpServletResponse();
         final ResourceServlet resourceServlet = initializeServlet(false, null, null);
         resourceServlet.service(servletRequest, invalidResponse);
-        Assert.assertThat("Should give 404 since internal.properties is not accepted.", invalidResponse.getStatus(), is(404));
+        assertThat("Should give 404 since internal.properties is not accepted.", invalidResponse.getStatus(), is(404));
     }
 
     @Test
@@ -73,8 +72,8 @@ public class ResourceServletTest {
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
         final ResourceServlet servlet = initializeServlet(false, GIF_RESOURCE_PATH, GIF_RESOURCE_MIME);
         servlet.service(servletRequest, servletResponse);
-        Assert.assertThat("Servlet should allow requests for image/gif.", servletResponse.getStatus(), is(200));
-        Assert.assertThat("Response should be of type image/gif.", servletResponse.getContentType(), is("image/gif"));
+        assertThat("Servlet should allow requests for image/gif.", servletResponse.getStatus(), is(200));
+        assertThat("Response should be of type image/gif.", servletResponse.getContentType(), is("image/gif"));
     }
 
     @Test
@@ -88,9 +87,9 @@ public class ResourceServletTest {
         final MockHttpServletResponse validResponse = new MockHttpServletResponse();
         final ResourceServlet servlet = initializeServlet(false, PROPERTIES_RESOURCE_PATH, PROPERTIES_RESOURCE_MIME);
         servlet.service(request, validResponse);
-        Assert.assertThat("Servlet should allow requests for text/plain.", validResponse.getStatus(), is(200));
-        Assert.assertThat("Response should be of type text/plain.", validResponse.getContentType(), is("text/plain"));
-        Assert.assertThat("Response content should be encoded.", validResponse.getHeader("Content-Encoding"), is("gzip"));
+        assertThat("Servlet should allow requests for text/plain.", validResponse.getStatus(), is(200));
+        assertThat("Response should be of type text/plain.", validResponse.getContentType(), is("text/plain"));
+        assertThat("Response content should be encoded.", validResponse.getHeader("Content-Encoding"), is("gzip"));
     }
 
     @Test
@@ -99,7 +98,7 @@ public class ResourceServletTest {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final ResourceServlet servlet = initializeServlet(true, GIF_RESOURCE_PATH, GIF_RESOURCE_MIME);
         servlet.service(request, response);
-        Assert.assertThat("Unauthorized request should give 404.", response.getStatus(), is(404));
+        assertThat("Unauthorized request should give 404.", response.getStatus(), is(404));
     }
 
     @Test
@@ -109,8 +108,8 @@ public class ResourceServletTest {
         final ResourceServlet servlet = initializeServlet(true);
         fakeLoggedinUser(request);
         servlet.service(request, response);
-        Assert.assertThat("Authorized request should give resource.", response.getStatus(), is(200));
-        Assert.assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
+        assertThat("Authorized request should give resource.", response.getStatus(), is(200));
+        assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
     }
 
     private ResourceServlet initializeServlet(final boolean requireAuthentication) throws ServletException {
@@ -136,26 +135,8 @@ public class ResourceServletTest {
 
     private void fakeLoggedinUser(final MockHttpServletRequest request) {
         final HttpSession mockedSession = new MockHttpSession();
-        mockedSession.setAttribute(CmsSessionContext.class.getName(), new MockSessionContext());
+        mockedSession.setAttribute("hippo:username", "admin");
         request.setSession(mockedSession);
-    }
-
-    class MockSessionContext implements CmsSessionContext {
-
-        @Override
-        public String getId() {
-            return null;
-        }
-
-        @Override
-        public String getCmsContextServiceId() {
-            return null;
-        }
-
-        @Override
-        public Object get(final String s) {
-            return null;
-        }
     }
 
     private static MockHttpServletRequest getMockHttpServletRequest() {

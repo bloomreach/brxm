@@ -44,7 +44,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -497,7 +496,7 @@ public class ResourceServlet extends HttpServlet {
             return false;
         }
 
-        if(requireAuthentication && !isUserLoggedIn(servletRequest)) {
+        if (requireAuthentication && !isUserLoggedIn(servletRequest)) {
             return false;
         }
 
@@ -512,13 +511,7 @@ public class ResourceServlet extends HttpServlet {
 
     private static boolean isUserLoggedIn(final HttpServletRequest servletRequest) {
         final HttpSession httpSession = servletRequest.getSession(false);
-
-        if (httpSession == null) {
-            return false;
-        }
-
-        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
-        return cmsSessionContext != null;
+        return httpSession != null && httpSession.getAttribute("hippo:username") != null;
     }
 
     private URL getJarResource(final String resourcePath) {

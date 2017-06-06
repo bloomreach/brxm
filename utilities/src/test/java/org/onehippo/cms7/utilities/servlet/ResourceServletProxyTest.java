@@ -39,7 +39,7 @@ public class ResourceServletProxyTest {
 
     @Test
     public void testProxy() throws Exception {
-        final ProxyServlet proxyServlet = new ProxyServlet("/servlet", "false",
+        final ProxyServlet proxyServlet = new ProxyServlet("/servlet",
                 "servlet/path@classpath:org/onehippo/cms7/utilities/servlet/test");
         final HttpServletResponse response = proxyServlet.get("/path/index.js");
 
@@ -49,9 +49,9 @@ public class ResourceServletProxyTest {
 
     @Test
     public void testProxies() throws Exception {
-        final ProxyServlet proxyServlet = new ProxyServlet("/servlet", "false",
+        final ProxyServlet proxyServlet = new ProxyServlet("/servlet",
                 "servlet/path@classpath:org/onehippo/cms7/utilities/servlet/test," +
-                "servlet/path2@classpath:org/onehippo/cms7/utilities/servlet/test2");
+                        "servlet/path2@classpath:org/onehippo/cms7/utilities/servlet/test2");
 
         final HttpServletResponse response1 = proxyServlet.get("/path/index.js");
         assertEquals(200, response1.getStatus());
@@ -64,7 +64,7 @@ public class ResourceServletProxyTest {
 
     @Test
     public void testProxyFileNotFound() throws Exception {
-        final ProxyServlet proxyServlet = new ProxyServlet("/servlet", "false",
+        final ProxyServlet proxyServlet = new ProxyServlet("/servlet",
                 "servlet/path@classpath:org/onehippo/cms7/utilities/servlet/test");
         final HttpServletResponse response = proxyServlet.get("/path/non-existing.js");
 
@@ -73,7 +73,7 @@ public class ResourceServletProxyTest {
 
     @Test
     public void testProxyDisabled() throws Exception {
-        final ProxyServlet proxyServlet = new ProxyServlet("/servlet", "false", "");
+        final ProxyServlet proxyServlet = new ProxyServlet("/servlet", "");
 
         final HttpServletResponse response = proxyServlet.get("/sub/index.js");
         assertEquals(404, response.getStatus());
@@ -98,7 +98,7 @@ public class ResourceServletProxyTest {
 
         final ResourceServlet servlet;
 
-        ProxyServlet(final String jarPathPrefix, final String requireAuthentication, final String resourceProxies) throws ServletException {
+        ProxyServlet(final String jarPathPrefix, final String resourceProxies) throws ServletException {
             System.setProperty("resource.proxies", resourceProxies);
 
             servlet = new ResourceServlet();
@@ -106,7 +106,7 @@ public class ResourceServletProxyTest {
             final MockServletConfig config = new MockServletConfig();
 
             config.addInitParameter("jarPathPrefix", jarPathPrefix);
-            config.addInitParameter("requireAuthentication", requireAuthentication);
+            config.addInitParameter("requireAuthentication", "false");
             servlet.init(config);
         }
 
