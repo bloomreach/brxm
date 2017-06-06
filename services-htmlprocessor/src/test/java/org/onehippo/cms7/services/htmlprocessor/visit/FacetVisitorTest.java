@@ -16,25 +16,21 @@
 package org.onehippo.cms7.services.htmlprocessor.visit;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.onehippo.cms7.services.htmlprocessor.richtext.TestUtil;
-import org.onehippo.cms7.services.htmlprocessor.richtext.jcr.JcrNodeFactory;
+import org.onehippo.cms7.services.htmlprocessor.service.FacetService;
 import org.onehippo.repository.mock.MockNode;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class FacetVisitorTest {
 
@@ -47,139 +43,58 @@ public class FacetVisitorTest {
     public void setUp() throws Exception {
         final MockNode root = MockNode.root();
         document = root.addNode("document", "hippo:document");
-
-        final JcrNodeFactory factory = JcrNodeFactory.of(root);
-        documentModel = factory.getNodeModelByNode(document);
+        documentModel = Model.of(document);
 
         doc1 = root.addNode("doc1", "nt:unstructured");
         doc2 = root.addNode("doc2", "nt:unstructured");
     }
 
     @Test
-    public void testGetFacetIdByName() throws Exception {
-        final FacetVisitor visitor = createVisitor(documentModel);
-        assertNull(visitor.getFacetId("facet0"));
-
-        visitor.before();
-        assertNull(visitor.getFacetId("facet0"));
-
-        addChildFacetNode("facet1", doc1.getIdentifier());
-        visitor.before();
-        assertEquals(visitor.getFacetId("facet1"), doc1.getIdentifier());
-
-        addChildFacetNode("facet2", doc2.getIdentifier());
-        visitor.before();
-        assertEquals(visitor.getFacetId("facet1"), doc1.getIdentifier());
-        assertEquals(visitor.getFacetId("facet2"), doc2.getIdentifier());
-    }
-
-    @Test
-    public void testGetFacetNameById() throws Exception {
-        final FacetVisitor visitor = createVisitor(documentModel);
-        assertNull(visitor.getFacetName("facet0"));
-
-        visitor.before();
-        assertNull(visitor.getFacetId("facet0"));
-
-        addChildFacetNode("facet1", doc1.getIdentifier());
-        visitor.before();
-        assertEquals("facet1", visitor.getFacetName(doc1.getIdentifier()));
-
-        addChildFacetNode("facet2", doc2.getIdentifier());
-        visitor.before();
-        assertEquals("facet1", visitor.getFacetName(doc1.getIdentifier()));
-        assertEquals("facet2", visitor.getFacetName(doc2.getIdentifier()));
-    }
-
-    @Test
-    public void testZeroFacets() throws Exception {
-        final FacetVisitor visitor = createVisitor(documentModel);
-        visitor.before();
-        visitor.onRead(null, null);
-        visitor.onWrite(null, null);
-        visitor.after();
-    }
-
-    @Test
-    public void testUnmarkedFacetsAreRemoved() throws Exception {
-        addChildFacetNode("facet1", doc1.getIdentifier());
-
-        final FacetVisitor visitor = createVisitor(documentModel);
-        visitor.before();
-        assertTrue(document.hasNode("facet1"));
-
-        visitor.after();
-        assertFalse(document.hasNode("facet1"));
-
-        addChildFacetNode("facet1", doc1.getIdentifier());
-        addChildFacetNode("facet2", doc2.getIdentifier());
-
-        visitor.before();
-        visitor.markVisited("facet1");
-        visitor.after();
-
-        assertTrue(document.hasNode("facet1"));
-        assertFalse(document.hasNode("facet2"));
-    }
-
-    @Test
-    public void testFacetsMapIsCleared() throws Exception {
-        addChildFacetNode("facet1", doc1.getIdentifier());
-        addChildFacetNode("facet2", doc2.getIdentifier());
-
-        final FacetVisitor visitor = createVisitor(documentModel);
-        visitor.before();
-
-        assertNotNull(visitor.getFacetId("facet1"));
-        assertNotNull(visitor.getFacetId("facet2"));
-
-        visitor.markVisited("facet1");
-        visitor.after();
-
-        assertNull(visitor.getFacetId("facet1"));
-        assertNull(visitor.getFacetId("facet2"));
-    }
-
-    @Test
-    public void testExistingFacetsAreNotRecreated() throws Exception {
-        addChildFacetNode("facet1", doc1.getIdentifier());
-        final String facet1NodeId = document.getNode("facet1").getIdentifier();
-
-        final FacetVisitor visitor = createVisitor(documentModel);
-        visitor.before();
-        visitor.markVisited("facet1");
-        visitor.after();
-
-        assertEquals(facet1NodeId, document.getNode("facet1").getIdentifier());
-    }
-
-
-    @Test
-    public void testNodeModelIsReleased() throws Exception {
-        final Model<Node> mockNodeModel = EasyMock.createMock(Model.class);
+    public void nodeModelIsReleased() throws Exception {
+        final Model<Node> mockNodeModel = createMock(Model.class);
         mockNodeModel.release();
         expectLastCall();
         replay(mockNodeModel);
 
-        final FacetVisitor visitor = createVisitor(mockNodeModel);
+        final FacetVisitor visitor = new FacetVisitor(mockNodeModel);
         visitor.release();
         verify(mockNodeModel);
     }
 
-    private void addChildFacetNode(final String name, final String uuid) throws RepositoryException {
-        TestUtil.addChildFacetNode(document, name, uuid);
+    @Test
+    public void callsTagProcessors() throws Exception {
+        final Tag image = TestUtil.createTag("img");
+        final FacetTagProcessor processor = createMock(FacetTagProcessor.class);
+
+        processor.onRead(eq(image), anyObject(FacetService.class));
+        expectLastCall();
+        processor.onWrite(eq(image), anyObject(FacetService.class));
+        expectLastCall();
+        replay(processor);
+
+        final FacetVisitor visitor = new FacetVisitor(documentModel, processor);
+        visitor.before();
+        visitor.onRead(null, image);
+        visitor.onWrite(null, image);
+        visitor.after();
     }
 
+    @Test
+    public void facetServiceIsNullifiedOnAfter() throws Exception {
+        final Tag image = TestUtil.createTag("img");
+        final FacetTagProcessor processor = createMock(FacetTagProcessor.class);
 
-    private FacetVisitor createVisitor(final Model<Node> model) {
-        return new FacetVisitor(model) {
-            @Override
-            public void onRead(final Tag parent, final Tag tag) throws RepositoryException {
-            }
+        processor.onRead(eq(image), eq(null));
+        processor.onWrite(eq(image), eq(null));
 
-            @Override
-            public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {
-            }
-        };
+        expectLastCall();
+        replay(processor);
+
+        final FacetVisitor visitor = new FacetVisitor(documentModel, processor);
+        visitor.before();
+        visitor.after();
+
+        visitor.onRead(null, image);
+        visitor.onWrite(null, image);
     }
 }

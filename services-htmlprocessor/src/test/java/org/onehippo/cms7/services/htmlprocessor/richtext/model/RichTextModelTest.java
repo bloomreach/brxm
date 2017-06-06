@@ -17,11 +17,11 @@ package org.onehippo.cms7.services.htmlprocessor.richtext.model;
 
 import javax.jcr.Node;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.onehippo.cms7.services.htmlprocessor.model.HtmlProcessorModel;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
@@ -30,14 +30,14 @@ public class RichTextModelTest {
 
     @Test
     public void testRelease() throws Exception {
-        final Model<String> valueModel = EasyMock.createMock(Model.class);
+        final Model<String> valueModel = createMock(Model.class);
         valueModel.release();
         expectLastCall();
 
-        final Model<Node> nodeModel = EasyMock.createMock(Model.class);
+        final Model<Node> nodeModel = createMock(Model.class);
         nodeModel.release();
-        // The node model is released by the RichTextProcessorModel directly and indirectly by the two internal visitors
-        expectLastCall().times(3);
+        // The node model is released by the RichTextProcessorModel directly and indirectly by the ImageAndLinkVisitor
+        expectLastCall().times(2);
 
         replay(valueModel, nodeModel);
 

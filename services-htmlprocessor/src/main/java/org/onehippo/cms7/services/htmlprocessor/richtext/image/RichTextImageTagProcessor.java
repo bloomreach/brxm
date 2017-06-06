@@ -13,22 +13,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.htmlprocessor.richtext.visit;
+package org.onehippo.cms7.services.htmlprocessor.richtext.image;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
-import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.onehippo.cms7.services.htmlprocessor.richtext.URLProvider;
+import org.onehippo.cms7.services.htmlprocessor.service.FacetService;
 import org.onehippo.cms7.services.htmlprocessor.util.LinkUtil;
-import org.onehippo.cms7.services.htmlprocessor.visit.FacetVisitor;
+import org.onehippo.cms7.services.htmlprocessor.visit.FacetTagProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImage.DOCUMENT_PATH_PLACEHOLDER;
 import static org.onehippo.cms7.services.htmlprocessor.util.JcrUtil.PATH_SEPARATOR;
+import static org.onehippo.cms7.services.htmlprocessor.visit.FacetVisitor.ATTRIBUTE_DATA_UUID;
 
-public class ImageVisitor extends FacetVisitor {
+public class RichTextImageTagProcessor implements FacetTagProcessor {
+
+    public static final Logger log = LoggerFactory.getLogger(RichTextImageTagProcessor.class);
 
     public static final String TAG_IMG = "img";
     public static final String ATTRIBUTE_SRC = "src";
@@ -36,26 +40,30 @@ public class ImageVisitor extends FacetVisitor {
 
     private final URLProvider imageURLProvider;
 
-    public ImageVisitor(final Model<Node> nodeModel, final URLProvider imageURLProvider) {
-        super(nodeModel);
+    public RichTextImageTagProcessor(final URLProvider imageURLProvider) {
         this.imageURLProvider = imageURLProvider;
     }
 
     @Override
-    public void onRead(final Tag parent, final Tag tag) throws RepositoryException {
+    public void onRead(final Tag tag, final FacetService facets) {
         if (tag != null && StringUtils.equalsIgnoreCase(TAG_IMG, tag.getName())) {
-            convertImageForRetrieval(tag);
+            convertImageForRetrieval(tag, facets);
         }
     }
 
     @Override
-    public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {
+    public void onWrite(final Tag tag, final FacetService facetService) {
         if (tag != null && StringUtils.equalsIgnoreCase(TAG_IMG, tag.getName())) {
-            convertImageForStorage(tag);
+            try {
+                convertImageForStorage(tag, facetService);
+            } catch (final RepositoryException e) {
+                log.warn("Failed to process image tag on write, src={}, data-uuid={}",
+                         tag.getAttribute(ATTRIBUTE_SRC), tag.getAttribute(ATTRIBUTE_DATA_UUID), e);
+            }
         }
     }
 
-    private void convertImageForRetrieval(final Tag tag) {
+    private void convertImageForRetrieval(final Tag tag, final FacetService facetService) {
         final String src = tag.getAttribute(ATTRIBUTE_SRC);
 
         if (StringUtils.isEmpty(src) || LinkUtil.isExternalLink(src)) {
@@ -64,7 +72,7 @@ public class ImageVisitor extends FacetVisitor {
 
         final String[] parts = src.split(PATH_SEPARATOR);
         final String name = parts.length >= 1 ? parts[0] : null;
-        final String uuid = getFacetId(name);
+        final String uuid = facetService.getFacetId(name);
 
         if (uuid != null) {
             tag.addAttribute(ATTRIBUTE_SRC, imageURLProvider.getURL(src));
@@ -75,11 +83,11 @@ public class ImageVisitor extends FacetVisitor {
                 tag.addAttribute(ATTRIBUTE_DATA_TYPE, type);
             }
 
-            markVisited(name);
+            facetService.markVisited(name);
         }
     }
 
-    private void convertImageForStorage(final Tag tag) throws RepositoryException {
+    private void convertImageForStorage(final Tag tag, final FacetService facetService) throws RepositoryException {
         if (!tag.hasAttribute(ATTRIBUTE_SRC) || StringUtils.isEmpty(tag.getAttribute(ATTRIBUTE_SRC))) {
             return;
         }
@@ -93,7 +101,7 @@ public class ImageVisitor extends FacetVisitor {
             return;
         }
 
-        final String name = findOrCreateFacetNode(uuid);
+        final String name = facetService.findOrCreateFacet(uuid);
         if (name == null) {
             return;
         }
@@ -104,6 +112,6 @@ public class ImageVisitor extends FacetVisitor {
         }
         tag.addAttribute(ATTRIBUTE_SRC, src);
 
-        markVisited(name);
+        facetService.markVisited(name);
     }
 }

@@ -20,8 +20,8 @@ import java.util.List;
 
 import javax.jcr.Node;
 
-import org.onehippo.cms7.services.htmlprocessor.TagVisitor;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorFactory;
+import org.onehippo.cms7.services.htmlprocessor.TagVisitor;
 import org.onehippo.cms7.services.htmlprocessor.model.HtmlProcessorModel;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.onehippo.cms7.services.htmlprocessor.richtext.URLEncoder;
@@ -32,8 +32,7 @@ import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageURLP
 import org.onehippo.cms7.services.htmlprocessor.richtext.jcr.NodeFactory;
 import org.onehippo.cms7.services.htmlprocessor.richtext.link.RichTextLinkFactory;
 import org.onehippo.cms7.services.htmlprocessor.richtext.link.RichTextLinkFactoryImpl;
-import org.onehippo.cms7.services.htmlprocessor.richtext.visit.ImageVisitor;
-import org.onehippo.cms7.services.htmlprocessor.richtext.visit.LinkVisitor;
+import org.onehippo.cms7.services.htmlprocessor.richtext.visit.ImageAndLinkVisitor;
 
 public class RichTextProcessorModel extends HtmlProcessorModel {
 
@@ -55,8 +54,7 @@ public class RichTextProcessorModel extends HtmlProcessorModel {
         final RichTextLinkFactory linkFactory = new RichTextLinkFactoryImpl(nodeModel, nodeFactory);
         final RichTextImageFactory imageFactory = new RichTextImageFactoryImpl(nodeModel, nodeFactory, encoder);
         final URLProvider imageProvider = createImageURLProvider(nodeModel, linkFactory, imageFactory);
-        visitors.add(new LinkVisitor(nodeModel));
-        visitors.add(new ImageVisitor(nodeModel, imageProvider));
+        visitors.add(new ImageAndLinkVisitor(nodeModel, imageProvider));
     }
 
     protected URLProvider createImageURLProvider(final Model<Node> nodeModel, final RichTextLinkFactory linkFactory, final RichTextImageFactory richTextImageFactory) {

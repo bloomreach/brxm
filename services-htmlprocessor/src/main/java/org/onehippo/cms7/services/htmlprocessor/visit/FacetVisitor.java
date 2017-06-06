@@ -15,76 +15,50 @@
  */
 package org.onehippo.cms7.services.htmlprocessor.visit;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
-import org.onehippo.cms7.services.htmlprocessor.util.FacetUtil;
+import org.onehippo.cms7.services.htmlprocessor.service.FacetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class FacetVisitor extends NodeVisitor {
+public class FacetVisitor extends NodeVisitor {
 
     public static final Logger log = LoggerFactory.getLogger(FacetVisitor.class);
 
     public static final String ATTRIBUTE_DATA_UUID = "data-uuid";
 
-    private Map<String, String> unmarkedFacets = Collections.emptyMap();
+    private final List<FacetTagProcessor> processors;
+    private FacetService facetService;
 
-    protected FacetVisitor(final Model<Node> nodeModel) {
+    protected FacetVisitor(final Model<Node> nodeModel, final FacetTagProcessor... processors) {
         super(nodeModel);
+        this.processors = Arrays.asList(processors);
     }
 
     @Override
     public void before() {
-        try {
-            final Node node = getNode();
-            unmarkedFacets = FacetUtil.getFacets(node);
-        } catch (final RepositoryException e) {
-            log.error("Error loading facets from node", e);
-            unmarkedFacets = Collections.emptyMap();
-        }
+        facetService = FacetService.from(getNode());
     }
 
     @Override
     public void after() {
-        // unmarked facets are no longer referenced from markup and can be removed
-        if (!unmarkedFacets.isEmpty()) {
-            final Node node = getNode();
-            unmarkedFacets.forEach((name, uuid) -> FacetUtil.removeFacet(node, name));
-            unmarkedFacets.clear();
-        }
+        facetService.removeUnmarkedFacets();
+        facetService = null;
     }
 
-    protected String getFacetId(final String name) {
-        return unmarkedFacets.get(name);
+    @Override
+    public void onRead(final Tag parent, final Tag tag) throws RepositoryException {
+        processors.forEach(tagProcessor -> tagProcessor.onRead(tag, facetService));
     }
 
-    protected String getFacetName(final String uuid) {
-        return unmarkedFacets.entrySet()
-                .stream()
-                .filter(entry -> Objects.equals(entry.getValue(), uuid))
-                .map(Entry::getKey)
-                .findFirst()
-                .orElse(null);
-    }
-
-    protected void markVisited(final String name) {
-        unmarkedFacets.remove(name);
-    }
-
-    protected String findOrCreateFacetNode(final String uuid) throws RepositoryException {
-        final String name = getFacetName(uuid);
-        if (name != null) {
-            return name;
-        }
-
-        final Node node = getNode();
-        return FacetUtil.createFacet(node, uuid);
+    @Override
+    public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {
+        processors.forEach(tagProcessor -> tagProcessor.onWrite(tag, facetService));
     }
 }
