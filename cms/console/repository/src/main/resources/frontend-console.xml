@@ -280,39 +280,6 @@
         <sv:value>service.check</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="createpatch">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>service.menu.item</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.console.menu.patch.CreatePatchPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="excludedPaths" sv:type="String">
-        <sv:value>/content</sv:value>
-        <sv:value>/hippo:log</sv:value>
-        <sv:value>/formdata</sv:value>
-        <sv:value>/jcr:system</sv:value>
-        <sv:value>/hippo:configuration/hippo:initialize</sv:value>
-        <sv:value>/hippo:configuration/hippo:modules/brokenlinks/hippo:moduleconfig/hippo:request</sv:value>
-        <sv:value>/hippo:configuration/hippo:update/hippo:queue</sv:value>
-        <sv:value>/hippo:configuration/hippo:udpate/hippo:history</sv:value>
-        <sv:value>/webfiles</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="applypatch">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>service.menu.item</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.console.menu.patch.ApplyPatchPlugin</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="nodereset">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
