@@ -77,6 +77,9 @@ public class EventJournalProcessor {
 
     private static final int MAX_REPEAT_PROCESS_EVENTS = 3;
 
+    /**
+     * Track changed jcr paths of *parent* nodes of jcr events
+     */
     protected static class Changes {
         private Set<String> changedNsPrefixes = new HashSet<>();
         private TreeSet<String> addedConfig = new TreeSet<>();
@@ -178,6 +181,7 @@ public class EventJournalProcessor {
 
     public void start() {
         exclusionContext = configuration.getExclusionContext();
+        // TODO: should we 'refresh' the currentModel here as well?
         synchronized (executor) {
             if (future == null || future.isCancelled() || future.isDone()) {
                 future = executor.scheduleWithFixedDelay(task, 0, minChangeLogAge, TimeUnit.MILLISECONDS);
@@ -462,6 +466,7 @@ public class EventJournalProcessor {
     }
 
     private void exportChangesModule(ModuleImpl changesModule) throws RepositoryException {
+        // TODO: move this to internal implementation/handling within DefinitionMergeService
         Set<ModuleImpl> exportModules = new HashSet<>();
         for (GroupImpl g : currentModel.getSortedGroups()) {
             for (ProjectImpl p : g.getProjects()) {
@@ -481,6 +486,7 @@ public class EventJournalProcessor {
         // TODO  2) configuration.setLastRevision(lastRevision)
         // TODO  3) save result to baseline (which should do Session.save() thereby also saving the lastRevision update
         // TODO  4) update or reload ConfigurationService.currentRuntimeModel
+        // TODO  NOTE: the above might need to be owned/implemented by ConfigurationServiceImpl
         // TODO  5) update/set EventJournalProcessor.currentModel
     }
 }

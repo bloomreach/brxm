@@ -116,6 +116,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         success = storeBaselineModel(bootstrapModel);
                     }
                     if (success) {
+                        // TODO: this doesn't yet account for possible update of the baseline through applyContent (like Module sequence)
+                        runtimeConfigurationModel = loadBaselineModel();
+
                         // TODO: probably also should pass in baselineModel (or runtimeConfigurationModel, if updated, see above)
                         //       applied changes then should also be applied to/updated in runtimeConfigurationModel
                         //       furthermore, ContentService should use BaselineService to do the updates, not directly to JCR
