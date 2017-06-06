@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -54,14 +55,11 @@ import org.onehippo.cm.model.Project;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.ContentSourceImpl;
-import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
-import org.onehippo.cm.model.parser.ModuleDescriptorParser;
+import org.onehippo.cm.model.parser.AggregatedModulesDescriptorParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -513,7 +511,7 @@ public class ConfigurationBaselineService {
             throws RepositoryException, ParserException {
         // for each module node under this baseline
         for (Node moduleNode : findModuleNodes(baselineNode)) {
-            Map<String, GroupImpl> moduleGroups;
+            Collection<GroupImpl> moduleGroups;
             ModuleImpl module;
 
             Node descriptorNode = moduleNode.getNode(HCM_MODULE_DESCRIPTOR);
@@ -523,12 +521,13 @@ public class ConfigurationBaselineService {
             final String descriptor = descriptorNode.getProperty(HCM_YAML).getString();
             if (StringUtils.isNotEmpty(descriptor)) {
                 // parse descriptor with ModuleDescriptorParser
+                // todo switch to single-module alternate parser
                 InputStream is = IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8);
-                moduleGroups = new ModuleDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
+                moduleGroups = new AggregatedModulesDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
                         .parse(is, moduleNode.getPath());
 
                 // This should always produce exactly one module!
-                module = moduleGroups.values().stream()
+                module = moduleGroups.stream()
                         .flatMap(g -> g.getProjects().stream())
                         .flatMap(p -> p.getModules().stream())
                         .findFirst().get();
@@ -555,7 +554,7 @@ public class ConfigurationBaselineService {
             }
 
             // accumulate all groups
-            groups.addAll(moduleGroups.values());
+            groups.addAll(moduleGroups);
         }
 
         log.debug("After parsing descriptors, we have {} groups and {} modules", groups.size(),

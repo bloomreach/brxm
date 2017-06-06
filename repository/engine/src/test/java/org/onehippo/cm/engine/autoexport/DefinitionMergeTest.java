@@ -32,7 +32,6 @@ import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.FileConfigurationWriter;
 import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.PathConfigurationReader;
-import org.onehippo.cm.model.SerializerTest;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.slf4j.Logger;
@@ -180,7 +179,7 @@ public class DefinitionMergeTest {
             final PathConfigurationReader.ReadResult result =
                     readFromResource(modulePath + "/" + Constants.HCM_MODULE_YAML);
 
-            return result.getGroups().values().stream()
+            return result.getGroups().stream()
                     .flatMap(group -> group.getProjects().stream())
                     .flatMap(project -> project.getModules().stream())
                     .findFirst().get();
