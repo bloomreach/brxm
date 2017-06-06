@@ -431,15 +431,6 @@ public class ConfigurationConfigService {
                 childNode = addNode(targetNode, childName, childPrimaryType, updateChild);
             } else {
                 if (baselineChild == null) {
-                    // node should not yet exist, but actually does; one edge case in which is ok and no message needs
-                    // to be logged is if the node is autoCreated and its parent was also just created
-                    if (!(existingChildNode.getDefinition().isAutoCreated() && existingChildNode.getParent().isNew())) {
-                        final String msg = String.format("[OVERRIDE] Node '%s' has been added, " +
-                                        "but will be re-created due to the incoming definition %s.",
-                                updateChild.getPath(), updateChild.getOrigin());
-                        logger.info(msg);
-                    }
-
                     final String childPrimaryType = existingChildNode.getPrimaryNodeType().getName();
                     baselineChild = newChildOfType(childPrimaryType);
                 }
@@ -620,10 +611,9 @@ public class ConfigurationConfigService {
                     logger.info(msg);
                 }
             } else {
-                // property should not yet exist, but actually does; one edge case in which is ok and no message needs
-                // to be logged is if the property is autoCreated and its parent was also just created; apparently, the
-                // configuration contains a different value than the default value, as propertyIsIdentical returned
-                // false, so we need to continue resetting the property
+                // property should not yet exist, but does, with a different value.
+                // This should not trigger an [OVERRIDE] message if the property is autoCreated and its parent
+                // has just been created.
                 if (!(jcrProperty.getDefinition().isAutoCreated() && jcrNode.isNew())) {
                     final String msg = String.format("[OVERRIDE] Property '%s' has been created in the repository, " +
                                     "and will be overridden due to definition %s.",

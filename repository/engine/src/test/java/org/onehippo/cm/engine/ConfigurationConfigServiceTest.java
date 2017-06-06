@@ -1377,22 +1377,11 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
                 + "      /child:\n"
                 + "        jcr:primaryType: nt:unstructured";
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
-            applyDefinitions(definition, new ExpectedEvents());
-            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
-                    "[OVERRIDE] Node '/test/child' has been added, but will be re-created " +
-                            "due to the incoming definition [test-group/test-project/test-module-0 [string]].")));
-        }
-
+        applyDefinitions(definition, new ExpectedEvents());
         expectNode("/test", "[child]", "[jcr:primaryType]");
 
         // likewise for forceApply
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(ConfigurationConfigService.class).build()) {
-            applyDefinitions(definition, true, new ExpectedEvents());
-            assertTrue(interceptor.messages().anyMatch(m -> m.equals(
-                    "[OVERRIDE] Node '/test/child' has been added, but will be re-created " +
-                            "due to the incoming definition [test-group/test-project/test-module-0 [string]].")));
-        }
+        applyDefinitions(definition, true, new ExpectedEvents());
         expectNode("/test", "[child]", "[jcr:primaryType]");
     }
 
