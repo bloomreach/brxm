@@ -152,6 +152,7 @@ public abstract class SourceParser extends AbstractBaseParser {
                 break;
             case mapping:
                 final DefinitionPropertyImpl property = constructDefinitionPropertyFromMap(name, value, ValueType.NAME, parent);
+                validateJcrTypePropertyCategory(property, value);
                 validateJcrTypePropertyOperations(property,
                         new PropertyOperation[]{PropertyOperation.REPLACE, PropertyOperation.OVERRIDE}, value);
                 validateJcrTypePropertyValueType(property, value);
@@ -169,6 +170,7 @@ public abstract class SourceParser extends AbstractBaseParser {
                 break;
             case mapping:
                 final DefinitionPropertyImpl property = constructDefinitionPropertyFromMap(name, value, ValueType.NAME, parent);
+                validateJcrTypePropertyCategory(property, value);
                 validateJcrTypePropertyOperations(property,
                         new PropertyOperation[]{PropertyOperation.ADD, PropertyOperation.REPLACE, PropertyOperation.OVERRIDE},
                         value);
@@ -177,6 +179,12 @@ public abstract class SourceParser extends AbstractBaseParser {
                 break;
             default:
                 throw new ParserException("Property value for 'jcr:mixinTypes' must be sequence or mapping", value);
+        }
+    }
+
+    private void validateJcrTypePropertyCategory(final DefinitionPropertyImpl property, final Node node) throws ParserException {
+        if (property.getCategory() != null) {
+            throw new ParserException("Property '" + property.getName() + "' does not support " + META_CATEGORY_KEY, node);
         }
     }
 
@@ -225,7 +233,7 @@ public abstract class SourceParser extends AbstractBaseParser {
         if (map.keySet().contains(META_CATEGORY_KEY)) {
             category = constructCategory(map.get(META_CATEGORY_KEY));
             if (map.size() == 1) {
-                property = parent.addProperty(name, ValueType.STRING, new ValueImpl[0]);
+                property = parent.addProperty(name, defaultValueType, new ValueImpl[0]);
                 property.setCategory(category);
                 return property;
             } else {
@@ -248,7 +256,7 @@ public abstract class SourceParser extends AbstractBaseParser {
                     throw new ParserException("Property map cannot contain '" + OPERATION_KEY + ": "
                             + PropertyOperation.DELETE.toString() + "' and other keys", value);
                 }
-                property = parent.addProperty(name, ValueType.STRING, new ValueImpl[0]);
+                property = parent.addProperty(name, defaultValueType, new ValueImpl[0]);
                 property.setOperation(operation);
                 return property;
             }

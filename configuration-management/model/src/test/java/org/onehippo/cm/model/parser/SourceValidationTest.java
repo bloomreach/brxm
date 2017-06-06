@@ -1159,6 +1159,38 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
+    public void metaCategoryNotAllowedOnJcrPrimaryType() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      jcr:primaryType:\n"
+                + "        .meta:category: runtime\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap,
+                "Property 'jcr:primaryType' does not support .meta:category");
+    }
+
+    @Test
+    public void metaCategoryNotAllowedOnJcrMixinTypes() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      jcr:mixinTypes:\n"
+                + "        .meta:category: runtime\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap,
+                "Property 'jcr:mixinTypes' does not support .meta:category");
+    }
+
+    @Test
     public void metaCategoryNotAllowedForSns() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
