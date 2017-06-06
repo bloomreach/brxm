@@ -82,6 +82,10 @@ public class ProjectImpl implements Project {
         return modules;
     }
 
+    public ModuleImpl getModule(final String name) {
+        return moduleMap.get(name);
+    }
+
     private void verifyNewModule(final String name) {
         if (moduleMap.containsKey(name)) {
             final String msg = String.format("Module %s already exists while merging projects. Merging of modules is not supported.",
