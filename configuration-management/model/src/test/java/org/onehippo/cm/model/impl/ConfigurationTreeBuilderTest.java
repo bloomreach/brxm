@@ -2136,12 +2136,12 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.build();
         final ConfigurationNodeImpl node = root.getNode("node[1]");
 
-        assertEquals(ConfigurationItemCategory.CONFIG, node.getChildNodeCategory("default[1]"));
-        assertEquals(ConfigurationItemCategory.CONTENT,       node.getChildNodeCategory("non-existing-node[1]"));
-        assertEquals(ConfigurationItemCategory.RUNTIME,       node.getChildNodeCategory("override[1]"));
-        assertEquals(ConfigurationItemCategory.RUNTIME,       node.getChildNodeCategory("override[2]"));
-        assertEquals(ConfigurationItemCategory.CONFIG, node.getChildPropertyCategory("default"));
-        assertEquals(ConfigurationItemCategory.CONFIG, node.getChildPropertyCategory("non-existing-property"));
-        assertEquals(ConfigurationItemCategory.RUNTIME,       node.getChildPropertyCategory("override"));
+        assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildNodeCategory("default[1]"));
+        assertEquals(ConfigurationItemCategory.CONTENT, node.getChildNodeCategory("non-existing-node[1]"));
+        assertEquals(ConfigurationItemCategory.RUNTIME, node.getChildNodeCategory("override[1]"));
+        assertEquals(ConfigurationItemCategory.RUNTIME, node.getChildNodeCategory("override[2]"));
+        assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildPropertyCategory("default"));
+        assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildPropertyCategory("non-existing-property"));
+        assertEquals(ConfigurationItemCategory.RUNTIME, node.getChildPropertyCategory("override"));
     }
 }
