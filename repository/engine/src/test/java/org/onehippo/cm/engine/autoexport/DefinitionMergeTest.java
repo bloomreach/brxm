@@ -27,6 +27,7 @@ import java.util.Set;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.FileConfigurationWriter;
 import org.onehippo.cm.model.ModuleContext;
@@ -49,52 +50,52 @@ public class DefinitionMergeTest {
 
     @Test
     public void template_works() throws Exception {
-        new MergeTest("template").test();
+        new MergeFixture("template").test();
     }
 
     @Test
     public void create_and_update_namespaces() throws Exception {
-        new MergeTest("namespace").test();
+        new MergeFixture("namespace").test();
     }
 
     @Test
     public void new_node() throws Exception {
-        new MergeTest("new-node").test();
+        new MergeFixture("new-node").test();
     }
 
     @Test
     public void delete_node() throws Exception {
-        new MergeTest("delete-node").test();
+        new MergeFixture("delete-node").test();
     }
 
     @Test
     public void add_property() throws Exception {
-        new MergeTest("add-property").test();
+        new MergeFixture("add-property").test();
     }
 
     @Test
     public void append_property() throws Exception {
-        new MergeTest("append-property").test();
+        new MergeFixture("append-property").test();
     }
 
     @Test
     public void delete_property() throws Exception {
-        new MergeTest("delete-property").test();
+        new MergeFixture("delete-property").test();
     }
 
     @Test
     public void override_property() throws Exception {
-        new MergeTest("override-property").test();
+        new MergeFixture("override-property").test();
     }
 
 
-    public class MergeTest extends SerializerTest {
+    public class MergeFixture extends AbstractBaseTest {
         String testName;
         String[] base = {"topmost", "upstream"};
         String[] toExport = {"exportFirst", "exportSecond"};
         Configuration autoExportConfig;
 
-        public MergeTest(final String testName) {
+        public MergeFixture(final String testName) {
             this.testName = testName;
 
             Map<String, Collection<String>> modules = new HashMap<>();
@@ -103,17 +104,17 @@ public class DefinitionMergeTest {
             autoExportConfig = AutoExportConfigFactory.make(true, modules);
         }
 
-        public MergeTest base(final String... base) {
+        public MergeFixture base(final String... base) {
             this.base = base;
             return this;
         }
 
-        public MergeTest toExport(final String... toExport) {
+        public MergeFixture toExport(final String... toExport) {
             this.toExport = toExport;
             return this;
         }
 
-        public MergeTest config(final Configuration config) {
+        public MergeFixture config(final Configuration config) {
             this.autoExportConfig = config;
             return this;
         }
