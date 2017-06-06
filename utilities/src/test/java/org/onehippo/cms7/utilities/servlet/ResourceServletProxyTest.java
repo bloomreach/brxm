@@ -51,7 +51,7 @@ public class ResourceServletProxyTest {
     public void testProxies() throws Exception {
         final ProxyServlet proxyServlet = new ProxyServlet("/servlet",
                 "servlet/path@classpath:org/onehippo/cms7/utilities/servlet/test," +
-                "servlet/path2@classpath:org/onehippo/cms7/utilities/servlet/test2");
+                        "servlet/path2@classpath:org/onehippo/cms7/utilities/servlet/test2");
 
         final HttpServletResponse response1 = proxyServlet.get("/path/index.js");
         assertEquals(200, response1.getStatus());
@@ -106,6 +106,7 @@ public class ResourceServletProxyTest {
             final MockServletConfig config = new MockServletConfig();
 
             config.addInitParameter("jarPathPrefix", jarPathPrefix);
+            config.addInitParameter("requireAuthentication", "false");
             servlet.init(config);
         }
 
