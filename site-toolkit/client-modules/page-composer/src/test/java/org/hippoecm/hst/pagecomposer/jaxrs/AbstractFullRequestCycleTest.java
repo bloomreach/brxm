@@ -28,14 +28,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.ForbiddenException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.ConfigurationLockedTest;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
@@ -129,8 +128,9 @@ public class AbstractFullRequestCycleTest {
         session.setAttribute(CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
         MockHttpServletResponse response = render(requestResponse, authenticatedCmsUser);
 
-        if (response.getStatus() == SC_FORBIDDEN) {
-            throw new ConfigurationLockTestException(response);
+        if (response.getStatus() == SC_FORBIDDEN && this.getClass().getName().equals(ConfigurationLockedTest.class.getName())) {
+            // in ConfigurationLockedTest we want to short-circuit by an exception
+            throw new ForbiddenException(response);
         }
         return response;
     }
@@ -156,12 +156,6 @@ public class AbstractFullRequestCycleTest {
                 super.doGet(req, resp);
             }
         }, filter));
-
-
-//        if (response.getStatus() == SC_FORBIDDEN) {
-//            throw new ForbiddenException();
-//        }
-
         return response;
     }
 
@@ -260,10 +254,10 @@ public class AbstractFullRequestCycleTest {
     }
 
 
-    public static class ConfigurationLockTestException extends RuntimeException {
+    public static class ForbiddenException extends RuntimeException {
         private MockHttpServletResponse response;
 
-        public ConfigurationLockTestException(final MockHttpServletResponse response) {
+        public ForbiddenException(final MockHttpServletResponse response) {
 
             this.response = response;
         }

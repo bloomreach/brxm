@@ -21,7 +21,6 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,12 +70,12 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.start_edit_creating_preview_config_as_admin();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
 
-    private void forbiddenAssertions(final ConfigurationLockTestException e) throws java.io.IOException {
+    private void forbiddenAssertions(final ForbiddenException e) throws java.io.IOException {
         MockHttpServletResponse response = e.getResponse();
         final String restResponse = response.getContentAsString();
         final Map<String, Object> responseMap = mapper.reader(Map.class).readValue(restResponse);
@@ -92,7 +91,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.start_edit_creating_preview_config_as_webmaster();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -103,7 +102,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try{
             super.liveuser_cannot_start_edit();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -114,7 +113,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.copy_a_page_as_admin();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -125,7 +124,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.copy_a_page_as_editor();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -136,7 +135,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.liveuser_cannot_copy_page();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -147,7 +146,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.publish_as_admin_changes_of_admin();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -158,7 +157,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.publish_as_editor_changes_of_editor();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -169,7 +168,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.discard_as_admin_changes_of_admin();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -180,7 +179,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.discard_as_editor_changes_of_editor();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -191,7 +190,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.publish_userswithchanges_as_admin_fails_if_security_model_cannot_be_loaded();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -202,7 +201,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.publish_userswithchanges_as_admin_succeeds_if_security_model_can_be_loaded();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -213,7 +212,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.publish_userswithchanges_as_editor_fails_regardless_of_security_model_can_be_loaded();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -224,7 +223,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.publish_userswithchanges_as_editor_fails_if_security_model_can_be_loaded();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -235,7 +234,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.discard_userswithchanges_as_admin_fails_if_security_model_cannot_be_loaded();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -246,7 +245,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.discard_userswithchanges_as_admin_succeeds_if_security_model_can_be_loaded();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -257,7 +256,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.discard_userswithchanges_as_editor_fails_regardless_of_security_model_can_be_loaded();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
@@ -268,7 +267,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         try {
             super.discard_userswithchanges_as_editor_fails_if_security_model_can_be_loaded();
             fail("Expected forbidden");
-        } catch (ConfigurationLockTestException e) {
+        } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
