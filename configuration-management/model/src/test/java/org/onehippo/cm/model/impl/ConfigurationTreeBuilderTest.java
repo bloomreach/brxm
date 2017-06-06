@@ -2069,7 +2069,7 @@ public class ConfigurationTreeBuilderTest {
                 + "    /:\n"
                 + "      default: value\n"
                 + "      override:\n"
-                + "        .meta:category: content\n"
+                + "        .meta:category: runtime\n"
                 + "      /default:\n"
                 + "        jcr:primaryType: foo\n"
                 + "      /override:\n"
@@ -2085,7 +2085,7 @@ public class ConfigurationTreeBuilderTest {
         assertEquals(ConfigurationItemCategory.CONTENT, root.getChildNodeCategory("override[2]"));
         assertEquals(ConfigurationItemCategory.CONFIG,  root.getChildPropertyCategory("default"));
         assertEquals(ConfigurationItemCategory.CONFIG,  root.getChildPropertyCategory("non-existing-property"));
-        assertEquals(ConfigurationItemCategory.CONTENT, root.getChildPropertyCategory("override"));
+        assertEquals(ConfigurationItemCategory.RUNTIME, root.getChildPropertyCategory("override"));
     }
 
     @Test
@@ -2096,7 +2096,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      jcr:primaryType: foo\n"
                 + "      default: value\n"
                 + "      override:\n"
-                + "        .meta:category: content\n"
+                + "        .meta:category: runtime\n"
                 + "      /default:\n"
                 + "        jcr:primaryType: foo\n"
                 + "      /override:\n"
@@ -2113,7 +2113,7 @@ public class ConfigurationTreeBuilderTest {
         assertEquals(ConfigurationItemCategory.CONTENT, node.getChildNodeCategory("override[2]"));
         assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildPropertyCategory("default"));
         assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildPropertyCategory("non-existing-property"));
-        assertEquals(ConfigurationItemCategory.CONTENT, node.getChildPropertyCategory("override"));
+        assertEquals(ConfigurationItemCategory.RUNTIME, node.getChildPropertyCategory("override"));
     }
 
     @Test

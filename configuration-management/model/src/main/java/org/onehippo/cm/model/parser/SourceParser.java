@@ -232,6 +232,11 @@ public abstract class SourceParser extends AbstractBaseParser {
         final ConfigurationItemCategory category;
         if (map.keySet().contains(META_CATEGORY_KEY)) {
             category = constructCategory(map.get(META_CATEGORY_KEY));
+            if (category == ConfigurationItemCategory.CONTENT) {
+                throw new ParserException(
+                        "Properties do not support " + META_CATEGORY_KEY + " value '" + ConfigurationItemCategory.CONTENT + "'",
+                        value);
+            }
             if (map.size() == 1) {
                 property = parent.addProperty(name, defaultValueType, new ValueImpl[0]);
                 property.setCategory(category);

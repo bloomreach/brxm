@@ -26,7 +26,6 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
     private ContentDefinitionImpl definition;
     private boolean delete;
     private SourceLocationImpl sourceLocation;
-    private ConfigurationItemCategory category;
 
     public DefinitionItemImpl(final String path, final String name, final ContentDefinitionImpl definition) {
         this.path = path;
@@ -34,7 +33,6 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
         this.parent = null;
         this.definition = definition;
         this.sourceLocation = new SourceLocationImpl();
-        this.category = null;
     }
 
     public DefinitionItemImpl(final String name, final DefinitionNodeImpl parent) {
@@ -45,7 +43,6 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
 
         final String parentPath = parent.getPath();
         path = parentPath + (parentPath.endsWith("/") ? "" : "/") + name;
-        this.category = null;
     }
 
     @Override
@@ -82,18 +79,8 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
     }
 
     @Override
-    public ConfigurationItemCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(final ConfigurationItemCategory category) {
-        this.category = category;
-    }
-
-    @Override
     public String getOrigin() {
         return getDefinition().getOrigin();
     }
-
 
 }

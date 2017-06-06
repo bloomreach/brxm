@@ -26,6 +26,7 @@ import org.onehippo.cm.model.ValueType;
 
 public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
 
+    private ConfigurationItemCategory category;
     private final LinkedHashMap<String, DefinitionNodeImpl> modifiableNodes = new LinkedHashMap<>();
     private final Map<String, DefinitionNodeImpl> nodes = Collections.unmodifiableMap(modifiableNodes);
     private final Map<String, DefinitionPropertyImpl> modifiableProperties = new LinkedHashMap<>();
@@ -41,6 +42,15 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
 
     public DefinitionNodeImpl(final String name, final DefinitionNodeImpl parent) {
         super(name, parent);
+    }
+
+    @Override
+    public ConfigurationItemCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(final ConfigurationItemCategory category) {
+        this.category = category;
     }
 
     @Override

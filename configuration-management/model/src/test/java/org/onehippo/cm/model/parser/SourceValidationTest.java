@@ -1191,6 +1191,21 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
+    public void metaCategoryContentNotAllowedOnProperties() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        .meta:category: content\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap, "Properties do not support .meta:category value 'content'");
+    }
+
+    @Test
     public void metaCategoryNotAllowedForSns() {
         final String yaml = "definitions:\n"
                 + "  config:\n"

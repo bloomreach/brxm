@@ -15,14 +15,18 @@
  */
 package org.onehippo.cm.model.impl;
 
+import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.ValueFormatException;
 import org.onehippo.cm.model.ValueType;
 
+import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
+
 public class DefinitionPropertyImpl extends DefinitionItemImpl implements DefinitionProperty {
 
+    private ConfigurationItemCategory category;
     private PropertyType propertyType;
     private ValueType valueType;
     private ValueImpl value;
@@ -84,6 +88,19 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
 
     public void setOperation(final PropertyOperation operation) {
         this.operation = operation;
+    }
+
+    @Override
+    public ConfigurationItemCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(final ConfigurationItemCategory category) {
+        if (category == ConfigurationItemCategory.CONTENT) {
+            throw new IllegalArgumentException("Properties do not support " + META_CATEGORY_KEY + " value '"
+                    + ConfigurationItemCategory.CONTENT + "'");
+        }
+        this.category = category;
     }
 
     /**
@@ -157,4 +174,5 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
         }
         return cloned;
     }
+
 }
