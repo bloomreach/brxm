@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImage.DOCUMENT_PATH_PLACEHOLDER;
 import static org.onehippo.cms7.services.htmlprocessor.util.JcrUtil.PATH_SEPARATOR;
-import static org.onehippo.cms7.services.htmlprocessor.visit.FacetVisitor.ATTRIBUTE_DATA_UUID;
 
 public class RichTextImageTagProcessor implements FacetTagProcessor {
 

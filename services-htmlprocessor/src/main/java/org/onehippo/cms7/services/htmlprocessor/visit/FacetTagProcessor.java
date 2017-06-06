@@ -22,6 +22,8 @@ import org.onehippo.cms7.services.htmlprocessor.service.FacetService;
 
 public interface FacetTagProcessor extends Serializable {
 
+    String ATTRIBUTE_DATA_UUID = "data-uuid";
+
     void onRead(Tag tag, final FacetService facetService);
 
     void onWrite(Tag tag, final FacetService facetService);

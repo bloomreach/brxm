@@ -31,8 +31,6 @@ public class FacetVisitor extends NodeVisitor {
 
     public static final Logger log = LoggerFactory.getLogger(FacetVisitor.class);
 
-    public static final String ATTRIBUTE_DATA_UUID = "data-uuid";
-
     private final List<FacetTagProcessor> processors;
     private FacetService facetService;
 

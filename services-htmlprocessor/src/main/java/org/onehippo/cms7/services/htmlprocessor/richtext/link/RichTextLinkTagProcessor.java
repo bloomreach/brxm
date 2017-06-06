@@ -26,8 +26,6 @@ import org.onehippo.cms7.services.htmlprocessor.visit.FacetTagProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.cms7.services.htmlprocessor.visit.FacetVisitor.ATTRIBUTE_DATA_UUID;
-
 public class RichTextLinkTagProcessor implements FacetTagProcessor {
     public static final Logger log = LoggerFactory.getLogger(RichTextLinkTagProcessor.class);
 
