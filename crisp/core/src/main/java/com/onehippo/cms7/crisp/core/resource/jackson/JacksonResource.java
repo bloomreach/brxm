@@ -3,7 +3,6 @@
  */
 package com.onehippo.cms7.crisp.core.resource.jackson;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +20,7 @@ import com.onehippo.cms7.crisp.api.resource.ValueMap;
 import com.onehippo.cms7.crisp.core.resource.DefaultValueMap;
 import com.onehippo.cms7.crisp.core.resource.EmptyValueMap;
 import com.onehippo.cms7.crisp.core.resource.ListResourceCollection;
+import com.onehippo.cms7.crisp.core.resource.util.ResourceCollectionUtils;
 
 public class JacksonResource extends AbstractResource {
 
@@ -74,7 +74,7 @@ public class JacksonResource extends AbstractResource {
     @Override
     public ResourceCollection getChildren(long offset, long limit) {
         final List<Resource> allChildren = getInternalAllChildren();
-        return new ListResourceCollection(createSubList(allChildren, offset, limit));
+        return new ListResourceCollection(ResourceCollectionUtils.createSubList(allChildren, offset, limit));
     }
 
     @Override
@@ -191,35 +191,4 @@ public class JacksonResource extends AbstractResource {
         return new JacksonResource(this, jsonNode, "[" + index + "]");
     }
 
-    private static List<Resource> createSubList(List<Resource> source, long offset, long limit) {
-        if (offset < 0 || offset >= source.size()) {
-            throw new IllegalArgumentException("Invalid offset: " + offset + " (size = " + source.size() + ")");
-        }
-
-        if (limit == 0) {
-            return Collections.emptyList();
-        }
-
-        if ((offset == 0 && limit < 0) || (offset == 0 && limit == source.size())) {
-            return source;
-        }
-
-        long endIndex;
-
-        if (limit > source.size()) {
-            endIndex = source.size();
-        } else {
-            endIndex = Math.min(source.size(), offset + limit);
-        }
-
-        if (offset == 0) {
-            return source.subList((int) offset, (int) endIndex);
-        } else {
-            if (limit < 0) {
-                return source.subList((int) offset, source.size());
-            } else {
-                return source.subList((int) offset, (int) endIndex);
-            }
-        }
-    }
 }
