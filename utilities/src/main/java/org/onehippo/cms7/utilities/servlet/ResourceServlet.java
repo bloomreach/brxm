@@ -298,7 +298,33 @@ public class ResourceServlet extends HttpServlet {
         gzipEnabled = Boolean.parseBoolean(getInitParameter("gzipEnabled", "true"));
         webResourceEnabled = Boolean.parseBoolean(getInitParameter("webResourceEnabled", "true"));
         jarResourceEnabled = Boolean.parseBoolean(getInitParameter("jarResourceEnabled", "true"));
-        requireAuthentication = Boolean.parseBoolean(getInitParameter("requireAuthentication", "true"));
+
+        // The ResourceServlet that serves resource in "/skin" is used by the CMS login page.
+        // To ease upgrading to Hippo 12 this servlet does not require authentication by default.
+        // TODO: remove this helpful workaround in Hippo 13
+        @Deprecated
+        final boolean isSkinResourceServlet = jarPathPrefix.equals("/skin");
+        if (isSkinResourceServlet && !hasInitParameter("requireAuthentication")) {
+            log.warn("The SkinResourceServlet used by the CMS application is missing the parameter 'requireAuthentication'. " +
+                    "For your convenience Hippo 12 will assume it is set to 'false'. " +
+                    "Please adjust the web.xml file of the CMS application to avoid future problems:\n" +
+                    "\n" +
+                    "  <servlet>\n" +
+                    "    <servlet-name>SkinResourceServlet</servlet-name>\n" +
+                    "    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>\n" +
+                    "    <init-param>\n" +
+                    "      <param-name>jarPathPrefix</param-name>\n" +
+                    "      <param-value>/skin</param-value>\n" +
+                    "    </init-param>\n" +
+                    "    <init-param>\n" +
+                    "      <param-name>requireAuthentication</param-name>\n" +
+                    "      <param-value>false</param-value>\n" +
+                    "    </init-param>\n" +
+                    "    ...\n");
+        }
+
+        requireAuthentication = Boolean.parseBoolean(getInitParameter("requireAuthentication",
+                Boolean.toString(!isSkinResourceServlet)));
 
         allowedResourcePaths = initPatterns("allowedResourcePaths", DEFAULT_ALLOWED_RESOURCE_PATHS);
         compressedMimeTypes = initPatterns("compressedMimeTypes", DEFAULT_COMPRESSED_MIME_TYPES);
@@ -593,6 +619,10 @@ public class ResourceServlet extends HttpServlet {
             value = defaultValue;
         }
         return value;
+    }
+
+    private boolean hasInitParameter(final String name) {
+        return getServletConfig().getInitParameter(name) != null;
     }
 
     private ClassLoader getDefaultClassLoader() {

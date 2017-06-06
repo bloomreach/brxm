@@ -112,6 +112,35 @@ public class ResourceServletTest {
         assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
     }
 
+    @Test
+    public void testSkinResourcesWithoutAuthenticationParameter() throws ServletException, IOException {
+        final MockHttpServletRequest request = getMockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final ResourceServlet servlet = initializeSkinServlet(null);
+        servlet.service(request, response);
+        assertThat("Authorized request should give resource.", response.getStatus(), is(200));
+        assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
+    }
+
+    @Test
+    public void testSkinResourcesExplicitlyWithAuthentication() throws ServletException, IOException {
+        final MockHttpServletRequest request = getMockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final ResourceServlet servlet = initializeSkinServlet(true);
+        servlet.service(request, response);
+        assertThat("Unauthorized request should give 404.", response.getStatus(), is(404));
+    }
+
+    @Test
+    public void testSkinResourcesExplicitlyWithoutAuthentication() throws ServletException, IOException {
+        final MockHttpServletRequest request = getMockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final ResourceServlet servlet = initializeSkinServlet(false);
+        servlet.service(request, response);
+        assertThat("Authorized request should give resource.", response.getStatus(), is(200));
+        assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
+    }
+
     private ResourceServlet initializeServlet(final boolean requireAuthentication) throws ServletException {
         return initializeServlet(requireAuthentication, null, null);
     }
@@ -131,6 +160,21 @@ public class ResourceServletTest {
 
         servlet.init(servletConfig);
         return servlet;
+    }
+
+    private ResourceServlet initializeSkinServlet(final Boolean requireAuthentication) throws ServletException {
+        final ResourceServlet skinServlet = new ResourceServlet();
+        final MockServletConfig servletConfig = new MockServletConfig();
+
+        servletConfig.addInitParameter("jarPathPrefix", "/skin");
+        if (requireAuthentication != null) {
+            servletConfig.addInitParameter("requireAuthentication", requireAuthentication ? "true" : "false");
+        }
+        servletConfig.addInitParameter("allowedResourcePaths", "^/.*\\..*");
+
+        skinServlet.init(servletConfig);
+
+        return skinServlet;
     }
 
     private void fakeLoggedinUser(final MockHttpServletRequest request) {
