@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -404,15 +404,20 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
         final Set<NodeId> augmentedRemove = new HashSet<>();
         while (remove.hasNext()) {
-            augmentedRemove.add(remove.next());
+            final NodeId nodeId = remove.next();
+            if (nodeId != null) {
+                augmentedRemove.add(nodeId);
+            }
         }
 
         // NodeState does not implement equals hence we need NodeId
         final Map<NodeId, NodeState> augmentedAdd = new HashMap<>();
         while (add.hasNext()) {
             final NodeState nodeState = add.next();
-            // since NodeState does not have hashcode/equals impls, we need to use NodeId for equals in Map
-            augmentedAdd.put(nodeState.getNodeId(), nodeState);
+            if (nodeState != null) {
+                // since NodeState does not have hashcode/equals impls, we need to use NodeId for equals in Map
+                augmentedAdd.put(nodeState.getNodeId(), nodeState);
+            }
         }
 
         appendDocumentsThatHaveChangedChildNodesOrChangedHandles(augmentedRemove, augmentedAdd);
