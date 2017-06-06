@@ -21,9 +21,15 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiPredicate;
 
 import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
@@ -38,6 +44,7 @@ import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cm.model.parser.ParserException;
 
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -333,5 +340,32 @@ public abstract class AbstractBaseTest {
         assertEquals(isResource, actual.isResource());
         assertEquals(isPath, actual.isPath());
         assertEquals(parent, actual.getParent());
+    }
+
+
+    protected void assertNoFileDiff(final Path expectedRoot, final Path actualRoot) throws IOException {
+        assertNoFileDiff(null, expectedRoot, actualRoot);
+    }
+
+    protected void assertNoFileDiff(final String msg, final Path expectedRoot, final Path actualRoot) throws IOException {
+        final List<Path> expected = findFiles(expectedRoot);
+        final List<Path> actual = findFiles(actualRoot);
+
+        assertEquals(msg, expected.stream().map(Path::toString).collect(toList()),
+                actual.stream().map(Path::toString).collect(toList()));
+        for (int i = 0; i < expected.size(); i++) {
+            assertEquals("comparing "+expected.get(i),
+                    new String(Files.readAllBytes(expectedRoot.resolve(expected.get(i)))),
+                    new String(Files.readAllBytes(actualRoot.resolve(actual.get(i)))));
+        }
+    }
+
+    private List<Path> findFiles(final Path root) throws IOException {
+        final List<Path> paths = new ArrayList<>();
+        //Ignore hcm-actions file as it is not being serialized to disk
+        final BiPredicate<Path, BasicFileAttributes> matcher = (filePath, fileAttr) -> fileAttr.isRegularFile() && !filePath.endsWith(Constants.ACTIONS_YAML);
+        Files.find(root, Integer.MAX_VALUE, matcher).forEachOrdered((path) -> paths.add(root.relativize(path)));
+        Collections.sort(paths);
+        return paths;
     }
 }

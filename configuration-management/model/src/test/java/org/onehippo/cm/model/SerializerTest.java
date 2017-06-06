@@ -73,30 +73,4 @@ public class SerializerTest extends AbstractBaseTest {
         assertNoFileDiff(expectedRoot, actualRoot);
     }
 
-    protected void assertNoFileDiff(final Path expectedRoot, final Path actualRoot) throws IOException {
-        assertNoFileDiff(null, expectedRoot, actualRoot);
-    }
-
-    protected void assertNoFileDiff(final String msg, final Path expectedRoot, final Path actualRoot) throws IOException {
-        final List<Path> expected = findFiles(expectedRoot);
-        final List<Path> actual = findFiles(actualRoot);
-
-        assertEquals(msg, expected.stream().map(Path::toString).collect(toList()),
-                actual.stream().map(Path::toString).collect(toList()));
-        for (int i = 0; i < expected.size(); i++) {
-            assertEquals("comparing "+expected.get(i),
-                    new String(Files.readAllBytes(expectedRoot.resolve(expected.get(i)))),
-                    new String(Files.readAllBytes(actualRoot.resolve(actual.get(i)))));
-        }
-    }
-
-    private List<Path> findFiles(final Path root) throws IOException {
-        final List<Path> paths = new ArrayList<>();
-        //Ignore hcm-actions file as it is not being serialized to disk
-        final BiPredicate<Path, BasicFileAttributes> matcher = (filePath, fileAttr) -> fileAttr.isRegularFile() && !filePath.endsWith(Constants.ACTIONS_YAML);
-        Files.find(root, Integer.MAX_VALUE, matcher).forEachOrdered((path) -> paths.add(root.relativize(path)));
-        Collections.sort(paths);
-        return paths;
-    }
-
 }
