@@ -6,7 +6,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="autoexport:modules" sv:type="String" h:merge="override">
-      <sv:value>bootstrap/configuration:/</sv:value>
+      <sv:value>repository-data/config:/</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

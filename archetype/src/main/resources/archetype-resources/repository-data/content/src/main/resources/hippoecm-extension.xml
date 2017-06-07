@@ -18,7 +18,7 @@
       <sv:value>/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig/autoexport:modules</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentpropadd" sv:type="String">
-      <sv:value>bootstrap/content:/content</sv:value>
+      <sv:value>repository-data/content:/content</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>30011</sv:value>
