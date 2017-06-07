@@ -149,4 +149,27 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="frontend-console-delete-create-patch">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/console/console/createpatch</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>904.0</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="frontend-console-delete-apply-patch">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/console/console/applypatch</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>904.0</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>
