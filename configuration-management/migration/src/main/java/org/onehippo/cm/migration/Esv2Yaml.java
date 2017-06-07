@@ -24,12 +24,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.jcr.PropertyType;
@@ -44,7 +44,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.DefinitionNode;
-import org.onehippo.cm.model.FileConfigurationWriter;
+import org.onehippo.cm.model.MigrationConfigWriter;
+import org.onehippo.cm.model.MigrationMode;
 import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
@@ -58,6 +59,9 @@ import org.onehippo.cm.model.impl.ValueImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cm.migration.ResourceProcessor.deleteEmptyDirectory;
+import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
+
 public class Esv2Yaml {
 
     static final Logger log = LoggerFactory.getLogger(Esv2Yaml.class);
@@ -67,6 +71,7 @@ public class Esv2Yaml {
     private static final String SOURCE_FOLDER = "s";
     private static final String TARGET_FOLDER = "t";
     private static final String AGGREGATE = "a";
+    private static final String MODE = "m";
     private static final String ECM_LOCATION = "i";
     private static final String[] MAIN_YAML_NAMES = {"main", "root", "base", "index"};
 
@@ -76,6 +81,7 @@ public class Esv2Yaml {
     private final File extensionFile;
     private final ModuleImpl module;
     private final boolean aggregate;
+    private final MigrationMode migrationMode;
 
     public static void main(final String[] args) throws IOException, EsvParseException, ParseException {
 
@@ -90,10 +96,16 @@ public class Esv2Yaml {
                 final String src = cmd.getOptionValue(SOURCE_FOLDER);
                 final String target = cmd.getOptionValue(TARGET_FOLDER);
 
+
+                final MigrationMode mode = cmd.hasOption(MODE) ? MigrationMode.valueOf(cmd.getOptionValue(MODE).toUpperCase()) : MigrationMode.COPY;
+                if (mode == MigrationMode.GIT && !Objects.equals(src, target)) {
+                    throw new IllegalArgumentException("GIT mode requires same source & destination location");
+                }
+
                 if (cmd.hasOption(ECM_LOCATION)) {
-                    new Esv2Yaml(new File(cmd.getOptionValue(ECM_LOCATION)), new File(src), new File(target), aggregate).convert();
+                    new Esv2Yaml(new File(cmd.getOptionValue(ECM_LOCATION)), new File(src), new File(target), aggregate, mode).convert();
                 } else {
-                    new Esv2Yaml(new File(src), new File(target), aggregate).convert();
+                    new Esv2Yaml(new File(src), new File(target), aggregate, mode).convert();
                 }
             } else {
                 final HelpFormatter formatter = new HelpFormatter();
@@ -118,15 +130,17 @@ public class Esv2Yaml {
         options.addOption(ECM_LOCATION, "init", true, "(optional) location of hippoecm-extension.xml file, if not within <src> folder");
         options.addOption(SOURCE_FOLDER, "src", true, "bootstrap initialization resources folder");
         options.addOption(TARGET_FOLDER, "target", true, "directory for writing the output yaml (will be emptied first)");
+        options.addOption(MODE, "mode", true, "File system mode. git/move/copy. Default is copy");
         options.addOption(AGGREGATE, "aggregate", false, "Aggregate module");
         return options;
     }
 
-    public Esv2Yaml(final File src, final File target, final boolean aggregate) throws IOException, EsvParseException {
-        this(null, src, target, aggregate);
+    public Esv2Yaml(final File src, final File target, final boolean aggregate, MigrationMode mode) throws IOException, EsvParseException {
+        this(null, src, target, aggregate, mode);
     }
 
-    public Esv2Yaml(final File init, final File src, final File target, final boolean aggregate) throws IOException, EsvParseException {
+    public Esv2Yaml(final File init, final File src, final File target, final boolean aggregate, MigrationMode mode) throws IOException, EsvParseException {
+        this.migrationMode = mode;
         this.aggregate = aggregate;
         this.src = src;
         this.target = target;
@@ -144,7 +158,7 @@ public class Esv2Yaml {
             if (target.isFile()) {
                 throw new IllegalArgumentException("Target is not a directory");
             } else {
-                final Path configFolder = Paths.get(target.toURI()).resolve(Constants.HCM_CONFIG_FOLDER);
+                final Path configFolder = Paths.get(target.toURI()).resolve(HCM_CONFIG_FOLDER);
                 final Path contentFolder = Paths.get(target.toURI()).resolve(Constants.HCM_CONTENT_FOLDER);
 
                 if (Files.exists(configFolder) && Files.isDirectory(configFolder)) {
@@ -184,16 +198,19 @@ public class Esv2Yaml {
 
                 final Set<String> sourcePaths = new HashSet<>();
 
+                final ResourceProcessor resourceProcessor = new ResourceProcessor();
+
                 // preprocess initializeitems and build set of claimed/needed target yaml source paths
                 for (InitializeInstruction instruction : instructions) {
                     preprocessInitializeInstruction(instruction);
                     if (instruction instanceof SourceInitializeInstruction) {
                         sourcePaths.add(instruction.getSourcePath());
+                        handleFsResource(resourceProcessor, instruction);
                     }
                 }
 
                 // now sort the instructions on processing order
-                Collections.sort(instructions, InitializeInstruction.COMPARATOR);
+                instructions.sort(InitializeInstruction.COMPARATOR);
 
                 // combine/link nodetypes to namespace instructions and remove them from the list
                 combineNamespaceAndNodeTypesInstructions(instructions);
@@ -203,8 +220,10 @@ public class Esv2Yaml {
                 for (InitializeInstruction instruction : instructions) {
                     if (instruction.getType() == InitializeInstruction.Type.RESOURCEBUNDLES) {
                         final String candidate = FilenameUtils.removeExtension(instruction.getResourcePath());
-                        instruction.setSourcePath(createSourcePath(new String[]{candidate}, sourcePaths, 0));
-                        sourcePaths.add(instruction.getSourcePath());
+                        String sourcePath = createSourcePath(new String[]{candidate}, sourcePaths, 0);
+                        instruction.setSourcePath(sourcePath);
+                        sourcePaths.add(sourcePath);
+                        handleFsResource(resourceProcessor, instruction);
                     }
                 }
 
@@ -218,6 +237,39 @@ public class Esv2Yaml {
                         " should have a root node with name \"hippo:initialize\"");
             }
             return;
+        }
+    }
+
+    /**
+     * Handle resource at filesystem level. Depending on a migration mode:
+     * <pre/>
+     * GIT: performs git mv -f source target and thus, preserve version control history
+     * <pre/>
+     * MOVE: DELETES source file and folder if it is empty
+     * <pre/>
+     * COPY: Does nothing
+     * @param resourceProcessor
+     * @param instruction
+     * @throws IOException
+     */
+    private void handleFsResource(final ResourceProcessor resourceProcessor, final InitializeInstruction instruction) throws IOException {
+        final Path sourceFilePath = Paths.get(src.toString(), instruction.getResourcePath());
+        final Path destinationPath = Paths.get(src.toString(), HCM_CONFIG_FOLDER, instruction.getSourcePath());
+        Path srcDirPath = sourceFilePath.getParent();
+
+        switch (migrationMode) {
+            case GIT:
+                log.info(String.format("Moving item from %s to %s", sourceFilePath, destinationPath));
+                resourceProcessor.moveGitResource(sourceFilePath, destinationPath);
+                deleteEmptyDirectory(srcDirPath);
+                break;
+            case MOVE:
+                Files.deleteIfExists(sourceFilePath);
+                deleteEmptyDirectory(srcDirPath);
+                break;
+            case COPY:
+                //do Nothing
+                break;
         }
     }
 
@@ -383,6 +435,6 @@ public class Esv2Yaml {
         module.setConfigResourceInputProvider(moduleContext.getConfigInputProvider());
         module.setContentResourceInputProvider(moduleContext.getContentInputProvider());
 
-        new FileConfigurationWriter().writeModule(module, Constants.DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
+        new MigrationConfigWriter(migrationMode).writeModule(module, Constants.DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
     }
 }
