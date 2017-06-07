@@ -345,6 +345,7 @@ describe('ChannelService', () => {
     loadChannel();
     expect(ChannelService.hasChannel()).toBe(true);
     expect(ChannelService.isEditable()).toBe(true);
+    ChannelService.setToolbarDisplayed(false);
 
     ChannelService.clearChannel();
 
