@@ -156,6 +156,8 @@ public class BinariesServlet extends HttpServlet {
      */
     public static final String CONTENT_DISPOSITION_FILENAME_ENCODING_INIT_PARAM = "contentDispositionFilenameEncoding";
 
+    public static final String MIME_SEPARATION_INIT_PARAM = "mimeSeparation";
+
     public static final String FORCE_CONTENT_DISPOSITION_INIT_PARAM = "forceContentDispositionRequestParamName";
 
     public static final String DEFAULT_FORCE_CONTENT_DISPOSITION_PARAM_NAME = "forceDownload";
@@ -177,7 +179,7 @@ public class BinariesServlet extends HttpServlet {
     /**
      * MIME multipart separation string
      */
-    protected static final String MIME_SEPARATION = "HST_MIME_BOUNDARY";
+    private static final String DEFAULT_MIME_SEPARATION = "TRIBES_MIME_BOUNDARY";
 
     private String baseBinariesContentPath = ResourceUtils.DEFAULT_BASE_BINARIES_CONTENT_PATH;
 
@@ -208,6 +210,8 @@ public class BinariesServlet extends HttpServlet {
     private String binaryLastModifiedPropName = ResourceUtils.DEFAULT_BINARY_LAST_MODIFIED_PROP_NAME;
 
     private String forceContentDispositionRequestParamName = DEFAULT_FORCE_CONTENT_DISPOSITION_PARAM_NAME;
+
+    private String mimeSeparation = DEFAULT_MIME_SEPARATION;
 
     /** FIXME: BinariesCache is not serializable. */
     private BinariesCache binariesCache;
@@ -334,11 +338,11 @@ public class BinariesServlet extends HttpServlet {
                     response.setHeader("Content-Length", Long.toString(range.end - range.start + 1));
                     copyPageToResponse(request, response, output, page, range.start, range.end - range.start + 1);
                 } else {
-                    response.setContentType("multipart/byteranges; boundary=" + MIME_SEPARATION);
+                    response.setContentType("multipart/byteranges; boundary=" + mimeSeparation);
                     for (ByteRange range : byteRanges) {
                         // Writing MIME header.
                         output.println();
-                        output.println("--" + MIME_SEPARATION);
+                        output.println("--" + mimeSeparation);
                         if (pageMimeType != null) {
                             output.println("Content-Type: " + pageMimeType);
                         }
@@ -693,6 +697,10 @@ public class BinariesServlet extends HttpServlet {
     }
 
     private void initContentDispostion() throws ServletException {
+
+        mimeSeparation =
+                StringUtils.defaultIfEmpty(StringUtils.trim(getInitParameter(MIME_SEPARATION_INIT_PARAM, null)),
+                        DEFAULT_MIME_SEPARATION);
 
         forceContentDispositionRequestParamName = getInitParameter(FORCE_CONTENT_DISPOSITION_INIT_PARAM, DEFAULT_FORCE_CONTENT_DISPOSITION_PARAM_NAME);
 

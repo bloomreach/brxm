@@ -15,6 +15,13 @@
  */
 package org.hippoecm.hst.servlet.utils;
 
+/**
+ * Byte Range Header Information class.
+ * <P>
+ * Inspired by <code>org.apache.catalina.servlets.DefaultServlet.java#parseRange(HttpServletRequest, HttpServletResponse, WebResource)</code>
+ * of Apache Tomcat project.
+ * </P>
+ */
 public class ByteRange {
 
     public long start;

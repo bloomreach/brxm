@@ -23,6 +23,13 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Byte Range Request Header Parsing Utility.
+ * <P>
+ * Inspired by <code>org.apache.catalina.servlets.DefaultServlet.java#parseRange(HttpServletRequest, HttpServletResponse, WebResource)</code>
+ * of Apache Tomcat project.
+ * </P>
+ */
 public class ByteRangeUtils {
 
     /**

@@ -40,6 +40,7 @@ public class AbstractTestBinariesServlet {
         expect(servletConfig.getInitParameter("set-expires-headers")).andReturn(null);
         expect(servletConfig.getInitParameter("set-content-length-header")).andReturn(null);
         expect(servletConfig.getInitParameter("forceContentDispositionRequestParamName")).andReturn(null);
+        expect(servletConfig.getInitParameter("mimeSeparation")).andReturn(null);
         expect(servletConfig.getInitParameter("use-accept-ranges-header")).andReturn("false");
         return servletConfig;
     }
