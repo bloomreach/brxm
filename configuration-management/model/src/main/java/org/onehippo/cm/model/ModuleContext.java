@@ -27,6 +27,7 @@ import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.mapper.ValueFileMapperProvider;
 import org.onehippo.cm.model.parser.SourceResourceCrawler;
 import org.onehippo.cm.model.serializer.ResourceNameResolver;
 import org.onehippo.cm.model.serializer.ResourceNameResolverImpl;
@@ -131,6 +132,7 @@ public class ModuleContext {
 
     /**
      * Adds predefined resource files to known files list. Should be invoked only after OutputProvider had been created
+     *
      * @throws IOException
      */
     public void collectExistingFilesAndResolveNewResources() throws IOException {
@@ -139,18 +141,16 @@ public class ModuleContext {
             throw new IOException(String.format("Output provider should be initialized for module: %s", module));
         }
 
+        final ValueFileMapperProvider mapperProvider = ValueFileMapperProvider.getInstance();
+
         final SourceResourceCrawler crawler = new SourceResourceCrawler();
-        LinkedHashMap<SourceImpl, List<Pair<ValueImpl, String>>> allNewResources = new LinkedHashMap<>();
+        final LinkedHashMap<SourceImpl, List<Pair<ValueImpl, String>>> allNewResources = new LinkedHashMap<>();
         for (final SourceImpl source : module.getSources()) {
             final List<Pair<ValueImpl, String>> resources = crawler.collect(source);
             for (final Pair<ValueImpl, String> pair : resources) {
                 if (pair.getLeft().isNewResource()) {
-                    List<Pair<ValueImpl, String>> newResources = allNewResources.get(source);
-                    if (newResources == null) {
-                        // postpone mapping new resources until existing files are all known (to prevent clashes)
-                        newResources = new ArrayList<>();
-                        allNewResources.put(source, newResources);
-                    }
+                    // postpone mapping new resources until existing files are all known (to prevent clashes)
+                    final List<Pair<ValueImpl, String>> newResources = allNewResources.computeIfAbsent(source, k -> new ArrayList<>());
                     newResources.add(pair);
                 } else {
                     final Path resourcePath = getOutputProvider(source).getResourceOutputPath(source, pair.getRight());
@@ -163,9 +163,11 @@ public class ModuleContext {
             final SourceImpl source = sourceEntry.getKey();
             for (final Pair<ValueImpl, String> pair : sourceEntry.getValue()) {
                 // TODO: tricky cast or always valid? In the latter case the APIs should reflect that
-                FileResourceOutputProvider outputProvider = (FileResourceOutputProvider)getOutputProvider(source);
-                final Path resourceFilePath = outputProvider.getResourceOutputPath(source, pair.getRight());
-                final String filePath  = generateUniqueName(source, resourceFilePath.toString());
+
+                final String resourceFileName = mapperProvider.generateName(pair.getLeft());
+                final FileResourceOutputProvider outputProvider = (FileResourceOutputProvider) getOutputProvider(source);
+                final Path resourceFilePath = outputProvider.getResourceOutputPath(source, resourceFileName);
+                final String filePath = generateUniqueName(source, resourceFilePath.toString());
                 final String resourcePath = filePath.substring(outputProvider.getModulePath().toString().length());
                 pair.getLeft().setResourceValue(resourcePath);
             }

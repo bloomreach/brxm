@@ -61,4 +61,9 @@ public class FileResourceInputProvider implements ResourceInputProvider {
         }
     }
 
+    @Override
+    public Path getBasePath() {
+        return basePath;
+    }
+
 }

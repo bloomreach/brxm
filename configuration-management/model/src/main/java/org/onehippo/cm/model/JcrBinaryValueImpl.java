@@ -17,13 +17,11 @@ package org.onehippo.cm.model;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.model.impl.ValueImpl;
 
 /**
@@ -31,19 +29,22 @@ import org.onehippo.cm.model.impl.ValueImpl;
  */
 public class JcrBinaryValueImpl extends ValueImpl {
 
-    public JcrBinaryValueImpl(final javax.jcr.Value value) {
-        super(value, ValueType.BINARY, false, false);
+    private Value jcrValue;
+    private Property parentProperty;
+
+    public JcrBinaryValueImpl(final Property parentProperty, final javax.jcr.Value jcrValue) {
+        super(jcrValue, ValueType.BINARY, false, false);
+        this.parentProperty = parentProperty;
+        this.jcrValue = jcrValue;
+    }
+
+    public Property getParentProperty() {
+        return parentProperty;
     }
 
     @Override
     public String getString() {
-        StringWriter writer = new StringWriter();
-        try {
-            IOUtils.copy(getResourceInputStream(), writer, StandardCharsets.UTF_8.name());
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("Failed to convert InputStream to String for property '%s'", getParent().getName()), e);
-        }
-        return writer.toString();
+        throw new UnsupportedOperationException();
     }
 
     @Override

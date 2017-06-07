@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.cm.model.serializer.AggregatedModulesDescriptorSerializer;
+import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.cm.model.serializer.SourceSerializer;
 import org.yaml.snakeyaml.nodes.Node;
 
@@ -121,7 +121,7 @@ public class FileConfigurationWriter {
         IOUtils.closeQuietly(inputStream);
     }
 
-    private void processCopyItem(Source source, CopyItem copyItem, ModuleContext moduleContext) throws IOException {
+    void processCopyItem(Source source, CopyItem copyItem, ModuleContext moduleContext) throws IOException {
         try (
                 final InputStream resourceInputStream = copyItem.getValue().getResourceInputStream();
                 final OutputStream resourceOutputStream = moduleContext.getOutputProvider(source)

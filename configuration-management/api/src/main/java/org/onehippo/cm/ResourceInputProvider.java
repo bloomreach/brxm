@@ -18,6 +18,7 @@ package org.onehippo.cm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Path;
 
 import org.onehippo.cm.model.Source;
 
@@ -47,4 +48,8 @@ public interface ResourceInputProvider {
      * @return the root URL of the base path within a Module for which this ResourceInputProvider is responsible.
      */
     URL getBaseURL();
+
+    default Path getBasePath() {
+        throw new UnsupportedOperationException();
+    }
 }
