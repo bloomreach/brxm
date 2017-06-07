@@ -129,7 +129,7 @@ public class HstLinkTag extends ParamContainerTag {
     public int doStartTag() throws JspException{
     
         if (var != null) {
-            pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
+            TagUtils.removeVar(var, pageContext, scope);
         }
         
         return EVAL_BODY_INCLUDE;

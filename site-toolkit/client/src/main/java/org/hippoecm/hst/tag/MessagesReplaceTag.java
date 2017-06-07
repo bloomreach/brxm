@@ -53,11 +53,12 @@ public class MessagesReplaceTag extends BodyTagSupport {
     protected String variablePrefix;
     protected String variableSuffix;
     protected Character escapeChar;
+    protected String scope;
 
     @Override
     public int doStartTag() throws JspException{
         if (var != null) {
-            pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
+            TagUtils.removeVar(var, pageContext, scope);
         }
 
         return EVAL_BODY_BUFFERED;
@@ -107,7 +108,7 @@ public class MessagesReplaceTag extends BodyTagSupport {
                             throw new JspException(" Exception: cannot write to the output writer.");
                         }
                     } else {
-                        pageContext.setAttribute(var, textContent, PageContext.PAGE_SCOPE);
+                        pageContext.setAttribute(var, textContent, TagUtils.getScopeByName(scope));
                     }
                 }
             }
@@ -124,6 +125,7 @@ public class MessagesReplaceTag extends BodyTagSupport {
         basename = null;
         locale = null;
         localeString = null;
+        scope = null;
     }
 
     @Override
@@ -183,6 +185,10 @@ public class MessagesReplaceTag extends BodyTagSupport {
         return variableSuffix;
     }
 
+    public String getScope() {
+        return scope;
+    }
+
     public void setVariableSuffix(String variableSuffix) {
         this.variableSuffix = variableSuffix;
     }
@@ -193,6 +199,10 @@ public class MessagesReplaceTag extends BodyTagSupport {
 
     public void setEscapeChar(Character escapeChar) {
         this.escapeChar = escapeChar;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 
     protected LocalizationContext getLocalizationContext() {

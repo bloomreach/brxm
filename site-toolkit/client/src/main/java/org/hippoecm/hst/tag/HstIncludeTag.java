@@ -21,11 +21,11 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.utils.TagUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +41,7 @@ public class HstIncludeTag extends TagSupport {
 
     protected String ref = null;
     protected String var;
+    protected String scope;
     
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -48,7 +49,7 @@ public class HstIncludeTag extends TagSupport {
     @Override
     public int doStartTag() throws JspException{
         if (var != null) {
-            pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
+            TagUtils.removeVar(var, pageContext, scope);
         }
         return EVAL_BODY_INCLUDE;
     }
@@ -75,7 +76,7 @@ public class HstIncludeTag extends TagSupport {
                 } else {
                     StringWriter writer = new StringWriter();
                     hstResponse.flushChildContent(ref, writer);
-                    pageContext.setAttribute(var, writer.toString(), PageContext.PAGE_SCOPE);
+                    pageContext.setAttribute(var, writer.toString(), TagUtils.getScopeByName(scope));
                 }
             } catch (IOException e) {
                 if (log.isDebugEnabled()) {
@@ -94,6 +95,7 @@ public class HstIncludeTag extends TagSupport {
     protected void cleanup() {
         ref = null;
         var = null;
+        scope = null;
     }
 
     /**
@@ -103,7 +105,11 @@ public class HstIncludeTag extends TagSupport {
     public String getRef() {
         return this.ref;
     }
-    
+
+    public String getScope() {
+        return scope;
+    }
+
     /**
      * Sets the ref property.
      * @param ref The referenced name of the child window content to include
@@ -119,5 +125,9 @@ public class HstIncludeTag extends TagSupport {
 
     public void setVar(final String var) {
         this.var = var;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 }

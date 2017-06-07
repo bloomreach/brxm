@@ -47,7 +47,7 @@ public class SetHstBundleTag extends TagSupport {
     protected boolean fallbackToDefaultLocalizationContext = true;
     protected boolean fallbackToJavaResourceBundle = true;
 
-    private int scope;
+    private String scope;
     private String var;
 
     public SetHstBundleTag() {
@@ -58,7 +58,7 @@ public class SetHstBundleTag extends TagSupport {
     private void init() {
         basename = null;
         fallbackToJavaResourceBundle = true;
-        scope = PageContext.PAGE_SCOPE;
+        scope = null;
     }
 
     // *********************************************************************
@@ -68,7 +68,7 @@ public class SetHstBundleTag extends TagSupport {
     }
 
     public void setScope(String scope) {
-        this.scope = getScope(scope);
+        this.scope = scope;
     }
 
     // for tag attribute
@@ -89,9 +89,9 @@ public class SetHstBundleTag extends TagSupport {
             LocalizationContext locCtxt = getLocalizationContext(pageContext, basename, fallbackToJavaResourceBundle, fallbackToDefaultLocalizationContext);
 
             if (var != null) {
-                pageContext.setAttribute(var, locCtxt, scope);
+                pageContext.setAttribute(var, locCtxt, TagUtils.getScopeByName(scope));
             } else {
-                Config.set(pageContext, Config.FMT_LOCALIZATION_CONTEXT, locCtxt, scope);
+                Config.set(pageContext, Config.FMT_LOCALIZATION_CONTEXT, locCtxt, TagUtils.getScopeByName(scope));
             }
             return EVAL_PAGE;
         } finally {
@@ -155,18 +155,6 @@ public class SetHstBundleTag extends TagSupport {
         } else {
             return new LocalizationContext(new CompositeResourceBundle(bundles.toArray(new ResourceBundle[bundles.size()])));
         }
-    }
-
-    private static int getScope(String scope) {
-        if ("request".equalsIgnoreCase(scope)) {
-            return PageContext.REQUEST_SCOPE;
-        } else if ("session".equalsIgnoreCase(scope)) {
-            return PageContext.SESSION_SCOPE;
-        } else if ("application".equalsIgnoreCase(scope)) {
-            return PageContext.APPLICATION_SCOPE;
-        }
-
-        return PageContext.PAGE_SCOPE;
     }
 
     private static ResourceBundle getResourceBundleOfDefaultLocalizationContext(PageContext pc) {

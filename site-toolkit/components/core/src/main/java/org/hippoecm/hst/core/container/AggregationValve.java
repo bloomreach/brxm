@@ -133,8 +133,16 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         }
 
         HstContainerConfig requestContainerConfig = context.getRequestContainerConfig();
-        // process doBeforeRender() of each component as sorted order, parent first.
-        processWindowsBeforeRender(requestContainerConfig, rootWindow, rootRenderingWindow, sortedComponentWindows, requestMap, responseMap);
+
+        // process prepareBeforeRender() of each component
+        boolean redirectedOrForwarded = processWindowsPrepareBeforeRender(requestContainerConfig, rootWindow,
+                rootRenderingWindow, sortedComponentWindows, requestMap, responseMap);
+
+        if (!redirectedOrForwarded) {
+            // process doBeforeRender() of each component as sorted order, parent first.
+            processWindowsBeforeRender(requestContainerConfig, rootWindow, rootRenderingWindow, sortedComponentWindows,
+                    requestMap, responseMap);
+        }
 
         String redirectLocation = null;
 
@@ -352,6 +360,38 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         }
     }
 
+    protected boolean processWindowsPrepareBeforeRender(
+            final HstContainerConfig requestContainerConfig,
+            final HstComponentWindow rootWindow,
+            final HstComponentWindow rootRenderingWindow,
+            final HstComponentWindow[] sortedComponentWindows,
+            final Map<HstComponentWindow, HstRequest> requestMap,
+            final Map<HstComponentWindow, HstResponse> responseMap)
+            throws ContainerException {
+        boolean redirectedOrForwarded = false;
+
+        for (HstComponentWindow window : sortedComponentWindows) {
+            HstRequest request = requestMap.get(window);
+            HstResponse response = responseMap.get(window);
+
+            if (window.isVisible() && !isAsync(window, request)) {
+                getComponentInvoker().invokePrepareBeforeRender(requestContainerConfig, request, response);
+            }
+
+            if (window.getResponseState().getRedirectLocation() != null) {
+                redirectedOrForwarded = true;
+                break;
+            }
+
+            if (rootWindow.getResponseState().getForwardPathInfo() != null) {
+                redirectedOrForwarded = true;
+                break;
+            }
+        }
+
+        return redirectedOrForwarded;
+    }
+
     protected void processWindowsBeforeRender(
             final HstContainerConfig requestContainerConfig,
             final HstComponentWindow rootWindow,
@@ -372,25 +412,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                         continue;
                     }
 
-                    AsynchronousComponentWindowRenderer asynchronousComponentWindowRenderer = null;
-
-                    if (asynchronousComponentWindowRendererMap != null) {
-                        String asyncMode = window.getComponentInfo().getAsyncMode();
-
-                        if (StringUtils.isNotEmpty(asyncMode)) {
-                            asynchronousComponentWindowRenderer = asynchronousComponentWindowRendererMap.get(asyncMode);
-
-                            if (asynchronousComponentWindowRenderer == null) {
-                                log.warn("Unsupported asyncMode '{}' found for '{}'. Using default asyncMode '{}' instead. " +
-                                                "Supported asyncModes are '{}'.",
-                                        new String[]{asyncMode, window.getComponentInfo().getId(), defaultAsynchronousComponentWindowRenderingMode, asynchronousComponentWindowRendererMap.keySet().toString()});
-                            }
-                        }
-
-                        if (asynchronousComponentWindowRenderer == null) {
-                            asynchronousComponentWindowRenderer = asynchronousComponentWindowRendererMap.get(defaultAsynchronousComponentWindowRenderingMode);
-                        }
-                    }
+                    AsynchronousComponentWindowRenderer asynchronousComponentWindowRenderer = getAsynchronousComponentWindowRenderer(window);
 
                     if (asynchronousComponentWindowRenderer != null) {
                         asynchronousComponentWindowRenderer.processWindowBeforeRender(window, request, response);
@@ -523,6 +545,30 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         // check whether the component itself is asyn
         return window.getComponentInfo().isAsync();
 
+    }
+
+    private AsynchronousComponentWindowRenderer getAsynchronousComponentWindowRenderer(final HstComponentWindow window) {
+        AsynchronousComponentWindowRenderer asynchronousComponentWindowRenderer = null;
+
+        if (asynchronousComponentWindowRendererMap != null) {
+            String asyncMode = window.getComponentInfo().getAsyncMode();
+
+            if (StringUtils.isNotEmpty(asyncMode)) {
+                asynchronousComponentWindowRenderer = asynchronousComponentWindowRendererMap.get(asyncMode);
+
+                if (asynchronousComponentWindowRenderer == null) {
+                    log.warn("Unsupported asyncMode '{}' found for '{}'. Using default asyncMode '{}' instead. " +
+                                    "Supported asyncModes are '{}'.",
+                            new String[]{asyncMode, window.getComponentInfo().getId(), defaultAsynchronousComponentWindowRenderingMode, asynchronousComponentWindowRendererMap.keySet().toString()});
+                }
+            }
+
+            if (asynchronousComponentWindowRenderer == null) {
+                asynchronousComponentWindowRenderer = asynchronousComponentWindowRendererMap.get(defaultAsynchronousComponentWindowRenderingMode);
+            }
+        }
+
+        return asynchronousComponentWindowRenderer;
     }
 
     private class NoopHstResponseImpl implements HstResponse {

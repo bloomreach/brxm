@@ -89,6 +89,24 @@ public class TagUtils {
         return builder.append(DOUBLE_QUOTE).append(value).append(DOUBLE_QUOTE);
     }
 
+    public static int getScopeByName(String scopeName) {
+        if (scopeName != null) {
+            if ("request".equals(scopeName)) {
+                return PageContext.REQUEST_SCOPE;
+            } else if ("session".equals(scopeName)) {
+                return PageContext.SESSION_SCOPE;
+            } else if ("application".equals(scopeName)) {
+                return PageContext.APPLICATION_SCOPE;
+            }
+        }
+
+        return PageContext.PAGE_SCOPE;
+    }
+
+    public static void removeVar(final String var, final PageContext pageContext, final String scope) throws JspException {
+        pageContext.removeAttribute(var, getScopeByName(scope));
+    }
+
     public static void writeOrSetVar(final String url, final String var, final PageContext pageContext, final String scope) throws JspException {
         if (var == null) {
             try {
@@ -99,17 +117,7 @@ public class TagUtils {
                         "ResourceURL-Tag Exception: cannot write to the output writer.");
             }
         } else {
-            int varScope = PageContext.PAGE_SCOPE;
-            if (scope != null) {
-                if ("request".equals(scope)) {
-                    varScope = PageContext.REQUEST_SCOPE;
-                } else if ("session".equals(scope)) {
-                    varScope = PageContext.SESSION_SCOPE;
-                } else if ("application".equals(scope)) {
-                    varScope = PageContext.APPLICATION_SCOPE;
-                }
-            }
-            pageContext.setAttribute(var, url, varScope);
+            pageContext.setAttribute(var, url, getScopeByName(scope));
         }
     }
 

@@ -34,6 +34,7 @@ import org.hippoecm.hst.content.rewriter.ContentRewriterFactory;
 import org.hippoecm.hst.content.rewriter.ImageVariant;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.utils.TagUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +83,7 @@ public class HstHtmlTag extends TagSupport {
     public int doStartTag() throws JspException{
        
         if (var != null) {
-            pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
+            TagUtils.removeVar(var, pageContext, scope);
         }
         
         return EVAL_BODY_INCLUDE;
@@ -145,19 +146,7 @@ public class HstHtmlTag extends TagSupport {
             }
         } 
         else {
-            int varScope = PageContext.PAGE_SCOPE;
-            
-            if (this.scope != null) {
-                if ("request".equals(this.scope)) {
-                    varScope = PageContext.REQUEST_SCOPE;
-                } else if ("session".equals(this.scope)) {
-                    varScope = PageContext.SESSION_SCOPE;
-                } else if ("application".equals(this.scope)) {
-                    varScope = PageContext.APPLICATION_SCOPE;
-                }
-            }
-            
-            pageContext.setAttribute(var, html, varScope);
+            pageContext.setAttribute(var, html, TagUtils.getScopeByName(scope));
         }
 
         cleanup();

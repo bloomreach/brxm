@@ -37,7 +37,20 @@ public interface HstComponent {
      * @throws HstComponentException
      */
     void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException;
-    
+
+    /**
+     * This method is invoked before {@link #doBeforeRender(HstRequest, HstResponse)} method to give an HstComponent
+     * a chance to <i>prepare</i> any business service invocation(s).
+     * This method can be implemented to prepare business content objects by creating asynchronous jobs in parallel
+     * without having to wait each component's {@link #doBeforeRender(HstRequest, HstResponse)} execution sequentially.
+     *
+     * @param request
+     * @param response
+     * @throws HstComponentException
+     */
+    default void prepareBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
+    }
+
     /**
      * Allows the component to do some business logic processing before rendering
      * 
