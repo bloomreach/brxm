@@ -62,6 +62,7 @@ class ChannelService {
 
   clearChannel() {
     this.channel = {};
+    this.setToolbarDisplayed(true);
   }
 
   hasChannel() {

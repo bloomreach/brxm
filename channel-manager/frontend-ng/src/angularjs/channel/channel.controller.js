@@ -54,8 +54,6 @@ class ChannelCtrl {
       this.hideSubpage();
       this.ChannelService.clearChannel();
     });
-
-    this.ChannelService.setToolbarDisplayed(true);
   }
 
   isControlsDisabled() {

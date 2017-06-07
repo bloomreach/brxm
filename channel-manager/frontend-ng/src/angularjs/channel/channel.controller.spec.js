@@ -32,23 +32,22 @@ describe('ChannelCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$timeout_, _$q_, _FeedbackService_) => {
+    inject(($controller, _$rootScope_, _$timeout_, _$q_, _FeedbackService_, _ChannelService_) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
       $timeout = _$timeout_;
       $q = _$q_;
       FeedbackService = _FeedbackService_;
+      ChannelService = _ChannelService_;
 
       const $stateParams = {
         initialRenderPath: '/testPath',
       };
 
-      ChannelService = jasmine.createSpyObj('ChannelService', [
-        'clearChannel',
-        'hasChannel',
-        'isEditable',
-      ]);
+      spyOn(ChannelService, 'clearChannel');
+      spyOn(ChannelService, 'hasChannel');
+      spyOn(ChannelService, 'isEditable');
 
       SidePanelService = jasmine.createSpyObj('SidePanelService', [
         'open',
@@ -190,5 +189,12 @@ describe('ChannelCtrl', () => {
   it('opens the content editor in the right sidepanel when told so', () => {
     ChannelCtrl.editContent('testUuid');
     expect(SidePanelService.open).toHaveBeenCalledWith('right', 'testUuid');
+  });
+
+  it('should return channel toolbar display status', () => {
+    ChannelService.setToolbarDisplayed(true);
+    expect(ChannelCtrl.isToolbarDisplayed()).toBe(true);
+    ChannelService.setToolbarDisplayed(false);
+    expect(ChannelCtrl.isToolbarDisplayed()).toBe(false);
   });
 });
