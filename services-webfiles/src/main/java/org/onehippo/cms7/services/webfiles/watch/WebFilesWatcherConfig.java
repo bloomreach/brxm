@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public interface WebFilesWatcherConfig {
 
     /**
      * @return the names of the Maven modules that should be watched for changes below the directory
-     * <code>src/main/resources</code>. May contain slashes to indicate child modules (e.g "bootstrap/webfiles").
+     * <code>src/main/resources</code>. May contain slashes to indicate child modules (e.g "repository-data/webfiles").
      */
     List<String> getWatchedModules();
 

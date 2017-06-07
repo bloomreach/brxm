@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@
       <sv:value>256</sv:value>
     </sv:property>
     <sv:property sv:name="watchedModules" sv:type="String" sv:multiple="true">
-      <sv:value>bootstrap/webfiles</sv:value>
+      <sv:value>repository-data/webfiles</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

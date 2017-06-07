@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -445,8 +445,8 @@ public class WebFilesWatcherIT extends AbstractWatcherIT {
     public void windows_paths_are_converted_to_correct_jcr_paths() throws IOException, InterruptedException, RepositoryException {
         webFilesService.importJcrWebFileBundle(anyObject(Session.class), anyObject(File.class), anyBoolean());
         expectLastCall();
-        final Path windowsBundleRoot = new MockPath("C:\\Users\\John\\myhippoproject\\bootstrap\\webfiles\\src\\main\\resources", '\\');
-        final Path windowsStyleCss = new MockPath("C:\\Users\\John\\myhippoproject\\bootstrap\\webfiles\\src\\main\\resources\\bundle\\css\\style.css", '\\');
+        final Path windowsBundleRoot = new MockPath("C:\\Users\\John\\myhippoproject\\repository-data\\webfiles\\src\\main\\resources", '\\');
+        final Path windowsStyleCss = new MockPath("C:\\Users\\John\\myhippoproject\\repository-data\\webfiles\\src\\main\\resources\\bundle\\css\\style.css", '\\');
 
         webFilesService.importJcrWebFiles(anyObject(Session.class), eq("bundle"), eq("css/style.css"), eq(windowsStyleCss.toFile()));
         expectLastCall();
