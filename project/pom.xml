@@ -67,7 +67,7 @@
     <cxf.version>3.1.6</cxf.version>
     <jaxrs.version>2.0.1</jaxrs.version>
     <jackson.version>1.9.13</jackson.version>
-    <jackson2.version>2.4.5</jackson2.version>
+    <jackson2.version>2.8.8</jackson2.version>
     <spring.version>4.2.6.RELEASE</spring.version>
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.4.11</groovy.version>
