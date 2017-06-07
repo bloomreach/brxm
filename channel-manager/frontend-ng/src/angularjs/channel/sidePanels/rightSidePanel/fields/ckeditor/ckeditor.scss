@@ -47,14 +47,14 @@
 .cke_top {
   border-bottom: 0 !important;
 
-  /* Remove codemirror buttons in CKEditor toolbar */
+  // Remove codemirror buttons in CKEditor toolbar
   .cke_button {
     &.cke_button__searchcode,
     &.cke_button__autoformat,
     &.cke_button__commentselectedrange,
     &.cke_button__uncommentselectedrange,
     &.cke_button__autocomplete {
-       display: none;
+      display: none;
     }
   }
 }
