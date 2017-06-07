@@ -15,7 +15,7 @@
   -->
 
 <div layout="column" flex ng-hide="channelCtrl.isSubpageOpen()">
-  <md-toolbar class="hippo-toolbar qa-toolbar">
+  <md-toolbar class="hippo-toolbar qa-toolbar" ng-show="channelCtrl.isToolbarDisplayed()">
     <div class="md-toolbar-tools">
       <div flex="30" layout layout-align="start center">
         <left-side-panel-toggle disabled="channelCtrl.isControlsDisabled()"></left-side-panel-toggle>

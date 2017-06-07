@@ -34,6 +34,20 @@
 
       <span flex></span>
 
+      <md-button class="md-icon-button qa-publish-in-content-perspective"
+                 aria-label="{{ 'PUBLISH' | translate }}"
+                 ng-disabled="!$ctrl.editing || $ctrl.disableContentButtons"
+                 ng-click="$ctrl.openContentEditor('view')">
+        <md-tooltip md-delay="500">{{ 'PUBLISH' | translate }}</md-tooltip>
+        <md-icon md-svg-src="images/publish.svg"></md-icon>
+      </md-button>
+      <md-button class="md-icon-button qa-edit-in-content-perspective"
+                 aria-label="{{ 'SWITCH_TO_CONTENT_EDITOR' | translate }}"
+                 ng-disabled="$ctrl.disableContentButtons"
+                 ng-click="$ctrl.openContentEditor('edit')">
+        <md-tooltip md-delay="500">{{ 'SWITCH_TO_CONTENT_EDITOR' | translate }}</md-tooltip>
+        <md-icon md-svg-src="images/switch-to-content-editor.svg"></md-icon>
+      </md-button>
       <md-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
                  aria-label="{{ 'FULL_WIDTH' | translate }}"
                  ng-click="$ctrl.setFullWidth(true)"
@@ -47,22 +61,6 @@
                  ng-show="$ctrl.isFullWidth">
         <md-tooltip md-delay="500">{{ 'NORMAL_WIDTH' | translate }}</md-tooltip>
         <md-icon md-svg-src="images/un-maximize-sidepanel.svg"></md-icon>
-      </md-button>
-      <md-button class="md-icon-button qa-publish-in-content-perspective"
-                 aria-label="{{ 'PUBLISH' | translate }}"
-                 ng-disabled="!$ctrl.editing || $ctrl.disableContentButtons"
-                 ng-click="$ctrl.openContentEditor('view')">
-        <md-tooltip md-delay="500">{{ 'PUBLISH' | translate }}</md-tooltip>
-
-        <md-icon md-svg-src="images/publish.svg"></md-icon>
-      </md-button>
-      <md-button class="md-icon-button qa-edit-in-content-perspective"
-                 aria-label="{{ 'SWITCH_TO_CONTENT_EDITOR' | translate }}"
-                 ng-disabled="$ctrl.disableContentButtons"
-                 ng-click="$ctrl.openContentEditor('edit')">
-        <md-tooltip md-delay="500">{{ 'SWITCH_TO_CONTENT_EDITOR' | translate }}</md-tooltip>
-
-        <md-icon md-svg-src="images/switch-to-content-editor.svg"></md-icon>
       </md-button>
     </div>
     <md-progress-linear md-mode="indeterminate"
