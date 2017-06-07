@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-fdescribe('ChannelService', () => {
+describe('ChannelService', () => {
   let $q;
   let $log;
   let $rootScope;
