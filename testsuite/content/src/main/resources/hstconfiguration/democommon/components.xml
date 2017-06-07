@@ -686,6 +686,68 @@
       </sv:property>
     </sv:node>
   </sv:node>
+  <sv:node sv:name="bodypreparecaller">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:components/general_threecolumnlayout</sv:value>
+    </sv:property>
+    <sv:node sv:name="content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentclassname" sv:type="String">
+        <sv:value>org.hippoecm.hst.demo.components.PrepareCallersParent</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>preparecalls</sv:value>
+      </sv:property>
+      <sv:node sv:name="preparechild1">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:referencecomponent" sv:type="String">
+          <sv:value>hst:components/preparecaller</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="preparechild2">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:referencecomponent" sv:type="String">
+          <sv:value>hst:components/preparecaller</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="preparechild3">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:referencecomponent" sv:type="String">
+          <sv:value>hst:components/preparecaller</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="preparechild4">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:referencecomponent" sv:type="String">
+          <sv:value>hst:components/preparecaller</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="preparecaller">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.demo.components.PrepareCaller</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:template" sv:type="String">
+      <sv:value>preparecaller</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="copyright">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:component</sv:value>
