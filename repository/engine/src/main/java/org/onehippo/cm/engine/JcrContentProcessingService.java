@@ -171,12 +171,17 @@ public class JcrContentProcessingService {
         final ModuleImpl module = new ModuleImpl("export-module", new ProjectImpl("export-project", new GroupImpl("export-group")));
         module.setConfigResourceInputProvider(new JcrResourceInputProvider(node.getSession()));
         module.setContentResourceInputProvider(module.getConfigResourceInputProvider());
-        final ContentSourceImpl contentSource = module.addContentSource(NodeNameCodec.decode(node.getName())+YAML_EXT);
+        final String sourceFilename = mapNodeNameToFileName(NodeNameCodec.decode(node.getName()));
+        final ContentSourceImpl contentSource = module.addContentSource(sourceFilename +YAML_EXT);
         final ContentDefinitionImpl contentDefinition = contentSource.addContentDefinition();
 
         exportNode(node, contentDefinition);
 
         return module;
+    }
+
+    protected String mapNodeNameToFileName(String part) {
+        return part.contains(":") ? part.replace(":", "-") : part;
     }
 
     public DefinitionNodeImpl exportNode(final Node node, final ContentDefinitionImpl contentDefinition) throws RepositoryException {
