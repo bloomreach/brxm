@@ -75,8 +75,10 @@ public class BinariesServletTest extends AbstractTestBinariesServlet {
         expect(servletConfig.getInitParameter("binaryLastModifiedPropName")).andReturn("my:lastmod");
         expect(servletConfig.getInitParameter("contentDispositionFilenameEncoding")).andReturn("user-agent-specific");
         expect(servletConfig.getInitParameter("forceContentDispositionRequestParamName")).andReturn("download");
+        expect(servletConfig.getInitParameter("mimeSeparation")).andReturn(null);
         expect(servletConfig.getInitParameter("set-expires-headers")).andReturn("false");
         expect(servletConfig.getInitParameter("set-content-length-header")).andReturn("false");
+        expect(servletConfig.getInitParameter("use-accept-ranges-header")).andReturn("false");
 
         replay(servletConfig);
         binariesServlet.init(servletConfig);
