@@ -63,6 +63,7 @@ class RightSidePanelCtrl {
     $translate,
     $q,
     SidePanelService,
+    ChannelService,
     CmsService,
     ContentService,
     DialogService,
@@ -79,6 +80,7 @@ class RightSidePanelCtrl {
     this.$q = $q;
 
     this.SidePanelService = SidePanelService;
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.DialogService = DialogService;
@@ -411,13 +413,19 @@ class RightSidePanelCtrl {
         this.$element.removeClass('sidepanel-open');
         this.$element.css('max-width', '0px');
       });
+
+    if (!this.ChannelService.isToolbarDisplayed) {
+      this.ChannelService.setToolbarDisplayed(true);
+    }
   }
 
   setFullWidth(state) {
     if (state === true) {
       this.$element.addClass('fullwidth');
+      this.ChannelService.setToolbarDisplayed(false);
     } else {
       this.$element.removeClass('fullwidth');
+      this.ChannelService.setToolbarDisplayed(true);
     }
     this.isFullWidth = state;
   }

@@ -54,6 +54,8 @@ class ChannelCtrl {
       this.hideSubpage();
       this.ChannelService.clearChannel();
     });
+
+    this.ChannelService.setToolbarDisplayed(true);
   }
 
   isControlsDisabled() {
@@ -110,6 +112,10 @@ class ChannelCtrl {
     if (key) {
       this.FeedbackService.showError(key, params);
     }
+  }
+
+  isToolbarDisplayed() {
+    return this.ChannelService.isToolbarDisplayed;
   }
 }
 
