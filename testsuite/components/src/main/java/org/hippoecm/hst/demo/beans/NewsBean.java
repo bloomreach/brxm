@@ -19,14 +19,17 @@ import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.index.IndexField;
+import org.hippoecm.hst.content.beans.standard.HippoAssetBean;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 
 @Node(jcrType="demosite:newsdocument")
 public class NewsBean extends TextBean{
 
     private HippoGalleryImageSetBean imageBean;
-    private boolean imagesLoaded = false;
+    private boolean imagesLoaded;
 
+    private HippoAssetBean videoBean;
+    private boolean videoLoaded;
 
     @Override
     @IndexField
@@ -50,5 +53,18 @@ public class NewsBean extends TextBean{
         this.imageBean = this.getLinkedBean("demosite:image", HippoGalleryImageSetBean.class);
         return imageBean;
     }
- 
+
+    /**
+     * Get the video of the newspage
+     *
+     * @return the video of the newspage
+     */
+    public HippoAssetBean getVideo() {
+        if(videoLoaded) {
+            return this.videoBean;
+        }
+        videoLoaded = true;
+        this.videoBean = getLinkedBean("demosite:video", HippoAssetBean.class);
+        return videoBean;
+    }
 }

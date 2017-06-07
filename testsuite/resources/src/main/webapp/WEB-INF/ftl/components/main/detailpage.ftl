@@ -78,11 +78,22 @@ ${document.title}
     <a href="${resource}">${document.resource.name}</a>
     <br/><br/>
   </#if>
-  
+
   <#if document.image??>
     <@hst.link var="documentImageLink" hippobean=document.image.original/>
     <#if "${documentImageLink!}" != "">
       <img src="${documentImageLink}"/>
+    </#if>
+  </#if>
+
+  <#if document.video?? && document.video.asset?? && "${document.video.asset.mimeType!}"?starts_with("video/")>
+    <@hst.link var="documentVideoLink" hippobean=document.video.asset />
+    <#if "${documentVideoLink!}" != "">
+       <div>
+         <video width="320" height="240" controls="true">
+           <source src="${documentVideoLink}" type="${document.video.asset.mimeType}">
+         </video>
+       </div> 
     </#if>
   </#if>
 
