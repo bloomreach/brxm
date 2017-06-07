@@ -35,7 +35,6 @@
         <sv:property sv:multiple="true" sv:name="hipposysedit:supertype" sv:type="String">
           <sv:value>hippo:document</sv:value>
           <sv:value>hippostd:relaxed</sv:value>
-          <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>http://www.hippoecm.org/hst/resourcebundle/nt/2.1</sv:value>
@@ -100,12 +99,6 @@
         </sv:property>
         <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
           <sv:value/>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>document-type-locale-id</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:locale" sv:type="String">
-          <sv:value>document-type-locale</sv:value>
         </sv:property>
         <sv:property sv:name="resourcebundle:id" sv:type="String">
           <sv:value/>
