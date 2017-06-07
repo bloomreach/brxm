@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,9 +137,9 @@ public abstract class BaseTest {
                 if (!essentialsFolder.exists()) {
                     essentialsFolder.mkdir();
                 }
-                final File bootstrapFolder = new File(basePath + File.separator + "bootstrap");
-                if (!bootstrapFolder.exists()) {
-                    bootstrapFolder.mkdir();
+                final File repositoryDataFolder = new File(basePath + File.separator + "repository-data");
+                if (!repositoryDataFolder.exists()) {
+                    repositoryDataFolder.mkdir();
                 }
             }
             context = new TestPluginContext(null);

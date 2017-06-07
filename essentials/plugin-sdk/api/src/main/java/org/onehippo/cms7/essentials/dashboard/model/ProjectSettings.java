@@ -40,9 +40,9 @@ public interface ProjectSettings extends Document {
 
     void setCmsModule(String cmsFolder);
 
-    String getBootstrapModule();
+    String getRepositoryDataModule();
 
-    void setBootstrapModule(String bootstrapFolder);
+    void setRepositoryDataModule(String repositoryDataFolder);
 
     String getWebfilesSubModule();
 

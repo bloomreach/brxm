@@ -36,7 +36,7 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
 
     public static final String MODULE_SITE = "site";
     public static final String MODULE_CMS = "cms";
-    public static final String MODULE_BOOTSTRAP = "bootstrap";
+    public static final String MODULE_REPOSITORY_DATA = "repository-data";
     public static final String SUBMODULE_WEBFILES = "webfiles";
 
     private String projectNamespace;
@@ -55,7 +55,7 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
 
     private String siteModule;
     private String cmsModule;
-    private String bootstrapModule;
+    private String repositoryDataModule;
     private String webfilesSubModule;
     private String beansFolder;
 
@@ -101,16 +101,16 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     }
 
     @Override
-    public String getBootstrapModule() {
-        if (Strings.isNullOrEmpty(bootstrapModule)) {
-            return MODULE_BOOTSTRAP;
+    public String getRepositoryDataModule() {
+        if (Strings.isNullOrEmpty(repositoryDataModule)) {
+            return MODULE_REPOSITORY_DATA;
         }
-        return bootstrapModule;
+        return repositoryDataModule;
     }
 
     @Override
-    public void setBootstrapModule(final String bootstrapModule) {
-        this.bootstrapModule = bootstrapModule;
+    public void setRepositoryDataModule(final String repositoryDataFolder) {
+        repositoryDataModule = repositoryDataFolder;
     }
 
     @Override

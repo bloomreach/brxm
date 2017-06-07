@@ -28,16 +28,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.generated.jaxb.WebXml;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.utils.common.PackageVisitor;
 import org.slf4j.Logger;
@@ -94,8 +88,8 @@ public final class ProjectUtils {
     }
 
     public static File getWebfilesResources(final PluginContext context) {
-        final File bootstrapFolder = getFolder(context.getProjectSettings().getBootstrapModule());
-        final String webfilesPath = bootstrapFolder.getAbsolutePath() + File.separator + "webfiles" + File.separator
+        final File repositoryDataFolder = getFolder(context.getProjectSettings().getRepositoryDataModule());
+        final String webfilesPath = repositoryDataFolder.getAbsolutePath() + File.separator + "webfiles" + File.separator
                 + "src" + File.separator + "main" + File.separator + "resources";
         return new File(webfilesPath);
     }
@@ -148,31 +142,31 @@ public final class ProjectUtils {
     }
 
     /**
-     * Returns Configuration root folder e.g. {@code /home/foo/myproject/bootstrap/configuration}
+     * Returns Configuration root folder e.g. {@code /home/foo/myproject/repository-data/config}
      *
      * @return Configuration project folder
      */
-    public static File getBootstrapConfigFolder(final PluginContext context) {
-        return getFolder(context.getProjectSettings().getBootstrapModule()+File.separator + "configuration");
+    public static File getRepositoryDataConfigFolder(final PluginContext context) {
+        return getFolder(context.getProjectSettings().getRepositoryDataModule() + File.separator + "config");
 
     }
 
     /**
-     * Returns Content root folder e.g. {@code /home/foo/myproject/bootstrap/content}
+     * Returns Content root folder e.g. {@code /home/foo/myproject/repository-data/content}
      *
      * @return Content project folder
      */
-    public static File getBootstrapContentFolder(final PluginContext context) {
-        return getFolder(context.getProjectSettings().getBootstrapModule() + File.separator + "content");
+    public static File getRepositoryDataContentFolder(final PluginContext context) {
+        return getFolder(context.getProjectSettings().getRepositoryDataModule() + File.separator + "content");
     }
 
     /**
-     * Returns Webfiles root folder e.g. {@code /home/foo/myproject/bootstrap/webfiles}
+     * Returns Webfiles root folder e.g. {@code /home/foo/myproject/repository-data/webfiles}
      *
      * @return Webfiles project folder
      */
-    public static File getBootstrapWebfilesFolder(final PluginContext context) {
-        return getFolder(context.getProjectSettings().getBootstrapModule() + File.separator + "webfiles");
+    public static File getRepositoryDataWebfilesFolder(final PluginContext context) {
+        return getFolder(context.getProjectSettings().getRepositoryDataModule() + File.separator + "webfiles");
     }
     /**
      * Returns Essentials root folder e.g. {@code /home/foo/myproject/essentials}
@@ -195,12 +189,12 @@ public final class ProjectUtils {
     }
 
     /**
-     * Returns Bootstrap root folder e.g. {@code /home/foo/myproject/bootstrap}
+     * Returns repository-data root folder e.g. {@code /home/foo/myproject/bootstrap}
      *
-     * @return Bootstrap project folder
+     * @return repository-data project folder
      */
-    public static File getBootstrapFolder(final PluginContext context) {
-        return getFolder(context.getProjectSettings().getBootstrapModule());
+    public static File getRepositoryDataFolder(final PluginContext context) {
+        return getFolder(context.getProjectSettings().getRepositoryDataModule());
     }
 
     public static Model getPomModel(final PluginContext context, final TargetPom targetPom) {
@@ -229,29 +223,22 @@ public final class ProjectUtils {
                 return getPomForDir(ProjectUtils.getCms(context));
             case PROJECT:
                 return getPomForDir(ProjectUtils.getProjectRootFolder());
-            case BOOTSTRAP:
-                return getPomForDir(ProjectUtils.getBootstrapFolder(context));
-            case BOOTSTRAP_CONFIG:
-                return getPomForDir(ProjectUtils.getBootstrapConfigFolder(context));
-            case BOOTSTRAP_CONTENT:
-                return getPomForDir(ProjectUtils.getBootstrapContentFolder(context));
+            case REPOSITORY_DATA:
+                return getPomForDir(ProjectUtils.getRepositoryDataFolder(context));
+            case REPOSITORY_DATA_CONFIG:
+                return getPomForDir(ProjectUtils.getRepositoryDataConfigFolder(context));
+            case REPOSITORY_DATA_CONTENT:
+                return getPomForDir(ProjectUtils.getRepositoryDataContentFolder(context));
+            case REPOSITORY_DATA_WEB_FILES:
+                return getPomForDir(ProjectUtils.getRepositoryDataWebfilesFolder(context));
             case ESSENTIALS:
                 return getPomForDir(ProjectUtils.getEssentialsFolderName(context));
-            case BOOTSTRAP_WEB_FILES:
-                return getPomForDir(ProjectUtils.getBootstrapWebfilesFolder(context));
         }
         return null;
 
     }
 
     public static String getWebXmlPath(final PluginContext context, final TargetPom targetPom) {
-        if (targetPom == null
-                || targetPom == TargetPom.INVALID
-                || targetPom == TargetPom.BOOTSTRAP
-                || targetPom == TargetPom.BOOTSTRAP_CONFIG
-                || targetPom == TargetPom.BOOTSTRAP_CONTENT) {
-            return null;
-        }
         switch (targetPom) {
             case SITE:
                 return getWebXmlForDir(ProjectUtils.getSite(context));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,16 @@ import com.google.common.base.Strings;
  */
 public enum TargetPom {
 
+    INVALID(null),
+    SITE("site"),
+    CMS("cms"),
+    REPOSITORY_DATA("repository-data"),
+    REPOSITORY_DATA_WEB_FILES("webfiles"),
+    REPOSITORY_DATA_CONFIG("config"),
+    REPOSITORY_DATA_CONTENT("content"),
+    ESSENTIALS("essentials"),
+    PROJECT("project");
 
-    INVALID(null), SITE("site"), CMS("cms"), BOOTSTRAP("bootstrap"), BOOTSTRAP_WEB_FILES("webfiles"), BOOTSTRAP_CONFIG("config"), BOOTSTRAP_CONTENT("content"), ESSENTIALS("essentials"), PROJECT("project");
     private final String name;
 
     TargetPom(final String name) {
@@ -52,18 +60,18 @@ public enum TargetPom {
             return SITE;
         } else if (type.equals(CMS.name)) {
             return CMS;
-        } else if (type.equals(BOOTSTRAP.name)) {
-            return BOOTSTRAP;
+        } else if (type.equals(REPOSITORY_DATA.name)) {
+            return REPOSITORY_DATA;
         } else if (type.equals(PROJECT.name)) {
             return PROJECT;
-        } else if (type.equals(BOOTSTRAP_CONFIG.name)) {
-            return BOOTSTRAP_CONFIG;
-        } else if (type.equals(BOOTSTRAP_CONTENT.name)) {
-            return BOOTSTRAP_CONTENT;
+        } else if (type.equals(REPOSITORY_DATA_CONFIG.name)) {
+            return REPOSITORY_DATA_CONFIG;
+        } else if (type.equals(REPOSITORY_DATA_CONTENT.name)) {
+            return REPOSITORY_DATA_CONTENT;
+        } else if (type.equals(REPOSITORY_DATA_WEB_FILES.name)) {
+            return REPOSITORY_DATA_WEB_FILES;
         } else if (type.equals(ESSENTIALS.name)) {
             return ESSENTIALS;
-        } else if (type.equals(BOOTSTRAP_WEB_FILES.name)) {
-            return BOOTSTRAP_WEB_FILES;
         }
         return TargetPom.INVALID;
 

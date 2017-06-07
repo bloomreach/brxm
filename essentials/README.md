@@ -113,7 +113,7 @@ mvn cargo:redeploy (or cargo:undeploy, or cargo:deploy)
 Essentials depends on the automatic export feature being enabled, which is the archetype-generated Hippo
 project's default setting. You can change the setting temporarily in the upper right corner in the CMS,
 or permanently in your project's file
-`./bootstrap/configuration/src/main/resources/configuration/modules/autoexport-module.xml`
+`./repository-data/config/src/main/resources/configuration/modules/autoexport-module.xml`
 
 ##Copyright and license
 
