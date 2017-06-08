@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ChannelHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
@@ -44,6 +45,9 @@ public abstract class AbstractMountResourceTest extends AbstractPageComposerTest
         MountResource resource = new MountResource();
         final PageComposerContextService pageComposerContextService = new PageComposerContextService();
         resource.setPageComposerContextService(pageComposerContextService);
+        final ChannelHelper channelHelper = new ChannelHelper();
+        channelHelper.setPageComposerContextService(pageComposerContextService);
+        resource.setChannelHelper(channelHelper);
         final SiteMapHelper siteMapHelper = new SiteMapHelper();
         siteMapHelper.setPageComposerContextService(pageComposerContextService);
         resource.setSiteMapHelper(siteMapHelper);

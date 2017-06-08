@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -216,51 +216,6 @@
 - hst:lastmodifiedby (string)
 + * (hst:sitemenu)
 
-[hst:workspace] > nt:base orderable
-+ hst:containers (hst:containercomponentfolder) = hst:containercomponentfolder
-+ hst:sitemenus (hst:sitemenus) = hst:sitemenus
-+ hst:pages (hst:pages) = hst:pages
-+ hst:sitemap (hst:sitemap) = hst:sitemap
-
-[hst:configuration] > nt:base, mix:referenceable, mix:versionable
-- hst:inheritsfrom (string) multiple
-// deprecated : not used any more as only fine grained locking
-- hst:lockedby (string)
-// deprecated : not used any more as only fine grained locking
-- hst:lockedon (date)
-+ hst:components (hst:components) = hst:components
-+ hst:abstractpages (hst:pages) = hst:pages
-+ hst:pages (hst:pages) = hst:pages
-+ hst:prototypepages (hst:pages) = hst:pages
-+ hst:sitemap (hst:sitemap) = hst:sitemap
-+ hst:templates (hst:templates) = hst:templates
-+ hst:sitemenus (hst:sitemenus) = hst:sitemenus
-+ hst:sitemapitemhandlers (hst:sitemapitemhandlers) = hst:sitemapitemhandlers
-+ hst:catalog (hst:catalog) = hst:catalog
-+ hst:workspace (hst:workspace) = hst:workspace
-
-[hst:configurations] > nt:base, mix:referenceable, mix:versionable
-+ * (hst:configuration) = hst:configuration version
-+ hst:catalog (hst:catalog) = hst:catalog
-
-[hst:site] > nt:base, mix:referenceable, mix:versionable
-+ hst:content (hippo:facetselect)
-- hst:configurationpath (string)
-- hst:version (long)
-// absolute path
-- hst:content (string)
-// deprecated and unused: do not use
-- hst:portalconfigurationenabled (boolean)
-
-[hst:sites] > nt:base, mix:referenceable, mix:versionable
-+ * (hst:site) = hst:site version
-
-[hst:primarydomain] mixin
-
-[hst:redirectdomain] mixin 
-- hst:redirect (string)
-
-
 [hst:channelinfo]
 - * (string)
 - * (string) multiple
@@ -287,8 +242,66 @@
 // properties of the channel
 + hst:channelinfo (hst:channelinfo)
 
+// hst:channels is deprecated and not to be used any more since 5.0.0 (CMS 12.0)
 [hst:channels] > nt:base, mix:referenceable, mix:versionable
 + * (hst:channel)
+
+[hst:workspace] > nt:base orderable
++ hst:containers (hst:containercomponentfolder) = hst:containercomponentfolder
++ hst:sitemenus (hst:sitemenus) = hst:sitemenus
++ hst:abstractpages (hst:pages) = hst:pages
++ hst:pages (hst:pages) = hst:pages
++ hst:components (hst:components) = hst:components
++ hst:templates (hst:templates) = hst:templates
++ hst:sitemap (hst:sitemap) = hst:sitemap
++ hst:channel (hst:channel) = hst:channel
+
+[hst:branch] mixin
+- hst:branchof (string) mandatory
+- hst:branchid (string) mandatory
++ hst:upstream (hst:workspace) = hst:workspace
+
+[hst:configuration] > nt:base, mix:referenceable, mix:versionable
+- hst:inheritsfrom (string) multiple
+// deprecated : not used any more as only fine grained locking
+- hst:lockedby (string)
+// deprecated : not used any more as only fine grained locking
+- hst:lockedon (date)
+// true if the entire configuration is locked
+- hst:locked (boolean)
++ hst:components (hst:components) = hst:components
++ hst:abstractpages (hst:pages) = hst:pages
++ hst:pages (hst:pages) = hst:pages
++ hst:prototypepages (hst:pages) = hst:pages
++ hst:sitemap (hst:sitemap) = hst:sitemap
++ hst:templates (hst:templates) = hst:templates
++ hst:sitemenus (hst:sitemenus) = hst:sitemenus
++ hst:sitemapitemhandlers (hst:sitemapitemhandlers) = hst:sitemapitemhandlers
++ hst:catalog (hst:catalog) = hst:catalog
++ hst:workspace (hst:workspace) = hst:workspace
++ hst:channel (hst:channel) = hst:channel
+
+[hst:configurations] > nt:base, mix:referenceable, mix:versionable
++ * (hst:configuration) = hst:configuration version
++ hst:catalog (hst:catalog) = hst:catalog
+
+[hst:site] > nt:base, mix:referenceable, mix:versionable
++ hst:content (hippo:facetselect)
+- hst:configurationpath (string)
+- hst:version (long)
+// absolute path
+- hst:content (string)
+// deprecated and unused: do not use
+- hst:portalconfigurationenabled (boolean)
+
+[hst:sites] > nt:base, mix:referenceable, mix:versionable
++ * (hst:site) = hst:site version
+
+[hst:primarydomain] mixin
+
+[hst:redirectdomain] mixin 
+- hst:redirect (string)
+
 
 [hst:mount] > nt:base, mix:referenceable
 + * (hst:mount)
@@ -335,8 +348,12 @@
 - hst:sessionstateful (boolean)
 // form login page for this site mount, to which the request can be redirected for non-authenticated user.
 - hst:formloginpage (string)
-// channel to which this mount belongs
+// deprecated : not used and more since CMS 12.0
 - hst:channelpath (string)
+// nochannelinfo can be used to exclude a certain (sub)mount that inherits
+// the hst site from a parent mount but should not have the same channel info, for
+// example because it is a rest api mount (that does use an hst sitemap)
+- hst:nochannelinfo (boolean)
 - hst:cacheable (boolean)
 // to hold all the 'free defined properties'
 - hst:defaultresourcebundleid (string)

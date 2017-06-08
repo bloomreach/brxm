@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,9 @@ public interface ContextualizableMount extends MutableMount {
 
     /**
      * @return the repository path to the preview channel configuration node and <code>null</code> if not configured
+     * @deprecated since 5.0.0 (CMS 12). Use {@link Channel#getChannelPath() getPreviewChannel().getChannelPath()} instead
      */
+    @Deprecated
     String getPreviewChannelPath();
 
     /**

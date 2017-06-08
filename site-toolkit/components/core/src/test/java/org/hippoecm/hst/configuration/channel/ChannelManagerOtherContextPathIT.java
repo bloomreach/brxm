@@ -58,9 +58,9 @@ public class ChannelManagerOtherContextPathIT extends AbstractTestConfigurations
         ((ServletContextAware)componentManager.getComponent(HstManager.class.getName()))
                 .setServletContext(servletContext);
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
-        assertFalse("testchannel should not be part of channels since has wrong contextpath",
-                channels.containsKey("testchannel"));
-        assertTrue("intranettestchannel should be part of channels since has wrong contextpath",
-                channels.containsKey("intranettestchannel"));
+        assertFalse("unittestproject should not be part of channels since has wrong contextpath",
+                channels.containsKey("unittestproject"));
+        assertTrue("intranettestproject should be part of channels since has wrong contextpath",
+                channels.containsKey("intranettestproject"));
     }
 }

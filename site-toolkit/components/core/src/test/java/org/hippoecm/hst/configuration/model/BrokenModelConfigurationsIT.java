@@ -23,6 +23,7 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -157,7 +158,7 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         final ResolvedMount resolvedMount = firstModel.matchMount("localhost", "/site", "home");
         assertEquals("hst:root",resolvedMount.getMount().getName());
         assertEquals("/hst:hst/hst:sites/unittestproject",resolvedMount.getMount().getMountPoint());
-        assertTrue(resolvedMount.getMount().getChannel() == channels.get("testchannel"));
+        assertTrue(resolvedMount.getMount().getChannel() == channels.get("unittestproject"));
         // now remove sites node
         session.getNode("/hst:hst/hst:sites").remove();
         invalidator.eventPaths("/hst:hst/hst:sites");
@@ -521,6 +522,7 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
                 final HstSiteMap siteMap = hstSite.getSiteMap();
                 assertTrue(siteMap instanceof HstNoopSiteMap);
             } catch (ContainerException e) {
+                log.error("ContainerException", e);
                 fail(e.toString());
             }
         });
@@ -665,7 +667,11 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
 
     @Test
     public void testProjectMissingChannels() throws Exception {
-        session.getNode("/hst:hst/hst:channels").remove();
+
+        QueryResult result = session.getWorkspace().getQueryManager().createQuery("/jcr:root/hst:hst//element(*,hst:channel)", "xpath").execute();
+        for (Node node : new NodeIterable(result.getNodes())) {
+            node.remove();
+        }
         session.save();
 
         try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(VirtualHostsService.class).build()) {
@@ -689,8 +695,8 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
             channelName = resolvedMount.getMount().getChannel().getId();
         }
 
-        session.getNode("/hst:hst/hst:channels/"+channelName).remove();
-        invalidator.eventPaths("/hst:hst/hst:channels");
+        session.getNode("/hst:hst/hst:configurations/"+channelName + "/hst:channel").remove();
+        invalidator.eventPaths("/hst:hst/hst:configurations/"+channelName);
         session.save();
         {
             try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(VirtualHostsService.class).build()) {
@@ -702,22 +708,21 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void testPreviewConfigurationButNoPreviewChannel() throws Exception {
+    public void test_preview_channel_instance_is_different_than_live_even_if_there_is_no_preview_configuration() throws Exception {
         String configPath;
-        String channelPath;
         {
             VirtualHosts model = hstManager.getVirtualHosts();
             final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
             final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
-            assertTrue("there is no preview channel thus live instance and preview should be the same",
+            assertFalse("there is no preview channel but still preview channel should be a different instance than the " +
+                    "live channel",
                     mount.getChannel() == mount.getPreviewChannel());
+            assertEquals("Since there is no preview channel, the id must be the same",
+                    mount.getChannel().getId(), mount.getPreviewChannel().getId());
 
-            channelPath = mount.getChannelPath();
             configPath = mount.getHstSite().getConfigurationPath();
         }
 
-        // create a preview hst configuration and a preview channel
-        JcrUtils.copy(session, channelPath, channelPath+"-preview");
         JcrUtils.copy(session, configPath, configPath+"-preview");
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
@@ -727,49 +732,8 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
             VirtualHosts model = hstManager.getVirtualHosts();
             final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
             final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
-            assertFalse("there is *a* preview channel thus live instance and preview should NOT be the same",
-                    mount.getChannel() == mount.getPreviewChannel());
-        }
-
-        // TODO only remove channel preview : This is an invalid configuration state since there is a preview configuration
-        // TODO a error should be logged : We need to add 'logging' expectation for this.
-        session.getNode(channelPath+"-preview").remove();
-        pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-        session.save();
-        invalidator.eventPaths(pathsToBeChanged);
-        {
-            Log4jInterceptor.onWarn().deny(VirtualHostsService.class).run( () -> {
-                try {
-                    VirtualHosts model = hstManager.getVirtualHosts();
-                    final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
-                    final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
-                    assertTrue("there is no preview channel thus live instance and preview should be the same",
-                            mount.getChannel() == mount.getPreviewChannel());
-                } catch (ContainerException e) {
-                    fail(e.toString());
-                }
-            });
-        }
-
-        // restore preview channel but remove the preview configuration now
-
-        JcrUtils.copy(session, channelPath, channelPath+"-preview");
-        session.getNode(configPath+"-preview").remove();
-        pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
-        session.save();
-        invalidator.eventPaths(pathsToBeChanged);
-        {
-            Log4jInterceptor.onWarn().deny(VirtualHostsService.class).run( () -> {
-                try {
-                    VirtualHosts model = hstManager.getVirtualHosts();
-                    final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
-                    final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
-                    assertFalse("there is a preview channel thus live instance and preview should NOT be the same",
-                            mount.getChannel() == mount.getPreviewChannel());
-                } catch (ContainerException e) {
-                    fail(e.toString());
-                }
-            });
+            assertEquals("Since there is a preview channel, the id must be the same as live id + '-preview'",
+                mount.getChannel().getId() + "-preview", mount.getPreviewChannel().getId());
         }
 
     }

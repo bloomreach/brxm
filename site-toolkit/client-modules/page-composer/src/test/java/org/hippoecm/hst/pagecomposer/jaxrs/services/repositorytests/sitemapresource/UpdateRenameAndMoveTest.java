@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -549,7 +549,6 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
     @Test
     public void test_rename_succeeds_when_no_non_workspace_sitemap() throws Exception {
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
-        session.getNode("/hst:hst/hst:configurations/unittestproject-preview/hst:sitemap").remove();
         session.save();
         final SiteMapResource siteMapResource = createResource();
         try {
@@ -730,7 +729,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
 
         Node homeNode = session.getNodeByIdentifier(home.getId());
 
-        // move news to 'home'
+        // move news to a child of 'home'
         news.setParentId(home.getId());
         siteMapResource.update(news);
         assertTrue(session.nodeExists(homeNode.getPath() + "/" + "news"));
@@ -742,8 +741,7 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
 
         final Response update = siteMapResource.update(newsDefault);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), update.getStatus());
-        final String message = ((ExtResponseRepresentation)update.getEntity()).getMessage();
-       assertTrue(message.contains("not allowed since the *non-workspace* sitemap already contains"));
+        assertThat(((ExtResponseRepresentation) update.getEntity()).getErrorCode(), is(ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE.name()));
     }
 
     @Test

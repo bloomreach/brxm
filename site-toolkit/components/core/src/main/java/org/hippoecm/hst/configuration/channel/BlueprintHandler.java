@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class BlueprintHandler {
         HstNode channelNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CHANNEL);
         final Channel channel;
         if (channelNode != null) {
-            channel = ChannelPropertyMapper.readChannel(channelNode, null);
+            channel = ChannelPropertyMapper.readBlueprintChannel(channelNode);
         } else {
             channel = new Channel();
         }

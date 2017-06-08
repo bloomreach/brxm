@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.site.HstSiteProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -39,6 +40,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
+import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_USER_ID_ATTR;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_SSO_AUTHENTICATED;
@@ -65,6 +67,8 @@ import static org.hippoecm.hst.core.container.ContainerConstants.CMS_USER_ID_ATT
 public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
     private SessionSecurityDelegation sessionSecurityDelegation;
+
+    private final String[] CMS_INTERACTION_ATTRIBUTES = new String[]{HST_SITE_PROVIDER_HTTP_SESSION_KEY};
 
     public void setSessionSecurityDelegation(SessionSecurityDelegation sessionSecurityDelegation) {
         this.sessionSecurityDelegation = sessionSecurityDelegation;
@@ -127,6 +131,10 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             if (httpSession == null) {
                 httpSession = servletRequest.getSession(true);
             }
+            // since the HST http session could still exist from a previous login, clean up attributes that might have
+            // been set during earlier cms interaction
+            cleanupCmsInteractionAttributes(httpSession);
+
             cmsSessionContext = cmsContextService.attachSessionContext(cmsSessionContextId, httpSession);
             if (cmsSessionContext == null) {
                 httpSession.invalidate();
@@ -186,6 +194,12 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                     jcrSession.logout();
                 }
             }
+        }
+    }
+
+    private void cleanupCmsInteractionAttributes(final HttpSession httpSession) {
+        for (String s : CMS_INTERACTION_ATTRIBUTES) {
+            httpSession.removeAttribute(s);
         }
     }
 

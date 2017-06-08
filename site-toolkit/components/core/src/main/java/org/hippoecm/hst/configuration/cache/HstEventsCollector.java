@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_UPSTREAM;
 
 /*
  * <p>
@@ -91,6 +93,11 @@ public class HstEventsCollector {
 
     }
 
+    // meant for unit test only
+    synchronized Set<HstEvent> getHstEvents() {
+        return Collections.unmodifiableSet(hstEvents);
+    }
+
     private void addEvent(final Event jcrEvent, final Map<String, Set<Integer>> movedNodeDetectionMap) throws RepositoryException {
         if (HippoNodeType.HIPPO_IGNORABLE.equals(jcrEvent.getUserData())) {
             log.debug("Ignore event '{}' because marked {}", jcrEvent.getPath(), HippoNodeType.HIPPO_IGNORABLE);
@@ -120,7 +127,7 @@ public class HstEventsCollector {
 
     private void addEvent(final String nodePath) {
         if (ignore(nodePath)) {
-            log.debug("Ignore event '{}' because not an event below /hst:hst.", nodePath);
+            log.debug("Ignore event '{}'", nodePath);
             return;
         }
         hstEvents.add(new HstEvent(nodePath, false));
@@ -131,6 +138,9 @@ public class HstEventsCollector {
     }
 
     private boolean ignore(final String eventPath) {
+        if (eventPath.contains("/" + NODENAME_HST_UPSTREAM + "/") || eventPath.endsWith("/" + NODENAME_HST_UPSTREAM)) {
+            return true;
+        }
         if (eventPath.startsWith(rootPath) && !eventPath.equals(rootPath)) {
             return false;
         }

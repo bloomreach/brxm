@@ -44,6 +44,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-commons</artifactId>
       <version>${project.version}</version>

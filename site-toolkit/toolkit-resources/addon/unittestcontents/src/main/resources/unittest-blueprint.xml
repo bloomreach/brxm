@@ -83,9 +83,10 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/unittestsubproject</sv:value>
-    </sv:property>
+    <!-- TODO create also a blueprint with explicit hst:configurationpath, see https://issues.onehippo.com/browse/HSTTWO-3976 -->
+    <!--<sv:property sv:name="hst:configurationpath" sv:type="String">-->
+      <!--<sv:value>/hst:hst/hst:configurations/unittestsubproject</sv:value>-->
+    <!--</sv:property>-->
     <sv:property sv:name="hst:content" sv:type="String">
       <sv:value>/unittestcontent/documents/unittestproject</sv:value>
     </sv:property>

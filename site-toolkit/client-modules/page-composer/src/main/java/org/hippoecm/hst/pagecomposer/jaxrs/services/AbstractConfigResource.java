@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.concurrent.Callable;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
@@ -32,7 +31,6 @@ import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.RuntimeExceptionEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
@@ -156,30 +154,8 @@ public class AbstractConfigResource implements ComponentManagerAware {
     private void createMandatoryWorkspaceNodesIfMissing() throws RepositoryException {
         final String liveConfigPath = getPageComposerContextService().getEditingLiveConfigurationPath();
         final String previewConfigPath = getPageComposerContextService().getEditingPreviewConfigurationPath();
-        createMandatoryWorkspaceNodesIfMissing(liveConfigPath);
-        createMandatoryWorkspaceNodesIfMissing(previewConfigPath);
-    }
-
-    private void createMandatoryWorkspaceNodesIfMissing(String configPath) throws RepositoryException {
-        final Session session = getPageComposerContextService().getRequestContext().getSession();
-        if (!session.nodeExists(configPath)) {
-            String msg = String.format("Expected configuration node at %s'%", configPath);
-            throw new ClientException(msg, ClientError.ITEM_NOT_FOUND);
-        }
-        Node configNode = session.getNode(configPath);
-        if (configNode.hasNode(HstNodeTypes.NODENAME_HST_WORKSPACE)) {
-            Node workspace = configNode.getNode(HstNodeTypes.NODENAME_HST_WORKSPACE);
-            if (!workspace.hasNode(HstNodeTypes.NODENAME_HST_PAGES)) {
-                workspace.addNode(HstNodeTypes.NODENAME_HST_PAGES);
-            }
-            if (!workspace.hasNode(HstNodeTypes.NODENAME_HST_SITEMAP)) {
-                workspace.addNode(HstNodeTypes.NODENAME_HST_SITEMAP);
-            }
-        } else {
-            Node workspace = configNode.addNode(HstNodeTypes.NODENAME_HST_WORKSPACE);
-            workspace.addNode(HstNodeTypes.NODENAME_HST_PAGES);
-            workspace.addNode(HstNodeTypes.NODENAME_HST_SITEMAP);
-        }
+        HstConfigurationUtils.createMandatoryWorkspaceNodesIfMissing(liveConfigPath, getPageComposerContextService().getRequestContext().getSession());
+        HstConfigurationUtils.createMandatoryWorkspaceNodesIfMissing(previewConfigPath, getPageComposerContextService().getRequestContext().getSession());
     }
 
     protected void resetSession() {

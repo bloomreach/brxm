@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
+
 public class ContainerHelper extends AbstractHelper {
 
     @SuppressWarnings("unchecked")
@@ -39,15 +41,20 @@ public class ContainerHelper extends AbstractHelper {
         throw new UnsupportedOperationException("not supported");
     }
 
+    @Override
+    protected String getNodeType() {
+        return NODETYPE_HST_CONTAINERCOMPONENT;
+    }
+
     /**
      * if the <code>container</code> is already locked for the user <code>container.getSession()</code> this method does not do
      * anything. If there is no lock yet, a lock for the current session userID gets set on the container. If there is
      * already a lock by another user a ClientException is thrown,
      */
     public void acquireLock(final Node container, final long versionStamp) throws RepositoryException {
-        if (!container.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
+        if (!container.isNodeType(NODETYPE_HST_CONTAINERCOMPONENT)) {
             throw new ClientException(String.format("Expected container of type '%s' but was of type '%s'",
-                    HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, container.getPrimaryNodeType().getName()),
+                    NODETYPE_HST_CONTAINERCOMPONENT, container.getPrimaryNodeType().getName()),
                     ClientError.INVALID_NODE_TYPE);
         }
         lockHelper.acquireLock(container, versionStamp);

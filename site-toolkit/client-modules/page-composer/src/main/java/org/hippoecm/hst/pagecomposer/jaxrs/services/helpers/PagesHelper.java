@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -37,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT;
-import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_ABSTRACT_COMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
@@ -60,6 +58,11 @@ public class PagesHelper extends AbstractHelper {
     @Override
     public Object getConfigObject(final String itemId, final Mount mount) {
         throw new UnsupportedOperationException("not supported");
+    }
+
+    @Override
+    protected String getNodeType() {
+        return NODETYPE_HST_ABSTRACT_COMPONENT;
     }
 
     public Node create(final Node prototype, final String targetPageNodeName) throws RepositoryException {
@@ -175,16 +178,17 @@ public class PagesHelper extends AbstractHelper {
             final Node referencedNode = session.getNodeByIdentifier(sourceReference.getCanonicalIdentifier());
             final List<String> configurationRelativePathSegments = getConfigurationRelativePathSegments(referencedNode);
             final String configurationRelativePath = getConfigurationRelativePath(configurationRelativePathSegments);
-            final String targetAbsolutePath = targetSite.getConfigurationPath() + "/" + configurationRelativePath;
+            String targetWorkspacePath = targetSite.getConfigurationPath() + "/hst:workspace";
+            final String targetAbsolutePath = targetWorkspacePath + "/" + configurationRelativePath;
             if (session.nodeExists(targetAbsolutePath)) {
                 log.debug("Target reference '{}' exists already in '{}'. Most likely it was not yet part of the model before. " +
                         "Nothing needs to be copied.", targetAbsolutePath, targetSite);
                 return;
             }
             final String mainConfigNodeName = configurationRelativePathSegments.get(0);
-            final String mainConfigNodePath = targetSite.getConfigurationPath() + "/" + mainConfigNodeName;
+            final String mainConfigNodePath = targetWorkspacePath + "/" + mainConfigNodeName;
             if (!session.nodeExists(mainConfigNodePath)) {
-                session.getNode(targetSite.getConfigurationPath()).addNode(mainConfigNodeName);
+                session.getNode(targetWorkspacePath).addNode(mainConfigNodeName);
             }
             // try to acquire the lock first
             final Node mainConfigNode = session.getNode(mainConfigNodePath);
@@ -197,8 +201,12 @@ public class PagesHelper extends AbstractHelper {
                     // found the missing node : This one needs to be copied
                     // first find the original
                     final String existingRelativePath = getConfigurationRelativePath(configurationRelativePathSegments.subList(0, i));
-                    final Node copy = JcrUtils.copy(session, sourceSite.getConfigurationPath() + "/" + existingRelativePath + "/" + configurationRelativePathSegments.get(i),
-                            targetSite.getConfigurationPath() + "/" + existingRelativePath + "/" + configurationRelativePathSegments.get(i));
+
+                    String sourcePath = StringUtils.substringBefore(session.getNodeByIdentifier(sourceReference.getCanonicalIdentifier()).getPath(), existingRelativePath)
+                            + existingRelativePath + "/" + configurationRelativePathSegments.get(i);
+
+                    final Node copy = JcrUtils.copy(session, sourcePath,
+                            targetWorkspacePath + "/" + existingRelativePath + "/" + configurationRelativePathSegments.get(i));
                     // repeat the same reference checking for the copied node
                     checkReferencesRecursive(copy, sourceSite, targetSite, checkedNodes);
                 }
@@ -527,7 +535,7 @@ public class PagesHelper extends AbstractHelper {
 
     private String getValidTargetPageNodeName(final String previewWorkspacePagesPath, final String targetPageNodeName, final Session session) throws RepositoryException {
         String testTargetNodeName = targetPageNodeName;
-        for (int counter = 1; !isValidTarget(session, testTargetNodeName, previewWorkspacePagesPath, getPreviewPagesPath()); counter++) {
+        for (int counter = 1; !isValidTarget(session, testTargetNodeName, previewWorkspacePagesPath, getLivePagesPath()); counter++) {
             log.info("targetPageNodeName '{}' not valid. Trying next one.", targetPageNodeName);
             testTargetNodeName = targetPageNodeName + "-" + counter;
         }
@@ -537,7 +545,7 @@ public class PagesHelper extends AbstractHelper {
     private boolean isValidTarget(final Session session,
                                   final String testTargetNodeName,
                                   final String previewWorkspacePagesPath,
-                                  final String previewPagesPath) throws RepositoryException {
+                                  final String livePagesPath) throws RepositoryException {
         final String testWorkspaceTargetNodePath = previewWorkspacePagesPath + "/" + testTargetNodeName;
         if (session.nodeExists(testWorkspaceTargetNodePath)) {
             Node targetNode = session.getNode(testWorkspaceTargetNodePath);
@@ -554,45 +562,20 @@ public class PagesHelper extends AbstractHelper {
             }
         }
         // the targetNodeName does not yet exist in workspace pages. Confirm it does not exist non workspace pages
-        return !session.nodeExists(previewPagesPath + "/" + testTargetNodeName);
+        return !session.nodeExists(livePagesPath + "/" + testTargetNodeName);
     }
 
     private String getPreviewWorkspacePagesPath() {
         return getPreviewWorkspacePath() + "/" + NODENAME_HST_PAGES;
     }
 
-    private String getPreviewPagesPath() {
-        return pageComposerContextService.getEditingPreviewSite().getConfigurationPath()
+    private String getLivePagesPath() {
+        String liveConfigurationPath = pageComposerContextService.getEditingPreviewSite().getConfigurationPath();
+        if (liveConfigurationPath.endsWith("-preview")) {
+            liveConfigurationPath = StringUtils.substringBeforeLast(liveConfigurationPath, "-preview");
+        }
+        return liveConfigurationPath
                 + "/" + NODENAME_HST_PAGES;
-    }
-
-
-    @Override
-    protected String buildXPathQueryLockedNodesForUsers(final String previewConfigurationPath,
-                                                        final List<String> userIds) {
-        if (userIds.isEmpty()) {
-            throw new IllegalArgumentException("List of user IDs cannot be empty");
-        }
-
-        StringBuilder xpath = new StringBuilder("/jcr:root");
-        xpath.append(ISO9075.encodePath(previewConfigurationPath));
-        xpath.append("//element(*,");
-        xpath.append(NODETYPE_HST_ABSTRACT_COMPONENT);
-        xpath.append(")[");
-
-        String concat = "";
-        for (String userId : userIds) {
-            xpath.append(concat);
-            xpath.append('@');
-            xpath.append(GENERAL_PROPERTY_LOCKED_BY);
-            xpath.append(" = '");
-            xpath.append(userId);
-            xpath.append("'");
-            concat = " or ";
-        }
-        xpath.append("]");
-
-        return xpath.toString();
     }
 
 }

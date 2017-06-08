@@ -890,6 +890,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
+  <!-- although deprecated, keep it for now : will be removed when we use jcr:path domain config for hst -->
   <sv:node sv:name="hst-channels">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>

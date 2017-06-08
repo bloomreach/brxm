@@ -1,5 +1,5 @@
 /*
-*  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -50,19 +50,20 @@ import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
-import org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel;
+import org.hippoecm.hst.channelmanager.security.SecurityModel;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
+import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
+import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_WEBMASTER_ROLE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl.PREVIEW_SUFFIX;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
 
     private static final Logger log = LoggerFactory.getLogger(RootResource.class);
-    private String rootPath;
     private boolean isCrossChannelPageCopySupported;
 
     private ChannelService channelService;
@@ -74,10 +75,6 @@ public class RootResource extends AbstractConfigResource {
 
     public void setSecurityModel(final SecurityModel securityModel) {
         this.securityModel = securityModel;
-    }
-
-    public void setRootPath(final String rootPath) {
-        this.rootPath = rootPath;
     }
 
     @Override
@@ -175,9 +172,9 @@ public class RootResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(CHANNEL_MANAGER_ADMIN_ROLE)
     public Response deleteChannel(@PathParam("id") String channelId) {
-        if (StringUtils.endsWith(channelId, HstConfigurationServiceImpl.PREVIEW_SUFFIX)) {
+        if (StringUtils.endsWith(channelId, PREVIEW_SUFFIX)) {
             // strip the preview suffix
-            channelId = StringUtils.removeEnd(channelId, HstConfigurationServiceImpl.PREVIEW_SUFFIX);
+            channelId = StringUtils.removeEnd(channelId, PREVIEW_SUFFIX);
         }
 
         try {
@@ -220,28 +217,26 @@ public class RootResource extends AbstractConfigResource {
         session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
 
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
-        boolean canWrite;
-        try {
-            canWrite = requestContext.getSession().hasPermission(rootPath + "/accesstest", Session.ACTION_SET_PROPERTY);
-        } catch (RepositoryException e) {
-            log.warn("Could not determine authorization", e);
-            return error("Could not determine authorization", e);
-        }
+
 
         final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId);
-        final boolean hasAdminRole = securityModel.isUserInRule(requestContext, CHANNEL_MANAGER_ADMIN_ROLE);
+        try {
+            final boolean hasAdminRole = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_MANAGER_ADMIN_ROLE);
+            final boolean isWebmaster = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_WEBMASTER_ROLE);
+            final boolean canDeleteChannel = isChannelDeletionSupported && hasAdminRole;
+            final boolean canManageChanges = hasAdminRole;
 
-        final boolean canDeleteChannel = isChannelDeletionSupported && hasAdminRole;
-        final boolean canManageChanges = hasAdminRole;
-
-        HandshakeResponse response = new HandshakeResponse();
-        response.setCanWrite(canWrite);
-        response.setCanManageChanges(canManageChanges);
-        response.setCanDeleteChannel(canDeleteChannel);
-        response.setCrossChannelPageCopySupported(isCrossChannelPageCopySupported);
-        response.setSessionId(session.getId());
-        log.info("Composer-Mode successful");
-        return ok("Composer-Mode successful", response);
+            HandshakeResponse response = new HandshakeResponse();
+            response.setCanWrite(isWebmaster);
+            response.setCanManageChanges(canManageChanges);
+            response.setCanDeleteChannel(canDeleteChannel);
+            response.setCrossChannelPageCopySupported(isCrossChannelPageCopySupported);
+            response.setSessionId(session.getId());
+            log.info("Composer-Mode successful");
+            return ok("Composer-Mode successful", response);
+        } catch (IllegalStateException | RepositoryException e) {
+            return error("Could not determine authorization or role", e);
+        }
     }
 
     private boolean isChannelDeletionSupported(final String mountId) {

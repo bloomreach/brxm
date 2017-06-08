@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import java.util.UUID;
 import com.google.common.base.Optional;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelPropertyMapper;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
@@ -36,6 +38,8 @@ import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlers
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
+
 /**
  * <p>
  *   Note that this class is <strong>not</strong> thread-safe : It should not be accessed by concurrent threads
@@ -45,6 +49,8 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(HstConfigurationLoadingCache.class);
 
+    private WeakTaggedCache<List<UUID>, Channel, String> liveChannelsCache = new WeakTaggedCache<>();
+    private WeakTaggedCache<List<UUID>, Channel, String> previewChannelsCache = new WeakTaggedCache<>();
     private WeakTaggedCache<List<UUID>, HstComponentsConfiguration, String> componentsConfigurationCache = new WeakTaggedCache<>();
     private WeakTaggedCache<List<UUID>, HstSiteMapItemHandlersConfiguration, String> siteMapItemHandlerConfigurationCache = new WeakTaggedCache<>();
 
@@ -89,6 +95,8 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
             }
         }
         for (String eventPath : eventPaths) {
+            liveChannelsCache.evictKeysByTag(eventPath);
+            previewChannelsCache.evictKeysByTag(eventPath);
             componentsConfigurationCache.evictKeysByTag(eventPath);
             siteMapItemHandlerConfigurationCache.evictKeysByTag(eventPath);
         }
@@ -122,6 +130,58 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
         return event.getNodePath().startsWith(rootConfigurationsPrefix);
     }
 
+
+    public Channel loadChannel(final String configurationPath, final boolean isPreviewSite, final String mountIdentifier) {
+        final CompositeConfigurationNodes ccn = getCompositeConfigurationNodes(configurationPath, NODENAME_HST_CHANNEL);
+        List<UUID> cachekey = ccn.getCacheKey();
+        // mount needs to be part of the cache key for channel objects
+        cachekey.add(UUID.fromString(mountIdentifier));
+        // configuration node needs to be part of the cache key for channel objects otherwise for for example branches the same
+        // channel object will be returned
+        final HstNode rootConfigNode = hstNodeLoadingCache.getNode(configurationPath);
+        cachekey.add(UUID.fromString(rootConfigNode.getValueProvider().getIdentifier()));
+
+        final WeakTaggedCache<List<UUID>, Channel, String> channelsCache;
+        if (isPreviewSite) {
+            channelsCache = previewChannelsCache;
+        } else {
+            channelsCache = liveChannelsCache;
+        }
+
+        Channel channel = channelsCache.get(cachekey);
+        if (channel != null ) {
+            return clone(channel);
+        }
+
+        CompositeConfigurationNodes.CompositeConfigurationNode channelCompositeNode = ccn.getCompositeConfigurationNodes().get(NODENAME_HST_CHANNEL);
+        if (channelCompositeNode == null) {
+            log.debug("No channel node present for '{}'. Return null", configurationPath);
+            return null;
+        }
+        HstNode channelNode = channelCompositeNode.getMainConfigNode();
+        if (channelNode == null) {
+            log.debug("No channel node present for '{}'. Return null", configurationPath);
+            return null;
+        }
+        channel = ChannelPropertyMapper.readChannel(channelNode, rootConfigNode);
+        channel.setChannelPath(channelNode.getValueProvider().getPath());
+        List<String> events = ccn.getCompositeConfigurationDependencyPaths();
+        if (isPreviewSite && !configurationPath.endsWith("-preview")) {
+            // we need to add event paths for preview to make sure the preview channel gets reloaded in case
+            // a preview is created
+            events.add(configurationPath + "-preview");
+            events.add(configurationPath + "-preview/hst:channel");
+            events.add(configurationPath + "-preview/hst:workspace/hst:channel");
+        }
+        channelsCache.put(cachekey, channel, events.toArray(new String[events.size()]));
+        return clone(channel);
+    }
+
+    // since org.hippoecm.hst.configuration.site.HstSiteService.init() can change the Channel object with
+    // setters, we return a cloned Channel object to avoid an existing Channel object to be changed
+    private Channel clone(final Channel channel) {
+        return new Channel(channel);
+    }
 
     /**
      * check wether we already a an instance that would result in the very same HstComponentsConfiguration instance. If

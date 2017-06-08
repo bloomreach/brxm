@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.site;
 
+import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
@@ -100,4 +102,16 @@ public interface HstSite {
      */
     boolean hasPreviewConfiguration();
 
+    /**
+     * @return The {@link Channel} object instance to which this {@link HstSite} belongs, or <code>null</code> if this
+     * {@link HstSite} does not contain a {@link Channel}
+     */
+    Channel getChannel();
+
+    /**
+     * @param <T> Type of the channel info.  Only checked at runtime on assignment.
+     * @return A channel properties instance or <code>null</code> in case {@link #getChannel()} returns <code>null</code> or
+     * when the {@link ChannelInfo} interface cannot be loaded by the current classLoader
+     */
+    <T extends ChannelInfo> T getChannelInfo();
 }

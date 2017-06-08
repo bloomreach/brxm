@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
@@ -29,12 +31,16 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -50,6 +56,7 @@ import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.NewPageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
@@ -60,6 +67,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.UserRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ChannelHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
@@ -75,8 +83,9 @@ import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
+import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 
 @Path("/hst:mount/")
 public class MountResource extends AbstractConfigResource {
@@ -86,6 +95,7 @@ public class MountResource extends AbstractConfigResource {
 
     private static final String DISCARD_ACTION = "discardMount";
 
+    private ChannelHelper channelHelper;
     private SiteMapHelper siteMapHelper;
     private SiteMenuHelper siteMenuHelper;
     private PagesHelper pagesHelper;
@@ -103,6 +113,9 @@ public class MountResource extends AbstractConfigResource {
         this.pagesHelper = pagesHelper;
     }
 
+    public void setChannelHelper(ChannelHelper channelHelper) {
+        this.channelHelper = channelHelper;
+    }
 
     @GET
     @Path("/pagemodel/{pageId}/")
@@ -171,6 +184,60 @@ public class MountResource extends AbstractConfigResource {
         return ok("New Page model loaded successfully", newPageModelRepresentation);
     }
 
+    @GET
+    @Path("/currentbranch")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response currentBranch(@Context HttpServletRequest servletRequest) {
+        final Mount mount = getPageComposerContextService().getEditingMount();
+        final HttpSession session = servletRequest.getSession();
+        Map<String, String> mountToBranchIdMap = (Map<String, String>) session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        if (mountToBranchIdMap == null || mountToBranchIdMap.get(mount.getIdentifier()) == null) {
+            return ok("No current branch", null);
+        }
+        return ok("Current branch id:", mountToBranchIdMap.get(mount.getIdentifier()));
+    }
+
+    @IgnoreLock
+    @PUT
+    @Path("/selectbranch/{branchId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response selectBranch(@Context HttpServletRequest servletRequest, @PathParam("branchId") final String branchId) {
+        final Mount editingMount = getPageComposerContextService().getEditingMount();
+        setMountToBranchId(servletRequest, branchId, editingMount);
+        log.debug("Selected branch:{} of channel:{}", branchId, editingMount.getChannel());
+        return ok("Branch selected successfully");
+    }
+
+    @IgnoreLock
+    @PUT
+    @Path("/selectmaster")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response selectMaster(@Context HttpServletRequest servletRequest) {
+        final Mount editingMount = getPageComposerContextService().getEditingMount();
+        clearMountToBranchId(servletRequest, editingMount);
+
+        log.debug("Selected master of channel:{}", editingMount.getChannel());
+        return ok("Master branch selected successfully");
+    }
+
+    private void clearMountToBranchId(final HttpServletRequest servletRequest, final Mount mount) {
+        final HttpSession session = servletRequest.getSession();
+        Map<String, String> mountToBranchIdMap = (Map<String, String>) session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        if (mountToBranchIdMap != null) {
+            mountToBranchIdMap.remove(mount.getIdentifier());
+        }
+    }
+
+    private void setMountToBranchId(final HttpServletRequest servletRequest, String branchId, final Mount mount) {
+        HttpSession session = servletRequest.getSession();
+        Map<String, String> mountToBranchIdMap = (Map<String, String>) session.getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        if (mountToBranchIdMap == null) {
+            mountToBranchIdMap = new HashMap<>();
+            session.setAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY, mountToBranchIdMap);
+        }
+        mountToBranchIdMap.put(mount.getIdentifier(), branchId);
+    }
+
     private NewPageModelRepresentation getNewPageModelRepresentation(final Mount mount) {
         PrototypesRepresentation prototypePagesRepresentation = new PrototypesRepresentation().represent(mount.getHstSite(),
                 true, getPageComposerContextService());
@@ -221,7 +288,7 @@ public class MountResource extends AbstractConfigResource {
             if (editingPreviewSite.hasPreviewConfiguration()) {
                 return ok("Site can be edited now");
             }
-            createPreviewChannelAndConfigurationNode();
+            createPreviewConfiguration();
             ChannelEvent event = new ChannelEvent(
                     ChannelEvent.ChannelEventType.PREVIEW_CREATION,
                     Collections.emptyList(),
@@ -242,18 +309,16 @@ public class MountResource extends AbstractConfigResource {
         } catch (RepositoryException e) {
             log.warn("Could not create a preview configuration : ", e);
             return error("Could not create a preview configuration : " + e);
+        } catch (ClientException e) {
+            log.warn("Could not create a preview configuration : ", e);
+            return clientError("Could not create a preview configuration : ", e.getErrorStatus());
         }
     }
 
-    private void createPreviewChannelAndConfigurationNode() throws RepositoryException {
+    private void createPreviewConfiguration() throws RepositoryException, ClientException {
         String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
-        String previewConfigurationPath = liveConfigurationPath + "-preview";
         Session session = getPageComposerContextService().getRequestContext().getSession();
-        JcrUtils.copy(session, liveConfigurationPath, previewConfigurationPath);
-
-        String liveChannelPath = getPageComposerContextService().getEditingLiveChannelPath();
-        String previewChannelPath = liveChannelPath + "-preview";
-        JcrUtils.copy(session, liveChannelPath, previewChannelPath);
+        HstConfigurationUtils.createPreviewConfiguration(liveConfigurationPath, session);
     }
 
     /**
@@ -332,10 +397,13 @@ public class MountResource extends AbstractConfigResource {
             final HstRequestContext requestContext = context.getRequestContext();
             Session session = requestContext.getSession();
 
-            List<String> mainConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
-            copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainConfigNodeNamesToPublish);
-            publishChannelChanges(session, userIds);
+            List<String> mainNonWorkspaceConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds, false);
+            List<String> mainWorkspaceConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds, true);
 
+            copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainNonWorkspaceConfigNodeNamesToPublish);
+            copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainWorkspaceConfigNodeNamesToPublish);
+
+            channelHelper.publishChanges(userIds);
             siteMapHelper.publishChanges(userIds);
             pagesHelper.publishChanges(userIds);
             siteMenuHelper.publishChanges(userIds);
@@ -397,8 +465,7 @@ public class MountResource extends AbstractConfigResource {
      * Method that returns a {@link Response} containing the list of document of (sub)type <code>docType</code> that
      * belong to the content of the site that is currently composed.
      *
-     * @param docType the docType the found documents must be of. The documents can also be a subType of
-     *                docType
+     * @param docType the docType the found documents must be of. The documents can also be a subType of docType
      * @return An ok Response containing the list of documents or an error response in case an exception occurred
      */
     @POST
@@ -417,7 +484,7 @@ public class MountResource extends AbstractConfigResource {
         try {
             Session session = requestContext.getSession();
 
-            Node contentRoot = (Node)session.getItem(canonicalContentPath);
+            Node contentRoot = (Node) session.getItem(canonicalContentPath);
 
             String statement = "//element(*," + docType + ")[@hippo:paths = '" + contentRoot.getIdentifier() + "' and @hippo:availability = 'preview' and not(@jcr:primaryType='nt:frozenNode')]";
             QueryManager queryMngr = session.getWorkspace().getQueryManager();
@@ -476,7 +543,6 @@ public class MountResource extends AbstractConfigResource {
         }
         try {
             Session session = context.getRequestContext().getSession();
-            session.getNode("/hst:hst/hst:channels/" + channel.getId()).remove();
             session.getNode(channel.getHstConfigPath()).remove();
             HstConfigurationUtils.persistChanges(session);
         } catch (RepositoryException e) {
@@ -513,10 +579,12 @@ public class MountResource extends AbstractConfigResource {
             String previewConfigurationPath = editingPreviewSite.getConfigurationPath();
 
             Session session = requestContext.getSession();
-            List<String> mainConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
-            copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainConfigNodeNamesToRevert);
-            discardChannelChanges(session, userIds);
+            List<String> mainNonWorkspaceConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds, false);
+            List<String> mainWorkspaceConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds, true);
+            copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainNonWorkspaceConfigNodeNamesToRevert);
+            copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainWorkspaceConfigNodeNamesToRevert);
 
+            channelHelper.discardChanges(userIds);
             siteMapHelper.discardChanges(userIds);
             pagesHelper.discardChanges(userIds);
             siteMenuHelper.discardChanges(userIds);
@@ -545,13 +613,15 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-
-    private List<String> findChangedMainConfigNodeNamesForUsers(final Session session, String previewConfigurationPath, List<String> userIds) throws RepositoryException {
+    private List<String> findChangedMainConfigNodeNamesForUsers(final Session session,
+                                                                final String previewConfigurationPath,
+                                                                final List<String> userIds,
+                                                                final boolean isWorkspace) throws RepositoryException {
         if (userIds.isEmpty()) {
             return Collections.emptyList();
         }
 
-        final String xpath = buildXPathQueryToFindMainConfigNodesForUsers(previewConfigurationPath, userIds);
+        final String xpath = buildXPathQueryToFindMainConfigNodesForUsers(previewConfigurationPath, userIds, isWorkspace);
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
 
         final NodeIterable mainConfigNodesForUsers = new NodeIterable(result.getNodes());
@@ -595,13 +665,17 @@ public class MountResource extends AbstractConfigResource {
         return xpath.toString();
     }
 
-    static String buildXPathQueryToFindMainConfigNodesForUsers(String previewConfigurationPath, List<String> userIds) {
+    static String buildXPathQueryToFindMainConfigNodesForUsers(final String previewConfigurationPath, final List<String> userIds,
+                                                               final boolean workspace) {
         if (userIds.isEmpty()) {
             throw new IllegalArgumentException("List of user IDs cannot be empty");
         }
 
         StringBuilder xpath = new StringBuilder("/jcr:root");
         xpath.append(ISO9075.encodePath(previewConfigurationPath));
+        if (workspace) {
+            xpath.append("/hst:workspace");
+        }
         xpath.append("/*[");
 
         String concat = "";
@@ -624,7 +698,13 @@ public class MountResource extends AbstractConfigResource {
                                             final String toConfig,
                                             final List<String> mainConfigNodeNames) throws RepositoryException {
         for (String mainConfigNodeName : mainConfigNodeNames) {
-            if (mainConfigNodeName.contains("/")) {
+            if (mainConfigNodeName.startsWith("hst:workspace/")) {
+                if (StringUtils.substringAfter(mainConfigNodeName, "hst:workspace/").contains("/")) {
+                    log.warn("Skip illegal main config node name '{}' because it contains a '/' after the " +
+                            "hst:workspace node.", mainConfigNodeName);
+                    continue;
+                }
+            } else if (mainConfigNodeName.contains("/")) {
                 log.warn("Skip illegal main config node name '{}' because it contains a '/'.", mainConfigNodeName);
                 continue;
             }
@@ -658,74 +738,6 @@ public class MountResource extends AbstractConfigResource {
                 fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
             }
         }
-    }
-
-    private void discardChannelChanges(final Session session,
-                                       final List<String> userIds) throws RepositoryException {
-        if (userIds.isEmpty()) {
-            return;
-        }
-        final Channel previewChannel = getPageComposerContextService().getEditingPreviewChannel();
-        if (previewChannel == null) {
-            log.warn("Preview channel null. Cannot discard its changes");
-            return;
-        }
-        if (previewChannel.getChannelNodeLockedBy() == null) {
-            log.debug("Preview channel '{}' is not locked and has thus no changes to discard.", previewChannel.getId());
-            return;
-        }
-        if (!userIds.contains(previewChannel.getChannelNodeLockedBy())) {
-            log.debug("Preview channel '{}' is locked by '{}' but won't be discarded since not present in user id list '{}'.",
-                    new String[]{previewChannel.getId(), previewChannel.getChannelNodeLockedBy(), userIds.toString()});
-            return;
-        }
-        log.info("Discarding changes in channel '{}' for user '{}'", previewChannel.getId(), previewChannel.getChannelNodeLockedBy());
-        final String previewChannelPath = getPageComposerContextService().getEditingPreviewChannelPath();
-        if (previewChannelPath != null && previewChannelPath.endsWith("-preview")) {
-            String liveChannelPath = previewChannelPath.substring(0, previewChannelPath.length() - "-preview".length());
-            copyChannelInfoNodes(session, liveChannelPath, previewChannelPath);
-        }
-    }
-
-    private void publishChannelChanges(final Session session,
-                                       final List<String> userIds) throws RepositoryException {
-        if (userIds.isEmpty()) {
-            return;
-        }
-        final Channel previewChannel = getPageComposerContextService().getEditingPreviewChannel();
-        if (previewChannel == null) {
-            log.warn("Preview channel null. Cannot publish its changes");
-            return;
-        }
-        if (previewChannel.getChannelNodeLockedBy() == null) {
-            log.debug("Preview channel '{}' is not locked and has thus no changes to publish.", previewChannel.getId());
-            return;
-        }
-        if (!userIds.contains(previewChannel.getChannelNodeLockedBy())) {
-            log.debug("Preview channel '{}' is locked by '{}' but won't be published since not present in user id list '{}'.",
-                    new String[]{previewChannel.getId(), previewChannel.getChannelNodeLockedBy(), userIds.toString()});
-            return;
-        }
-        log.info("Publishing changes in channel '{}' for user '{}'", previewChannel.getId(), previewChannel.getChannelNodeLockedBy());
-        final String previewChannelPath = getPageComposerContextService().getEditingPreviewChannelPath();
-        if (previewChannelPath != null && previewChannelPath.endsWith("-preview")) {
-            String liveChannelPath = previewChannelPath.substring(0, previewChannelPath.length() - "-preview".length());
-            copyChannelInfoNodes(session, previewChannelPath, liveChannelPath);
-        }
-    }
-
-    private void copyChannelInfoNodes(final Session session, final String fromConfig, final String toConfig) throws RepositoryException {
-        Node channelToNode = session.getNode(toConfig);
-        channelToNode.remove();
-        Node channelFromNode = session.getNode(fromConfig);
-        if (channelFromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-            channelFromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
-        }
-        if (channelFromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-            channelFromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
-        }
-        channelFromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
-        JcrUtils.copy(session, fromConfig, toConfig);
     }
 
     private void postChannelEvent(final String action, final String liveConfigurationPath, final String previewConfigurationPath, final List<String> contributors) {

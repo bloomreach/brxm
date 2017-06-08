@@ -240,8 +240,10 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     }
 
     protected String getPrototypePageUUID() throws RepositoryException {
-        String previewConfigurationPath = mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
-        return session.getNode(previewConfigurationPath).getNode("hst:prototypepages/prototype-page").getIdentifier();
+        final String previewConfigurationPath = mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
+        // Since HSTTWO-3959 prototype pages are not copied to preview any more
+        final String liveConfigurationPath = StringUtils.substringBefore(previewConfigurationPath, "-preview");
+        return session.getNode(liveConfigurationPath).getNode("hst:prototypepages/prototype-page").getIdentifier();
     }
 
 

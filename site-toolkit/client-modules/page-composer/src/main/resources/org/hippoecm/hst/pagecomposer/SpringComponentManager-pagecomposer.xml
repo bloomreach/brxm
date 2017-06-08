@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -69,6 +69,9 @@
   <bean id="containerHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper" parent="abstractHelper"/>
   <bean id="containerItemHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper" parent="abstractHelper"/>
 
+
+  <bean id="channelHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ChannelHelper" parent="abstractHelper"/>
+
   <bean id="siteMenuHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper" parent="abstractHelper"/>
 
   <bean id="pagesHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper" parent="abstractHelper"/>
@@ -134,7 +137,10 @@
     <property name="invokerPreprocessors">
       <list>
         <bean class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.HstConfigSecurityAnnotationInvokerPreprocessor">
-          <property name="securityModel" ref="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel"/>
+          <property name="securityModel" ref="org.hippoecm.hst.channelmanager.security.SecurityModel"/>
+        </bean>
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.HstConfigLockedCheckInvokerPreprocessor">
+          <property name="pageComposerContextService" ref="pageComposerContextService"/>
         </bean>
       </list>
     </property>
@@ -196,6 +202,7 @@
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource" parent="abstractConfigResource">
+              <property name="channelHelper" ref="channelHelper"/>
               <property name="siteMapHelper" ref="siteMapHelper"/>
               <property name="siteMenuHelper" ref="siteMenuHelper"/>
               <property name="pagesHelper" ref="pagesHelper"/>
@@ -205,9 +212,8 @@
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.RootResource" parent="abstractConfigResource">
-              <property name="rootPath" value="${hst.configuration.rootPath}"/>
               <property name="channelService" ref="channelService"/>
-              <property name="securityModel" ref="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel"/>
+              <property name="securityModel" ref="org.hippoecm.hst.channelmanager.security.SecurityModel"/>
             </bean>
           </constructor-arg>
         </bean>
@@ -281,47 +287,6 @@
         <property name="mountNamedPipeline" value="ComposerPipeline"/>
       </bean>
     </property>
-  </bean>
-
-  <!-- Inject the templatecomposer configuration invalidation listener to the EventListenersContainer -->
-  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel#SecurityModelEventListener"
-        class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
-    <constructor-arg value="java.lang.Boolean" />
-    <property name="targetObject" ref="jcrObservationEventListenerItems"/>
-    <property name="targetMethod" value="add"/>
-    <property name="arguments">
-      <!-- Targeting configuration invalidation listener -->
-      <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
-        <property name="nodeAddedEnabled" value="true"/>
-        <property name="nodeRemovedEnabled" value="true"/>
-        <property name="propertyAddedEnabled" value="true"/>
-        <property name="propertyChangedEnabled" value="true"/>
-        <property name="propertyRemovedEnabled" value="true"/>
-        <property name="absolutePath" ref="jcrPathTemplateComposer"/>
-        <property name="deep" value="true"/>
-        <property name="uuids">
-          <null/>
-        </property>
-        <property name="noLocal" value="false"/>
-        <property name="eventListener">
-          <bean class="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel$SecurityModelEventListener">
-            <property name="securityModel" ref="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel"/>
-          </bean>
-        </property>
-      </bean>
-    </property>
-  </bean>
-
-  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel" class="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel">
-    <!-- Use the delegating repository here, because we want a non pooled session: When loading the configuration
-        we do not need a session from the pool, but rather a fresh session that is logged out at the end -->
-    <property name="repository" ref="javax.jcr.Repository.delegating"/>
-    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
-    <property name="jcrPathTemplateComposer" ref="jcrPathTemplateComposer"/>
-  </bean>
-
-  <bean id="jcrPathTemplateComposer" class="java.lang.String">
-       <constructor-arg value="/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer"/>
   </bean>
 
 </beans>

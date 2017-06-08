@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs;
 import java.io.IOException;
 
 import javax.jcr.Credentials;
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -33,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.ConfigurationLockedTest;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
@@ -45,6 +47,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
 
+import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
 import static org.junit.Assert.assertTrue;
 
@@ -75,7 +78,7 @@ public class AbstractFullRequestCycleTest {
         // assert admin has hippo:admin privilege
         Session admin = createSession("admin", "admin");
         assertTrue(admin.hasPermission("/hst:hst", "jcr:write"));
-        assertTrue(admin.hasPermission("/hst:hst/hst:channels", "hippo:admin"));
+        assertTrue(admin.hasPermission("/hst:hst", "hippo:admin"));
         admin.logout();
 
         // assert editor is part of webmaster group
@@ -109,18 +112,27 @@ public class AbstractFullRequestCycleTest {
         return repository.login(new SimpleCredentials(userName, password.toCharArray()));
     }
 
-    public String getNodeId(final String jcrMountPath) throws RepositoryException {
+    public String getNodeId(final String jcrPath) throws RepositoryException {
         final Session admin = createSession("admin", "admin");
-        final String mountId = admin.getNode(jcrMountPath).getIdentifier();
+        final String mountId = admin.getNode(jcrPath).getIdentifier();
         admin.logout();
         return mountId;
     }
 
     public MockHttpServletResponse render(final String mountId, final RequestResponseMock requestResponse, final Credentials authenticatedCmsUser) throws IOException, ServletException {
-        final MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute(CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
-        requestResponse.getRequest().setSession(mockHttpSession);
-        return render(requestResponse, authenticatedCmsUser);
+        MockHttpSession session = (MockHttpSession)requestResponse.getRequest().getSession(false);
+        if (session == null) {
+            session = new MockHttpSession();
+            requestResponse.getRequest().setSession(session);
+        }
+        session.setAttribute(CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
+        MockHttpServletResponse response = render(requestResponse, authenticatedCmsUser);
+
+        if (response.getStatus() == SC_FORBIDDEN && this.getClass().getName().equals(ConfigurationLockedTest.class.getName())) {
+            // in ConfigurationLockedTest we want to short-circuit by an exception
+            throw new ForbiddenException(response);
+        }
+        return response;
     }
 
     public MockHttpServletResponse render(final RequestResponseMock requestResponse, final Credentials authenticatedCmsUser) throws IOException, ServletException {
@@ -228,6 +240,30 @@ public class AbstractFullRequestCycleTest {
         @Override
         public Object get(final String key) {
             return CmsSessionContext.REPOSITORY_CREDENTIALS.equals(key) ? credentials : null;
+        }
+    }
+
+    protected void setPrivilegePropsForSecurityModel() throws RepositoryException {
+        final Session admin = createSession("admin", "admin");
+        final Node mount = admin.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        // make sure that users that have 'hippo:admin' role on /hst:hst can publish other ones their changes
+        mount.setProperty("manage.changes.privileges","hippo:admin");
+        mount.setProperty("manage.changes.privileges.path","/hst:hst");
+        admin.save();
+        admin.logout();
+    }
+
+
+    public static class ForbiddenException extends RuntimeException {
+        private MockHttpServletResponse response;
+
+        public ForbiddenException(final MockHttpServletResponse response) {
+
+            this.response = response;
+        }
+
+        public MockHttpServletResponse getResponse() {
+            return response;
         }
     }
 }

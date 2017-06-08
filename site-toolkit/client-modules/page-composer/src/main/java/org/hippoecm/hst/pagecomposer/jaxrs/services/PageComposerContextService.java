@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,11 +72,15 @@ public class PageComposerContextService {
     public String getRenderingMountId() {
         final String renderingMountId = (String) getRequestContext().getServletRequest().getSession(true).getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID);
         if (renderingMountId == null) {
-            throw new IllegalStateException("Cound not find rendering mount id on request session.");
+            throw new IllegalStateException("Could not find rendering mount id on request session.");
         }
         return renderingMountId;
     }
 
+
+    public boolean isRenderingMountSet() {
+        return getRequestContext().getServletRequest().getSession(true).getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID) != null;
+    }
 
     public String getEditingLiveConfigurationPath() {
         String editingPreviewConfigurationPath = getEditingPreviewConfigurationPath();

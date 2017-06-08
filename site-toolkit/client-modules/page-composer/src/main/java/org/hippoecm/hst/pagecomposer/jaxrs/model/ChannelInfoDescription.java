@@ -28,15 +28,18 @@ public class ChannelInfoDescription {
     private Map<String, HstPropertyDefinitionInfo> propertyDefinitions;
     private Map<String, String> i18nResources;
     private String lockedBy;
+    private boolean editable;
 
     public ChannelInfoDescription(final List<FieldGroupInfo> fieldGroups,
                                   final Map<String, HstPropertyDefinitionInfo> propertyDefinitions,
                                   final Map<String, String> i18nResources,
-                                  final String lockedBy) {
+                                  final String lockedBy,
+                                  final boolean editable) {
         this.fieldGroups = fieldGroups;
         this.propertyDefinitions = propertyDefinitions;
         this.i18nResources = i18nResources;
         this.lockedBy = lockedBy;
+        this.editable = editable;
     }
 
     public List<FieldGroupInfo> getFieldGroups() {
@@ -53,5 +56,9 @@ public class ChannelInfoDescription {
 
     public String getLockedBy() {
         return lockedBy;
+    }
+
+    public boolean isEditable() {
+        return editable;
     }
 }
