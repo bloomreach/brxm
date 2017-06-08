@@ -74,8 +74,4 @@ public class DocumentType {
     public List<FieldType> getFields() {
         return fields;
     }
-
-    public void addField(final FieldType field) {
-        fields.add(field);
-    }
 }
