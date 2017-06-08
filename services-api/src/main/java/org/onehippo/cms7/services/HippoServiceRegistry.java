@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,12 +25,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * The singleton Hippo service registry.  Serves as a service locator across applications running in the same JVM.
  */
 public final class HippoServiceRegistry {
-    
+
     private volatile static int version = 0;
 
     private static class NamedRegistration extends HippoServiceRegistration {
@@ -54,8 +55,7 @@ public final class HippoServiceRegistry {
                     Thread.currentThread().setContextClassLoader(classLoader);
                     try {
                         return method.invoke(service, args);
-                    }
-                    catch (InvocationTargetException ite) {
+                    } catch (InvocationTargetException ite) {
                         throw (ite.getCause() != null) ? ite.getCause() : ite;
                     } finally {
                         Thread.currentThread().setContextClassLoader(currentContextClassLoader);
@@ -148,7 +148,8 @@ public final class HippoServiceRegistry {
      * The service will be proxied to enforce the Thread ContextClassLoader during invocation to
      * be set to the Thread ContextClassLoader during registration.
      * </p>
-     * @param service service object to register
+     *
+     * @param service    service object to register
      * @param ifaceClass interface to register the service upon for service lookup
      */
     public synchronized static void registerService(Object service, Class<?> ifaceClass) {
@@ -170,7 +171,8 @@ public final class HippoServiceRegistry {
      * This allows for example (web application) internal interfaces to be used to access additional methods, not to be
      * shared across web applications.
      * </p><p>
-     * @param service service object to register
+     *
+     * @param service      service object to register
      * @param ifaceClasses array of interfaces to proxy for the service, the first interface is used to register the
      *                     service upon for service lookup
      */
@@ -195,16 +197,6 @@ public final class HippoServiceRegistry {
             descriptor.checkWhiteboard();
             unregisterUnnamedServiceInternal(service, ifaceClass);
         }
-    }
-
-    /**
-     * Retrieve a service by it's default (class) name.  This provides a mechanism for services that used to be
-     * singletons to be upgraded to non-singleton situations.
-     *
-     * @param ifaceClass
-     */
-    public synchronized static <T> T getService(Class<T> ifaceClass) {
-        return getNamedServiceInternal(ifaceClass, ifaceClass.getName());
     }
 
     /**
@@ -236,16 +228,36 @@ public final class HippoServiceRegistry {
         unregisterNamedServiceInternal(service, ifaceClass, name);
     }
 
+    /**
+     * Retrieve a service by it's default (class) name.  This provides a mechanism for services that used to be
+     * singletons to be upgraded to non-singleton situations.
+     *
+     * @param ifaceClass
+     */
+    public synchronized static <T> T getService(Class<T> ifaceClass) {
+        return getNamedServiceInternal(ifaceClass, ifaceClass.getName());
+    }
+
+    /**
+     * Retrieves the list of <strong>named </strong>services by the interface class through which they
+     * were registered. If no <strong>named</strong> services is available for {@code ifaceClass},
+     * an empty list is returned
+     */
+    public synchronized static <T> List<T> getServices(Class<T> ifaceClass) {
+        return getNamedServicesInternal(ifaceClass);
+    }
+
     public synchronized static <T> T getService(Class<T> ifaceClass, String name) {
         ServiceDescriptor descriptor = new ServiceDescriptor(ifaceClass);
         descriptor.checkNonSingleton();
         return getNamedServiceInternal(ifaceClass, name);
     }
 
+
     /**
-     * @return the version of this {@link HippoServiceRegistry} : Every time the registry gets a service added or removed
-     * the version is incremented. This is for classes using the HippoServiceRegistry that they can easily check whether
-     * they need to register or unregister new {@link HippoServiceRegistration}s
+     * @return the version of this {@link HippoServiceRegistry} : Every time the registry gets a service added or
+     * removed the version is incremented. This is for classes using the HippoServiceRegistry that they can easily check
+     * whether they need to register or unregister new {@link HippoServiceRegistration}s
      */
     public static int getVersion() {
         return version;
@@ -282,16 +294,23 @@ public final class HippoServiceRegistry {
         return null;
     }
 
+    private static <T> List<T> getNamedServicesInternal(final Class<T> ifaceClass) {
+        return namedServices.values().stream()
+                .filter(r -> ifaceClass.isAssignableFrom(r.getInterface()))
+                .map(r -> (T) r.getProxy())
+                .collect(Collectors.toList());
+    }
+
     private static void registerUnnamedServiceInternal(Object service, Class<?> ifaceClass) {
         if (ifaceClass.isInstance(service)) {
             throw new HippoServiceException("Service implements provided interface " + ifaceClass.getName() +
-                                                    ", a whiteboard listener should not do that");
+                    ", a whiteboard listener should not do that");
         }
 
         HippoServiceRegistration registration = newRegistration(service);
         List<HippoServiceRegistration> siblings;
         if (!unnamedServices.containsKey(ifaceClass)) {
-            siblings = new LinkedList<HippoServiceRegistration>();
+            siblings = new LinkedList<>();
             unnamedServices.put(ifaceClass, siblings);
         } else {
             siblings = unnamedServices.get(ifaceClass);
@@ -319,7 +338,7 @@ public final class HippoServiceRegistry {
     private static List<HippoServiceRegistration> getUnnamedServicesInternal(final Class<?> clazz) {
         List<HippoServiceRegistration> siblings = unnamedServices.get(clazz);
         if (siblings != null) {
-            return new ArrayList<HippoServiceRegistration>(siblings);
+            return new ArrayList<>(siblings);
         }
         return Collections.emptyList();
     }
