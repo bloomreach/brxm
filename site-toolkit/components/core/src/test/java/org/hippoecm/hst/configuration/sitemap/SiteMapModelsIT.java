@@ -465,4 +465,47 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         assertTrue(siteMap.getSiteMapItem("news").isMarkedDeleted());
         assertTrue(siteMap.getSiteMapItem("news").getChild("_default_").isMarkedDeleted());
     }
+
+    @Test
+    public void parameternames_values_from_mount_are_resolved_on_sitemap_items() throws Exception {
+        final Node testprojectMount = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        testprojectMount.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo"});
+        testprojectMount.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"bar"});
+        final Node anyGIF = session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap/_any_.GIF");
+        anyGIF.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"lux"});
+        // ${foo} is a property lookup from the mount
+        anyGIF.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"${foo}"});
+        session.save();
+
+        HstSiteMapItem siteMapItem = hstManager.getVirtualHosts().getMountByIdentifier(testprojectMount.getIdentifier()).getHstSite()
+                .getSiteMap().getSiteMapItem("_any_.GIF");
+
+        assertEquals("bar", siteMapItem.getParameter("lux"));
+    }
+
+    @Test
+    public void parameternames_values_from_multiple_mounts_are_resolved_per_mount_for_shared_sitemap_items() throws Exception {
+        final Node testprojectMount = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        testprojectMount.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo"});
+        testprojectMount.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"bar"});
+        final Node testsubprojectMount = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite");
+        testsubprojectMount.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo"});
+        testsubprojectMount.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"sub_bar"});
+
+        final Node anyGIF = session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap/_any_.GIF");
+        anyGIF.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"lux"});
+        // ${foo} is a property lookup from the mount
+        anyGIF.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"${foo}"});
+        session.save();
+
+        HstSiteMapItem siteMapItem = hstManager.getVirtualHosts().getMountByIdentifier(testprojectMount.getIdentifier()).getHstSite()
+                .getSiteMap().getSiteMapItem("_any_.GIF");
+
+        assertEquals("bar", siteMapItem.getParameter("lux"));
+
+        HstSiteMapItem siteMapItemSub = hstManager.getVirtualHosts().getMountByIdentifier(testsubprojectMount.getIdentifier()).getHstSite()
+                .getSiteMap().getSiteMapItem("_any_.GIF");
+
+        assertEquals("sub_bar", siteMapItemSub.getParameter("lux"));
+    }
 }

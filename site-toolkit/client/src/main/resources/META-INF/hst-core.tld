@@ -45,6 +45,16 @@
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.String</type>
     </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
     <example><![CDATA[
       <!-- Threecolumnlayout -->
       <table class="main">
@@ -138,6 +148,16 @@
       <rtexprvalue>false</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
     <example><![CDATA[
       <ul id="paging-nav">
         <c:forEach var="pageNr" items="${searchResults.pageNumbersArray}" varStatus="status">
@@ -191,6 +211,16 @@
       <rtexprvalue>false</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
   </tag>
 
   <tag>
@@ -237,6 +267,16 @@
       <rtexprvalue>false</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
   </tag>
 
   <tag>
@@ -271,6 +311,16 @@
       <required>false</required>
       <rtexprvalue>false</rtexprvalue>
       <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
     </attribute>
     <example><![CDATA[
       <c:forEach var="pageNr" items="${searchResults.pageNumbersArray}">
@@ -408,6 +458,16 @@
       <rtexprvalue>false</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
     <example><![CDATA[
     <!-- In a body component: A list of document names with summaries and links to those documents: -->
 
@@ -505,6 +565,16 @@
       <required>false</required>
       <rtexprvalue>false</rtexprvalue>
       <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
     </attribute>
     <example><![CDATA[
          <hst:webfile var="html4shiv" path="/js/html5shiv.js"/>
@@ -627,6 +697,16 @@
       <rtexprvalue>false</rtexprvalue>
       <type>java.lang.String</type>
     </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
   </tag>
 
   <tag>
@@ -716,6 +796,16 @@
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
     </attribute>
     <example><![CDATA[
       <div>
@@ -999,11 +1089,13 @@
     </attribute>
     <attribute>
       <description>
-        Scope of var or the localization context configuration variable.
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
       </description>
       <name>scope</name>
       <required>false</required>
       <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
     </attribute>
   </tag>
 
@@ -1096,6 +1188,16 @@
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.Character</type>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable. "page", "request", "session" or "application".
+        "page" scope by default.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.String</type>
     </attribute>
     <example><![CDATA[
       <%-- Replaces all the variables (e.g, ${company.name}) in the html output --%>

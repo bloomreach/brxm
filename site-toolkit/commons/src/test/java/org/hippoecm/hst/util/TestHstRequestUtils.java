@@ -27,6 +27,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,6 +37,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_REQUEST_CONTEXT;
+import static org.hippoecm.hst.util.HstRequestUtils.HTTP_FORWARDED_FOR_HEADER_PARAM;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -67,6 +69,11 @@ public class TestHstRequestUtils {
     public void setUp() throws Exception {
         servletContext = createNiceMock(ServletContext.class);
         replay(servletContext);
+    }
+
+    @After
+    public void tearDown() {
+        HstRequestUtils.httpForwardedForHeader = null;
     }
 
     @Test
@@ -272,7 +279,8 @@ public class TestHstRequestUtils {
         HttpServletRequest request = setupMocks();
         String[] split = StringUtils.split(DEFAULT_X_FORWARDED_FOR_HEADER_VALUE, ", ");
         String[] remoteAddrs = HstRequestUtils.getRemoteAddrs(request);
-        assertArrayEquals(String.format("Arrays '%s' and '%s' are not equal", ArrayUtils.toString(split), ArrayUtils.toString(remoteAddrs)),
+        assertArrayEquals(String.format("Arrays '%s' and '%s' are not equal. Used 'http-forwarded-for-header' is '%s'",
+                ArrayUtils.toString(split), ArrayUtils.toString(remoteAddrs), servletContext.getInitParameter(HTTP_FORWARDED_FOR_HEADER_PARAM)),
                 split, remoteAddrs);
         assertEquals(split[0], HstRequestUtils.getFarthestRemoteAddr(request));
     }
@@ -288,7 +296,7 @@ public class TestHstRequestUtils {
     @Test
     public void testGetRemoteAddrsWithCustomForwardedForHeader() {
         servletContext = createNiceMock(ServletContext.class);
-        expect(servletContext.getInitParameter(HstRequestUtils.HTTP_FORWARDED_FOR_HEADER_PARAM))
+        expect(servletContext.getInitParameter(HTTP_FORWARDED_FOR_HEADER_PARAM))
                 .andReturn(CUSTOM_X_FORWARDED_FOR_HEADER_NAME).anyTimes();
         replay(servletContext);
         HstRequestUtils.httpForwardedForHeader = null;
@@ -303,7 +311,7 @@ public class TestHstRequestUtils {
     @Test
     public void testGetRemoteAddrsWithCustomForwardedForHeaderSetEmpty() {
         servletContext = createNiceMock(ServletContext.class);
-        expect(servletContext.getInitParameter(HstRequestUtils.HTTP_FORWARDED_FOR_HEADER_PARAM))
+        expect(servletContext.getInitParameter(HTTP_FORWARDED_FOR_HEADER_PARAM))
                 .andReturn(CUSTOM_X_FORWARDED_FOR_HEADER_NAME).anyTimes();
         replay(servletContext);
         // Set httpForwardedForHeaders to null to clean the cache in HstRequestUtils.

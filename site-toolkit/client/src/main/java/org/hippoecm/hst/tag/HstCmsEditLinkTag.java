@@ -40,6 +40,7 @@ import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.EncodingUtils;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.utils.TagUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -79,7 +80,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
     public int doStartTag() throws JspException{
     
         if (var != null) {
-            pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
+            TagUtils.removeVar(var, pageContext, scope);
         }
         
         return EVAL_BODY_INCLUDE;
@@ -192,19 +193,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
                 }
             }
             else {
-                int varScope = PageContext.PAGE_SCOPE;
-
-                if (scope != null) {
-                    if ("request".equals(scope)) {
-                        varScope = PageContext.REQUEST_SCOPE;
-                    } else if ("session".equals(scope)) {
-                        varScope = PageContext.SESSION_SCOPE;
-                    } else if ("application".equals(scope)) {
-                        varScope = PageContext.APPLICATION_SCOPE;
-                    }
-                }
-
-                pageContext.setAttribute(var, cmsEditLink, varScope);
+                TagUtils.writeOrSetVar(cmsEditLink, var, pageContext, scope);
             }
 
             return EVAL_PAGE;

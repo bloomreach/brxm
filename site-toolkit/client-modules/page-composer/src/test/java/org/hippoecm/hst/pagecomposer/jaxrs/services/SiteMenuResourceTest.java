@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -143,7 +143,7 @@ public class SiteMenuResourceTest {
         final Response response = siteMenuResource.getMenu();
         assertThat(response.getStatus(), is(OK));
         final ExtResponseRepresentation entity = ExtResponseRepresentation.class.cast(response.getEntity());
-        assertThat(entity.getData(), is(SiteMenuRepresentation.class));
+        assertThat(entity.getData(), is(instanceOf(SiteMenuRepresentation.class)));
         assertThat(entity.isSuccess(), is(true));
     }
 
@@ -176,11 +176,11 @@ public class SiteMenuResourceTest {
         final Response response = siteMenuResource.getMenu();
         assertThat(response.getStatus(), is(OK));
         final Object entity = response.getEntity();
-        assertThat(entity, is(ExtResponseRepresentation.class));
+        assertThat(entity, is(instanceOf(ExtResponseRepresentation.class)));
         final ExtResponseRepresentation extResponse = (ExtResponseRepresentation) entity;
 
         assertThat(extResponse.isSuccess(), is(true));
-        assertThat(extResponse.getData(), is(SiteMenuRepresentation.class));
+        assertThat(extResponse.getData(), is(instanceOf(SiteMenuRepresentation.class)));
         final SiteMenuRepresentation siteMenu = (SiteMenuRepresentation) extResponse.getData();
         assertThat(siteMenu.getLockedBy(), is("admin"));
         assertThat(siteMenu.getLockedOn(), is(lockedOn));
@@ -201,7 +201,7 @@ public class SiteMenuResourceTest {
         final Response response = siteMenuResource.getMenuItem(id);
         assertThat(response.getStatus(), is(OK));
         final ExtResponseRepresentation entity = ExtResponseRepresentation.class.cast(response.getEntity());
-        assertThat(entity.getData(), is(SiteMenuItemRepresentation.class));
+        assertThat(entity.getData(), is(instanceOf(SiteMenuItemRepresentation.class)));
         assertThat(entity.isSuccess(), is(true));
     }
 
@@ -234,7 +234,7 @@ public class SiteMenuResourceTest {
         final Response response = siteMenuResource.create(menuId, "last", "'", newMenuItem);
 
         assertThat(response.getStatus(), is(OK));
-        assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
+        assertThat(response.getEntity(), is(instanceOf(ExtResponseRepresentation.class)));
 
         final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
         assertThat(extResponse.isSuccess(), is(true));
@@ -264,7 +264,7 @@ public class SiteMenuResourceTest {
         final Response response = siteMenuResource.update(modifiedItem);
 
         assertThat(response.getStatus(), is(OK));
-        assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
+        assertThat(response.getEntity(), is(instanceOf(ExtResponseRepresentation.class)));
 
         final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
         assertThat(extResponse.isSuccess(), is(true));
@@ -289,11 +289,11 @@ public class SiteMenuResourceTest {
 
         final Response response = siteMenuResource.update(modifiedItem);
         assertThat(response.getStatus(), is(SERVER_ERROR));
-        assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
+        assertThat(response.getEntity(), is(instanceOf(ExtResponseRepresentation.class)));
 
         final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
         assertThat(extResponse.isSuccess(), is(false));
-        assertThat(extResponse.getData(), is(String[].class));
+        assertThat(extResponse.getData(), is(instanceOf(String[].class)));
 
     }
 
@@ -320,7 +320,7 @@ public class SiteMenuResourceTest {
 
         final Response response = siteMenuResource.move(sourceId, parentTargetId, childTargetIndex);
         assertThat(response.getStatus(), is(OK));
-        assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
+        assertThat(response.getEntity(), is(instanceOf(ExtResponseRepresentation.class)));
 
         final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
         assertThat(extResponse.isSuccess(), is(true));
@@ -343,7 +343,7 @@ public class SiteMenuResourceTest {
 
         final Response response = siteMenuResource.delete(sourceId);
         assertThat(response.getStatus(), is(OK));
-        assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
+        assertThat(response.getEntity(), is(instanceOf(ExtResponseRepresentation.class)));
 
         final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
         assertThat(extResponse.isSuccess(), is(true));

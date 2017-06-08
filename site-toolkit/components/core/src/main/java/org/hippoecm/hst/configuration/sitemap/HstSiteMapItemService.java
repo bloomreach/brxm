@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.sitemap;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -312,26 +313,31 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         }
 
         if(parameterNames != null && parameterValues != null){
-           if(parameterNames.length != parameterValues.length) {
-               log.warn("Skipping parameters for sitemapitem '{}' because they only make sense if there are equal number of names and values",
-                       canonicalPath);
-           }  else {
-               for (int i = 0; i < parameterNames.length ; i++) {
-                   if (parameterValues[i] != null && parameterValues[i].contains("${")) {
-                       String resolved = (String) mountParameterParser.resolveProperty(parameterNames[i], parameterValues[i]);
-                       if (containsInvalidOrNonIntegerPlaceholders(resolved)) {
-                           log.warn("Invalid irreplaceable property placeholder found for parameter name '{}' with value '{}' for " +
-                                   "sitemap item '{}'. Setting value for '{}' to null", new String[]{parameterNames[i], parameterValues[i],
-                                    id, parameterNames[i]});
-                           parameterValues[i] = null;
-                       } else {
-                           parameterValues[i] = resolved;
-                       }
-                   }
-                   parameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
-                   localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
-               }
-           }
+            if(parameterNames.length != parameterValues.length) {
+                log.warn("Skipping parameters for sitemapitem '{}' because they only make sense if there are equal number of names and values",
+                        canonicalPath);
+            }  else {
+                // since the parameterNames and parameterValues can come from a HstNode shared between different channels (mounts)
+                // do not directly changes the values in the array but first clone the arrays to avoid loading issues for
+                // shared HstNodes
+                final String[] clonedParameterNames = Arrays.copyOf(parameterNames, parameterNames.length);
+                final String[] clonedParameterValues = Arrays.copyOf(parameterValues, parameterValues.length);
+                for (int i = 0; i < clonedParameterNames.length ; i++) {
+                    if (clonedParameterValues[i] != null && clonedParameterValues[i].contains("${")) {
+                        String resolved = (String) mountParameterParser.resolveProperty(clonedParameterNames[i], clonedParameterValues[i]);
+                        if (containsInvalidOrNonIntegerPlaceholders(resolved)) {
+                            log.warn("Invalid irreplaceable property placeholder found for parameter name '{}' with value '{}' for " +
+                                    "sitemap item '{}'. Setting value for '{}' to null", new String[]{clonedParameterNames[i], clonedParameterValues[i],
+                                    id, clonedParameterNames[i]});
+                            clonedParameterValues[i] = null;
+                        } else {
+                            clonedParameterValues[i] = resolved;
+                        }
+                    }
+                    parameters.put(StringPool.get(clonedParameterNames[i]), StringPool.get(clonedParameterValues[i]));
+                    localParameters.put(StringPool.get(clonedParameterNames[i]), StringPool.get(clonedParameterValues[i]));
+                }
+            }
         }
 
         if(parentItem != null){

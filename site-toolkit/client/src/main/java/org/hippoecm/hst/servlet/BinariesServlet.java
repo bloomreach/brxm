@@ -17,7 +17,6 @@ package org.hippoecm.hst.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,6 +31,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +45,9 @@ import org.hippoecm.hst.core.linking.ResourceContainer;
 import org.hippoecm.hst.core.linking.ResourceLocationResolver;
 import org.hippoecm.hst.servlet.utils.BinariesCache;
 import org.hippoecm.hst.servlet.utils.BinaryPage;
+import org.hippoecm.hst.servlet.utils.BinaryPage.CacheKey;
+import org.hippoecm.hst.servlet.utils.ByteRange;
+import org.hippoecm.hst.servlet.utils.ByteRangeUtils;
 import org.hippoecm.hst.servlet.utils.ContentDispositionUtils;
 import org.hippoecm.hst.servlet.utils.HeaderUtils;
 import org.hippoecm.hst.servlet.utils.ResourceUtils;
@@ -53,8 +56,6 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ServletConfigUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.hst.servlet.utils.BinaryPage.CacheKey;
 
 /**
  * Serves binary files from the repository. Binary files are represented by nodes.
@@ -140,6 +141,8 @@ public class BinariesServlet extends HttpServlet {
 
     public static final String SET_CONTENT_LENGTH_HEADER_INIT_PARAM = "set-content-length-header";
 
+    public static final String USE_ACCEPT_RANGES_HEADER_INIT_PARAM = "use-accept-ranges-header";
+
     public static final String BASE_BINARIES_CONTENT_PATH_INIT_PARAM = "baseBinariesContentPath";
 
     public static final String CONTENT_DISPOSITION_CONTENT_TYPES_INIT_PARAM = "contentDispositionContentTypes";
@@ -152,6 +155,8 @@ public class BinariesServlet extends HttpServlet {
      * javax.servlet.http.HttpServletResponse, java.lang.String, java.lang.String)}
      */
     public static final String CONTENT_DISPOSITION_FILENAME_ENCODING_INIT_PARAM = "contentDispositionFilenameEncoding";
+
+    public static final String MIME_SEPARATION_INIT_PARAM = "mimeSeparation";
 
     public static final String FORCE_CONTENT_DISPOSITION_INIT_PARAM = "forceContentDispositionRequestParamName";
 
@@ -168,6 +173,13 @@ public class BinariesServlet extends HttpServlet {
     private static final boolean DEFAULT_SET_EXPIRES_HEADERS = true;
     
     private static final boolean DEFAULT_SET_CONTENT_LENGTH_HEADERS = true;
+
+    private static final boolean DEFAULT_USE_ACCEPT_RANGES = true;
+
+    /**
+     * MIME multipart separation string
+     */
+    private static final String DEFAULT_MIME_SEPARATION = "TRIBES_MIME_BOUNDARY";
 
     private String baseBinariesContentPath = ResourceUtils.DEFAULT_BASE_BINARIES_CONTENT_PATH;
 
@@ -187,6 +199,8 @@ public class BinariesServlet extends HttpServlet {
     
     private boolean setContentLength = DEFAULT_SET_CONTENT_LENGTH_HEADERS;
 
+    private boolean useAcceptRanges = DEFAULT_USE_ACCEPT_RANGES;
+
     private String binaryResourceNodeType = ResourceUtils.DEFAULT_BINARY_RESOURCE_NODE_TYPE;
 
     private String binaryDataPropName = ResourceUtils.DEFAULT_BINARY_DATA_PROP_NAME;
@@ -196,6 +210,8 @@ public class BinariesServlet extends HttpServlet {
     private String binaryLastModifiedPropName = ResourceUtils.DEFAULT_BINARY_LAST_MODIFIED_PROP_NAME;
 
     private String forceContentDispositionRequestParamName = DEFAULT_FORCE_CONTENT_DISPOSITION_PARAM_NAME;
+
+    private String mimeSeparation = DEFAULT_MIME_SEPARATION;
 
     /** FIXME: BinariesCache is not serializable. */
     private BinariesCache binariesCache;
@@ -229,6 +245,7 @@ public class BinariesServlet extends HttpServlet {
         initContentDispostion();
         initExpires();
         initSetContentLengthHeader();
+        initUseAcceptRangesHeader();
         binaryPageFactory = createBinaryPageFactory();
     }
 
@@ -263,7 +280,9 @@ public class BinariesServlet extends HttpServlet {
         response.setStatus(page.getStatus());
         boolean setExpiresNeeded = setExpires;
 
-        if (ContentDispositionUtils.isContentDispositionType(page.getMimeType(), contentDispositionContentTypes) ||
+        final String pageMimeType = page.getMimeType();
+
+        if (ContentDispositionUtils.isContentDispositionType(pageMimeType, contentDispositionContentTypes) ||
                 (request.getParameter(forceContentDispositionRequestParamName) != null &&
                         Boolean.parseBoolean(request.getParameter(forceContentDispositionRequestParamName)))) {
             setExpiresNeeded = false;
@@ -291,16 +310,76 @@ public class BinariesServlet extends HttpServlet {
             return;
         }
 
+        response.setHeader("ETag", page.getETag());
+
         if (setContentLength) {
             HeaderUtils.setContentLengthHeader(response, page);
         }
 
-        response.setContentType(page.getMimeType());
-        response.setHeader("ETag", page.getETag());
+        if (useAcceptRanges) {
+            response.setHeader("Accept-Ranges", "bytes");
+        }
 
+        List<ByteRange> byteRanges = ByteRangeUtils.parseRanges(request, response, page);
+
+        ServletOutputStream output = null;
+
+        try {
+            output = response.getOutputStream();
+
+            // only when byte range request comes...
+            if (byteRanges != null && !byteRanges.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+
+                if (byteRanges.size() == 1) {
+                    response.setContentType(pageMimeType);
+                    ByteRange range = byteRanges.get(0);
+                    response.addHeader("Content-Range", "bytes " + range.start + "-" + range.end + "/" + range.length);
+                    response.setHeader("Content-Length", Long.toString(range.end - range.start + 1));
+                    copyPageToResponse(request, response, output, page, range.start, range.end - range.start + 1);
+                } else {
+                    response.setContentType("multipart/byteranges; boundary=" + mimeSeparation);
+                    for (ByteRange range : byteRanges) {
+                        // Writing MIME header.
+                        output.println();
+                        output.println("--" + mimeSeparation);
+                        if (pageMimeType != null) {
+                            output.println("Content-Type: " + pageMimeType);
+                        }
+                        output.println("Content-Range: bytes " + range.start + "-" + range.end + "/" + range.length);
+                        output.println();
+                        // Printing content
+                        copyPageToResponse(request, response, output, page, range.start, range.end - range.start + 1);
+                    }
+                }
+            }
+            // keep the old default behavior for full compatibility...
+            else {
+                response.setContentType(pageMimeType);
+                copyPageToResponse(request, response, output, page, -1, -1);
+            }
+        } finally {
+            IOUtils.closeQuietly(output);
+        }
+    }
+
+    /**
+     * Copy binary page bytes data from {@code offset} index up to {@code length} bytes in total.
+     * If {@code offset} and {@code length} are both negative, the whole bytes data will be copied.
+     * @param request request
+     * @param response response
+     * @param output servlet output stream
+     * @param page binary page
+     * @param offset offset index
+     * @param length max length to copy
+     * @throws IOException if IO exception occurs
+     */
+    private void copyPageToResponse(HttpServletRequest request, HttpServletResponse response,
+            final ServletOutputStream output, final BinaryPage page, final long offset, final long length)
+                    throws IOException {
         InputStream input = null;
-        OutputStream output = null;
         Session session = null;
+
         try {
             if (page.containsData()) {
                 input = page.getStream();
@@ -308,13 +387,19 @@ public class BinariesServlet extends HttpServlet {
                 session = SessionUtils.getBinariesSession(request);
                 input = getRepositoryResourceStream(session, page);
             }
-            if(input == null) {
+
+            if (input == null) {
                 log.warn("Could not find binary for uri '{}'", request.getRequestURI());
                 page.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-            output = response.getOutputStream();
-            IOUtils.copy(input, output);
+
+            if (offset >= 0 || length >= 0) {
+                IOUtils.copyLarge(input, output, offset, length);
+            } else {
+                IOUtils.copyLarge(input, output);
+            }
+
             output.flush();
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
@@ -333,7 +418,6 @@ public class BinariesServlet extends HttpServlet {
             }
         } finally {
             IOUtils.closeQuietly(input);
-            IOUtils.closeQuietly(output);
             SessionUtils.releaseSession(request, session);
         }
     }
@@ -614,6 +698,10 @@ public class BinariesServlet extends HttpServlet {
 
     private void initContentDispostion() throws ServletException {
 
+        mimeSeparation =
+                StringUtils.defaultIfEmpty(StringUtils.trim(getInitParameter(MIME_SEPARATION_INIT_PARAM, null)),
+                        DEFAULT_MIME_SEPARATION);
+
         forceContentDispositionRequestParamName = getInitParameter(FORCE_CONTENT_DISPOSITION_INIT_PARAM, DEFAULT_FORCE_CONTENT_DISPOSITION_PARAM_NAME);
 
         contentDispositionFilenamePropertyNames = StringUtils.split(getInitParameter(
@@ -648,6 +736,9 @@ public class BinariesServlet extends HttpServlet {
         setContentLength = getBooleanInitParameter(SET_CONTENT_LENGTH_HEADER_INIT_PARAM, DEFAULT_SET_CONTENT_LENGTH_HEADERS);
     }
 
+    private void initUseAcceptRangesHeader() {
+        useAcceptRanges = getBooleanInitParameter(USE_ACCEPT_RANGES_HEADER_INIT_PARAM, DEFAULT_USE_ACCEPT_RANGES);
+    }
     private void initBinariesCache() {
         binariesCacheComponentName = getInitParameter(CACHE_NAME_INIT_PARAM, "defaultBinariesCache");
         HstCache cache = HstServices.getComponentManager().getComponent(binariesCacheComponentName);
