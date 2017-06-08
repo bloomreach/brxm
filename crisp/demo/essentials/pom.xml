@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.onehippo.cms7.demo</groupId>
     <artifactId>hippo-addon-crisp-demo</artifactId>
-    <version>0.9.1</version>
+    <version>0.9.2</version>
   </parent>
   <artifactId>hippo-addon-crisp-demo-essentials</artifactId>
   <packaging>war</packaging>
