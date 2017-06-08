@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
-/**
- * @version "$Id$"
- */
 public interface Repository {
-
 
     long serialVersionUID = 1L;
 
@@ -40,9 +36,9 @@ public interface Repository {
 
     void setUrl(String url);
 
-    Snapshot getSnapshots();
+    RepositoryPolicy getSnapshots();
 
-    void setSnapshots(Snapshot snapshots);
+    void setSnapshots(RepositoryPolicy snapshots);
 
     String getTargetPom();
 
