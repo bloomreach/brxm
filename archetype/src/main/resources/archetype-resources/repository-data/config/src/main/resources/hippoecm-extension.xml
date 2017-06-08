@@ -85,20 +85,6 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-hst-channels">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30053</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hst/channels.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-hst-sites">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -199,6 +185,21 @@
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hst/configurations/${rootArtifactId}/workspace/containers.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:workspace</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-workspace-channel">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>30060</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hst/configurations/${rootArtifactId}/workspace/channel.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/${rootArtifactId.replace($hyphen,$empty)}/hst:workspace</sv:value>
