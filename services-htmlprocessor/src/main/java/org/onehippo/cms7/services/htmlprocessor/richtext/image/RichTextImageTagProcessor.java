@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.services.htmlprocessor.richtext.image;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.cms7.services.htmlprocessor.richtext.URLProvider;
@@ -53,12 +51,7 @@ public class RichTextImageTagProcessor implements FacetTagProcessor {
     @Override
     public void onWrite(final Tag tag, final FacetService facetService) {
         if (tag != null && StringUtils.equalsIgnoreCase(TAG_IMG, tag.getName())) {
-            try {
-                convertImageForStorage(tag, facetService);
-            } catch (final RepositoryException e) {
-                log.warn("Failed to process image tag on write, src={}, data-uuid={}",
-                         tag.getAttribute(ATTRIBUTE_SRC), tag.getAttribute(ATTRIBUTE_DATA_UUID), e);
-            }
+            convertImageForStorage(tag, facetService);
         }
     }
 
@@ -86,7 +79,7 @@ public class RichTextImageTagProcessor implements FacetTagProcessor {
         }
     }
 
-    private void convertImageForStorage(final Tag tag, final FacetService facetService) throws RepositoryException {
+    private void convertImageForStorage(final Tag tag, final FacetService facetService)  {
         if (!tag.hasAttribute(ATTRIBUTE_SRC) || StringUtils.isEmpty(tag.getAttribute(ATTRIBUTE_SRC))) {
             return;
         }

@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.services.htmlprocessor.richtext.link;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
@@ -35,27 +33,18 @@ public class RichTextLinkTagProcessor implements FacetTagProcessor {
     @Override
     public void onRead(final Tag tag, final FacetService facets) {
         if (tag != null && StringUtils.equalsIgnoreCase(TAG_A, tag.getName())) {
-            try {
-                convertLinkForRetrieval(tag, facets);
-            } catch (final RepositoryException e) {
-                log.warn("Failed to process link tag on read, href={}", tag.getAttribute(ATTRIBUTE_HREF), e);
-            }
+            convertLinkForRetrieval(tag, facets);
         }
     }
 
     @Override
     public void onWrite(final Tag tag, final FacetService facetService) {
         if (tag != null && StringUtils.equalsIgnoreCase(TAG_A, tag.getName())) {
-            try {
-                convertLinkForStorage(tag, facetService);
-            } catch (final RepositoryException e) {
-                log.warn("Failed to process link tag on write, href={}, data-uuid={}",
-                         tag.getAttribute(ATTRIBUTE_HREF), tag.getAttribute(ATTRIBUTE_DATA_UUID), e);
-            }
+            convertLinkForStorage(tag, facetService);
         }
     }
 
-    private void convertLinkForRetrieval(final Tag tag, final FacetService facetService) throws RepositoryException {
+    private void convertLinkForRetrieval(final Tag tag, final FacetService facetService) {
         final String href = tag.getAttribute(ATTRIBUTE_HREF);
 
         if (StringUtils.isEmpty(href)) {
@@ -69,6 +58,7 @@ public class RichTextLinkTagProcessor implements FacetTagProcessor {
         final String uuid = facetService.getFacetId(name);
 
         if (uuid != null) {
+            // set href to 'http://' so CKEditor handles it as a link instead of an anchor
             tag.addAttribute(ATTRIBUTE_HREF, LinkUtil.INTERNAL_LINK_DEFAULT_HREF);
             tag.addAttribute(ATTRIBUTE_DATA_UUID, uuid);
 
@@ -76,7 +66,7 @@ public class RichTextLinkTagProcessor implements FacetTagProcessor {
         }
     }
 
-    private void convertLinkForStorage(final Tag tag, final FacetService facetService) throws RepositoryException {
+    private void convertLinkForStorage(final Tag tag, final FacetService facetService) {
         final String href = tag.getAttribute(ATTRIBUTE_HREF);
 
         if (StringUtils.isEmpty(href)) {
