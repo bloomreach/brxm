@@ -67,7 +67,7 @@
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig/watchedModules</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+    <sv:property sv:name="hippo:contentpropset" sv:type="String" sv:multiple="true">
       <sv:value>repository-data/webfiles</sv:value>
     </sv:property>
   </sv:node>
