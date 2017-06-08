@@ -232,7 +232,7 @@
         </property>
       </activation>
       <modules>
-        <module>bootstrap</module>
+        <module>repository-data</module>
         <module>cms</module>
         <module>site</module>
         <module>essentials</module>
@@ -262,7 +262,7 @@
                 </configfiles>
                 <files>
                   <file>
-                    <file>${project.basedir}/bootstrap/content/target/${rootArtifactId}-bootstrap-content-${dollar}{project.version}.jar</file>
+                    <file>${project.basedir}/repository-data/content/target/${rootArtifactId}-repository-data-content-${dollar}{project.version}.jar</file>
                     <todir>${content-module-deploy-dir}</todir>
                   </file>
                 </files>

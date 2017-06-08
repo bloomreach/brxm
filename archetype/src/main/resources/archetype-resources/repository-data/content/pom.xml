@@ -4,13 +4,13 @@
 
   <parent>
     <groupId>${groupId}</groupId>
-    <artifactId>${rootArtifactId}-bootstrap</artifactId>
+    <artifactId>${rootArtifactId}-repository-data</artifactId>
     <version>${version}</version>
   </parent>
 
-  <name>${projectName} Bootstrap Configuration</name>
-  <description>${projectName} Bootstrap Configuration</description>
-  <artifactId>${artifactId}-bootstrap-configuration</artifactId>
+  <name>${projectName} Repository Data Content</name>
+  <description>${projectName} Repository Data Content</description>
+  <artifactId>${artifactId}-repository-data-content</artifactId>
 
   <build>
     <defaultGoal>install</defaultGoal>

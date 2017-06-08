@@ -148,6 +148,10 @@
         ^/.*\..*
       </param-value>
     </init-param>
+    <init-param>
+      <param-name>requireAuthentication</param-name>
+      <param-value>false</param-value>
+    </init-param>
   </servlet>
 
   <servlet>

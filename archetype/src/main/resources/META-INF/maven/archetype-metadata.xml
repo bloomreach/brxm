@@ -56,66 +56,59 @@
         <include>hippo-cms7-release-pom.xml</include>
       </includes>
     </fileSet>
-    <!-- bootstrap module -->
+    <!-- repository-data module -->
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>bootstrap</directory>
+      <directory>repository-data</directory>
       <includes>
         <include>pom.xml</include>
       </includes>
     </fileSet>
-    <!-- bootstrap-configuration module -->
+    <!-- repository-data-config module -->
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>bootstrap/configuration/src/main/resources</directory>
+      <directory>repository-data/config/src/main/resources</directory>
       <includes>
-        <include>**/*.xml</include>
+        <include>**/*.yaml</include>
         <include>**/*.cnd</include>
-      </includes>
-    </fileSet>
-    <fileSet filtered="true" encoding="UTF-8">
-      <directory>bootstrap/configuration</directory>
-      <includes>
-        <include>pom.xml</include>
-      </includes>
-    </fileSet>
-    <!-- bootstrap-content module -->
-    <fileSet filtered="true" encoding="UTF-8">
-      <directory>bootstrap/content/src/main/resources</directory>
-      <includes>
         <include>**/*.xml</include>
-        <include>**/*.cnd</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>bootstrap/content</directory>
+      <directory>repository-data/config</directory>
       <includes>
         <include>pom.xml</include>
       </includes>
     </fileSet>
-    <!-- bootstrap-webfiles module -->
+    <!-- repository-data-content module -->
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>bootstrap/webfiles/src/main/resources</directory>
+      <directory>repository-data/content/src/main/resources</directory>
       <includes>
-        <include>**/*.css</include>
-        <include>**/*.js</include>
+        <include>**/*.yaml</include>
+        <include>**/*.cnd</include>
+        <include>**/*.xml</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>repository-data/content</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
+    <!-- repository-data-webfiles module -->
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>repository-data/webfiles/src/main/resources</directory>
+      <includes>
+        <include>**/*.yaml</include>
         <include>**/*.xml</include>
       </includes>
     </fileSet>
     <fileSet filtered="false" encoding="UTF-8">
-      <directory>bootstrap/webfiles/src/main/resources/site</directory>
+      <directory>repository-data/webfiles/src/main/resources/site</directory>
       <includes>
         <include>**/**</include>
       </includes>
     </fileSet>
-    <fileSet filtered="false" encoding="UTF-8">
-      <directory>bootstrap/webfiles/src/main/resources</directory>
-      <includes>
-        <include>**/*.png</include>
-        <include>**/*.ftl</include>
-        <include>**/*.properties</include>
-      </includes>
-    </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>bootstrap/webfiles</directory>
+      <directory>repository-data/webfiles</directory>
       <includes>
         <include>pom.xml</include>
       </includes>
