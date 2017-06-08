@@ -269,7 +269,7 @@ public class RichTextLinkTagProcessorTest {
         final Tag link1 = createLink("http://", doc1.getIdentifier());
         final Tag link2 = createLink("http://", doc2.getIdentifier());
 
-        final FacetService service = FacetService.from(document);
+        final FacetService service = new FacetService(document);
         final RichTextLinkTagProcessor processor = new RichTextLinkTagProcessor();
         processor.onWrite(link1, service);
         processor.onWrite(link2, service);
@@ -302,14 +302,14 @@ public class RichTextLinkTagProcessorTest {
     }
 
     private void read(final Tag link) throws RepositoryException {
-        final FacetService service = FacetService.from(document);
+        final FacetService service = new FacetService(document);
         final RichTextLinkTagProcessor processor = new RichTextLinkTagProcessor();
         processor.onRead(link, service);
         service.removeUnmarkedFacets();
     }
 
     private void write(final Tag link) throws RepositoryException {
-        final FacetService service = FacetService.from(document);
+        final FacetService service = new FacetService(document);
         final RichTextLinkTagProcessor processor = new RichTextLinkTagProcessor();
         processor.onWrite(link, service);
         service.removeUnmarkedFacets();
@@ -324,7 +324,7 @@ public class RichTextLinkTagProcessorTest {
 
     private void assertNoChangesReading(final String href, final RichTextLinkTagProcessor processor) throws RepositoryException {
         final Tag image = createLink(href);
-        final FacetService service = FacetService.from(document);
+        final FacetService service = new FacetService(document);
 
         final long childNodesBeforeRead = document.getNodes().getSize();
         processor.onRead(image, service);
@@ -336,7 +336,7 @@ public class RichTextLinkTagProcessorTest {
 
     private void assertNoChangesWriting(final String href, final RichTextLinkTagProcessor processor) throws RepositoryException {
         final Tag link = createLink(href);
-        final FacetService service = FacetService.from(document);
+        final FacetService service = new FacetService(document);
 
         final long childNodesBeforeWrite = document.getNodes().getSize();
         processor.onWrite(link, service);

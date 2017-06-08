@@ -27,83 +27,59 @@ import org.onehippo.cms7.services.htmlprocessor.util.FacetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public interface FacetService {
+public class FacetService {
 
-    Logger log = LoggerFactory.getLogger(FacetService.class);
+    private static final Logger log = LoggerFactory.getLogger(FacetService.class);
 
-    void markVisited(String name);
+    private final Node node;
+    private Map<String, String> unmarkedFacets = Collections.emptyMap();
 
-    void removeUnmarkedFacets();
-
-    String findOrCreateFacet(String uuid);
-
-    String getFacetId(String name);
-
-    String getFacetName(String uuid);
-
-
-    static FacetService from(final Node node) {
-        return new FacetServiceImpl(node);
+    public FacetService(final Node node) {
+        this.node = node;
+        try {
+            unmarkedFacets = FacetUtil.getFacets(node);
+        } catch (final RepositoryException e) {
+            log.error("Error loading facets from node", e);
+            unmarkedFacets = Collections.emptyMap();
+        }
     }
 
-    class FacetServiceImpl implements FacetService {
-        private final Node node;
-        private Map<String, String> unmarkedFacets = Collections.emptyMap();
+    public String getFacetId(final String name) {
+        return unmarkedFacets.get(name);
+    }
 
-        FacetServiceImpl(final Node node) {
-            this.node = node;
-            try {
-                unmarkedFacets = FacetUtil.getFacets(node);
-            } catch (final RepositoryException e) {
-                log.error("Error loading facets from node", e);
-                unmarkedFacets = Collections.emptyMap();
-            }
+    public void markVisited(final String name) {
+        unmarkedFacets.remove(name);
+    }
+
+    public void removeUnmarkedFacets() {
+        // unmarked facets are no longer referenced from markup and can be removed
+        if (!unmarkedFacets.isEmpty()) {
+            unmarkedFacets.forEach((name, uuid) -> FacetUtil.removeFacet(node, name));
+            unmarkedFacets.clear();
+        }
+    }
+
+    public String findOrCreateFacet(final String uuid) {
+        final String name = getFacetName(uuid);
+        if (name != null) {
+            return name;
         }
 
-        @Override
-        public String getFacetId(final String name) {
-            return unmarkedFacets.get(name);
+        try {
+            return FacetUtil.createFacet(node, uuid);
+        } catch (final RepositoryException e) {
+            log.error("Failed to create facet for node with id {}", uuid, e);
         }
+        return null;
+    }
 
-        @Override
-        public String getFacetName(final String uuid) {
-            return unmarkedFacets.entrySet()
-                    .stream()
-                    .filter(entry -> Objects.equals(entry.getValue(), uuid))
-                    .map(Entry::getKey)
-                    .findFirst()
-                    .orElse(null);
-        }
-
-        @Override
-        public void markVisited(final String name) {
-            unmarkedFacets.remove(name);
-        }
-
-        @Override
-        public void removeUnmarkedFacets() {
-            // unmarked facets are no longer referenced from markup and can be removed
-            if (!unmarkedFacets.isEmpty()) {
-                unmarkedFacets.forEach((name, uuid) -> FacetUtil.removeFacet(node, name));
-                unmarkedFacets.clear();
-            }
-        }
-
-        @Override
-        public String findOrCreateFacet(final String uuid) {
-            final String name = getFacetName(uuid);
-            if (name != null) {
-                return name;
-            }
-
-            try {
-                return FacetUtil.createFacet(node, uuid);
-            } catch (final RepositoryException e) {
-                log.error("Failed to create facet for node with id {}", uuid, e);
-            }
-            return null;
-        }
-
-
+    String getFacetName(final String uuid) {
+        return unmarkedFacets.entrySet()
+                .stream()
+                .filter(entry -> Objects.equals(entry.getValue(), uuid))
+                .map(Entry::getKey)
+                .findFirst()
+                .orElse(null);
     }
 }

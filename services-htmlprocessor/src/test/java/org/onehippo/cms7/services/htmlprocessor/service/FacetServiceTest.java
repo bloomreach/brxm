@@ -139,7 +139,7 @@ public class FacetServiceTest {
     }
 
     private FacetService createService() {
-        return FacetService.from(document);
+        return new FacetService(document);
     }
 
     private void addChildFacetNode(final String name, final String uuid) throws RepositoryException {

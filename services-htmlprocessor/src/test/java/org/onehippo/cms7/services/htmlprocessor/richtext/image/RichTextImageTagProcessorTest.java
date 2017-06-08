@@ -227,7 +227,7 @@ public class RichTextImageTagProcessorTest {
         image2.addAttribute("data-uuid", imageNode2.getIdentifier());
         image2.addAttribute("data-type", "hippogallery:original");
 
-        final FacetService service = FacetService.from(document);
+        final FacetService service = new FacetService(document);
         final RichTextImageTagProcessor processor = new RichTextImageTagProcessor(prefixingImageUrlProvider);
         processor.onWrite(image1, service);
         processor.onWrite(image2, service);
@@ -282,7 +282,7 @@ public class RichTextImageTagProcessorTest {
         final RichTextImageURLProvider urlProvider = new RichTextImageURLProvider(mockImageFactory, mockLinkFactory, documentModel);
         final Tag imageTag = createImage("image.jpg/{_document}/hippogallery:original");
 
-        final FacetService service = FacetService.from(document);
+        final FacetService service = new FacetService(document);
         final RichTextImageTagProcessor processor = new RichTextImageTagProcessor(urlProvider);
         processor.onRead(imageTag, service);
         service.removeUnmarkedFacets();
@@ -298,7 +298,7 @@ public class RichTextImageTagProcessorTest {
 
     private void read(final Tag imageTag, final URLProvider urlProvider) throws RepositoryException {
         final RichTextImageTagProcessor processor = new RichTextImageTagProcessor(urlProvider);
-        final FacetService service = FacetService.from(document);
+        final FacetService service = new FacetService(document);
         processor.onRead(imageTag, service);
         service.removeUnmarkedFacets();
     }
@@ -309,7 +309,7 @@ public class RichTextImageTagProcessorTest {
 
     private void write(final Tag imageTag, final URLProvider urlProvider) throws RepositoryException {
         final RichTextImageTagProcessor processor = new RichTextImageTagProcessor(urlProvider);
-        final FacetService service = FacetService.from(document);
+        final FacetService service = new FacetService(document);
         processor.onWrite(imageTag, service);
         service.removeUnmarkedFacets();
     }
