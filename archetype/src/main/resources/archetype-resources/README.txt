@@ -7,7 +7,7 @@ From the project root folder, execute:
   mvn clean verify
   mvn -P cargo.run
 
-By default this includes and bootstraps repository content from the bootstrap/content module,
+By default this includes and bootstraps repository content from the repository-data/content module,
 which is deployed by cargo to the Tomcat shared/lib.
 If you want or need to start *without* bootstrapping the local content module, for example when testing
 against an existing repository, you can specify the *additional* Maven profile without-content to do so:
@@ -81,7 +81,7 @@ Automatic Export
 Automatic export of repository changes to the filesystem is turned on by default. To control this behavior, log into
 http://localhost:8080/cms/console and press the "Enable/Disable Auto Export" button at the top right. To set this
 as the default for your project edit the file
-./bootstrap/configuration/src/main/resources/configuration/modules/autoexport-module.xml
+./repository-data/config/src/main/resources/configuration/modules/autoexport-module.xml
 
 Monitoring with JMX Console
 ===========================

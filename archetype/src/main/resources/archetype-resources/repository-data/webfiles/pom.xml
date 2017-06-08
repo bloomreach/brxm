@@ -4,13 +4,13 @@
 
   <parent>
     <groupId>${groupId}</groupId>
-    <artifactId>${rootArtifactId}-bootstrap</artifactId>
+    <artifactId>${rootArtifactId}-repository-data</artifactId>
     <version>${version}</version>
   </parent>
 
-  <name>${projectName} Bootstrap Web Files</name>
-  <description>${projectName} Bootstrap Web Files</description>
-  <artifactId>${artifactId}-bootstrap-webfiles</artifactId>
+  <name>${projectName} Repository Data Web Files</name>
+  <description>${projectName} Repository Data Web Files</description>
+  <artifactId>${artifactId}-repository-data-webfiles</artifactId>
 
   <dependencies>
     <dependency>

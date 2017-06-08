@@ -8,20 +8,20 @@
     <version>${version}</version>
   </parent>
 
-  <name>${projectName} Bootstrap</name>
-  <description>${projectName} Bootstrap</description>
-  <artifactId>${artifactId}-bootstrap</artifactId>
+  <name>${projectName} Repository Data</name>
+  <description>${projectName} Repository Data</description>
+  <artifactId>${artifactId}-repository-data</artifactId>
   <packaging>pom</packaging>
 
   <modules>
-    <module>configuration</module>
+    <module>config</module>
     <module>content</module>
     <module>webfiles</module>
   </modules>
 
   <build>
     <plugins>
-      <!-- ARCHE-487: disable jrebel.xml generation for bootstrap modules -->
+      <!-- ARCHE-487: disable jrebel.xml generation for repository-data modules -->
       <plugin>
         <groupId>org.zeroturnaround</groupId>
         <artifactId>jrebel-maven-plugin</artifactId>
