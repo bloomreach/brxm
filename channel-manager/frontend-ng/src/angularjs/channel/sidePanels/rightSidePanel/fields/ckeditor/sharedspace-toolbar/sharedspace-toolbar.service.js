@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-import template from './overlayToggle.html';
-import controller from './overlayToggle.controller';
+class SharedSpaceToolbarService {
+  constructor() {
+    'ngInject';
 
-const modeToggleComponent = {
-  restrict: 'E',
-  template,
-  controller,
-  bindings: {
-    state: '=',
-    iconName: '@?',
-    iconSrc: '@?',
-    tooltip: '@?',
-  },
-};
+    this.triggerCallback = angular.noop;
+  }
 
-export default modeToggleComponent;
+  registerTriggerCallback(fn) {
+    this.triggerCallback = fn;
+  }
+
+  showToolbar(options) {
+    this.triggerCallback(true, {
+      hasBottomToolbar: options.hasBottomToolbar,
+    });
+  }
+
+  hideToolbar() {
+    this.triggerCallback(false);
+  }
+}
+
+export default SharedSpaceToolbarService;

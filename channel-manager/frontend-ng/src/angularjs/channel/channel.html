@@ -15,7 +15,7 @@
   -->
 
 <div layout="column" flex ng-hide="channelCtrl.isSubpageOpen()">
-  <md-toolbar class="hippo-toolbar qa-toolbar">
+  <md-toolbar class="hippo-toolbar qa-toolbar" ng-show="channelCtrl.isToolbarDisplayed()">
     <div class="md-toolbar-tools">
       <div flex="30" layout layout-align="start center">
         <left-side-panel-toggle disabled="channelCtrl.isControlsDisabled()"></left-side-panel-toggle>
@@ -38,14 +38,14 @@
 
       <div flex="30" layout layout-align="end center">
         <overlay-toggle state="channelCtrl.isComponentsOverlayDisplayed"
-                        icon="view_quilt"
+                        icon-src="images/toggle_components_overlay.svg"
                         tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
                         class="qa-toggle-components"
                         ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded()">
         </overlay-toggle>
 
         <overlay-toggle state="channelCtrl.isContentOverlayDisplayed"
-                        icon="description"
+                        icon-src="images/document.svg"
                         class="qa-toggle-content"
                         tooltip="{{ channelCtrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}"
                         ng-if="channelCtrl.isPageLoaded()">
@@ -69,7 +69,9 @@
       on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>
 
-    <right-side-panel layout="row"></right-side-panel>
+    <right-side-panel layout="row"
+                      ng-show="channelCtrl.isChannelLoaded()">
+    </right-side-panel>
   </md-content>
 </div>
 

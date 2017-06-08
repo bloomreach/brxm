@@ -343,15 +343,20 @@ describe('ChannelService', () => {
   });
 
   it('should clear the current channel', () => {
+    spyOn(ChannelService, 'setToolbarDisplayed');
+
     loadChannel();
     expect(ChannelService.hasChannel()).toBe(true);
     expect(ChannelService.isEditable()).toBe(true);
+    ChannelService.setToolbarDisplayed(false);
 
     ChannelService.clearChannel();
 
     expect(ChannelService.hasChannel()).toBe(false);
     expect(ChannelService.isEditable()).toBe(false);
     expect(ChannelService.getChannel()).toEqual({});
+
+    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalled();
   });
 
   it('should switch to a new channel', () => {
@@ -669,5 +674,12 @@ describe('ChannelService', () => {
 
     expect(ChannelService.deleteChannel()).toBe(promise);
     expect(HstService.doDelete).toHaveBeenCalledWith(ConfigServiceMock.rootUuid, 'channels', channelMock.id);
+  });
+
+  it('should set channel toolbar display status', () => {
+    loadChannel();
+    expect(ChannelService.isToolbarDisplayed).toBe(true);
+    ChannelService.setToolbarDisplayed(false);
+    expect(ChannelService.isToolbarDisplayed).toBe(false);
   });
 });

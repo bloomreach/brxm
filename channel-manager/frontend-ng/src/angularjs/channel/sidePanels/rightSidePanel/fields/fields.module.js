@@ -17,18 +17,17 @@ import documentFieldsComponent from './documentFields/documentFields.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import choiceFieldComponent from './choiceField/choiceField.component';
 import compoundFieldComponent from './compoundField/compoundField.component';
-import ckeditorComponent from './ckeditor/ckeditor.component';
-import ckeditorService from './ckeditor/ckeditor.service';
+import ckeditorModule from './ckeditor/ckeditor.module';
 import collapse from './collapse/collapse.directive';
 
 const fieldsModule = angular
-  .module('hippo-cm.channel.fieldsModule', [])
+  .module('hippo-cm.channel.fieldsModule', [
+    ckeditorModule,
+  ])
   .component('documentFields', documentFieldsComponent)
   .component('primitiveField', primitiveFieldComponent)
   .component('choiceField', choiceFieldComponent)
   .component('compoundField', compoundFieldComponent)
-  .component('ckeditor', ckeditorComponent)
-  .directive('collapse', collapse)
-  .service('CKEditorService', ckeditorService);
+  .directive('collapse', collapse);
 
 export default fieldsModule.name;

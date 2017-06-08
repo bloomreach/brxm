@@ -95,6 +95,6 @@ describe('resizeHandle component', () => {
     $ctrl.$document.trigger(eMouseMove);
 
     $ctrl.$document.trigger('mouseup');
-    expect(mockSidePanelElement.css).not.toHaveBeenCalled();
+    expect(mockSidePanelElement.css).toHaveBeenCalled();
   });
 });

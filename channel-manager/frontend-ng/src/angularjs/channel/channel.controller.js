@@ -119,6 +119,10 @@ class ChannelCtrl {
       this.FeedbackService.showError(key, params);
     }
   }
+
+  isToolbarDisplayed() {
+    return this.ChannelService.isToolbarDisplayed;
+  }
 }
 
 export default ChannelCtrl;

@@ -25,7 +25,7 @@
                  ng-if="!$ctrl.isFullWidth">
   </resize-handle>
 
-  <md-toolbar>
+  <md-toolbar class="edit-title-toolbar">
     <div class="md-toolbar-tools">
       <h1 class="md-title text-truncate">
         {{ $ctrl.title }}
@@ -34,26 +34,11 @@
 
       <span flex></span>
 
-      <md-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
-                 aria-label="{{ 'FULL_WIDTH' | translate }}"
-                 ng-click="$ctrl.setFullWidth(true)"
-                 ng-show="!$ctrl.isFullWidth">
-        <md-tooltip md-delay="500">{{ 'FULL_WIDTH' | translate }}</md-tooltip>
-        <md-icon>fullscreen</md-icon>
-      </md-button>
-      <md-button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
-                 aria-label="{{ 'NORMAL_WIDTH' | translate }}"
-                 ng-click="$ctrl.setFullWidth(false)"
-                 ng-show="$ctrl.isFullWidth">
-        <md-tooltip md-delay="500">{{ 'NORMAL_WIDTH' | translate }}</md-tooltip>
-        <md-icon>fullscreen_exit</md-icon>
-      </md-button>
       <md-button class="md-icon-button qa-publish-in-content-perspective"
                  aria-label="{{ 'PUBLISH' | translate }}"
                  ng-disabled="!$ctrl.editing || $ctrl.disableContentButtons"
                  ng-click="$ctrl.openContentEditor('view')">
         <md-tooltip md-delay="500">{{ 'PUBLISH' | translate }}</md-tooltip>
-
         <md-icon md-svg-src="images/publish.svg"></md-icon>
       </md-button>
       <md-button class="md-icon-button qa-edit-in-content-perspective"
@@ -61,14 +46,29 @@
                  ng-disabled="$ctrl.disableContentButtons"
                  ng-click="$ctrl.openContentEditor('edit')">
         <md-tooltip md-delay="500">{{ 'SWITCH_TO_CONTENT_EDITOR' | translate }}</md-tooltip>
-
         <md-icon md-svg-src="images/switch-to-content-editor.svg"></md-icon>
+      </md-button>
+      <md-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
+                 aria-label="{{ 'FULL_WIDTH' | translate }}"
+                 ng-click="$ctrl.setFullWidth(true)"
+                 ng-show="!$ctrl.isFullWidth">
+        <md-tooltip md-delay="500">{{ 'FULL_WIDTH' | translate }}</md-tooltip>
+        <md-icon md-svg-src="images/maximize-sidepanel.svg"></md-icon>
+      </md-button>
+      <md-button class="md-icon-button btn-normalwidth qa-rightsidepanel-normalwidth"
+                 aria-label="{{ 'NORMAL_WIDTH' | translate }}"
+                 ng-click="$ctrl.setFullWidth(false)"
+                 ng-show="$ctrl.isFullWidth">
+        <md-tooltip md-delay="500">{{ 'NORMAL_WIDTH' | translate }}</md-tooltip>
+        <md-icon md-svg-src="images/un-maximize-sidepanel.svg"></md-icon>
       </md-button>
     </div>
     <md-progress-linear md-mode="indeterminate"
                         ng-if="$ctrl.loading">
     </md-progress-linear>
   </md-toolbar>
+
+  <sharedspace-toolbar></sharedspace-toolbar>
 
   <md-content flex="grow"
               layout="column">

@@ -15,65 +15,73 @@
 // sass-lint:disable class-name-format, no-qualifying-elements
 @import 'variables';
 
-ckeditor {
-  textarea {
-    // Material fields have a 1px bottom border
-    + .cke {
-      border-bottom-width: 1px;
-    }
-
-    // Invalid fields have a 2px red bottom border
-    &.ng-invalid + .cke {
-      border-bottom-color: $red-500;
-      border-bottom-width: 2px;
-
-      // ...but should not push the remaining fields 1px down, so reduce the padding of the bottom toolbar by 1px
-      .cke_bottom {
-        padding-bottom: 1px;
-      }
-    }
-
-    // Focused fields have a 2px blue bottom border
-    &.focussed + .cke {
-      border-bottom-color: $blue-500;
-      border-bottom-width: 2px;
-
-      // ...but should not push the remaining fields 1px down, so reduce the padding of the bottom toolbar by 1px
-      .cke_bottom {
-        padding-bottom: 1px;
-      }
-    }
+.cke {
+  .cke_button__source {
+    display: none;
   }
 
-  // use similar border color as other fields
-  .cke,
-  .cke_top,
-  .cke_bottom {
-    border-color: $grey-300;
+  .cke_wysiwyg_div {
+    padding: 8px !important;
   }
 
-  // use custom background color and font in the toolbars
-  .cke_top,
-  .cke_bottom {
-    background: $grey-50;
+  .md-resize-handle {
+    display: none !important;
+  }
 
+  // CKEditor input area (:not is required to exclude toolbars)
+  &[class*='cke_editor_input_']:not(.cke_shared) {
+    margin-bottom: 1px;
+
+    &.cke_focus {
+      border-bottom: 2px solid $blue-500;
+      margin-bottom: 0;
+    }
+  }
+}
+
+.cke_shared {
+  border: 0 !important;
+  box-shadow: 0 !important;
+}
+
+.cke_top {
+  border-bottom: 0 !important;
+
+  // Remove codemirror buttons in CKEditor toolbar
+  .cke_button {
+    &.cke_button__searchcode,
+    &.cke_button__autoformat,
+    &.cke_button__commentselectedrange,
+    &.cke_button__uncommentselectedrange,
+    &.cke_button__autocomplete {
+      display: none;
+    }
+  }
+}
+
+.cke_bottom {
+  border: 0 !important;
+
+  &:empty {
+    padding: 0 !important;
+  }
+}
+
+.cke_resizer {
+  display: none;
+}
+
+.cke_dialog_contents {
+  .cke_dialog_ui_textarea {
     * {
-      font-family: $font-family;
+      font-family: monospace !important;
+      font-size: 12px;
     }
   }
 
-  // use a darker background for 'on' toolbar buttons to increase visibility on the custom toolbar background color
-  a.cke_button_on {
-    background-color: $grey-200;
-  }
-
-  // align left side of the text in the 'Styles' dropdown with left side of the icons below it
-  .cke_combo_text {
-    padding-left: 6px;
-  }
-
-  // use same margin in the editing area as other input fields
-  .cke_wysiwyg_div.cke_editable {
-    padding: 8px;
+  .cke_dialog_ui_button {
+    &.UncommentSelectedRange {
+      margin-top: 0 !important;
+    }
   }
 }

@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+  ~ Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,10 +15,12 @@
   -->
 
 <md-button class="btn-overlay-toggle"
-           ng-click="$ctrl.toggleState()">
+           ng-click="$ctrl.toggleState()"
+           title="{{ $ctrl.tooltip }}">
   <md-icon ng-class="{
             'active': $ctrl.state
-           }">{{ $ctrl.icon }}
+           }"
+           md-svg-src="{{ $ctrl.iconSrc }}">
+    {{ $ctrl.iconName }}
   </md-icon>
-  <md-tooltip ng-if="$ctrl.tooltip" ng-bind="$ctrl.tooltip"></md-tooltip>
 </md-button>

@@ -47,6 +47,7 @@ class ChannelService {
     this.PathService = PathService;
     this.ProjectService = ProjectService;
 
+    this.isToolbarDisplayed = true;
     this.channel = {};
 
     this.CmsService.subscribe('channel-changed-in-extjs', () => {
@@ -63,6 +64,10 @@ class ChannelService {
 
   clearChannel() {
     this.channel = {};
+
+    if (!this.isToolbarDisplayed) {
+      this.setToolbarDisplayed(true);
+    }
   }
 
   hasChannel() {
@@ -311,6 +316,10 @@ class ChannelService {
 
   deleteChannel() {
     return this.HstService.doDelete(this.ConfigService.rootUuid, 'channels', this.getId());
+  }
+
+  setToolbarDisplayed(state) {
+    this.isToolbarDisplayed = state;
   }
 }
 

@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import SharedSpaceToolbarComponent from './sharedspace-toolbar.component';
+import SharedSpaceToolbarService from './sharedspace-toolbar.service';
 
-import template from './overlayToggle.html';
-import controller from './overlayToggle.controller';
+const SharedSpaceToolbarModule = angular
+  .module('hippo-cm.channel.fieldsModule.sharedspaceToolbar', [])
+  .component('sharedspaceToolbar', SharedSpaceToolbarComponent)
+  .service('SharedSpaceToolbarService', SharedSpaceToolbarService);
 
-const modeToggleComponent = {
-  restrict: 'E',
-  template,
-  controller,
-  bindings: {
-    state: '=',
-    iconName: '@?',
-    iconSrc: '@?',
-    tooltip: '@?',
-  },
-};
-
-export default modeToggleComponent;
+export default SharedSpaceToolbarModule.name;

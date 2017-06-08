@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-import template from './overlayToggle.html';
-import controller from './overlayToggle.controller';
+import template from './sharedspace-toolbar.html';
+import controller from './sharedspace-toolbar.controller';
+import './sharedspace-toolbar.scss';
 
-const modeToggleComponent = {
-  restrict: 'E',
+const ckeditorComponent = {
   template,
   controller,
   bindings: {
-    state: '=',
-    iconName: '@?',
-    iconSrc: '@?',
-    tooltip: '@?',
+    isVisible: '=?',
   },
 };
 
-export default modeToggleComponent;
+export default ckeditorComponent;

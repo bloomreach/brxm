@@ -13,20 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import SharedSpaceToolbarModule from './sharedspace-toolbar/sharedspace-toolbar.module';
+import ckeditorComponent from './ckeditor.component';
+import ckeditorService from './ckeditor.service';
 
-import template from './overlayToggle.html';
-import controller from './overlayToggle.controller';
+const ckeditorModule = angular
+  .module('hippo-cm.channel.fieldsModule.ckeditor', [
+    SharedSpaceToolbarModule,
+  ])
+  .component('ckeditor', ckeditorComponent)
+  .service('CKEditorService', ckeditorService);
 
-const modeToggleComponent = {
-  restrict: 'E',
-  template,
-  controller,
-  bindings: {
-    state: '=',
-    iconName: '@?',
-    iconSrc: '@?',
-    tooltip: '@?',
-  },
-};
-
-export default modeToggleComponent;
+export default ckeditorModule.name;
