@@ -25,9 +25,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -43,11 +40,15 @@ import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.cms7.services.htmlprocessor.TagVisitor;
 import org.onehippo.cms7.services.htmlprocessor.model.HtmlProcessorModel;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.richtext.image.RichTextImageTagProcessor;
 import org.onehippo.cms7.services.htmlprocessor.richtext.jcr.JcrNodeFactory;
 import org.onehippo.cms7.services.htmlprocessor.richtext.model.RichTextProcessorModel;
-import org.onehippo.cms7.services.htmlprocessor.richtext.visit.ImageVisitor;
+import org.onehippo.cms7.services.htmlprocessor.visit.FacetTagProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * A document field of type hippostd:html.
@@ -263,11 +264,11 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
         @Override
         public void onRead(final Tag parent, final Tag tag) throws RepositoryException {
             if (tag != null
-                    && StringUtils.equalsIgnoreCase(ImageVisitor.TAG_IMG, tag.getName())
-                    && tag.hasAttribute(ImageVisitor.ATTRIBUTE_SRC)
-                    && tag.hasAttribute(ImageVisitor.ATTRIBUTE_DATA_UUID)) {
-                final String src = tag.getAttribute(ImageVisitor.ATTRIBUTE_SRC);
-                tag.addAttribute(ImageVisitor.ATTRIBUTE_SRC, pathPrefix + src);
+                    && StringUtils.equalsIgnoreCase(RichTextImageTagProcessor.TAG_IMG, tag.getName())
+                    && tag.hasAttribute(RichTextImageTagProcessor.ATTRIBUTE_SRC)
+                    && tag.hasAttribute(FacetTagProcessor.ATTRIBUTE_DATA_UUID)) {
+                final String src = tag.getAttribute(RichTextImageTagProcessor.ATTRIBUTE_SRC);
+                tag.addAttribute(RichTextImageTagProcessor.ATTRIBUTE_SRC, pathPrefix + src);
             }
         }
 
