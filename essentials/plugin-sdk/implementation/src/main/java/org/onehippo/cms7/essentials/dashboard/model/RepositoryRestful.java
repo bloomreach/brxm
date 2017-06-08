@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,6 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 
-/**
- * @version "$Id$"
- */
 @XmlRootElement(name = "repository")
 public class RepositoryRestful implements Repository, Restful {
 
@@ -35,7 +32,7 @@ public class RepositoryRestful implements Repository, Restful {
     private String name;
     private String layout;
     private String url;
-    private Snapshot snapshots;
+    private RepositoryPolicy snapshots;
     private String targetPom;
     private RepositoryPolicy releases;
 
@@ -79,16 +76,16 @@ public class RepositoryRestful implements Repository, Restful {
         this.url = url;
     }
 
-    @XmlElementRef(type = SnapshotRestful.class, name = "snapshots")
-    @JsonSubTypes({@JsonSubTypes.Type(value = SnapshotRestful.class, name = "snapshots")})
-    @JsonTypeInfo(defaultImpl = SnapshotRestful.class, use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
+    @XmlElementRef(type = RepositoryPolicyRestful.class, name = "snapshots")
+    @JsonSubTypes({@JsonSubTypes.Type(value = RepositoryPolicyRestful.class, name = "snapshots")})
+    @JsonTypeInfo(defaultImpl = RepositoryPolicyRestful.class, use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
     @Override
-    public Snapshot getSnapshots() {
+    public RepositoryPolicy getSnapshots() {
         return snapshots;
     }
 
     @Override
-    public void setSnapshots(final Snapshot snapshots) {
+    public void setSnapshots(final RepositoryPolicy snapshots) {
         this.snapshots = snapshots;
     }
 
@@ -128,14 +125,11 @@ public class RepositoryRestful implements Repository, Restful {
         repository.setName(getName());
         repository.setId(getId());
         repository.setUrl(getUrl());
-        final org.apache.maven.model.RepositoryPolicy policy = new org.apache.maven.model.RepositoryPolicy();
-        if (snapshots == null || snapshots.getEnabled() == null) {
-            policy.setEnabled(false);
-        } else {
-            policy.setEnabled(snapshots.getEnabled());
-        }
-        if(getReleases() != null) {
+        if (getReleases() != null) {
             repository.setReleases(getReleases().createMavenRepositoryPolicy());
+        }
+        if (getSnapshots() != null) {
+            repository.setSnapshots(getSnapshots().createMavenRepositoryPolicy());
         }
         return repository;
     }

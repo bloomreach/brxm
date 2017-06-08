@@ -25,8 +25,6 @@ import org.onehippo.cms7.essentials.dashboard.model.Repository;
 import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicy;
 import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicyRestful;
 import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
-import org.onehippo.cms7.essentials.dashboard.model.Snapshot;
-import org.onehippo.cms7.essentials.dashboard.model.SnapshotRestful;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.Vendor;
 import org.onehippo.cms7.essentials.dashboard.model.VendorRestful;
@@ -61,8 +59,10 @@ public class PluginDescriptorRestfulTest {
         final Repository repository = new RepositoryRestful();
         repository.setId("myId");
         repository.setUrl("http://onehippo.com/maven2");
-        final Snapshot snapshots = new SnapshotRestful();
-        snapshots.setEnabled(true);
+        final RepositoryPolicy snapshots = new RepositoryPolicyRestful();
+        snapshots.setChecksumPolicy("test-snapshots-checksumpolicy");
+        snapshots.setUpdatePolicy("test-snapshots-updatepolicy");
+        repository.setSnapshots(snapshots);
         final RepositoryPolicy repositoryPolicy = new RepositoryPolicyRestful();
         repositoryPolicy.setChecksumPolicy("testchecksumpolicy");
         repositoryPolicy.setUpdatePolicy("testupdatepolicy");
@@ -86,6 +86,9 @@ public class PluginDescriptorRestfulTest {
         assertEquals("Expected repository checksum policy", "testchecksumpolicy", value.getRepositories().get(0).getReleases().getChecksumPolicy());
         assertEquals("Expected repository update policy", "testupdatepolicy", value.getRepositories().get(0).getReleases().getUpdatePolicy());
         assertEquals("Expected repository enabled not to be set", null, value.getRepositories().get(0).getReleases().getEnabled());
+        assertEquals("Expected repository snapshots checksum policy", "test-snapshots-checksumpolicy", value.getRepositories().get(0).getSnapshots().getChecksumPolicy());
+        assertEquals("Expected repository snapshots update policy", "test-snapshots-updatepolicy", value.getRepositories().get(0).getSnapshots().getUpdatePolicy());
+        assertEquals("Expected repository snapshots enabled not to be set", null, value.getRepositories().get(0).getSnapshots().getEnabled());
 
     }
 }
