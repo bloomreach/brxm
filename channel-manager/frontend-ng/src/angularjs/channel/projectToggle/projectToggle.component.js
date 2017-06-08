@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import template from './projectToggle.html';
+import ProjectToggleController from './projectToggle.controller';
 
-import './helpIcon.scss';
-import template from './helpIcon.html';
+const projectToggleComponent = {
+  controller: ProjectToggleController,
+  template,
+};
 
-function helpIconDirective() {
-  'ngInject';
-
-  return {
-    restrict: 'E',
-    scope: {
-      text: '@',
-    },
-    template,
-  };
-}
-
-export default helpIconDirective;
+export default projectToggleComponent;

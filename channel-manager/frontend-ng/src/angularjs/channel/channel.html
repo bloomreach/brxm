@@ -30,6 +30,10 @@
           render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
 
         <viewport-toggle disabled="channelCtrl.isControlsDisabled()"></viewport-toggle>
+        <project-toggle ng-if="channelCtrl.projectsEnabled"
+                        disabled="channelCtrl.isControlsDisabled()"
+                        flex>
+        </project-toggle>
       </div>
 
       <div flex="30" layout layout-align="end center">

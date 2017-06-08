@@ -147,6 +147,7 @@ describe('ChannelSettings', () => {
 
   it('marks required fields as dirty on save', () => {
     channelInfoDescription.propertyDefinitions.dropDown.isRequired = true;
+    channelInfoDescription.editable = true;
     const ChannelSettingsCtrl = compileDirectiveAndGetController();
     expect(ChannelSettingsCtrl.form.dropDown.$dirty).toEqual(false);
 
@@ -166,6 +167,7 @@ describe('ChannelSettings', () => {
   });
 
   it('notifies the event "on-success" when saving is successful', () => {
+    channelInfoDescription.editable = true;
     spyOn(ChannelService, 'saveChannel').and.returnValue($q.when());
     spyOn(ChannelService, 'recordOwnChange');
     spyOn(HippoIframeService, 'reload');
@@ -180,6 +182,7 @@ describe('ChannelSettings', () => {
   });
 
   it('shows feedback message when saving is failed', () => {
+    channelInfoDescription.editable = true;
     spyOn(ChannelService, 'saveChannel').and.returnValue($q.reject());
     compileDirectiveAndGetController();
 
@@ -200,6 +203,7 @@ describe('ChannelSettings', () => {
   it('displays an alert message when the current channel is locked', () => {
     ConfigService.cmsUser = 'admin';
     channelInfoDescription.lockedBy = 'tester';
+    channelInfoDescription.editable = true;
     compileDirectiveAndGetController();
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: 'tester' });
 

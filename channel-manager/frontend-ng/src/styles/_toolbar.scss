@@ -76,7 +76,6 @@ md-toolbar.hippo-toolbar {
 
   md-select {
     margin: 0;
-    padding-bottom: 6px;
 
     &[disabled] md-select-value md-icon {
       color: $grey-500;
@@ -85,35 +84,35 @@ md-toolbar.hippo-toolbar {
 
   md-select-value {
     background: none !important;
-    border-bottom-width: 0 !important;
     font-weight: bold;
     margin-left: 4px;
     position: relative;
-    top: 1px;
 
     md-icon {
       color: $text-dark;
     }
   }
 
-  md-switch {
-    margin: 0;
+  .changes-button {
+    margin-left: 0;
+    margin-right: 4px;
+    padding-right: 20px;
+
+    md-icon {
+      fill: $toolbar-channel-changes-color;
+      left: 4px;
+      position: relative;
+    }
   }
 }
 
-md-toolbar md-progress-linear {
+md-toolbar > md-progress-linear {
+  bottom: 0;
   height: 2px;
+  position: absolute;
 
   .md-container {
     height: 2px;
   }
 }
 
-.viewport-name {
-  margin-left: 8px;
-
-  // hide the name of the selected viewport
-  md-select-value & {
-    display: none;
-  }
-}

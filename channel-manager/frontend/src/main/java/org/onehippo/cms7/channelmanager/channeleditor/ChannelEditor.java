@@ -16,6 +16,7 @@
 package org.onehippo.cms7.channelmanager.channeleditor;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -94,6 +95,10 @@ public class ChannelEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
+    private Boolean projectsEnabled;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
     private Boolean hideHstConfigEditor;
 
     @ExtProperty
@@ -132,7 +137,12 @@ public class ChannelEditor extends ExtPanel {
             this.extAjaxTimeout = config.getLong("extAjaxTimeoutMillis", DEFAULT_EXT_AJAX_TIMEOUT);
             registerEditorOpenListener(context, config);
         }
-        this.variantsUuid = getVariantsUuidOrNull(variantsPath);
+        getUuid(variantsPath).ifPresent(uuid -> this.variantsUuid = uuid);
+        Optional.of(config).ifPresent(
+                (c -> getUuid(c.getString("projectsPath"))
+                        .ifPresent(uuid -> this.projectsEnabled = true))
+        );
+
         // TODO: decide how to show hide hst-config-editor. Probably a config option in ChannelEditor constructor
         // and a message from the ng app (a click) to show the hst-config-editor card
         this.hideHstConfigEditor = true;
@@ -189,31 +199,32 @@ public class ChannelEditor extends ExtPanel {
         }
     }
 
-    public void viewChannel(final String channelId, final String initialPath) {
+    public void viewChannel(final String channelId, final String initialPath, final String branchId) {
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
-            final String loadChannelScript = String.format("Ext.getCmp('%s').loadChannel('%s', '%s');",
-                    getMarkupId(), channelId, initialPath);
+            final String loadChannelScript = String.format("Ext.getCmp('%s').loadChannel('%s', '%s', '%s');",
+                    getMarkupId(), channelId, initialPath, branchId);
             target.appendJavaScript(loadChannelScript);
         }
     }
 
-    private static String getVariantsUuidOrNull(final String variantsPath) {
-        if (StringUtils.isNotEmpty(variantsPath)) {
+    private static Optional<String> getUuid(final String path) {
+        String result = null;
+        if (StringUtils.isNotEmpty(path)) {
             final javax.jcr.Session session = UserSession.get().getJcrSession();
             try {
-                if (session.nodeExists(variantsPath)) {
-                    return session.getNode(variantsPath).getIdentifier();
+                if (session.nodeExists(path)) {
+                    result =  session.getNode(path).getIdentifier();
                 } else {
-                    log.info("No node at '{}': variants will not be available.", variantsPath);
+                    log.info("No node at '{}': variants will not be available.", path);
                 }
             } catch (RepositoryException e) {
-                log.error("Failed to retrieve variants node '" + variantsPath + "'", e);
+                log.error("Failed to retrieve variants node '" + path + "'", e);
             }
         } else {
             log.info("Variants path not configured. Only the default variant will be available.");
         }
-        return null;
+        return Optional.ofNullable(result);
     }
 
     /**

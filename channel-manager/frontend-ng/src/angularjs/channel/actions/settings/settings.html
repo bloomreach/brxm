@@ -20,7 +20,9 @@
                  mode="cancel">
 </subpage-toolbar>
 
-<subpage-content flex layout="row" class="qa-channel-settings">
+<subpage-content flex
+                 layout="row"
+                 class="qa-channel-settings">
   <form name="channelSettings.form"
         flex="initial"
         class="qa-subpage"
@@ -29,23 +31,26 @@
     <div ng-repeat="fieldGroup in channelSettings.getFieldGroups()">
       <h3 class="md-title qa-fieldgroup">{{ channelSettings.getLabel(fieldGroup.titleKey) }}</h3>
 
-      <div ng-repeat="field in fieldGroup.value"
-           channel-property="{{field}}"
-           channel-property-value="channelSettings.values[field]"
-           channel-properties-error="form[field].$error"
-           channel-properties-data="channelSettings.channelInfoDescription">
-      </div>
+      <property-field ng-repeat="field in fieldGroup.value"
+                      field="field"
+                      value="channelSettings.values[field]"
+                      read-only="channelSettings.isReadOnly()"
+                      error="form[field].$error"
+                      info="channelSettings.channelInfoDescription">
+      </property-field>
     </div>
 
-    <div ng-if="!channelSettings.getFieldGroups().length"
-         ng-repeat="field in channelSettings.getUngroupedFields()"
-         channel-property="{{field}}"
-         channel-property-value="channelSettings.values[field]"
-         channel-properties-error="form[field].$error"
-         channel-properties-data="channelSettings.channelInfoDescription">
-    </div>
+    <property-field ng-if="!channelSettings.getFieldGroups().length"
+                    ng-repeat="field in channelSettings.getUngroupedFields()"
+                    field="field"
+                    value="channelSettings.values[field]"
+                    read-only="channelSettings.isReadOnly()"
+                    error="form[field].$error"
+                    info="channelSettings.channelInfoDescription">
+    </property-field>
 
-    <div layout="row" layout-align="end center">
+    <div layout="row"
+         layout-align="end center">
       <md-button type="button"
                  class="qa-discard"
                  ng-click="channelSettings.onDone()">
@@ -53,7 +58,7 @@
       </md-button>
       <md-button type="submit"
                  class="qa-action md-raised md-primary"
-                 ng-disabled="channelSettings.isLockedByOther()">
+                 ng-disabled="channelSettings.isSaveDisabled()">
         {{ 'SAVE' | translate }}
       </md-button>
     </div>

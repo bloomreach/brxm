@@ -23,6 +23,7 @@ class ChannelCtrl {
     $timeout,
     $translate,
     ChannelService,
+    ConfigService,
     SidePanelService,
     CmsService,
     FeedbackService,
@@ -36,10 +37,13 @@ class ChannelCtrl {
     this.$timeout = $timeout;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
+    this.ConfigService = ConfigService;
     this.SidePanelService = SidePanelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
+
+    this.projectsEnabled = ConfigService.projectsEnabled;
 
     this.isContentOverlayDisplayed = true;
     this.isComponentsOverlayDisplayed = false;
@@ -66,6 +70,10 @@ class ChannelCtrl {
 
   isPageLoaded() {
     return this.HippoIframeService.isPageLoaded();
+  }
+
+  projectsEnabled() {
+    return this.ConfigService.projectsEnabled;
   }
 
   isEditable() {

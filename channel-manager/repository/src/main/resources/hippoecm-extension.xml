@@ -80,10 +80,16 @@
       <sv:value>20013</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentpropset" sv:type="String">
-      <sv:value>/hst:hst/hst:channels</sv:value>
+      <sv:value>/hst:hst</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer/manage.changes.privileges.path</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>5.0.0</sv:value>
     </sv:property>
   </sv:node>
 

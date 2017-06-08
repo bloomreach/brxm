@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,9 @@ class ChannelSettingsCtrl {
         if (this.isLockedByOther()) {
           this.FeedbackService.showError('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: channelInfoDescription.lockedBy });
         }
+        if (!this.isEditable()) {
+          this.FeedbackService.showError('ERROR_CHANNEL_SETTINGS_NOT_EDITABLE');
+        }
       })
       .catch(() => {
         this.onError({ key: 'ERROR_CHANNEL_INFO_RETRIEVAL_FAILED' });
@@ -53,6 +56,18 @@ class ChannelSettingsCtrl {
 
   isLockedByOther() {
     return this.channelInfoDescription.lockedBy && this.channelInfoDescription.lockedBy !== this.ConfigService.cmsUser;
+  }
+
+  isEditable() {
+    return this.channelInfoDescription.editable;
+  }
+
+  isReadOnly() {
+    return this.isLockedByOther() || !this.isEditable();
+  }
+
+  isSaveDisabled() {
+    return this.isLockedByOther() || !this.isEditable();
   }
 
   touchRequiredFields() {

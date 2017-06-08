@@ -23,6 +23,7 @@ import channelHippoIframeModule from './hippoIframe/hippoIframe';
 import channelMenuModule from './menu/editor';
 import maskModule from './mask/mask.module';
 import channelRelevanceModule from './relevance/relevance';
+import projectToggleModule from './projectToggle/projectToggle.module';
 import viewportsModule from './viewportToggle/viewportToggle.module';
 import overlayToggleModule from './overlayToggle/overlayToggle';
 import config from './channel.config';
@@ -40,6 +41,7 @@ const channelModule = angular
     channelHippoIframeModule.name,
     channelMenuModule.name,
     channelRelevanceModule.name,
+    projectToggleModule.name,
     viewportsModule.name,
     overlayToggleModule.name,
     maskModule.name,

@@ -26,6 +26,7 @@ class ChannelService {
     FeedbackService,
     HstService,
     ConfigService,
+    ProjectService,
     CmsService,
     SiteMapService,
     PathService,
@@ -44,6 +45,7 @@ class ChannelService {
     this.CmsService = CmsService;
     this.SiteMapService = SiteMapService;
     this.PathService = PathService;
+    this.ProjectService = ProjectService;
 
     this.isToolbarDisplayed = true;
     this.channel = {};
@@ -54,7 +56,7 @@ class ChannelService {
   }
 
   initialize() {
-    this.CmsService.subscribe('load-channel', (channel, initialPath) => this._onLoadChannel(channel, initialPath));
+    this.CmsService.subscribe('load-channel', (channel, initialPath, branchId) => this._onLoadChannel(channel, initialPath, branchId));
 
     // Handle reloading of iframe by BrowserSync during development
     this.CmsService.publish('reload-channel');
@@ -80,32 +82,33 @@ class ChannelService {
     return this._load(channelId, this.channel.contextPath);
   }
 
-  _onLoadChannel(channel, initialPath) {
-    this._load(channel.id, channel.contextPath)
+  _onLoadChannel(channel, initialPath, branchId) {
+    this._load(channel.id, channel.contextPath, branchId)
       .then((channelId) => {
         const initialRenderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
-        this.$state.go('hippo-cm.channel', { channelId, initialRenderPath }, { reload: true });
+        this.$state.go('hippo-cm.channel', { channelId, initialRenderPath, branchId }, { reload: true });
       });
   }
 
   switchToChannel(contextPath, id) {
-    return this._load(id, contextPath)
+    return this._load(id, contextPath, this.branchId)
       .then((channelId) => {
         this.CmsService.publish('switch-channel', channelId); // update breadcrumb.
       });
   }
 
-  _load(channelId, contextPath) {
+  _load(channelId, contextPath, branchId) {
     this.ConfigService.setContextPathForChannel(contextPath);
 
-    return this._initChannel(channelId)
+    return this._initChannel(channelId, branchId)
       .then(channel => this._setChannel(channel));
   }
 
-  _initChannel(channelId) {
+  _initChannel(channelId, branchId) {
     return this.HstService.getChannel(channelId)
-      .then(channel => this.SessionService.initialize(channel.hostname, channel.mountId)
-        .then(() => this._ensurePreviewHstConfigExists(channel)),
+      .then(channel => this._initProject(channel, branchId)
+          .then(() => this.SessionService.initialize(channel.hostname, channel.mountId)
+            .then(() => this._ensurePreviewHstConfigExists(channel))),
       )
       .catch((error) => {
         // TODO: improve error handling.
@@ -116,6 +119,14 @@ class ChannelService {
       });
   }
 
+  _initProject(channel, branchId) {
+    if (this.ConfigService.projectsEnabled) {
+      return this.ProjectService.load(channel, branchId)
+        .then(id => id);
+    }
+    return this.$q.resolve();
+  }
+
   _setChannel(channel) {
     this.channel = channel;
 
@@ -123,6 +134,7 @@ class ChannelService {
     this.channelPrefix = this._makeContextPrefix(channel.contextPath);
 
     this.CatalogService.load(this.getMountId());
+
     this.SiteMapService.load(channel.siteMapId);
 
     if (this.SessionService.hasWriteAccess()) {

@@ -13,20 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import projectToggleComponent from './projectToggle.component';
 
-import './helpIcon.scss';
-import template from './helpIcon.html';
+const projectToggleModule = angular
+  .module('hippo-cm.channel.projects', [])
+  .component('projectToggle', projectToggleComponent);
 
-function helpIconDirective() {
-  'ngInject';
-
-  return {
-    restrict: 'E',
-    scope: {
-      text: '@',
-    },
-    template,
-  };
-}
-
-export default helpIconDirective;
+export default projectToggleModule;
