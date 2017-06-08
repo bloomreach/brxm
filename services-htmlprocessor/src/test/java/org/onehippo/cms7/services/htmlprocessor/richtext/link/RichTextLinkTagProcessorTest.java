@@ -13,55 +13,52 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.htmlprocessor.richtext.visit;
+package org.onehippo.cms7.services.htmlprocessor.richtext.link;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.easymock.EasyMock;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
-import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.onehippo.cms7.services.htmlprocessor.richtext.TestUtil;
-import org.onehippo.cms7.services.htmlprocessor.richtext.jcr.JcrNodeFactory;
+import org.onehippo.cms7.services.htmlprocessor.service.FacetService;
 import org.onehippo.repository.mock.MockNode;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class LinkVisitorTest {
+public class RichTextLinkTagProcessorTest {
 
     private MockNode root;
     private MockNode document;
-    private Model<Node> documentModel;
 
     @Before
     public void setUp() throws Exception {
         root = MockNode.root();
         document = root.addNode("document", "hippo:document");
-
-        final JcrNodeFactory factory = JcrNodeFactory.of(root);
-        documentModel = factory.getNodeModelByNode(document);
     }
 
     @Test
-    public void testVisitsOnlyAnchorElements() throws Exception {
-        final LinkVisitor visitor = new LinkVisitor(documentModel);
+    public void testProcessesOnlyAnchorElements() throws Exception {
+        final RichTextLinkTagProcessor processor = new RichTextLinkTagProcessor();
 
-        final Tag anchor = EasyMock.createMock(Tag.class);
-        expect(anchor.getName()).andReturn("div").times(2);
-        EasyMock.replay(anchor);
+        final Tag divTag = createMock(Tag.class);
+        expect(divTag.getName()).andReturn("div").times(2);
+        replay(divTag);
 
-        visitor.onRead(null, anchor);
-        visitor.onWrite(null, anchor);
+        processor.onRead(divTag, null);
+        processor.onWrite(divTag, null);
 
-        EasyMock.verify(anchor);
+        verify(divTag);
     }
 
     @Test
@@ -152,7 +149,8 @@ public class LinkVisitorTest {
         write(link);
 
         assertTrue("Text with new link UUID should create a child facet node", document.hasNode("linked-node"));
-        assertEquals("Text with new link UUID should create exactly one child facet node", 1, document.getNodes().getSize());
+        assertEquals("Text with new link UUID should create exactly one child facet node", 1,
+                     document.getNodes().getSize());
 
         final Node child = document.getNode("linked-node");
         assertEquals(linkTarget.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
@@ -167,7 +165,8 @@ public class LinkVisitorTest {
         final Tag link = createLink("http://", linkTarget.getIdentifier());
         write(link);
 
-        assertEquals("Text with existing link UUID should reuse existing child facet node", 1, document.getNodes().getSize());
+        assertEquals("Text with existing link UUID should reuse existing child facet node", 1,
+                     document.getNodes().getSize());
 
         final Node child = document.getNode("linked-node");
         assertEquals(linkTarget.getIdentifier(), child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
@@ -267,13 +266,13 @@ public class LinkVisitorTest {
         final Node doc1 = root.addNode("doc", "nt:unstructured");
         final Node doc2 = root.addNode("doc", "nt:unstructured");
 
-        final Tag div = TestUtil.createTag("div");
         final Tag link1 = createLink("http://", doc1.getIdentifier());
         final Tag link2 = createLink("http://", doc2.getIdentifier());
 
-        final LinkVisitor visitor = new LinkVisitor(documentModel);
-        visitor.onWrite(div, link1);
-        visitor.onWrite(div, link2);
+        final FacetService service = new FacetService(document);
+        final RichTextLinkTagProcessor processor = new RichTextLinkTagProcessor();
+        processor.onWrite(link1, service);
+        processor.onWrite(link2, service);
 
         assertTrue("facetselect node doc exists", document.hasNode("doc"));
         assertTrue("facetselect node doc_1 exists", document.hasNode("doc_1"));
@@ -303,40 +302,45 @@ public class LinkVisitorTest {
     }
 
     private void read(final Tag link) throws RepositoryException {
-        final LinkVisitor visitor = new LinkVisitor(documentModel);
-        visitor.before();
-        visitor.onRead(null, link);
-        visitor.after();
+        final FacetService service = new FacetService(document);
+        final RichTextLinkTagProcessor processor = new RichTextLinkTagProcessor();
+        processor.onRead(link, service);
+        service.removeUnmarkedFacets();
     }
 
     private void write(final Tag link) throws RepositoryException {
-        final LinkVisitor visitor = new LinkVisitor(documentModel);
-        visitor.before();
-        visitor.onWrite(null, link);
-        visitor.after();
+        final FacetService service = new FacetService(document);
+        final RichTextLinkTagProcessor processor = new RichTextLinkTagProcessor();
+        processor.onWrite(link, service);
+        service.removeUnmarkedFacets();
     }
 
     private void assertNoChanges(final String href) throws RepositoryException {
-        final LinkVisitor visitor = new LinkVisitor(documentModel);
-        assertNoChangesReading(href, visitor);
-        assertNoChangesWriting(href, visitor);
+        final RichTextLinkTagProcessor processor = new RichTextLinkTagProcessor();
+
+        assertNoChangesReading(href, processor);
+        assertNoChangesWriting(href, processor);
     }
 
-    private void assertNoChangesReading(final String href, final LinkVisitor visitor) throws RepositoryException {
+    private void assertNoChangesReading(final String href, final RichTextLinkTagProcessor processor) throws RepositoryException {
         final Tag image = createLink(href);
+        final FacetService service = new FacetService(document);
 
         final long childNodesBeforeRead = document.getNodes().getSize();
-        visitor.onRead(null, image);
+        processor.onRead(image, service);
+        service.removeUnmarkedFacets();
         assertEquals("Value of src attribute should not have changed during read", href, image.getAttribute("href"));
         assertEquals("Number of child facet nodes should not have changed during read",
                      childNodesBeforeRead, document.getNodes().getSize());
     }
 
-    private void assertNoChangesWriting(final String href, final LinkVisitor visitor) throws RepositoryException {
+    private void assertNoChangesWriting(final String href, final RichTextLinkTagProcessor processor) throws RepositoryException {
         final Tag link = createLink(href);
+        final FacetService service = new FacetService(document);
 
         final long childNodesBeforeWrite = document.getNodes().getSize();
-        visitor.onWrite(null, link);
+        processor.onWrite(link, service);
+        service.removeUnmarkedFacets();
         assertEquals("Value of href attribute should not have changed during write", href, link.getAttribute("href"));
         assertEquals("Number of child facet nodes should not have changed during write",
                      childNodesBeforeWrite, document.getNodes().getSize());

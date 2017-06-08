@@ -13,42 +13,38 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.htmlprocessor.richtext.visit;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
+package org.onehippo.cms7.services.htmlprocessor.richtext.link;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
-import org.onehippo.cms7.services.htmlprocessor.model.Model;
+import org.onehippo.cms7.services.htmlprocessor.service.FacetService;
 import org.onehippo.cms7.services.htmlprocessor.util.LinkUtil;
-import org.onehippo.cms7.services.htmlprocessor.visit.FacetVisitor;
+import org.onehippo.cms7.services.htmlprocessor.visit.FacetTagProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class LinkVisitor extends FacetVisitor {
+public class RichTextLinkTagProcessor implements FacetTagProcessor {
+    public static final Logger log = LoggerFactory.getLogger(RichTextLinkTagProcessor.class);
 
     public static final String TAG_A = "a";
     public static final String ATTRIBUTE_HREF = "href";
 
-    public LinkVisitor(final Model<Node> nodeModel) {
-        super(nodeModel);
-    }
-
     @Override
-    public void onRead(final Tag parent, final Tag tag) throws RepositoryException {
+    public void onRead(final Tag tag, final FacetService facets) {
         if (tag != null && StringUtils.equalsIgnoreCase(TAG_A, tag.getName())) {
-            convertLinkForRetrieval(tag);
+            convertLinkForRetrieval(tag, facets);
         }
     }
 
     @Override
-    public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {
+    public void onWrite(final Tag tag, final FacetService facetService) {
         if (tag != null && StringUtils.equalsIgnoreCase(TAG_A, tag.getName())) {
-            convertLinkForStorage(tag);
+            convertLinkForStorage(tag, facetService);
         }
     }
 
-    private void convertLinkForRetrieval(final Tag tag) throws RepositoryException {
+    private void convertLinkForRetrieval(final Tag tag, final FacetService facetService) {
         final String href = tag.getAttribute(ATTRIBUTE_HREF);
 
         if (StringUtils.isEmpty(href)) {
@@ -59,17 +55,18 @@ public class LinkVisitor extends FacetVisitor {
         }
 
         final String name = NodeNameCodec.encode(href, true);
-        final String uuid = getFacetId(name);
+        final String uuid = facetService.getFacetId(name);
 
         if (uuid != null) {
+            // set href to 'http://' so CKEditor handles it as a link instead of an anchor
             tag.addAttribute(ATTRIBUTE_HREF, LinkUtil.INTERNAL_LINK_DEFAULT_HREF);
             tag.addAttribute(ATTRIBUTE_DATA_UUID, uuid);
 
-            markVisited(name);
+            facetService.markVisited(name);
         }
     }
 
-    private void convertLinkForStorage(final Tag tag) throws RepositoryException {
+    private void convertLinkForStorage(final Tag tag, final FacetService facetService) {
         final String href = tag.getAttribute(ATTRIBUTE_HREF);
 
         if (StringUtils.isEmpty(href)) {
@@ -87,10 +84,10 @@ public class LinkVisitor extends FacetVisitor {
             return;
         }
 
-        final String name = findOrCreateFacetNode(uuid);
+        final String name = facetService.findOrCreateFacet(uuid);
         if (name != null) {
             tag.addAttribute(ATTRIBUTE_HREF, name);
-            markVisited(name);
+            facetService.markVisited(name);
         } else {
             tag.removeAttribute(ATTRIBUTE_HREF);
         }
