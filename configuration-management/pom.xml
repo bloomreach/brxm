@@ -156,6 +156,8 @@
             <inherited>false</inherited>
             <configuration>
               <excludes combine.children="append">
+                <exclude>**/src/main/resources/**/*.yaml</exclude>
+                <exclude>**/src/test/resources/**</exclude>
               </excludes>
             </configuration>
           </plugin>
