@@ -35,11 +35,16 @@
         <include>shared-lib-content-component.xml</include>
       </includes>
     </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>conf</directory>
+      <includes>
+        <include>**/log*.xml</include>
+      </includes>
+    </fileSet>
     <fileSet filtered="false" encoding="UTF-8">
       <directory>conf</directory>
       <includes>
-        <include>**/*.dtd</include>
-        <include>**/*.xml</include>
+        <include>context.xml</include>
         <include>**/*.properties</include>
       </includes>
     </fileSet>
