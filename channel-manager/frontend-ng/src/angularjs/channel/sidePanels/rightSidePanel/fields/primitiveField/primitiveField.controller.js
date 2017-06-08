@@ -15,6 +15,13 @@
  */
 
 class PrimitiveFieldCtrl {
+  constructor(FieldService) {
+    'ngInject';
+
+    this.FieldService = FieldService;
+    this.autoDraftInterval = null;
+  }
+
   getFieldName(index) {
     const fieldName = this.name ? `${this.name}/${this.fieldType.id}` : this.fieldType.id;
     return index > 0 ? `${fieldName}[${index}]` : fieldName;
@@ -47,7 +54,12 @@ class PrimitiveFieldCtrl {
 
   blurPrimitive() {
     delete this.hasFocus;
+    this.FieldService.draftField(this.getFieldName(), this.fieldValues);
     this.onFieldBlur();
+  }
+
+  valueChanged() {
+    this.FieldService.startDraftTimer(this.getFieldName(), this.fieldValues);
   }
 }
 
