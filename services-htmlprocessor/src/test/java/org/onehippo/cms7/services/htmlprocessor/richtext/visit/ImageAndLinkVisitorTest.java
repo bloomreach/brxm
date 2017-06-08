@@ -50,42 +50,42 @@ public class ImageAndLinkVisitorTest {
     }
 
     @Test
-    public void readNonExistingLinkAndImage() throws Exception {
+    public void readNonInternalLinkAndImage() throws Exception {
         final ImageAndLinkVisitor visitor = new ImageAndLinkVisitor(documentModel, src -> src);
 
         final Tag link = TestUtil.createTag("a");
-        link.addAttribute("href", "non-existing-link");
+        link.addAttribute("href", "page.html");
 
         final Tag image = TestUtil.createTag("img");
-        image.addAttribute("src", "non-existing-image");
+        image.addAttribute("src", "img.gif");
 
         read(visitor, link, image);
         assertEquals(0, document.getNodes().getSize());
 
-        assertEquals("non-existing-link", link.getAttribute("href"));
+        assertEquals("page.html", link.getAttribute("href"));
         assertNull(link.getAttribute("data-uuid"));
 
-        assertEquals("non-existing-image", image.getAttribute("src"));
+        assertEquals("img.gif", image.getAttribute("src"));
         assertNull(image.getAttribute("data-uuid"));
     }
 
     @Test
-    public void writeNonExistingLinkAndImage() throws Exception {
+    public void writeNonInternalLinkAndImage() throws Exception {
         final ImageAndLinkVisitor visitor = new ImageAndLinkVisitor(documentModel, src -> src);
 
         final Tag link = TestUtil.createTag("a");
-        link.addAttribute("href", "non-existing-link");
+        link.addAttribute("href", "page.html");
 
         final Tag image = TestUtil.createTag("img");
-        image.addAttribute("src", "non-existing-image");
+        image.addAttribute("src", "img.gif");
 
         write(visitor, link, image);
         assertEquals(0, document.getNodes().getSize());
 
-        assertEquals("non-existing-link", link.getAttribute("href"));
+        assertEquals("page.html", link.getAttribute("href"));
         assertNull(link.getAttribute("data-uuid"));
 
-        assertEquals("non-existing-image", image.getAttribute("src"));
+        assertEquals("img.gif", image.getAttribute("src"));
         assertNull(image.getAttribute("data-uuid"));
     }
 
@@ -114,6 +114,7 @@ public class ImageAndLinkVisitorTest {
     public void writeNewImageWithSameNameAsExistingLink() throws Exception {
         final Node doc1 = documents.addNode("node1", "nt:unstructured");
         final Node img1 = images.addNode("node1", "nt:unstructured");
+
         addChildFacetNode("node1", doc1.getIdentifier());
 
         final ImageAndLinkVisitor visitor = new ImageAndLinkVisitor(documentModel, src -> src);
