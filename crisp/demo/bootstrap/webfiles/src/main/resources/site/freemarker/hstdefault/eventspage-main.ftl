@@ -32,10 +32,21 @@
 
   <#if salesForceLeads?? && salesForceLeads.valueMap['totalSize'] gt 0>
     <article class="has-edit-button">
-      <h3>Related Leads</h3>
+      <h3>Related SalesForce Leads</h3>
       <ul>
         <#list salesForceLeads.valueMap['records'].children.collection as lead>
           <li><a href="mailto:${lead.valueMap['Email']}">${lead.valueMap['FirstName']} ${lead.valueMap['LastName']}</a></li>
+        </#list>
+      </ul>
+    </article>
+  </#if>
+
+  <#if marketoLeadChanges??>
+    <article class="has-edit-button">
+      <h3>Related Marketo Lead Changes</h3>
+      <ul>
+        <#list marketoLeadChanges.valueMap['result'].children.collection as leadChange>
+          <li>Updated Lead ID: ${leadChange.valueMap['leadId']?c} (last updated: ${leadChange.valueMap['activityDate']})</a></li>
         </#list>
       </ul>
     </article>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="demoSalesForce" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="demoMarketo" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>crisp:resourceresolver</sv:value>
   </sv:property>
@@ -11,25 +11,15 @@
 &#xd;
   &lt;bean parent="abstractCrispSimpleJacksonRestTemplateResourceResolver"&#xd;
         class="com.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver"&gt;&#xd;
-    &lt;property name="baseUri" value="${salesforce.baseUrl}/services/data/v20.0" /&gt;&#xd;
+    &lt;property name="baseUri" value="${marketo.baseUrl}/rest/v1" /&gt;&#xd;
     &lt;property name="restTemplate"&gt;&#xd;
       &lt;bean class="org.springframework.security.oauth2.client.OAuth2RestTemplate"&gt;&#xd;
         &lt;constructor-arg&gt;&#xd;
-          &lt;bean class="org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails"&gt;&#xd;
-            &lt;property name="clientAuthenticationScheme" value="form" /&gt;&#xd;
-            &lt;property name="accessTokenUri" value="${salesforce.baseUrl}/services/oauth2/token" /&gt;&#xd;
-            &lt;property name="clientId" value="${salesforce.clientId}" /&gt;&#xd;
-            &lt;property name="clientSecret" value="${salesforce.clientSecret}" /&gt;&#xd;
-            &lt;property name="grantType" value="password" /&gt;&#xd;
-            &lt;!-- NOTE: SalesForce doesn't support scope parameter!&#xd;
-            &lt;property name="scope"&gt;&#xd;
-              &lt;list&gt;&#xd;
-                &lt;value&gt;read&lt;/value&gt;&#xd;
-              &lt;/list&gt;&#xd;
-            &lt;/property&gt;&#xd;
-            --&gt;&#xd;
-            &lt;property name="username" value="${salesforce.username}" /&gt;&#xd;
-            &lt;property name="password" value="${salesforce.password}${salesforce.securityToken}" /&gt;&#xd;
+          &lt;bean class="org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails"&gt;&#xd;
+            &lt;property name="accessTokenUri" value="${marketo.baseUrl}/identity/oauth/token" /&gt;&#xd;
+            &lt;property name="clientId" value="${marketo.clientId}" /&gt;&#xd;
+            &lt;property name="clientSecret" value="${marketo.clientSecret}" /&gt;&#xd;
+            &lt;property name="grantType" value="client_credentials" /&gt;&#xd;
           &lt;/bean&gt;&#xd;
         &lt;/constructor-arg&gt;&#xd;
         &lt;constructor-arg&gt;&#xd;
@@ -49,7 +39,7 @@
           &lt;bean class="org.springframework.cache.ehcache.EhCacheCache"&gt;&#xd;
             &lt;constructor-arg&gt;&#xd;
               &lt;bean parent="abstractCrispResourceEhCache"&gt;&#xd;
-                &lt;property name="cacheName" value="demoSalesForceCache" /&gt;&#xd;
+                &lt;property name="cacheName" value="demomarketoCache" /&gt;&#xd;
                 &lt;property name="maxEntriesLocalHeap" value="1000" /&gt;&#xd;
                 &lt;property name="maxEntriesLocalDisk" value="0" /&gt;&#xd;
                 &lt;property name="timeToLiveSeconds" value="60" /&gt;&#xd;
@@ -65,19 +55,13 @@
 &lt;/beans&gt;</sv:value>
   </sv:property>
   <sv:property sv:multiple="true" sv:name="crisp:propnames" sv:type="String">
-    <sv:value>salesforce.clientId</sv:value>
-    <sv:value>salesforce.clientSecret</sv:value>
-    <sv:value>salesforce.username</sv:value>
-    <sv:value>salesforce.password</sv:value>
-    <sv:value>salesforce.securityToken</sv:value>
-    <sv:value>salesforce.baseUrl</sv:value>
+    <sv:value>marketo.clientId</sv:value>
+    <sv:value>marketo.clientSecret</sv:value>
+    <sv:value>marketo.baseUrl</sv:value>
   </sv:property>
   <sv:property sv:multiple="true" sv:name="crisp:propvalues" sv:type="String">
     <sv:value>someClientId</sv:value>
     <sv:value>someClientSecret</sv:value>
-    <sv:value>john.doe@example.com</sv:value>
-    <sv:value>somePassword</sv:value>
-    <sv:value>someSecurityToken</sv:value>
-    <sv:value>https://na1.salesforce.example.com</sv:value>
+    <sv:value>https://302-gjy-034.mktorest.example.com</sv:value>
   </sv:property>
 </sv:node>

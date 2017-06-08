@@ -93,7 +93,7 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
      * {@inheritDoc}
      */
     @Override
-    public ResourceDataCache getResourceDataCache(String resourceSpace) {
+    public ResourceDataCache getResourceDataCache(String resourceSpace) throws ResourceException {
         return null;
     }
 
@@ -101,12 +101,19 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
      * Finds and returns a {@link ResourceResolver} by the specified {@code resourceSpace}.
      * @param resourceSpace resource space name
      * @return a {@link ResourceResolver} by the specified {@code resourceSpace}
+     * @throws ResourceException if resource resolve is not found
      */
-    protected ResourceResolver getResourceResolver(String resourceSpace) {
+    protected ResourceResolver getResourceResolver(String resourceSpace) throws ResourceException {
         if (getResourceResolverProvider() == null) {
             throw new ResourceException("No ResourceResolverProvider available.");
         }
 
-        return getResourceResolverProvider().getResourceResolver(resourceSpace);
+        ResourceResolver resourceResolver = getResourceResolverProvider().getResourceResolver(resourceSpace);
+
+        if (resourceResolver == null) {
+            throw new ResourceException("No resource space for '" + resourceSpace + "'.");
+        }
+
+        return resourceResolver;
     }
 }
