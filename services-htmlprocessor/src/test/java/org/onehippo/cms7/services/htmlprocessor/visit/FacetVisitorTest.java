@@ -79,22 +79,27 @@ public class FacetVisitorTest {
         visitor.after();
     }
 
-    @Test
-    public void facetServiceIsNullifiedOnAfter() throws Exception {
+    @Test(expected=NullPointerException.class)
+    public void facetServiceIsNullifiedAfterRead() throws Exception {
         final Tag image = TestUtil.createTag("img");
         final FacetTagProcessor processor = createMock(FacetTagProcessor.class);
-
-        processor.onRead(eq(image), eq(null));
-        processor.onWrite(eq(image), eq(null));
-
-        expectLastCall();
-        replay(processor);
 
         final FacetVisitor visitor = new FacetVisitor(documentModel, processor);
         visitor.before();
         visitor.after();
 
         visitor.onRead(null, image);
+    }
+
+    @Test(expected=NullPointerException.class)
+    public void facetServiceIsNullifiedOnWrite() throws Exception {
+        final Tag image = TestUtil.createTag("img");
+        final FacetTagProcessor processor = createMock(FacetTagProcessor.class);
+
+        final FacetVisitor visitor = new FacetVisitor(documentModel, processor);
+        visitor.before();
+        visitor.after();
+
         visitor.onWrite(null, image);
     }
 }

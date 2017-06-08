@@ -41,7 +41,7 @@ public class FacetVisitor extends NodeVisitor {
 
     @Override
     public void before() {
-        facetService = FacetService.from(getNode());
+        facetService = new FacetService(getNode());
     }
 
     @Override
@@ -52,11 +52,17 @@ public class FacetVisitor extends NodeVisitor {
 
     @Override
     public void onRead(final Tag parent, final Tag tag) throws RepositoryException {
+        if (facetService == null) {
+            throw new NullPointerException("FacetService is null");
+        }
         processors.forEach(tagProcessor -> tagProcessor.onRead(tag, facetService));
     }
 
     @Override
     public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {
+        if (facetService == null) {
+            throw new NullPointerException("FacetService is null");
+        }
         processors.forEach(tagProcessor -> tagProcessor.onWrite(tag, facetService));
     }
 }
