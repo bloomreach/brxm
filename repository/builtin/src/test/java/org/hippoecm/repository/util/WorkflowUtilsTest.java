@@ -34,6 +34,7 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.mock.MockNode;
 
 import org.junit.Test;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -83,7 +84,9 @@ public class WorkflowUtilsTest {
     public void getVariantFromRootNode() {
         final Node root = MockNode.root();
 
-        WorkflowUtils.getDocumentVariantNode(root, WorkflowUtils.Variant.DRAFT).get();
+        Log4jInterceptor.onWarn().deny(WorkflowUtils.class).run( () -> {
+            WorkflowUtils.getDocumentVariantNode(root, WorkflowUtils.Variant.DRAFT).get();
+        });
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -160,7 +163,9 @@ public class WorkflowUtilsTest {
         expect(node.getSession()).andThrow(new RepositoryException());
         replay(node);
 
-        WorkflowUtils.getWorkflow(node, "category", EditableWorkflow.class).get();
+        Log4jInterceptor.onWarn().deny(WorkflowUtils.class).run( () -> {
+            WorkflowUtils.getWorkflow(node, "category", EditableWorkflow.class).get();
+        });
     }
 
     @Test

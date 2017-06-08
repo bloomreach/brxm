@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,11 +26,13 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.jackrabbit.MirrorVirtualProvider;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -261,10 +263,10 @@ public class FacetSelectTest extends RepositoryTestCase {
         build(combineContentFilterPointsToFilter, session);
         session.save();
         session.refresh(true);
-
-        assertTrue(session.getRootNode().getNode("test").hasNode("filterTofilter"));
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(MirrorVirtualProvider.class).build()) {
+            assertTrue(session.getRootNode().getNode("test").hasNode("filterTofilter"));
+        }
         assertFalse(session.getRootNode().getNode("test").getNode("filterTofilter").hasNodes());
-       
     }
 
     @Test

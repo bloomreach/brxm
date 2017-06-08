@@ -64,7 +64,7 @@
     <Logger additivity="false" name="org.hippoecm.checker" level="warn">
       <AppenderRef ref="console"/>
     </Logger>
-    <Logger additivity="false" name="org.hippoecm.repository.events.Broadcaster" level="debug">
+    <Logger additivity="false" name="org.hippoecm.repository.events.Broadcaster" level="warn">
       <AppenderRef ref="console"/>
     </Logger>
 

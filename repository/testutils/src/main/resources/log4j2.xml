@@ -25,6 +25,8 @@
   </Appenders>
   <Loggers>
     <Logger name="org.apache.jackrabbit" level="warn"/>
+    <Logger name="org.apache.jackrabbit.core.ItemManager" level="error"/>
+    <Logger name="org.apache.jackrabbit.core.state.ItemStateReferenceCache" level="error"/>
     <Logger name="org.hippoecm" level="warn"/>
     <Logger name="org.onehippo" level="warn"/>
     <Root level="warn">

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import javax.jcr.nodetype.NodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -54,7 +55,9 @@ public class DocumentUtilsTest {
         expect(session.getNodeByIdentifier("uuid")).andThrow(new RepositoryException());
         replay(session);
 
-        DocumentUtils.getHandle("uuid", session).get();
+        Log4jInterceptor.onWarn().deny(DocumentUtils.class).run( () -> {
+            DocumentUtils.getHandle("uuid", session).get();
+        });
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -86,7 +89,9 @@ public class DocumentUtilsTest {
         expect(node.getDisplayName()).andThrow(new RepositoryException());
         replay(node);
 
-        DocumentUtils.getDisplayName(node).get();
+        Log4jInterceptor.onWarn().deny(DocumentUtils.class).run( () -> {
+            DocumentUtils.getDisplayName(node).get();
+        });
     }
 
     @Test
@@ -112,6 +117,8 @@ public class DocumentUtilsTest {
         expect(handle.getNode("name")).andThrow(new RepositoryException());
         replay(handle);
 
-        DocumentUtils.getVariantNodeType(handle).get();
+        Log4jInterceptor.onWarn().deny(DocumentUtils.class).run( () -> {
+            DocumentUtils.getVariantNodeType(handle).get();
+        });
     }
 }

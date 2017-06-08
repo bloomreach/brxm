@@ -21,10 +21,15 @@
     </Console>
   </Appenders>
   <Loggers>
+    <Logger name="org.eclipse.jetty.server.handler" level="error"/>
+    <Logger name="org.apache.cxf.endpoint" level="error"/>
+
     <!-- on purpose, for unit testing changing log level, we set it here to warn -->
     <Logger name="org.onehippo.repository" level="warn"/>
     <!-- on purpose, for unit testing changing log level, we set it here to info -->
     <Logger name="org.onehippo.repository.testutils" level="info"/>
+    <!-- suppress intended/needed test logging -->
+    <Logger name="org.onehippo.repository.testutils.slf4j.LoggerRecordingWrapperTest$Hello" level="fatal"/>
     <Root level="warn">
       <AppenderRef ref="console"/>
     </Root>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2012 Hippo
+  Copyright 2007-2017 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -17,9 +17,6 @@
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hippo:initialize">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:version" sv:type="String">
-    <sv:value>v19a-testcontent</sv:value>
   </sv:property>
   <!-- testcontent namespace -->
   <sv:node sv:name="testcontent">

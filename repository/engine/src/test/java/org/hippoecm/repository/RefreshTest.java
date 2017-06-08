@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,35 +25,47 @@ import javax.jcr.SimpleCredentials;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 
-import org.hippoecm.repository.api.HippoNodeType;
-
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 public class RefreshTest {
 
+    @BeforeClass
+    public static void clearRepository() {
+        // when run together with other RepositoryTestCase based tests *and*
+        // -Dorg.onehippo.repository.test.keepserver=true
+        // then an existing RepositoryImpl may already be (kept) running, which can interfere with this test
+        RepositoryTestCase.clearRepository();
+    }
+
     @Ignore
     public void testRefreshAfterRemoveIssueJackrabbit() throws Exception {
-        Repository repository = RepositoryImpl.create(RepositoryConfig.create(getClass().getResourceAsStream("jackrabbit.xml"), "target"));
+        RepositoryImpl repository = RepositoryImpl.create(RepositoryConfig.create(getClass().getResourceAsStream("jackrabbit.xml"), "target"));
         testRefreshAfterRemoveIssue(repository);
+        repository.shutdown();
     }
 
     @Test
     public void testRefreshAfterRemoveIssueHippo() throws Exception {
-        Repository repository = HippoRepositoryFactory.getHippoRepository().getRepository();
-        testRefreshAfterRemoveIssue(repository);
+        HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
+        testRefreshAfterRemoveIssue(repository.getRepository());
+        repository.close();
     }
 
     @Ignore
     public void testMultiSessionMoveJackrabbit() throws Exception {
-        Repository repository = RepositoryImpl.create(RepositoryConfig.create(getClass().getResourceAsStream("jackrabbit.xml"), "target"));
+        RepositoryImpl repository = RepositoryImpl.create(RepositoryConfig.create(getClass().getResourceAsStream("jackrabbit.xml"), "target"));
         testMultiSessionMove(repository);
+        repository.shutdown();
     }
 
     @Test
     public void testMultiSessionMoveHippo() throws Exception {
-        Repository repository = HippoRepositoryFactory.getHippoRepository().getRepository();
-        testMultiSessionMove(repository);
+        HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
+        testMultiSessionMove(repository.getRepository());
+        repository.close();
     }
 
     private void testMultiSessionMove(Repository repository) throws Exception {
@@ -75,6 +87,7 @@ public class RefreshTest {
         altSession.logout();
         session.getRootNode().getNode("test").remove();
         session.save();
+        session.logout();
     }
 
     protected void traverse(Node node) throws RepositoryException {
@@ -104,6 +117,7 @@ public class RefreshTest {
         session.getRootNode().getNode("test").remove();
         session.refresh(false);
         session.save();
+        session.logout();
     }
 
 }

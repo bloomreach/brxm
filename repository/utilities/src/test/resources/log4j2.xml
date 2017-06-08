@@ -26,7 +26,7 @@
   <Loggers>
     <Logger name="org.hippoecm.repository.LocalHippoRepository" level="warn"/>
     <Logger name="net.sf.ehcache" level="error"/>
-    <Logger name="org.onehippo.repository.util.DateMathParserTest" level="debug"/>
+    <Logger name="org.onehippo.repository.util.DateMathParserTest" level="warn"/>
 
     <Root level="warn">
       <AppenderRef ref="console"/>

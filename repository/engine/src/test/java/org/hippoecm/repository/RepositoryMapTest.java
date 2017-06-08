@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.hippoecm.repository.api.RepositoryMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNodeFactory;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -71,14 +72,18 @@ public class RepositoryMapTest {
 
     @Test
     public void testValues() {
-        final Collection<Object> values = new RepositoryMapImpl(test).values();
-        assertEquals(4, values.size());
+        Log4jInterceptor.onWarn().deny(HippoRepository.class).run( () -> {
+            final Collection<Object> values = new RepositoryMapImpl(test).values();
+            assertEquals(4, values.size());
+        });
     }
 
     @Test
     public void testEntrySet() {
-        final Set<Map.Entry> entries = new RepositoryMapImpl(test).entrySet();
-        assertEquals(4, entries.size());
+        Log4jInterceptor.onWarn().deny(HippoRepository.class).run( () -> {
+            final Set<Map.Entry> entries = new RepositoryMapImpl(test).entrySet();
+            assertEquals(4, entries.size());
+        });
     }
 
     @Test

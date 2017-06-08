@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.onehippo.repository.jaxrs;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -42,6 +44,17 @@ import static org.hamcrest.CoreMatchers.equalTo;
  */
 public class EmbeddingTest {
 
+    private static final Logger[] silencedTomcatLoggers = new Logger[] {
+            Logger.getLogger("org.apache.tomcat.util.net.NioSelectorPool"),
+            Logger.getLogger("org.apache.catalina.util.SessionIdGeneratorBase")
+    };
+
+    static {
+        for (Logger l : silencedTomcatLoggers) {
+            l.setLevel(Level.WARNING);
+        }
+    }
+
     @Rule
     public TemporaryFolder tmpTomcatFolder = new TemporaryFolder();
 
@@ -52,6 +65,7 @@ public class EmbeddingTest {
     @Test
     public void embedTomcat() throws LifecycleException {
         Tomcat tomcat = new Tomcat();
+        tomcat.setSilent(true);
         tomcat.setBaseDir(getTmpTomcatFolderName());
         int portNumber = PortUtil.getPortNumber(getClass());
         tomcat.setPort(portNumber);
@@ -83,6 +97,7 @@ public class EmbeddingTest {
     @Test
     public void embedCXF() throws LifecycleException {
         Tomcat tomcat = new Tomcat();
+        tomcat.setSilent(true);
         tomcat.setBaseDir(getTmpTomcatFolderName());
         int portNumber = PortUtil.getPortNumber(getClass());
         tomcat.setPort(portNumber);
@@ -113,6 +128,7 @@ public class EmbeddingTest {
     @Test
     public void embedRepositoryJaxrsServlet() throws LifecycleException {
         Tomcat tomcat = new Tomcat();
+        tomcat.setSilent(true);
         tomcat.setBaseDir(getTmpTomcatFolderName());
         int portNumber = PortUtil.getPortNumber(getClass());
         tomcat.setPort(portNumber);

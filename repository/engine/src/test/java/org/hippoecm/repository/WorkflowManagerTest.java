@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -93,6 +93,7 @@ public class WorkflowManagerTest extends RepositoryTestCase {
         final TestWorkflow workflow = (TestWorkflow) workflowManager.getWorkflow("testworkflow", handle);
         assertNotNull(workflow);
         assertTrue(handle.isSame(workflow.getNode()));
+        workflowManager.close();
     }
 
     @Test
@@ -102,6 +103,7 @@ public class WorkflowManagerTest extends RepositoryTestCase {
         session.getNode("/test/doc/doc").setPrimaryType("hippo:document");
         final TestWorkflow workflow = (TestWorkflow) workflowManager.getWorkflow("testworkflow", handle);
         assertNull(workflow);
+        workflowManager.close();
     }
 
     @Test
@@ -111,6 +113,7 @@ public class WorkflowManagerTest extends RepositoryTestCase {
         final TestWorkflow workflow = (TestWorkflow) workflowManager.getWorkflow("testworkflow", doc);
         assertNotNull(workflow);
         assertTrue(doc.isSame(workflow.getNode()));
+        workflowManager.close();
     }
 
 }
