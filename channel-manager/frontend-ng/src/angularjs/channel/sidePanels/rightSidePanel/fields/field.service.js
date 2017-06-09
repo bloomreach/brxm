@@ -51,11 +51,11 @@ class FieldService {
     this._clearFieldTimer(documentId, fieldName);
     this.ContentService.draftField(documentId, fieldName, fieldValue);
 
-    if (!Object.keys(this.activeDraftTimers[documentId]).length) delete this.activeDraftTimers[documentId];
+    if (this.activeDraftTimers[documentId] && !Object.keys(this.activeDraftTimers[documentId]).length) delete this.activeDraftTimers[documentId];
   }
 
   _clearFieldTimer(documentId, fieldName) {
-    if (this.activeDraftTimers[documentId][fieldName]) {
+    if (this.activeDraftTimers[documentId] && this.activeDraftTimers[documentId][fieldName]) {
       this.$timeout.cancel(this.activeDraftTimers[documentId][fieldName]);
       delete this.activeDraftTimers[documentId][fieldName];
     }

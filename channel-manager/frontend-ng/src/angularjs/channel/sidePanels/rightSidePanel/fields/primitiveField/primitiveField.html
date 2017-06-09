@@ -61,8 +61,8 @@
               aria-label="::$ctrl.fieldType.displayName"
               ng-required="::$ctrl.fieldType.required"
               md-no-resize
-              ng-focus="$ctrl.onFieldFocus()"
-              ng-blur="$ctrl.onFieldBlur()">
+              ng-focus="$ctrl.focusPrimitive()"
+              ng-blur="$ctrl.blurPrimitive()">
     </textarea>
 
     <ckeditor ng-switch-when="HTML"

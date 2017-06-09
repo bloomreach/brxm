@@ -50,12 +50,17 @@ class PrimitiveFieldCtrl {
   focusPrimitive() {
     this.hasFocus = true;
     this.onFieldFocus();
+
+    this.temporaryContent = angular.copy(this.fieldValues);
   }
 
   blurPrimitive() {
     delete this.hasFocus;
-    this.FieldService.draftField(this.getFieldName(), this.fieldValues);
     this.onFieldBlur();
+
+    if (angular.toJson(this.temporaryContent) !== angular.toJson(this.fieldValues)) {
+      this.FieldService.draftField(this.getFieldName(), this.fieldValues);
+    }
   }
 
   valueChanged() {
