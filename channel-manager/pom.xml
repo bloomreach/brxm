@@ -274,7 +274,6 @@
 
                 <exclude>frontend-ng/.*</exclude>
                 <exclude>frontend-ng/*.md</exclude>
-                <exclude>frontend-ng/yarn.lock</exclude>
 
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
