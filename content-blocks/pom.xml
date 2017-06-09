@@ -105,6 +105,7 @@
           <include>**/*.css</include>
           <include>**/*.cnd</include>
           <include>**/*.xml</include>
+          <include>**/*.yaml</include>
         </includes>
       </resource>
     </resources>
