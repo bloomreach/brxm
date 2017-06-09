@@ -158,16 +158,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private ServletContext servletContext;
 
-    /**
-     * {@link ServletConfig} instance which can be used during initialization.
-     * <P>
-     * Note that {@link ServletConfig} is available only when initializing with a servlet such as {@link HstSiteConfigServlet}.
-     * </P>
-     * @deprecated ServletConfig cannot be available when HST container loaded by a listener.
-     */
-    @Deprecated
-    private ServletConfig servletConfig;
-
     public DefaultHstSiteConfigurer() {
     }
 
@@ -177,32 +167,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
-    }
-
-    /**
-     * Returns the ServletConfig that this object runs in if available. Otherwise returns null.
-     * <P>
-     * Note that {@link ServletConfig} is available only when initializing with a servlet such as {@link HstSiteConfigServlet}.
-     * </P>
-     * @return the ServletConfig that this object runs in, otherwise null
-     * @deprecated ServletConfig cannot be available when HST container loaded by a listener.
-     */
-    @Deprecated
-    public ServletConfig getServletConfig() {
-        return servletConfig;
-    }
-
-    /**
-     * Set the ServletConfig that this object runs in.
-     * <P>
-     * Note that {@link ServletConfig} is available only when initializing with a servlet such as {@link HstSiteConfigServlet}.
-     * </P>
-     * @param servletConfig
-     * @deprecated ServletConfig cannot be available when HST container loaded by a listener.
-     */
-    @Deprecated
-    public void setServletConfig(ServletConfig servletConfig) {
-        this.servletConfig = servletConfig;
     }
 
     @Override
@@ -260,11 +224,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
             log.info(INIT_START_MSG);
 
             log.info("HstSiteConfigServlet attempting to create the Component manager...");
-            if (getServletConfig() != null) {
-                componentManager = new SpringComponentManager(getServletConfig(), configuration);
-            } else {
-                componentManager = new SpringComponentManager(getServletContext(), configuration);
-            }
+            componentManager = new SpringComponentManager(getServletContext(), configuration);
             log.info("HSTSiteServlet attempting to start the Component Manager...");
 
             if (assemblyOverridesConfigurations != null && assemblyOverridesConfigurations.length > 0) {
@@ -477,7 +437,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
             }
         }
 
-        fileParam = ServletConfigUtils.getInitParameter(getServletConfig(), null, HST_CONFIGURATION_PARAM, "/WEB-INF/" + HST_CONFIGURATION_XML);
+        fileParam = ServletConfigUtils.getInitParameter(null, getServletContext(), HST_CONFIGURATION_PARAM, "/WEB-INF/" + HST_CONFIGURATION_XML);
 
         if (StringUtils.isNotBlank(fileParam)) {
             Configuration config = loadConfigurationFromDefinitionXml(getResourceFile(fileParam, true));
@@ -485,7 +445,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
                 log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
                 configs.add(config);
             } else {
-                fileParam = ServletConfigUtils.getInitParameter(getServletConfig(), null, HST_CONFIG_PROPERTIES_PARAM, "/WEB-INF/" + HST_CONFIG_PROPERTIES);
+                fileParam = ServletConfigUtils.getInitParameter(null, getServletContext(), HST_CONFIG_PROPERTIES_PARAM, "/WEB-INF/" + HST_CONFIG_PROPERTIES);
                 config = loadConfigurationFromProperties(getResourceFile(fileParam, true));
                 if (config != null) {
                     log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
@@ -493,7 +453,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
                 }
             }
         } else {
-            fileParam = ServletConfigUtils.getInitParameter(getServletConfig(), null, HST_CONFIG_PROPERTIES_PARAM, "/WEB-INF/" + HST_CONFIG_PROPERTIES);
+            fileParam = ServletConfigUtils.getInitParameter(null, getServletContext(), HST_CONFIG_PROPERTIES_PARAM, "/WEB-INF/" + HST_CONFIG_PROPERTIES);
             Configuration config = loadConfigurationFromProperties(getResourceFile(fileParam, true));
             if (config != null) {
                 log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
@@ -505,7 +465,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
     }
 
     protected String getConfigOrContextInitParameter(String paramName, String defaultValue) {
-        String value = ServletConfigUtils.getInitParameter(getServletConfig(), getServletContext(), paramName, defaultValue);
+        String value = ServletConfigUtils.getInitParameter(null, getServletContext(), paramName, defaultValue);
         return (value != null ? value.trim() : null);
     }
 
