@@ -23,6 +23,7 @@
     <version>5.0.0-SNAPSHOT</version>
   </parent>
 
+
   <artifactId>hippo-addon-channel-manager-frontend</artifactId>
   <packaging>jar</packaging>
 
