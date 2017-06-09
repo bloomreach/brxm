@@ -107,6 +107,8 @@ public interface FieldType {
      */
     void writeTo(Node node, Optional<List<FieldValue>> optionalValue) throws ErrorWithPayloadException;
 
+    boolean writeField(Node node, String fieldPath, List<FieldValue> value) throws ErrorWithPayloadException;
+
     /**
      * Validate the current value of this field against all applicable (and supported) validators.
      *

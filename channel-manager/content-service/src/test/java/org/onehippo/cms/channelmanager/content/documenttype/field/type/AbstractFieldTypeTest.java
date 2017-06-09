@@ -75,6 +75,11 @@ public class AbstractFieldTypeTest {
                     throws ErrorWithPayloadException { }
 
             @Override
+            public boolean writeField(final Node node, final String fieldPath, final List<FieldValue> value) throws ErrorWithPayloadException {
+                return false;
+            }
+
+            @Override
             public boolean validate(final List<FieldValue> valueList) {
                 return false;
             }

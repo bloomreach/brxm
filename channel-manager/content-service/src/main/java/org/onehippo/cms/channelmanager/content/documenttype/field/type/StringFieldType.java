@@ -163,6 +163,15 @@ public class StringFieldType extends AbstractFieldType {
         }
     }
 
+    @Override
+    public boolean writeField(final Node node, final String fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
+        if (fieldPath.equals(getId())) {
+            writeTo(node, Optional.of(values));
+            return true;
+        }
+        return false;
+    }
+
     protected List<FieldValue> writeValues(final Optional<List<FieldValue>> optionalValues) {
         return optionalValues.orElse(Collections.emptyList());
     }

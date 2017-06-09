@@ -252,6 +252,15 @@ public class FieldTypeUtils {
         }
     }
 
+    public static boolean writeFieldValue(final String fieldPath, final List<FieldValue> fieldValues, final List<FieldType> fields, final Node node) throws ErrorWithPayloadException {
+        for (FieldType field : fields) {
+            if (field.writeField(node, fieldPath, fieldValues)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Validate the values of a set of fields against a list of field types.
      *
