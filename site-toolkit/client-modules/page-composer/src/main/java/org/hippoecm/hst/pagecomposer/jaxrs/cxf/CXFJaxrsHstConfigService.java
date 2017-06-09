@@ -87,13 +87,6 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
         String resourceType = "";
 
-        try {
-            refreshRequestJcrSession(requestContext);
-        } catch (RepositoryException e) {
-            log.warn("RepositoryException ", e);
-            return setErrorMessageAndReturn(requestContext, request, e.toString());
-        }
-
         Session session = null;
         try {
             // we need the HST configuration user jcr session since some CMS user sessions (for example authors) typically
@@ -136,17 +129,6 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
         log.debug("Invoking JAX-RS endpoint {}: {} for uuid {}", new Object[]{request.getMethod(), jaxrsEndpointRequestPath.toString(), uuid});
         return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), jaxrsEndpointRequestPath.toString());
-    }
-
-    private void refreshRequestJcrSession(final HstRequestContext requestContext) throws RepositoryException {
-        Session jcrSession = requestContext.getSession(false);
-        if (jcrSession == null) {
-            throw new RepositoryException("No jcr session available on hst request context.");
-        }
-        // we explicitly call a refresh here. Normally, the sessionstateful jcr session is already refreshed. However, due to asychronous
-        // jcr event dispatching, there might be changes in the repository, but not yet a jcr event was sent that triggers a jcr session refresh. Hence, here
-        // we explicitly refresh the jcr session again.
-        jcrSession.refresh(false);
     }
 
     private HttpServletRequest setErrorMessageAndReturn(HstRequestContext requestContext, HttpServletRequest request, String message) throws ContainerException {

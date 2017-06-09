@@ -154,8 +154,10 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             httpSession.setAttribute(CMS_SSO_AUTHENTICATED, Boolean.TRUE);
         }
 
-        // we need to synchronize on a http session as a jcr session which is tied to it is not thread safe. Also, virtual states will be lost
-        // if another thread flushes this session.
+        // We synchronize on http session to disallow concurrent requests for the Channel manager. Note it is questionable
+        // whether this is still needed : The synchronization originates from the time we did not use a (fresh) new jcr
+        // session for every CM request, which we now do....so perhaps removing this synchronization completely makes
+        // most sense. For now we keep it because we can't oversee the impact and thus need extensive testing
         synchronized (httpSession) {
             Session jcrSession = null;
             try {
