@@ -450,6 +450,9 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
 
     private void addControlsToListItem(final ListItem<?> item) {
         final boolean isEditMode = (mode == Mode.EDIT);
+
+        final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModelObject());
+        final int itemCount = classification.getKeyCount();
         final int itemIndex = item.getIndex();
 
         final WebMarkupContainer controls = new WebMarkupContainer("controls");
@@ -458,7 +461,14 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         final MarkupContainer upLink = new AjaxLink("up") {
             @Override
             public void onClick(AjaxRequestTarget target) {
-                // TODO
+                final String curKey = (String) item.getModelObject();
+                if (classification.containsKey(curKey)) {
+                    final int curIndex = classification.indexOfKey(curKey);
+                    classification.removeKey(curKey);
+                    classification.addKey(curIndex - 1, curKey);
+                    dao.save(classification);
+                    target.add(TaxonomyPickerPlugin.this);
+                }
             }
         };
         upLink.setEnabled(isEditMode && itemIndex > 0);
@@ -470,10 +480,17 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         final MarkupContainer downLink = new AjaxLink("down") {
             @Override
             public void onClick(AjaxRequestTarget target) {
-                // TODO
+                final String curKey = (String) item.getModelObject();
+                if (classification.containsKey(curKey)) {
+                    final int curIndex = classification.indexOfKey(curKey);
+                    classification.removeKey(curKey);
+                    classification.addKey(curIndex + 1, curKey);
+                    dao.save(classification);
+                    target.add(TaxonomyPickerPlugin.this);
+                }
             }
         };
-        downLink.setEnabled(isEditMode);
+        downLink.setEnabled(isEditMode && itemIndex < itemCount - 1);
         downLink.setVisible(isEditMode);
         final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
         downLink.add(downIcon);
@@ -482,7 +499,6 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         final MarkupContainer removeLink = new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget target) {
-                final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModelObject());
                 final String curKey = (String) item.getModelObject();
                 if (classification.containsKey(curKey)) {
                     classification.removeKey(curKey);
