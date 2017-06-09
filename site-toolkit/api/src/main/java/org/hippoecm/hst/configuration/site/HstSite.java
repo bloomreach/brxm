@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.configuration.site;
 
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;

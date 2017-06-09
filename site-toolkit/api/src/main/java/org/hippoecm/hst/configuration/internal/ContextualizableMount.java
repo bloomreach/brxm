@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.configuration.internal;
 
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;

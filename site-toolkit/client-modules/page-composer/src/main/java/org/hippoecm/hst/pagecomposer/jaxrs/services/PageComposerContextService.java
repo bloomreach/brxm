@@ -22,7 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;

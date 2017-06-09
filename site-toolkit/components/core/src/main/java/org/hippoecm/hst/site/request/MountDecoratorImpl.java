@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;

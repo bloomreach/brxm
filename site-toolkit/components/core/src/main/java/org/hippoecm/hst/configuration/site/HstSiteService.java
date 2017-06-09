@@ -23,7 +23,7 @@ import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes;
 import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes.CompositeConfigurationNode;
 import org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelLazyLoadingChangedBySet;
 import org.hippoecm.hst.configuration.channel.ChannelPropertyMapper;

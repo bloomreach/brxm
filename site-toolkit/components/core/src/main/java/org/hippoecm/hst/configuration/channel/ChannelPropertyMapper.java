@@ -40,6 +40,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.parameters.HstValueType;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

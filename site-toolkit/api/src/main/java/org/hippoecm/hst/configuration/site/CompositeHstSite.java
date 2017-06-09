@@ -16,7 +16,7 @@
 package org.hippoecm.hst.configuration.site;
 
 import java.util.Map;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 
 public interface CompositeHstSite extends HstSite {
 

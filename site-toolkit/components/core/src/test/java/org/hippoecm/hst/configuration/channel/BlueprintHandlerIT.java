@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;

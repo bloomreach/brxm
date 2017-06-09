@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.configuration.site;
 
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 

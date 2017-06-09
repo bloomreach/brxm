@@ -29,7 +29,7 @@ import javax.ws.rs.Path;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;

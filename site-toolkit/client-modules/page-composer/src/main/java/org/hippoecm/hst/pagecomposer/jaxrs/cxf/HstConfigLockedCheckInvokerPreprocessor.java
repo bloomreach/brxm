@@ -30,7 +30,7 @@ import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.MessageContentsList;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.jaxrs.cxf.InvokerPreprocessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;

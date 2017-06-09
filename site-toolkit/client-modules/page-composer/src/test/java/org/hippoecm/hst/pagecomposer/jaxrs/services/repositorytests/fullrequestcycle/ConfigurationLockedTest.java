@@ -19,7 +19,7 @@ import java.util.Map;
 
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.junit.Before;

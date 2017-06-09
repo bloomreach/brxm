@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.hippoecm.hst.cmsrest.services;
 
 import com.google.common.base.Predicate;
 
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;

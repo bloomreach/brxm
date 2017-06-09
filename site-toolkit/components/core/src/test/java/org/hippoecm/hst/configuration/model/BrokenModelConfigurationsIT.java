@@ -25,7 +25,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.query.QueryResult;
 
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.configuration.hosting.MountService;

@@ -25,7 +25,7 @@ import java.util.UUID;
 import com.google.common.base.Optional;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelPropertyMapper;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;

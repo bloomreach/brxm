@@ -36,7 +36,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.BlueprintHandler;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelInfoClassProcessor;

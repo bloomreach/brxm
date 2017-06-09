@@ -48,7 +48,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;

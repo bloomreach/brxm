@@ -21,17 +21,15 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.core.container.HstRequestProcessor;
-import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.onehippo.cms7.services.hst.Channel;
 
 /**
  * <p>A {@link Mount} object is the mount from a prefix to some (sub)site *or* content location: when the {@link Mount#isMapped()} property returns <code>true</code> or missing,

@@ -28,7 +28,7 @@ import javax.jcr.SimpleCredentials;
 import com.google.common.base.Optional;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;

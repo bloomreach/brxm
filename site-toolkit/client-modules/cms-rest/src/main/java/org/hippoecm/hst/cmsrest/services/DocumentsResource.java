@@ -1,5 +1,5 @@
 /*
-*  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.util.List;
 import javax.jcr.Node;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;

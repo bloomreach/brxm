@@ -45,6 +45,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import junit.framework.Assert;

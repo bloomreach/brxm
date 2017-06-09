@@ -37,7 +37,7 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;

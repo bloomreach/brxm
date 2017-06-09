@@ -27,7 +27,7 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.eventbus.Subscribe;
 
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;

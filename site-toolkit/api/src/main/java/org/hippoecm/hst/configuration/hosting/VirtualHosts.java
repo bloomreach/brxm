@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
