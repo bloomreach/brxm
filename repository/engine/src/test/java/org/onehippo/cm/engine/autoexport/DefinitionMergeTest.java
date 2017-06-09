@@ -130,11 +130,9 @@ public class DefinitionMergeTest {
                 }
 
                 // build auto-export targets
-                final Set<ModuleImpl> toExportModules = new HashSet<>(toExport.length);
                 for (String toExportName : toExport) {
                     final ModuleImpl toExportModule = loadModule(in(testName, toExportName));
                     toExportModule.setMvnPath(toExportName);
-                    toExportModules.add(toExportModule);
                     model.addModule(toExportModule);
                 }
                 model.build();
@@ -144,7 +142,8 @@ public class DefinitionMergeTest {
 
                 // merge diff
                 DefinitionMergeService merger = new DefinitionMergeService(autoExportConfig);
-                Collection<ModuleImpl> allMerged = merger.mergeChangesToModules(diff, toExportModules, model);
+                Collection<ModuleImpl> allMerged =
+                        merger.mergeChangesToModules(diff, new EventJournalProcessor.Changes(), model);
 
                 for (ModuleImpl merged : allMerged) {
                     writeAndCompare(testName, merged);

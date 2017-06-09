@@ -95,47 +95,47 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
     }
 
 
-    protected ConfigurationModel applyDefinitions(final String source) throws Exception {
+    protected ConfigurationModelImpl applyDefinitions(final String source) throws Exception {
         return applyDefinitions(new String[]{source}, makeMergedModel(DEFAULT_BASELINE_SOURCES), false);
     }
 
-    protected ConfigurationModel applyDefinitions(final String source, final boolean forceApply) throws Exception {
+    protected ConfigurationModelImpl applyDefinitions(final String source, final boolean forceApply) throws Exception {
         return applyDefinitions(new String[]{source}, makeMergedModel(DEFAULT_BASELINE_SOURCES), forceApply);
     }
 
-    protected ConfigurationModel applyDefinitions(final String source, final ConfigurationModel baseline) throws Exception {
+    protected ConfigurationModelImpl applyDefinitions(final String source, final ConfigurationModel baseline) throws Exception {
         return applyDefinitions(new String[]{source}, baseline, false);
     }
 
-    protected ConfigurationModel applyDefinitions(final String source, final ConfigurationModel baseline, final boolean forceApply) throws Exception {
+    protected ConfigurationModelImpl applyDefinitions(final String source, final ConfigurationModel baseline, final boolean forceApply) throws Exception {
         return applyDefinitions(new String[]{source}, baseline, forceApply);
     }
 
-    protected ConfigurationModel applyDefinitions(final String source, final ExpectedEvents expectedEvents) throws Exception {
+    protected ConfigurationModelImpl applyDefinitions(final String source, final ExpectedEvents expectedEvents) throws Exception {
         return applyDefinitions(new String[]{source}, makeMergedModel(DEFAULT_BASELINE_SOURCES), false, expectedEvents);
     }
 
-    protected ConfigurationModel applyDefinitions(final String source, final boolean forceApply, final ExpectedEvents expectedEvents) throws Exception {
+    protected ConfigurationModelImpl applyDefinitions(final String source, final boolean forceApply, final ExpectedEvents expectedEvents) throws Exception {
         return applyDefinitions(new String[]{source}, makeMergedModel(DEFAULT_BASELINE_SOURCES), forceApply, expectedEvents);
     }
 
-    protected ConfigurationModel applyDefinitions(final String source, final ConfigurationModel baseline, final ExpectedEvents expectedEvents) throws Exception {
+    protected ConfigurationModelImpl applyDefinitions(final String source, final ConfigurationModel baseline, final ExpectedEvents expectedEvents) throws Exception {
         return applyDefinitions(new String[]{source}, baseline, false, expectedEvents);
     }
 
-    protected ConfigurationModel applyDefinitions(final String source, final ConfigurationModel baseline, final boolean forceApply, final ExpectedEvents expectedEvents) throws Exception {
+    protected ConfigurationModelImpl applyDefinitions(final String source, final ConfigurationModel baseline, final boolean forceApply, final ExpectedEvents expectedEvents) throws Exception {
         return applyDefinitions(new String[]{source}, baseline, forceApply, expectedEvents);
     }
 
-    protected ConfigurationModel applyDefinitions(final String[] sources, final ExpectedEvents expectedEvents) throws Exception {
+    protected ConfigurationModelImpl applyDefinitions(final String[] sources, final ExpectedEvents expectedEvents) throws Exception {
         return applyDefinitions(sources, makeMergedModel(DEFAULT_BASELINE_SOURCES), false, expectedEvents);
     }
 
-    protected ConfigurationModel applyDefinitions(final String[] sources,
+    protected ConfigurationModelImpl applyDefinitions(final String[] sources,
                                                   final ConfigurationModel baseline,
                                                   final boolean forceApply,
                                                   final ExpectedEvents expectedEvents) throws Exception {
-        final ConfigurationModel configurationModel;
+        final ConfigurationModelImpl configurationModel;
 
         if (expectedEvents != null) {
             final EventCollector eventCollector = new EventCollector(session, testNode);
@@ -152,10 +152,10 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
         return configurationModel;
     }
 
-    protected ConfigurationModel applyDefinitions(final String[] sources,
+    protected ConfigurationModelImpl applyDefinitions(final String[] sources,
                                                   final ConfigurationModel baseline,
                                                   final boolean forceApply) throws Exception {
-        final ConfigurationModel configurationModel = makeMergedModel(sources);
+        final ConfigurationModelImpl configurationModel = makeMergedModel(sources);
 
         final ConfigurationConfigService helper = new ConfigurationConfigService();
         helper.computeAndWriteDelta(baseline, configurationModel, session, forceApply);
@@ -178,7 +178,7 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
         }
     }
 
-    private ConfigurationModel makeMergedModel(final String[] sources) throws Exception {
+    private ConfigurationModelImpl makeMergedModel(final String[] sources) throws Exception {
         final ConfigurationModelImpl configurationModelImpl = new ConfigurationModelImpl();
         for (int i = 0; i < sources.length; i++) {
             final List<AbstractDefinitionImpl> definitions = parseNoSort(sources[i], "test-module-" + i, true);

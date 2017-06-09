@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -109,31 +110,33 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     log.info("ConfigurationService: apply bootstrap config");
                     success = applyConfig(baselineModel, bootstrapModel, false, verify, fullConfigure, !first);
                     if (success) {
-                        // TODO: applyConfig should (probably) update/replace baselineModel, which then can/must
-                        //       serve as runtimeConfigurationModel
+                        // set the runtime model to bootstrap here just in case storing the baseline fails
                         runtimeConfigurationModel = bootstrapModel;
                         log.info("ConfigurationService: store bootstrap config");
                         success = storeBaselineModel(bootstrapModel);
                     }
                     if (success) {
-                        // TODO: this doesn't yet account for possible update of the baseline through applyContent (like Module sequence)
-                        runtimeConfigurationModel = loadBaselineModel();
+                        // reload the baseline after storing, so we have a JCR-backed view of our modules
+                        // we want to avoid using bootstrap modules directly, because of awkward ZipFileSystems
+                        baselineModel = loadBaselineModel();
 
-                        // TODO: probably also should pass in baselineModel (or runtimeConfigurationModel, if updated, see above)
-                        //       applied changes then should also be applied to/updated in runtimeConfigurationModel
-                        //       furthermore, ContentService should use BaselineService to do the updates, not directly to JCR
+                        // also, we prefer using source modules over baseline modules
+                        runtimeConfigurationModel = mergeWithSourceModules(bootstrapModel, baselineModel);
+
+                        // use new runtime model for applying content, so it gets updated with new sequence numbers
                         log.info("ConfigurationService: apply bootstrap content");
-                        success = applyContent(bootstrapModel);
-                    }
-                    if (startAutoExportService) {
-                        log.info("ConfigurationService: start autoexport service");
-                        startAutoExportService();
+                        success = applyContent(runtimeConfigurationModel);
                     }
                     log.info("ConfigurationService: start repository services");
                     startRepositoryServicesTask.execute();
                     if (success) {
                         log.info("ConfigurationService: start post-startup tasks");
-                        postStartupTasks();
+                        // we need the bootstrap model here, not the baseline, so we can access the jar content
+                        postStartupTasks(bootstrapModel);
+                    }
+                    if (startAutoExportService) {
+                        log.info("ConfigurationService: start autoexport service");
+                        startAutoExportService();
                     }
                 } finally {
                     if (bootstrapModel != null) {
@@ -219,6 +222,24 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             return applyConfig(new ConfigurationModelImpl().build(), loadBootstrapModel(), true, false, true, false);
         } finally {
             lockManager.unlock();
+        }
+    }
+
+    /**
+     * Store the new baseline model as computed by auto-export, and make this the new runtimeConfigurationModel.
+     * @param updatedModules modules that have been changed by auto-export and need to be stored in the baseline
+     * @return
+     */
+    // TODO: confirm that this is the appropriate scope (public, but not exposed on interface)
+    public boolean updateBaselineForAutoExport(final Collection<ModuleImpl> updatedModules) {
+        try {
+            ConfigurationModelImpl newBaseline = baselineService.updateBaselineModules(updatedModules);
+            runtimeConfigurationModel = mergeWithSourceModules(getRuntimeConfigurationModel(), newBaseline);
+            return true;
+        }
+        catch (Exception e) {
+            log.error("Failed to update the Configuration baseline after auto-export", e);
+            return false;
         }
     }
 
@@ -329,14 +350,34 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         }
     }
 
+    /**
+     * Combine the source modules from an existingModel with all of the other modules from a newModel.
+     * @param existingModel model from which we want to extract source modules and no other modules
+     * @param newModel model from which we want to extract all modules that don't overlap with source modules
+     * @return a new, fully-built model combining modules from the params
+     */
+    private ConfigurationModelImpl mergeWithSourceModules(final ConfigurationModelImpl existingModel,
+                                                          final ConfigurationModelImpl newModel) {
+        final ConfigurationModelImpl mergedModel = new ConfigurationModelImpl();
+
+        // preserve the source modules
+        for (ModuleImpl module : existingModel.getModules()) {
+            if (module.getMvnPath() != null) {
+                log.debug("Merging module: {}", module);
+                mergedModel.addModule(module);
+            }
+        }
+
+        // layer on top all of the other modules
+        newModel.getSortedGroups().forEach(mergedModel::addGroup);
+
+        return mergedModel.build();
+    }
+
     private boolean hasSourceModules(final ConfigurationModelImpl model) {
-        for (GroupImpl g : model.getSortedGroups()) {
-            for (ProjectImpl p : g.getProjects()) {
-                for (ModuleImpl m : p.getModules()) {
-                    if (m.getMvnPath() != null) {
-                        return true;
-                    }
-                }
+        for (ModuleImpl m : model.getModules()) {
+            if (m.getMvnPath() != null) {
+                return true;
             }
         }
         return false;
@@ -400,7 +441,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     private boolean storeBaselineModel(final ConfigurationModelImpl model) {
         try {
             baselineService.storeBaseline(model);
-            session.save();
+            // session.save() isn't necessary here, because storeBaseline() already does it
             return true;
         } catch (Exception e) {
             log.error("Failed to store the Configuration baseline", e);
@@ -426,11 +467,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         }
     }
 
-    private void postStartupTasks() {
+    private void postStartupTasks(final ConfigurationModel bootstrapModel) {
         try {
             // webfiles
             try {
-                configService.writeWebfiles(runtimeConfigurationModel, session);
+                configService.writeWebfiles(bootstrapModel, session);
             } catch (IOException e) {
                 log.error("Error initializing webfiles", e);
             }

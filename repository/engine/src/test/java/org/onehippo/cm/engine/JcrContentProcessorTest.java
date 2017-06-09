@@ -41,7 +41,6 @@ import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.ExportModuleContext;
 import org.onehippo.cm.model.FileConfigurationWriter;
-import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -58,9 +57,7 @@ import static org.junit.Assert.fail;
 import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
 import static org.onehippo.cm.model.impl.ModelTestUtils.parseNoSort;
 
-public class JcrContentProcessingServiceTest extends RepositoryTestCase {
-
-    private final ValueProcessor valueProcessor = new ValueProcessor();
+public class JcrContentProcessorTest extends RepositoryTestCase {
 
     private final String source =
             "/test:\n" +
@@ -181,7 +178,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
 
         final ConfigurationModel configModel2 = createConfigurationModel(new String[]{source2});
 
-        final JcrContentProcessingService processingService = new JcrContentProcessingService(valueProcessor);
+        final JcrContentProcessor processingService = new JcrContentProcessor();
 
         Node parentNode = session.getNode("/test/node1");
         processingService.importNode(configModel2.getContentDefinitions().get(0).getNode(), parentNode, ActionType.APPEND);
@@ -203,7 +200,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
         importedNode.setProperty("binary", binary);
         session.save();
 
-        final JcrContentProcessingService processingService = new JcrContentProcessingService(valueProcessor);
+        final JcrContentProcessor processingService = new JcrContentProcessor();
         ModuleImpl module = processingService.exportNode(importedNode);
 
         File tempDir = Files.createTempDir();
@@ -246,7 +243,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
     public void delete_content() throws Exception {
         append_content();
 
-        final JcrContentProcessingService processingService = new JcrContentProcessingService(valueProcessor);
+        final JcrContentProcessor processingService = new JcrContentProcessor();
 
         final DefinitionNodeImpl deleteNode = new DefinitionNodeImpl("/test/node3", "node3", null);
         processingService.apply(deleteNode, ActionType.DELETE, session);
@@ -327,7 +324,7 @@ public class JcrContentProcessingServiceTest extends RepositoryTestCase {
     }
 
     private void saveContent(final ConfigurationModel configModel, final ActionType actionType) throws RepositoryException {
-        final JcrContentProcessingService processingService = new JcrContentProcessingService(valueProcessor);
+        final JcrContentProcessor processingService = new JcrContentProcessor();
         for (final ContentDefinition contentDefinition : configModel.getContentDefinitions()) {
             processingService.apply(contentDefinition.getNode(), actionType, session);
         }

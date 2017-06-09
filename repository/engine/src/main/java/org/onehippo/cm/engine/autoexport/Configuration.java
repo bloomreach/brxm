@@ -199,9 +199,13 @@ class Configuration {
         return lastRevision;
     }
 
+    /**
+     * Sets the lastRevision property, but DOES NOT save the JCR session.
+     * @param lastRevision the new value of the lastRevision property
+     * @throws RepositoryException
+     */
     public synchronized void setLastRevision(final long lastRevision) throws RepositoryException {
         node.setProperty(Constants.CONFIG_LAST_REVISION_PROPERTY_NAME, lastRevision);
         this.lastRevision = lastRevision;
-        node.getSession().save();
     }
 }

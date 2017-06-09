@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -53,15 +54,19 @@ import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.DefinitionItemImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cm.model.util.FileConfigurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.autoexport.Constants.DEFAULT_MAIN_CONFIG_FILE;
@@ -124,13 +129,34 @@ public class DefinitionMergeService {
      * to the corresponding Sources and Definitions in Sm as possible (for stable output), and for any new Sources and
      * Definitions to follow the sorting schemes encoded in org.onehippo.cms7.autoexport.LocationMapper.
      * @param changes R∆B expressed as a Module with one ConfigSource with zero-or-more Definitions and zero-or-more ContentSources
-     * @param toMerge the Modules that we expect to be revised to include changes
      * @param baseline the currently stored configuration baseline B
      * @return a new version of each toMerge module, if revisions are necessary
      */
-    public Collection<ModuleImpl> mergeChangesToModules(final ModuleImpl changes, final Set<ModuleImpl> toMerge,
+    public Collection<ModuleImpl> mergeChangesToModules(final ModuleImpl changes,
+                                                        final EventJournalProcessor.Changes contentChanges,
                                                         final ConfigurationModelImpl baseline) {
+        // find the modules that are configured for auto-export and also have a mvnPath indicating a source location
+        final Set<String> configuredMvnPaths = new HashSet<>();
+        configuredMvnPaths.addAll(moduleMappings.keySet());
+        configuredMvnPaths.add(defaultModuleMapping.mvnPath);
+
+        final Set<ModuleImpl> toMerge = new HashSet<>();
+        for (ModuleImpl m : baseline.getModules()) {
+            if (m.getMvnPath() != null && configuredMvnPaths.contains(m.getMvnPath())) {
+                toMerge.add(m);
+            }
+        }
+
         log.debug("Merging changes to modules: {}", toMerge);
+        log.debug("Content added: {} changed: {}", contentChanges.getAddedContent(), contentChanges.getChangedContent());
+
+        final Set<String> toMergeMvnPaths = toMerge.stream().map(ModuleImpl::getMvnPath).collect(Collectors.toSet());
+
+        if (!toMergeMvnPaths.containsAll(configuredMvnPaths)) {
+            // TODO: should this interrupt auto-export processing with an exception?
+            log.warn("Configured auto-export modules do not all have a source location in repo.bootstrap.modules!");
+            log.warn("auto-export: {} -- configured sources: {}", moduleMappings.keySet(), toMergeMvnPaths);
+        }
 
         // clone the toMerge modules and keep a copy indexed by mvnSourceRoot
         final HashMap<String, ModuleImpl> toExport = new HashMap<>();
@@ -162,7 +188,8 @@ public class DefinitionMergeService {
             model = mergeConfigDefinitionNode(change.getNode(), toExport, model);
         }
 
-        mergeContentDefinitions(changes, toExport);
+        // TODO: test and re-enable content export
+//        mergeContentDefinitions(changes, contentChanges, toExport);
 
         return toExport.values();
     }
@@ -481,12 +508,7 @@ public class DefinitionMergeService {
         // create the new ConfigDefinition and add it to the source
         // we know that this is the only place that mentions this node, because it's new
         // -- put all descendent properties and nodes in this def
-        final String rootDefPath = incomingDefNode.getPath();
-        final String name = StringUtils.substringAfterLast(rootDefPath, "/");
-        final ConfigDefinitionImpl configDef = destSource.addConfigDefinition();
-
-        final DefinitionNodeImpl newRootNode = new DefinitionNodeImpl(rootDefPath, name, configDef);
-        configDef.setNode(newRootNode);
+        final DefinitionNodeImpl newRootNode = destSource.addConfigDefinition().setRoot(incomingDefNode.getPath());
 
         if (copyContents) {
             recursiveCopy(incomingDefNode, newRootNode, toExport);
@@ -987,12 +1009,14 @@ public class DefinitionMergeService {
     }
 
     protected void mergeContentDefinitions(final ModuleImpl changes,
+                                           final EventJournalProcessor.Changes contentChanges,
                                            final HashMap<String, ModuleImpl> toExport) {
 
         // set of content change paths in lexical order, so that shorter common sub-paths come first
         final Function<ContentDefinitionImpl, String> cdPath = cd -> cd.getModifiableNode().getPath();
-        TreeSet<String> contentChangesByPath = changes.getContentDefinitions().stream().map(cdPath)
-                .collect(Collectors.toCollection(TreeSet::new));
+        TreeSet<String> contentChangesByPath = new TreeSet<>();
+        contentChangesByPath.addAll(contentChanges.getAddedContent());
+        contentChangesByPath.addAll(contentChanges.getChangedContent());
 
         // set of existing sources in reverse lexical order, so that longer paths come first
         final BinaryOperator<ContentDefinitionImpl> pickOne = (l, r) -> l;
@@ -1004,6 +1028,8 @@ public class DefinitionMergeService {
 
         for (final String changePath : contentChangesByPath) {
             // if LocationMapper tells us we should have a new source file...
+            // TODO: we should actually scan down all existing descendants and repeat this check
+            // TODO: (or rely on the diff for the descendant scan)
             if (shouldPathCreateNewSource(changePath)) {
                 // create a new source file
                 createNewContentSource(changePath, toExport);
@@ -1027,25 +1053,23 @@ public class DefinitionMergeService {
         }
 
         // process deletes, including resource removal
-        changes.getActionsMap().values().stream().flatMap(Set::stream)
-                .filter(actionItem -> actionItem.getType() == ActionType.DELETE)
-                .forEach(actionItem -> {
-                    final String deletePath = actionItem.getPath();
+        for (String deletePath : contentChanges.getDeletedContent()) {
+            // for now, we only care about deletes that match a content root or a descendant
+            for (final String sourcePath : existingSourcesByPath.keySet()) {
+                if (sourcePath.startsWith(deletePath)) {
+                    final ContentDefinitionImpl contentDef = existingSourcesByPath.get(sourcePath);
+                    final SourceImpl source = contentDef.getSource();
+                    final ModuleImpl module = source.getModule();
 
-                    // for now, we only care about deletes that exactly match a content root
-                    if (existingSourcesByPath.containsKey(deletePath)) {
-                        final ContentDefinitionImpl contentDef = existingSourcesByPath.get(deletePath);
-                        final SourceImpl source = contentDef.getSource();
-                        final ModuleImpl module = source.getModule();
+                    // mark all referenced resources for delete
+                    removeResources(contentDef.getNode());
 
-                        // mark all referenced resources for delete
-                        removeResources(contentDef.getNode());
-
-                        // remove the source from its module
-                        module.getModifiableSources().remove(source);
-                        module.addContentResourceToRemove("/"+source.getPath());
-                    }
-        });
+                    // remove the source from its module
+                    module.getModifiableSources().remove(source);
+                    module.addContentResourceToRemove("/" + source.getPath());
+                }
+            }
+        }
     }
 
     /**

@@ -174,6 +174,54 @@ public class ConfigurationBaselineService {
     }
 
     /**
+     * Update the stored baseline for a single module as an atomic operation. This is primarily used by auto-export,
+     * which frequently updates existing modules. This method assumes that the module already exists and that it is
+     * save to call session.save() at any time without regard to the calling context.
+     * @param module the module to be updated in the stored baseline
+     */
+    protected ConfigurationModelImpl updateBaselineModules(final Collection<ModuleImpl> modules)
+            throws RepositoryException, IOException, ParserException {
+        configurationLockManager.lock();
+        try {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+
+            final Node hcmRootNode = configurationServiceSession.getNode(HCM_ROOT_PATH);
+            Node baseline = hcmRootNode.getNode(HCM_BASELINE);
+
+            for (final ModuleImpl module : modules) {
+                log.debug("Updating module in baseline configuration: {}", module.getFullName());
+
+                // set lastupdated date to now
+                baseline.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
+
+                Node groupNode = baseline.getNode(NodeNameCodec.encode(module.getProject().getGroup().getName()));
+                Node projectNode = groupNode.getNode(NodeNameCodec.encode(module.getProject().getName()));
+                Node moduleNode = projectNode.getNode(NodeNameCodec.encode(module.getName()));
+
+                storeBaselineModule(module, moduleNode);
+            }
+
+            // update digest
+            ConfigurationModelImpl newBaseline = loadBaseline();
+            baseline.setProperty(HCM_DIGEST, newBaseline.getDigest());
+
+            configurationServiceSession.save();
+            stopWatch.stop();
+            log.info("Updated module in baseline configuration in {}", stopWatch.toString());
+
+            return newBaseline;
+        }
+        catch (RepositoryException|IOException|ParserException e) {
+            log.error("Failed to store baseline configuration", e);
+            throw e;
+        }
+        finally {
+            configurationLockManager.unlock();
+        }
+    }
+
+    /**
      * Store a single Module into the configuration baseline. This method assumes the locking and session context
      * managed in storeBaseline().
      * @param module the module to store
@@ -730,6 +778,7 @@ public class ConfigurationBaselineService {
     void updateModuleSequenceNumber(final ModuleImpl module) throws RepositoryException {
         final Optional<Double> latestVersion = module.getActionsMap().keySet().stream().max(Double::compareTo);
         if (latestVersion.isPresent()) {
+            // TODO: JCR encode this properly!
             final String moduleNodePath = HCM_BASELINE_PATH + "/" + module.getFullName();
 
             module.setSequenceNumber(latestVersion.get());

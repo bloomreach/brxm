@@ -29,6 +29,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.parser.ActionListParser;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
@@ -152,8 +153,8 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
                 + "      jcr:primaryType: nt:unstructured\n"
                 + "      /foo:\n"
                 + "        jcr:primaryType: nt:unstructured";
-        final ConfigurationModel baseline = applyDefinitions(baselineSource);
-        final ModuleImpl module = (ModuleImpl)baseline.getSortedGroups().get(0).getProjects().get(0).getModules().get(0);
+        final ConfigurationModelImpl baseline = applyDefinitions(baselineSource);
+        final ModuleImpl module = baseline.getModulesStream().findFirst().get();
 
         assertEquals(null, module.getSequenceNumber());
 
@@ -169,8 +170,8 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
                 + "      jcr:primaryType: nt:unstructured\n"
                 + "      /foo:\n"
                 + "        jcr:primaryType: nt:unstructured";
-        final ConfigurationModel baseline = applyDefinitions(baselineSource);
-        final ModuleImpl module = (ModuleImpl)baseline.getSortedGroups().get(0).getProjects().get(0).getModules().get(0);
+        final ConfigurationModelImpl baseline = applyDefinitions(baselineSource);
+        final ModuleImpl module = baseline.getModulesStream().findFirst().get();
         final ActionListParser actionListParser = new ActionListParser();
 
         final Node moduleBaseline = session.getRootNode()

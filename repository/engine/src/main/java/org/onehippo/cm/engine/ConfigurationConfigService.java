@@ -32,14 +32,12 @@ import java.util.Set;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
@@ -51,7 +49,7 @@ import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.ConfigurationProperty;
-import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.ModelProperty;
 import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.Source;
@@ -72,9 +70,14 @@ import org.slf4j.LoggerFactory;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
-import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
+import static org.onehippo.cm.engine.ValueProcessor.collectVerifiedValue;
+import static org.onehippo.cm.engine.ValueProcessor.determineVerifiedValues;
+import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
+import static org.onehippo.cm.engine.ValueProcessor.isReferenceTypeProperty;
+import static org.onehippo.cm.engine.ValueProcessor.isUuidInUse;
+import static org.onehippo.cm.engine.ValueProcessor.propertyIsIdentical;
+import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
+import static org.onehippo.cm.engine.ValueProcessor.valuesFrom;
 import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getBaseZipFileFromURL;
 
 /**
@@ -84,14 +87,7 @@ import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getBaseZipFi
  */
 public class ConfigurationConfigService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConfigurationConfigService.class);
-    private static final String[] knownDerivedPropertyNames = new String[] {
-            HIPPO_RELATED,
-            HIPPO_PATHS,
-            HIPPOSTD_STATESUMMARY
-    };
-
-    private final ValueProcessor valueProcessor = new ValueProcessor();
+    private static final Logger log = LoggerFactory.getLogger(ConfigurationConfigService.class);
 
     private static class UnprocessedReference {
         final ConfigurationProperty updateProperty;
@@ -109,13 +105,13 @@ public class ConfigurationConfigService {
         if (!model.getWebFileBundleDefinitions().isEmpty()) {
             final WebFilesService service = HippoServiceRegistry.getService(WebFilesService.class);
             if (service == null) {
-                logger.warn(String.format("Skipping import web file bundles: service '%s' not available.",
+                log.warn(String.format("Skipping import web file bundles: service '%s' not available.",
                         WebFilesService.class.getName()));
                 return;
             }
             for (WebFileBundleDefinition webFileBundleDefinition : model.getWebFileBundleDefinitions()) {
                 final String bundleName = webFileBundleDefinition.getName();
-                logger.debug(String.format("processing web file bundle '%s' defined in %s.", bundleName,
+                log.debug(String.format("processing web file bundle '%s' defined in %s.", bundleName,
                         webFileBundleDefinition.getOrigin()));
 
                 final ResourceInputProvider resourceInputProvider =
@@ -175,7 +171,7 @@ public class ConfigurationConfigService {
             final String prefix = namespaceDefinition.getPrefix();
             final String uriString = namespaceDefinition.getURI().toString();
 
-            logger.debug(String.format("processing namespace prefix='%s' uri='%s' defined in %s.",
+            log.debug(String.format("processing namespace prefix='%s' uri='%s' defined in %s.",
                     prefix, uriString, namespaceDefinition.getOrigin()));
 
             if (prefixes.contains(prefix)) {
@@ -198,8 +194,8 @@ public class ConfigurationConfigService {
         for (NamespaceDefinition nsDefinition : nsDefinitions) {
             if (nsDefinition.getCndPath() != null) {
                 final String cndPath = nsDefinition.getCndPath().getString();
-                if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("processing CND '%s' defined in %s.", cndPath, nsDefinition.getOrigin()));
+                if (log.isDebugEnabled()) {
+                    log.debug(String.format("processing CND '%s' defined in %s.", cndPath, nsDefinition.getOrigin()));
                 }
 
                 // TODO: nodeTypeStream should be closed, right?
@@ -250,7 +246,7 @@ public class ConfigurationConfigService {
                                 + "Overriding to type '%s', defined in %s.",
                                 jcrPrimaryType, updateNode.getPath(), baselinePrimaryType, updatePrimaryType,
                         updatePrimaryTypeProperty.getOrigin());
-                logger.info(msg);
+                log.info(msg);
             }
             targetNode.setPrimaryType(updatePrimaryType);
         }
@@ -277,7 +273,7 @@ public class ConfigurationConfigService {
                         final String msg = String.format("[OVERRIDE] Mixin '%s' has been removed from node '%s', " +
                                         "but is re-added because it is defined at %s.",
                                 mixin, updateNode.getPath(), updateMixinProperty.getOrigin());
-                        logger.info(msg);
+                        log.info(msg);
                     }
                     targetNode.addMixin(mixin);
                 } else {
@@ -298,7 +294,7 @@ public class ConfigurationConfigService {
                         final String msg = String.format("[OVERRIDE] Mixin '%s' has been added to node '%s'," +
                                         " but is removed because it is not present in definition %s.",
                                 jcrMixin, updateNode.getPath(), updateNode.getOrigin());
-                        logger.info(msg);
+                        log.info(msg);
                     }
 
                     removeMixin(targetNode, jcrMixin);
@@ -419,7 +415,7 @@ public class ConfigurationConfigService {
                         final String msg = String.format("[OVERRIDE] Node '%s' has been removed, " +
                                         "but will be re-added due to definition %s.",
                                 updateChild.getPath(), updateChild.getOrigin());
-                        logger.info(msg);
+                        log.info(msg);
                     } else {
                         // In the baseline, the child exists. Some of its properties or (nested) children may
                         // have changed, but the current implementation considers the manual removal of the
@@ -478,7 +474,7 @@ public class ConfigurationConfigService {
                     final String msg = String.format("[OVERRIDE] Child node '%s' exists, " +
                                     "but will be deleted while processing the children of node '%s' defined in %s.",
                             indexedChildName, updateNode.getPath(), updateNode.getOrigin());
-                    logger.info(msg);
+                    log.info(msg);
                 } else {
                     // [OVERRIDE] We don't currently check if the removed node has changes compared to the baseline.
                     //            Such a check would be rather invasive (potentially full sub-tree compare)
@@ -505,21 +501,12 @@ public class ConfigurationConfigService {
                 final NodeImpl parentNodeImpl = (NodeImpl) NodeDecorator.unwrap(parentNode);
                 return parentNodeImpl.addNodeWithUuid(childName, childPrimaryType, uuid);
             } else {
-                logger.warn(String.format("Specified jcr:uuid %s for node '%s' defined in %s already in use: "
+                log.warn(String.format("Specified jcr:uuid %s for node '%s' defined in %s already in use: "
                                 + "a new jcr:uuid will be generated instead.",
                         uuid, childModelNode.getPath(), childModelNode.getOrigin()));
             }
         }
         return parentNode.addNode(childName, childPrimaryType);
-    }
-
-    private boolean isUuidInUse(final String uuid, final Session session) throws RepositoryException {
-        try {
-            session.getNodeByIdentifier(uuid);
-            return true;
-        } catch (ItemNotFoundException e) {
-            return false;
-        }
     }
 
     private ConfigurationNode newChildOfType(final String primaryType) {
@@ -603,12 +590,11 @@ public class ConfigurationConfigService {
 
             if (baselineProperty != null) {
                 // property should already exist, and so it does. But has it been changed?
-                final List<Value> verifiedBaselineValues = determineVerifiedValues(baselineProperty, session);
-                if (!propertyIsIdentical(jcrProperty, baselineProperty, verifiedBaselineValues)) {
+                if (!propertyIsIdentical(jcrProperty, baselineProperty)) {
                     final String msg = String.format("[OVERRIDE] Property '%s' has been changed in the repository, " +
                                     "and will be overridden due to definition %s.",
                             updateProperty.getPath(), updateProperty.getOrigin());
-                    logger.info(msg);
+                    log.info(msg);
                 }
             } else {
                 // property should not yet exist, but does, with a different value.
@@ -618,7 +604,7 @@ public class ConfigurationConfigService {
                     final String msg = String.format("[OVERRIDE] Property '%s' has been created in the repository, " +
                                     "and will be overridden due to definition %s.",
                             updateProperty.getPath(), updateProperty.getOrigin());
-                    logger.info(msg);
+                    log.info(msg);
                 }
             }
 
@@ -633,16 +619,16 @@ public class ConfigurationConfigService {
                 final String msg = String.format("[OVERRIDE] Property '%s' has been deleted from the repository, " +
                                 "and will be re-added due to definition %s.",
                         updateProperty.getPath(), updateProperty.getOrigin());
-                logger.info(msg);
+                log.info(msg);
             }
         }
 
         try {
             if (updateProperty.isMultiple()) {
-                jcrNode.setProperty(updateProperty.getName(), valueProcessor.valuesFrom(updateProperty, verifiedUpdateValues, session));
+                jcrNode.setProperty(updateProperty.getName(), valuesFrom(updateProperty, verifiedUpdateValues, session));
             } else {
                 if (verifiedUpdateValues.size() > 0) {
-                    jcrNode.setProperty(updateProperty.getName(), valueProcessor.valueFrom(updateProperty, verifiedUpdateValues.get(0), session));
+                    jcrNode.setProperty(updateProperty.getName(), valueFrom(updateProperty, verifiedUpdateValues.get(0), session));
                 }
             }
         } catch (RepositoryException e) {
@@ -664,149 +650,20 @@ public class ConfigurationConfigService {
 
         if (baselineProperty != null) {
             final Session session = jcrNode.getSession();
-            final List<Value> verifiedBaselineValues = determineVerifiedValues(baselineProperty, session);
-            if (!propertyIsIdentical(jcrProperty, baselineProperty, verifiedBaselineValues)) {
+            if (!propertyIsIdentical(jcrProperty, baselineProperty)) {
                 final String msg = String.format("[OVERRIDE] Property '%s' originally defined in %s has been changed, " +
                                 "but will be deleted because it no longer is part of the configuration model.",
                         baselineProperty.getPath(), baselineProperty.getOrigin());
-                logger.info(msg);
+                log.info(msg);
             }
         } else {
             final String msg = String.format("[OVERRIDE] Property '%s' of node '%s' has been added to the repository, " +
                             "but will be deleted because it is not defined in %s.",
                     propertyName, jcrNode.getPath(), modelNode.getOrigin());
-            logger.info(msg);
+            log.info(msg);
         }
 
         jcrProperty.remove();
-    }
-
-    private boolean isKnownDerivedPropertyName(final String modelPropertyName) {
-        return ArrayUtils.contains(knownDerivedPropertyNames, modelPropertyName);
-    }
-
-    private List<Value> determineVerifiedValues(final ConfigurationProperty property, final Session session)
-            throws RepositoryException {
-
-        final List<Value> verifiedValues = new ArrayList<>();
-        if (property.isMultiple()) {
-            for (Value value : property.getValues()) {
-                collectVerifiedValue(property, value, verifiedValues, session);
-            }
-        } else {
-            collectVerifiedValue(property, property.getValue(), verifiedValues, session);
-        }
-        return verifiedValues;
-    }
-
-    private void collectVerifiedValue(final ConfigurationProperty modelProperty, final Value value, final List<Value> modelValues, final Session session)
-            throws RepositoryException {
-        if (isReferenceTypeProperty(modelProperty)) {
-            final String uuid = getVerifiedReferenceIdentifier(modelProperty, value, session);
-            if (uuid != null) {
-                modelValues.add(new VerifiedReferenceValue(value, uuid));
-            }
-        } else {
-            modelValues.add(value);
-        }
-    }
-
-    private boolean isReferenceTypeProperty(final ConfigurationProperty modelProperty) {
-        return (modelProperty.getValueType() == ValueType.REFERENCE ||
-                modelProperty.getValueType() == ValueType.WEAKREFERENCE);
-    }
-
-    private String getVerifiedReferenceIdentifier(final ConfigurationProperty modelProperty, final Value modelValue, final Session session)
-            throws RepositoryException {
-        String identifier = modelValue.getString();
-        if (modelValue.isPath()) {
-            String nodePath = identifier;
-            if (!nodePath.startsWith("/")) {
-                // path reference is relative to content definition root path
-                final String rootPath = ((ContentDefinition) modelValue.getParent().getDefinition()).getNode().getPath();
-                final StringBuilder pathBuilder = new StringBuilder(rootPath);
-                if (!"".equals(nodePath)) {
-                    if (!"/".equals(rootPath)) {
-                        pathBuilder.append("/");
-                    }
-                    pathBuilder.append(nodePath);
-                }
-                nodePath = pathBuilder.toString();
-            }
-            // lookup node identifier by node path
-            try {
-                identifier = session.getNode(nodePath).getIdentifier();
-            } catch (PathNotFoundException e) {
-                logger.warn(String.format("Path reference '%s' for property '%s' defined in %s not found: skipping.",
-                        nodePath, modelProperty.getPath(), modelProperty.getOrigin()));
-                return null;
-            }
-        } else {
-            try {
-                session.getNodeByIdentifier(identifier);
-            } catch (ItemNotFoundException e) {
-                logger.warn(String.format("Reference %s for property '%s' defined in %s not found: skipping.",
-                        identifier, modelProperty.getPath(), modelProperty.getOrigin()));
-                return null;
-            }
-        }
-        return identifier;
-    }
-
-    private boolean propertyIsIdentical(final ConfigurationProperty p1, final ConfigurationProperty p2) throws IOException {
-        return p1.getType() == p2.getType()
-                && p1.getValueType() == p2.getValueType()
-                && valuesAreIdentical(p1, p2);
-    }
-
-    private boolean valuesAreIdentical(final ConfigurationProperty p1, final ConfigurationProperty p2) throws IOException {
-        if (p1.isMultiple()) {
-            final Value[] v1 = p1.getValues();
-            final Value[] v2 = p2.getValues();
-
-            if (v1.length != v2.length) {
-                return false;
-            }
-            for (int i = 0; i < v1.length; i++) {
-                if (!valueProcessor.valueIsIdentical(v1[i], v2[i])) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return valueProcessor.valueIsIdentical(p1.getValue(), p2.getValue());
-    }
-
-    private boolean propertyIsIdentical(final Property jcrProperty, final ConfigurationProperty modelProperty,
-                                        final List<Value> modelValues) throws RepositoryException, IOException {
-        return modelProperty.getValueType().ordinal() == jcrProperty.getType()
-                && modelProperty.isMultiple() == jcrProperty.isMultiple()
-                && valuesAreIdentical(modelProperty, modelValues, jcrProperty);
-    }
-
-    private boolean valuesAreIdentical(final ConfigurationProperty modelProperty, final List<Value> modelValues,
-                                       final Property jcrProperty) throws RepositoryException, IOException {
-        if (modelProperty.isMultiple()) {
-            final javax.jcr.Value[] jcrValues = jcrProperty.getValues();
-            if (modelValues.size() != jcrValues.length) {
-                return false;
-            }
-            for (int i = 0; i < jcrValues.length; i++) {
-                if (!valueProcessor.valueIsIdentical(modelProperty, modelValues.get(i), jcrValues[i])) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            if (modelValues.size() > 0) {
-                return valueProcessor.valueIsIdentical(modelProperty, modelProperty.getValue(), jcrProperty.getValue());
-            } else {
-                // No modelValue indicates that a reference failed verification (of UUID or path).
-                // We leave the current reference (existing or not) unchanged and return true to
-                // short-circuit further processing of this modelProperty.
-                return true;
-            }
-        }
     }
 
     private InputStream getResourceInputStream(final Source source, final String resourceName) throws IOException {

@@ -20,23 +20,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.jcr.Binary;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.model.ConfigurationProperty;
+import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.ModelItem;
+import org.onehippo.cm.model.ModelProperty;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static javax.jcr.PropertyType.BINARY;
 import static javax.jcr.PropertyType.BOOLEAN;
@@ -50,11 +60,24 @@ import static javax.jcr.PropertyType.REFERENCE;
 import static javax.jcr.PropertyType.STRING;
 import static javax.jcr.PropertyType.URI;
 import static javax.jcr.PropertyType.WEAKREFERENCE;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
 
 /**
  * Config {@link Value} -> JCR {@link javax.jcr.Value} converter
  */
-public class ValueProcessor {
+public abstract class ValueProcessor {
+    private static final Logger log = LoggerFactory.getLogger(ValueProcessor.class);
+    private static final String[] knownDerivedPropertyNames = new String[] {
+            HIPPO_RELATED,
+            HIPPO_PATHS,
+            HIPPOSTD_STATESUMMARY
+    };
+
+    public static boolean isKnownDerivedPropertyName(final String modelPropertyName) {
+        return ArrayUtils.contains(knownDerivedPropertyNames, modelPropertyName);
+    }
 
     /**
      * Creates array of {@link javax.jcr.Value} based on {@link Value} list
@@ -62,7 +85,7 @@ public class ValueProcessor {
      * @return
      * @throws Exception
      */
-    public javax.jcr.Value[] valuesFrom(final List<Value> modelValues, final Session session) throws RepositoryException, IOException {
+    public static javax.jcr.Value[] valuesFrom(final List<Value> modelValues, final Session session) throws RepositoryException, IOException {
         final javax.jcr.Value[] jcrValues = new javax.jcr.Value[modelValues.size()];
         for (int i = 0; i < jcrValues.length; i++) {
             jcrValues[i] = valueFrom(modelValues.get(i), session);
@@ -70,7 +93,7 @@ public class ValueProcessor {
         return jcrValues;
     }
 
-    public javax.jcr.Value[] valuesFrom(final ModelItem modelItem,
+    public static javax.jcr.Value[] valuesFrom(final ModelItem modelItem,
                                          final List<Value> modelValues,
                                          final Session session) throws RepositoryException, IOException {
         final javax.jcr.Value[] jcrValues = new javax.jcr.Value[modelValues.size()];
@@ -80,7 +103,7 @@ public class ValueProcessor {
         return jcrValues;
     }
 
-    public javax.jcr.Value valueFrom(final ModelItem modelItem,
+    public static javax.jcr.Value valueFrom(final ModelItem modelItem,
                                       final Value modelValue, final Session session)
             throws RepositoryException, IOException {
 
@@ -96,7 +119,7 @@ public class ValueProcessor {
         }
     }
 
-    public boolean valueIsIdentical(final ModelItem modelItem,
+    public static boolean valueIsIdentical(final ModelItem modelItem,
                                      final Value modelValue,
                                      final javax.jcr.Value jcrValue) throws RepositoryException, IOException {
         try {
@@ -115,7 +138,7 @@ public class ValueProcessor {
      * @return {@link javax.jcr.Value}
      * @throws Exception
      */
-    public javax.jcr.Value valueFrom(final Value modelValue, final Session session) throws RepositoryException, IOException {
+    public static javax.jcr.Value valueFrom(final Value modelValue, final Session session) throws RepositoryException, IOException {
         final ValueFactory factory = session.getValueFactory();
         final ValueType type = modelValue.getType();
 
@@ -155,7 +178,7 @@ public class ValueProcessor {
         }
     }
 
-    private boolean valueIsIdentical(final Value modelValue,
+    private static boolean valueIsIdentical(final Value modelValue,
                                      final javax.jcr.Value jcrValue) throws RepositoryException, IOException {
         if (modelValue.getType().ordinal() != jcrValue.getType()) {
             return false;
@@ -198,7 +221,7 @@ public class ValueProcessor {
         }
     }
 
-    public boolean valueIsIdentical(final Value v1, final Value v2) throws IOException {
+    public static boolean valueIsIdentical(final Value v1, final Value v2) throws IOException {
         // Type equality at the property level is sufficient, no need to check for type equality at value level.
 
         switch (v1.getType()) {
@@ -220,7 +243,31 @@ public class ValueProcessor {
         }
     }
 
-    private String getStringValue(final Value modelValue) throws IOException {
+    public static boolean propertyIsIdentical(final ModelProperty p1, final ModelProperty p2) throws IOException {
+        return p1.getType() == p2.getType()
+                && p1.getValueType() == p2.getValueType()
+                && valuesAreIdentical(p1, p2);
+    }
+
+    public static boolean valuesAreIdentical(final ModelProperty p1, final ModelProperty p2) throws IOException {
+        if (p1.isMultiple()) {
+            final Value[] v1 = p1.getValues();
+            final Value[] v2 = p2.getValues();
+
+            if (v1.length != v2.length) {
+                return false;
+            }
+            for (int i = 0; i < v1.length; i++) {
+                if (!valueIsIdentical(v1[i], v2[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return valueIsIdentical(p1.getValue(), p2.getValue());
+    }
+
+    private static String getStringValue(final Value modelValue) throws IOException {
         if (modelValue.isResource()) {
             try (final InputStream inputStream = modelValue.getResourceInputStream()) {
                 return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
@@ -230,11 +277,11 @@ public class ValueProcessor {
         }
     }
 
-    private InputStream getBinaryInputStream(final Value modelValue) throws IOException {
+    private static InputStream getBinaryInputStream(final Value modelValue) throws IOException {
         return modelValue.isResource() ? modelValue.getResourceInputStream() : new ByteArrayInputStream((byte[]) modelValue.getObject());
     }
 
-    public ValueImpl[] valuesFrom(final Property property, final DefinitionNodeImpl definitionNode) throws RepositoryException {
+    public static ValueImpl[] valuesFrom(final Property property, final DefinitionNodeImpl definitionNode) throws RepositoryException {
         final javax.jcr.Value[] jcrValues = property.getValues();
         final ValueImpl[] values = new ValueImpl[jcrValues.length];
         for (int i = 0; i < jcrValues.length; i++) {
@@ -243,11 +290,11 @@ public class ValueProcessor {
         return values;
     }
 
-    public ValueImpl valueFrom(final Property property, final DefinitionNodeImpl definitionNode) throws RepositoryException {
+    public static ValueImpl valueFrom(final Property property, final DefinitionNodeImpl definitionNode) throws RepositoryException {
         return valueFrom(property, property.getValue(), 0, definitionNode);
     }
 
-    private ValueImpl valueFrom(final Property property, final javax.jcr.Value jcrValue, final int valueIndex,
+    private static ValueImpl valueFrom(final Property property, final javax.jcr.Value jcrValue, final int valueIndex,
                                 final DefinitionNodeImpl definitionNode) throws RepositoryException {
 
         String indexPostfix = "";
@@ -287,6 +334,121 @@ public class ValueProcessor {
             default:
                 final String msg = String.format("Unsupported jcrValue type '%s'.", jcrValue.getType());
                 throw new RuntimeException(msg);
+        }
+    }
+
+    public static List<Value> determineVerifiedValues(final ModelProperty property, final Session session)
+            throws RepositoryException {
+
+        final List<Value> verifiedValues = new ArrayList<>();
+        if (property.isMultiple()) {
+            for (Value value : property.getValues()) {
+                collectVerifiedValue(property, value, verifiedValues, session);
+            }
+        } else {
+            collectVerifiedValue(property, property.getValue(), verifiedValues, session);
+        }
+        return verifiedValues;
+    }
+
+    public static void collectVerifiedValue(final ModelProperty modelProperty, final Value value, final List<Value> modelValues, final Session session)
+            throws RepositoryException {
+        if (isReferenceTypeProperty(modelProperty)) {
+            final String uuid = getVerifiedReferenceIdentifier(modelProperty, value, session);
+            if (uuid != null) {
+                modelValues.add(new VerifiedReferenceValue(value, uuid));
+            }
+        } else {
+            modelValues.add(value);
+        }
+    }
+
+    public static boolean isReferenceTypeProperty(final ModelProperty modelProperty) {
+        return (modelProperty.getValueType() == ValueType.REFERENCE ||
+                modelProperty.getValueType() == ValueType.WEAKREFERENCE);
+    }
+
+    protected static String getVerifiedReferenceIdentifier(final ModelProperty modelProperty, final Value modelValue, final Session session)
+            throws RepositoryException {
+        String identifier = modelValue.getString();
+        if (modelValue.isPath()) {
+            String nodePath = identifier;
+            if (!nodePath.startsWith("/")) {
+                // path reference is relative to content definition root path
+                final String rootPath = ((ContentDefinition) modelValue.getParent().getDefinition()).getNode().getPath();
+                final StringBuilder pathBuilder = new StringBuilder(rootPath);
+                if (!StringUtils.EMPTY.equals(nodePath)) {
+                    if (!"/".equals(rootPath)) {
+                        pathBuilder.append("/");
+                    }
+                    pathBuilder.append(nodePath);
+                }
+                nodePath = pathBuilder.toString();
+            }
+            // lookup node identifier by node path
+            try {
+                identifier = session.getNode(nodePath).getIdentifier();
+            } catch (PathNotFoundException e) {
+                log.warn(String.format("Path reference '%s' for property '%s' defined in %s not found: skipping.",
+                        nodePath, modelProperty.getPath(), modelProperty.getOrigin()));
+                return null;
+            }
+        } else {
+            try {
+                session.getNodeByIdentifier(identifier);
+            } catch (ItemNotFoundException e) {
+                log.warn(String.format("Reference %s for property '%s' defined in %s not found: skipping.",
+                        identifier, modelProperty.getPath(), modelProperty.getOrigin()));
+                return null;
+            }
+        }
+        return identifier;
+    }
+
+    public static boolean isUuidInUse(final String uuid, final Session session) throws RepositoryException {
+        try {
+            session.getNodeByIdentifier(uuid);
+            return true;
+        } catch (ItemNotFoundException e) {
+            return false;
+        }
+    }
+
+    public static boolean propertyIsIdentical(final Property jcrProperty, final ModelProperty modelProperty)
+            throws RepositoryException, IOException {
+        return propertyIsIdentical(jcrProperty, modelProperty,
+                determineVerifiedValues(modelProperty, jcrProperty.getSession()));
+    }
+
+    public static boolean propertyIsIdentical(final Property jcrProperty, final ModelProperty modelProperty,
+                                              final List<Value> modelValues) throws RepositoryException, IOException {
+        return modelProperty.getValueType().ordinal() == jcrProperty.getType()
+                && modelProperty.isMultiple() == jcrProperty.isMultiple()
+                && valuesAreIdentical(modelProperty, modelValues, jcrProperty);
+    }
+
+    public static boolean valuesAreIdentical(final ModelProperty modelProperty, final List<Value> modelValues,
+                                             final Property jcrProperty) throws RepositoryException, IOException {
+        if (modelProperty.isMultiple()) {
+            final javax.jcr.Value[] jcrValues = jcrProperty.getValues();
+            if (modelValues.size() != jcrValues.length) {
+                return false;
+            }
+            for (int i = 0; i < jcrValues.length; i++) {
+                if (!valueIsIdentical(modelProperty, modelValues.get(i), jcrValues[i])) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            if (modelValues.size() > 0) {
+                return valueIsIdentical(modelProperty, modelProperty.getValue(), jcrProperty.getValue());
+            } else {
+                // No modelValue indicates that a reference failed verification (of UUID or path).
+                // We leave the current reference (existing or not) unchanged and return true to
+                // short-circuit further processing of this modelProperty.
+                return true;
+            }
         }
     }
 }

@@ -21,13 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.collections4.iterators.IteratorIterable;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cm.model.ActionItem;
 import org.onehippo.cm.model.ActionType;
@@ -55,8 +53,7 @@ public class ConfigurationContentService {
     private static final Logger log = LoggerFactory.getLogger(ConfigurationContentService.class);
     public static final String SEPARATOR = "/";
 
-    private final ValueProcessor valueProcessor = new ValueProcessor();
-    private final JcrContentProcessingService contentProcessingService = new JcrContentProcessingService(valueProcessor);
+    private final JcrContentProcessor contentProcessingService = new JcrContentProcessor();
     private final ConfigurationBaselineService configurationBaselineService;
 
     ConfigurationContentService(final ConfigurationBaselineService configurationBaselineService) {
@@ -70,11 +67,7 @@ public class ConfigurationContentService {
      * @param session active {@link Session}
      */
     public void apply(final ConfigurationModelImpl model, final Session session) throws RepositoryException {
-
-        final Stream<ModuleImpl> modulesStream = model.getSortedGroups().stream()
-                .flatMap(g -> g.getProjects().stream())
-                .flatMap(p -> p.getModules().stream());
-        for (ModuleImpl module : new IteratorIterable<>(modulesStream.iterator())) {
+        for (ModuleImpl module : model.getModules()) {
             if (isNotEmpty(module.getActionsMap()) || isNotEmpty(module.getContentDefinitions())) {
                 apply(module, model, session);
             }

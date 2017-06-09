@@ -1210,7 +1210,8 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
                 + "            path: /undefined\n"
                 + "";
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationConfigService.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn()
+                .trap(ConfigurationConfigService.class, ValueProcessor.class).build()) {
             applyDefinitions(definition);
             assertFalse(testNode.hasProperty("foo/bar/uuid-reference"));
             assertTrue(testNode.hasProperty("foo/bar/uuid-references"));
