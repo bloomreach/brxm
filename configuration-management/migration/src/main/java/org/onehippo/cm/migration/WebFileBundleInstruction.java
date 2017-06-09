@@ -28,8 +28,10 @@ import org.onehippo.cm.model.impl.ConfigSourceImpl;
 public class WebFileBundleInstruction extends InitializeInstruction {
 
     public WebFileBundleInstruction(final EsvNode instructionNode, final Type type,
-                                    final InitializeInstruction combinedWith) throws EsvParseException {
-        super(instructionNode, type, combinedWith);
+                                    final InitializeInstruction combinedWith, final String[] contentRoots)
+            throws EsvParseException
+    {
+        super(instructionNode, type, combinedWith, contentRoots);
     }
 
     public void processWebFileBundle(final ConfigSourceImpl source, final File moduleRoot) throws IOException {

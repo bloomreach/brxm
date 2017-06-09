@@ -31,8 +31,9 @@ import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
-import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.ContentSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
@@ -48,8 +49,10 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
     private EsvNode sourceNode;
 
     public SourceInitializeInstruction(final EsvNode instructionNode, final Type type,
-                                       final InitializeInstruction combinedWith) throws EsvParseException {
-        super(instructionNode, type, combinedWith);
+                                       final InitializeInstruction combinedWith, final String[] contentRoots)
+            throws EsvParseException
+    {
+        super(instructionNode, type, combinedWith, contentRoots);
     }
 
     public EsvNode getSourceNode() {
@@ -74,7 +77,12 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
 
     public void processSource(final ModuleImpl module, final Map<String, DefinitionNodeImpl> nodeDefinitions,
                               final Set<DefinitionNode> deltaNodes) throws EsvParseException {
-        final SourceImpl source = module.addConfigSource(getSourcePath()); //TODO SS: review this. how to distinguish content from config definitions
+        final SourceImpl source;
+        if (isContent(getContentPath())) {
+            source = module.addContentSource(getSourcePath());
+        } else {
+            source = module.addConfigSource(getSourcePath());
+        }
         log.info("Processing " + getType().getPropertyName() + " " + getContentPath() + " from file " + getResourcePath());
         processNode(sourceNode, getContentPath(), source, null, nodeDefinitions, deltaNodes);
     }
@@ -121,7 +129,12 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
             if (parentNode != null) {
                 defNode = parentNode.addNode(node.getName());
             } else {
-                ConfigDefinitionImpl def = ((ConfigSourceImpl)source).addConfigDefinition();
+                ContentDefinitionImpl def;
+                if (isContent(path)) {
+                    def = ((ContentSourceImpl)source).addContentDefinition();
+                } else {
+                    def = ((ConfigSourceImpl)source).addConfigDefinition();
+                }
                 defNode = new DefinitionNodeImpl(path, node.getName(), def);
                 def.setNode(defNode);
             }
@@ -177,7 +190,13 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
             processProperty(node, defNode, property, deltaNode);
         }
         for (EsvNode child : node.getChildren()) {
-            processNode(child, path + "/" + child.getName(), source, defNode, nodeDefinitions, deltaNodes);
+            final String childPath = path + "/" + child.getName();
+            if (!isContent(path) && isContent(childPath)) {
+                log.warn("Ignoring node " + childPath + " defined at " + child.getSourceLocation() +
+                        ": switching from configuration to content not supported yet.");
+            } else {
+                processNode(child, childPath, source, defNode, nodeDefinitions, deltaNodes);
+            }
         }
     }
 

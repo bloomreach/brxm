@@ -42,6 +42,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.MigrationConfigWriter;
@@ -73,6 +75,7 @@ public class Esv2Yaml {
     private static final String AGGREGATE = "a";
     private static final String MODE = "m";
     private static final String ECM_LOCATION = "i";
+    private static final String CONTENT_ROOTS = "content";
     private static final String[] MAIN_YAML_NAMES = {"main", "root", "base", "index"};
 
     private final File src;
@@ -82,6 +85,7 @@ public class Esv2Yaml {
     private final ModuleImpl module;
     private final boolean aggregate;
     private final MigrationMode migrationMode;
+    private final String[] contentRoots;
 
     public static void main(final String[] args) throws IOException, EsvParseException, ParseException {
 
@@ -95,7 +99,7 @@ public class Esv2Yaml {
                 final boolean aggregate = cmd.hasOption(AGGREGATE);
                 final String src = cmd.getOptionValue(SOURCE_FOLDER);
                 final String target = cmd.getOptionValue(TARGET_FOLDER);
-
+                final String[] contentRoots = parseContentRoots(cmd.getOptionValue(CONTENT_ROOTS));
 
                 final MigrationMode mode = cmd.hasOption(MODE) ? MigrationMode.valueOf(cmd.getOptionValue(MODE).toUpperCase()) : MigrationMode.COPY;
                 if (mode == MigrationMode.GIT && !Objects.equals(src, target)) {
@@ -103,9 +107,9 @@ public class Esv2Yaml {
                 }
 
                 if (cmd.hasOption(ECM_LOCATION)) {
-                    new Esv2Yaml(new File(cmd.getOptionValue(ECM_LOCATION)), new File(src), new File(target), aggregate, mode).convert();
+                    new Esv2Yaml(new File(cmd.getOptionValue(ECM_LOCATION)), new File(src), new File(target), aggregate, mode, contentRoots).convert();
                 } else {
-                    new Esv2Yaml(new File(src), new File(target), aggregate, mode).convert();
+                    new Esv2Yaml(new File(src), new File(target), aggregate, mode, contentRoots).convert();
                 }
             } else {
                 final HelpFormatter formatter = new HelpFormatter();
@@ -132,18 +136,41 @@ public class Esv2Yaml {
         options.addOption(TARGET_FOLDER, "target", true, "directory for writing the output yaml (will be emptied first)");
         options.addOption(MODE, "mode", true, "File system mode. git/move/copy. Default is copy");
         options.addOption(AGGREGATE, "aggregate", false, "Aggregate module");
+        options.addOption(CONTENT_ROOTS, "content", true, "Content root paths. Comma separated.");
         return options;
     }
 
-    public Esv2Yaml(final File src, final File target, final boolean aggregate, MigrationMode mode) throws IOException, EsvParseException {
-        this(null, src, target, aggregate, mode);
+    private static String[] parseContentRoots(final String optionValue) {
+        if (optionValue == null) {
+            return new String[0];
+        }
+        final String[] split = optionValue.split(",");
+        for (int i = 0; i < split.length; i++) {
+            final String contentRoot = split[i].trim();
+            if (contentRoot.equals("/")) {
+                throw new IllegalArgumentException("'/' cannot be used as content root");
+            }
+            if (!contentRoot.startsWith("/")) {
+                throw new IllegalArgumentException("Illegal content root '" + contentRoot + "'; content root must start with a '/'");
+            }
+            if (StringUtils.containsAny(contentRoot, "[", "]")) {
+                throw new IllegalArgumentException("Illegal content root '" + contentRoot + "'; content root must not contain '[' or ']'");
+            }
+            split[i] = StringUtils.removeEnd(contentRoot, "/");
+        }
+        return split;
     }
 
-    public Esv2Yaml(final File init, final File src, final File target, final boolean aggregate, MigrationMode mode) throws IOException, EsvParseException {
+    public Esv2Yaml(final File src, final File target, final boolean aggregate, MigrationMode mode, final String[] contentRoots) throws IOException, EsvParseException {
+        this(null, src, target, aggregate, mode, contentRoots);
+    }
+
+    public Esv2Yaml(final File init, final File src, final File target, final boolean aggregate, MigrationMode mode, final String[] contentRoots) throws IOException, EsvParseException {
         this.migrationMode = mode;
         this.aggregate = aggregate;
         this.src = src;
         this.target = target;
+        this.contentRoots = contentRoots;
         extensionFile = init != null ? new File(init, HIPPOECM_EXTENSION_FILE) : new File(src, HIPPOECM_EXTENSION_FILE);
         if (!extensionFile.exists() || !extensionFile.isFile()) {
             throw new IOException("File not found: " + extensionFile.getCanonicalPath());
@@ -190,7 +217,7 @@ public class Esv2Yaml {
                         if (!initializeItemNames.add(child.getName())) {
                             throw new EsvParseException("Duplicate hippo:initializeitem name: " + child.getName());
                         }
-                        InitializeInstruction.parse(child, instructions);
+                        InitializeInstruction.parse(child, instructions, contentRoots);
                     } else {
                         log.warn("Ignored " + HIPPOECM_EXTENSION_FILE + " node: " + child.getName());
                     }
@@ -231,6 +258,14 @@ public class Esv2Yaml {
                 final ConfigSourceImpl mainSource = module.addConfigSource(createSourcePath(MAIN_YAML_NAMES, sourcePaths, 0));  //TODO SS: review this. how to distinguish content from config definitions
 
                 processInitializeInstructions(mainSource, instructions);
+
+                for (String contentRoot : contentRoots) {
+                    final ConfigDefinitionImpl definition = mainSource.addConfigDefinition();
+                    final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(
+                            contentRoot, StringUtils.substringAfterLast(contentRoot, "/"), definition);
+                    definitionNode.setCategory(ConfigurationItemCategory.CONTENT);
+                    definition.setNode(definitionNode);
+                }
                 serializeModule();
             } else {
                 throw new EsvParseException(extensionFile.getCanonicalPath() +

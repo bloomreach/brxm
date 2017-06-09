@@ -153,6 +153,7 @@ public class InitializeInstruction {
     private File resource;
     private String contentPath;
     private String sourcePath;
+    private final String[] contentRoots;
 
     protected boolean isDownStream(final InitializeInstruction other) {
         if (other.getType() != Type.CONTENTRESOURCE) {
@@ -189,7 +190,16 @@ public class InitializeInstruction {
         return false;
     }
 
-    public static void parse(final EsvNode node, final List<InitializeInstruction> instructions) throws EsvParseException {
+    public boolean isContent(final String path) {
+        for (String root : contentRoots) {
+            if (path.startsWith(root)) {
+                return path.length() == root.length() || path.charAt(root.length()) == '/';
+            }
+        }
+        return false;
+    }
+
+    public static void parse(final EsvNode node, final List<InitializeInstruction> instructions, final String[] contentRoots) throws EsvParseException {
         // cater for initializeitems having 2 instructions (namespace+cnd, contentdelete+contentresource)
         InitializeInstruction first = null;
         InitializeInstruction second = null;
@@ -204,22 +214,22 @@ public class InitializeInstruction {
                 InitializeInstruction instruction;
                 switch (type) {
                     case CONTENTRESOURCE:
-                        instruction = new SourceInitializeInstruction(node, type, first);
+                        instruction = new SourceInitializeInstruction(node, type, first, contentRoots);
                         break;
                     case RESOURCEBUNDLES:
-                        instruction = new ResourcebundlesInitializeInstruction(node, type, first);
+                        instruction = new ResourcebundlesInitializeInstruction(node, type, first, contentRoots);
                         break;
                     case CONTENTDELETE:
                     case CONTENTPROPDELETE:
                     case CONTENTPROPSET:
                     case CONTENTPROPADD:
-                        instruction = new ContentInitializeInstruction(node, type, first);
+                        instruction = new ContentInitializeInstruction(node, type, first, contentRoots);
                         break;
                     case WEBFILEBUNDLE:
-                        instruction = new WebFileBundleInstruction(node, type, first);
+                        instruction = new WebFileBundleInstruction(node, type, first, contentRoots);
                         break;
                     default:
-                        instruction = new InitializeInstruction(node, type, first);
+                        instruction = new InitializeInstruction(node, type, first, contentRoots);
                 }
                 if (first != null) {
                     second = instruction;
@@ -241,13 +251,16 @@ public class InitializeInstruction {
     }
 
     protected InitializeInstruction(final EsvNode instructionNode, final Type type,
-                                    final InitializeInstruction combinedWith) throws EsvParseException {
+                                    final InitializeInstruction combinedWith, final String[] contentRoots)
+            throws EsvParseException
+    {
         this.instructionNode = instructionNode;
         this.name = instructionNode.getName();
         this.type = type;
         this.combinedWith = combinedWith;
         final String value = getPropertyValue("hippo:sequence", PropertyType.DOUBLE, false);
         this.sequence = value != null ? Double.valueOf(value) : -1.0;
+        this.contentRoots = contentRoots;
     }
 
     public void setCombinedWith(final InitializeInstruction combinedWith) {

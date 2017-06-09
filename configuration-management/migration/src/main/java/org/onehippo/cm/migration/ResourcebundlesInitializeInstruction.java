@@ -42,8 +42,10 @@ public class ResourcebundlesInitializeInstruction extends InitializeInstruction 
     public static final String RESOURCEBUNDLE_NT = "hipposys:resourcebundle";
 
     public ResourcebundlesInitializeInstruction(final EsvNode instructionNode, final Type type,
-                                                final InitializeInstruction combinedWith) throws EsvParseException {
-        super(instructionNode, type, combinedWith);
+                                                final InitializeInstruction combinedWith, final String[] contentRoots)
+            throws EsvParseException
+    {
+        super(instructionNode, type, combinedWith, contentRoots);
     }
 
     public void processResourceBundles(final ModuleImpl module, final ConfigDefinitionImpl resourceBundleParents,

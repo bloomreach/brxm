@@ -41,8 +41,10 @@ import static org.onehippo.cm.model.PropertyType.SINGLE;
 public class ContentInitializeInstruction extends InitializeInstruction {
 
     protected ContentInitializeInstruction(final EsvNode instructionNode, final Type type,
-                                           final InitializeInstruction combinedWith) throws EsvParseException {
-        super(instructionNode, type, combinedWith);
+                                           final InitializeInstruction combinedWith, final String[] contentRoots)
+            throws EsvParseException
+    {
+        super(instructionNode, type, combinedWith, contentRoots);
     }
 
     private String getNodePath() {
@@ -112,9 +114,21 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                         }
                     }
                 } else {
+                    if (isContent(nodePath)) {
+                        log.warn("Ignoring hippo:contentdelete for " + nodePath + " defined at "
+                                + getInstructionNode().getSourceLocation()
+                                + ": node not found in this module, manual conversion required");
+                        break;
+                    }
                     log.info("Adding hippo:contentdelete for " + nodePath + " defined at " + getInstructionNode().getSourceLocation());
                 }
                 if (node == null) {
+                    if (isContent(nodePath)) {
+                        log.warn("Ignoring hippo:contentdelete for " + nodePath + " defined at "
+                                + getInstructionNode().getSourceLocation()
+                                + ": node not found in this module, manual conversion required");
+                        break;
+                    }
                     ConfigDefinitionImpl def = ((ConfigSourceImpl)source).addConfigDefinition();
                     node = new DefinitionNodeImpl(nodePath, name, def);
                     def.setNode(node);
@@ -152,11 +166,23 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                 }
                             }
                         } else {
+                            if (isContent(nodePath)) {
+                                log.warn("Ignoring hippo:contentpropdelete for " + nodePath + " defined at "
+                                        + getInstructionNode().getSourceLocation()
+                                        + ": parent node not found in this module, manual conversion required");
+                                break;
+                            }
                             log.info("Merging hippo:contentpropdelete for " + nodePath + " defined at " + node.getSourceLocation());
                             // add delete property at the end
                         }
                     }
                 } else {
+                    if (isContent(nodePath)) {
+                        log.warn("Ignoring hippo:contentpropdelete for " + nodePath + " defined at "
+                                + getInstructionNode().getSourceLocation()
+                                + ": parent node not found in this module, manual conversion required");
+                        break;
+                    }
                     node = findNearestParent(nodePath, nodeDefinitions, deltaNodes);
                     if (node != null) {
                         if (node.isDeleted()) {
@@ -226,6 +252,12 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                         log.info("Merging " + getType().getPropertyName() + " for " + nodePath + " defined at " + node.getSourceLocation());
                     }
                 } else {
+                    if (isContent(nodePath)) {
+                        log.warn("Ignoring " + getType().getPropertyName() + " " + getName() + " for " + nodePath
+                                + " defined at " + getInstructionNode().getSourceLocation()
+                                + ": parent node not found in this module, manual conversion required");
+                        break;
+                    }
                     node = findNearestParent(nodePath, nodeDefinitions, deltaNodes);
                     if (node != null) {
                         if (node.isDeleted()) {
