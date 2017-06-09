@@ -448,7 +448,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         return new ResourceModel(INVALID_TAXONOMY_KEY);
     }
 
-    private void addControlsToListItem(ListItem<?> item) {
+    private void addControlsToListItem(final ListItem<?> item) {
         final boolean isEditMode = (mode == Mode.EDIT);
         final int itemIndex = item.getIndex();
 
@@ -482,7 +482,23 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         final MarkupContainer removeLink = new AjaxLink("remove") {
             @Override
             public void onClick(AjaxRequestTarget target) {
-                // TODO
+                final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModelObject());
+                final String curKey = (String) item.getModelObject();
+                if (classification.containsKey(curKey)) {
+                    classification.removeKey(curKey);
+                    if (classification.isCanonised()) {
+                        // change canonical key if current is the one that is removed
+                        if (curKey.equals(classification.getCanonical())) {
+                            classification.setCanonical(null);
+                            final List<String> allKeys = classification.getKeys();
+                            if (!allKeys.isEmpty()) {
+                                classification.setCanonical(allKeys.get(0));
+                            }
+                        }
+                    }
+                    dao.save(classification);
+                    target.add(TaxonomyPickerPlugin.this);
+                }
             }
         };
         removeLink.setEnabled(isEditMode);
