@@ -258,9 +258,15 @@ describe('RightSidePanel', () => {
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     spyOn($scope, '$broadcast');
 
+    spyOn($ctrl, '_confirmSaveOrDiscardChanges').and.returnValue($q.resolve());
+
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
+    const onCloseCallback = SidePanelService.initialize.calls.mostRecent().args[3];
     onOpenCallback('test');
+    onCloseCallback();
     $rootScope.$digest();
+
+    expect($ctrl._confirmSaveOrDiscardChanges).toHaveBeenCalled();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');

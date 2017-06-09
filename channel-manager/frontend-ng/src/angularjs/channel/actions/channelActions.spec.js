@@ -32,6 +32,7 @@ describe('ChannelActions', () => {
   let HippoIframeService;
   let SessionService;
   let SiteMapService;
+  let SidePanelService;
 
   const confirmDialog = jasmine.createSpyObj('confirmDialog', ['title', 'textContent', 'ok', 'cancel']);
   confirmDialog.title.and.returnValue(confirmDialog);
@@ -55,6 +56,7 @@ describe('ChannelActions', () => {
       _FeedbackService_,
       _SessionService_,
       _SiteMapService_,
+      _SidePanelService_,
     ) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
@@ -68,6 +70,7 @@ describe('ChannelActions', () => {
       HippoIframeService = _HippoIframeService_;
       SessionService = _SessionService_;
       SiteMapService = _SiteMapService_;
+      SidePanelService = _SidePanelService_;
     });
 
     spyOn($translate, 'instant');
@@ -333,7 +336,16 @@ describe('ChannelActions', () => {
     const $ctrl = compileDirectiveAndGetController();
     spyOn(CmsService, 'publish');
 
+    SidePanelService.panels = {
+      right: {
+        onCloseCallback: () => angular.noop(),
+      },
+    };
+
+    spyOn(SidePanelService.panels.right, 'onCloseCallback').and.returnValue($q.resolve());
+
     $ctrl.closeChannel();
+    $scope.$apply();
 
     expect(CmsService.publish).toHaveBeenCalledWith('close-channel');
   });
