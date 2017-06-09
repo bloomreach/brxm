@@ -42,7 +42,7 @@ public class ConfigurationModelImplTest {
         assertEquals("", root.getName());
         assertNull(root.getParent());
         assertEquals(0, root.getNodes().size());
-        assertEquals(2, root.getProperties().size());
+        assertEquals(3, root.getProperties().size());
     }
 
     @Test
@@ -317,14 +317,14 @@ public class ConfigurationModelImplTest {
 
         assertEquals(2, model.getNamespaceDefinitions().size());
 
-        final List<ContentDefinitionImpl> definitions = getContentDefinitionsFromFirstModule(model);
+        final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
 
         assertEquals(5, definitions.size());
         String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
         assertEquals("[/a, /a/b, /a/b/a, /a/b/c, /a/b/c/d]", roots);
     }
 
-    private List<ContentDefinitionImpl> getContentDefinitionsFromFirstModule(final ConfigurationModelImpl configurationModel) {
+    private List<ConfigDefinitionImpl> getConfigDefinitionsFromFirstModule(final ConfigurationModelImpl configurationModel) {
         final ModuleImpl module = configurationModel.getSortedGroups().get(0).getProjects().get(0).getModules().get(0);
         return new ArrayList<>(module.getConfigDefinitions());
     }
@@ -342,7 +342,7 @@ public class ConfigurationModelImplTest {
         String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
         assertEquals("[myhippoproject, hishippoproject]", namespaces);
 
-        final List<ContentDefinitionImpl> definitions = getContentDefinitionsFromFirstModule(model);
+        final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
 
         assertEquals(9, definitions.size());
         String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
@@ -362,7 +362,7 @@ public class ConfigurationModelImplTest {
         String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
         assertEquals("[myhippoproject, hishippoproject]", namespaces);
 
-        final List<ContentDefinitionImpl> definitions = getContentDefinitionsFromFirstModule(model);
+        final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
 
         assertEquals(9, definitions.size());
         String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();

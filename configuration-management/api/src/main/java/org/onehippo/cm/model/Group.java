@@ -17,7 +17,7 @@ package org.onehippo.cm.model;
 
 import java.util.List;
 
-public interface Group extends Orderable {
+public interface Group extends OrderableByName {
     /**
      * @return The immutable list of {@link Project}s currently in this Group.
      */

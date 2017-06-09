@@ -63,13 +63,17 @@ public class FileConfigurationWriter {
         writeModule(module, DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
     }
 
-        public void writeModule(final Module module, final boolean explicitSequencing,
+    public void writeModule(final Module module, final boolean explicitSequencing,
                             final ModuleContext moduleContext) throws IOException {
 
         // TODO: remove deleted resources first
+
         moduleContext.collectExistingFilesAndResolveNewResources();
 
         for (final Source source : module.getSources()) {
+
+            // TODO: optimize by writing only changed sources
+            // TODO: what about writes to the same directory as source?
 
             final SourceSerializer sourceSerializer;
 

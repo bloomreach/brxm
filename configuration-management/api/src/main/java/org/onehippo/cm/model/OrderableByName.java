@@ -15,11 +15,15 @@
  */
 package org.onehippo.cm.model;
 
-public interface DefinitionProperty extends DefinitionItem, ModelProperty {
+import java.util.Set;
 
-    PropertyOperation getOperation();
+public interface OrderableByName {
 
-    default boolean isDeleted() {
-        return getOperation() == PropertyOperation.DELETE;
-    }
+    String getName();
+
+    /**
+     * @return The <strong>ordered</strong> immutable set of {@link String}s after which
+     * this {@link OrderableByName} instance should be loaded.
+     */
+    Set<String> getAfter();
 }

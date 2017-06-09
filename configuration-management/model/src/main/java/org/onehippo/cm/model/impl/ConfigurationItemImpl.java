@@ -24,22 +24,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationItem;
 import org.onehippo.cm.model.util.SnsUtils;
 
-public abstract class ConfigurationItemImpl implements ConfigurationItem {
+public abstract class ConfigurationItemImpl extends ModelItemImpl implements ConfigurationItem {
 
-    private String name;
     private ConfigurationNodeImpl parent;
     private final List<DefinitionItemImpl> modifiableDefinitions = new ArrayList<>();
     private final List<DefinitionItemImpl> definitions = Collections.unmodifiableList(modifiableDefinitions);
     private boolean deleted;
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
 
     @Override
     public String getPath() {

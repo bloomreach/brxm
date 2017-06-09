@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,13 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model;
+package org.onehippo.cm.model.impl;
 
-public interface DefinitionProperty extends DefinitionItem, ModelProperty {
+import org.onehippo.cm.model.ModelItem;
 
-    PropertyOperation getOperation();
+public abstract class ModelItemImpl implements ModelItem {
 
-    default boolean isDeleted() {
-        return getOperation() == PropertyOperation.DELETE;
+    protected String name;
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String toString() {
+        return getClass().getSimpleName()+"{path='"+getPath()+"'}";
     }
 }

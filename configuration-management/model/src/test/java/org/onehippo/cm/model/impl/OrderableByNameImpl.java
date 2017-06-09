@@ -21,21 +21,22 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.onehippo.cm.model.Orderable;
+import org.onehippo.cm.model.OrderableByName;
 
 /**
- * Dummy implementation of {@link Orderable} for testing the sorting of orderables.
+ * Dummy implementation of {@link OrderableByName} for testing the sorting of orderables.
+ * TODO: use this as a base class to share code in Group-/Project-/Module-Impl
  */
-public class OrderableImpl implements Orderable {
+public class OrderableByNameImpl implements OrderableByName {
     private final String name;
     private final Set<String> after;
 
-    public OrderableImpl(final String name) {
+    public OrderableByNameImpl(final String name) {
         this.name = name;
         after = Collections.emptySet();
     }
 
-    public OrderableImpl(final String name, final String afterCsv) {
+    public OrderableByNameImpl(final String name, final String afterCsv) {
         this.name = name;
         after = new LinkedHashSet<>(Arrays.asList(afterCsv.split("\\s*,\\s*")));
     }

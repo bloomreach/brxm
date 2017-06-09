@@ -325,6 +325,16 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         return this;
     }
 
+    /**
+     * @return true iff no definitions are defined here -- client must call build() before this method
+     */
+    public boolean isEmpty() {
+        return namespaceDefinitions.isEmpty()
+            && configDefinitions.isEmpty()
+            && contentDefinitions.isEmpty()
+            && webFileBundleDefinitions.isEmpty();
+    }
+
     private void ensureSingleSourceForNamespaces(final AbstractDefinitionImpl namespaceDefinition) {
         if (!namespaceDefinitions.isEmpty()
                 && !namespaceDefinition.getSource().getPath().equals(namespaceDefinitions.get(0).getSource().getPath())) {
@@ -638,8 +648,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
                         source.getPath(), configResourceInputProvider.getBaseURL() + source.getPath(), newModule);
             }
             for (ContentSourceImpl source : getContentSources()) {
-                contentSourceParser.parse(contentResourceInputProvider.getResourceInputStream(null, source.getPath()),
-                        source.getPath(), source.getPath(), newModule);
+                contentSourceParser.parse(contentResourceInputProvider.getResourceInputStream(null, "/" + source.getPath()),
+                        source.getPath(), configResourceInputProvider.getBaseURL() + source.getPath(), newModule);
             }
 
             return newModule;

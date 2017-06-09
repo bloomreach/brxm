@@ -61,4 +61,8 @@ public class NamespaceDefinitionImpl extends AbstractDefinitionImpl implements N
     public ConfigSourceImpl getSource() {
         return (ConfigSourceImpl) super.getSource();
     }
+
+    public String toString() {
+        return getClass().getSimpleName()+"{prefix='"+getPrefix()+", origin="+getOrigin()+"'}";
+    }
 }

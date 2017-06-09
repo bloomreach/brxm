@@ -35,8 +35,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Group;
 import org.slf4j.Logger;
@@ -49,7 +52,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationModelImpl.class);
 
-    private static final OrderableListSorter<GroupImpl> groupSorter = new OrderableListSorter<>(Group.class.getSimpleName());
+    private static final OrderableByNameListSorter<GroupImpl> groupSorter = new OrderableByNameListSorter<>(Group.class.getSimpleName());
 
     private final Map<String, GroupImpl> groupMap = new HashMap<>();
     private final List<GroupImpl> groups = new ArrayList<>();
@@ -71,9 +74,28 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     // Used for cleanup when done with this ConfigurationModel
     private Set<FileSystem> filesystems = new HashSet<>();
 
+    private long buildTimeStamp = 0;
+
     @Override
     public List<GroupImpl> getSortedGroups() {
         return sortedGroups;
+    }
+
+    /**
+     * Convenience method for client code that wants to iterate over modules using streams.
+     */
+    public Stream<ModuleImpl> getModulesStream() {
+        return getSortedGroups().stream()
+                .flatMap(g -> g.getProjects().stream())
+                .flatMap(p -> p.getModules().stream());
+    }
+
+    /**
+     * Convenience method for client code that wants to iterate over modules using a for-each loop.
+     * DO NOT reuse the return value in more than one loop, as the underlying stream will not support this!
+     */
+    public Iterable<ModuleImpl> getModules() {
+        return getModulesStream()::iterator;
     }
 
     @Override
@@ -146,12 +168,31 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @return this
      */
     public ConfigurationModelImpl addModule(final ModuleImpl module) {
-        addGroup(module.getProject().getGroup());
+        // this duplicates much of the logic of addGroup(),
+        // but it's necessary to avoid grabbing undesired sibling modules
+        final GroupImpl group = module.getProject().getGroup();
+        if (!groupMap.containsKey(group.getName())) {
+            groupMap.put(group.getName(), new GroupImpl(group.getName()));
+        }
+        final GroupImpl consolidatedGroup = groupMap.get(group.getName());
+        consolidatedGroup.addAfter(group.getAfter());
+
+        final ProjectImpl project = module.getProject();
+        final ProjectImpl consolidatedProject = consolidatedGroup.getOrAddProject(project.getName());
+        consolidatedProject.addAfter(project.getAfter());
+
+        if (!replacements.contains(module)) {
+            consolidatedProject.addModule(module);
+        }
+
+        // now that we've added the module, store a reference for filtering out new copies we might encounter later
         replacements.add(module);
         return this;
     }
 
     public ConfigurationModelImpl build() {
+        buildTimeStamp = System.currentTimeMillis();
+
         buildModel();
         buildConfiguration();
         return this;
@@ -217,12 +258,8 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     public String getDigest() {
         TreeMap<ModuleImpl,TreeMap<String,String>> manifest = new TreeMap<>();
         // for each module, accumulate manifest items
-        for (GroupImpl g : getSortedGroups()) {
-            for (ProjectImpl p : g.getProjects()) {
-                for (ModuleImpl m : p.getModules()) {
-                    m.compileManifest(this, manifest);
-                }
-            }
+        for (ModuleImpl m : getModules()) {
+            m.compileManifest(this, manifest);
         }
 
         final String modelManifest = manifestToString(manifest);
@@ -312,6 +349,11 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     @Override
     public ConfigurationNodeImpl resolveNode(String path) {
+        // special handling for root node
+        if (path.equals("/")) {
+            return getConfigurationRootNode();
+        }
+
         String[] segments = StringUtils.stripStart(path, "/").split("/");
 
         ConfigurationNodeImpl currentNode = getConfigurationRootNode();
@@ -350,5 +392,16 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
         // check for prefix match on path in reverse lexical order -- first match is longest prefix match
         return getContentDefinitions().stream().filter(cd -> p.startsWith(Paths.get(cd.getNode().getPath()))).findFirst();
+    }
+
+    @Override
+    public String toString() {
+        return ConfigurationModelImpl.class.getSimpleName()
+                + "{built="
+                + ((buildTimeStamp == 0)?
+                    "never"
+                    :DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.format(buildTimeStamp))
+                + "}";
+
     }
 }

@@ -26,25 +26,25 @@ import java.util.stream.Collectors;
 import org.onehippo.cm.model.CircularDependencyException;
 import org.onehippo.cm.model.DuplicateNameException;
 import org.onehippo.cm.model.MissingDependencyException;
-import org.onehippo.cm.model.Orderable;
+import org.onehippo.cm.model.OrderableByName;
 
 /**
- * Topological <em>in place</em> {@link #sort(List) sorter} of a <em>modifiable</em> DAG list of {@link Orderable}s.
+ * Topological <em>in place</em> {@link #sort(List) sorter} of a <em>modifiable</em> DAG list of {@link OrderableByName}s.
  * <p>
  * After sorting the provided list will be cleared and filled again with the sorted result!
  * </p>
  * <p>
- * To guarantee a stable ordered result, independent of the ordering of the {@code Orderable}s in the list
- * and the ordering of their {@link Orderable#getAfter dependencies}, they all are processed in
+ * To guarantee a stable ordered result, independent of the ordering of the {@code OrderableByName}s in the list
+ * and the ordering of their {@link OrderableByName#getAfter dependencies}, they all are processed in
  * alphabetically sorted order.
  * </p>
  * <p>
- * The {@link #sort(List)} provided list of {@code Orderable}s is automatically verified against duplicate
- * {@link Orderable#getName() named} elements and against cyclic or missing dependencies, and will throw a
+ * The {@link #sort(List)} provided list of {@code OrderableByName}s is automatically verified against duplicate
+ * {@link OrderableByName#getName() named} elements and against cyclic or missing dependencies, and will throw a
  * {@link DuplicateNameException}, {@link CircularDependencyException} or {@link MissingDependencyException}
  * respectively when encountered.
  * </p>
- * <p>The {@link #OrderableListSorter(String)} constructor requires a {@code orderableTypeName} parameter which
+ * <p>The {@link #OrderableByNameListSorter(String)} constructor requires a {@code orderableTypeName} parameter which
  * will be used for constructing the above mentioned exceptions error message.</p>
  * <p>
  * Usage:
@@ -61,11 +61,11 @@ import org.onehippo.cm.model.Orderable;
  *     https://en.wikipedia.org/wiki/Topological_sorting#Depth-first_search</a>
  * </p>
  */
-public class OrderableListSorter<T extends Orderable> {
+public class OrderableByNameListSorter<T extends OrderableByName> {
 
     private final String orderableTypeName;
 
-    public OrderableListSorter(final String orderableTypeName) {
+    public OrderableByNameListSorter(final String orderableTypeName) {
         this.orderableTypeName = orderableTypeName;
     }
 

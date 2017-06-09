@@ -33,7 +33,7 @@ public class ProjectImpl implements Project {
 
     private static final Logger log = LoggerFactory.getLogger(ProjectImpl.class);
 
-    private static final OrderableListSorter<ModuleImpl> modulesSorter = new OrderableListSorter<>(Module.class.getSimpleName());
+    private static final OrderableByNameListSorter<ModuleImpl> modulesSorter = new OrderableByNameListSorter<>(Module.class.getSimpleName());
 
     private final String name;
     private final GroupImpl group;

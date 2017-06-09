@@ -21,16 +21,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.onehippo.cm.model.Orderable;
+import org.onehippo.cm.model.OrderableByName;
 import org.onehippo.cm.model.CircularDependencyException;
 import org.onehippo.cm.model.DuplicateNameException;
 import org.onehippo.cm.model.MissingDependencyException;
 
 import static org.junit.Assert.assertEquals;
 
-public class OrderableListSorterTest {
+public class OrderableByNameListSorterTest {
 
-    private static final OrderableListSorter<OrderableImpl> orderableSorter = new OrderableListSorter<>(Orderable.class.getSimpleName());
+    private static final OrderableByNameListSorter<OrderableByNameImpl> orderableSorter = new OrderableByNameListSorter<>(OrderableByName.class.getSimpleName());
 
     /*
      * test duplicate name detection
@@ -38,13 +38,13 @@ public class OrderableListSorterTest {
 
     @Test
     public void duplicate_names() {
-        OrderableImpl o1 = new OrderableImpl("o1", "");
-        OrderableImpl o2 = new OrderableImpl("o1", "");
+        OrderableByNameImpl o1 = new OrderableByNameImpl("o1", "");
+        OrderableByNameImpl o2 = new OrderableByNameImpl("o1", "");
 
         try {
             orderableSorter.sort(list(o1, o2));
         } catch (DuplicateNameException e) {
-            assertEquals("Duplicate Orderable named 'o1'.", e.getMessage());
+            assertEquals("Duplicate OrderableByName named 'o1'.", e.getMessage());
         }
     }
 
@@ -54,55 +54,55 @@ public class OrderableListSorterTest {
 
     @Test
     public void self_circular_dependency() {
-        OrderableImpl o1 = new OrderableImpl("o1", "o1");
-        OrderableImpl o2 = new OrderableImpl("o2", "");
+        OrderableByNameImpl o1 = new OrderableByNameImpl("o1", "o1");
+        OrderableByNameImpl o2 = new OrderableByNameImpl("o2", "");
 
         try {
             orderableSorter.sort(list(o1, o2));
         } catch (CircularDependencyException e) {
-            assertEquals("Orderable 'o1' has a circular dependency: [o1 -> o1].", e.getMessage());
+            assertEquals("OrderableByName 'o1' has a circular dependency: [o1 -> o1].", e.getMessage());
         }
     }
 
     @Test
     public void two_wise_circular_dependency() {
-        OrderableImpl o1 = new OrderableImpl("o1","o2");
-        OrderableImpl o2 = new OrderableImpl("o2","o1");
+        OrderableByNameImpl o1 = new OrderableByNameImpl("o1","o2");
+        OrderableByNameImpl o2 = new OrderableByNameImpl("o2","o1");
 
         try {
             orderableSorter.sort(list(o1, o2));
         } catch (CircularDependencyException e) {
-            assertEquals("Orderable 'o1' has a circular dependency: [o1 -> o2 -> o1].", e.getMessage());
+            assertEquals("OrderableByName 'o1' has a circular dependency: [o1 -> o2 -> o1].", e.getMessage());
         }
     }
 
     @Test
     public void three_wise_circular_dependency() {
-        OrderableImpl o1 = new OrderableImpl("o1","o2");
-        OrderableImpl o2 = new OrderableImpl("o2","o3");
-        OrderableImpl o3 = new OrderableImpl("o3","o1");
+        OrderableByNameImpl o1 = new OrderableByNameImpl("o1","o2");
+        OrderableByNameImpl o2 = new OrderableByNameImpl("o2","o3");
+        OrderableByNameImpl o3 = new OrderableByNameImpl("o3","o1");
 
         try {
             orderableSorter.sort(list(o1, o2, o3));
         } catch (CircularDependencyException e) {
-            assertEquals("Orderable 'o1' has a circular dependency: [o1 -> o2 -> o3 -> o1].", e.getMessage());
+            assertEquals("OrderableByName 'o1' has a circular dependency: [o1 -> o2 -> o3 -> o1].", e.getMessage());
         }
     }
 
     @Test
     public void complex_multiple_circular_dependencies() {
         // o2 is part of 2 circular dependencies
-        OrderableImpl o1 = new OrderableImpl("o1","o3");
-        OrderableImpl o2 = new OrderableImpl("o2","o1, o2a");
-        OrderableImpl o3 = new OrderableImpl("o3","o2");
+        OrderableByNameImpl o1 = new OrderableByNameImpl("o1","o3");
+        OrderableByNameImpl o2 = new OrderableByNameImpl("o2","o1, o2a");
+        OrderableByNameImpl o3 = new OrderableByNameImpl("o3","o2");
 
-        OrderableImpl o2a = new OrderableImpl("o2a","o2b");
-        OrderableImpl o2b = new OrderableImpl("o2b","o2");
+        OrderableByNameImpl o2a = new OrderableByNameImpl("o2a","o2b");
+        OrderableByNameImpl o2b = new OrderableByNameImpl("o2b","o2");
 
         try {
             orderableSorter.sort(list(o1, o2, o3, o2a, o2b));
         } catch (CircularDependencyException e) {
-            assertEquals("Orderable 'o1' has a circular dependency: [o1 -> o3 -> o2 -> o1].", e.getMessage());
+            assertEquals("OrderableByName 'o1' has a circular dependency: [o1 -> o3 -> o2 -> o1].", e.getMessage());
         }
     }
 
@@ -112,24 +112,24 @@ public class OrderableListSorterTest {
 
     @Test
     public void missing_dependency() {
-        OrderableImpl o1 = new OrderableImpl("o1","foo");
+        OrderableByNameImpl o1 = new OrderableByNameImpl("o1","foo");
 
         try {
             orderableSorter.sort(list(o1));
         } catch (MissingDependencyException e) {
-            assertEquals("Orderable 'o1' has a missing dependency 'foo'", e.getMessage());
+            assertEquals("OrderableByName 'o1' has a missing dependency 'foo'", e.getMessage());
         }
     }
 
     @Test
     public void missing_dependency_again() {
-        OrderableImpl o1 = new OrderableImpl("o1","o2");
-        OrderableImpl o2 = new OrderableImpl("o2","foo");
+        OrderableByNameImpl o1 = new OrderableByNameImpl("o1","o2");
+        OrderableByNameImpl o2 = new OrderableByNameImpl("o2","foo");
 
         try {
             orderableSorter.sort(list(o1, o2));
         } catch (MissingDependencyException e) {
-            assertEquals("Orderable 'o2' has a missing dependency 'foo'", e.getMessage());
+            assertEquals("OrderableByName 'o2' has a missing dependency 'foo'", e.getMessage());
         }
     }
 
@@ -144,29 +144,29 @@ public class OrderableListSorterTest {
 
     @Test
     public void sort_one() {
-        OrderableImpl o1 = new OrderableImpl("a1");
+        OrderableByNameImpl o1 = new OrderableByNameImpl("a1");
         assertEquals("[a1]", sortedNames(list(o1)));
     }
 
     @Test
     public void sort_two_by_name() {
-        OrderableImpl o1 = new OrderableImpl("a1");
-        OrderableImpl o2 = new OrderableImpl("a2");
+        OrderableByNameImpl o1 = new OrderableByNameImpl("a1");
+        OrderableByNameImpl o2 = new OrderableByNameImpl("a2");
         assertEquals("[a1, a2]", sortedNames(list(o2, o1)));
     }
 
     @Test
     public void sort_two_by_dependency() {
-        OrderableImpl o1 = new OrderableImpl("a1", "a2");
-        OrderableImpl o2 = new OrderableImpl("a2");
+        OrderableByNameImpl o1 = new OrderableByNameImpl("a1", "a2");
+        OrderableByNameImpl o2 = new OrderableByNameImpl("a2");
         assertEquals("[a2, a1]", sortedNames(list(o1, o2)));
     }
 
     @Test
     public void sort_by_name() {
-        OrderableImpl o1 = new OrderableImpl("a1", "a3");
-        OrderableImpl o2 = new OrderableImpl("a2");
-        OrderableImpl o3 = new OrderableImpl("a3");
+        OrderableByNameImpl o1 = new OrderableByNameImpl("a1", "a3");
+        OrderableByNameImpl o2 = new OrderableByNameImpl("a2");
+        OrderableByNameImpl o3 = new OrderableByNameImpl("a3");
         assertEquals("[a3, a1, a2]", sortedNames(list(o1, o2, o3)));
         assertEquals("[a3, a1, a2]", sortedNames(list(o2, o1, o3)));
         assertEquals("[a3, a1, a2]", sortedNames(list(o3, o2, o1)));
@@ -174,34 +174,34 @@ public class OrderableListSorterTest {
 
     @Test
     public void sort_by_dependency() {
-        OrderableImpl o1 = new OrderableImpl("a1", "a3, a2");
-        OrderableImpl o2 = new OrderableImpl("a2");
-        OrderableImpl o3 = new OrderableImpl("a3");
+        OrderableByNameImpl o1 = new OrderableByNameImpl("a1", "a3, a2");
+        OrderableByNameImpl o2 = new OrderableByNameImpl("a2");
+        OrderableByNameImpl o3 = new OrderableByNameImpl("a3");
 
         assertEquals("[a2, a3, a1]", sortedNames(list(o1, o2, o3)));
     }
 
     @Test
     public void sort_by_name_and_dependency() {
-        OrderableImpl o1 = new OrderableImpl("a1");
-        OrderableImpl o2 = new OrderableImpl("b1", "b3");
-        OrderableImpl o3 = new OrderableImpl("b2", "a1");
-        OrderableImpl o4 = new OrderableImpl("b3", "a1");
-        OrderableImpl o5 = new OrderableImpl("a2");
-        OrderableImpl o6 = new OrderableImpl("b4", "b3");
-        OrderableImpl o7 = new OrderableImpl("c1");
+        OrderableByNameImpl o1 = new OrderableByNameImpl("a1");
+        OrderableByNameImpl o2 = new OrderableByNameImpl("b1", "b3");
+        OrderableByNameImpl o3 = new OrderableByNameImpl("b2", "a1");
+        OrderableByNameImpl o4 = new OrderableByNameImpl("b3", "a1");
+        OrderableByNameImpl o5 = new OrderableByNameImpl("a2");
+        OrderableByNameImpl o6 = new OrderableByNameImpl("b4", "b3");
+        OrderableByNameImpl o7 = new OrderableByNameImpl("c1");
 
         assertEquals("[a1, a2, b3, b1, b2, b4, c1]", sortedNames(list(o1, o2, o3, o4, o5, o6, o7)));
     }
 
-    private static List<OrderableImpl> list(OrderableImpl... args) {
-        List<OrderableImpl> result = new ArrayList<>();
+    private static List<OrderableByNameImpl> list(OrderableByNameImpl... args) {
+        List<OrderableByNameImpl> result = new ArrayList<>();
         Collections.addAll(result, args);
         return result;
     }
 
-    private static String sortedNames(List<OrderableImpl> orderables) {
+    private static String sortedNames(List<OrderableByNameImpl> orderables) {
         orderableSorter.sort(orderables);
-        return orderables.stream().map(Orderable::getName).collect(Collectors.toList()).toString();
+        return orderables.stream().map(OrderableByName::getName).collect(Collectors.toList()).toString();
     }
 }

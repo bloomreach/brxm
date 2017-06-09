@@ -15,20 +15,6 @@
  */
 package org.onehippo.cm.model;
 
-public interface ConfigurationProperty extends ConfigurationItem {
-    PropertyType getType();
+public interface ConfigurationProperty extends ConfigurationItem, ModelProperty {
 
-    boolean isMultiple();
-
-    ValueType getValueType();
-
-    /**
-     * @throws ValueFormatException if the property is multi-valued.
-     */
-    Value getValue() throws ValueFormatException;
-
-    /**
-     * @throws ValueFormatException if the property is single-valued.
-     */
-    Value[] getValues() throws ValueFormatException;
 }

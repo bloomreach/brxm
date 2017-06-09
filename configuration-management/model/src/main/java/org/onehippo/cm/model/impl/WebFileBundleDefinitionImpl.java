@@ -44,4 +44,7 @@ public class WebFileBundleDefinitionImpl extends AbstractDefinitionImpl implemen
         return (ConfigSourceImpl) super.getSource();
     }
 
+    public String toString() {
+        return getClass().getSimpleName()+"{name='"+name+", origin="+getOrigin()+"'}";
+    }
 }

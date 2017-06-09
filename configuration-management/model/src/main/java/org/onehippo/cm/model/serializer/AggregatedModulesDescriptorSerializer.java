@@ -20,15 +20,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.Orderable;
+import org.onehippo.cm.model.OrderableByName;
 import org.onehippo.cm.model.Project;
-import org.onehippo.cm.model.impl.GroupImpl;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -92,7 +90,7 @@ public class AggregatedModulesDescriptorSerializer extends AbstractBaseSerialize
         return new MappingNode(Tag.MAP, tuples, false);
     }
 
-    private List<NodeTuple> representOrderable(final Orderable orderable, String nameProperty) {
+    private List<NodeTuple> representOrderable(final OrderableByName orderable, String nameProperty) {
         final List<NodeTuple> tuples = new ArrayList<>();
         tuples.add(createStrStrTuple(nameProperty, orderable.getName()));
 

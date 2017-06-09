@@ -19,10 +19,13 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.ValueType;
+
+import static org.onehippo.cm.model.serializer.ResourceNameResolverImpl.PATH_DELIMITER;
 
 public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
 
@@ -38,6 +41,10 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
 
     public DefinitionNodeImpl(final String path, final String name, final ContentDefinitionImpl definition) {
         super(path, name, definition);
+    }
+
+    public DefinitionNodeImpl(final String path, final ContentDefinitionImpl definition) {
+        super(path, definition);
     }
 
     public DefinitionNodeImpl(final String name, final DefinitionNodeImpl parent) {

@@ -107,7 +107,6 @@ public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
 
         ClasspathConfigurationModelReader classpathReader = new ClasspathConfigurationModelReader();
         ConfigurationModelImpl model = classpathReader.read(getClass().getClassLoader(), true);
-        return model.getSortedGroups().stream().flatMap(group -> group.getProjects().stream())
-                .flatMap(project -> project.getModules().stream()).collect(Collectors.toSet());
+        return model.getModulesStream().collect(Collectors.toSet());
     }
 }

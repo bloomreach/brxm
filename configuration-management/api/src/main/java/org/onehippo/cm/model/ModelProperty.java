@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,13 +15,23 @@
  */
 package org.onehippo.cm.model;
 
-import java.util.Set;
+public interface ModelProperty extends ModelItem {
 
-public interface Orderable {
-    String getName();
+    ValueType getValueType();
+
+    PropertyType getType();
+
+    default boolean isMultiple() {
+        return getType() != PropertyType.SINGLE;
+    }
+
     /**
-     * @return The <strong>ordered</strong> immutable set of {@link String}s after which
-     * this {@link Orderable} instance should be loaded.
+     * @throws ValueFormatException if the property is multi-valued.
      */
-    Set<String> getAfter();
+    Value getValue() throws ValueFormatException;
+
+    /**
+     * @throws ValueFormatException if the property is single-valued.
+     */
+    Value[] getValues() throws ValueFormatException;
 }

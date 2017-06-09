@@ -15,19 +15,29 @@
  */
 package org.onehippo.cm.model.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.DefinitionItem;
 
-public abstract class DefinitionItemImpl implements DefinitionItem {
+import static org.onehippo.cm.model.serializer.ResourceNameResolverImpl.PATH_DELIMITER;
+
+public abstract class DefinitionItemImpl extends ModelItemImpl implements DefinitionItem {
 
     private String path;
-    private String name;
     private DefinitionNodeImpl parent;
     private ContentDefinitionImpl definition;
-    private boolean delete;
     private SourceLocationImpl sourceLocation;
 
     public DefinitionItemImpl(final String path, final String name, final ContentDefinitionImpl definition) {
+        if (StringUtils.isBlank(path)) {
+            throw new IllegalArgumentException("Item path must not be blank! name="+name);
+        }
+
+        // The global root is a special case
+        if (StringUtils.isBlank(name) && !path.equals("/")) {
+            throw new IllegalArgumentException("Item name must not be blank! path="+path);
+        }
+
         this.path = path;
         this.name = name;
         this.parent = null;
@@ -35,7 +45,19 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
         this.sourceLocation = new SourceLocationImpl();
     }
 
+    public DefinitionItemImpl(final String path, final ContentDefinitionImpl definition) {
+        this(path, StringUtils.substringAfterLast(path, PATH_DELIMITER), definition);
+    }
+
     public DefinitionItemImpl(final String name, final DefinitionNodeImpl parent) {
+        if (StringUtils.isBlank(name)) {
+            throw new IllegalArgumentException("Item name must not be blank! path="+path);
+        }
+
+        if (parent == null) {
+            throw new IllegalArgumentException("Item parent can be null only if a Definition is provided!");
+        }
+
         this.name = name;
         this.parent = parent;
         this.definition = parent.getDefinition();
@@ -48,11 +70,6 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
     @Override
     public SourceLocationImpl getSourceLocation() {
         return sourceLocation;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override

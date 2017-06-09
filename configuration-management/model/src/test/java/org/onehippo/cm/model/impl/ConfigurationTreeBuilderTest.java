@@ -64,7 +64,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push(definition);
         final ConfigurationNodeImpl root = builder.build();
 
-        assertEquals("[jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
         assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[jcr:primaryType, property1, property2]", sortedCollectionToString(a.getProperties()));
@@ -95,7 +95,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push(definition);
         final ConfigurationNodeImpl root = builder.build();
 
-        assertEquals("[jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
         assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[jcr:primaryType, property2, property1]", sortedCollectionToString(a.getProperties()));
@@ -144,7 +144,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push(definition);
         final ConfigurationNodeImpl root = builder.build();
 
-        assertEquals("[jcr:primaryType, jcr:mixinTypes, property1]", sortedCollectionToString(root.getProperties()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes, property1]", sortedCollectionToString(root.getProperties()));
         assertEquals(PropertyType.SINGLE, root.getProperty("property1").getType());
         assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -180,7 +180,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ContentDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.build();
 
-        assertEquals("[jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
         assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[jcr:primaryType, property2, property1]", sortedCollectionToString(a.getProperties()));
@@ -231,7 +231,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ContentDefinitionImpl)definitions2.get(0));
         final ConfigurationNodeImpl root = builder.build();
 
-        assertEquals("[jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
         assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[jcr:primaryType, property2, property1, property3]", sortedCollectionToString(a.getProperties()));
@@ -893,7 +893,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ContentDefinitionImpl)definitions.get(1));
         final ConfigurationNodeImpl root = builder.build();
 
-        assertEquals("[jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
         assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(a.getProperties()));
@@ -2004,7 +2004,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl root = builder.build();
         assertEquals("[b[1]]", sortedCollectionToString(root.getNodes()));
-        assertEquals("[jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
+        assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
     }
 
     @Test

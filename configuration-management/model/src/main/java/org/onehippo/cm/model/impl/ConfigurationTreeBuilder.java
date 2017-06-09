@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.apache.jackrabbit.JcrConstants.MIX_REFERENCEABLE;
 import static org.onehippo.cm.model.Constants.META_IGNORE_REORDERED_CHILDREN;
 import static org.onehippo.cm.model.PropertyOperation.ADD;
@@ -50,6 +51,15 @@ class ConfigurationTreeBuilder {
     ConfigurationTreeBuilder() {
         root.setName("");
         root.setResidualNodeCategory(ConfigurationItemCategory.RUNTIME);
+
+        // add required jcr:uuid:
+        final ConfigurationPropertyImpl uuidProperty = new ConfigurationPropertyImpl();
+        uuidProperty.setName(JCR_UUID);
+        uuidProperty.setParent(root);
+        uuidProperty.setType(PropertyType.SINGLE);
+        uuidProperty.setValueType(ValueType.STRING);
+        uuidProperty.setValue(new ValueImpl("cafebabe-cafe-babe-cafe-babecafebabe", ValueType.STRING, false, false));
+        root.addProperty(JCR_UUID, uuidProperty);
 
         // add required jcr:primaryType: rep:root
         final ConfigurationPropertyImpl primaryTypeProperty = new ConfigurationPropertyImpl();

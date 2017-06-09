@@ -18,7 +18,7 @@ package org.onehippo.cm.model;
 import java.util.List;
 
 public interface ConfigurationItem extends ModelItem {
-    String getName();
+    @Override
     ConfigurationNode getParent();
 
     /**
@@ -27,6 +27,6 @@ public interface ConfigurationItem extends ModelItem {
      * model processing order.
      */
     List<? extends DefinitionItem> getDefinitions();
+
     boolean isDeleted();
-    boolean isRoot();
 }

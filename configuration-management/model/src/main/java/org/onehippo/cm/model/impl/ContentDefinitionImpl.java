@@ -45,11 +45,19 @@ public class ContentDefinitionImpl extends AbstractDefinitionImpl
         this.node = node;
     }
 
+    public DefinitionNodeImpl setRoot(final String path) {
+        return node = new DefinitionNodeImpl(path, this);
+    }
+
     /**
      * Compare ContentDefinitions based on the lexical order of the root definition node paths.
      */
     @Override
     public int compareTo(final ContentDefinition o) {
         return this.getNode().getPath().compareTo(o.getNode().getPath());
+    }
+
+    public String toString() {
+        return getClass().getSimpleName()+"{node.path='"+node.getPath()+", origin="+getOrigin()+"'}";
     }
 }

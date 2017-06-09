@@ -34,9 +34,12 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.parser.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Throwables;
 
 public class ClasspathConfigurationModelReader {
 
@@ -60,20 +63,17 @@ public class ClasspathConfigurationModelReader {
         final ConfigurationModelImpl model = new ConfigurationModelImpl();
 
         // load modules that are specified via repo.bootstrap.modules system property
-        final List<GroupImpl> groupsFromSourceFiles = readModulesFromSourceFiles(verifyOnly);
+        final List<ModuleImpl> modulesFromSourceFiles = readModulesFromSourceFiles(verifyOnly);
 
         // add all of the filesystem modules to the builder as "replacements" that override later additions
-        groupsFromSourceFiles.stream()
-                .flatMap(g -> g.getProjects().stream())
-                .flatMap(p -> p.getModules().stream())
-                .forEach(model::addModule);
+        modulesFromSourceFiles.forEach(model::addModule);
 
         // load modules that are packaged on the classpath
         final Pair<Set<FileSystem>, List<GroupImpl>> classpathGroups =
                 readModulesFromClasspath(classLoader, verifyOnly);
 
         // add classpath modules to model
-        classpathGroups.getRight().stream().forEach(model::addGroup);
+        classpathGroups.getRight().forEach(model::addGroup);
 
         // add filesystems to the model
         model.setFileSystems(classpathGroups.getLeft());
@@ -93,12 +93,12 @@ public class ClasspathConfigurationModelReader {
      * @param verifyOnly TODO
      * @return a List of results from PathConfigurationReader
      */
-    protected List<GroupImpl> readModulesFromSourceFiles(final boolean verifyOnly) throws IOException, ParserException {
+    protected List<ModuleImpl> readModulesFromSourceFiles(final boolean verifyOnly) throws IOException, ParserException {
         // if repo.bootstrap.modules and project.basedir are defined, load modules from the filesystem before loading
         // additional modules from the classpath
         final String projectDir = System.getProperty(Constants.PROJECT_BASEDIR_PROPERTY);
         final String sourceModules = System.getProperty(Constants.BOOTSTRAP_MODULES_PROPERTY);
-        final List<GroupImpl> groupsFromSourceFiles = new ArrayList<>();
+        final List<ModuleImpl> modulesFromSourceFiles = new ArrayList<>();
         if (StringUtils.isNotBlank(projectDir) && StringUtils.isNotBlank(sourceModules)) {
 
             // convert the project basedir to a Path, so we can resolve modules against it
@@ -124,13 +124,14 @@ public class ClasspathConfigurationModelReader {
                 result.getGroups().stream()
                         .flatMap(g -> g.getProjects().stream())
                         .flatMap(p -> p.getModules().stream())
-                        .forEach(m -> m.setMvnPath(mvnModulePath));
-
-                groupsFromSourceFiles.addAll(result.getGroups());
+                        .forEach(m -> {
+                            m.setMvnPath(mvnModulePath);
+                            modulesFromSourceFiles.add(m);
+                        });
             }
 
         }
-        return groupsFromSourceFiles;
+        return modulesFromSourceFiles;
     }
 
     /**

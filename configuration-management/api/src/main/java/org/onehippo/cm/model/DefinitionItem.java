@@ -16,10 +16,12 @@
 package org.onehippo.cm.model;
 
 public interface DefinitionItem extends ModelItem {
-    String getName();
+    @Override
     DefinitionNode getParent();
-    boolean isRoot();
+
     ContentDefinition getDefinition();
+
     SourceLocation getSourceLocation();
+
     ConfigurationItemCategory getCategory();
 }

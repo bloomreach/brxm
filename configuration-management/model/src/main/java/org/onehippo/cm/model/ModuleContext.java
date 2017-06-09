@@ -118,6 +118,9 @@ public class ModuleContext {
         return SourceType.CONFIG == source.getType() ? configOutputProvider : contentOutputProvider;
     }
 
+    /**
+     * @param destinationPath the path to the module descriptor file
+     */
     public void createOutputProviders(Path destinationPath) {
         Path configModuleBasePath = FileConfigurationUtils.getModuleBasePath(destinationPath, module, multiModule);
         configOutputProvider = new FileResourceOutputProvider(configModuleBasePath);

@@ -17,7 +17,7 @@ package org.onehippo.cm.model;
 
 import java.util.List;
 
-public interface Project extends Orderable {
+public interface Project extends OrderableByName {
     Group getGroup();
 
     /**

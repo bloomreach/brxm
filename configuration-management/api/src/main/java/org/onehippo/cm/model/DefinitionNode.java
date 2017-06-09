@@ -17,19 +17,21 @@ package org.onehippo.cm.model;
 
 import java.util.Map;
 
-public interface DefinitionNode extends DefinitionItem {
+public interface DefinitionNode extends DefinitionItem, ModelNode {
 
     /**
      * @return The <strong>ordered</strong> map of {@link DefinitionNode}s by name for this {@link DefinitionNode} as an immutable map
      * and empty immutable map if none present. Note the ordering is according to serialized yaml format and not in
      * model processing order.
      */
+    @Override
     Map<String, ? extends DefinitionNode> getNodes();
 
     /**
      * @param name the name of the child node
      * @return the child {@link DefinitionNode node} requested, or null if not configured
      */
+    @Override
     DefinitionNode getNode(final String name);
 
     /**
@@ -37,14 +39,28 @@ public interface DefinitionNode extends DefinitionItem {
      * and empty immutable map if none present. Note the ordering is according to serialized yaml format and not in
      * model processing order.
      */
+    @Override
     Map<String, ? extends DefinitionProperty> getProperties();
 
     /**
      * @param name the name of the property
      * @return the {@link DefinitionProperty} requested, or null if not configured
      */
+    @Override
     DefinitionProperty getProperty(final String name);
 
+    /**
+     * @return Boolean.TRUE iff for this node the order of its children can be ignored on detecting changes,
+     * even if its primary node type indicates otherwise, or null if unspecified.
+     */
+    @Override
+    Boolean getIgnoreReorderedChildren();
+
+    /**
+     * @return true iff this node definition indicates a deletion of a node defined in a module upon which the
+     * module containing this node depends
+     * TODO: resolve inconsistency between isDelete() here and DefinitionNodeImpl.isDeleted(), then push up to ModelItem
+     */
     boolean isDelete();
 
     /**
@@ -52,12 +68,6 @@ public interface DefinitionNode extends DefinitionItem {
      * has been defined.
      */
     String getOrderBefore();
-
-    /**
-     * @return Boolean.TRUE if for this node the order of its children can be ignored on detecting changes,
-     * even if its primary node type indicates otherwise, or null if unspecified.
-     */
-    Boolean getIgnoreReorderedChildren();
 
     /**
      * @return The {@link ConfigurationItemCategory} for configured for this node, or null if unspecified.

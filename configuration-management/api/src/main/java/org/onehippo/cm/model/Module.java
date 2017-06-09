@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.onehippo.cm.ResourceInputProvider;
 
-public interface Module extends Orderable {
+public interface Module extends OrderableByName {
 
     /**
      * @return the full group/project/module name for this module

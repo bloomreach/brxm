@@ -30,7 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.Orderable;
+import org.onehippo.cm.model.OrderableByName;
 import org.onehippo.cm.model.Project;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
@@ -61,8 +61,8 @@ public class ModelTestUtils {
     };
 
 
-    public static <T extends Orderable> T findByName(final String name, final Collection<T> entries) {
-        return findInCollection(name, entries, Orderable::getName);
+    public static <T extends OrderableByName> T findByName(final String name, final Collection<T> entries) {
+        return findInCollection(name, entries, OrderableByName::getName);
     }
 
     public static <T extends SourceImpl> T findByPath(final String name, final Collection<T> entries) {
