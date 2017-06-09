@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.channel;
+package org.onehippo.cms7.services.hst;
 
 import java.io.Serializable;
 import java.util.Calendar;
