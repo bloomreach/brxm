@@ -32,16 +32,20 @@ import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.parser.ActionListParser;
+import org.onehippo.cm.model.parser.AggregatedModulesDescriptorParser;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
-import org.onehippo.cm.model.parser.AggregatedModulesDescriptorParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.SourceParser;
 import org.onehippo.cm.model.util.FileConfigurationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
 public class PathConfigurationReader {
+
+    private static final Logger log = LoggerFactory.getLogger(PathConfigurationReader.class);
 
     private final boolean explicitSequencing;
 
@@ -126,6 +130,7 @@ public class PathConfigurationReader {
      * @throws ParserException
      */
     public void readModule(final ModuleImpl module, final ModuleContext moduleContext, final boolean verifyOnly) throws IOException, ParserException {
+        log.debug("Reading module: {}", module.getFullName());
         module.setConfigResourceInputProvider(moduleContext.getConfigInputProvider());
         module.setContentResourceInputProvider(moduleContext.getContentInputProvider());
         processConfigSources(verifyOnly, module, moduleContext);

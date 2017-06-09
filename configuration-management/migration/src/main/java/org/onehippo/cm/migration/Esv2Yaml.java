@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,6 +50,7 @@ import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.MigrationConfigWriter;
 import org.onehippo.cm.model.MigrationMode;
 import org.onehippo.cm.model.ModuleContext;
+import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
@@ -86,6 +88,7 @@ public class Esv2Yaml {
     private final boolean aggregate;
     private final MigrationMode migrationMode;
     private final String[] contentRoots;
+    private final ResourceProcessor resourceProcessor = new ResourceProcessor();
 
     public static void main(final String[] args) throws IOException, EsvParseException, ParseException {
 
@@ -206,6 +209,8 @@ public class Esv2Yaml {
 
         final EsvNode rootNode = esvParser.parse(new FileInputStream(extensionFile), extensionFile.getCanonicalPath());
         if (rootNode != null) {
+
+
             if ("hippo:initialize".equals(rootNode.getName())) {
 
                 // parse and create list of initializeitem instructions
@@ -225,14 +230,14 @@ public class Esv2Yaml {
 
                 final Set<String> sourcePaths = new HashSet<>();
 
-                final ResourceProcessor resourceProcessor = new ResourceProcessor();
 
+                Map<String, String> resourceList = new LinkedHashMap<>();
                 // preprocess initializeitems and build set of claimed/needed target yaml source paths
                 for (InitializeInstruction instruction : instructions) {
                     preprocessInitializeInstruction(instruction);
                     if (instruction instanceof SourceInitializeInstruction) {
                         sourcePaths.add(instruction.getSourcePath());
-                        handleFsResource(resourceProcessor, instruction);
+                        resourceList.putIfAbsent(instruction.getResourcePath(), instruction.getSourcePath());
                     }
                 }
 
@@ -250,7 +255,7 @@ public class Esv2Yaml {
                         String sourcePath = createSourcePath(new String[]{candidate}, sourcePaths, 0);
                         instruction.setSourcePath(sourcePath);
                         sourcePaths.add(sourcePath);
-                        handleFsResource(resourceProcessor, instruction);
+                        resourceList.putIfAbsent(instruction.getResourcePath(), instruction.getSourcePath());
                     }
                 }
 
@@ -266,6 +271,31 @@ public class Esv2Yaml {
                     definitionNode.setCategory(ConfigurationItemCategory.CONTENT);
                     definition.setNode(definitionNode);
                 }
+
+                for (final String sourcePath : resourceList.keySet()) {
+                    final String destination = resourceList.get(sourcePath);
+                    final Source source = module.getModifiableSources().stream().filter(s -> s.getPath().equals(destination)).findFirst().get();
+                    final Path sourceFilePath = Paths.get(src.toString(), sourcePath);
+                    if (source.getDefinitions().isEmpty()) {
+                        if (migrationMode == MigrationMode.GIT || migrationMode == MigrationMode.MOVE) {
+                            Files.deleteIfExists(sourceFilePath);
+                        }
+                    } else {
+                        handleFsResource(sourceFilePath, Paths.get(src.toString(), HCM_CONFIG_FOLDER, destination));
+                    }
+                }
+
+                final Path sourceFilePath = Paths.get(extensionFile.getAbsolutePath());
+                final Path yamlMainSourceLocation = sourceFilePath.getParent().resolve(HCM_CONFIG_FOLDER).resolve(mainSource.getPath());
+
+                if (mainSource.getDefinitions().isEmpty()) {
+                    if (migrationMode == MigrationMode.GIT || migrationMode == MigrationMode.MOVE) {
+                        Files.deleteIfExists(sourceFilePath);
+                    }
+                } else {
+                    handleFsResource(sourceFilePath, yamlMainSourceLocation);
+                }
+
                 serializeModule();
             } else {
                 throw new EsvParseException(extensionFile.getCanonicalPath() +
@@ -283,14 +313,11 @@ public class Esv2Yaml {
      * MOVE: DELETES source file and folder if it is empty
      * <pre/>
      * COPY: Does nothing
-     * @param resourceProcessor
-     * @param instruction
+     *
      * @throws IOException
      */
-    private void handleFsResource(final ResourceProcessor resourceProcessor, final InitializeInstruction instruction) throws IOException {
-        final Path sourceFilePath = Paths.get(src.toString(), instruction.getResourcePath());
-        final Path destinationPath = Paths.get(src.toString(), HCM_CONFIG_FOLDER, instruction.getSourcePath());
-        Path srcDirPath = sourceFilePath.getParent();
+    private void handleFsResource(final Path sourceFilePath, final Path destinationPath) throws IOException {
+        final Path srcDirPath = sourceFilePath.getParent();
 
         switch (migrationMode) {
             case GIT:
@@ -364,7 +391,7 @@ public class Esv2Yaml {
 
     protected void combineNamespaceAndNodeTypesInstructions(final List<InitializeInstruction> initializeInstructions)
             throws EsvParseException {
-        for (int i = initializeInstructions.size()-1; i >= 0; i--) {
+        for (int i = initializeInstructions.size() - 1; i >= 0; i--) {
             final InitializeInstruction instruction = initializeInstructions.get(i);
             if (instruction.getType() == InitializeInstruction.Type.NODETYPESRESOURCE) {
                 if (instruction.getCombinedWith() == null) {
