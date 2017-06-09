@@ -19,7 +19,7 @@
   <md-input-container class="qa-field"
                       md-no-float
                       ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
-                      ng-switch="$ctrl.fieldType.type"
+                      ng-switch="::$ctrl.fieldType.type"
                       ng-class="{ 'has-focused-field': $ctrl.hasFocus }" >
 
     <label ng-if="::$first"
@@ -76,7 +76,7 @@
 
     <div ng-if="::$last"
          ng-messages="$ctrl.getFieldError()">
-      <div ng-message="required">{{ 'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>
+      <div ng-message="required">{{ ::'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>
     </div>
   </md-input-container>
 </div>

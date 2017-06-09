@@ -1,5 +1,5 @@
 <!--
-  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 <md-list class="qa-catalog">
   <md-list-item class="md-1-line"
-                ng-repeat="component in $ctrl.components"
+                ng-repeat="component in $ctrl.components track by component.label"
                 ng-class="{'list-item-active catalog-list-item-active': $ctrl.isComponentSelected(component)}"
                 ng-click="$ctrl.onSelect(component)">
     <img class="md-avatar"
-         ng-src="{{component.iconURL}}" />
+         ng-src="{{::component.iconURL}}" />
 
     <div class="md-list-item-text">
       <p>
@@ -33,7 +33,7 @@
       <md-icon>close</md-icon>
     </md-button>
 
-    <md-divider ng-if="!$last"></md-divider>
+    <md-divider ng-if="::!$last"></md-divider>
   </md-list-item>
 </md-list>
 

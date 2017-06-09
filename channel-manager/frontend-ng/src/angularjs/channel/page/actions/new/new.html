@@ -15,7 +15,7 @@
   -->
 
 <subpage-toolbar flex="none"
-                 data-title="{{ 'SUBPAGE_PAGE_NEW_TITLE' | translate }}"
+                 data-title="{{ ::'SUBPAGE_PAGE_NEW_TITLE' | translate }}"
                  on-back="$ctrl.onDone()"
                  mode="cancel">
 </subpage-toolbar>
@@ -27,64 +27,64 @@
         ng-submit="form.$valid && $ctrl.create()"
         novalidate>
     <md-input-container class="md-block">
-      <label class="md-required">{{ 'SUBPAGE_PAGE_LABEL_TITLE' | translate }}</label>
+      <label class="md-required">{{ ::'SUBPAGE_PAGE_LABEL_TITLE' | translate }}</label>
       <input type="text" name="title" class="qa-title"
              required
              focus-if
              ng-model="$ctrl.title">
       <div ng-messages="form.title.$error">
-        <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
+        <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
       </div>
     </md-input-container>
     <div layout="row">
       <md-input-container class="md-block" flex>
-        <label>{{ 'SUBPAGE_PAGE_LABEL_URL_STEM' | translate }}</label>
+        <label>{{ ::'SUBPAGE_PAGE_LABEL_URL_STEM' | translate }}</label>
         <md-select required name="location" class="qa-url-stem"
                    ng-model="$ctrl.location"
                    ng-model-options="{trackBy: '$value.location'}">
-          <md-option ng-repeat="location in $ctrl.locations" ng-value="{{location}}">
-            {{ location.location }}
+          <md-option ng-repeat="location in $ctrl.locations track by location.location" ng-value="{{::location}}">
+            {{ ::location.location }}
           </md-option>
         </md-select>
         <div ng-messages="form.location.$error">
-          <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
+          <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
         </div>
       </md-input-container>
       <md-input-container class="md-block" flex>
-        <label class="md-required">{{ 'SUBPAGE_PAGE_LABEL_LAST_PATHINFO_ELEMENT' | translate }}</label>
+        <label class="md-required">{{ ::'SUBPAGE_PAGE_LABEL_LAST_PATHINFO_ELEMENT' | translate }}</label>
         <input type="text" name="lastPathInfoElement" class="qa-url-leaf"
                required
-               illegal-characters="{{$ctrl.illegalCharacters}}"
+               illegal-characters="{{::$ctrl.illegalCharacters}}"
                ng-keyup="$ctrl.disableAutomaticLastPathInfoElementUpdate()"
                ng-model="$ctrl.lastPathInfoElement">
         <div ng-messages="form.lastPathInfoElement.$error">
-          <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
-          <div ng-message="illegalCharacters">{{ $ctrl.illegalCharactersMessage }}</div>
+          <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
+          <div ng-message="illegalCharacters">{{ ::$ctrl.illegalCharactersMessage }}</div>
         </div>
       </md-input-container>
     </div>
     <md-input-container class="md-block">
-      <label>{{ 'SUBPAGE_PAGE_LABEL_TEMPLATE' | translate }}</label>
+      <label>{{ ::'SUBPAGE_PAGE_LABEL_TEMPLATE' | translate }}</label>
       <md-select required name="prototype" class="qa-template"
                  ng-model="$ctrl.prototype"
                  ng-model-options="{trackBy: '$value.id'}">
-        <md-option ng-repeat="prototype in $ctrl.prototypes" ng-value="{{prototype}}">
-          {{ prototype.displayName }}
+        <md-option ng-repeat="prototype in $ctrl.prototypes track by prototype.id" ng-value="{{::prototype}}">
+          {{ ::prototype.displayName }}
         </md-option>
       </md-select>
       <div ng-messages="form.prototype.$error">
-        <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
+        <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
       </div>
     </md-input-container>
     <div layout="row" layout-align="end center">
       <md-button type="button"
                  class="qa-discard"
                  ng-click="$ctrl.onDone()">
-        {{ 'CANCEL' | translate }}
+        {{ ::'CANCEL' | translate }}
       </md-button>
       <md-button type="submit"
                  class="md-raised md-primary qa-action">
-        {{ 'CREATE' | translate }}
+        {{ ::'CREATE' | translate }}
       </md-button>
     </div>
   </form>
