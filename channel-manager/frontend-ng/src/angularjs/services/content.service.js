@@ -44,7 +44,7 @@ class ContentService {
 
   draftField(documentId, fieldName, value) {
     // TODO: HTTP call
-    console.log(`ContentService.draftField (id: ${fieldName}, data: ${value})`);
+    angular.noop(`ContentService.draftField (id: ${fieldName}, data: ${value})`);
   }
 
   _send(method, pathElements, data) {
