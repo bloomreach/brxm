@@ -17,8 +17,7 @@
 class ChoiceFieldCtrl {
   getFieldName(index) {
     const choiceId = this.fieldValues[index].chosenId;
-    const fieldName = `${this.name}/${choiceId}`;
-    return index > 0 ? `${fieldName}[${index}]` : fieldName;
+    return index > 0 ? `${this.name}[${index + 1}]/${choiceId}` : `${this.name}/${choiceId}`;
   }
 
   focusChoice() {

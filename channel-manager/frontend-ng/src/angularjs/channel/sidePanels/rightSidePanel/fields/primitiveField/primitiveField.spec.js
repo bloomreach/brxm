@@ -58,16 +58,16 @@ describe('PrimitiveField', () => {
 
   it('helps composing unique form field names', () => {
     expect($ctrl.getFieldName(0)).toBe('test-name/field:type');
-    expect($ctrl.getFieldName(1)).toBe('test-name/field:type[1]');
-    expect($ctrl.getFieldName(2)).toBe('test-name/field:type[2]');
+    expect($ctrl.getFieldName(1)).toBe('test-name/field:type[2]');
+    expect($ctrl.getFieldName(2)).toBe('test-name/field:type[3]');
 
     const stubbed = $componentController('primitiveField', { }, {
       fieldType,
       fieldValues,
     });
     expect(stubbed.getFieldName(0)).toBe('field:type');
-    expect(stubbed.getFieldName(1)).toBe('field:type[1]');
-    expect(stubbed.getFieldName(2)).toBe('field:type[2]');
+    expect(stubbed.getFieldName(1)).toBe('field:type[2]');
+    expect(stubbed.getFieldName(2)).toBe('field:type[3]');
   });
 
   it('returns the form error object if a single field is invalid', () => {
@@ -89,7 +89,7 @@ describe('PrimitiveField', () => {
           required: true,
         },
       },
-      'test-name/field:type[1]': {
+      'test-name/field:type[2]': {
         $error: {
           maxlength: true,
         },
@@ -140,7 +140,7 @@ describe('PrimitiveField', () => {
       'test-name/field:type': {
         $invalid: false,
       },
-      'test-name/field:type[1]': {
+      'test-name/field:type[2]': {
         $invalid: false,
       },
     };
@@ -152,7 +152,7 @@ describe('PrimitiveField', () => {
       'test-name/field:type': {
         $invalid: false,
       },
-      'test-name/field:type[1]': {
+      'test-name/field:type[2]': {
         $invalid: true,
       },
     };

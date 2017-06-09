@@ -23,7 +23,7 @@ class DocumentFieldsCtrl {
 
   getFieldName(fieldType, index) {
     const fieldName = this.name ? `${this.name}/${fieldType.id}` : fieldType.id;
-    return index > 0 ? `${fieldName}[${index}]` : fieldName;
+    return index > 0 ? `${fieldName}[${index + 1}]` : fieldName;
   }
 
   getFieldTypeHash(fieldType) {
