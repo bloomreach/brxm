@@ -15,13 +15,15 @@
  */
 package org.onehippo.cm.model.impl;
 
+import java.util.List;
+
 import org.onehippo.cm.model.ConfigurationProperty;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.ValueFormatException;
 import org.onehippo.cm.model.ValueType;
 
-public class ConfigurationPropertyImpl extends ConfigurationItemImpl implements ConfigurationProperty {
-
+public class ConfigurationPropertyImpl extends ConfigurationItemImpl<DefinitionPropertyImpl>
+        implements ConfigurationProperty<DefinitionPropertyImpl> {
 
     private PropertyType type;
     private ValueType valueType;
@@ -63,4 +65,5 @@ public class ConfigurationPropertyImpl extends ConfigurationItemImpl implements 
     public void setValues(final ValueImpl[] values) {
         this.values = values;
     }
+
 }

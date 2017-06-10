@@ -41,14 +41,15 @@ import static org.onehippo.cm.model.PropertyOperation.DELETE;
 import static org.onehippo.cm.model.PropertyOperation.OVERRIDE;
 import static org.onehippo.cm.model.PropertyOperation.REPLACE;
 
-class ConfigurationTreeBuilder {
+public class ConfigurationTreeBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationTreeBuilder.class);
     private static final String REP_ROOT_NT = "rep:root";
 
-    private final ConfigurationNodeImpl root = new ConfigurationNodeImpl();
+    private final ConfigurationNodeImpl root;
 
     ConfigurationTreeBuilder() {
+        root = new ConfigurationNodeImpl();
         root.setName("");
         root.setResidualNodeCategory(ConfigurationItemCategory.RUNTIME);
 
@@ -80,6 +81,14 @@ class ConfigurationTreeBuilder {
         root.addProperty(JCR_MIXINTYPES, mixinTypesProperty);
     }
 
+    /**
+     * Constructor for use when incrementally updating an existing config tree.
+     * @param root
+     */
+    public ConfigurationTreeBuilder(final ConfigurationNodeImpl root) {
+        this.root = root;
+    }
+
     ConfigurationNodeImpl build() {
         // validation of the input and construction of the tree happens at "push time".
 
@@ -87,19 +96,20 @@ class ConfigurationTreeBuilder {
         return root;
     }
 
-    void push(final ContentDefinitionImpl definition) {
+    public ConfigurationTreeBuilder push(final ContentDefinitionImpl definition) {
         final ConfigurationNodeImpl rootForDefinition = getOrCreateRootForDefinition(definition);
 
         if (rootForDefinition != null) {
             mergeNode(rootForDefinition, definition.getModifiableNode());
         }
+        return this;
     }
 
     /**
      * Recursively merge a tree of {@link DefinitionNodeImpl}s and {@link DefinitionPropertyImpl}s
      * onto the tree of {@link ConfigurationNodeImpl}s and {@link ConfigurationPropertyImpl}s.
      */
-    private void mergeNode(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
+    public void mergeNode(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
         if (definitionNode.isDeleted()) {
             final String indexedName = SnsUtils.createIndexedName(definitionNode.getName());
             if (SnsUtils.hasSns(indexedName, node.getParent().getNodes().keySet())) {
@@ -127,7 +137,7 @@ class ConfigurationTreeBuilder {
 
         if (definitionNode.getResidualChildNodeCategory() != null) {
             node.setResidualNodeCategory(definitionNode.getResidualChildNodeCategory());
-            node.addDefinitionItem(definitionNode);
+            node.addDefinition(definitionNode);
         }
 
         if (definitionNode.getIgnoreReorderedChildren() != null) {
@@ -142,7 +152,7 @@ class ConfigurationTreeBuilder {
                 }
             }
             node.setIgnoreReorderedChildren(definitionNode.getIgnoreReorderedChildren());
-            node.addDefinitionItem(definitionNode);
+            node.addDefinition(definitionNode);
         }
 
         final ConfigurationNodeImpl parent = node.getParent();
@@ -269,15 +279,17 @@ class ConfigurationTreeBuilder {
                 && override != ConfigurationItemCategory.CONFIG;
     }
 
-    private void markNodeAsDeletedBy(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
+    // used by DefinitionMergeService to update model in-place
+    public ConfigurationTreeBuilder markNodeAsDeletedBy(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
         node.setDeleted(true);
-        node.addDefinitionItem(definitionNode);
+        node.addDefinition(definitionNode);
         node.clearNodes();
         node.clearProperties();
         node.getParent().clearChildNodeCategorySettings(node.getName());
+        return this;
     }
 
-    private ConfigurationNodeImpl getOrCreateRootForDefinition(final ContentDefinitionImpl definition) {
+    public ConfigurationNodeImpl getOrCreateRootForDefinition(final ContentDefinitionImpl definition) {
         final DefinitionNodeImpl definitionNode = definition.getModifiableNode();
         final String definitionRootPath = definitionNode.getPath();
         final String[] pathSegments = getPathSegments(definitionRootPath);
@@ -322,7 +334,7 @@ class ConfigurationTreeBuilder {
         return rootForDefinition;
     }
 
-    private ConfigurationNodeImpl createChildNode(final ConfigurationNodeImpl parent, final String name,
+    public ConfigurationNodeImpl createChildNode(final ConfigurationNodeImpl parent, final String name,
                                                   final DefinitionNodeImpl definitionNode) {
         final ConfigurationNodeImpl node = new ConfigurationNodeImpl();
 
@@ -359,17 +371,17 @@ class ConfigurationTreeBuilder {
 
         node.setName(name);
         node.setParent(parent);
-        node.addDefinitionItem(definitionNode);
+        node.addDefinition(definitionNode);
 
         parent.addNode(name, node);
 
         return node;
     }
 
-    private void mergeProperty(final ConfigurationNodeImpl parent,
+    public ConfigurationTreeBuilder mergeProperty(final ConfigurationNodeImpl parent,
                                final DefinitionPropertyImpl definitionProperty) {
         // a node should have a back-reference to any definition that changes its properties
-        parent.addDefinitionItem(definitionProperty.getParent());
+        parent.addDefinition(definitionProperty.getParent());
 
         final Map<String, ConfigurationPropertyImpl> properties = parent.getModifiableProperties();
         final String name = definitionProperty.getName();
@@ -388,16 +400,16 @@ class ConfigurationTreeBuilder {
             final ConfigurationItemCategory category = definitionProperty.getCategory();
             if (category != null && category != ConfigurationItemCategory.CONFIG) {
                 property.setDeleted(true);
-                property.addDefinitionItem(definitionProperty);
+                property.addDefinition(definitionProperty);
                 parent.setChildPropertyCategorySettings(name, category, definitionProperty);
-                return;
+                return this;
             }
 
             if (op == DELETE) {
                 property.setDeleted(true);
-                property.addDefinitionItem(definitionProperty);
+                property.addDefinition(definitionProperty);
                 // no need to clear category on parent
-                return;
+                return this;
             }
 
             if (property.getType() != definitionProperty.getType()) {
@@ -414,14 +426,14 @@ class ConfigurationTreeBuilder {
             final ConfigurationItemCategory category = definitionProperty.getCategory();
             if (isAndRemainsNonConfigurationProperty(parent, definitionProperty.getName(), category)) {
                 logger.warn("Trying to modify non-configuration property '{}', skipping.", definitionProperty.getPath());
-                return;
+                return this;
             }
             if (category != null) {
                 if (category == ConfigurationItemCategory.CONFIG) {
                     parent.clearChildPropertyCategorySettings(name);
                 } else {
                     parent.setChildPropertyCategorySettings(name, definitionProperty.getCategory(), definitionProperty);
-                    return;
+                    return this;
                 }
             }
 
@@ -429,7 +441,7 @@ class ConfigurationTreeBuilder {
                 final String msg = String.format("%s: Trying to delete property %s that does not exist.",
                         definitionProperty.getOrigin(), definitionProperty.getPath());
                 logger.warn(msg);
-                return;
+                return this;
             }
 
             // create new property
@@ -445,7 +457,7 @@ class ConfigurationTreeBuilder {
             warnIfValuesAreEqual(definitionProperty, property);
         }
 
-        property.addDefinitionItem(definitionProperty);
+        property.addDefinition(definitionProperty);
         if (PropertyType.SINGLE == definitionProperty.getType()) {
             property.setValue(definitionProperty.getValue());
         } else {
@@ -457,6 +469,8 @@ class ConfigurationTreeBuilder {
         }
 
         parent.addProperty(name, property);
+
+        return this;
     }
 
     private void handleTypeConflict(final ConfigurationPropertyImpl property,
@@ -574,6 +588,7 @@ class ConfigurationTreeBuilder {
         }
     }
 
+    // todo: move this to a utilities class -- it could be generally useful!
     private String[] getPathSegments(final String path) {
         if ("/".equals(path)) {
             return new String[0];
@@ -586,7 +601,7 @@ class ConfigurationTreeBuilder {
         return pathSegments;
     }
 
-    private void pruneDeletedItems(final ConfigurationNodeImpl node) {
+    public void pruneDeletedItems(final ConfigurationNodeImpl node) {
         if (node.isDeleted()) {
             node.getParent().removeNode(node.getName(), false);
             return;

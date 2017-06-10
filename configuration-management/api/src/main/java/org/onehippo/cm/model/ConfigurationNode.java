@@ -17,7 +17,7 @@ package org.onehippo.cm.model;
 
 import java.util.Map;
 
-public interface ConfigurationNode extends ConfigurationItem, ModelNode {
+public interface ConfigurationNode<D extends DefinitionNode> extends ConfigurationItem<D>, ModelNode {
 
     /**
      * @return The <strong>ordered</strong> map of child {@link ConfigurationNode}s by name for this

@@ -18,6 +18,8 @@ package org.onehippo.cm.model;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.onehippo.cm.ResourceInputProvider;
+
 public interface Value {
     Object getObject();
     String getString();
@@ -38,6 +40,12 @@ public interface Value {
      * a <em>candidate</em> path only.
      */
     boolean isNewResource();
+
+    /**
+     * Provides access to the ResourceInputProvider backing this value -- can be used to compare src and dest when
+     * writing.
+     */
+    ResourceInputProvider getResourceInputProvider();
 
     /**
      * Uses a ResourceInputProvider to create an InputStream for this Value's content.

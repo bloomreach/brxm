@@ -51,6 +51,8 @@ public class SerializerTest extends AbstractBaseTest {
         readAndWrite("/parser/not_explicitly_sequenced_test/"+Constants.HCM_MODULE_YAML, false);
     }
 
+    // TODO add test for writing to the same dir that module was read from
+
     private void readAndWrite(final String moduleConfig) throws IOException, ParserException {
         readAndWrite(moduleConfig, DEFAULT_EXPLICIT_SEQUENCING);
     }

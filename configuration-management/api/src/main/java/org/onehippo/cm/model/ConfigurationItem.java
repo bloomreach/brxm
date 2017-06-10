@@ -17,7 +17,7 @@ package org.onehippo.cm.model;
 
 import java.util.List;
 
-public interface ConfigurationItem extends ModelItem {
+public interface ConfigurationItem<D extends DefinitionItem> extends ModelItem {
     @Override
     ConfigurationNode getParent();
 
@@ -26,7 +26,7 @@ public interface ConfigurationItem extends ModelItem {
      * if no definitions present. Note the ordering is according to serialized yaml format and not in
      * model processing order.
      */
-    List<? extends DefinitionItem> getDefinitions();
+    List<D> getDefinitions();
 
     boolean isDeleted();
 }

@@ -27,7 +27,8 @@ import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.util.SnsUtils;
 
-public class ConfigurationNodeImpl extends ConfigurationItemImpl implements ConfigurationNode {
+public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeImpl>
+        implements ConfigurationNode<DefinitionNodeImpl> {
 
     // Nodes names must always be indexed names, e.g. node[1]
     private final Map<String, ConfigurationNodeImpl> modifiableNodes = new LinkedHashMap<>();
@@ -218,5 +219,4 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
     public void setResidualNodeCategory(final ConfigurationItemCategory residualNodeCategory) {
         this.residualNodeCategory = residualNodeCategory;
     }
-
 }

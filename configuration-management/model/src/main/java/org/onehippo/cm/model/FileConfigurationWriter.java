@@ -16,6 +16,7 @@
 package org.onehippo.cm.model;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +28,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.serializer.AggregatedModulesDescriptorSerializer;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.cm.model.serializer.SourceSerializer;
@@ -114,6 +117,7 @@ public class FileConfigurationWriter {
         if (binaryItem.getValue() instanceof JcrBinaryValueImpl) {
             inputStream = binaryItem.getValue().getResourceInputStream();
         } else {
+            // todo move this logic to ValueImpl.getResourceInputStream(), so we can avoid the ugly cast above
             final byte[] content = (byte[]) binaryItem.getValue().getObject();
             inputStream = new ByteArrayInputStream(content);
         }
@@ -126,11 +130,22 @@ public class FileConfigurationWriter {
     }
 
     void processCopyItem(Source source, CopyItem copyItem, ModuleContext moduleContext) throws IOException {
-        try (
-                final InputStream resourceInputStream = copyItem.getValue().getResourceInputStream();
-                final OutputStream resourceOutputStream = moduleContext.getOutputProvider(source)
-                        .getResourceOutputStream(source, copyItem.getValue().getString())
-        ) {
+        final ResourceInputProvider rip =  copyItem.getValue().getResourceInputProvider();
+        final ResourceOutputProvider outputProvider = moduleContext.getOutputProvider(source);
+
+        if (rip instanceof FileResourceInputProvider && outputProvider instanceof FileResourceOutputProvider) {
+            final FileResourceInputProvider frip = (FileResourceInputProvider) rip;
+            final FileResourceOutputProvider fout = (FileResourceOutputProvider) outputProvider;
+
+            if (frip.getBasePath().equals(fout.getModulePath())) {
+                // don't copy when src and dest are the same file
+                return;
+            }
+        }
+
+        try (final InputStream resourceInputStream = copyItem.getValue().getResourceInputStream();
+             final OutputStream resourceOutputStream =
+                     outputProvider.getResourceOutputStream(source, copyItem.getValue().getString())) {
             IOUtils.copy(resourceInputStream, resourceOutputStream);
         }
     }

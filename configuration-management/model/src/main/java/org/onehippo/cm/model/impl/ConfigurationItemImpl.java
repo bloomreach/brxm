@@ -24,11 +24,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationItem;
 import org.onehippo.cm.model.util.SnsUtils;
 
-public abstract class ConfigurationItemImpl extends ModelItemImpl implements ConfigurationItem {
+public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extends ModelItemImpl
+        implements ConfigurationItem<D> {
 
     private ConfigurationNodeImpl parent;
-    private final List<DefinitionItemImpl> modifiableDefinitions = new ArrayList<>();
-    private final List<DefinitionItemImpl> definitions = Collections.unmodifiableList(modifiableDefinitions);
+    private final List<D> modifiableDefinitions = new ArrayList<>();
+    protected final List<D> definitions = Collections.unmodifiableList(modifiableDefinitions);
     private boolean deleted;
 
     @Override
@@ -55,18 +56,18 @@ public abstract class ConfigurationItemImpl extends ModelItemImpl implements Con
     }
 
     @Override
-    public List<DefinitionItemImpl> getDefinitions() {
+    public List<D> getDefinitions() {
         return definitions;
     }
 
-    public void addDefinitionItem(final DefinitionItemImpl definitionItem) {
+    public void addDefinition(final D definition) {
         if (modifiableDefinitions.isEmpty()) {
-            modifiableDefinitions.add(definitionItem);
+            modifiableDefinitions.add(definition);
         }
         else {
             DefinitionItemImpl lastDef = modifiableDefinitions.get(modifiableDefinitions.size() - 1);
-            if (!lastDef.equals(definitionItem)) {
-                modifiableDefinitions.add(definitionItem);
+            if (!lastDef.equals(definition)) {
+                modifiableDefinitions.add(definition);
             }
         }
     }

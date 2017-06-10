@@ -81,7 +81,6 @@ public class FileConfigurationUtils {
 
     /**
      * Use a simple numbering convention to generate a unique path given a candidate path and a test of uniqueness.
-     * TODO move to a utilities class?
      * @param candidate a path that might be used directly, if it is already unique, or modified to create a unique path
      * @param isNotUnique a test of uniqueness for a proposed path
      * @param sequence the number of the current attempt, used for loop control -- callers typically pass 0

@@ -15,6 +15,6 @@
  */
 package org.onehippo.cm.model;
 
-public interface ConfigurationProperty extends ConfigurationItem, ModelProperty {
+public interface ConfigurationProperty<D extends DefinitionProperty> extends ConfigurationItem<D>, ModelProperty {
 
 }

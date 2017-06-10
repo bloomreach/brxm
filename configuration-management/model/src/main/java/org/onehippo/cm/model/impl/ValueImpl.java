@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Calendar;
 
+import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.DefinitionType;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
@@ -135,6 +136,7 @@ public class ValueImpl implements Value, Cloneable {
      * Detaches a {@link #clone() cloned} resource Value from its original Source. Should be called after
      * retrieving and processing (serializing) through {@link #getResourceInputStream()}.
      */
+    // todo: this is apparently never called, and it seems like it should be
     public void detach() {
         internalResourcePath = null;
         resourceSource = null;
@@ -179,31 +181,33 @@ public class ValueImpl implements Value, Cloneable {
         this.internalResourcePath = internalResourcePath;
     }
 
+    // get access to the RIP backing this value -- used to compare src and dest when writing
+    public ResourceInputProvider getResourceInputProvider() {
+        final AbstractDefinitionImpl definition = getDefinition();
+
+        // If we have a "foreign" source, use that to find the RIP instead of the local Source
+        SourceImpl source = (resourceSource != null)? resourceSource: definition.getSource();
+
+        if (definition.getType() == DefinitionType.CONTENT) {
+            return source.getModule().getContentResourceInputProvider();
+        }
+        else {
+            return source.getModule().getConfigResourceInputProvider();
+        }
+    }
+
     @Override
     public InputStream getResourceInputStream() throws IOException {
         if (!isResource()) {
             throw new IllegalStateException("Cannot get an InputStream for a Value that is not a Resource!");
         }
 
-        final AbstractDefinitionImpl definition = getDefinition();
-
         // If we have a "foreign" source, use that to find the RIP instead of the local Source
-        SourceImpl source = definition.getSource();
-        if (resourceSource != null) {
-            source = resourceSource;
-        }
+        SourceImpl source = (resourceSource != null)? resourceSource: getDefinition().getSource();
 
         String resourcePath = internalResourcePath != null ? internalResourcePath : getString();
 
-        if (definition.getType() == DefinitionType.CONTENT) {
-            return source.getModule().getContentResourceInputProvider().getResourceInputStream(source, resourcePath);
-        }
-        else {
-            return source
-                    .getModule()
-                    .getConfigResourceInputProvider()
-                    .getResourceInputStream(source, resourcePath);
-        }
+        return getResourceInputProvider().getResourceInputStream(source, resourcePath);
     }
 
     @Override
