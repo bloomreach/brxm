@@ -33,18 +33,22 @@ import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.decorating.RepositoryDecorator;
 import org.onehippo.repository.InternalHippoRepository;
 
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
+
+import static com.google.common.collect.Sets.newHashSet;
+
 class NodeTypeChangesMonitor implements NodeTypeRegistryListener {
 
     private final NodeTypeRegistry ntRegistry;
     private final Configuration moduleConfig;
     private final Session monitorSession;
     // TODO: derive 'protected' namsepacePrefixed from none-sourced ConfigurationModel modules
-    private static final Set<String> hippoNamespacePrefixed = new HashSet<>(Arrays.asList(new String[] {
+    private static final Set<String> hippoNamespacePrefixed = newHashSet(
             "hippo",
             "hipposys",
             "hipposysedit",
-            "hippofacnav"
-        }));
+            "hippofacnav");
 
     public NodeTypeChangesMonitor(final Configuration moduleConfig) throws RepositoryException {
         this.moduleConfig = moduleConfig;

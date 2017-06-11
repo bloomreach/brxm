@@ -68,8 +68,6 @@ import org.onehippo.cm.model.util.ConfigurationModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Stopwatch;
-
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 
 public class EventJournalProcessor {
@@ -77,7 +75,6 @@ public class EventJournalProcessor {
     static final Logger log = LoggerFactory.getLogger(EventJournalProcessor.class);
 
     private static final String[] builtinIgnoredEventPaths = new String[] {
-            // TODO: why aren't these being ignored?
             "/hippo:log",
             "/content/attic",
             "/formdata",
@@ -237,24 +234,24 @@ public class EventJournalProcessor {
             }
             else {
                 // processEvents unsuccessful: new events arrived before it could export already collected changes
-                AutoExportServiceImpl.log.debug("Incoming events during processEvents() -- retrying!");
+                log.debug("Incoming events during processEvents() -- retrying!");
             }
 
             stopWatch.stop();
             if (stopWatch.getTime(TimeUnit.MILLISECONDS) > 0) {
-                AutoExportServiceImpl.log.debug("Full cycle in {}", stopWatch.toString());
+                log.debug("Full auto-export cycle in {}", stopWatch.toString());
             }
         }
     }
 
     private boolean processEvents() throws RepositoryException {
+        // update our local reference to the runtime model immediately before using it
+        this.currentModel = configurationService.getRuntimeConfigurationModel();
+
         if (eventJournal == null) {
             final ObservationManager observationManager = eventProcessorSession.getWorkspace().getObservationManager();
             eventJournal = (RevisionEventJournal)observationManager.getEventJournal();
             lastRevision = configuration.getLastRevision();
-
-            // update our local reference to the runtime model immediately before using it
-            this.currentModel = configurationService.getRuntimeConfigurationModel();
         }
         try {
             eventJournal.skipToRevision(lastRevision);
@@ -492,13 +489,14 @@ public class EventJournalProcessor {
             }
         }
 
-        // TODO: use Configuration.filterUuidPaths during delta computation (suppressing export of jcr:uuid)
-        JcrContentProcessor jcrInputProcessor = new JcrContentProcessor();
-
+        JcrContentProcessor jcrInputProcessor = new JcrContentProcessor(currentModel, configuration);
         for (String path : pendingChanges.getChangedConfig()) {
             log.info("Computing diff for path: \n\t{}", path);
-            jcrInputProcessor.exportConfigNode(eventProcessorSession, path, configSource, currentModel);
+            jcrInputProcessor.exportConfigNode(eventProcessorSession, path, configSource);
         }
+
+        // empty defs rarely happen when a new node ends up having only excluded properties -- clean them up
+        configSource.cleanEmptyDefinitions();
 
         if (log.isInfoEnabled()) {
             final SourceSerializer sourceSerializer = new SourceSerializer(null, configSource, false);

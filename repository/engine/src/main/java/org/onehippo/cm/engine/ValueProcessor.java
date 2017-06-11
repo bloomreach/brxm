@@ -72,7 +72,7 @@ public abstract class ValueProcessor {
     private static final String[] knownDerivedPropertyNames = new String[] {
             HIPPO_RELATED,
             HIPPO_PATHS,
-            HIPPOSTD_STATESUMMARY
+            HIPPOSTD_STATESUMMARY,
     };
 
     public static boolean isKnownDerivedPropertyName(final String modelPropertyName) {

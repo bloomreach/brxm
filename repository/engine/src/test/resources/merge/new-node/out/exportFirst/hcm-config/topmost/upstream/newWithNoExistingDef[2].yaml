@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /topmost/upstream:
+      /newWithNoExistingDef[2]:
+        jcr:primaryType: nt:unstructured

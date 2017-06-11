@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.util.JcrUtils;
 
 import static org.onehippo.cm.engine.autoexport.AutoExportServiceImpl.log;
@@ -35,7 +36,7 @@ import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_EXCLUDED_PROPER
 import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME;
 import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_MODULES_PROPERTY_NAME;
 
-class Configuration {
+public class Configuration {
 
     private final Node node;
     private final String nodePath;
@@ -43,10 +44,10 @@ class Configuration {
     private Long lastRevision;
     private Map<String, Collection<String>> modules;
     private PatternSet exclusionContext;
-    private List<String> filterUuidPaths;
+    private String[] filterUuidPaths;
 
     // constructor for testing purposes only
-    Configuration(Boolean enabled, Map<String, Collection<String>> modules, PatternSet exclusionContext, List<String> filterUuidPaths) {
+    Configuration(Boolean enabled, Map<String, Collection<String>> modules, PatternSet exclusionContext, String[] filterUuidPaths) {
         this.node = null;
         this.nodePath = null;
         this.enabled = enabled;
@@ -68,7 +69,7 @@ class Configuration {
         return node.getSession();
     }
 
-    PatternSet getExclusionContext() {
+    public PatternSet getExclusionContext() {
         if (exclusionContext == null) {
             List<String> excluded = Collections.emptyList();
             try {
@@ -144,16 +145,16 @@ class Configuration {
         repositoryPaths.add(repositoryPath);
     }
 
-    List<String> getFilterUuidPaths() {
+    String[] getFilterUuidPaths() {
         if (filterUuidPaths == null) {
-            filterUuidPaths = Collections.emptyList();
             try {
                 if (node.hasProperty(CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME)) {
                     Value[] values = node.getProperty(CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME).getValues();
-                    filterUuidPaths = new ArrayList<>(values.length);
-                    for (Value value : values) {
+                    filterUuidPaths = new String[values.length];
+                    for (int i = 0; i < values.length; i++) {
+                        Value value = values[i];
                         String filterUuidPath = value.getString();
-                        filterUuidPaths.add(filterUuidPath);
+                        filterUuidPaths[i] = filterUuidPath;
                         if (log.isDebugEnabled()) {
                             log.debug("filtering uuid paths below " + filterUuidPath);
                         }
@@ -164,6 +165,10 @@ class Configuration {
             }
         }
         return filterUuidPaths;
+    }
+
+    public boolean shouldFilterUuid(final String nodePath) {
+        return StringUtils.startsWithAny(nodePath, getFilterUuidPaths());
     }
 
     public synchronized boolean checkEnabled() {

@@ -54,6 +54,7 @@ import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
 public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigServiceTest {
 
     private ConfigurationBaselineService baselineService;
+    private ConfigurationLockManager configurationLockManager;
 
     @Before
     public void load_hcm_cnd() throws Exception {
@@ -69,11 +70,13 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
         session.save();
         cndStream.close();
 
-        baselineService = new ConfigurationBaselineService(session, new ConfigurationLockManager(session));
+        configurationLockManager = new ConfigurationLockManager(session);
+        baselineService = new ConfigurationBaselineService(session, configurationLockManager);
     }
 
     @After
     public void cleanup_baseline_nodes() throws Exception {
+        configurationLockManager.stop();
         if (session.nodeExists(HCM_ROOT_PATH)) {
             session.getNode(HCM_ROOT_PATH).remove();
             session.save();

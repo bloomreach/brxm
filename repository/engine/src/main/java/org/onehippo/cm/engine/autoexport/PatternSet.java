@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-class PatternSet {
+public class PatternSet {
 
     private List<Pattern> patterns;
     private PatternSet parentPatternSet;
@@ -68,7 +68,7 @@ class PatternSet {
         return sb.toString();
     }
 
-    boolean matches(String s) {
+    public boolean matches(String s) {
         if (parentPatternSet != null && parentPatternSet.matches(s)) {
             return true;
         }

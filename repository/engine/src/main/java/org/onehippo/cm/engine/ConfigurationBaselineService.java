@@ -174,10 +174,10 @@ public class ConfigurationBaselineService {
     }
 
     /**
-     * Update the stored baseline for a single module as an atomic operation. This is primarily used by auto-export,
-     * which frequently updates existing modules. This method assumes that the module already exists and that it is
-     * save to call session.save() at any time without regard to the calling context.
-     * @param module the module to be updated in the stored baseline
+     * Update the stored baseline for a set of modules as an atomic operation. This is primarily used by auto-export,
+     * which frequently updates existing modules. This method assumes that the modules already exist and that it is
+     * safe to call session.save() at any time without regard to the calling context.
+     * @param modules the modules to be updated in the stored baseline
      */
     protected ConfigurationModelImpl updateBaselineModules(final Collection<ModuleImpl> modules)
             throws RepositoryException, IOException, ParserException {
@@ -198,6 +198,11 @@ public class ConfigurationBaselineService {
                 Node groupNode = baseline.getNode(NodeNameCodec.encode(module.getProject().getGroup().getName()));
                 Node projectNode = groupNode.getNode(NodeNameCodec.encode(module.getProject().getName()));
                 Node moduleNode = projectNode.getNode(NodeNameCodec.encode(module.getName()));
+
+                // clear the existing module def and start clean
+                // todo: figure out how to do incremental update properly
+                moduleNode.remove();
+                moduleNode = projectNode.addNode(NodeNameCodec.encode(module.getName()), NT_HCM_MODULE);
 
                 storeBaselineModule(module, moduleNode);
             }
@@ -233,13 +238,14 @@ public class ConfigurationBaselineService {
         // get the resource input provider, which provides access to raw data for module content
         ResourceInputProvider rip = module.getConfigResourceInputProvider();
 
-        // create descriptor node, if necessary
-        Node descriptorNode = createNodeIfNecessary(moduleNode, HCM_MODULE_DESCRIPTOR, NT_HCM_DESCRIPTOR, false);
-
+        // store the content action sequence number
         final Double sequenceNumber = module.getSequenceNumber();
         if (sequenceNumber != null) {
             moduleNode.setProperty(HCM_MODULE_SEQUENCE, sequenceNumber);
         }
+
+        // create descriptor node, if necessary
+        Node descriptorNode = createNodeIfNecessary(moduleNode, HCM_MODULE_DESCRIPTOR, NT_HCM_DESCRIPTOR, false);
 
         // AFAIK, a module MUST have a descriptor, but check here for a malformed package or special case
         // TODO the "/../" is an ugly hack because RIP actually treats absolute paths as relative to config base, not module base
@@ -289,12 +295,12 @@ public class ConfigurationBaselineService {
             sourceNode.setProperty(HCM_CONTENT_PATH, firstDef.getNode().getPath());
         }
 
+        // always create the config root node, since we need it to setup the RIP, and that's needed later
+        // TODO this is an ugly hack because source.getPath() is actually relative to config root, not module root
+        Node configRootNode = createNodeIfNecessary(moduleNode, HCM_CONFIG_FOLDER, NT_HCM_CONFIG_FOLDER, false);
+
         // foreach config source
         for (Source source : module.getConfigSources()) {
-            // TODO this is an ugly hack because source.getPath() is actually relative to config root, not module root
-            // create the config root node, if necessary
-            Node configRootNode = createNodeIfNecessary(moduleNode, HCM_CONFIG_FOLDER, NT_HCM_CONFIG_FOLDER, false);
-
             // process in detail ...
             storeBaselineConfigSource(source, configRootNode, rip);
         }
@@ -595,6 +601,7 @@ public class ConfigurationBaselineService {
 
             // store RIPs for later use
             if (moduleNode.hasNode(HCM_CONFIG_FOLDER)) {
+                // note: we need this to always be true, so that we can load the descriptor etc
                 module.setConfigResourceInputProvider(new BaselineResourceInputProvider(moduleNode.getNode(HCM_CONFIG_FOLDER)));
             }
             if (moduleNode.hasNode(HCM_CONTENT_FOLDER)) {

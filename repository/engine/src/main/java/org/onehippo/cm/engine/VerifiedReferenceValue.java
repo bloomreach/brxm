@@ -18,6 +18,7 @@ package org.onehippo.cm.engine;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.Value;
@@ -78,6 +79,11 @@ public final class VerifiedReferenceValue implements Value {
     @Override
     public Definition getDefinition() {
         return getParent().getDefinition();
+    }
+
+    @Override
+    public ResourceInputProvider getResourceInputProvider() {
+        throw new UnsupportedOperationException("References do not have resource streams!");
     }
 
     @Override

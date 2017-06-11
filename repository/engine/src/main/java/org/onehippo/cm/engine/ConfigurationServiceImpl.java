@@ -234,7 +234,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     public boolean updateBaselineForAutoExport(final Collection<ModuleImpl> updatedModules) {
         try {
             ConfigurationModelImpl newBaseline = baselineService.updateBaselineModules(updatedModules);
-            runtimeConfigurationModel = mergeWithSourceModules(getRuntimeConfigurationModel(), newBaseline);
+            runtimeConfigurationModel = mergeWithSourceModules(updatedModules, newBaseline);
             return true;
         }
         catch (Exception e) {
@@ -369,6 +369,25 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         }
 
         // layer on top all of the other modules
+        newModel.getSortedGroups().forEach(mergedModel::addGroup);
+
+        return mergedModel.build();
+    }
+
+    /**
+     * Combine the provided source modules with all of the other modules from a newModel.
+     * @param sourceModules the new source modules
+     * @param newModel model from which we want to extract all modules that don't overlap with source modules
+     * @return a new, fully-built model combining modules from the params
+     */
+    private ConfigurationModelImpl mergeWithSourceModules(final Collection<ModuleImpl> sourceModules,
+                                                          final ConfigurationModelImpl newModel) {
+        final ConfigurationModelImpl mergedModel = new ConfigurationModelImpl();
+
+        // start with the source modules
+        sourceModules.forEach(mergedModel::addModule);
+
+        // then layer on top all of the other modules
         newModel.getSortedGroups().forEach(mergedModel::addGroup);
 
         return mergedModel.build();

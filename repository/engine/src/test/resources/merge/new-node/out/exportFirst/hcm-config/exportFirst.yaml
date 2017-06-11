@@ -12,6 +12,8 @@ definitions:
               jcr:primaryType: nt:unstructured
           /newAsChild1:
             jcr:primaryType: nt:unstructured
+          /existingChild[2]:
+            jcr:primaryType: nt:unstructured
     /exportFirstExistingRoot:
       jcr:primaryType: nt:unstructured
       /shouldAddToDef:

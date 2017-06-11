@@ -100,7 +100,7 @@ public class DefinitionMergeTest {
             Map<String, Collection<String>> modules = new HashMap<>();
             modules.put("exportFirst", Arrays.asList("/topmost", "/exportFirstExistingRoot", "/hippo:namespaces"));
             modules.put("exportSecond", singletonList("/"));
-            autoExportConfig = AutoExportConfigFactory.make(true, modules);
+            autoExportConfig = new Configuration(true, modules, null, null);
         }
 
         public MergeFixture base(final String... base) {
