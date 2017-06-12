@@ -244,7 +244,7 @@ public class Esv2Yaml {
                 // now sort the instructions on processing order
                 instructions.sort(InitializeInstruction.COMPARATOR);
 
-                // combine/link nodetypes to namespace instructions and remove them from the list
+                // combine/link nodetypes to namespace instructions and remove nodetype instructions from the list
                 combineNamespaceAndNodeTypesInstructions(instructions);
 
                 // for resourcebundles (.json) make sure to use/create a unique target yaml source path
@@ -442,8 +442,8 @@ public class Esv2Yaml {
             switch (instruction.getType()) {
                 case NAMESPACE:
                     try {
-                        String cndPath = instruction.getCombinedWith() != null ? instruction.getCombinedWith().getResourcePath() : null;
-                        final ValueImpl value = new ValueImpl(cndPath, ValueType.STRING, true, false);
+                        final String cndPath = instruction.getCombinedWith() != null ? instruction.getCombinedWith().getResourcePath() : null;
+                        final ValueImpl value = cndPath != null ? new ValueImpl(cndPath, ValueType.STRING, true, false) : null;
                         mainSource.addNamespaceDefinition(instruction.getName(), new URI(instruction.getTypePropertyValue()), value);
                     } catch (URISyntaxException e) {
                         // already checked
