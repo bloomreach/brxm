@@ -245,7 +245,17 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public boolean canChannelBeDeleted(final String channelId) throws ChannelException {
-        return getChannel(channelId).isDeletable();
+        return canChannelBeDeleted(getChannel(channelId));
+    }
+
+    @Override
+    public boolean canChannelBeDeleted(final Channel channel) {
+        return channel.isDeletable();
+    }
+
+    @Override
+    public boolean isMaster(final Channel channel) {
+        return channel.getBranchOf() == null;
     }
 
     @Override

@@ -42,6 +42,10 @@ public interface ChannelService {
 
     boolean canChannelBeDeleted(String channelId) throws ChannelException;
 
+    boolean canChannelBeDeleted(Channel channel);
+
+    boolean isMaster(Channel channel);
+
     /**
      * Validates conditions before return a deletable channel. This method should be called before
      * {@link #deleteChannel(Session, Channel, List<Mount>)}

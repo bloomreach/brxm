@@ -240,15 +240,13 @@ public class RootResource extends AbstractConfigResource {
     }
 
     private boolean isChannelDeletionSupported(final String mountId) {
-        try {
-            final Optional<Channel> channel = channelService.getChannelByMountId(mountId);
-            if (channel.isPresent()) {
-                return channelService.canChannelBeDeleted(channel.get().getId());
-            }
-        } catch (ChannelException e) {
-            log.debug("Cannot check channel deletion support", e);
-            // ignore, consider unsupported.
+
+        final Optional<Channel> channel = channelService.getChannelByMountId(mountId);
+        if (channel.isPresent()) {
+            // note that you cannot delete a channel if a branch is selected
+            return channelService.canChannelBeDeleted(channel.get()) && channelService.isMaster(channel.get());
         }
+
         return false;
     }
 
