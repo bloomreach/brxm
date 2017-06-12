@@ -640,7 +640,7 @@ public class ConfigurationBaselineService {
                                 group.getName(), project.getName(), module.getName());
                     }
                     else {
-                        ConfigSourceParser parser = new ConfigSourceParser(rip, true, DEFAULT_EXPLICIT_SEQUENCING);
+                        ConfigSourceParser parser = new ConfigSourceParser(rip);
                         Node configFolderNode = rip.getBaseNode();
 
                         // for each config source

@@ -342,7 +342,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     private ConfigurationModelImpl loadBootstrapModel() throws RepositoryException {
         try {
-            return new ClasspathConfigurationModelReader().read(Thread.currentThread().getContextClassLoader(), true);
+            return new ClasspathConfigurationModelReader().read(Thread.currentThread().getContextClassLoader());
         } catch (Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException)e;

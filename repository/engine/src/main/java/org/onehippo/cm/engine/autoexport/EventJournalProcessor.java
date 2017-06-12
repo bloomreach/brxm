@@ -542,7 +542,7 @@ public class EventJournalProcessor {
                 // then reload the modules, so we get a nice, clean, purely-File-based view of the sources
                 // TODO: share this logic with ClasspathConfigurationModelReader somehow
                 final PathConfigurationReader.ReadResult result =
-                        new PathConfigurationReader().read(moduleDescriptorPath, true);
+                        new PathConfigurationReader().read(moduleDescriptorPath);
                 result.getGroups().stream()
                         .flatMap(g -> g.getProjects().stream())
                         .flatMap(p -> p.getModules().stream())
