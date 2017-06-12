@@ -260,7 +260,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void preDeleteChannel(final Session session, final Channel channel, List<Mount> mountsOfChannel) throws ChannelException, RepositoryException {
-        if (!channel.isDeletable()) {
+        if (!channel.isDeletable() || !isMaster(channel)) {
             throw new ChannelException("Requested channel cannot be deleted");
         }
 
