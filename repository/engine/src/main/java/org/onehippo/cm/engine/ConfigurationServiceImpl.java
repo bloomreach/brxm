@@ -116,16 +116,17 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         success = storeBaselineModel(bootstrapModel);
                     }
                     if (success) {
+                        log.info("ConfigurationService: apply bootstrap content");
+                        // use bootstrap modules, because that's the only place content sources really exist
+                        success = applyContent(bootstrapModel);
+                    }
+                    if (success) {
                         // reload the baseline after storing, so we have a JCR-backed view of our modules
                         // we want to avoid using bootstrap modules directly, because of awkward ZipFileSystems
                         baselineModel = loadBaselineModel();
 
                         // also, we prefer using source modules over baseline modules
                         runtimeConfigurationModel = mergeWithSourceModules(bootstrapModel, baselineModel);
-
-                        // use new runtime model for applying content, so it gets updated with new sequence numbers
-                        log.info("ConfigurationService: apply bootstrap content");
-                        success = applyContent(runtimeConfigurationModel);
                     }
                     log.info("ConfigurationService: start repository services");
                     startRepositoryServicesTask.execute();
