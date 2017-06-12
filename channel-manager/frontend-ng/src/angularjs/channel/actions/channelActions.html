@@ -15,10 +15,10 @@
   -->
 
 <md-menu>
-  <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}"
+  <md-button aria-label="{{ ::'TOOLBAR_BUTTON_CHANNEL' | translate }}"
              class="qa-button-channel channel-button"
              ng-click="$mdMenu.open($event)">
-    {{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}
+    {{ ::'TOOLBAR_BUTTON_CHANNEL' | translate }}
     <md-icon class="qa-icon-changes"
              md-svg-src="images/attention.svg"
              ng-if="$ctrl.isChangesAvailable()">
@@ -27,10 +27,10 @@
   <md-menu-content width="4" class="channel-menu qa-channel-menu">
     <md-menu-item ng-if="$ctrl.isChannelSettingsAvailable()">
       <md-button class="qa-channel-action-settings"
-                 aria-label="{{ 'TOOLBAR_MENU_CHANNEL_SETTINGS' | translate }}"
+                 aria-label="{{ ::'TOOLBAR_MENU_CHANNEL_SETTINGS' | translate }}"
                  ng-click="$ctrl.openSettings()">
         <md-icon>settings</md-icon>
-        {{ 'TOOLBAR_MENU_CHANNEL_SETTINGS' | translate }}
+        {{ ::'TOOLBAR_MENU_CHANNEL_SETTINGS' | translate }}
       </md-button>
     </md-menu-item>
 
@@ -38,29 +38,29 @@
 
     <md-menu-item ng-if="$ctrl.hasOwnChanges()">
       <md-button class="qa-channel-action-publish"
-                 aria-label="{{ 'TOOLBAR_MENU_CHANNEL_PUBLISH' | translate }}"
+                 aria-label="{{ ::'TOOLBAR_MENU_CHANNEL_PUBLISH' | translate }}"
                  ng-click="$ctrl.publish()">
         <md-icon>publish</md-icon>
-        {{ 'TOOLBAR_MENU_CHANNEL_PUBLISH' | translate }}
+        {{ ::'TOOLBAR_MENU_CHANNEL_PUBLISH' | translate }}
       </md-button>
     </md-menu-item>
 
     <md-menu-item ng-if="$ctrl.hasOwnChanges()">
       <md-button class="qa-channel-action-discard-changes"
-                 aria-label="{{ 'TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES' | translate }}"
+                 aria-label="{{ ::'TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES' | translate }}"
                  ng-click="$ctrl.discardChanges()">
         <md-icon></md-icon>
-        {{ 'TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES' | translate }}
+        {{ ::'TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES' | translate }}
       </md-button>
     </md-menu-item>
 
     <md-menu-item ng-if="$ctrl.hasChangesToManage()">
       <md-button class="qa-channel-action-manage-changes"
-                 aria-label="{{ 'TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES' | translate }}"
+                 aria-label="{{ ::'TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES' | translate }}"
                  ng-disabled="!$ctrl.isManageChangesEnabled()"
                  ng-click="$ctrl.manageChanges()">
         <md-icon></md-icon>
-        {{ 'TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES' | translate }}
+        {{ ::'TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES' | translate }}
       </md-button>
     </md-menu-item>
 
@@ -68,19 +68,19 @@
 
     <md-menu-item ng-if="$ctrl.isChannelDeletionAvailable()">
       <md-button class="qa-channel-action-delete"
-                 aria-label="{{ 'TOOLBAR_MENU_CHANNEL_DELETE' | translate }}"
+                 aria-label="{{ ::'TOOLBAR_MENU_CHANNEL_DELETE' | translate }}"
                  ng-click="$ctrl.deleteChannel()">
         <md-icon>delete</md-icon>
-        {{ 'TOOLBAR_MENU_CHANNEL_DELETE' | translate }}
+        {{ ::'TOOLBAR_MENU_CHANNEL_DELETE' | translate }}
       </md-button>
     </md-menu-item>
 
     <md-menu-item>
       <md-button class="qa-channel-action-close"
-                 aria-label="{{ 'TOOLBAR_MENU_CHANNEL_CLOSE' | translate }}"
+                 aria-label="{{ ::'TOOLBAR_MENU_CHANNEL_CLOSE' | translate }}"
                  ng-click="$ctrl.closeChannel()">
         <md-icon></md-icon>
-        {{ 'TOOLBAR_MENU_CHANNEL_CLOSE' | translate }}
+        {{ ::'TOOLBAR_MENU_CHANNEL_CLOSE' | translate }}
       </md-button>
     </md-menu-item>
   </md-menu-content>

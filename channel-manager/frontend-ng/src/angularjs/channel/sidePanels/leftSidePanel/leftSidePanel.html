@@ -23,22 +23,22 @@
   <md-tabs flex
            md-no-pagination
            class="qa-sidenav-tabs">
-    <md-tab label="{{ 'LEFT_SIDE_PANEL_TAB_SITEMAP' | translate }}">
+    <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_SITEMAP' | translate }}">
       <md-list class="qa-sitemap">
         <md-list-item class="md-2-line qa-sitemap-item"
                       ng-class="{'list-item-active': $ctrl.isActiveSiteMapItem(item) }"
-                      ng-repeat="item in $ctrl.getSiteMap()"
+                      ng-repeat="item in $ctrl.getSiteMap() track by item.pathInfo"
                       md-autofocus="$ctrl.isActiveSiteMapItem(item)"
                       ng-click="$ctrl.showPage(item)">
           <div class="md-list-item-text">
-            <h4 class="qa-pathinfo">{{ item.pathInfo | startWithSlash }}</h4>
-            <p class="qa-name">{{ item.pageTitle || item.name }}</p>
+            <h4 class="qa-pathinfo">{{ ::item.pathInfo | startWithSlash }}</h4>
+            <p class="qa-name">{{ ::item.pageTitle || item.name }}</p>
           </div>
-          <md-divider ng-if="!$last"></md-divider>
+          <md-divider ng-if="::!$last"></md-divider>
         </md-list-item>
       </md-list>
     </md-tab>
-    <md-tab label="{{ 'LEFT_SIDE_PANEL_TAB_COMPONENTS' | translate }}"
+    <md-tab label="{{ ::'LEFT_SIDE_PANEL_TAB_COMPONENTS' | translate }}"
             ng-if="$ctrl.showComponentsTab()">
       <component-catalog components="$ctrl.getCatalog()"></component-catalog>
     </md-tab>

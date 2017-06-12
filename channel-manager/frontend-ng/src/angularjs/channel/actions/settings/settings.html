@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
   -->
 
 <subpage-toolbar flex="none"
-                 data-title="{{ channelSettings.subpageTitle }}"
+                 data-title="{{ ::channelSettings.subpageTitle }}"
                  on-back="channelSettings.onDone()"
                  mode="cancel">
 </subpage-toolbar>
@@ -28,25 +28,25 @@
         class="qa-subpage"
         ng-submit="channelSettings.saveIfValid()"
         novalidate>
-    <div ng-repeat="fieldGroup in channelSettings.getFieldGroups()">
-      <h3 class="md-title qa-fieldgroup">{{ channelSettings.getLabel(fieldGroup.titleKey) }}</h3>
+    <div ng-repeat="fieldGroup in channelSettings.getFieldGroups() track by fieldGroup.titleKey">
+      <h3 class="md-title qa-fieldgroup">{{ ::channelSettings.getLabel(fieldGroup.titleKey) }}</h3>
 
       <property-field ng-repeat="field in fieldGroup.value"
-                      field="field"
+                      field="::field"
                       value="channelSettings.values[field]"
-                      read-only="channelSettings.isReadOnly()"
+                      read-only="::channelSettings.isReadOnly()"
                       error="form[field].$error"
-                      info="channelSettings.channelInfoDescription">
+                      info="::channelSettings.channelInfoDescription">
       </property-field>
     </div>
 
     <property-field ng-if="!channelSettings.getFieldGroups().length"
                     ng-repeat="field in channelSettings.getUngroupedFields()"
-                    field="field"
+                    field="::field"
                     value="channelSettings.values[field]"
-                    read-only="channelSettings.isReadOnly()"
+                    read-only="::channelSettings.isReadOnly()"
                     error="form[field].$error"
-                    info="channelSettings.channelInfoDescription">
+                    info="::channelSettings.channelInfoDescription">
     </property-field>
 
     <div layout="row"
@@ -54,12 +54,12 @@
       <md-button type="button"
                  class="qa-discard"
                  ng-click="channelSettings.onDone()">
-        {{ 'CANCEL' | translate }}
+        {{ ::'CANCEL' | translate }}
       </md-button>
       <md-button type="submit"
                  class="qa-action md-raised md-primary"
                  ng-disabled="channelSettings.isSaveDisabled()">
-        {{ 'SAVE' | translate }}
+        {{ ::'SAVE' | translate }}
       </md-button>
     </div>
   </form>
