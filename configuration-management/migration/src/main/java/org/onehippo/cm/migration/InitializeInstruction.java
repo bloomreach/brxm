@@ -217,7 +217,7 @@ public class InitializeInstruction {
                         instruction = new SourceInitializeInstruction(node, type, first, contentRoots);
                         break;
                     case RESOURCEBUNDLES:
-                        instruction = new ResourcebundlesInitializeInstruction(node, type, first, contentRoots);
+                        instruction = new ResourceBundlesInitializeInstruction(node, type, first, contentRoots);
                         break;
                     case CONTENTDELETE:
                     case CONTENTPROPDELETE:

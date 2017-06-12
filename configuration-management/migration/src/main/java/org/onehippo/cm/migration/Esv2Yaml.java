@@ -462,7 +462,7 @@ public class Esv2Yaml {
                     ((WebFileBundleInstruction) instruction).processWebFileBundle(mainSource, target);
                     break;
                 case RESOURCEBUNDLES:
-                    ((ResourcebundlesInitializeInstruction) instruction).processResourceBundles(module, resourceBundleParents, resourceBundles);
+                    ((ResourceBundlesInitializeInstruction) instruction).processResourceBundles(module, resourceBundleParents, resourceBundles);
                     break;
             }
         }

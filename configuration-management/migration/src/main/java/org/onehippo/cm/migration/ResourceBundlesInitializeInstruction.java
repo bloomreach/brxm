@@ -32,7 +32,7 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
 
-public class ResourcebundlesInitializeInstruction extends InitializeInstruction {
+public class ResourceBundlesInitializeInstruction extends InitializeInstruction {
 
     public static final String CONFIGURATION_ROOT = "/hippo:configuration";
     public static final String TRANSLATIONS_NODE = "hippo:translations";
@@ -41,7 +41,7 @@ public class ResourcebundlesInitializeInstruction extends InitializeInstruction 
     public static final String RESOURCEBUNDLES_NT = "hipposys:resourcebundles";
     public static final String RESOURCEBUNDLE_NT = "hipposys:resourcebundle";
 
-    public ResourcebundlesInitializeInstruction(final EsvNode instructionNode, final Type type,
+    public ResourceBundlesInitializeInstruction(final EsvNode instructionNode, final Type type,
                                                 final InitializeInstruction combinedWith, final String[] contentRoots)
             throws EsvParseException
     {
