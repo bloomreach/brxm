@@ -639,8 +639,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
             // reload sources from raw YAML instead of attempting to copy the full parsed structure
             // TODO is this good enough? for auto-export, it should be, since baseline will not change during export
-            final SourceParser configSourceParser = new ConfigSourceParser(configResourceInputProvider, true, DEFAULT_EXPLICIT_SEQUENCING);
-            final SourceParser contentSourceParser = new ContentSourceParser(contentResourceInputProvider, true, DEFAULT_EXPLICIT_SEQUENCING);
+            final SourceParser configSourceParser = new ConfigSourceParser(configResourceInputProvider);
+            final SourceParser contentSourceParser = new ContentSourceParser(contentResourceInputProvider);
 
             for (ConfigSourceImpl source : getConfigSources()) {
                 // TODO adding the slash here is a silly hack to load a source path without needing the source first
