@@ -157,8 +157,10 @@
       <param-value>/skin</param-value>
     </init-param>
     <init-param>
-      <param-name>requireAuthentication</param-name>
-      <param-value>false</param-value>
+      <param-name>allowedResourcePaths</param-name>
+      <param-value>
+        ^/.*\..*
+      </param-value>
     </init-param>
   </servlet>
 
