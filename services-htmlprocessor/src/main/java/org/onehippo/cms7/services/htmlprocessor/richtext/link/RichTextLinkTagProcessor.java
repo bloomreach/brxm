@@ -88,8 +88,6 @@ public class RichTextLinkTagProcessor implements FacetTagProcessor {
         if (name != null) {
             tag.addAttribute(ATTRIBUTE_HREF, name);
             facetService.markVisited(name);
-        } else {
-            tag.removeAttribute(ATTRIBUTE_HREF);
         }
     }
 }
