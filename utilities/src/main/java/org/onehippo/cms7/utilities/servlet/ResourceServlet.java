@@ -61,10 +61,6 @@ import org.slf4j.LoggerFactory;
  *             <param-name>jarPathPrefix</param-name>
  *             <param-value>/META-INF/example/myapp/skin</param-value>
  *         </init-param>
- *         <init-param>
- *             <param-name>requireAuthentication</param-name>
- *             <param-value>false</param-value>
- *         </init-param>
  *     </servlet>
  *     <servlet-mapping>
  *         <servlet-name>ExampleResourceServlet</servlet-name>
@@ -110,12 +106,6 @@ import org.slf4j.LoggerFactory;
  *     <tr>
  *         <td>jarResourceEnabled</td>
  *         <td> Flag to enable/disable to read resources from the classpath resources. If this is enabled, then the servlet will try to read a resource from the classpath.</td>
- *         <td>false</td>
- *         <td>true</td>
- *     </tr>
- *     <tr>
- *         <td>requireAuthentication</td>
- *         <td> Flag to enable/disable to read resources from the classpath resources when logged in. If this is enabled, then the servlet will check if the user is logged in and only provide the requested resource when the user is logged in.</td>
  *         <td>false</td>
  *         <td>true</td>
  *     </tr>
@@ -281,7 +271,6 @@ public class ResourceServlet extends HttpServlet {
     private boolean gzipEnabled;
     private boolean webResourceEnabled;
     private boolean jarResourceEnabled;
-    private boolean requireAuthentication;
 
     private Set<Pattern> allowedResourcePaths;
     private Set<Pattern> compressedMimeTypes;
@@ -298,34 +287,6 @@ public class ResourceServlet extends HttpServlet {
         gzipEnabled = Boolean.parseBoolean(getInitParameter("gzipEnabled", "true"));
         webResourceEnabled = Boolean.parseBoolean(getInitParameter("webResourceEnabled", "true"));
         jarResourceEnabled = Boolean.parseBoolean(getInitParameter("jarResourceEnabled", "true"));
-
-        // The ResourceServlet that serves resource in "/skin" is used by the CMS login page.
-        // To ease upgrading to Hippo 12 this servlet does not require authentication by default.
-        // TODO: remove this helpful workaround in Hippo 13
-        @Deprecated
-        final boolean isSkinResourceServlet = jarPathPrefix.equals("/skin");
-        if (isSkinResourceServlet && !hasInitParameter("requireAuthentication")) {
-            log.warn("The SkinResourceServlet used by the CMS application is missing the parameter 'requireAuthentication'. " +
-                    "For your convenience Hippo 12 will assume it is set to 'false'. " +
-                    "Please adjust the web.xml file of the CMS application to avoid future problems:\n" +
-                    "\n" +
-                    "  <servlet>\n" +
-                    "    <servlet-name>SkinResourceServlet</servlet-name>\n" +
-                    "    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>\n" +
-                    "    <init-param>\n" +
-                    "      <param-name>jarPathPrefix</param-name>\n" +
-                    "      <param-value>/skin</param-value>\n" +
-                    "    </init-param>\n" +
-                    "    <init-param>\n" +
-                    "      <param-name>requireAuthentication</param-name>\n" +
-                    "      <param-value>false</param-value>\n" +
-                    "    </init-param>\n" +
-                    "    ...\n");
-        }
-
-        requireAuthentication = Boolean.parseBoolean(getInitParameter("requireAuthentication",
-                Boolean.toString(!isSkinResourceServlet)));
-
         allowedResourcePaths = initPatterns("allowedResourcePaths", DEFAULT_ALLOWED_RESOURCE_PATHS);
         compressedMimeTypes = initPatterns("compressedMimeTypes", DEFAULT_COMPRESSED_MIME_TYPES);
 
@@ -517,12 +478,8 @@ public class ResourceServlet extends HttpServlet {
         return resource;
     }
 
-    private boolean isAllowed(final String resourcePath, final HttpServletRequest servletRequest) {
+    protected boolean isAllowed(final String resourcePath, final HttpServletRequest servletRequest) {
         if (webResourceEnabled && WEBAPP_PROTECTED_PATH.matcher(resourcePath).matches()) {
-            return false;
-        }
-
-        if (requireAuthentication && !isUserLoggedIn(servletRequest)) {
             return false;
         }
 
@@ -533,11 +490,6 @@ public class ResourceServlet extends HttpServlet {
         }
 
         return false;
-    }
-
-    private static boolean isUserLoggedIn(final HttpServletRequest servletRequest) {
-        final HttpSession httpSession = servletRequest.getSession(false);
-        return httpSession != null && httpSession.getAttribute("hippo:username") != null;
     }
 
     private URL getJarResource(final String resourcePath) {
