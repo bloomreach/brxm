@@ -139,9 +139,8 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
 
                     validatePreviewConfiguration(mount, false);
 
-                    // copy live config to preview and also for channel node
+                    // copy live config to preview
                     JcrUtils.copy(remoteSession, mount.getHstSite().getConfigurationPath(), mount.getHstSite().getConfigurationPath() + "-preview");
-                    JcrUtils.copy(remoteSession, mount.getChannel().getChannelPath(), mount.getChannel().getChannelPath() + "-preview");
                     remoteSession.save();
                 }
 
@@ -310,9 +309,8 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                 validatePreviewConfiguration(mount, false);
 
                 rootPreviewConfigurationPath = mount.getHstSite().getConfigurationPath() + "-preview";
-                // copy live config to preview and also for channel node
+                // copy live config to preview
                 JcrUtils.copy(remoteSession, mount.getHstSite().getConfigurationPath(), rootPreviewConfigurationPath);
-                JcrUtils.copy(remoteSession, mount.getChannel().getChannelPath(), mount.getChannel().getChannelPath() + "-preview");
                 remoteSession.save();
             }
 
