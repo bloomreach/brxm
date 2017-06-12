@@ -934,12 +934,15 @@ describe('RightSidePanel', () => {
 
   it('should close right side panel', () => {
     spyOn(ChannelService, 'setToolbarDisplayed');
+    spyOn($ctrl, 'setFullWidth');
     SidePanelService.close.and.returnValue($q.resolve());
 
     ChannelService.isToolbarDisplayed = false;
     $ctrl._closePanel();
+    $scope.$apply();
 
     expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
+    expect($ctrl.setFullWidth).toHaveBeenCalledWith(false);
   });
 });
 

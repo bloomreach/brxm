@@ -412,6 +412,7 @@ class RightSidePanelCtrl {
       .finally(() => {
         this.$element.removeClass('sidepanel-open');
         this.$element.css('max-width', '0px');
+        this.setFullWidth(false);
       });
 
     if (!this.ChannelService.isToolbarDisplayed) {
