@@ -1052,8 +1052,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     @Test
     public void webFileBundleWithNonStringValue() {
         final String yaml = "definitions:\n"
-                + "  webfilebundle:\n"
-                + "  - 42";
+                + "  webfilebundle: [42]";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node name = firstDefinitionFirstValue(root);
@@ -1064,9 +1063,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     @Test
     public void webFileBundleDuplicateNames() {
         final String yaml = "definitions:\n"
-                + "  webfilebundle:\n"
-                + "  - name\n"
-                + "  - name";
+                + "  webfilebundle: [name, name]";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node name = secondValue(firstDefinitionTuple(root).getValueNode());

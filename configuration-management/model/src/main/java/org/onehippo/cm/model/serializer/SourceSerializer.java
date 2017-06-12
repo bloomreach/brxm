@@ -113,7 +113,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
             definitionNodes.add(createStrOptionalSequenceTuple(DefinitionType.CONTENT.toString(), contentDefinitionTuples));
         }
         if (webFilesDefinitionNodes.size() > 0) {
-            definitionNodes.add(createStrSeqTuple(DefinitionType.WEBFILEBUNDLE.toString(), webFilesDefinitionNodes));
+            definitionNodes.add(createStrSeqTuple(DefinitionType.WEBFILEBUNDLE.toString(), webFilesDefinitionNodes, true));
         }
 
         final List<NodeTuple> sourceTuples = new ArrayList<>();
