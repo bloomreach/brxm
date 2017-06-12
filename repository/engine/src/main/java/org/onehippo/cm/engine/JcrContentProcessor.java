@@ -538,7 +538,7 @@ public class JcrContentProcessor {
             final DefinitionNodeImpl defNode = configSource.getOrCreateDefinitionFor(jcrNode.getPath());
             final Property primaryTypeProperty = jcrNode.getProperty(JCR_PRIMARYTYPE);
             final ValueImpl value = valueFrom(primaryTypeProperty, defNode);
-            defNode.addProperty(primaryTypeProperty.getName(), value).setOperation(PropertyOperation.OVERRIDE);
+            defNode.addProperty(JCR_PRIMARYTYPE, value).setOperation(PropertyOperation.OVERRIDE);
             return defNode;
         }
         else {
@@ -625,23 +625,21 @@ public class JcrContentProcessor {
         DefinitionNodeImpl defNode = exportPropertiesDelta(jcrNode, configNode, configSource, configurationModel);
 
         // check if we need to add children
-        // TODO: handle ordering changes
-        // TODO: handle SNS properly
         for (final Node childNode : new NodeIterable(jcrNode.getNodes())) {
-            final ConfigurationItemCategory category = configNode.getChildNodeCategory(createIndexedName(childNode));
+            final String indexedJcrChildNodeName = createIndexedName(childNode);
+            final ConfigurationItemCategory category = configNode.getChildNodeCategory(indexedJcrChildNodeName);
             if (category != ConfigurationItemCategory.CONFIG) {
                 log.debug("Ignoring child node because of category:{} \n\t{}", category, childNode.getPath());
                 continue;
             }
 
-            final ConfigurationNodeImpl childConfigNode = configNode.getNode(createIndexedName(childNode));
+            final ConfigurationNodeImpl childConfigNode = configNode.getNode(indexedJcrChildNodeName);
             if (childConfigNode == null) {
                 // the config doesn't know about this child, so do a full export without delta comparisons
                 // yes, defNode is indeed supposed to be the _parent's_ defNode
                 defNode = createDefNodeIfNecessary(defNode, jcrNode, configSource);
                 exportNode(childNode, defNode);
-            }
-            else {
+            } else {
                 // call top-level recursion, not this delta method
                 exportConfigNode(childNode.getSession(), childNode.getPath(), configSource);
             }
@@ -649,12 +647,6 @@ public class JcrContentProcessor {
 
         // check if we need to delete children
         for (final String childConfigNode : configNode.getNodes().keySet()) {
-            final ConfigurationItemCategory category = configNode.getChildNodeCategory(childConfigNode);
-            if (category != ConfigurationItemCategory.CONFIG) {
-                log.debug("Ignoring child node because of category:{} \n\t{}", category, configNode+"/"+childConfigNode);
-                continue;
-            }
-
             if (!jcrNode.hasNode(childConfigNode)) {
                 final DefinitionNodeImpl childNode = configSource
                         .getOrCreateDefinitionFor(String.join("/", configNode.getPath(), childConfigNode));
@@ -668,6 +660,84 @@ public class JcrContentProcessor {
                 }
             }
         }
+
+        // Care for node ordering?
+        final boolean orderingIsRelevant = jcrNode.getPrimaryNodeType().hasOrderableChildNodes()
+                && (configNode.getIgnoreReorderedChildren() == null || !configNode.getIgnoreReorderedChildren());
+        if (orderingIsRelevant) {
+            updateOrdering(jcrNode, configNode, configSource);
+        }
+    }
+
+    /**
+     * Because we've processed jcrNode's children in order, all new definitions (add node) are already in the correct
+     * order. To fix the ordering of inserted and reordered nodes, we walk over jcrNode's children again, comparing
+     * their order to the order of configNode's children. Where necessary, we insert "order-before" meta-data.
+     *
+     * example: consider the configuration child nodes
+     *
+     *  A, B, C
+     *
+     * and the JCR child nodes
+     *
+     *  X, A, Y, C, B*, Z
+     *
+     * where B* has different properties or children from B. When entering this method, the list of child definition
+     * nodes already populated is
+     *
+     *  X, Y, B*, Z
+     *
+     * (i.e. the new or changed nodes). Below method will add order-before (->) to this list as follows:
+     *
+     *  X->A, Y->C, B*, Z, C->B*
+     *
+     * When merging these definitions, this should be sufficient information to put the nodes into the correct order.
+     */
+    private void updateOrdering(final Node jcrNode, final ConfigurationNodeImpl configNode,
+                                final ConfigSourceImpl configSource) throws RepositoryException {
+        final List<String> indexedJcrChildNodeNames = new ArrayList<>();
+        for (Node child : new NodeIterable(jcrNode.getNodes())) {
+            indexedJcrChildNodeNames.add(SnsUtils.createIndexedName(child));
+        }
+        final List<String> indexedConfigNodeNames = new ArrayList<>();
+        for (String indexedConfigChildNodeName : configNode.getNodes().keySet()) {
+            if (indexedJcrChildNodeNames.contains(indexedConfigChildNodeName)) {
+                indexedConfigNodeNames.add(indexedConfigChildNodeName);
+            }
+        }
+        final List<String> processedConfigNodeNames = new ArrayList<>();
+
+        for (int jcrIndex = 0, configIndex = 0; jcrIndex < indexedJcrChildNodeNames.size(); jcrIndex++) {
+            final String indexedJcrChildNodeName = indexedJcrChildNodeNames.get(jcrIndex);
+            if (indexedConfigNodeNames.contains(indexedJcrChildNodeName)) {
+                // pre-existing child node
+                if (indexedJcrChildNodeName.equals(indexedConfigNodeNames.get(configIndex))) {
+                    // at expected index, consume.
+                    configIndex++;
+                    // also skip all already processed config child nodes
+                    while (configIndex < indexedConfigNodeNames.size()
+                            && processedConfigNodeNames.contains(indexedConfigNodeNames.get(configIndex))) {
+                        configIndex++;
+                    }
+                } else {
+                    // not at expected index, set order-before
+                    setOrderBefore(configNode, indexedJcrChildNodeName, indexedJcrChildNodeNames.get(jcrIndex + 1), configSource);
+                    processedConfigNodeNames.add(indexedJcrChildNodeName);
+                }
+            } else {
+                if (configIndex < indexedConfigNodeNames.size()) {
+                    // not after all configuration nodes, set order-before
+                    setOrderBefore(configNode, indexedJcrChildNodeName, indexedJcrChildNodeNames.get(jcrIndex + 1), configSource);
+                }
+            }
+        }
+    }
+
+    private void setOrderBefore(final ConfigurationNodeImpl configNode, final String childName, final String beforeName,
+                                final ConfigSourceImpl configSource) {
+        final DefinitionNodeImpl childNode = configSource
+                .getOrCreateDefinitionFor(String.join("/", configNode.getPath(), childName));
+        childNode.setOrderBefore(beforeName);
     }
 
     /**
