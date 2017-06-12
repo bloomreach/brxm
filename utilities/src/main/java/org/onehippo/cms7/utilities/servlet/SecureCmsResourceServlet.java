@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
  *
  * Can be used in cms only and checks whether the requester is logged in before serving the resource.
  */
-public class SecuredCmsResourceServlet extends ResourceServlet {
+public class SecureCmsResourceServlet extends ResourceServlet {
 
     protected boolean isAllowed(final String resourcePath, final HttpServletRequest servletRequest) {
         if (!isUserLoggedIn(servletRequest)) {

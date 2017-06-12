@@ -18,13 +18,11 @@ package org.onehippo.cms7.utilities.servlet;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletConfig;
 
 import static org.hamcrest.core.Is.is;
@@ -92,16 +90,6 @@ public class ResourceServletTest {
         assertThat("Response content should be encoded.", validResponse.getHeader("Content-Encoding"), is("gzip"));
     }
 
-    @Test
-    public void testSkinResourcesExplicitlyWithoutAuthentication() throws ServletException, IOException {
-        final MockHttpServletRequest request = getMockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeSkinServlet();
-        servlet.service(request, response);
-        assertThat("Authorized request should give resource.", response.getStatus(), is(200));
-        assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
-    }
-
     private ResourceServlet initializeServlet() throws ServletException {
         return initializeServlet(null, null);
     }
@@ -120,24 +108,6 @@ public class ResourceServletTest {
 
         servlet.init(servletConfig);
         return servlet;
-    }
-
-    private ResourceServlet initializeSkinServlet() throws ServletException {
-        final ResourceServlet skinServlet = new ResourceServlet();
-        final MockServletConfig servletConfig = new MockServletConfig();
-
-        servletConfig.addInitParameter("jarPathPrefix", "/skin");
-        servletConfig.addInitParameter("allowedResourcePaths", "^/.*\\..*");
-
-        skinServlet.init(servletConfig);
-
-        return skinServlet;
-    }
-
-    private void fakeLoggedinUser(final MockHttpServletRequest request) {
-        final HttpSession mockedSession = new MockHttpSession();
-        mockedSession.setAttribute("hippo:username", "admin");
-        request.setSession(mockedSession);
     }
 
     protected static MockHttpServletRequest getMockHttpServletRequest() {

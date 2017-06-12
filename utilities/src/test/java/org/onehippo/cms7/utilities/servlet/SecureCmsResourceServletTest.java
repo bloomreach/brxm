@@ -20,7 +20,6 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -31,7 +30,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.onehippo.cms7.utilities.servlet.ResourceServletTest.getMockHttpServletRequest;
 
-public class SecuredCmsResourceServletTest {
+public class SecureCmsResourceServletTest {
 
     @Test
     public void testUnauthorizedServlet() throws ServletException, IOException {
@@ -54,17 +53,8 @@ public class SecuredCmsResourceServletTest {
     }
 
 
-    @Test
-    public void testSkinResourcesExplicitlyWithAuthentication() throws ServletException, IOException {
-        final MockHttpServletRequest request = getMockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeSkinServlet();
-        servlet.service(request, response);
-        assertThat("Unauthorized request should give 404.", response.getStatus(), is(404));
-    }
-
     private ResourceServlet initializeServlet() throws ServletException {
-        final SecuredCmsResourceServlet servlet = new SecuredCmsResourceServlet();
+        final SecureCmsResourceServlet servlet = new SecureCmsResourceServlet();
         final MockServletConfig servletConfig = new MockServletConfig();
         servletConfig.addInitParameter("jarPathPrefix", "META-INF/test");
 
@@ -77,17 +67,4 @@ public class SecuredCmsResourceServletTest {
         mockedSession.setAttribute("hippo:username", "admin");
         request.setSession(mockedSession);
     }
-
-    private SecuredCmsResourceServlet initializeSkinServlet() throws ServletException {
-        final SecuredCmsResourceServlet skinServlet = new SecuredCmsResourceServlet();
-        final MockServletConfig servletConfig = new MockServletConfig();
-
-        servletConfig.addInitParameter("jarPathPrefix", "/skin");
-        servletConfig.addInitParameter("allowedResourcePaths", "^/.*\\..*");
-
-        skinServlet.init(servletConfig);
-
-        return skinServlet;
-    }
-
 }
