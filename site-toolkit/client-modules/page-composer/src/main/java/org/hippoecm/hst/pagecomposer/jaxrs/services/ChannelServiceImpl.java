@@ -270,7 +270,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void deleteChannel(Session session, Channel channel, List<Mount> mountsOfChannel) throws RepositoryException, ChannelException {
-        removeConfigurationNodes(session, channel);
+        removeConfigurationNodes(channel);
         removeSiteNode(session, channel);
         removeMountNodes(session, mountsOfChannel);
     }
@@ -279,10 +279,10 @@ public class ChannelServiceImpl implements ChannelService {
         return RequestContextProvider.get();
     }
 
-    private void removeConfigurationNodes(final Session session, final Channel channel) throws RepositoryException {
+    private void removeConfigurationNodes(final Channel channel) throws RepositoryException {
         final String hstConfigPath = channel.getHstConfigPath();
         try {
-            hstConfigurationService.delete(session, hstConfigPath);
+            hstConfigurationService.delete(getRequestContext(), channel);
         } catch (HstConfigurationException e) {
             log.info("configuration node '{}' won't be deleted because : {}", hstConfigPath, e.getMessage());
         }

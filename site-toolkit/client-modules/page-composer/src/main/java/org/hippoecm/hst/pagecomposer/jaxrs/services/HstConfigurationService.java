@@ -23,14 +23,18 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
+import org.onehippo.cms7.services.hst.Channel;
 
 /**
  * Composer service to manage 'hst:configuration' nodes at '/hst:hst/hst:configurations'
  */
 public interface HstConfigurationService {
 
-    void delete(final Session session, final String configurationPath) throws RepositoryException, HstConfigurationException;
+    void delete(Session session, String configurationPath) throws RepositoryException, HstConfigurationException;
+
+    void delete(HstRequestContext requestContext, Channel channel) throws RepositoryException, HstConfigurationException;
 
     /**
      * Get all container nodes of type {@link HstNodeTypes#NODETYPE_HST_CONTAINERCOMPONENT} in the given
