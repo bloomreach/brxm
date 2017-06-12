@@ -57,12 +57,13 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         return path.equals("") ? "/" : path;
     }
 
-    public void processContentInstruction(final SourceImpl source, final Map<String, DefinitionNodeImpl> nodeDefinitions,
+    public void processContentInstruction(final SourceImpl source,
+                                          final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions,
                                           Set<DefinitionNode> deltaNodes) throws EsvParseException {
         final String nodePath = getNodePath();
         final String name = StringUtils.substringAfterLast(getContentPath(), "/");
 
-        DefinitionNodeImpl node = nodeDefinitions.get(nodePath);
+        DefinitionNodeImpl node = nodeDefinitions.get(new MinimallyIndexedPath(nodePath));
 
         log.info("processing " + getType().getPropertyName() + " " + getContentPath());
 
@@ -77,7 +78,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                         log.info((removable ? "Removing" : "Deleting") + " path " + nodePath + " defined at " + node.getSourceLocation() +
                                 " by hippo:contentdelete " + getName() + " at " + getInstructionNode().getSourceLocation());
                         if (removable) {
-                            nodeDefinitions.remove(nodePath);
+                            nodeDefinitions.remove(new MinimallyIndexedPath(nodePath));
                         }
                         deleteChildren(nodePath + "/", nodeDefinitions);
                         if (deltaNodes.contains(node)) {
@@ -95,7 +96,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                 DefinitionNodeImpl parentNode = node.getParent();
                                 while (parentNode.isEmpty()) {
                                     // empty (delta) parent: remove as well
-                                    nodeDefinitions.remove(parentNode.getPath());
+                                    nodeDefinitions.remove(new MinimallyIndexedPath(parentNode.getPath()));
                                     deltaNodes.remove(parentNode);
                                     if (parentNode.isRoot()) {
                                         // can remove whole of delta definition
@@ -134,7 +135,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                     def.setNode(node);
                     node.setDelete(true);
                     node.getSourceLocation().copy(getInstructionNode().getSourceLocation());
-                    nodeDefinitions.put(nodePath, node);
+                    nodeDefinitions.put(new MinimallyIndexedPath(nodePath), node);
                 }
                 break;
             case CONTENTPROPDELETE:
@@ -344,33 +345,34 @@ public class ContentInitializeInstruction extends InitializeInstruction {
     }
 
     private DefinitionNodeImpl addIntermediateParents(final DefinitionNodeImpl parentNode, final String nodePath,
-                                                      final Map<String, DefinitionNodeImpl> nodeDefinitions,
+                                                      final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions,
                                                       final Set<DefinitionNode> deltaNodes) {
         DefinitionNodeImpl node = parentNode;
         String[] parentsToAdd = nodePath.substring(parentNode.getPath().length() + 1).split("/");
         for (String parent : parentsToAdd) {
             node = node.addNode(parent);
             node.getSourceLocation().copy(getInstructionNode().getSourceLocation());
-            nodeDefinitions.put(node.getPath(), node);
+            nodeDefinitions.put(new MinimallyIndexedPath(node.getPath()), node);
             deltaNodes.add(node);
         }
         return node;
     }
 
     protected DefinitionNodeImpl addDeltaRootNode(final SourceImpl source, final String nodePath, final String name,
-                                                final Map<String, DefinitionNodeImpl> nodeDefinitions,
-                                                final Set<DefinitionNode> deltaNodes) {
+                                                  final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions,
+                                                  final Set<DefinitionNode> deltaNodes) {
         ConfigDefinitionImpl def = ((ConfigSourceImpl)source).addConfigDefinition();
         DefinitionNodeImpl node = new DefinitionNodeImpl(nodePath, name, def);
         def.setNode(node);
         deltaNodes.add(node);
         node.getSourceLocation().copy(getInstructionNode().getSourceLocation());
-        nodeDefinitions.put(nodePath, node);
+        nodeDefinitions.put(new MinimallyIndexedPath(nodePath), node);
         return node;
     }
 
-    private DefinitionNodeImpl findNearestParent(final String nodePath, final Map<String, DefinitionNodeImpl> nodeDefinitions,
-                                                      final Set<DefinitionNode> deltaNodes) {
+    private DefinitionNodeImpl findNearestParent(final String nodePath,
+                                                 final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions,
+                                                 final Set<DefinitionNode> deltaNodes) {
         String path = StringUtils.substringBeforeLast(nodePath, "/");
         if (path.equals("")) {
             path = "/";
@@ -384,12 +386,12 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         return null;
     }
 
-    private void deleteChildren(final String childPathPrefix, final Map<String, DefinitionNodeImpl> nodeDefinitions) {
-        TreeSet<String> deletePaths = nodeDefinitions.keySet().stream()
-                .filter(p -> p.startsWith(childPathPrefix))
+    private void deleteChildren(final String childPathPrefix, final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions) {
+        TreeSet<MinimallyIndexedPath> deletePaths = nodeDefinitions.keySet().stream()
+                .filter(p -> p.getPath().startsWith(childPathPrefix))
                 .collect(Collectors.toCollection(TreeSet::new));
-        for (Iterator<String> delIter = deletePaths.descendingIterator(); delIter.hasNext(); ) {
-            String delPath = delIter.next();
+        for (Iterator<MinimallyIndexedPath> delIter = deletePaths.descendingIterator(); delIter.hasNext(); ) {
+            MinimallyIndexedPath delPath = delIter.next();
             DefinitionNodeImpl delNode = nodeDefinitions.get(delPath);
             if (delNode.isRoot()) {
                 // remove definition from source

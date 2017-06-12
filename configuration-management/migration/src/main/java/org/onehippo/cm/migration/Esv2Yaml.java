@@ -429,7 +429,7 @@ public class Esv2Yaml {
 
         Set<String> resourceBundles = new HashSet<>();
         Set<DefinitionNode> deltaNodes = new HashSet<>();
-        Map<String, DefinitionNodeImpl> nodeDefinitions = new HashMap<>();
+        Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions = new HashMap<>();
 
         // not yet 'added' definition for resourcebundle root translation parent definitions, if needed
         final ConfigDefinitionImpl resourceBundleParents = mainSource.addConfigDefinition();

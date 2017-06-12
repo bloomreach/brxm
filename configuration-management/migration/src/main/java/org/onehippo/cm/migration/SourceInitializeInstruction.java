@@ -18,7 +18,9 @@ package org.onehippo.cm.migration;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,6 +40,7 @@ import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.util.SnsUtils;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -59,11 +62,13 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         return sourceNode;
     }
 
+    private String contentRoot;
+
     public void prepareSource(final EsvParser parser) throws IOException, EsvParseException {
         prepareResource(parser.getBaseDir(), true);
         setSourcePath(FilenameUtils.removeExtension(getResourcePath()) + ".yaml");
         sourceNode = parser.parse(new FileInputStream(getResource()), getResource().getCanonicalPath());
-        final String contentRoot = normalizePath(getPropertyValue("hippo:contentroot", PropertyType.STRING, true));
+        contentRoot = "/" + normalizePath(getPropertyValue("hippo:contentroot", PropertyType.STRING, true));
         setContentPath(contentRoot + "/" + sourceNode.getName());
     }
 
@@ -75,7 +80,8 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         return sourceNode != null && sourceNode.isDeltaSkip();
     }
 
-    public void processSource(final ModuleImpl module, final Map<String, DefinitionNodeImpl> nodeDefinitions,
+    public void processSource(final ModuleImpl module,
+                              final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions,
                               final Set<DefinitionNode> deltaNodes) throws EsvParseException {
         final SourceImpl source;
         if (isContent(getContentPath())) {
@@ -84,14 +90,59 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
             source = module.addConfigSource(getSourcePath());
         }
         log.info("Processing " + getType().getPropertyName() + " " + getContentPath() + " from file " + getResourcePath());
-        processNode(sourceNode, getContentPath(), source, null, nodeDefinitions, deltaNodes);
+        final String path = calculatePath(sourceNode, contentRoot, nodeDefinitions, Collections.emptyList());
+        processNode(sourceNode, path, source, null, nodeDefinitions, deltaNodes);
     }
 
-    private void processNode(final EsvNode node, final String path, final SourceImpl source, DefinitionNodeImpl parentNode,
-                             final Map<String, DefinitionNodeImpl> nodeDefinitions,
+    /**
+     * Calculates the target path for the given node, most importantly, determines if an SNS index for this node is
+     * necessary.
+     */
+    private String calculatePath(final EsvNode node, final String parentPath,
+                                 final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions,
+                                 final List<EsvNode> siblings) {
+
+        final String base = StringUtils.appendIfMissing(parentPath, "/") + node.getName();
+        if (node.getMerge() != null) {
+            return base;
+        }
+
+        // No merge defined, pre-12 behavior was to create new SNS in case path already exists.
+        // TODO: add capability to check whether another module defined a node at this path.
+        DefinitionNodeImpl def = nodeDefinitions.get(new MinimallyIndexedPath(base));
+        if (def != null) {
+            if (def.isDeleted()) {
+                return base;
+            }
+            int index = 2;
+            while (nodeDefinitions.containsKey(new MinimallyIndexedPath(SnsUtils.createIndexedName(base, index)))) {
+                index++;
+            }
+            return SnsUtils.createIndexedName(base, index);
+        }
+
+        // No earlier definitions at this path found, check if this node has siblings with the same name. If so, make
+        // sure the first one gets an explicit index of 1.
+        int count = 0;
+        for (EsvNode sibling : siblings) {
+            if (sibling.getName().equals(node.getName())) {
+                count++;
+            }
+        }
+
+        if (count > 1) {
+            return SnsUtils.createIndexedName(base, 1);
+        } else {
+            return base;
+        }
+    }
+
+    private void processNode(final EsvNode node, final String path, final SourceImpl source,
+                             DefinitionNodeImpl parentNode,
+                             final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions,
                              final Set<DefinitionNode> deltaNodes) throws EsvParseException {
 
-        DefinitionNodeImpl defNode = nodeDefinitions.get(path);
+        DefinitionNodeImpl defNode = nodeDefinitions.get(new MinimallyIndexedPath(path));
         if (defNode != null && !defNode.isDelete()) {
             if (node.isDeltaSkip()) {
                 log.warn("Skipping node " + path + " at " + node.getSourceLocation() + ": already defined before at " +
@@ -120,14 +171,15 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                     if (parentPath.equals("")) {
                         parentPath = "/";
                     }
-                    parentNode = nodeDefinitions.get(parentPath);
+                    parentNode = nodeDefinitions.get(new MinimallyIndexedPath(parentPath));
                 }
             }
             if (node.isDeltaInsert() && parentNode == null) {
                 parentNode = addDeltaRootNode(source, parentPath, StringUtils.substringAfterLast(parentPath, "/"), nodeDefinitions, deltaNodes);
             }
+            final String newNodeName = StringUtils.substringAfterLast(path, "/");
             if (parentNode != null) {
-                defNode = parentNode.addNode(node.getName());
+                defNode = parentNode.addNode(newNodeName);
             } else {
                 ContentDefinitionImpl def;
                 if (isContent(path)) {
@@ -135,7 +187,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                 } else {
                     def = ((ConfigSourceImpl)source).addConfigDefinition();
                 }
-                defNode = new DefinitionNodeImpl(path, node.getName(), def);
+                defNode = new DefinitionNodeImpl(path, newNodeName, def);
                 def.setNode(defNode);
             }
             if (node.getMerge() != null) {
@@ -146,7 +198,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
 
             defNode.getSourceLocation().copy(node.getSourceLocation());
 
-            nodeDefinitions.put(path, defNode);
+            nodeDefinitions.put(new MinimallyIndexedPath(path), defNode);
 
             if (node.isDeltaInsert()) {
                 if (deltaNodes.contains(parentNode)) {
@@ -190,7 +242,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
             processProperty(node, defNode, property, deltaNode);
         }
         for (EsvNode child : node.getChildren()) {
-            final String childPath = path + "/" + child.getName();
+            final String childPath = calculatePath(child, path, nodeDefinitions, node.getChildren());
             if (!isContent(path) && isContent(childPath)) {
                 log.warn("Ignoring node " + childPath + " defined at " + child.getSourceLocation() +
                         ": switching from configuration to content not supported yet.");
