@@ -50,7 +50,21 @@ public class ClasspathConfigurationModelReader {
      * configuration and content into a ConfigurationModel.
      *
      * @param classLoader the ClassLoader which will be searched for HCM modules
-     * @param verifyOnly TODO explain this
+     * @return a ConfigurationModel of configuration and content definitions
+     * @throws IOException
+     * @throws ParserException
+     */
+    public ConfigurationModelImpl read(final ClassLoader classLoader)
+            throws IOException, ParserException, URISyntaxException {
+        return read(classLoader, false);
+    }
+
+    /**
+     * Searches the classpath for module manifest files and uses these as entry points for loading HCM module
+     * configuration and content into a ConfigurationModel.
+     *
+     * @param classLoader the ClassLoader which will be searched for HCM modules
+     * @param verifyOnly when true use 'verify only' yaml parsing, allowing (but warning on) certain model errors
      * @return a ConfigurationModel of configuration and content definitions
      * @throws IOException
      * @throws ParserException
