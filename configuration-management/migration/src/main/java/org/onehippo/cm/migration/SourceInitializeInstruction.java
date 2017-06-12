@@ -193,8 +193,6 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
             if (node.getMerge() != null) {
                 deltaNodes.add(defNode);
             }
-            // if (deleted) -> mixed bag
-            defNode.setDelete(deleted);
 
             defNode.getSourceLocation().copy(node.getSourceLocation());
 
