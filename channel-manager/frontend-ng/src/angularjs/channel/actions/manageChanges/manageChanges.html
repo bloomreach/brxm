@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,24 +15,24 @@
   -->
 
 <subpage-toolbar flex="none"
-                 data-title="{{ 'SUBPAGE_CHANGEMANAGEMENT_TITLE' | translate }}"
+                 data-title="{{ ::'SUBPAGE_CHANGEMANAGEMENT_TITLE' | translate }}"
                  on-back="changeMan.goBack()">
 </subpage-toolbar>
 
 <subpage-content flex class="qa-change-management">
   <md-list>
     <md-list-item>
-      <md-button class="md-secondary" ng-click="changeMan.discardAllChanges()">{{ 'DISCARD_ALL' | translate }}</md-button>
-      <md-button class="md-secondary md-primary" ng-click="changeMan.publishAllChanges()">{{ 'PUBLISH_ALL' | translate }}</md-button>
+      <md-button class="md-secondary" ng-click="changeMan.discardAllChanges()">{{ ::'DISCARD_ALL' | translate }}</md-button>
+      <md-button class="md-secondary md-primary" ng-click="changeMan.publishAllChanges()">{{ ::'PUBLISH_ALL' | translate }}</md-button>
     </md-list-item>
 
     <md-divider></md-divider>
 
     <md-list-item ng-repeat="user in changeMan.usersWithChanges">
-      {{ changeMan.getLabel(user) }}
+      {{ ::changeMan.getLabel(user) }}
 
-      <md-button class="md-secondary" ng-click="changeMan.discardChanges(user)">{{ 'DISCARD' | translate }}</md-button>
-      <md-button class="md-secondary md-primary" ng-click="changeMan.publishChanges(user)">{{ 'PUBLISH' | translate }}</md-button>
+      <md-button class="md-secondary" ng-click="changeMan.discardChanges(user)">{{ ::'DISCARD' | translate }}</md-button>
+      <md-button class="md-secondary md-primary" ng-click="changeMan.publishChanges(user)">{{ ::'PUBLISH' | translate }}</md-button>
     </md-list-item>
   </md-list>
 </subpage-content>

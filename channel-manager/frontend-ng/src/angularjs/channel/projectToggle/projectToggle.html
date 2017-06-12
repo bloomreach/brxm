@@ -17,10 +17,10 @@
 <div layout
      layout-align="start center">
   <label flex="none">
-    {{ 'TOOLBAR_PROJECT_LABEL' | translate }}
+    {{ ::'TOOLBAR_PROJECT_LABEL' | translate }}
   </label>
 
-  <md-select aria-label="{{ 'TOOLBAR_PROJECT_LABEL' | translate }}"
+  <md-select aria-label="{{ ::'TOOLBAR_PROJECT_LABEL' | translate }}"
              class="md-no-underline"
              ng-model="$ctrl.selectedProject">
     <md-option ng-value="$ctrl.core">
@@ -32,7 +32,7 @@
     <md-option ng-repeat="project in $ctrl.getProjects() | orderBy: 'name'"
                ng-value="project"
                md-truncate>
-      {{ project.name }}
+      {{ ::project.name }}
     </md-option>
   </md-select>
 </div>

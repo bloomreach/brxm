@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 <md-toolbar class="hippo-toolbar qa-toolbar">
   <div class="md-toolbar-tools">
     <md-button class="qa-button-back md-icon-button"
-               aria-label="{{ toolbar.ariaLabel }}"
-               title="{{ toolbar.ariaLabel }}"
+               aria-label="{{ ::toolbar.ariaLabel }}"
+               title="{{ ::toolbar.ariaLabel }}"
                ng-click="onBack()">
-      <md-icon md-svg-src="{{ toolbar.icon }}"></md-icon>
+      <md-icon md-svg-src="{{ ::toolbar.icon }}"></md-icon>
     </md-button>
     <span flex></span>
-    <h2>{{ title }}</h2>
+    <h2>{{ ::title }}</h2>
     <span flex></span>
   </div>
 </md-toolbar>

@@ -24,11 +24,12 @@ class SidePanelService {
     this.panels = { };
   }
 
-  initialize(side, jQueryElement, onOpenCallback) {
+  initialize(side, jQueryElement, onOpenCallback, onCloseCallback) {
     const panel = {
       jQueryElement,
       sideNavComponentId: jQueryElement.attr('md-component-id'),
       onOpenCallback: onOpenCallback || angular.noop,
+      onCloseCallback: onCloseCallback || angular.noop,
     };
 
     this.panels[side] = panel;

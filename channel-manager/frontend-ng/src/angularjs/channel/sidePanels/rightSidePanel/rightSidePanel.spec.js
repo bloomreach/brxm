@@ -26,6 +26,7 @@ describe('RightSidePanel', () => {
   let DialogService;
   let HippoIframeService;
   let FeedbackService;
+  let ChannelService;
 
   let $ctrl;
   let $scope;
@@ -81,12 +82,13 @@ describe('RightSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_, _$translate_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_, _$translate_, _ChannelService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $timeout = _$timeout_;
       $translate = _$translate_;
+      ChannelService = _ChannelService_;
     });
 
     SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close']);
@@ -258,9 +260,15 @@ describe('RightSidePanel', () => {
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     spyOn($scope, '$broadcast');
 
+    spyOn($ctrl, '_confirmSaveOrDiscardChanges').and.returnValue($q.resolve());
+
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
+    const onCloseCallback = SidePanelService.initialize.calls.mostRecent().args[3];
     onOpenCallback('test');
+    onCloseCallback();
     $rootScope.$digest();
+
+    expect($ctrl._confirmSaveOrDiscardChanges).toHaveBeenCalled();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
@@ -922,6 +930,16 @@ describe('RightSidePanel', () => {
 
     onKillEditor('documentId');
     expect(SidePanelService.close).toHaveBeenCalled();
+  });
+
+  it('should close right side panel', () => {
+    spyOn(ChannelService, 'setToolbarDisplayed');
+    SidePanelService.close.and.returnValue($q.resolve());
+
+    ChannelService.isToolbarDisplayed = false;
+    $ctrl._closePanel();
+
+    expect(ChannelService.setToolbarDisplayed).toHaveBeenCalledWith(true);
   });
 });
 

@@ -98,7 +98,7 @@ class RightSidePanelCtrl {
     SidePanelService.initialize('right', $element.find('.right-side-panel'), (documentId) => {
       this.openDocument(documentId);
       this._onOpen();
-    });
+    }, () => this._confirmSaveOrDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE'));
 
     // Prevent the default closing action bound to the escape key by Angular Material.
     // We should show the "unsaved changes" dialog first.

@@ -29,25 +29,25 @@
     </md-icon>
 
     <span>
-      {{ $ctrl.fieldType.displayName }}
-      <span ng-if="$ctrl.fieldType.required">*</span>
+      {{ ::$ctrl.fieldType.displayName }}
+      <span ng-if="::$ctrl.fieldType.required">*</span>
     </span>
 
-    <md-icon ng-if="$ctrl.fieldType.hint">
+    <md-icon ng-if="::$ctrl.fieldType.hint">
       info_outline
 
       <md-tooltip>
-        {{ $ctrl.fieldType.hint }}
+        {{ ::$ctrl.fieldType.hint }}
       </md-tooltip>
     </md-icon>
   </h5>
 
   <div class="collapse-element">
     <div ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
-        ng-switch="$ctrl.fieldType.choices[fieldValue.chosenId].type">
+        ng-switch="::$ctrl.fieldType.choices[fieldValue.chosenId].type">
 
       <compound-field ng-switch-when="COMPOUND"
-                      name="$ctrl.getFieldName($index)"
+                      name="::$ctrl.getFieldName($index)"
                       field-type="::$ctrl.fieldType.choices[fieldValue.chosenId]"
                       field-values="fieldValue.chosenValue.fields"
                       on-field-focus="$ctrl.focusChoice()"
@@ -55,8 +55,8 @@
       </compound-field>
 
       <primitive-field ng-switch-default
-                      name="$ctrl.getFieldName($index)"
-                      field-type="$ctrl.fieldType.choices[fieldValue.chosenId]"
+                      name="::$ctrl.getFieldName($index)"
+                      field-type="::$ctrl.fieldType.choices[fieldValue.chosenId]"
                       field-values="[fieldValue.chosenValue]"
                       on-field-focus="$ctrl.focusChoice()"
                       on-field-blur="$ctrl.blurChoice()">

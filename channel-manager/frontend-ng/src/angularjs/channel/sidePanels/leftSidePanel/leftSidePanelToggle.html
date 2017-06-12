@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
   -->
 
 <md-button class="md-icon-button md-icon-button-left-side-panel qa-button-sidenav"
-  aria-label="{{ 'TOOLBAR_BUTTON_LEFT_SIDE_PANEL' | translate }}"
+  aria-label="{{ ::'TOOLBAR_BUTTON_LEFT_SIDE_PANEL' | translate }}"
   ng-disabled="$ctrl.disabled"
   ng-click="$ctrl.toggleLeftSidePanel()">
-  <md-icon title="{{ 'TOOLBAR_BUTTON_LEFT_SIDE_PANEL' | translate }}"
+  <md-icon title="{{ ::'TOOLBAR_BUTTON_LEFT_SIDE_PANEL' | translate }}"
     md-svg-src="{{ $ctrl.isLeftSidePanelOpen() ? 'images/left-side-panel-arrow-left.svg' : 'images/left-side-panel-arrow-right.svg' }}" />
 </md-button>

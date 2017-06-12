@@ -29,6 +29,7 @@ class ChannelActionsCtrl {
     HippoIframeService,
     SessionService,
     SiteMapService,
+    SidePanelService,
   ) {
     'ngInject';
 
@@ -42,6 +43,7 @@ class ChannelActionsCtrl {
     this.HippoIframeService = HippoIframeService;
     this.SessionService = SessionService;
     this.SiteMapService = SiteMapService;
+    this.SidePanelService = SidePanelService;
   }
 
   // Settings
@@ -193,10 +195,10 @@ class ChannelActionsCtrl {
     this.DialogService.show(alert);
   }
 
-  // Close
-
   closeChannel() {
-    this.CmsService.publish('close-channel');
+    this.SidePanelService.panels.right.onCloseCallback().then(() => {
+      this.CmsService.publish('close-channel');
+    });
   }
 }
 
