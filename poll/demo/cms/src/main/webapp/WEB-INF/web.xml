@@ -107,7 +107,7 @@
 
   <servlet>
     <servlet-name>AngularResourceServlet</servlet-name>
-    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.SecureCmsResourceServlet</servlet-class>
     <init-param>
       <param-name>jarPathPrefix</param-name>
       <param-value>/angular</param-value>
@@ -122,7 +122,7 @@
 
   <servlet>
     <servlet-name>CKEditorResourceServlet</servlet-name>
-    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.SecureCmsResourceServlet</servlet-class>
     <init-param>
       <param-name>jarPathPrefix</param-name>
       <param-value>/ckeditor</param-value>
@@ -141,12 +141,6 @@
     <init-param>
       <param-name>jarPathPrefix</param-name>
       <param-value>/skin</param-value>
-    </init-param>
-    <init-param>
-      <param-name>allowedResourcePaths</param-name>
-      <param-value>
-        ^/.*\..*
-      </param-value>
     </init-param>
     <init-param>
       <param-name>requireAuthentication</param-name>
