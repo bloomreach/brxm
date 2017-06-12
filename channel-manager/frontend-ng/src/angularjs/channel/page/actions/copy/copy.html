@@ -33,7 +33,7 @@
                  ng-model="pageCopy.channel"
                  ng-change="pageCopy.channelChanged()"
                  ng-model-options="{trackBy: '$value.id'}">
-        <md-option ng-repeat="channel in pageCopy.channels" ng-value="{{::channel}}">
+        <md-option ng-repeat="channel in pageCopy.channels track by channel.id" ng-value="{{::channel}}">
           {{ ::channel.name }}
         </md-option>
       </md-select>
@@ -48,7 +48,7 @@
                    focus-if="!pageCopy.isCrossChannelCopyAvailable"
                    ng-model="pageCopy.location"
                    ng-model-options="{trackBy: '$value.location'}">
-          <md-option ng-repeat="location in pageCopy.locations" ng-value="{{::location}}">
+          <md-option ng-repeat="location in pageCopy.locations track by location.location" ng-value="{{::location}}">
             {{ ::location.location }}
           </md-option>
         </md-select>

@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
              ng-model="viewAs.selectedVariant"
              ng-model-options="{trackBy: '$value.id'}"
              md-selected-text="viewAs.makeDisplayName(viewAs.selectedVariant)">
-    <md-option ng-repeat="variant in viewAs.globalVariants"
+    <md-option ng-repeat="variant in viewAs.globalVariants track by variant.id"
                ng-value="{{::variant}}"
                ng-click="viewAs.editVariant(variant)">
       {{ ::viewAs.makeSelectableDisplayName(variant) }}
