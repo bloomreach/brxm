@@ -13,7 +13,5 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-
 An attempt to access a protected resource at /internal.properties was disallowed.
 An attempt to access a protected resource at /onehippo.gif was disallowed.
-The SkinResourceServlet used by the CMS application is missing the parameter 'requireAuthentication'.

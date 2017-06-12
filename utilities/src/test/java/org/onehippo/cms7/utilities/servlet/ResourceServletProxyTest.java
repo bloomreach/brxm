@@ -106,7 +106,6 @@ public class ResourceServletProxyTest {
             final MockServletConfig config = new MockServletConfig();
 
             config.addInitParameter("jarPathPrefix", jarPathPrefix);
-            config.addInitParameter("requireAuthentication", "false");
             servlet.init(config);
         }
 

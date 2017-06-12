@@ -18,13 +18,11 @@ package org.onehippo.cms7.utilities.servlet;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletConfig;
 
 import static org.hamcrest.core.Is.is;
@@ -41,7 +39,7 @@ public class ResourceServletTest {
     public void testDefaultServlet() throws ServletException, IOException {
         final MockHttpServletRequest servletRequest = getMockHttpServletRequest();
         final MockHttpServletResponse validResponse = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeServlet(false, null, null);
+        final ResourceServlet servlet = initializeServlet();
         servlet.service(servletRequest, validResponse);
         assertThat("Default servlet should allow any request.", validResponse.getStatus(), is(200));
         assertThat("Response should be of type image/gif.", validResponse.getContentType(), is("image/gif"));
@@ -56,7 +54,7 @@ public class ResourceServletTest {
         servletRequest.setServletPath("/resources");
         servletRequest.setPathInfo("/internal.properties");
         final MockHttpServletResponse invalidResponse = new MockHttpServletResponse();
-        final ResourceServlet resourceServlet = initializeServlet(false, null, null);
+        final ResourceServlet resourceServlet = initializeServlet();
         resourceServlet.service(servletRequest, invalidResponse);
         assertThat("Should give 404 since internal.properties is not accepted.", invalidResponse.getStatus(), is(404));
     }
@@ -70,7 +68,7 @@ public class ResourceServletTest {
         servletRequest.setServletPath("/resources");
         servletRequest.setPathInfo("/onehippo.gif");
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeServlet(false, GIF_RESOURCE_PATH, GIF_RESOURCE_MIME);
+        final ResourceServlet servlet = initializeServlet(GIF_RESOURCE_PATH, GIF_RESOURCE_MIME);
         servlet.service(servletRequest, servletResponse);
         assertThat("Servlet should allow requests for image/gif.", servletResponse.getStatus(), is(200));
         assertThat("Response should be of type image/gif.", servletResponse.getContentType(), is("image/gif"));
@@ -85,71 +83,21 @@ public class ResourceServletTest {
         request.setServletPath("/resources");
         request.setPathInfo("/internal.properties");
         final MockHttpServletResponse validResponse = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeServlet(false, PROPERTIES_RESOURCE_PATH, PROPERTIES_RESOURCE_MIME);
+        final ResourceServlet servlet = initializeServlet(PROPERTIES_RESOURCE_PATH, PROPERTIES_RESOURCE_MIME);
         servlet.service(request, validResponse);
         assertThat("Servlet should allow requests for text/plain.", validResponse.getStatus(), is(200));
         assertThat("Response should be of type text/plain.", validResponse.getContentType(), is("text/plain"));
         assertThat("Response content should be encoded.", validResponse.getHeader("Content-Encoding"), is("gzip"));
     }
 
-    @Test
-    public void testUnauthorizedServlet() throws ServletException, IOException {
-        final MockHttpServletRequest request = getMockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeServlet(true, GIF_RESOURCE_PATH, GIF_RESOURCE_MIME);
-        servlet.service(request, response);
-        assertThat("Unauthorized request should give 404.", response.getStatus(), is(404));
+    private ResourceServlet initializeServlet() throws ServletException {
+        return initializeServlet(null, null);
     }
 
-    @Test
-    public void testAuthorizedServlet() throws ServletException, IOException {
-        final MockHttpServletRequest request = getMockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeServlet(true);
-        fakeLoggedinUser(request);
-        servlet.service(request, response);
-        assertThat("Authorized request should give resource.", response.getStatus(), is(200));
-        assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
-    }
-
-    @Test
-    public void testSkinResourcesWithoutAuthenticationParameter() throws ServletException, IOException {
-        final MockHttpServletRequest request = getMockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeSkinServlet(null);
-        servlet.service(request, response);
-        assertThat("Authorized request should give resource.", response.getStatus(), is(200));
-        assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
-    }
-
-    @Test
-    public void testSkinResourcesExplicitlyWithAuthentication() throws ServletException, IOException {
-        final MockHttpServletRequest request = getMockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeSkinServlet(true);
-        servlet.service(request, response);
-        assertThat("Unauthorized request should give 404.", response.getStatus(), is(404));
-    }
-
-    @Test
-    public void testSkinResourcesExplicitlyWithoutAuthentication() throws ServletException, IOException {
-        final MockHttpServletRequest request = getMockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final ResourceServlet servlet = initializeSkinServlet(false);
-        servlet.service(request, response);
-        assertThat("Authorized request should give resource.", response.getStatus(), is(200));
-        assertThat("Response should be of type image/gif.", response.getContentType(), is("image/gif"));
-    }
-
-    private ResourceServlet initializeServlet(final boolean requireAuthentication) throws ServletException {
-        return initializeServlet(requireAuthentication, null, null);
-    }
-
-    private ResourceServlet initializeServlet(final boolean requireAuthentication, final String allowedResourcePaths, final String mimeTypes) throws ServletException {
+    private ResourceServlet initializeServlet(final String allowedResourcePaths, final String mimeTypes) throws ServletException {
         final ResourceServlet servlet = new ResourceServlet();
         final MockServletConfig servletConfig = new MockServletConfig();
         servletConfig.addInitParameter("jarPathPrefix", "META-INF/test");
-        servletConfig.addInitParameter("requireAuthentication", requireAuthentication ? "true" : "false");
         if (!StringUtils.isEmpty(allowedResourcePaths)) {
             servletConfig.addInitParameter("allowedResourcePaths", allowedResourcePaths);
         }
@@ -162,28 +110,7 @@ public class ResourceServletTest {
         return servlet;
     }
 
-    private ResourceServlet initializeSkinServlet(final Boolean requireAuthentication) throws ServletException {
-        final ResourceServlet skinServlet = new ResourceServlet();
-        final MockServletConfig servletConfig = new MockServletConfig();
-
-        servletConfig.addInitParameter("jarPathPrefix", "/skin");
-        if (requireAuthentication != null) {
-            servletConfig.addInitParameter("requireAuthentication", requireAuthentication ? "true" : "false");
-        }
-        servletConfig.addInitParameter("allowedResourcePaths", "^/.*\\..*");
-
-        skinServlet.init(servletConfig);
-
-        return skinServlet;
-    }
-
-    private void fakeLoggedinUser(final MockHttpServletRequest request) {
-        final HttpSession mockedSession = new MockHttpSession();
-        mockedSession.setAttribute("hippo:username", "admin");
-        request.setSession(mockedSession);
-    }
-
-    private static MockHttpServletRequest getMockHttpServletRequest() {
+    protected static MockHttpServletRequest getMockHttpServletRequest() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         request.addHeader("Accept", "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,video/x-mng,image/png,image/jpeg,image/gif;q=0.2,*/*;q=0.1");
