@@ -116,19 +116,17 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                     }
                 } else {
                     if (isContent(nodePath)) {
-                        log.warn("Ignoring hippo:contentdelete for " + nodePath + " defined at "
-                                + getInstructionNode().getSourceLocation()
+                        throw new EsvParseException("Cannot process hippo:contentdelete for " + nodePath
+                                + " defined at " + getInstructionNode().getSourceLocation()
                                 + ": node not found in this module, manual conversion required");
-                        break;
                     }
                     log.info("Adding hippo:contentdelete for " + nodePath + " defined at " + getInstructionNode().getSourceLocation());
                 }
                 if (node == null) {
                     if (isContent(nodePath)) {
-                        log.warn("Ignoring hippo:contentdelete for " + nodePath + " defined at "
-                                + getInstructionNode().getSourceLocation()
+                        throw new EsvParseException("Cannot process hippo:contentdelete for " + nodePath
+                                + " defined at " + getInstructionNode().getSourceLocation()
                                 + ": node not found in this module, manual conversion required");
-                        break;
                     }
                     ConfigDefinitionImpl def = ((ConfigSourceImpl)source).addConfigDefinition();
                     node = new DefinitionNodeImpl(nodePath, name, def);
@@ -168,10 +166,9 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                             }
                         } else {
                             if (isContent(nodePath)) {
-                                log.warn("Ignoring hippo:contentpropdelete for " + nodePath + " defined at "
-                                        + getInstructionNode().getSourceLocation()
+                                throw new EsvParseException("Cannot process hippo:contentpropdelete for "
+                                        + nodePath + " defined at " + getInstructionNode().getSourceLocation()
                                         + ": parent node not found in this module, manual conversion required");
-                                break;
                             }
                             log.info("Merging hippo:contentpropdelete for " + nodePath + " defined at " + node.getSourceLocation());
                             // add delete property at the end
@@ -179,10 +176,10 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                     }
                 } else {
                     if (isContent(nodePath)) {
-                        log.warn("Ignoring hippo:contentpropdelete for " + nodePath + " defined at "
+                        throw new EsvParseException("Cannot process hippo:contentpropdelete for "
+                                + nodePath + " defined at " + getInstructionNode().getSourceLocation()
                                 + getInstructionNode().getSourceLocation()
                                 + ": parent node not found in this module, manual conversion required");
-                        break;
                     }
                     node = findNearestParent(nodePath, nodeDefinitions, deltaNodes);
                     if (node != null) {
@@ -254,10 +251,9 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                     }
                 } else {
                     if (isContent(nodePath)) {
-                        log.warn("Ignoring " + getType().getPropertyName() + " " + getName() + " for " + nodePath
-                                + " defined at " + getInstructionNode().getSourceLocation()
+                        throw new EsvParseException("Cannot process " + getType().getPropertyName() + " " + getName()
+                                + " for " + nodePath + " defined at " + getInstructionNode().getSourceLocation()
                                 + ": parent node not found in this module, manual conversion required");
-                        break;
                     }
                     node = findNearestParent(nodePath, nodeDefinitions, deltaNodes);
                     if (node != null) {
