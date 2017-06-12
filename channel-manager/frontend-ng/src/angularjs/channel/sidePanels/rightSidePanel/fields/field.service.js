@@ -50,14 +50,20 @@ class FieldService {
   draftField(fieldName, fieldValue, documentId = this.getDocumentId()) {
     this._clearFieldTimer(documentId, fieldName);
     this.ContentService.draftField(documentId, fieldName, fieldValue);
-
-    if (this.activeDraftTimers[documentId] && !Object.keys(this.activeDraftTimers[documentId]).length) delete this.activeDraftTimers[documentId];
+    this._cleanupTimers(documentId);
   }
 
   _clearFieldTimer(documentId, fieldName) {
     if (this.activeDraftTimers[documentId] && this.activeDraftTimers[documentId][fieldName]) {
       this.$timeout.cancel(this.activeDraftTimers[documentId][fieldName]);
       delete this.activeDraftTimers[documentId][fieldName];
+    }
+  }
+
+  _cleanupTimers(documentId) {
+    const timers = this.activeDraftTimers[documentId];
+    if (timers && Object.keys(timers).length === 0) {
+      delete this.activeDraftTimers[documentId];
     }
   }
 }
