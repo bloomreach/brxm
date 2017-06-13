@@ -405,7 +405,7 @@ public class EsvParser extends DefaultHandler {
         if (!file.exists() || !file.isFile()) {
             throw new SAXException("File esv:file: " + esvFile + " not found or not a file at " + getLocation());
         }
-        return path;
+        return "/" + path;
     }
 
     private SourceLocationImpl getLocation() {
