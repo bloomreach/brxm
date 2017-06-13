@@ -198,11 +198,6 @@ public class ConfigurationBaselineService {
                 Node projectNode = groupNode.getNode(NodeNameCodec.encode(module.getProject().getName()));
                 Node moduleNode = projectNode.getNode(NodeNameCodec.encode(module.getName()));
 
-                // todo test and remove
-//                // clear the existing module def and start clean
-//                moduleNode.remove();
-//                moduleNode = projectNode.addNode(NodeNameCodec.encode(module.getName()), NT_HCM_MODULE);
-
                 // do incremental update
                 storeBaselineModule(module, moduleNode, true);
 
