@@ -181,6 +181,11 @@ public class ValueImpl implements Value, Cloneable {
         this.internalResourcePath = internalResourcePath;
     }
 
+    // TODO: this should be removed when writing of JCR-backed values is refactored
+    public String getInternalResourcePath() {
+        return internalResourcePath;
+    }
+
     // get access to the RIP backing this value -- used to compare src and dest when writing
     public ResourceInputProvider getResourceInputProvider() {
         final AbstractDefinitionImpl definition = getDefinition();

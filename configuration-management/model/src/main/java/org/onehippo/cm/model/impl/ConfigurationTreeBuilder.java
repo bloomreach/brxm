@@ -52,6 +52,7 @@ public class ConfigurationTreeBuilder {
         root = new ConfigurationNodeImpl();
         root.setName("");
         root.setResidualNodeCategory(ConfigurationItemCategory.RUNTIME);
+        root.setIgnoreReorderedChildren(true);
 
         // add required jcr:uuid:
         final ConfigurationPropertyImpl uuidProperty = new ConfigurationPropertyImpl();

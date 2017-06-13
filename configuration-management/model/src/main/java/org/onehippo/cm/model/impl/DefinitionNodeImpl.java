@@ -18,14 +18,16 @@ package org.onehippo.cm.model.impl;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.ModelItem;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.ValueType;
 
-import static org.onehippo.cm.model.serializer.ResourceNameResolverImpl.PATH_DELIMITER;
+import com.google.common.collect.Maps;
 
 public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
 
@@ -204,4 +206,16 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     public void setResidualChildNodeCategory(final ConfigurationItemCategory category) {
         residualChildNodeCategory = category;
     }
+
+    public void sortProperties() {
+        final SortedSet<DefinitionPropertyImpl> properties = new TreeSet<>(modifiableProperties.values());
+        modifiableProperties.clear();
+        modifiableProperties.putAll(Maps.uniqueIndex(properties, ModelItem::getName));
+    }
+
+    public void recursiveSortProperties() {
+        sortProperties();
+        getNodes().values().forEach(DefinitionNodeImpl::recursiveSortProperties);
+    }
+
 }

@@ -47,6 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.DefinitionNode;
+import org.onehippo.cm.model.DefinitionType;
 import org.onehippo.cm.model.MigrationConfigWriter;
 import org.onehippo.cm.model.MigrationMode;
 import org.onehippo.cm.model.ModuleContext;
@@ -55,6 +56,7 @@ import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
@@ -488,6 +490,12 @@ public class Esv2Yaml {
             }
         }
 
+        // visit all node definitions and sort properties
+        module.getModifiableSources().stream().flatMap(source -> source.getDefinitions().stream())
+                .filter(def -> DefinitionType.CONFIG.isOfType(def) || DefinitionType.CONTENT.isOfType(def))
+                .map(def -> ((ContentDefinitionImpl) def).getNode())
+                .forEach(DefinitionNodeImpl::recursiveSortProperties);
+
         boolean multiModule = module.getProject().getGroup().getProjects().stream().mapToInt(p -> p.getModules().size()).sum() > 1;
         ModuleContext moduleContext = aggregate ? new AggregatedModuleContext(module, src.toPath(), multiModule) :
                 new LegacyModuleContext(module, src.toPath(), multiModule);
@@ -499,4 +507,5 @@ public class Esv2Yaml {
 
         new MigrationConfigWriter(migrationMode).writeModule(module, Constants.DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
     }
+
 }

@@ -22,9 +22,13 @@ import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.ValueFormatException;
 import org.onehippo.cm.model.ValueType;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
+import static org.onehippo.cm.model.Constants.META_KEY_PREFIX;
 
-public class DefinitionPropertyImpl extends DefinitionItemImpl implements DefinitionProperty {
+public class DefinitionPropertyImpl extends DefinitionItemImpl implements DefinitionProperty, Comparable<DefinitionProperty> {
 
     private ConfigurationItemCategory category;
     private PropertyType propertyType;
@@ -175,4 +179,46 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
         return cloned;
     }
 
+    @Override
+    public int compareTo(final DefinitionProperty o) {
+        // first check object equality
+        if (this == o) {
+            return 0;
+        }
+
+        final String oName = o.getName();
+        if (name.startsWith(META_KEY_PREFIX) && !oName.startsWith(META_KEY_PREFIX)) {
+            return -1;
+        }
+        if (!name.startsWith(META_KEY_PREFIX) && oName.startsWith(META_KEY_PREFIX)) {
+            return 1;
+        }
+        if (name.equals(JCR_PRIMARYTYPE) && !oName.equals(JCR_PRIMARYTYPE)) {
+            return -1;
+        }
+        if (!name.equals(JCR_PRIMARYTYPE) && oName.equals(JCR_PRIMARYTYPE)) {
+            return 1;
+        }
+        if (name.equals(JCR_MIXINTYPES) && !oName.equals(JCR_MIXINTYPES)) {
+            return -1;
+        }
+        if (!name.equals(JCR_MIXINTYPES) && oName.equals(JCR_MIXINTYPES)) {
+            return 1;
+        }
+        if (name.equals(JCR_UUID) && !oName.equals(JCR_UUID)) {
+            return -1;
+        }
+        if (!name.equals(JCR_UUID) && oName.equals(JCR_UUID)) {
+            return 1;
+        }
+
+        final int byName = name.compareTo(oName);
+        if (byName != 0) {
+            return byName;
+        }
+        else {
+            // final disambiguation via hashCode
+            return Integer.compare(hashCode(), o.hashCode());
+        }
+    }
 }

@@ -28,9 +28,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Session;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cm.model.serializer.AggregatedModulesDescriptorSerializer;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.cm.model.serializer.SourceSerializer;
@@ -39,6 +42,14 @@ import org.yaml.snakeyaml.nodes.Node;
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
 public class FileConfigurationWriter {
+
+    private ResourceInputProvider jcrRip;
+
+    public FileConfigurationWriter() {}
+
+    public FileConfigurationWriter(final ResourceInputProvider jcrRip) {
+        this.jcrRip = jcrRip;
+    }
 
     void write(final Path destination,
                final Collection<? extends Group> groups,
@@ -96,7 +107,8 @@ public class FileConfigurationWriter {
             for (final PostProcessItem resource : resources) {
                 if (resource instanceof CopyItem) {
                     processCopyItem(source, (CopyItem) resource, moduleContext);
-                } else if (resource instanceof BinaryItem) {
+                }
+                else if (resource instanceof BinaryItem) {
                     processBinaryItem(source, (BinaryItem) resource, moduleContext);
                 }
             }
@@ -133,7 +145,11 @@ public class FileConfigurationWriter {
         final ResourceInputProvider rip =  copyItem.getValue().getResourceInputProvider();
         final ResourceOutputProvider outputProvider = moduleContext.getOutputProvider(source);
 
-        if (rip instanceof FileResourceInputProvider && outputProvider instanceof FileResourceOutputProvider) {
+        // todo: this is ugly and needs to be replaced by a solution that doesn't require this cast
+        final ValueImpl value = (ValueImpl) copyItem.getValue();
+        if (rip instanceof FileResourceInputProvider && outputProvider instanceof FileResourceOutputProvider
+                // don't try to do a basePath comparison if this is actually backed by the JCR
+                && !value.isNewResource()) {
             final FileResourceInputProvider frip = (FileResourceInputProvider) rip;
             final FileResourceOutputProvider fout = (FileResourceOutputProvider) outputProvider;
 
@@ -143,10 +159,21 @@ public class FileConfigurationWriter {
             }
         }
 
-        try (final InputStream resourceInputStream = copyItem.getValue().getResourceInputStream();
+        try (final InputStream resourceInputStream = getValueInputProvider(value);
              final OutputStream resourceOutputStream =
                      outputProvider.getResourceOutputStream(source, copyItem.getValue().getString())) {
             IOUtils.copy(resourceInputStream, resourceOutputStream);
+        }
+    }
+
+    // TODO: move this processing somewhere else
+    private InputStream getValueInputProvider(final ValueImpl value) throws IOException {
+        final String internalResourcePath = value.getInternalResourcePath();
+        if (internalResourcePath != null && value.isNewResource()) {
+            return jcrRip.getResourceInputStream(null, internalResourcePath);
+        }
+        else {
+            return value.getResourceInputStream();
         }
     }
 }
