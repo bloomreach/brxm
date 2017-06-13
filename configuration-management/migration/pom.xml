@@ -64,6 +64,67 @@
       <artifactId>hippo-cms-testutils</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>appassembler-maven-plugin</artifactId>
+        <version>1.10</version>
+        <configuration>
+          <licenseHeaderFile>${basedir}/license-header.txt</licenseHeaderFile>
+          <copyConfigurationDirectory>true</copyConfigurationDirectory>
+          <repositoryLayout>flat</repositoryLayout>
+          <repositoryName>libs</repositoryName>
+          <logsDirectory>logs</logsDirectory>
+          <useWildcardClassPath>true</useWildcardClassPath>
+          <binFileExtensions>
+            <unix>.sh</unix>
+          </binFileExtensions>
+          <platforms>
+            <!--<platform>windows</platform>-->
+            <platform>unix</platform>
+          </platforms>
+          <programs>
+            <program>
+              <mainClass>org.onehippo.cm.migration.Esv2Yaml</mainClass>
+              <id>esv2yaml</id>
+            </program>
+          </programs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

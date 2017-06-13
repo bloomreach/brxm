@@ -118,7 +118,7 @@ public class Esv2Yaml {
                 }
             } else {
                 final HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp("esv2yaml", options);
+                formatter.printHelp("esv2yaml", "Converts esv based xml files to yaml format", options, StringUtils.EMPTY);
             }
         } catch (Exception e) {
             Throwable t = e;
@@ -139,8 +139,8 @@ public class Esv2Yaml {
         options.addOption(ECM_LOCATION, "init", true, "(optional) location of hippoecm-extension.xml file, if not within <src> folder");
         options.addOption(SOURCE_FOLDER, "src", true, "bootstrap initialization resources folder");
         options.addOption(TARGET_FOLDER, "target", true, "directory for writing the output yaml (will be emptied first)");
-        options.addOption(MODE, "mode", true, "File system mode. git/move/copy. Default is copy");
-        options.addOption(AGGREGATE, "aggregate", false, "Aggregate module");
+        options.addOption(MODE, "mode", true, "(optional) File system mode. git/move/copy. Default is copy");
+        options.addOption(AGGREGATE, "aggregate", false, "(optional) Aggregate module");
         options.addOption(CONTENT_ROOTS, "content", true, "Content root paths. Comma separated.");
         return options;
     }
