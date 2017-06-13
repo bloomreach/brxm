@@ -34,6 +34,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
@@ -126,7 +127,7 @@ class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public void updateDraftField(final String uuid, final String fieldPath, final List<FieldValue> fieldValues, final Session session, final Locale locale) throws ErrorWithPayloadException {
+    public void updateDraftField(final String uuid, final FieldPath fieldPath, final List<FieldValue> fieldValues, final Session session, final Locale locale) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getWorkflow(handle);
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)

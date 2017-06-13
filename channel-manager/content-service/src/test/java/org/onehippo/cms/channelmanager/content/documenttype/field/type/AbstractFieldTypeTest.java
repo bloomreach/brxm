@@ -27,6 +27,7 @@ import javax.jcr.Node;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -75,7 +76,7 @@ public class AbstractFieldTypeTest {
                     throws ErrorWithPayloadException { }
 
             @Override
-            public boolean writeField(final Node node, final String fieldPath, final List<FieldValue> value) throws ErrorWithPayloadException {
+            public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> value) throws ErrorWithPayloadException {
                 return false;
             }
 

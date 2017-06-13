@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.jcr.Node;
 
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -107,7 +108,18 @@ public interface FieldType {
      */
     void writeTo(Node node, Optional<List<FieldValue>> optionalValue) throws ErrorWithPayloadException;
 
-    boolean writeField(Node node, String fieldPath, List<FieldValue> value) throws ErrorWithPayloadException;
+    /**
+     * Write a value to the field indicated by the field path. Can be this field, or a child field in case of
+     * compound or compound-like types.
+     *
+     * @param node the node for this field in the document field hierarchy
+     * @param fieldPath the path to the field to write
+     * @param value the value to write
+     * @return
+     * @throws ErrorWithPayloadException
+     *                      indicates that writing the provided value ran into an unrecoverable error
+     */
+    boolean writeField(Node node, FieldPath fieldPath, List<FieldValue> value) throws ErrorWithPayloadException;
 
     /**
      * Validate the current value of this field against all applicable (and supported) validators.

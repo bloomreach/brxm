@@ -34,6 +34,7 @@ import javax.ws.rs.core.Response;
 
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -76,7 +77,7 @@ public class ContentResource {
                                      List<FieldValue> fieldValues,
                                      @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Response.Status.OK, (session, locale) -> {
-            DocumentsService.get().updateDraftField(documentId, fieldPath, fieldValues, session, locale);
+            DocumentsService.get().updateDraftField(documentId, new FieldPath(fieldPath), fieldValues, session, locale);
             return null; // no response data
         });
     }

@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
@@ -164,12 +165,12 @@ public class StringFieldType extends AbstractFieldType {
     }
 
     @Override
-    public boolean writeField(final Node node, final String fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
-        if (fieldPath.equals(getId())) {
-            writeTo(node, Optional.of(values));
-            return true;
+    public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
+        if (!fieldPath.is(getId())) {
+            return false;
         }
-        return false;
+        writeTo(node, Optional.of(values));
+        return true;
     }
 
     protected List<FieldValue> writeValues(final Optional<List<FieldValue>> optionalValues) {

@@ -27,9 +27,9 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -120,26 +120,29 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     }
 
     @Override
-    public boolean writeField(final Node node, final String fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
-        final String fieldId = StringUtils.substringBefore(fieldPath, "/");
-        if (fieldId.equals(getId())) {
-            try {
-                if (node.hasNode(fieldId)) {
-                    final Node child = node.getNode(fieldId);
-                    String remainingFieldPath = StringUtils.substringAfter(fieldPath, "/");
-                    final String chosenId = StringUtils.substringBefore(remainingFieldPath, "/");
-                    final NodeFieldType fieldType = choices.get(chosenId);
-                    if (fieldType != null) {
-                        remainingFieldPath = StringUtils.substringAfter(remainingFieldPath, "/");
-                        return fieldType.writeField(child, remainingFieldPath, values);
-                    }
-                }
-            } catch (RepositoryException e) {
-                log.warn("Failed to write value of field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(node), e);
-                throw new InternalServerErrorException();
-            }
+    public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
+        final String id = getId();
+        if (!fieldPath.startsWith(id)) {
+            return false;
         }
-        return false;
+        try {
+            if (!node.hasNode(id)) {
+                throw INVALID_DATA.get();
+            }
+            final Node child = node.getNode(id);
+            return writeFieldValue(child, fieldPath.getRemainingSegments(), values);
+        } catch (RepositoryException e) {
+            log.warn("Failed to write value of choice field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(node), e);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    @Override
+    public boolean writeFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException {
+        final FieldPath remaining = fieldPath.getRemainingSegments();
+        final String chosenId = remaining.getFirstSegment();
+        final NodeFieldType choice = findChoice(chosenId).orElseThrow(INVALID_DATA);
+        return choice.writeFieldValue(node, remaining.getRemainingSegments(), values);
     }
 
     @Override

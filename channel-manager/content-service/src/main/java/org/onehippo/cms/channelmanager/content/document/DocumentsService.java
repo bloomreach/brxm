@@ -22,6 +22,7 @@ import java.util.Locale;
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.document.model.Document;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
@@ -70,7 +71,7 @@ public interface DocumentsService {
      * before being persisted).
      *
      * @param uuid     UUID of the document
-     * @param fieldPath Path to the field inside the document, consisting of field IDs separated by slashes.
+     * @param fieldPath Path to the field in the document
      * @param fieldValues Field values containing the to-be-persisted content
      * @param session  user-authenticated, invocation-scoped JCR session.
      *                 In case of a bad request, changes may be pending.
@@ -78,7 +79,7 @@ public interface DocumentsService {
      * @throws ErrorWithPayloadException
      *                 If updating the draft failed
      */
-    void updateDraftField(String uuid, String fieldPath, List<FieldValue> fieldValues, Session session, Locale locale) throws ErrorWithPayloadException;
+    void updateDraftField(String uuid, FieldPath fieldPath, List<FieldValue> fieldValues, Session session, Locale locale) throws ErrorWithPayloadException;
 
     /**
      * Delete the draft version of a document, such that it is available for others to edit.

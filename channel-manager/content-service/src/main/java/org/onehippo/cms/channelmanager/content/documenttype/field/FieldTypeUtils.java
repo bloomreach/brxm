@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
@@ -252,7 +253,10 @@ public class FieldTypeUtils {
         }
     }
 
-    public static boolean writeFieldValue(final String fieldPath, final List<FieldValue> fieldValues, final List<FieldType> fields, final Node node) throws ErrorWithPayloadException {
+    public static boolean writeFieldValue(final FieldPath fieldPath, final List<FieldValue> fieldValues, final List<FieldType> fields, final Node node) throws ErrorWithPayloadException {
+        if (fieldPath.isEmpty() || fieldValues.isEmpty()) {
+            return false;
+        }
         for (FieldType field : fields) {
             if (field.writeField(node, fieldPath, fieldValues)) {
                 return true;
