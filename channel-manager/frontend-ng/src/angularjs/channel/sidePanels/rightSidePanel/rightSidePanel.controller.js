@@ -70,6 +70,7 @@ class RightSidePanelCtrl {
     HippoIframeService,
     FeedbackService,
     localStorageService,
+    FieldService,
     ) {
     'ngInject';
 
@@ -87,6 +88,7 @@ class RightSidePanelCtrl {
     this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
     this.localStorageService = localStorageService;
+    this.FieldService = FieldService;
 
     this.defaultTitle = $translate.instant('EDIT_CONTENT');
     this.closeLabel = $translate.instant('CLOSE');
@@ -150,6 +152,7 @@ class RightSidePanelCtrl {
 
   _loadDocument(id) {
     this.documentId = id;
+    this.FieldService.setDocumentId(this.documentId);
     this.loading = true;
     this.CmsService.closeDocumentWhenValid(id)
       .then(() => this.ContentService.createDraft(id)

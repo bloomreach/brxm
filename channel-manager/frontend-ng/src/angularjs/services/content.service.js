@@ -42,6 +42,11 @@ class ContentService {
     return this._send('GET', ['documenttypes', id]);
   }
 
+  draftField(documentId, fieldName, value) {
+    // TODO: HTTP call
+    angular.noop(`ContentService.draftField (id: ${fieldName}, data: ${value})`);
+  }
+
   _send(method, pathElements, data) {
     const url = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), REST_API_PATH, ...pathElements);
     const headers = {};
