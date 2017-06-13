@@ -30,7 +30,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.configuration.site.HstSiteProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -43,9 +42,6 @@ import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_USER_ID_ATTR;
-import static org.hippoecm.hst.core.container.ContainerConstants.CMS_SSO_AUTHENTICATED;
-import static org.hippoecm.hst.core.container.ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME;
-import static org.hippoecm.hst.core.container.ContainerConstants.CMS_USER_ID_ATTR;
 
 /**
  * <p>
@@ -146,13 +142,6 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
         servletRequest.setAttribute(CMS_REQUEST_USER_ID_ATTR, cmsSessionContext.getRepositoryCredentials().getUserID());
         servletRequest.setAttribute(CMS_REQUEST_REPO_CREDS_ATTR, cmsSessionContext.getRepositoryCredentials());
-
-        // TODO: remove this with 5.0 / CMS 12.0
-        {
-            httpSession.setAttribute(CMS_USER_ID_ATTR, cmsSessionContext.getRepositoryCredentials().getUserID());
-            httpSession.setAttribute(CMS_SSO_REPO_CREDS_ATTR_NAME, cmsSessionContext.getRepositoryCredentials());
-            httpSession.setAttribute(CMS_SSO_AUTHENTICATED, Boolean.TRUE);
-        }
 
         // We synchronize on http session to disallow concurrent requests for the Channel manager. Note it is questionable
         // whether this is still needed : The synchronization originates from the time we did not use a (fresh) new jcr
