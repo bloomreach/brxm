@@ -16,13 +16,13 @@
 
         <p>
           You can download the demo project from Hippo Maven 2 Enterprise Repository.
-          For example, you can download the demo project of v0.9.1 from here:
+          For example, you can download the demo project of v1.0.0 from here:
         </p>
 
         <ul>
           <li>
-            <a href="https://maven.onehippo.com/content/groups/maven2-enterprise/com/onehippo/cms7/hippo-addon-crisp-demopkg/0.9.1/hippo-addon-crisp-demopkg-0.9.1-src.zip">
-              https://maven.onehippo.com/content/groups/maven2-enterprise/com/onehippo/cms7/hippo-addon-crisp-demopkg/0.9.1/hippo-addon-crisp-demopkg-0.9.1-src.zip
+            <a href="https://maven.onehippo.com/maven2-enterprise/com/onehippo/cms7/hippo-addon-crisp-demopkg/1.0.0/hippo-addon-crisp-demopkg-1.0.0-src.zip">
+              https://maven.onehippo.com/maven2-enterprise/com/onehippo/cms7/hippo-addon-crisp-demopkg/1.0.0/hippo-addon-crisp-demopkg-1.0.0-src.zip
             </a>
           </li>
         </ul>
@@ -39,7 +39,7 @@ mvn org.apache.maven.plugins:maven-dependency-plugin:3.0.0:get \
     -DremoteRepositories=hippo-maven2-enterprise \
     -DgroupId=com.onehippo.cms7 \
     -DartifactId=hippo-addon-crisp-demopkg \
-    -Dversion=0.9.1 \
+    -Dversion=1.0.0 \
     -Dclassifier=src \
     -Dpackaging=zip \
     -Dtransitive=false
@@ -48,7 +48,7 @@ mvn org.apache.maven.plugins:maven-dependency-plugin:3.0.0:get \
 
         <p>
           And, you will be able to find the zip file in your local Maven repository directory.
-          e.g, <code>~/.m2/repository/com/onehippo/cms7/hippo-addon-crisp-demopkg/0.9.1/hippo-addon-crisp-demopkg-0.9.1-src.zip</code>.
+          e.g, <code>~/.m2/repository/com/onehippo/cms7/hippo-addon-crisp-demopkg/1.0.0/hippo-addon-crisp-demopkg-1.0.0-src.zip</code>.
         </p>
 
         <p>

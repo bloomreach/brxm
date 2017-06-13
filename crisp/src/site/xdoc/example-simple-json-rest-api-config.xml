@@ -20,6 +20,12 @@
           object configuration, cache control configuration, etc.
         </p>
 
+        <p>
+          The following ResourceResolver Spring Framework Beans configuration can be set at
+          <code>/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer/demoProductCatalogs/@crisp:beandefinition</code>
+          property in the repository for "demoProductCatalogs" resource space, for instance.
+        </p>
+
       </subsection>
 
       <subsection name="ResourceResolver Configuration">
@@ -79,7 +85,9 @@
 
         <p>
           The following properties are used in the bean configuration through pairs of
-          <code>crisp:propnames</code> and <code>crisp:propvalues</code> properties.
+          <code>crisp:propnames</code> and <code>crisp:propvalues</code> properties
+          at <code>/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer/demoProductCatalogs</code>
+          node for "demoProductCatalogs" resource space, for instance.
         </p>
 
         <table>

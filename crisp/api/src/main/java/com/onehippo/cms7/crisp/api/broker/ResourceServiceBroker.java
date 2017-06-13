@@ -144,7 +144,8 @@ public interface ResourceServiceBroker {
      * @return a proper resource cache store representation ({@link ResourceDataCache}) for the specified
      *         {@code resourceSpace}, or a fallback {@link ResourceDataCache} if the resolved {@link ResourceResolver}
      *         doesn't have its own {@link ResourceDataCache} instance
+     * @throws ResourceException if resource space is not found
      */
-    ResourceDataCache getResourceDataCache(String resourceSpace);
+    ResourceDataCache getResourceDataCache(String resourceSpace) throws ResourceException;
 
 }

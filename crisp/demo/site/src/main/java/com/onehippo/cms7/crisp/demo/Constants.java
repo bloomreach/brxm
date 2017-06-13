@@ -9,6 +9,8 @@ public class Constants {
 
     public static final String RESOURCE_SPACE_DEMO_SALES_FORCE = "demoSalesForce";
 
+    public static final String RESOURCE_SPACE_DEMO_MARKETO = "demoMarketo";
+
     private Constants() {
     }
 }
