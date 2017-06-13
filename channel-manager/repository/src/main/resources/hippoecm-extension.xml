@@ -260,4 +260,19 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="hippo-channel-managere-add-empty-wpm-projects-path">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20012</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value/>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer/projectsPath</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>
