@@ -404,4 +404,47 @@ public class ConfigurationModelImpl implements ConfigurationModel {
                 + "}";
 
     }
+
+    /**
+     * Combine the provided source modules with all of the other modules from a newModel.
+     * @param sourceModules the new source modules
+     * @param newModel model from which we want to extract all modules that don't overlap with source modules
+     * @return a new, fully-built model combining modules from the params
+     */
+    public static ConfigurationModelImpl mergeWithSourceModules(final Collection<ModuleImpl> sourceModules,
+                                                                final ConfigurationModelImpl newModel) {
+        final ConfigurationModelImpl mergedModel = new ConfigurationModelImpl();
+
+        // start with the source modules
+        sourceModules.forEach(mergedModel::addModule);
+
+        // then layer on top all of the other modules
+        newModel.getSortedGroups().forEach(mergedModel::addGroup);
+
+        return mergedModel.build();
+    }
+
+    /**
+     * Combine the source modules from an existingModel with all of the other modules from a newModel.
+     * @param existingModel model from which we want to extract source modules and no other modules
+     * @param newModel model from which we want to extract all modules that don't overlap with source modules
+     * @return a new, fully-built model combining modules from the params
+     */
+    public static ConfigurationModelImpl mergeWithSourceModules(final ConfigurationModelImpl existingModel,
+                                                                final ConfigurationModelImpl newModel) {
+        final ConfigurationModelImpl mergedModel = new ConfigurationModelImpl();
+
+        // preserve the source modules
+        for (ModuleImpl module : existingModel.getModules()) {
+            if (module.getMvnPath() != null) {
+                log.debug("Merging module: {}", module);
+                mergedModel.addModule(module);
+            }
+        }
+
+        // layer on top all of the other modules
+        newModel.getSortedGroups().forEach(mergedModel::addGroup);
+
+        return mergedModel.build();
+    }
 }
