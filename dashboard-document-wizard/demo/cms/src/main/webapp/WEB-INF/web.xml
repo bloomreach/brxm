@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -114,14 +114,14 @@
     <filter-name>Console</filter-name>
     <url-pattern>/console/*</url-pattern>
   </filter-mapping>
-  
+
   <listener>
     <listener-class>org.hippoecm.frontend.plugins.login.ConcurrentLoginListener</listener-class>
   </listener>
 
   <servlet>
     <servlet-name>AngularResourceServlet</servlet-name>
-    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.SecureCmsResourceServlet</servlet-class>
     <init-param>
       <param-name>jarPathPrefix</param-name>
       <param-value>/angular</param-value>
@@ -132,19 +132,11 @@
         ^/.*\..*
       </param-value>
     </init-param>
-    <init-param>
-      <!--
-        Cache timeout in seconds. Make sure to increase it in production environments,
-        for example to one day (cacheTimeout = 86400)
-      -->
-      <param-name>cacheTimeout</param-name>
-      <param-value>0</param-value>
-    </init-param>
   </servlet>
 
   <servlet>
     <servlet-name>CKEditorResourceServlet</servlet-name>
-    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.SecureCmsResourceServlet</servlet-class>
     <init-param>
       <param-name>jarPathPrefix</param-name>
       <param-value>/ckeditor</param-value>
@@ -154,14 +146,6 @@
       <param-value>
         ^/.*\..*
       </param-value>
-    </init-param>
-    <init-param>
-      <!--
-        Cache timeout in seconds. Make sure to increase it in production environments,
-        for example to one day (cacheTimeout = 86400)
-      -->
-      <param-name>cacheTimeout</param-name>
-      <param-value>0</param-value>
     </init-param>
   </servlet>
 
@@ -178,14 +162,6 @@
         ^/.*\..*
       </param-value>
     </init-param>
-    <init-param>
-      <!--
-        Cache timeout in seconds. Make sure to increase it in production environments,
-        for example to one day (cacheTimeout = 86400)
-      -->
-      <param-name>cacheTimeout</param-name>
-      <param-value>0</param-value>
-    </init-param>
   </servlet>
 
   <servlet>
@@ -201,15 +177,15 @@
     <load-on-startup>4</load-on-startup>
   </servlet>
 
-  <servlet> 
-    <servlet-name>PingServlet</servlet-name> 
-    <servlet-class>org.hippoecm.repository.PingServlet</servlet-class> 
+  <servlet>
+    <servlet-name>PingServlet</servlet-name>
+    <servlet-class>org.hippoecm.repository.PingServlet</servlet-class>
     <init-param>
       <param-name>repository-address</param-name>
       <param-value>vm://</param-value>
     </init-param>
-    <load-on-startup>5</load-on-startup> 
-  </servlet> 
+    <load-on-startup>5</load-on-startup>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>LoggingServlet</servlet-name>
@@ -221,9 +197,9 @@
     <url-pattern>/repository/*</url-pattern>
   </servlet-mapping>
 
-  <servlet-mapping> 
-    <servlet-name>PingServlet</servlet-name> 
-    <url-pattern>/ping/</url-pattern> 
+  <servlet-mapping>
+    <servlet-name>PingServlet</servlet-name>
+    <url-pattern>/ping/</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
