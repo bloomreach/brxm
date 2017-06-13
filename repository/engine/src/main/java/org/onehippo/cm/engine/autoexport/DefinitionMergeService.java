@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.engine.autoexport;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -464,11 +465,9 @@ public class DefinitionMergeService {
      */
     protected ConfigSourceImpl createConfigSourceIfNecessary(final String sourcePath, final ModuleImpl module) {
         // does this Source already exist?
-        final Optional<ConfigSourceImpl> maybeSource =
-                module.getConfigSources().stream()
-                        .filter(source -> source.getPath().equals(sourcePath))
-                        .findFirst();
-        return maybeSource.orElseGet(() -> module.addConfigSource(sourcePath));
+        return module.getConfigSource(sourcePath)
+                // if not, add it
+                .orElseGet(() -> module.addConfigSource(sourcePath));
     }
 
     /**
@@ -487,7 +486,10 @@ public class DefinitionMergeService {
      * @return a module-base-relative path with no leading slash for a potentially new yaml source file
      */
     protected String getFilePathByLocationMapper(String path) {
-        final String xmlFile = LocationMapper.fileForPath(path, true);
+        String xmlFile = LocationMapper.fileForPath(path, true);
+        if (xmlFile == null) {
+            return "main.yaml";
+        }
         return StringUtils.removeEnd(xmlFile, ".xml") + YAML_EXT;
     }
 
@@ -1073,6 +1075,33 @@ public class DefinitionMergeService {
         // set of existing sources in reverse lexical order, so that longer paths come first
         final SortedMap<String, ContentDefinitionImpl> existingSourcesByPath = collectContentSourcesByPath(toExport);
 
+        // process deletes, including resource removal
+        for (final String deletePath : contentChanges.getDeletedContent()) {
+            // if a delete path is -above- a content root path, we need to delete one or more entire sources
+            final Set<String> toRemove = new HashSet<>();
+            for (final String sourcePath : existingSourcesByPath.keySet()) {
+                if (sourcePath.startsWith(deletePath)) {
+                    final ContentDefinitionImpl contentDef = existingSourcesByPath.get(sourcePath);
+                    final SourceImpl source = contentDef.getSource();
+                    final ModuleImpl module = source.getModule();
+
+                    // mark all referenced resources for delete
+                    removeResources(contentDef.getNode());
+
+                    // remove the source from its module
+                    module.getModifiableSources().remove(source);
+                    module.addContentResourceToRemove("/" + source.getPath());
+                    toRemove.add(source.getPath());
+                }
+            }
+            // if a delete path is -below- one of the sources that remains, treat it as a change
+            for (final String sourcePath : Sets.difference(existingSourcesByPath.keySet(), toRemove)) {
+                if (deletePath.startsWith(sourcePath)) {
+                    contentChangesByPath.add(deletePath);
+                }
+            }
+        }
+
         for (final String changePath : contentChangesByPath) {
             // is there an existing source for this exact path? if so, use that
             if (existingSourcesByPath.containsKey(changePath)) {
@@ -1105,25 +1134,6 @@ public class DefinitionMergeService {
             }
         }
 
-        // process deletes, including resource removal
-        for (final String deletePath : contentChanges.getDeletedContent()) {
-            // for now, we only care about deletes that match a content root or a descendant
-            for (final String sourcePath : existingSourcesByPath.keySet()) {
-                if (sourcePath.startsWith(deletePath)) {
-                    final ContentDefinitionImpl contentDef = existingSourcesByPath.get(sourcePath);
-                    final SourceImpl source = contentDef.getSource();
-                    final ModuleImpl module = source.getModule();
-
-                    // mark all referenced resources for delete
-                    removeResources(contentDef.getNode());
-
-                    // remove the source from its module
-                    module.getModifiableSources().remove(source);
-                    module.addContentResourceToRemove("/" + source.getPath());
-                }
-            }
-        }
-
         // for all changed content sources, regenerate definitions from JCR
         // todo: move this to serialization stage instead of merge stage
         final Set<String> newSourcePaths = collectContentSourcesByPath(toExport).keySet();
@@ -1138,7 +1148,8 @@ public class DefinitionMergeService {
                                 Sets.difference(newSourcePaths, Sets.newTreeSet(Collections.singleton(rootPath))));
                     }
                     catch (RepositoryException e) {
-                        throw new RuntimeException("Exception while regenerating changed content source file", e);
+                        throw new RuntimeException(
+                                "Exception while regenerating changed content source file for " + rootPath, e);
                     }
                 });
     }

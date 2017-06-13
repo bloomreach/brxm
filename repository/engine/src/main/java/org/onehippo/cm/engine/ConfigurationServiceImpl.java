@@ -254,7 +254,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
         final ModuleContext moduleContext = new ExportModuleContext(module, modulePath);
         try {
-            new FileConfigurationWriter().writeModule(module, moduleContext);
+            new FileConfigurationWriter().writeModule(module, moduleContext, false);
             File file = File.createTempFile("export", "zip");
             final ZipCompressor zipCompressor = new ZipCompressor();
             zipCompressor.zipDirectory(dirToZip.toPath(), file.getAbsolutePath());

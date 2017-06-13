@@ -512,8 +512,9 @@ public class EventJournalProcessor {
 
     private void exportChangesModule(ModuleImpl changesModule) throws RepositoryException, IOException, ParserException {
         if (changesModule.isEmpty() && pendingChanges.getAddedContent().isEmpty()
-                && pendingChanges.getChangedContent().isEmpty()) {
-            AutoExportServiceImpl.log.info("No changes detected");
+                && pendingChanges.getChangedContent().isEmpty()
+                && pendingChanges.getDeletedContent().isEmpty()) {
+            log.info("No changes detected");
 
             // save this fact immediately and do nothing else
             configuration.setLastRevision(lastRevision);
@@ -539,11 +540,11 @@ public class EventJournalProcessor {
                 final ModuleContext ctx = new ModuleContext(module, moduleDescriptorPath, false);
                 ctx.createOutputProviders(moduleDescriptorPath);
 
-                // TODO: confirm that this will work properly with in-place overwrite
-                writer.writeModule(module, ctx);
+                writer.writeModule(module, ctx, true);
 
                 // then reload the modules, so we get a nice, clean, purely-File-based view of the sources
                 // TODO: share this logic with ClasspathConfigurationModelReader somehow
+                // TODO: better yet, avoid this step via proper in-place resource updating on write
                 final PathConfigurationReader.ReadResult result =
                         new PathConfigurationReader().read(moduleDescriptorPath);
                 result.getGroups().stream()
@@ -552,6 +553,19 @@ public class EventJournalProcessor {
                         .forEach(m -> {
                             // store mvnPath again for later use
                             m.setMvnPath(module.getMvnPath());
+
+                            // temporary hacks to enable more efficient update of baseline
+                            module.getRemovedConfigResources().forEach(m::addConfigResourceToRemove);
+                            module.getRemovedContentResources().forEach(m::addContentResourceToRemove);
+                            module.getConfigSources().forEach(source -> {
+                                m.getConfigSource(source.getPath())
+                                        .ifPresent(s -> { if (source.hasChangedSinceLoad()) { s.markChanged(); }});
+                            });
+                            module.getContentSources().forEach(source -> {
+                                m.getContentSource(source.getPath())
+                                        .ifPresent(s -> { if (source.hasChangedSinceLoad()) { s.markChanged(); }});
+                            });
+
                             reloadedModules.add(m);
                         });
             }

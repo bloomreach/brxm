@@ -54,10 +54,16 @@ import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.Project;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.ContentSourceImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.AggregatedModulesDescriptorParser;
 import org.onehippo.cm.model.parser.ParserException;
@@ -116,7 +122,7 @@ public class ConfigurationBaselineService {
      * The provided ConfigurationModel is assumed to be fully formed and validated.
      * @param model the configuration model to store as the new baseline
      */
-    public void storeBaseline(final ConfigurationModel model) throws RepositoryException, IOException {
+    public void storeBaseline(final ConfigurationModelImpl model) throws RepositoryException, IOException {
         configurationLockManager.lock();
         try {
             StopWatch stopWatch = new StopWatch();
@@ -143,19 +149,19 @@ public class ConfigurationBaselineService {
 
             // create group, project, and module nodes, if necessary
             // foreach group
-            for (Group group : model.getSortedGroups()) {
+            for (GroupImpl group : model.getSortedGroups()) {
                 Node groupNode = createNodeIfNecessary(baseline, group.getName(), NT_HCM_GROUP, true);
 
                 // foreach project
-                for (Project project : group.getProjects()) {
+                for (ProjectImpl project : group.getProjects()) {
                     Node projectNode = createNodeIfNecessary(groupNode, project.getName(), NT_HCM_PROJECT, true);
 
                     // foreach module
-                    for (Module module : project.getModules()) {
+                    for (ModuleImpl module : project.getModules()) {
                         Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
 
                         // process each module in detail
-                        storeBaselineModule(module, moduleNode);
+                        storeBaselineModule(module, moduleNode, false);
                     }
                 }
             }
@@ -199,12 +205,13 @@ public class ConfigurationBaselineService {
                 Node projectNode = groupNode.getNode(NodeNameCodec.encode(module.getProject().getName()));
                 Node moduleNode = projectNode.getNode(NodeNameCodec.encode(module.getName()));
 
-                // clear the existing module def and start clean
-                // todo: figure out how to do incremental update properly
-                moduleNode.remove();
-                moduleNode = projectNode.addNode(NodeNameCodec.encode(module.getName()), NT_HCM_MODULE);
+                // todo test and remove
+//                // clear the existing module def and start clean
+//                moduleNode.remove();
+//                moduleNode = projectNode.addNode(NodeNameCodec.encode(module.getName()), NT_HCM_MODULE);
 
-                storeBaselineModule(module, moduleNode);
+                // do incremental update
+                storeBaselineModule(module, moduleNode, true);
             }
 
             // update digest
@@ -231,9 +238,10 @@ public class ConfigurationBaselineService {
      * managed in storeBaseline().
      * @param module the module to store
      * @param moduleNode the JCR node destination for the module
-     * @see #storeBaseline(ConfigurationModel)
+     * @see #storeBaseline(ConfigurationModelImpl)
      */
-    protected void storeBaselineModule(Module module, Node moduleNode) throws RepositoryException, IOException {
+    protected void storeBaselineModule(final ModuleImpl module, final Node moduleNode, final boolean incremental)
+            throws RepositoryException, IOException {
 
         // get the resource input provider, which provides access to raw data for module content
         ResourceInputProvider rip = module.getConfigResourceInputProvider();
@@ -278,8 +286,39 @@ public class ConfigurationBaselineService {
             storeString(is, actionsNode, HCM_YAML);
         }
 
+        // always create the config root node, since we need it to setup the RIP, and that's needed later
+        // TODO this is an ugly hack because source.getPath() is actually relative to config root, not module root
+        Node configRootNode = createNodeIfNecessary(moduleNode, HCM_CONFIG_FOLDER, NT_HCM_CONFIG_FOLDER, false);
+
+        // delete removed resources, which might include removed sources
+        if (incremental) {
+            log.debug("removing config resources: \n\t{}", String.join("\n\t", module.getRemovedConfigResources()));
+            log.debug("removing content resources: \n\t{}", String.join("\n\t", module.getRemovedContentResources()));
+
+            for (String removed : module.getRemovedConfigResources()) {
+                final String relPath = removed.substring(1);
+                if (configRootNode.hasNode(relPath)) {
+                    configRootNode.getNode(relPath).remove();
+                }
+            }
+            if (moduleNode.hasNode(HCM_CONTENT_FOLDER)) {
+                final Node contentRootNode = moduleNode.getNode(HCM_CONTENT_FOLDER);
+                for (String removed : module.getRemovedContentResources()) {
+                    final String relPath = removed.substring(1);
+                    if (contentRootNode.hasNode(relPath)) {
+                        contentRootNode.getNode(relPath).remove();
+                    }
+                }
+            }
+        }
+
         // foreach content source
-        for (Source source : module.getContentSources()) {
+        for (ContentSourceImpl source : module.getContentSources()) {
+            // short-circuit processing if we're in incremental update mode and the source hasn't changed
+            if (incremental && !source.hasChangedSinceLoad()) {
+                continue;
+            }
+
             // TODO this is an ugly hack because source.getPath() is actually relative to content root, not module root
             // create the content root node, if necessary
             Node contentRootNode = createNodeIfNecessary(moduleNode, HCM_CONTENT_FOLDER, NT_HCM_CONTENT_FOLDER, false);
@@ -289,18 +328,19 @@ public class ConfigurationBaselineService {
                     NT_HCM_CONTENT_FOLDER, NT_HCM_CONTENT_SOURCE);
 
             // assume that there is exactly one content definition here, as required
-            ContentDefinition firstDef = (ContentDefinition) source.getDefinitions().get(0);
+            ContentDefinitionImpl firstDef = (ContentDefinitionImpl) source.getDefinitions().get(0);
 
             // set content path property
             sourceNode.setProperty(HCM_CONTENT_PATH, firstDef.getNode().getPath());
         }
 
-        // always create the config root node, since we need it to setup the RIP, and that's needed later
-        // TODO this is an ugly hack because source.getPath() is actually relative to config root, not module root
-        Node configRootNode = createNodeIfNecessary(moduleNode, HCM_CONFIG_FOLDER, NT_HCM_CONFIG_FOLDER, false);
-
         // foreach config source
-        for (Source source : module.getConfigSources()) {
+        for (ConfigSourceImpl source : module.getConfigSources()) {
+            // short-circuit processing if we're in incremental update mode and the source hasn't changed
+            if (incremental && !source.hasChangedSinceLoad()) {
+                continue;
+            }
+
             // process in detail ...
             storeBaselineConfigSource(source, configRootNode, rip);
         }
@@ -312,9 +352,9 @@ public class ConfigurationBaselineService {
      * @param source the Source to store
      * @param configRootNode the JCR node destination for the config Sources and resources
      * @param rip provides access to raw data streams
-     * @see #storeBaseline(ConfigurationModel)
+     * @see #storeBaseline(ConfigurationModelImpl)
      */
-    protected void storeBaselineConfigSource(final Source source, final Node configRootNode, final ResourceInputProvider rip)
+    protected void storeBaselineConfigSource(final ConfigSourceImpl source, final Node configRootNode, final ResourceInputProvider rip)
             throws RepositoryException, IOException {
 
         // create folder nodes, if necessary
@@ -332,7 +372,7 @@ public class ConfigurationBaselineService {
         for (Definition def : source.getDefinitions()) {
             switch (def.getType()) {
                 case NAMESPACE:
-                    NamespaceDefinition namespaceDefinition = (NamespaceDefinition)def;
+                    NamespaceDefinitionImpl namespaceDefinition = (NamespaceDefinitionImpl) def;
                     if (namespaceDefinition.getCndPath() != null) {
                         String cndPath = namespaceDefinition.getCndPath().getString();
 
@@ -353,43 +393,13 @@ public class ConfigurationBaselineService {
                     // this shouldn't exist here anymore, but we'll let the verifier handle it
                     break;
                 case CONFIG:
-                    ConfigDefinition configDef = (ConfigDefinition) def;
+                    ConfigDefinitionImpl configDef = (ConfigDefinitionImpl) def;
 
                     // recursively find all resources, make nodes, store binary and digest
-                    storeResourcesForNode(configDef.getNode(), sourceNode, configRootNode);
+                    configDef.getNode().visitResources(value ->
+                            storeBinaryResourceIfNecessary(value, sourceNode, configRootNode));
                     break;
             }
-        }
-    }
-
-    /**
-     * Recursively find resource references in properties of a DefinitionNode and its children nodes and store the
-     * referenced resource content in the configuration baseline.
-     * @param defNode a DefinitionNode to search for resource references
-     * @param sourceNode the JCR Node where source is stored in the baseline
-     * @param configRootNode the JCR node destination for the config Sources and resources
-     */
-    protected void storeResourcesForNode(DefinitionNode defNode, Node sourceNode, Node configRootNode)
-            throws RepositoryException, IOException {
-
-        // find resource values
-        for (DefinitionProperty dp : defNode.getProperties().values()) {
-            switch (dp.getType()) {
-                case SINGLE:
-                    storeBinaryResourceIfNecessary(dp.getValue(), sourceNode, configRootNode);
-                    break;
-                case SET:
-                case LIST:
-                    for (Value value : dp.getValues()) {
-                        storeBinaryResourceIfNecessary(value, sourceNode, configRootNode);
-                    }
-                    break;
-            }
-        }
-
-        // recursively visit child definition nodes
-        for (DefinitionNode dn : defNode.getNodes().values()) {
-            storeResourcesForNode(dn, sourceNode, configRootNode);
         }
     }
 
@@ -400,7 +410,7 @@ public class ConfigurationBaselineService {
      * @param sourceNode the JCR Node where source is stored in the baseline
      * @param configRootNode the JCR node destination for the config Sources and resources
      */
-    protected void storeBinaryResourceIfNecessary(Value value, Node sourceNode, Node configRootNode)
+    protected void storeBinaryResourceIfNecessary(ValueImpl value, Node sourceNode, Node configRootNode)
             throws RepositoryException, IOException {
         if (value.isResource()) {
             // create nodes, if necessary
