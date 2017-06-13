@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -308,7 +308,8 @@ public abstract class AbstractGroupManager implements GroupManager {
         return groupIds;
     }
 
-    private Set<Node> getMembershipsByPath(String userId, String providerId, Node groupFolder, int level) {
+    private Set<Node> getMembershipsByPath(final String userId, final String providerId, final Node groupFolder,
+                                           final int level) {
         final Set<Node> groups = new HashSet<>();
         try {
             for (Node groupNode : new NodeIterable(groupFolder.getNodes())) {
@@ -321,9 +322,8 @@ public abstract class AbstractGroupManager implements GroupManager {
                             }
                         }
                     }
-                } else if (groupNode.isNodeType(NT_GROUPFOLDER) && level <= dirLevels) {
-                    level++;
-                    groups.addAll(getMembershipsByPath(userId, providerId, groupNode, level));
+                } else if (groupNode.isNodeType(NT_GROUPFOLDER) && level < dirLevels) {
+                    groups.addAll(getMembershipsByPath(userId, providerId, groupNode, level + 1));
                 }
             }
         } catch (RepositoryException e) {
