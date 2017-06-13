@@ -28,6 +28,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.base.Strings;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -36,8 +38,6 @@ import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.utils.common.PackageVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -189,7 +189,7 @@ public final class ProjectUtils {
     }
 
     /**
-     * Returns repository-data root folder e.g. {@code /home/foo/myproject/bootstrap}
+     * Returns repository-data root folder e.g. {@code /home/foo/myproject/repository-data}
      *
      * @return repository-data project folder
      */
