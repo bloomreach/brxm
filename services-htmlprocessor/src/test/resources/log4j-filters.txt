@@ -18,6 +18,7 @@ Expected exception
 Failed to load node with uuid cafebabe-cafe-babe-cafe-babecafebabe
 Failed to retrieve uuid from node /broken-node
 Failed to create node model from node /broken-node
-Error creating image link for input 'image.jpg/{_document}/hippogallery:original'
+Error creating image link for input
 HtmlProcessor id 'org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService' has been replaced by 'richtext', please update the configuration.
 HtmlProcessor id 'org.hippoecm.frontend.plugins.richtext.DefaultHtmlCleanerService' has been replaced by 'formatted', please update the configuration.
+Cannot create facet node below '/document', target UUID does not exist: 'non-existing-uuid'
