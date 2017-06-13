@@ -188,6 +188,7 @@ public class DefinitionMergeService {
         // of the upstream modules from the baseline. We must take care not to modify those Sources!
         // However, the toExport modules are represented with cloned copies with reparsed Sources distinct from the
         // original baseline. We can safely modify those Sources and Definitions as needed.
+        // TODO: do we still need to do this, or can we do everything in place now?
         final ConfigurationModelImpl model = rebuild(toExport, baseline);
 
         // merge config changes

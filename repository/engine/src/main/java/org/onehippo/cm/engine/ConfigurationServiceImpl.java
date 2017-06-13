@@ -65,6 +65,7 @@ import static org.onehippo.cm.engine.Constants.HIPPO_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HIPPO_PREFIX;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
+import static org.onehippo.cm.model.impl.ConfigurationModelImpl.mergeWithSourceModules;
 
 public class ConfigurationServiceImpl implements InternalConfigurationService {
 
@@ -77,6 +78,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     private ConfigurationContentService contentService;
     private AutoExportServiceImpl autoExportService;
 
+    private ConfigurationModelImpl baselineModel;
     private ConfigurationModelImpl runtimeConfigurationModel;
 
     public ConfigurationServiceImpl start(final Session session, final StartRepositoryServicesTask startRepositoryServicesTask)
@@ -98,7 +100,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             final boolean verify = Boolean.getBoolean("repo.bootstrap.verify");
             final boolean autoExportAllowed = Boolean.getBoolean(org.onehippo.cm.engine.autoexport.Constants.SYSTEM_ALLOWED_PROPERTY_NAME);
 
-            ConfigurationModelImpl baselineModel = loadBaselineModel();
+            baselineModel = loadBaselineModel();
             ConfigurationModelImpl bootstrapModel = null;
             boolean success;
             if (mustConfigure) {
@@ -234,8 +236,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     // TODO: confirm that this is the appropriate scope (public, but not exposed on interface)
     public boolean updateBaselineForAutoExport(final Collection<ModuleImpl> updatedModules) {
         try {
-            ConfigurationModelImpl newBaseline = baselineService.updateBaselineModules(updatedModules);
-            runtimeConfigurationModel = mergeWithSourceModules(updatedModules, newBaseline);
+            baselineModel = baselineService.updateBaselineModules(updatedModules, baselineModel);
+            runtimeConfigurationModel = mergeWithSourceModules(updatedModules, baselineModel);
             return true;
         }
         catch (Exception e) {
@@ -349,49 +351,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             }
             throw new RepositoryException(e);
         }
-    }
-
-    /**
-     * Combine the source modules from an existingModel with all of the other modules from a newModel.
-     * @param existingModel model from which we want to extract source modules and no other modules
-     * @param newModel model from which we want to extract all modules that don't overlap with source modules
-     * @return a new, fully-built model combining modules from the params
-     */
-    private ConfigurationModelImpl mergeWithSourceModules(final ConfigurationModelImpl existingModel,
-                                                          final ConfigurationModelImpl newModel) {
-        final ConfigurationModelImpl mergedModel = new ConfigurationModelImpl();
-
-        // preserve the source modules
-        for (ModuleImpl module : existingModel.getModules()) {
-            if (module.getMvnPath() != null) {
-                log.debug("Merging module: {}", module);
-                mergedModel.addModule(module);
-            }
-        }
-
-        // layer on top all of the other modules
-        newModel.getSortedGroups().forEach(mergedModel::addGroup);
-
-        return mergedModel.build();
-    }
-
-    /**
-     * Combine the provided source modules with all of the other modules from a newModel.
-     * @param sourceModules the new source modules
-     * @param newModel model from which we want to extract all modules that don't overlap with source modules
-     * @return a new, fully-built model combining modules from the params
-     */
-    private ConfigurationModelImpl mergeWithSourceModules(final Collection<ModuleImpl> sourceModules,
-                                                          final ConfigurationModelImpl newModel) {
-        final ConfigurationModelImpl mergedModel = new ConfigurationModelImpl();
-
-        // start with the source modules
-        sourceModules.forEach(mergedModel::addModule);
-
-        // then layer on top all of the other modules
-        newModel.getSortedGroups().forEach(mergedModel::addGroup);
-
-        return mergedModel.build();
     }
 
     private boolean hasSourceModules(final ConfigurationModelImpl model) {

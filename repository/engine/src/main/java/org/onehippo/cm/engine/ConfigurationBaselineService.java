@@ -24,9 +24,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -42,18 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.model.ConfigDefinition;
-import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.Definition;
-import org.onehippo.cm.model.DefinitionNode;
-import org.onehippo.cm.model.DefinitionProperty;
-import org.onehippo.cm.model.Group;
-import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.NamespaceDefinition;
-import org.onehippo.cm.model.Project;
-import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -104,6 +93,7 @@ import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
 import static org.onehippo.cm.model.Constants.HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
+import static org.onehippo.cm.model.impl.ConfigurationModelImpl.mergeWithSourceModules;
 
 public class ConfigurationBaselineService {
 
@@ -184,8 +174,10 @@ public class ConfigurationBaselineService {
      * which frequently updates existing modules. This method assumes that the modules already exist and that it is
      * safe to call session.save() at any time without regard to the calling context.
      * @param modules the modules to be updated in the stored baseline
+     * @param baselineModel
      */
-    protected ConfigurationModelImpl updateBaselineModules(final Collection<ModuleImpl> modules)
+    protected ConfigurationModelImpl updateBaselineModules(final Collection<ModuleImpl> modules,
+                                                           final ConfigurationModelImpl baselineModel)
             throws RepositoryException, IOException, ParserException {
         configurationLockManager.lock();
         try {
@@ -195,6 +187,7 @@ public class ConfigurationBaselineService {
             final Node hcmRootNode = configurationServiceSession.getNode(HCM_ROOT_PATH);
             Node baseline = hcmRootNode.getNode(HCM_BASELINE);
 
+            final Set<ModuleImpl> newBaselineModules = new HashSet<>();
             for (final ModuleImpl module : modules) {
                 log.debug("Updating module in baseline configuration: {}", module.getFullName());
 
@@ -212,10 +205,15 @@ public class ConfigurationBaselineService {
 
                 // do incremental update
                 storeBaselineModule(module, moduleNode, true);
+
+                final List<GroupImpl> groups = new ArrayList<>();
+                loadModuleDescriptor(moduleNode, groups);
+                parseSources(groups);
+                newBaselineModules.add(groups.get(0).getProjects().get(0).getModules().get(0));
             }
 
             // update digest
-            ConfigurationModelImpl newBaseline = loadBaseline();
+            ConfigurationModelImpl newBaseline = mergeWithSourceModules(newBaselineModules, baselineModel);
             baseline.setProperty(HCM_DIGEST, newBaseline.getDigest());
 
             configurationServiceSession.save();
@@ -575,55 +573,66 @@ public class ConfigurationBaselineService {
             throws RepositoryException, ParserException {
         // for each module node under this baseline
         for (Node moduleNode : findModuleNodes(baselineNode)) {
-            Collection<GroupImpl> moduleGroups;
-            ModuleImpl module;
-
-            Node descriptorNode = moduleNode.getNode(HCM_MODULE_DESCRIPTOR);
-
-            // if descriptor exists
-            // TODO when demo project is restructured, we should assume this exists
-            final String descriptor = descriptorNode.getProperty(HCM_YAML).getString();
-            if (StringUtils.isNotEmpty(descriptor)) {
-                // parse descriptor with ModuleDescriptorParser
-                // todo switch to single-module alternate parser
-                InputStream is = IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8);
-                moduleGroups = new AggregatedModulesDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
-                        .parse(is, moduleNode.getPath());
-
-                // This should always produce exactly one module!
-                module = moduleGroups.stream()
-                        .flatMap(g -> g.getProjects().stream())
-                        .flatMap(p -> p.getModules().stream())
-                        .findFirst().get();
-
-                final double sequenceNumber = moduleNode.hasProperty(HCM_MODULE_SEQUENCE)
-                        ? moduleNode.getProperty(HCM_MODULE_SEQUENCE).getDouble()
-                        : 0.0;
-                module.setSequenceNumber(sequenceNumber);
-
-                log.debug("Building module from descriptor: {}/{}/{}",
-                        module.getProject().getGroup().getName(), module.getProject().getName(), module.getName());
-            }
-            else {
-                // this should no longer happen, since we generate dummy descriptors when saving the baseline
-                throw new ConfigurationRuntimeException("Module found in baseline with empty descriptor: " + moduleNode.getPath());
-            }
-
-            // store RIPs for later use
-            if (moduleNode.hasNode(HCM_CONFIG_FOLDER)) {
-                // note: we need this to always be true, so that we can load the descriptor etc
-                module.setConfigResourceInputProvider(new BaselineResourceInputProvider(moduleNode.getNode(HCM_CONFIG_FOLDER)));
-            }
-            if (moduleNode.hasNode(HCM_CONTENT_FOLDER)) {
-                module.setContentResourceInputProvider(new BaselineResourceInputProvider(moduleNode.getNode(HCM_CONTENT_FOLDER)));
-            }
-
-            // accumulate all groups
-            groups.addAll(moduleGroups);
+            loadModuleDescriptor(moduleNode, groups);
         }
 
         log.debug("After parsing descriptors, we have {} groups and {} modules", groups.size(),
                 groups.stream().flatMap(g -> g.getProjects().stream()).flatMap(p -> p.getModules().stream()).count());
+    }
+
+    /**
+     * Helper for {@link #parseDescriptors(Node, List)} -- loads one module descriptor from a given module baseline node.
+     * @param moduleNode the JCR node where the baseline for a module has been previously stored
+     * @param groups accumulator for Groups as defined by modules loaded here
+     * @throws RepositoryException
+     * @throws ParserException
+     */
+    protected void loadModuleDescriptor(final Node moduleNode, final List<GroupImpl> groups) throws RepositoryException, ParserException {
+        Collection<GroupImpl> moduleGroups;
+        ModuleImpl module;
+
+        Node descriptorNode = moduleNode.getNode(HCM_MODULE_DESCRIPTOR);
+
+        // if descriptor exists
+        // TODO when demo project is restructured, we should assume this exists
+        final String descriptor = descriptorNode.getProperty(HCM_YAML).getString();
+        if (StringUtils.isNotEmpty(descriptor)) {
+            // parse descriptor with ModuleDescriptorParser
+            // todo switch to single-module alternate parser
+            InputStream is = IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8);
+            moduleGroups = new AggregatedModulesDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
+                    .parse(is, moduleNode.getPath());
+
+            // This should always produce exactly one module!
+            module = moduleGroups.stream()
+                    .flatMap(g -> g.getProjects().stream())
+                    .flatMap(p -> p.getModules().stream())
+                    .findFirst().get();
+
+            final double sequenceNumber = moduleNode.hasProperty(HCM_MODULE_SEQUENCE)
+                    ? moduleNode.getProperty(HCM_MODULE_SEQUENCE).getDouble()
+                    : 0.0;
+            module.setSequenceNumber(sequenceNumber);
+
+            log.debug("Building module from descriptor: {}/{}/{}",
+                    module.getProject().getGroup().getName(), module.getProject().getName(), module.getName());
+        }
+        else {
+            // this should no longer happen, since we generate dummy descriptors when saving the baseline
+            throw new ConfigurationRuntimeException("Module found in baseline with empty descriptor: " + moduleNode.getPath());
+        }
+
+        // store RIPs for later use
+        if (moduleNode.hasNode(HCM_CONFIG_FOLDER)) {
+            // note: we need this to always be true, so that we can load the descriptor etc
+            module.setConfigResourceInputProvider(new BaselineResourceInputProvider(moduleNode.getNode(HCM_CONFIG_FOLDER)));
+        }
+        if (moduleNode.hasNode(HCM_CONTENT_FOLDER)) {
+            module.setContentResourceInputProvider(new BaselineResourceInputProvider(moduleNode.getNode(HCM_CONTENT_FOLDER)));
+        }
+
+        // accumulate all groups
+        groups.addAll(moduleGroups);
     }
 
     /**
