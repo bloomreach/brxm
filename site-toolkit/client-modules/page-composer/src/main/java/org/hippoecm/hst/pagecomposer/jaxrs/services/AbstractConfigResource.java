@@ -54,7 +54,7 @@ public class AbstractConfigResource implements ComponentManagerAware {
         this.componentManager = componentManager;
     }
 
-    public final PageComposerContextService getPageComposerContextService() {
+    public PageComposerContextService getPageComposerContextService() {
         return pageComposerContextService;
     }
 
