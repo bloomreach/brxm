@@ -89,6 +89,12 @@
     </property>
   </bean>
 
+  <!-- jaxrsHstConfigCxfServerFactoryBean needs to be available in the HST core component manager so downstream
+       projects can access it -->
+  <bean id="jaxrsHstConfigCxfServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
+  </bean>
+
+
   <bean id="jcrPathTemplateComposer" class="java.lang.String">
     <constructor-arg value="/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer"/>
   </bean>
