@@ -33,15 +33,21 @@ import javax.jcr.Session;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cm.model.serializer.AggregatedModulesDescriptorSerializer;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.cm.model.serializer.SourceSerializer;
+import org.onehippo.cm.model.util.FileConfigurationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.nodes.Node;
 
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
 public class FileConfigurationWriter {
+
+    private static final Logger log = LoggerFactory.getLogger(FileConfigurationWriter.class);
 
     private ResourceInputProvider jcrRip;
 
@@ -73,21 +79,43 @@ public class FileConfigurationWriter {
         }
     }
 
-    public void writeModule(final Module module, final ModuleContext moduleContext) throws IOException {
-        writeModule(module, DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
+    public void writeModule(final Module module, final ModuleContext moduleContext, final boolean incremental)
+            throws IOException {
+        writeModule(module, DEFAULT_EXPLICIT_SEQUENCING, moduleContext, incremental);
     }
 
     public void writeModule(final Module module, final boolean explicitSequencing,
                             final ModuleContext moduleContext) throws IOException {
+        writeModule(module, explicitSequencing, moduleContext, false);
+    }
 
-        // TODO: remove deleted resources first
+    public void writeModule(final Module module, final boolean explicitSequencing,
+                            final ModuleContext moduleContext,
+                            final boolean incremental) throws IOException {
+
+        // remove deleted resources before processing new resource names
+        if (incremental) {
+            log.debug("removing config resources: \n\t{}", String.join("\n\t", module.getRemovedConfigResources()));
+            log.debug("removing content resources: \n\t{}", String.join("\n\t", module.getRemovedContentResources()));
+            for (final String removed : module.getRemovedConfigResources()) {
+                final Path removedPath =
+                        FileConfigurationUtils.getResourcePath(moduleContext.getConfigRoot(), null, removed);
+                Files.deleteIfExists(removedPath);
+            }
+            for (final String removed : module.getRemovedContentResources()) {
+                final Path removedPath =
+                        FileConfigurationUtils.getResourcePath(moduleContext.getContentRoot(), null, removed);
+                Files.deleteIfExists(removedPath);
+            }
+        }
 
         moduleContext.collectExistingFilesAndResolveNewResources();
 
         for (final Source source : module.getSources()) {
-
-            // TODO: optimize by writing only changed sources
-            // TODO: what about writes to the same directory as source?
+            // short-circuit processing of unchanged sources
+            if (incremental && !source.hasChangedSinceLoad()) {
+                continue;
+            }
 
             final SourceSerializer sourceSerializer;
 
@@ -162,6 +190,7 @@ public class FileConfigurationWriter {
         try (final InputStream resourceInputStream = getValueInputProvider(value);
              final OutputStream resourceOutputStream =
                      outputProvider.getResourceOutputStream(source, copyItem.getValue().getString())) {
+            // TODO: after Java 9, use InputStream.transferTo()
             IOUtils.copy(resourceInputStream, resourceOutputStream);
         }
     }

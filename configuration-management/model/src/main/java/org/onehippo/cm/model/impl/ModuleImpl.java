@@ -32,6 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -177,6 +178,22 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         return (ConfigSourceImpl) addSource(source);
     }
 
+    public Optional<ConfigSourceImpl> getConfigSource(final String path) {
+        return sources.stream()
+                .filter(SourceType.CONFIG::isOfType)
+                .map(ConfigSourceImpl.class::cast)
+                .filter(source -> source.getPath().equals(path))
+                .findFirst();
+    }
+
+    public Optional<ContentSourceImpl> getContentSource(final String path) {
+        return sources.stream()
+                .filter(SourceType.CONTENT::isOfType)
+                .map(ContentSourceImpl.class::cast)
+                .filter(source -> source.getPath().equals(path))
+                .findFirst();
+    }
+
     @Override
     public Map<Double, Set<ActionItem>> getActionsMap() {
         return actionsMap;
@@ -289,6 +306,14 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      */
     public void addContentResourceToRemove(final String resourcePath) {
         removedContentResources.add(resourcePath);
+    }
+
+    public Set<String> getRemovedConfigResources() {
+        return removedConfigResources;
+    }
+
+    public Set<String> getRemovedContentResources() {
+        return removedContentResources;
     }
 
     public ModuleImpl build() {

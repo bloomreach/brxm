@@ -15,11 +15,15 @@
  */
 package org.onehippo.cm.model.impl;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Consumer;
+
+import javax.jcr.RepositoryException;
 
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.DefinitionNode;
@@ -216,6 +220,37 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     public void recursiveSortProperties() {
         sortProperties();
         getNodes().values().forEach(DefinitionNodeImpl::recursiveSortProperties);
+    }
+
+    public void visitResources(ValueConsumer consumer) throws RepositoryException, IOException {
+        // find resource values
+        for (DefinitionPropertyImpl dp : getProperties().values()) {
+            switch (dp.getType()) {
+                case SINGLE:
+                    final ValueImpl val = dp.getValue();
+                    if (val.isResource()) {
+                        consumer.accept(val);
+                    }
+                    break;
+                case SET:
+                case LIST:
+                    for (ValueImpl value : dp.getValues()) {
+                        if (value.isResource()) {
+                            consumer.accept(value);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        // recursively visit child definition nodes
+        for (DefinitionNodeImpl dn : getNodes().values()) {
+            dn.visitResources(consumer);
+        }
+    }
+
+    public interface ValueConsumer {
+        void accept(ValueImpl value) throws RepositoryException, IOException;
     }
 
 }

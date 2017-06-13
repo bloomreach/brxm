@@ -36,4 +36,9 @@ public interface Source {
      * model processing order.
      */
     List<? extends Definition> getDefinitions();
+
+    /**
+     * @return has this source been modified in memory since it was loaded from its persistent representation?
+     */
+    boolean hasChangedSinceLoad();
 }

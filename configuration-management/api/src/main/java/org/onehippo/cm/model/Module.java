@@ -73,4 +73,8 @@ public interface Module extends OrderableByName {
      */
     Map<Double, Set<ActionItem>> getActionsMap();
 
+    Set<String> getRemovedConfigResources();
+
+    Set<String> getRemovedContentResources();
+
 }

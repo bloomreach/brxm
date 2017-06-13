@@ -107,7 +107,7 @@ public abstract class SourceImpl implements Source {
 
     @Override
     public String toString() {
-        return "SourceImpl{" + "path='" + path + '\'' + ", module=" + module + '}';
+        return "SourceImpl{" + (hasChangedSinceLoad?"CHANGED ":"") + "path='" + path + '\'' + ", module=" + module + '}';
     }
 
     @Override

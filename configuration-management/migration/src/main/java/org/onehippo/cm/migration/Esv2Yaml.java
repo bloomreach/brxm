@@ -493,7 +493,8 @@ public class Esv2Yaml {
         // visit all node definitions and sort properties
         module.getModifiableSources().stream().flatMap(source -> source.getDefinitions().stream())
                 .filter(def -> DefinitionType.CONFIG.isOfType(def) || DefinitionType.CONTENT.isOfType(def))
-                .map(def -> ((ContentDefinitionImpl) def).getNode())
+                .map(ContentDefinitionImpl.class::cast)
+                .map(ContentDefinitionImpl::getNode)
                 .forEach(DefinitionNodeImpl::recursiveSortProperties);
 
         boolean multiModule = module.getProject().getGroup().getProjects().stream().mapToInt(p -> p.getModules().size()).sum() > 1;
