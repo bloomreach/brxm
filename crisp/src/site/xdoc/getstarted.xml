@@ -146,7 +146,7 @@
             <code>((Resource) Resource#getValueMap().get("extendedData")).getValueMap().get("description")</code>.
           </li>
           <li>
-            In the example shown above, &lt;@crisp.link /&gt; (or &lt;crisp:link /&gt; in JSTL) tab library used
+            In the example shown above, &lt;@crisp.link /&gt; (or &lt;crisp:link /&gt; in JSP) tab library used
             to generate a URI link for the specific <code>Resource</code> object.
             The link generation topic is discussed in the next section.
           </li>
@@ -178,7 +178,7 @@
         </p>
 
         <p>
-          Anyway, the idea is that if you use &lt;@crisp.link /&gt; (or &lt;crisp:link /&gt; in JSTL) tag library
+          Anyway, the idea is that if you use &lt;@crisp.link /&gt; (or &lt;crisp:link /&gt; in JSP) tag library
           in a template with specifying <strong>resource space</strong> name, <strong>resource</strong> bean,
           then the tag library will invoke <code>ResourceServiceBroker</code> to invoke the underlying <code>ResourceLinkResolver</code>
           for the specific <code>ResourceResolver</code> component specified by the <strong>resource space</strong> name
@@ -190,8 +190,8 @@
         <p>
           However, sometimes it might not be enough only with those, but it may require more "variables" to determine
           a right URI link for the <code>Resource</code> object. For that reason, &lt;@crisp.link /&gt;
-          (or &lt;crisp:link /&gt; in JSTL) tag library supports embedding &lt;@crisp.variable /&gt;
-          (or &lt;crisp:variable /&gt; in JSTL) tags to pass more variables to use in URI link generation process.
+          (or &lt;crisp:link /&gt; in JSP) tag library supports embedding &lt;@crisp.variable /&gt;
+          (or &lt;crisp:variable /&gt; in JSP) tags to pass more variables to use in URI link generation process.
         </p>
 
         <p>
@@ -211,7 +211,7 @@
 
         <p>
           The template may use two variables, "preview" and "name", passed by the &lt;@crisp.variable /&gt;
-          (or &lt;crisp:variable /&gt; in JSTL) tags inside &lt;@crisp.link /&gt; (or &lt;crisp:link /&gt; in JSTL) tag
+          (or &lt;crisp:variable /&gt; in JSP) tags inside &lt;@crisp.link /&gt; (or &lt;crisp:link /&gt; in JSP) tag
           in its expressions. But in this specific example, it used "preview" variable only for demonstration purpose.
         </p>
 
@@ -304,7 +304,6 @@
 
         <p>
           You can also expand the resource relative path by variables, too.
-          Suppose <code>http://localhost:8080/example-commerce/api/v1/products/sku/12345678901</code>
         </p>
 
         <div class="brush: java">

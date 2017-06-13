@@ -20,6 +20,9 @@
 
         <ul>
           <li>
+            <a href="example-using-generic-resources.html">Using Generic Resource Objects</a>
+          </li>
+          <li>
             <a href="example-webhook-invalidate-cache.html">Web-hook Example to Invalidate Cache</a>
           </li>
         </ul>

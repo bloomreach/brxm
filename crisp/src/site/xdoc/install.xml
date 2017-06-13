@@ -6,29 +6,29 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <document>
   <properties>
-    <title>Installing Hippo Addon CRISP</title>
+    <title>Installing CRISP Addon</title>
   </properties>
   <body>
 
-    <section name="Installing Hippo Addon CRISP">
+    <section name="Installing CRISP Addon">
 
       <subsection name="Introduction">
 
         <p>
-          Installing Hippo Addon CRISP module is slightly different based on whether you want to use it in Content
+          Installing CRISP Addon module is slightly different based on whether you want to use it in Content
           Delivery tier application ("site") only, or you want to use it in both Content Delivery tier application ("site")
           and Content Authoring tier application ("cms"):
         </p>
 
         <ul>
           <li>
-            <a href="#Option_1:_Installing_Hippo_Addon_CRISP_When_Using_Content_Delivery_tier_Application_Only">
-              Option 1: Installing Hippo Addon CRISP When Using Content Delivery tier Application Only
+            <a href="#Option_1:_Installing_CRISP_Addon_When_Using_Content_Delivery_tier_Application_Only">
+              Option 1: Installing CRISP Addon When Using Content Delivery tier Application Only
             </a>
           </li>
           <li>
-            <a href="#Option_2:_Installing_Hippo_Addon_CRISP_When_Using_Both_Content_Delivery_and_Authoring_tier_Applications">
-              Option 2: Installing Hippo Addon CRISP When Using Both Content Delivery and Authoring tier Applications
+            <a href="#Option_2:_Installing_CRISP_Addon_When_Using_Both_Content_Delivery_and_Authoring_tier_Applications">
+              Option 2: Installing CRISP Addon When Using Both Content Delivery and Authoring tier Applications
             </a>
           </li>
         </ul>
@@ -109,7 +109,7 @@
 
     </section>
 
-    <section name="Option 1: Installing Hippo Addon CRISP When Using Content Delivery tier Application Only">
+    <section name="Option 1: Installing CRISP Addon When Using Content Delivery tier Application Only">
 
       <p>
         In this installation option, <code>hippo-addon-crisp-api</code> JAR module is used by Content Delivery
@@ -182,7 +182,7 @@
 
     </section>
 
-    <section name="Option 2: Installing Hippo Addon CRISP When Using Both Content Delivery and Authoring tier Applications">
+    <section name="Option 2: Installing CRISP Addon When Using Both Content Delivery and Authoring tier Applications">
 
       <subsection name="Put CRISP API JAR as Shared Library">
 
