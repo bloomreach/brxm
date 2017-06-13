@@ -72,6 +72,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.onehippo.cms7.hst.client-modules</groupId>
+      <artifactId>hst-page-composer</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-solr-client</artifactId>
       <version>${hippo.hst.version}</version>
