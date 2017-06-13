@@ -24,9 +24,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:mount</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:channelpath" sv:type="String">
-          <sv:value>/hst:hst/hst:channels/polldemo</sv:value>
-        </sv:property>
         <sv:property sv:name="hst:mountpoint" sv:type="String">
           <sv:value>/hst:hst/hst:sites/polldemo</sv:value>
         </sv:property>
