@@ -28,7 +28,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.util.JcrUtils;
 
 import static org.onehippo.cm.engine.autoexport.AutoExportServiceImpl.log;
@@ -44,10 +43,11 @@ public class Configuration {
     private Long lastRevision;
     private Map<String, Collection<String>> modules;
     private PatternSet exclusionContext;
-    private String[] filterUuidPaths;
+    private PathsMap filterUuidPaths;
+    private PathsMap ignoredPaths = new PathsMap();
 
     // constructor for testing purposes only
-    Configuration(Boolean enabled, Map<String, Collection<String>> modules, PatternSet exclusionContext, String[] filterUuidPaths) {
+    Configuration(Boolean enabled, Map<String, Collection<String>> modules, PatternSet exclusionContext, PathsMap filterUuidPaths) {
         this.node = null;
         this.nodePath = null;
         this.enabled = enabled;
@@ -67,6 +67,14 @@ public class Configuration {
 
     public Session getModuleSession() throws RepositoryException {
         return node.getSession();
+    }
+
+    public void addIgnoredPaths(final PathsMap ignoredPaths) {
+        this.ignoredPaths.addAll(ignoredPaths);
+    }
+
+    public boolean isExcludedPath(final String path) {
+        return ignoredPaths.matches(path) || getExclusionContext().matches(path);
     }
 
     public PatternSet getExclusionContext() {
@@ -145,16 +153,16 @@ public class Configuration {
         repositoryPaths.add(repositoryPath);
     }
 
-    String[] getFilterUuidPaths() {
+    PathsMap getFilterUuidPaths() {
         if (filterUuidPaths == null) {
+            filterUuidPaths = new PathsMap();
             try {
                 if (node.hasProperty(CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME)) {
                     Value[] values = node.getProperty(CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME).getValues();
-                    filterUuidPaths = new String[values.length];
                     for (int i = 0; i < values.length; i++) {
                         Value value = values[i];
                         String filterUuidPath = value.getString();
-                        filterUuidPaths[i] = filterUuidPath;
+                        filterUuidPaths.add(filterUuidPath);
                         if (log.isDebugEnabled()) {
                             log.debug("filtering uuid paths below " + filterUuidPath);
                         }
@@ -168,7 +176,7 @@ public class Configuration {
     }
 
     public boolean shouldFilterUuid(final String nodePath) {
-        return StringUtils.startsWithAny(nodePath, getFilterUuidPaths());
+        return getFilterUuidPaths().matches(nodePath);
     }
 
     public synchronized boolean checkEnabled() {

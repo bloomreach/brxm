@@ -25,11 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -93,11 +90,11 @@ public class EventJournalProcessor {
      */
     protected static class Changes {
         private Set<String> changedNsPrefixes = new HashSet<>();
-        private TreeSet<String> addedConfig = new TreeSet<>();
-        private TreeSet<String> changedConfig = new TreeSet<>();
-        private TreeSet<String> addedContent = new TreeSet<>();
-        private TreeSet<String> changedContent = new TreeSet<>();
-        private TreeSet<String> deletedContent = new TreeSet<>();
+        private PathsMap addedConfig = new PathsMap();
+        private PathsMap changedConfig = new PathsMap();
+        private PathsMap addedContent = new PathsMap();
+        private PathsMap changedContent = new PathsMap();
+        private PathsMap deletedContent = new PathsMap();
         private long creationTime;
 
         protected Changes() {
@@ -112,23 +109,23 @@ public class EventJournalProcessor {
             return changedNsPrefixes;
         }
 
-        protected TreeSet<String> getAddedConfig() {
+        protected PathsMap getAddedConfig() {
             return addedConfig;
         }
 
-        protected TreeSet<String> getChangedConfig() {
+        protected PathsMap getChangedConfig() {
             return changedConfig;
         }
 
-        protected TreeSet<String> getAddedContent() {
+        protected PathsMap getAddedContent() {
             return addedContent;
         }
 
-        protected TreeSet<String> getChangedContent() {
+        protected PathsMap getChangedContent() {
             return changedContent;
         }
 
-        protected TreeSet<String> getDeletedContent() {
+        protected PathsMap getDeletedContent() {
             return deletedContent;
         }
 
@@ -145,7 +142,6 @@ public class EventJournalProcessor {
     }
 
     private final Configuration configuration;
-    private final TreeSet<String> ignoredEventPaths;
     private final ConfigurationServiceImpl configurationService;
     private final Session eventProcessorSession;
     private final String nodeTypeRegistryLastModifiedPropertyPath;
@@ -156,7 +152,6 @@ public class EventJournalProcessor {
     private Changes currentChanges;
     private RevisionEventJournal eventJournal;
     private ConfigurationModelImpl currentModel;
-    private PatternSet exclusionContext;
 
     private ScheduledFuture<?> future;
     private volatile boolean taskFailed;
@@ -179,8 +174,9 @@ public class EventJournalProcessor {
             throws RepositoryException {
         this.configurationService = configurationService;
         this.configuration = configuration;
-        ignoredEventPaths = new TreeSet<>(Arrays.asList(builtinIgnoredEventPaths));
+        PathsMap ignoredEventPaths = new PathsMap(builtinIgnoredEventPaths);
         ignoredEventPaths.addAll(extraIgnoredEventPaths);
+        configuration.addIgnoredPaths(ignoredEventPaths);
 
         final Session moduleSession = configuration.getModuleSession();
         eventProcessorSession =
@@ -190,7 +186,6 @@ public class EventJournalProcessor {
     }
 
     public void start() {
-        exclusionContext = configuration.getExclusionContext();
         synchronized (executor) {
             if (future == null || future.isCancelled() || future.isDone()) {
                 future = executor.scheduleWithFixedDelay(task, 0, minChangeLogAge, TimeUnit.MILLISECONDS);
@@ -348,7 +343,7 @@ public class EventJournalProcessor {
 
     private void checkAddEventPath(final RevisionEvent event, final String eventPath, final boolean addedNode,
                                    final boolean deletedNode, final boolean propertyPath) throws RepositoryException {
-        if (!overlaps(eventPath, ignoredEventPaths) && !exclusionContext.matches(eventPath)) {
+        if (!configuration.isExcludedPath(eventPath)) {
 
             final ConfigurationItemCategory category =
                     ConfigurationModelUtils.getCategoryForItem(eventPath, propertyPath,
@@ -357,18 +352,18 @@ public class EventJournalProcessor {
             // for config, we want to store the paths of the parents of changed nodes or properties
             // (that way, we always have a node to scan for detailed changes)
             // also, remove descendants from the list, since we will be scanning them anyway
-            if (category == ConfigurationItemCategory.CONFIG && !overlaps(eventPath, currentChanges.getAddedConfig())) {
+            if (category == ConfigurationItemCategory.CONFIG && !currentChanges.getAddedConfig().matches(eventPath)) {
                 if (addedNode) {
-                    boolean childPathAddedBefore = removeChildPaths(eventPath, currentChanges.getAddedConfig());
+                    boolean childPathAddedBefore = currentChanges.getAddedConfig().removeChildren(eventPath);
                     currentChanges.getAddedConfig().add(eventPath);
                     if (childPathAddedBefore) {
-                        removeChildPaths(eventPath, currentChanges.getChangedConfig());
+                        currentChanges.getChangedConfig().removeChildren(eventPath);
                     }
                     currentChanges.getChangedConfig().remove(eventPath);
                 } else if (deletedNode) {
-                    removeChildPaths(eventPath, currentChanges.getAddedConfig());
+                    currentChanges.getAddedConfig().removeChildren(eventPath);
                     currentChanges.getAddedConfig().remove(eventPath);
-                    removeChildPaths(eventPath, currentChanges.getChangedConfig());
+                    currentChanges.getChangedConfig().removeChildren(eventPath);
                     currentChanges.getChangedConfig().remove(eventPath);
                 }
                 String parentPath = getParentPath(eventPath);
@@ -378,7 +373,7 @@ public class EventJournalProcessor {
             }
             // for content, we want to store the actual paths of changed nodes (not properties)
             // for add or change events, keep descendants, since they may indicate a need to export a separate source file
-            else if (category == ConfigurationItemCategory.CONTENT && !overlaps(eventPath, currentChanges.getAddedContent())) {
+            else if (category == ConfigurationItemCategory.CONTENT && !currentChanges.getAddedContent().matches(eventPath)) {
                 if (addedNode) {
                     currentChanges.getAddedContent().add(eventPath);
 
@@ -394,16 +389,16 @@ public class EventJournalProcessor {
                     }
 
                     // cleanup a previously-encountered delete
-                    removeChildPaths(eventPath, currentChanges.getDeletedContent());
+                    currentChanges.getDeletedContent().removeChildren(eventPath);
                     currentChanges.getDeletedContent().remove(eventPath);
                 } else if (deletedNode) {
                     // clean up previously-recorded events for descendants, which are now redundant,
                     // since this delete will clear out all descendants anyway
-                    removeChildPaths(eventPath, currentChanges.getAddedContent());
+                    currentChanges.getAddedContent().removeChildren(eventPath);
                     currentChanges.getAddedContent().remove(eventPath);
-                    removeChildPaths(eventPath, currentChanges.getChangedContent());
+                    currentChanges.getChangedContent().removeChildren(eventPath);
                     currentChanges.getChangedContent().remove(eventPath);
-                    removeChildPaths(eventPath, currentChanges.getDeletedContent());
+                    currentChanges.getDeletedContent().removeChildren(eventPath);
                     currentChanges.getDeletedContent().add(eventPath);
                 } else {
                     final String changedPath = propertyPath ? getParentPath(eventPath) : eventPath;
@@ -423,33 +418,6 @@ public class EventJournalProcessor {
                     eventPath.startsWith(path) ? eventPath.substring(path.length()) : eventPath,
                     event.getUserID()));
         }
-    }
-
-    private boolean overlaps(final String path, final SortedSet<String> collectedPaths) {
-        for (String collectedPath : collectedPaths) {
-            final String collectedChildPath = collectedPath+"/";
-            if (path.equals(collectedPath) || path.startsWith(collectedChildPath)) {
-                return true;
-            } else if ((collectedChildPath).compareTo(path) > 0) {
-                return false;
-            }
-        }
-        return false;
-    }
-
-    private boolean removeChildPaths(final String path, final SortedSet<String> collectedPaths) {
-        final String childPath = path + "/";
-        boolean childPathRemoved = false;
-        for (Iterator<String> iter = collectedPaths.iterator(); iter.hasNext(); ) {
-            final String collectedPath = iter.next();
-            if (collectedPath.startsWith(childPath)) {
-                childPathRemoved = true;
-                iter.remove();
-            } else if (collectedPath.compareTo(childPath) > 0) {
-                break;
-            }
-        }
-        return childPathRemoved;
     }
 
     private String getParentPath(String absPath) {

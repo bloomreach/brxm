@@ -95,12 +95,6 @@ public class JcrContentProcessor {
 
     private static final Set<String> suppressedDelta = newHashSet(
             // TODO: move these somewhere more permanent
-            // suppress various versioning-related properties
-            "jcr:predecessors",
-            "jcr:baseVersion",
-            "jcr:isCheckedOut",
-            "jcr:versionHistory",
-            "jcr:lastModified",
 
             // facet-related generated property
             "hippo:count"
@@ -355,7 +349,7 @@ public class JcrContentProcessor {
                 return true;
             }
         }
-        if (autoExportConfig != null && autoExportConfig.getExclusionContext().matches(jcrPath)) {
+        if (autoExportConfig != null && autoExportConfig.isExcludedPath(jcrPath)) {
             log.debug("Ignoring node because of auto-export exclusion:\n\t{}", jcrPath);
             return true;
         }
@@ -497,6 +491,9 @@ public class JcrContentProcessor {
             if (propName.equals(JCR_PRIMARYTYPE) || propName.equals(JCR_MIXINTYPES)) {
                 continue;
             }
+            if (jcrProperty.getDefinition().isProtected()) {
+                continue;
+            }
             if (isKnownDerivedPropertyName(propName) || suppressedDelta.contains(propName)) {
                 continue;
             }
@@ -624,13 +621,27 @@ public class JcrContentProcessor {
         // first look at properties, since that's the simple case
         DefinitionNodeImpl defNode = exportPropertiesDelta(jcrNode, configNode, configSource, configurationModel);
 
+        // Early check if we will need to care for node ordering (at the end)
+        final boolean orderingIsRelevant = jcrNode.getPrimaryNodeType().hasOrderableChildNodes()
+                && (configNode.getIgnoreReorderedChildren() == null || !configNode.getIgnoreReorderedChildren());
+
         // check if we need to add children
+        //   and already build an indexed list of non-skipped/ignored jcrChildNodeNames if we need to check node ordering
+        final List<String> indexedJcrChildNodeNames = new ArrayList<>();
         for (final Node childNode : new NodeIterable(jcrNode.getNodes())) {
+            if (autoExportConfig != null && autoExportConfig.isExcludedPath(childNode.getPath())) {
+                log.debug("Ignoring node because of auto-export exclusion:\n\t{}", childNode.getPath());
+                continue;
+            }
             final String indexedJcrChildNodeName = createIndexedName(childNode);
             final ConfigurationItemCategory category = configNode.getChildNodeCategory(indexedJcrChildNodeName);
             if (category != ConfigurationItemCategory.CONFIG) {
                 log.debug("Ignoring child node because of category:{} \n\t{}", category, childNode.getPath());
                 continue;
+            }
+
+            if (orderingIsRelevant) {
+                indexedJcrChildNodeNames.add(indexedJcrChildNodeName);
             }
 
             final ConfigurationNodeImpl childConfigNode = configNode.getNode(indexedJcrChildNodeName);
@@ -661,11 +672,8 @@ public class JcrContentProcessor {
             }
         }
 
-        // Care for node ordering?
-        final boolean orderingIsRelevant = jcrNode.getPrimaryNodeType().hasOrderableChildNodes()
-                && (configNode.getIgnoreReorderedChildren() == null || !configNode.getIgnoreReorderedChildren());
         if (orderingIsRelevant) {
-            updateOrdering(jcrNode, configNode, configSource);
+            updateOrdering(indexedJcrChildNodeNames, configNode, configSource);
         }
     }
 
@@ -693,12 +701,8 @@ public class JcrContentProcessor {
      *
      * When merging these definitions, this should be sufficient information to put the nodes into the correct order.
      */
-    private void updateOrdering(final Node jcrNode, final ConfigurationNodeImpl configNode,
+    private void updateOrdering(final List<String> indexedJcrChildNodeNames, final ConfigurationNodeImpl configNode,
                                 final ConfigSourceImpl configSource) throws RepositoryException {
-        final List<String> indexedJcrChildNodeNames = new ArrayList<>();
-        for (Node child : new NodeIterable(jcrNode.getNodes())) {
-            indexedJcrChildNodeNames.add(SnsUtils.createIndexedName(child));
-        }
         final List<String> indexedConfigNodeNames = new ArrayList<>();
         for (String indexedConfigChildNodeName : configNode.getNodes().keySet()) {
             if (indexedJcrChildNodeNames.contains(indexedConfigChildNodeName)) {

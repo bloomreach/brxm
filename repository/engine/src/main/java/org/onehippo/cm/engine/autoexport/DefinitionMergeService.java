@@ -1062,8 +1062,8 @@ public class DefinitionMergeService {
         // set of content change paths in lexical order, so that shorter common sub-paths come first
         final Function<ContentDefinitionImpl, String> cdPath = cd -> cd.getModifiableNode().getPath();
         final TreeSet<String> contentChangesByPath = new TreeSet<>();
-        contentChangesByPath.addAll(contentChanges.getAddedContent());
-        contentChangesByPath.addAll(contentChanges.getChangedContent());
+        contentChangesByPath.addAll(contentChanges.getAddedContent().getPaths());
+        contentChangesByPath.addAll(contentChanges.getChangedContent().getPaths());
 
         // set of existing sources in reverse lexical order, so that longer paths come first
         final BinaryOperator<ContentDefinitionImpl> pickOne = (l, r) -> l;
