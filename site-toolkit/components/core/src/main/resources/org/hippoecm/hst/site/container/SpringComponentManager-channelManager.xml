@@ -82,6 +82,13 @@
     <property name="jcrPathTemplateComposer" ref="jcrPathTemplateComposer"/>
   </bean>
 
+  <bean id="pageComposerPropertyPresentationFactories" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
+
   <bean id="jcrPathTemplateComposer" class="java.lang.String">
     <constructor-arg value="/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer"/>
   </bean>
