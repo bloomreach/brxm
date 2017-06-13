@@ -20,10 +20,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
@@ -32,6 +35,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.api.HippoNode;
@@ -65,6 +69,8 @@ import org.onehippo.cm.model.util.SnsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -95,7 +101,6 @@ public class JcrContentProcessor {
 
     private static final Set<String> suppressedDelta = newHashSet(
             // TODO: move these somewhere more permanent
-
             // facet-related generated property
             "hippo:count"
     );
@@ -177,7 +182,7 @@ public class JcrContentProcessor {
         final ContentSourceImpl contentSource = module.addContentSource(sourceFilename +YAML_EXT);
         final ContentDefinitionImpl contentDefinition = contentSource.addContentDefinition();
 
-        exportNode(node, contentDefinition);
+        exportNode(node, contentDefinition, false, Collections.emptySet());
 
         return module;
     }
@@ -186,24 +191,35 @@ public class JcrContentProcessor {
         return part.contains(":") ? part.replace(":", "-") : part;
     }
 
-    public DefinitionNodeImpl exportNode(final Node node, final ContentDefinitionImpl contentDefinition) throws RepositoryException {
+    public DefinitionNodeImpl exportNode(final Node node, final ContentDefinitionImpl contentDefinition,
+                                         final boolean fullPath,
+                                         final Set<String> excludedPaths) throws RepositoryException {
         if (isVirtual(node)) {
             throw new ConfigurationRuntimeException("Virtual node cannot be exported: " + node.getPath());
         }
 
-        // Creating a definition with path 'rooted' at the node itself, without possible SNS index: we're not supporting indexed path elements
-        final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl("/"+node.getName(), node.getName(), contentDefinition);
+        final DefinitionNodeImpl definitionNode;
+        if (fullPath) {
+            definitionNode = new DefinitionNodeImpl(node.getPath(), contentDefinition);
+        }
+        else {
+            // Creating a definition with path 'rooted' at the node itself, without possible SNS index: we're not supporting indexed path elements
+            definitionNode = new DefinitionNodeImpl("/" + node.getName(), node.getName(), contentDefinition);
+        }
         contentDefinition.setNode(definitionNode);
 
         processProperties(node, definitionNode);
+        definitionNode.sortProperties();
 
         for (final Node childNode : new NodeIterable(node.getNodes())) {
-            exportNode(childNode, definitionNode);
+            if (!excludedPaths.contains(childNode.getPath())) {
+                exportNode(childNode, definitionNode, excludedPaths);
+            }
         }
         return definitionNode;
     }
 
-    public DefinitionNodeImpl exportNode(final Node sourceNode, final DefinitionNodeImpl parentNode) throws RepositoryException {
+    public DefinitionNodeImpl exportNode(final Node sourceNode, final DefinitionNodeImpl parentNode, final Set<String> excludedPaths) throws RepositoryException {
 
         if (!isVirtual(sourceNode) && !shouldExcludeNode(sourceNode.getPath())) {
             final DefinitionNodeImpl definitionNode = parentNode.addNode(createNodeName(sourceNode));
@@ -211,7 +227,9 @@ public class JcrContentProcessor {
             processProperties(sourceNode, definitionNode);
 
             for (final Node childNode : new NodeIterable(sourceNode.getNodes())) {
-                exportNode(childNode, definitionNode);
+                if (!excludedPaths.contains(childNode.getPath())) {
+                    exportNode(childNode, definitionNode, excludedPaths);
+                }
             }
             return definitionNode;
         }
@@ -246,6 +264,11 @@ public class JcrContentProcessor {
             if (isKnownDerivedPropertyName(propName)) {
                 continue;
             }
+            // skip protected properties, which are managed internally by JCR and don't make sense in export
+            // (except JCR:UUID, which we need to do references properly)
+            if (!propName.equals(JCR_UUID) && property.getDefinition().isProtected()) {
+                continue;
+            }
             // skip suppressed properties if we're in auto-export mode
             if ((autoExportConfig != null) && suppressedDelta.contains(propName)) {
                 continue;
@@ -258,6 +281,8 @@ public class JcrContentProcessor {
 
             exportProperty(property, definitionNode);
         }
+
+        definitionNode.sortProperties();
     }
 
     private DefinitionPropertyImpl exportProperty(final Property property, DefinitionNodeImpl definitionNode) throws RepositoryException {
@@ -284,6 +309,7 @@ public class JcrContentProcessor {
             for (final NodeType mixinNodeType : mixinNodeTypes) {
                 values.add(new ValueImpl(mixinNodeType.getName()));
             }
+            Collections.sort(values, Comparator.comparing(ValueImpl::getString));
             definitionNode.addProperty(JCR_MIXINTYPES, ValueType.STRING, values.toArray(new ValueImpl[values.size()]));
         }
     }
@@ -299,7 +325,6 @@ public class JcrContentProcessor {
      * @param configSource
      * @throws RepositoryException
      */
-    // TODO
     public void exportConfigNode(final Session session, final String jcrPath, final ConfigSourceImpl configSource)
             throws RepositoryException, IOException {
 
@@ -308,8 +333,17 @@ public class JcrContentProcessor {
             return;
         }
 
+        // if the parent node of jcrPath doesn't exist, we are in a strange error state and need to bail out fast
+        // we can skip this check for the root node or a top-level node
+        if (!jcrPath.equals("/") && (jcrPath.lastIndexOf("/") > 0)) {
+            final String parentPath = StringUtils.substringBeforeLast(jcrPath, "/");
+            if (!session.nodeExists(parentPath)) {
+                // todo: throw a more specific exception that we can catch in EventJournalProcessor
+                throw new RepositoryException("Parent path of change is missing for path: " + parentPath);
+            }
+        }
+
         // if the jcrPath doesn't exist, we need a delete definition, and that's all
-        // todo: do we really need to check every path segment?
         if (!session.nodeExists(jcrPath)) {
             log.debug("Deleting node: \n\t{}", jcrPath);
             final DefinitionNodeImpl definitionNode = configSource.getOrCreateDefinitionFor(jcrPath);
@@ -332,7 +366,7 @@ public class JcrContentProcessor {
 
             processProperties(jcrNode, definitionNode);
             for (final Node childNode : new NodeIterable(jcrNode.getNodes())) {
-                exportNode(childNode, definitionNode);
+                exportNode(childNode, definitionNode, Collections.emptySet());
             }
         }
         else {
@@ -356,125 +390,6 @@ public class JcrContentProcessor {
         return false;
     }
 
-//        ConfigurationNodeImpl configNode = model.getConfigurationRootNode();
-//        Node jcrNode = session.getRootNode();
-//
-//        String[] pathSegments = jcrPath.substring(1).split("/");
-//
-//        if (jcrPath.equals("/")) {
-//            pathSegments = new String[0];
-//        }
-//
-//        // scan path segments until we find
-//        // 1. an indexed node, indicating a SNS issue
-//        // 2. a node that doesn't exist in the JCR, so we need to mark it as delete
-//        // 3. a node that doesn't exist in the model, so we can define it and all children without a delta comparison
-//        // 4. the end of the path
-//        boolean deletedNode = false;
-//        int pathIndex = 0;
-//        for (; pathIndex < pathSegments.length; pathIndex++) {
-//            final String childName = pathSegments[pathIndex];
-//
-//            if (childName.contains("[")) {
-//                // we cannot create a definition path for an indexed name
-//                break;
-//            }
-//
-//            final String indexedChildName = createIndexedName(childName);
-//            if (!jcrNode.hasNode(indexedChildName)) {
-//                deletedNode = true;
-//                break;
-//            }
-//
-//            configNode = configNode.getNode(indexedChildName);
-//            if (configNode == null) {
-//                // not a delta: no config defined yet
-//                break;
-//            }
-//
-//            jcrNode = jcrNode.getNode(indexedChildName);
-//        }
-//        final String definitionNodePath = jcrNode.getPath() + (deletedNode ? "/" + pathSegments[pathIndex] : "");
-//
-//        DefinitionNodeImpl definitionNode = getOrCreateConfigDefinitionNodeForPath(definitionNodePath, configSource);
-//        log.debug("Using definitionNode: {}", definitionNode.getPath());
-//
-//        if (deletedNode) {
-//            log.debug("Deleting: {}", definitionNode.getPath());
-//            definitionNode.setDelete(true);
-//            return;
-//        }
-//
-//        // TODO: this seems to largely duplicate the logic in the loop above. can we simplify?
-//        if (configNode != null) {
-//            for (; pathIndex < pathSegments.length; pathIndex++) {
-//                final String childName = pathSegments[pathIndex];
-//
-//                DefinitionNodeImpl childDefNode = definitionNode.getNodes().get(childName);
-//                if (childDefNode == null) {
-//                    childDefNode = definitionNode.addNode(childName);
-//                }
-//                definitionNode = childDefNode;
-//
-//                final String indexedChildName = createIndexedName(childName);
-//                if (!jcrNode.hasNode(indexedChildName)) {
-//                    deletedNode = true;
-//                    break;
-//                }
-//
-//                configNode = configNode.getNode(indexedChildName);
-//                if (configNode == null) {
-//                    // not a delta: no config defined yet
-//                    break;
-//                }
-//            }
-//        }
-//        if (deletedNode) {
-//            log.debug("Deleting: {}", definitionNode.getPath());
-//            definitionNode.setDelete(true);
-//            return;
-//        }
-//
-//        if (configNode == null) {
-//            // this is a brand new node, so we can skip the delta comparisons and just dump the JCR version into a def
-//            log.debug("Creating new node def without delta: {}", definitionNode.getPath());
-//            processProperties(jcrNode, definitionNode);
-//            for (final Node childNode : new NodeIterable(jcrNode.getNodes())) {
-//                exportNode(childNode, definitionNode);
-//            }
-//        }
-//        else {
-//            // otherwise, we need to do a detailed comparison
-//            exportConfigNodeDelta(jcrNode, definitionNode, configNode);
-//        }
-//        if (definitionNode.isEmpty()) {
-//            // TODO: remove empty delta definitionNode as the change seemingly was a false positive
-//        }
-//
-//    private DefinitionNodeImpl getOrCreateConfigDefinitionNodeForPath(final String path,
-//                                                                      final ConfigSourceImpl configSource) {
-//        ConfigDefinitionImpl definition = null;
-//        for (AbstractDefinitionImpl def : configSource.getModifiableDefinitions()) {
-//            if (def.getType() == DefinitionType.CONFIG) {
-//                ConfigDefinitionImpl configDef = (ConfigDefinitionImpl)def;
-//                if (path.startsWith(configDef.getNode().getPath())) {
-//                    if (definition == null) {
-//                        definition = configDef;
-//                    } else if (configDef.getNode().getPath().length() > definition.getNode().getPath().length()) {
-//                        definition = configDef;
-//                    }
-//                }
-//            }
-//        }
-//        if (definition == null) {
-//            definition = configSource.addConfigDefinition();
-//            definition.setNode(new DefinitionNodeImpl(path, StringUtils.substringAfterLast(path, "/"), definition));
-//        }
-//        // TODO: it seems that it would be possible for this node to not correspond to the supplied path param
-//        // TODO: why would we want to allow that?  if we don't, this implementation can be much simpler
-//        return definition.getNode();
-//    }
-
     private DefinitionNodeImpl exportPropertiesDelta(final Node jcrNode,
                                                      final ConfigurationNodeImpl configNode,
                                                      final ConfigSourceImpl configSource,
@@ -491,10 +406,12 @@ public class JcrContentProcessor {
             if (propName.equals(JCR_PRIMARYTYPE) || propName.equals(JCR_MIXINTYPES)) {
                 continue;
             }
-            if (jcrProperty.getDefinition().isProtected()) {
+            if (isKnownDerivedPropertyName(propName) || suppressedDelta.contains(propName)) {
                 continue;
             }
-            if (isKnownDerivedPropertyName(propName) || suppressedDelta.contains(propName)) {
+            // skip protected properties, which are managed internally by JCR and don't make sense in export
+            // (except JCR:UUID, which we need to do references properly)
+            if (!propName.equals(JCR_UUID) && jcrProperty.getDefinition().isProtected()) {
                 continue;
             }
             if (configNode.getChildPropertyCategory(propName) != ConfigurationItemCategory.CONFIG) {
@@ -649,7 +566,7 @@ public class JcrContentProcessor {
                 // the config doesn't know about this child, so do a full export without delta comparisons
                 // yes, defNode is indeed supposed to be the _parent's_ defNode
                 defNode = createDefNodeIfNecessary(defNode, jcrNode, configSource);
-                exportNode(childNode, defNode);
+                exportNode(childNode, defNode, Collections.emptySet());
             } else {
                 // call top-level recursion, not this delta method
                 exportConfigNode(childNode.getSession(), childNode.getPath(), configSource);

@@ -20,9 +20,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -143,7 +141,7 @@ public class DefinitionMergeTest {
                 // merge diff
                 DefinitionMergeService merger = new DefinitionMergeService(autoExportConfig);
                 Collection<ModuleImpl> allMerged =
-                        merger.mergeChangesToModules(diff, new EventJournalProcessor.Changes(), model);
+                        merger.mergeChangesToModules(diff, new EventJournalProcessor.Changes(), model, null);
 
                 for (ModuleImpl merged : allMerged) {
                     writeAndCompare(testName, merged);

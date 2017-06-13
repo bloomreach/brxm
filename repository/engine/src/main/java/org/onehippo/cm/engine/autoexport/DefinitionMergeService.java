@@ -16,7 +16,9 @@
 package org.onehippo.cm.engine.autoexport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,8 +35,12 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.onehippo.cm.engine.JcrContentProcessor;
 import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionItem;
 import org.onehippo.cm.model.DefinitionNode;
@@ -63,10 +69,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
-import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
-import static org.onehippo.cm.engine.Constants.PRODUCT_GROUP_NAME;
 import static org.onehippo.cm.engine.autoexport.Constants.DEFAULT_MAIN_CONFIG_FILE;
 import static org.onehippo.cm.model.Constants.YAML_EXT;
 import static org.onehippo.cm.model.DefinitionType.NAMESPACE;
@@ -128,11 +133,13 @@ public class DefinitionMergeService {
      * Definitions to follow the sorting schemes encoded in org.onehippo.cms7.autoexport.LocationMapper.
      * @param changes R∆B expressed as a Module with one ConfigSource with zero-or-more Definitions and zero-or-more ContentSources
      * @param baseline the currently stored configuration baseline B
+     * @param jcrSession JCR session to be used for regenerating changed content sources
      * @return a new version of each toMerge module, if revisions are necessary
      */
     public Collection<ModuleImpl> mergeChangesToModules(final ModuleImpl changes,
                                                         final EventJournalProcessor.Changes contentChanges,
-                                                        final ConfigurationModelImpl baseline) {
+                                                        final ConfigurationModelImpl baseline,
+                                                        final Session jcrSession) {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
@@ -189,8 +196,7 @@ public class DefinitionMergeService {
             mergeConfigDefinitionNode(change.getNode(), toExport, model);
         }
 
-        // TODO: test and re-enable content export
-//        mergeContentDefinitions(changes, contentChanges, toExport);
+        mergeContentDefinitions(changes, contentChanges, toExport, jcrSession);
 
         stopWatch.stop();
         log.info("Completed full auto-export merge in {}", stopWatch.toString());
@@ -1057,26 +1063,26 @@ public class DefinitionMergeService {
 
     protected void mergeContentDefinitions(final ModuleImpl changes,
                                            final EventJournalProcessor.Changes contentChanges,
-                                           final HashMap<String, ModuleImpl> toExport) {
+                                           final HashMap<String, ModuleImpl> toExport, final Session jcrSession) {
 
         // set of content change paths in lexical order, so that shorter common sub-paths come first
-        final Function<ContentDefinitionImpl, String> cdPath = cd -> cd.getModifiableNode().getPath();
         final TreeSet<String> contentChangesByPath = new TreeSet<>();
         contentChangesByPath.addAll(contentChanges.getAddedContent().getPaths());
         contentChangesByPath.addAll(contentChanges.getChangedContent().getPaths());
 
         // set of existing sources in reverse lexical order, so that longer paths come first
-        final BinaryOperator<ContentDefinitionImpl> pickOne = (l, r) -> l;
-        final Supplier<TreeMap<String, ContentDefinitionImpl>> reverseTreeMapper =
-                () -> new TreeMap<>(Comparator.reverseOrder());
-        final SortedMap<String, ContentDefinitionImpl> existingSourcesByPath = toExport.values().stream()
-                .flatMap(m -> Lists.reverse(m.getContentDefinitions()).stream())
-                .collect(Collectors.toMap(cdPath, Function.identity(), pickOne, reverseTreeMapper));
+        final SortedMap<String, ContentDefinitionImpl> existingSourcesByPath = collectContentSourcesByPath(toExport);
 
         for (final String changePath : contentChangesByPath) {
+            // is there an existing source for this exact path? if so, use that
+            if (existingSourcesByPath.containsKey(changePath)) {
+                // mark it changed for later re-export, and then we're done with this path
+                existingSourcesByPath.get(changePath).getSource().markChanged();
+                continue;
+            }
+
+            // there was no exactly-matching source, so we need to decide whether to reuse or create new
             // if LocationMapper tells us we should have a new source file...
-            // TODO: we should actually scan down all existing descendants and repeat this check
-            // TODO: (or rely on the diff for the descendant scan)
             if (shouldPathCreateNewSource(changePath)) {
                 // create a new source file
                 createNewContentSource(changePath, toExport);
@@ -1117,6 +1123,38 @@ public class DefinitionMergeService {
                 }
             }
         }
+
+        // for all changed content sources, regenerate definitions from JCR
+        // todo: move this to serialization stage instead of merge stage
+        final Set<String> newSourcePaths = collectContentSourcesByPath(toExport).keySet();
+        toExport.values().stream().flatMap(m -> m.getContentSources().stream())
+                .filter(SourceImpl::hasChangedSinceLoad)
+                .forEach(source -> {
+                    final ContentDefinitionImpl def = (ContentDefinitionImpl) source.getDefinitions().get(0);
+                    final String rootPath = def.getNode().getPath();
+                    try {
+                        new JcrContentProcessor().exportNode(jcrSession.getNode(rootPath), def, true,
+                                // exclude all paths that have their own sources
+                                Sets.difference(newSourcePaths, Sets.newTreeSet(Collections.singleton(rootPath))));
+                    }
+                    catch (RepositoryException e) {
+                        throw new RuntimeException("Exception while regenerating changed content source file", e);
+                    }
+                });
+    }
+
+    /**
+     * Helper to collect all content sources of given modules by root path in reverse lexical order of root paths.
+     * @param toExport modules in whose sources we're interested
+     */
+    protected SortedMap<String, ContentDefinitionImpl> collectContentSourcesByPath(final HashMap<String, ModuleImpl> toExport) {
+        final Function<ContentDefinitionImpl, String> cdPath = cd -> cd.getModifiableNode().getPath();
+        final BinaryOperator<ContentDefinitionImpl> pickOne = (l, r) -> l;
+        final Supplier<TreeMap<String, ContentDefinitionImpl>> reverseTreeMapper =
+                () -> new TreeMap<>(Comparator.reverseOrder());
+        return toExport.values().stream()
+                .flatMap(m -> Lists.reverse(m.getContentDefinitions()).stream())
+                .collect(Collectors.toMap(cdPath, Function.identity(), pickOne, reverseTreeMapper));
     }
 
     /**

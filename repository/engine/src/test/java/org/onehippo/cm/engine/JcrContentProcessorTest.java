@@ -207,7 +207,8 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
         Path moduleRootPath = Paths.get(tempDir.getPath());
 
         ModuleContext moduleContext = new ExportModuleContext(module, moduleRootPath);
-        new FileConfigurationWriter().writeModule(module, org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
+        new FileConfigurationWriter(new JcrResourceInputProvider(session))
+                .writeModule(module, org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
         tempDir.delete();
     }
 

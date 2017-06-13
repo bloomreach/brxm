@@ -46,7 +46,7 @@ public class JcrResourceInputProvider implements ResourceInputProvider {
         throw new UnsupportedOperationException();
     }
 
-    public String createResourcePath(final Property property, final int valueIndex) throws RepositoryException {
+    public static String createResourcePath(final Property property, final int valueIndex) throws RepositoryException {
         return property.getPath()+"["+valueIndex+"]";
     }
 

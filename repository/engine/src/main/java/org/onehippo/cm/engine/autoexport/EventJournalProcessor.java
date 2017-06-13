@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,6 +65,9 @@ import org.onehippo.cm.model.serializer.SourceSerializer;
 import org.onehippo.cm.model.util.ConfigurationModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 
@@ -231,15 +235,18 @@ public class EventJournalProcessor {
                 // processEvents unsuccessful: new events arrived before it could export already collected changes
                 log.debug("Incoming events during processEvents() -- retrying!");
             }
+        }
 
-            stopWatch.stop();
-            if (stopWatch.getTime(TimeUnit.MILLISECONDS) > 0) {
-                log.debug("Full auto-export cycle in {}", stopWatch.toString());
-            }
+        stopWatch.stop();
+        if (stopWatch.getTime(TimeUnit.MILLISECONDS) > 0) {
+            log.info("Full auto-export cycle in {}", stopWatch.toString());
         }
     }
 
     private boolean processEvents() throws RepositoryException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
         // update our local reference to the runtime model immediately before using it
         this.currentModel = configurationService.getRuntimeConfigurationModel();
 
@@ -274,11 +281,18 @@ public class EventJournalProcessor {
                     pendingChanges = currentChanges;
                 }
             }
+            if (count > 0) {
+                stopWatch.split();
+                log.info("Events processed in {}", stopWatch.toSplitString());
+            }
             if (pendingChanges != null) {
                 currentChanges = null;
 
                 ModuleImpl changesModule = createChangesModule();
                 if (eventJournal.hasNext()) {
+                    stopWatch.stop();
+                    log.info("Diff processing abandoned after {}", stopWatch.toString());
+
                     // new events arrived before we could export the pending changes!
                     // rewind and let tryProcessEvents() repeat until success
                     return false;
@@ -288,6 +302,9 @@ public class EventJournalProcessor {
                 }
             }
         } catch (Exception e) {
+            stopWatch.stop();
+            log.info("Events processing failed after {}", stopWatch.toString());
+
             // catch all exceptions, not just RepositoryException
             AutoExportServiceImpl.log.error("Processing events failed: ", e);
         }
@@ -379,11 +396,17 @@ public class EventJournalProcessor {
 
                     // we must scan down the JCR tree and record an add for each descendant node path
                     // protect against race conditions with add and then immediate delete
+                    // TODO: do this only for node move and not for all node-add, which will already have separate events
+                    // TODO: if add, then move, this could try to find children for a non-existing node
+                    // TODO: -- catch this case and continue processing
                     if (eventProcessorSession.nodeExists(eventPath)) {
                         eventProcessorSession.getNode(eventPath).accept(new TraversingItemVisitor.Default() {
                             @Override
                             protected void entering(final Node node, final int level) throws RepositoryException {
-                                currentChanges.getAddedContent().add(node.getPath());
+                                final String path = node.getPath();
+                                if (!configuration.isExcludedPath(path)) {
+                                    currentChanges.getAddedContent().add(path);
+                                }
                             }
                         });
                     }
@@ -426,6 +449,9 @@ public class EventJournalProcessor {
     }
 
     private ModuleImpl createChangesModule() throws RepositoryException, IOException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
         final ModuleImpl module = new ModuleImpl("autoexport-module",
                 new ProjectImpl("autoexport-project",
                         new GroupImpl("autoexport-group")));
@@ -471,9 +497,17 @@ public class EventJournalProcessor {
             final StringWriter writer = new StringWriter();
             sourceSerializer.serializeNode(writer,sourceSerializer.representSource(new ArrayList<>()::add));
             log.info("Computed diff: \n{}", writer.toString());
+            log.info("added content: \n\t{}", String.join("\n\t", pendingChanges.getAddedContent()));
+            log.info("changed content: \n\t{}", String.join("\n\t", pendingChanges.getChangedContent()));
+            log.info("deleted content: \n\t{}", String.join("\n\t", pendingChanges.getDeletedContent()));
         }
 
-        return module.build();
+        module.build();
+
+        stopWatch.stop();
+        log.info("Diff computed in {}", stopWatch.toString());
+
+        return module;
     }
 
     private void exportChangesModule(ModuleImpl changesModule) throws RepositoryException, IOException, ParserException {
@@ -488,7 +522,7 @@ public class EventJournalProcessor {
         else {
             final DefinitionMergeService mergeService = new DefinitionMergeService(configuration);
             final Collection<ModuleImpl> mergedModules =
-                    mergeService.mergeChangesToModules(changesModule, pendingChanges, currentModel);
+                    mergeService.mergeChangesToModules(changesModule, pendingChanges, currentModel, eventProcessorSession);
             final List<ModuleImpl> reloadedModules = new ArrayList<>();
 
             // 1) export result to filesystem
@@ -497,7 +531,8 @@ public class EventJournalProcessor {
             final Path projectPath = Paths.get(projectDir);
 
             // write each module to the file system
-            FileConfigurationWriter writer = new FileConfigurationWriter();
+            FileConfigurationWriter writer =
+                    new FileConfigurationWriter(new JcrResourceInputProvider(eventProcessorSession));
             for (ModuleImpl module : mergedModules) {
                 final Path moduleDescriptorPath = projectPath.resolve(module.getMvnPath())
                         .resolve(org.onehippo.cm.model.Constants.MAVEN_MODULE_DESCRIPTOR);

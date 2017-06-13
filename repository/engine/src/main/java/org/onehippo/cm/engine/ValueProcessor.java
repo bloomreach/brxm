@@ -308,10 +308,7 @@ public abstract class ValueProcessor {
                 // TODO: we need a JCR based ValueFileMapper to derive a sensible resource path *here*
                 // TODO: without we only can do a dumb default mapping, using 'data.bin' or 'data[valueIndex].bin'
                 ValueImpl valueImpl = new ValueImpl("data"+indexPostfix+".bin", ValueType.BINARY, true, false);
-                SourceImpl source = definitionNode.getDefinition().getSource();
-                JcrResourceInputProvider jcrResourceInputProvider =
-                        (JcrResourceInputProvider)source.getModule().getConfigResourceInputProvider();
-                valueImpl.setInternalResourcePath(jcrResourceInputProvider.createResourcePath(property, valueIndex));
+                valueImpl.setInternalResourcePath(JcrResourceInputProvider.createResourcePath(property, valueIndex));
                 valueImpl.setNewResource(true);
                 return valueImpl;
             case LONG:
