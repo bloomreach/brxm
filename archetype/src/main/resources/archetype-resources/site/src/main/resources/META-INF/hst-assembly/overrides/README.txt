@@ -1,0 +1,1 @@
+Include here all spring configuration for overriding hst spring beans or add custom beans
