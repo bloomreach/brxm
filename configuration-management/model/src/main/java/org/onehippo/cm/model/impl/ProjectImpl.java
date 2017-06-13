@@ -108,6 +108,8 @@ public class ProjectImpl implements Project {
 
     void addModule(final ModuleImpl other) {
         verifyNewModule(other.getName());
+        // TODO: do we really need to clone the module here?
+        // TODO: this makes us choose which Module back-reference will be retained in Sources
         final ModuleImpl module = new ModuleImpl(other, this);
         moduleMap.put(module.getName(), module);
         modifiableModules.add(module);

@@ -199,6 +199,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     }
 
     public ConfigurationModelImpl buildModel() {
+        replacements.clear();
         groups.clear();
         groups.addAll(groupMap.values());
         groupSorter.sort(groups);

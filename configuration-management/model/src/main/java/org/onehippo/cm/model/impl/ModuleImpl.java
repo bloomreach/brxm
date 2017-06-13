@@ -123,6 +123,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         actionsMap.putAll(module.getActionsMap());
         // TODO: the following two methods require ModuleImpl access, but clone/creation should only use/need Module interface
         sortedSources.addAll(module.getSources());
+        // update the back-reference, since this new module will now "own" these Sources
+        sortedSources.forEach(source -> source.setModule(this));
         mvnPath = module.getMvnPath();
         build();
     }
@@ -627,7 +629,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     @Override
     public String toString() {
         return "ModuleImpl{" +
-                ((mvnPath==null)? "": ("mvnPath='" + mvnPath +'\'')) +
+                ((mvnPath==null)? "": ("mvnPath='" + mvnPath +"', ")) +
                 "name='" + name + '\'' +
                 ", project=" + project +
                 '}';

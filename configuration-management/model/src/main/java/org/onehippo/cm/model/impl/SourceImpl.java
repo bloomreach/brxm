@@ -57,6 +57,14 @@ public abstract class SourceImpl implements Source {
         return module;
     }
 
+    /**
+     * Should be used only when cloning a module via {@link ModuleImpl#ModuleImpl(ModuleImpl, ProjectImpl)}.
+     * @param module
+     */
+    void setModule(final ModuleImpl module) {
+        this.module = module;
+    }
+
     @Override
     public List<AbstractDefinitionImpl> getDefinitions() {
         return definitions;
