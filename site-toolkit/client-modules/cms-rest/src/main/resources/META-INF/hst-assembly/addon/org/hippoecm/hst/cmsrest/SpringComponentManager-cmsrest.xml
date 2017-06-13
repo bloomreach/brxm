@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -80,8 +80,6 @@
     </property>
   </bean>
 
-
-
   <bean id="channelFilter" class="com.google.common.base.Predicates" factory-method="and">
     <constructor-arg ref="allChannelFilters"/>
   </bean>
@@ -114,7 +112,6 @@
       </list>
     </property>
   </bean>
-
 
   <bean id="baseResource" abstract="true">
     <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>

@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -32,10 +33,13 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.hippoecm.hst.container.HstFilter;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.ConfigurationLockedTest;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
+import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
@@ -70,10 +74,15 @@ public class AbstractFullRequestCycleTest {
 
         componentManager.setServletContext(servletContext);
 
+        List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
+        if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
+            componentManager.setAddonModuleDefinitions(addonModuleDefinitions);
+        }
+
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
-        filter = HstServices.getComponentManager().getComponent("org.hippoecm.hst.container.HstFilter");
+        filter = HstServices.getComponentManager().getComponent(HstFilter.class.getName());
 
         // assert admin has hippo:admin privilege
         Session admin = createSession("admin", "admin");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,19 +90,22 @@ public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest 
     @After
     @Override
     public void tearDown() throws Exception {
-        final Node users = session.getNode("/hippo:configuration/hippo:users");
-        users.getNode("bob").remove();
-        users.getNode("alice").remove();
+        try {
+            final Node users = session.getNode("/hippo:configuration/hippo:users");
+            users.getNode("bob").remove();
+            users.getNode("alice").remove();
 
-        final Node adminGroup = session.getNode("/hippo:configuration/hippo:groups/admin");
-        Value[] adminMembers = adminGroup.getProperty("hipposys:members").getValues();
+            final Node adminGroup = session.getNode("/hippo:configuration/hippo:groups/admin");
+            Value[] adminMembers = adminGroup.getProperty("hipposys:members").getValues();
 
-        // remove bob and alice again
-        Value[] original = (Value[]) ArrayUtils.subarray(adminMembers, 0, adminMembers.length - 2);
+            // remove bob and alice again
+            Value[] original = (Value[])ArrayUtils.subarray(adminMembers, 0, adminMembers.length - 2);
 
-        adminGroup.setProperty("hipposys:members", original);
-        session.save();
-        super.tearDown();
+            adminGroup.setProperty("hipposys:members", original);
+            session.save();
+        } finally {
+            super.tearDown();
+        }
     }
 
     protected Session createSession(final String userName, final String password) throws RepositoryException {

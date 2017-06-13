@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -21,9 +21,6 @@
   <import resource="classpath:/org/hippoecm/hst/pagecomposer/jaxrs/AbstractPageComposerTest.xml" />
 
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-filterDelegatee.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-jackson.xml" />
-  <import resource="classpath:/org/hippoecm/hst/pagecomposer/SpringComponentManager-pagecomposer.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-observation.xml" />
 
   <bean id="jcrPathTemplateComposer" class="java.lang.String">
     <constructor-arg value="/hst:hst/hst:hosts/dev-localhost/localhost/hst:root"/>

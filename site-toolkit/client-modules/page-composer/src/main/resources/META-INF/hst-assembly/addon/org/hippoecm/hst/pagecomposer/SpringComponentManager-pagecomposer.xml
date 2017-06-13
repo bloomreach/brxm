@@ -18,6 +18,23 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
+  <bean id="pagecomposerJaxrsRestJacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+    <property name="annotationIntrospector" ref="pagecomposerJaxrsRestJacksonJaxbIntrospector"/>
+  </bean>
+
+  <bean id="pagecomposerJaxrsRestJacksonJaxbIntrospector" class="com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair" factory-method="pair">
+    <constructor-arg>
+      <bean class="com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector"/>
+    </constructor-arg>
+    <constructor-arg>
+      <bean class="com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector"/>
+    </constructor-arg>
+  </bean>
+
+  <bean id="pagecomposerJaxrsRestJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
+    <property name="mapper" ref="pagecomposerJaxrsRestJacksonObjectMapper" />
+  </bean>
+
   <bean id="pageComposerAnnotationJsonSerializer" class="org.hippoecm.hst.rest.custom.AnnotationJsonSerializer">
     <constructor-arg type="java.lang.Class" value="java.lang.annotation.Annotation" />
   </bean>
@@ -40,7 +57,7 @@
 
   <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <constructor-arg value="com.fasterxml.jackson.databind.ObjectMapper" />
-    <property name="targetObject" ref="jaxrsRestJacksonObjectMapper" />
+    <property name="targetObject" ref="pagecomposerJaxrsRestJacksonObjectMapper" />
     <property name="targetMethod" value="registerModule" />
     <property name="arguments">
       <ref bean="jaxrsHstConfigJacksonJsonModule" />
@@ -155,7 +172,7 @@
     <property name="address" value="/"/>
     <property name="providers">
       <list>
-        <ref bean="jaxrsRestJsonProvider"/>
+        <ref bean="pagecomposerJaxrsRestJsonProvider"/>
       </list>
     </property>
     <property name="resourceProviders">
