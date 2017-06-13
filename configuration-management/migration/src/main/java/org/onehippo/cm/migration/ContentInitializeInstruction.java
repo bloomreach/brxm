@@ -373,7 +373,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         if (path.equals("")) {
             path = "/";
         }
-        DefinitionNodeImpl parent = nodeDefinitions.get(path);
+        DefinitionNodeImpl parent = nodeDefinitions.get(new MinimallyIndexedPath(path));
         if (parent != null) {
             return parent;
         } else if (!path.equals("/")) {
