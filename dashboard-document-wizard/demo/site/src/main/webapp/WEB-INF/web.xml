@@ -76,6 +76,12 @@
       ,classpath*:org/onehippo/forge/**/*.class
     </param-value>
   </context-param>
+
+  <context-param>
+    <param-name>hst-config-refresh-delay</param-name>
+    <param-value>3000</param-value>
+  </context-param>
+
   <filter>
     <filter-name>CharacterEncodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -119,21 +125,9 @@
     <listener-class>org.hippoecm.hst.site.container.session.HttpSessionEventPublisher</listener-class>
   </listener>
 
-  <servlet>
-    <servlet-name>HstSiteConfigServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
-    <!--
-      If 'hst-config-refresh-delay' parameter is greater than 0,
-      then the HST configuration file changes will be monitored to re-initialize the HST Container.
-      The value is in ms. If set to 0 or missing, the re-initialization option on configuration file changes is not turned on.
-      Default below is set to 3 sec
-    -->
-    <init-param>
-      <param-name>hst-config-refresh-delay</param-name>
-      <param-value>3000</param-value>
-    </init-param>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
+  <listener>
+    <listener-class>org.hippoecm.hst.site.container.HstContextLoaderListener</listener-class>
+  </listener>
 
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
