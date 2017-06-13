@@ -149,29 +149,15 @@ public class DefinitionMergeService {
         configuredMvnPaths.addAll(moduleMappings.keySet());
         configuredMvnPaths.add(defaultModuleMapping.mvnPath);
 
-        final Set<ModuleImpl> toMerge = new HashSet<>();
+        final HashMap<String, ModuleImpl> toExport = new HashMap<>();
         for (final ModuleImpl m : baseline.getModules()) {
             if (m.getMvnPath() != null && configuredMvnPaths.contains(m.getMvnPath())) {
-                toMerge.add(m);
+                toExport.put(m.getMvnPath(), m);
             }
         }
 
-        log.debug("Merging changes to modules: {}", toMerge);
+        log.debug("Merging changes to modules: {}", toExport.values());
         log.debug("Content added: {} changed: {}", contentChanges.getAddedContent(), contentChanges.getChangedContent());
-
-        final Set<String> toMergeMvnPaths = toMerge.stream().map(ModuleImpl::getMvnPath).collect(Collectors.toSet());
-
-        if (!toMergeMvnPaths.containsAll(configuredMvnPaths)) {
-            // TODO: should this interrupt auto-export processing with an exception?
-            log.warn("Configured auto-export modules do not all have a source location in repo.bootstrap.modules!");
-            log.warn("auto-export: {} -- configured sources: {}", moduleMappings.keySet(), toMergeMvnPaths);
-        }
-
-        // clone the toMerge modules and keep a copy indexed by mvnSourceRoot
-        final HashMap<String, ModuleImpl> toExport = new HashMap<>();
-        for (final ModuleImpl module : toMerge) {
-            toExport.put(module.getMvnPath(), module.clone().build());
-        }
 
         // make sure the changes module has all the definitions nicely sorted
         changes.build();
@@ -183,21 +169,14 @@ public class DefinitionMergeService {
 
         // TODO does it make sense to auto-export webfilebundle definitions?
 
-        // create a copy of the baseline that includes the new modules
-        // This model includes copies of upstream modules that reference the actual Source and Definition objects
-        // of the upstream modules from the baseline. We must take care not to modify those Sources!
-        // However, the toExport modules are represented with cloned copies with reparsed Sources distinct from the
-        // original baseline. We can safely modify those Sources and Definitions as needed.
-        // TODO: do we still need to do this, or can we do everything in place now?
-        final ConfigurationModelImpl model = rebuild(toExport, baseline);
-
         // merge config changes
         // ConfigDefinitions are already sorted by root path
         for (final ConfigDefinitionImpl change : changes.getConfigDefinitions()) {
             // run the full and complex merge logic, recursively
-            mergeConfigDefinitionNode(change.getNode(), toExport, model);
+            mergeConfigDefinitionNode(change.getNode(), toExport, baseline);
         }
 
+        // merge content changes
         mergeContentDefinitions(changes, contentChanges, toExport, jcrSession);
 
         stopWatch.stop();
@@ -827,7 +806,7 @@ public class DefinitionMergeService {
 
             // remove the source from its module
             module.getModifiableSources().remove(source);
-            module.addConfigResourceToRemove("/"+source.getPath());
+            module.addConfigResourceToRemove("/" + source.getPath());
         }
     }
 

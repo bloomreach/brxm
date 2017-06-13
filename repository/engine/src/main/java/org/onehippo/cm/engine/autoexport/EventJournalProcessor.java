@@ -511,6 +511,9 @@ public class EventJournalProcessor {
     }
 
     private void exportChangesModule(ModuleImpl changesModule) throws RepositoryException, IOException, ParserException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
         if (changesModule.isEmpty() && pendingChanges.getAddedContent().isEmpty()
                 && pendingChanges.getChangedContent().isEmpty()
                 && pendingChanges.getDeletedContent().isEmpty()) {
@@ -519,6 +522,9 @@ public class EventJournalProcessor {
             // save this fact immediately and do nothing else
             configuration.setLastRevision(lastRevision);
             eventProcessorSession.save();
+
+            stopWatch.stop();
+            log.info("Diff export (revision update only) in {}", stopWatch.toString());
         }
         else {
             final DefinitionMergeService mergeService = new DefinitionMergeService(configuration);
@@ -572,6 +578,9 @@ public class EventJournalProcessor {
 
             // 2) configuration.setLastRevision(lastRevision) (should NOT save the JCR session!)
             configuration.setLastRevision(lastRevision);
+
+            stopWatch.stop();
+            log.info("Diff export (writing modules) in {}", stopWatch.toString());
 
             // 3) save result to baseline (which should do Session.save() thereby also saving the lastRevision update
             // 4) update or reload ConfigurationService.currentRuntimeModel
