@@ -22,7 +22,7 @@ describe('selectAllOnFocusDirective', () => {
   let $compile;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.menu');
+    angular.mock.module('hippo-cm.channel.sitemenu');
 
     inject((_$rootScope_, _$compile_) => {
       $rootScope = _$rootScope_;

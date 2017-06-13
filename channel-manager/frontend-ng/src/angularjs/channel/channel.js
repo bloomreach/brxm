@@ -20,7 +20,7 @@ import channelPageActionsModule from './page/actions/actions';
 import channelActionsModule from './actions/actions';
 import channelSidePanelModule from './sidePanels/sidePanel';
 import channelHippoIframeModule from './hippoIframe/hippoIframe';
-import channelMenuModule from './menu/editor';
+import channelSitemenuModule from './sitemenu/editor';
 import maskModule from './mask/mask.module';
 import channelRelevanceModule from './relevance/relevance';
 import projectToggleModule from './projectToggle/projectToggle.module';
@@ -39,7 +39,7 @@ const channelModule = angular
     channelActionsModule.name,
     channelSidePanelModule.name,
     channelHippoIframeModule.name,
-    channelMenuModule.name,
+    channelSitemenuModule.name,
     channelRelevanceModule.name,
     projectToggleModule.name,
     viewportsModule.name,

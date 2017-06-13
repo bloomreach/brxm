@@ -22,7 +22,7 @@ import PickerCtrl from './picker.controller';
 import uiTreeModule from '../tree/tree';
 
 const pickerModule = angular
-  .module('hippo-cm.channel.menu.picker', [
+  .module('hippo-cm.channel.sitemenu.picker', [
     uiTreeModule.name,
   ])
   .controller('PickerCtrl', PickerCtrl)
