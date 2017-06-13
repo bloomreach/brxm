@@ -100,7 +100,7 @@ public class WebFilesServiceImpl implements WebFilesService {
         if (bootstrapPhase && autoReload != null && autoReload.isEnabled()) {
             // (re)import files will be done directly from file system. In case of an existing local repository, existing
             // web files will be replaced completely to sync possible local changes after restart
-            log.debug("Auto reload is enabled hence webfiles are (re-)imported directly from filesystem instead of via bootstrap.");
+            log.debug("Auto reload is enabled hence webfiles are (re-)imported directly from filesystem instead of from configuration module.");
         }
         final WebFilesFileArchive archive = new WebFilesFileArchive(directory, importedFiles, maxFileLengthBytes);
         importJcrWebFileBundle(session, archive);
@@ -113,7 +113,7 @@ public class WebFilesServiceImpl implements WebFilesService {
         if (bootstrapPhase && autoReload != null && autoReload.isEnabled()) {
             // (re)import files will be done directly from file system. In case of an existing local repository, existing
             // web files will be replaced completely to sync possible local changes after restart
-           log.debug("Auto reload is enabled hence webfiles are (re-)imported directly from filesystem instead of via bootstrap.");
+           log.debug("Auto reload is enabled hence webfiles are (re-)imported directly from filesystem instead of from configuration module.");
         } else {
             final WebFilesZipArchive archive = new WebFilesZipArchive(zip, importedFiles, maxFileLengthBytes);
             importJcrWebFileBundle(session, archive);
