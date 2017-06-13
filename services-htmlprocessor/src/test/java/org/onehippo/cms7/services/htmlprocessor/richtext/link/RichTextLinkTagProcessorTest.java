@@ -34,6 +34,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class RichTextLinkTagProcessorTest {
@@ -280,6 +281,20 @@ public class RichTextLinkTagProcessorTest {
         assertLink(link1, "doc");
         assertLink(link2, "doc_1");
     }
+
+    @Test
+    public void newBrokenLinkRemainsClickable() throws Exception {
+        final FacetService service = new FacetService(document);
+        final RichTextLinkTagProcessor processor = new RichTextLinkTagProcessor();
+        final Tag link = createLink("http://", "non-existing-uuid");
+
+        processor.onWrite(link, service);
+
+        assertEquals(0, document.getNodes().getSize());
+        assertNull(link.getAttribute("data-uuid"));
+        assertEquals("http://", link.getAttribute("href"));
+    }
+
 
 
     // Helper methods
