@@ -17,7 +17,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 import javax.annotation.security.RolesAllowed;
 import javax.jcr.RepositoryException;
@@ -38,7 +37,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms7.services.hst.Channel;
+import org.hippoecm.hst.channelmanager.security.SecurityModel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -50,9 +49,9 @@ import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
-import org.hippoecm.hst.channelmanager.security.SecurityModel;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +102,7 @@ public class RootResource extends AbstractConfigResource {
     public Response getChannels(@QueryParam("previewConfigRequired") final boolean previewConfigRequired,
                                 @QueryParam("workspaceRequired") final boolean workspaceRequired) {
         try {
-          final List<Channel> channels = this.channelService.getChannels(previewConfigRequired, workspaceRequired);
+            final List<Channel> channels = this.channelService.getChannels(previewConfigRequired, workspaceRequired);
             return ok("Fetched channels successful", channels);
         } catch (RuntimeRepositoryException e) {
             log.warn("Could not determine authorization", e);
@@ -240,14 +239,9 @@ public class RootResource extends AbstractConfigResource {
     }
 
     private boolean isChannelDeletionSupported(final String mountId) {
-
-        final Optional<Channel> channel = channelService.getChannelByMountId(mountId);
-        if (channel.isPresent()) {
-            // note that you cannot delete a channel if a branch is selected
-            return channelService.canChannelBeDeleted(channel.get()) && channelService.isMaster(channel.get());
-        }
-
-        return false;
+        return channelService.getChannelByMountId(mountId)
+                .map(channel -> channelService.canChannelBeDeleted(channel) && channelService.isMaster(channel))
+                .orElse(false);
     }
 
     @GET
@@ -289,8 +283,8 @@ public class RootResource extends AbstractConfigResource {
     }
 
     /**
-     * Note: Override the AbstractConfigResource#logAndReturnClientError() to remove ExtResponseRepresentation wrapper in the
-     * body response.
+     * Note: Override the AbstractConfigResource#logAndReturnClientError() to remove ExtResponseRepresentation wrapper
+     * in the body response.
      */
     @Override
     protected Response logAndReturnClientError(final ClientException e) {
