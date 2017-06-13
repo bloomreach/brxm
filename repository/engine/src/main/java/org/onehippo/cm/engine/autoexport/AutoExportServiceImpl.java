@@ -16,6 +16,9 @@
 package org.onehippo.cm.engine.autoexport;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -26,8 +29,12 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
+import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 import static javax.jcr.observation.Event.PROPERTY_ADDED;
 import static javax.jcr.observation.Event.PROPERTY_CHANGED;
@@ -59,10 +66,36 @@ public final class AutoExportServiceImpl implements EventListener {
         eventJournalProcessor = new EventJournalProcessor(configurationService, configuration, Collections.emptySet());
         manager.addEventListener(this, EVENT_TYPES, SERVICE_CONFIG_PATH, false, null, null, false);
         if (configuration.isEnabled()) {
+            checkModules(configuration, configurationService.getRuntimeConfigurationModel());
             log.info("autoexport service enabled");
             eventJournalProcessor.start();
         } else {
             log.info("autoexport service disabled");
+        }
+    }
+
+    /**
+     * Confirm that all modules that are configured for auto-export have a corresponding source path in
+     * repo.bootstrap.modules.
+     * @param configuration
+     * @param baseline
+     */
+    private void checkModules(final Configuration configuration, final ConfigurationModelImpl baseline) {
+        final Set<String> configuredMvnPaths = configuration.getModules().keySet();
+        final Set<String> exportable = new HashSet<>();
+        for (final ModuleImpl m : baseline.getModules()) {
+            if (m.getMvnPath() != null && configuredMvnPaths.contains(m.getMvnPath())) {
+                exportable.add(m.getMvnPath());
+            }
+        }
+
+        if (!exportable.containsAll(configuredMvnPaths)) {
+            // interrupt auto-export startup with an exception
+            final Sets.SetView<String> missing = Sets.difference(configuredMvnPaths, exportable);
+            log.error("Configured auto-export modules do not all have a source path in repo.bootstrap.modules!");
+            log.error("auto-export: {}, configured sources: {}, missing: {}", configuredMvnPaths, exportable, missing);
+            throw new IllegalStateException(
+                    "Cannot auto-export modules without a source path in repo.bootstrap.modules: " + missing);
         }
     }
 
