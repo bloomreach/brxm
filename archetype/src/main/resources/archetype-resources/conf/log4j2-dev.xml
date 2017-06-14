@@ -59,9 +59,8 @@
     <Logger name="org.hippoecm.frontend" level="warn"/>
     <Logger name="org.apache.wicket" level="warn"/>
 
-    <!-- DiagnosticsRequestCycleListener only logs when diagnostics is enabled in the repository at
-         /hippo:configuration/hippo:modules/diagnosis
-         hence can be here on level 'info' -->
+    <!-- DiagnosticsRequestCycleListener only logs when diagnostics are enabled in the repository at
+         /hippo:configuration/hippo:modules/diagnostics. Hence can be here on level 'info' -->
     <Logger name="org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener" level="info"/>
 
     <!-- audit logging -->
