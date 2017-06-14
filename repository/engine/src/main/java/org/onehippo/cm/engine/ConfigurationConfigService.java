@@ -341,6 +341,9 @@ public class ConfigurationConfigService {
             if (propertyName.equals(JCR_PRIMARYTYPE) || propertyName.equals(JCR_MIXINTYPES)) {
                 continue; // we have already addressed these properties
             }
+            if (propertyName.equals(JCR_UUID)) {
+                continue; // nor need to look at immutable jcr:uuid
+            }
 
             final ConfigurationProperty updateProperty = updateProperties.get(propertyName);
             final ConfigurationProperty baselineProperty = baselineProperties.get(propertyName);
@@ -578,11 +581,16 @@ public class ConfigurationConfigService {
             return; // TODO: should derived properties even be an allowed part of the configuration model?
         }
 
+        final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, updateProperty.getName());
+
+        if (jcrProperty != null && jcrProperty.getDefinition().isProtected()) {
+            return; // protected properties cannot be update, no need to even check or try
+        }
+
         // pre-process the values of the property to address reference type values
         final Session session = jcrNode.getSession();
         final List<Value> verifiedUpdateValues = determineVerifiedValues(updateProperty, session);
 
-        final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, updateProperty.getName());
         if (jcrProperty != null) {
             if (propertyIsIdentical(jcrProperty, updateProperty, verifiedUpdateValues)) {
                 return; // no update needed
