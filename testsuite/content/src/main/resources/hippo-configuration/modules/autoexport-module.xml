@@ -1,30 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="autoexport">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:module</sv:value>
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:esv="http://www.onehippo.org/jcr/xmlimport"
+         sv:name="hippo:moduleconfig" esv:merge="combine">
+  <sv:property sv:name="autoexport:enabled" sv:type="Boolean" esv:merge="override">
+    <sv:value>false</sv:value>
   </sv:property>
-  <sv:node sv:name="hippo:moduleconfig">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>autoexport:config</sv:value>
-    </sv:property>
-    <sv:property sv:name="autoexport:enabled" sv:type="Boolean">
-      <sv:value>false</sv:value>
-    </sv:property>
-    <sv:property sv:name="autoexport:excluded" sv:type="String" sv:multiple="true">
-      <sv:value>/hst:hst/hst:configurations/*-preview</sv:value>
-      <sv:value>/hst:hst/hst:configurations/*-preview/**</sv:value>
-      <sv:value>/hst:hst/hst:configurations/*-v*</sv:value>
-      <sv:value>/hst:hst/hst:configurations/*-v*/**</sv:value>
-      <sv:value>/hst:hst/hst:sites/*/hst:version</sv:value>
-      <sv:value>/webfiles/**</sv:value>
-      <sv:value>/**/hippo:lockExpirationTime</sv:value>
-    </sv:property>
-    <sv:property sv:name="autoexport:filteruuidpaths" sv:type="String" sv:multiple="true">
-      <sv:value>/hst:hst</sv:value>
-    </sv:property>
-    <sv:property sv:name="autoexport:modules" sv:type="String" sv:multiple="true">
-      <sv:value>content:/</sv:value>
-      <sv:value>intranet-bootstrap/content:/content/documents/intranet</sv:value>
-      <sv:value>intranet-bootstrap/configuration:/hippo:namespaces/intranet</sv:value>
-    </sv:property>
-  </sv:node>
+  <sv:property sv:name="autoexport:modules" sv:type="String" sv:multiple="true" esv:merge="append">
+    <sv:value>intranet-bootstrap/content:/content/documents/intranet</sv:value>
+    <sv:value>intranet-bootstrap/configuration:/hippo:namespaces/intranet</sv:value>
+  </sv:property>
 </sv:node>
