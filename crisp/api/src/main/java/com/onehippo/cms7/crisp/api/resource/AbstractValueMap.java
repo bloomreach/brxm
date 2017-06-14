@@ -54,4 +54,5 @@ public abstract class AbstractValueMap implements ValueMap {
         final Object value = get(name);
         return (value != null) ? (T) value : defaultValue;
     }
+
 }

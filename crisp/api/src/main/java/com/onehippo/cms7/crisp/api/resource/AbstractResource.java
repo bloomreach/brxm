@@ -242,4 +242,26 @@ public abstract class AbstractResource implements Resource {
         return (T) value;
     }
 
+    /**
+     * {@inheritDoc}
+     * <P>
+     * This default implementation is equivalent to <code>getValueMap().get("")</code> if not overriden.
+     * </P>
+     */
+    @Override
+    public Object getDefaultValue() {
+        return getValueMap().get("");
+    }
+
+    /**
+     * {@inheritDoc}
+     * <P>
+     * This default implementation is equivalent to <code>getValueMap().get("", type)</code> if not overriden.
+     * </P>
+     */
+    @Override
+    public <T> T getDefaultValue(Class<T> type) {
+        return getValueMap().get("", type);
+    }
+
 }

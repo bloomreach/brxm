@@ -3,7 +3,11 @@
  */
 package com.onehippo.cms7.crisp.core.broker;
 
+import java.io.IOException;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.onehippo.cms7.crisp.api.broker.AbstractResourceServiceBroker;
 import com.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
@@ -21,6 +25,8 @@ import com.onehippo.cms7.crisp.core.resource.DefaultValueMap;
  * </P>
  */
 public class CacheableResourceServiceBroker extends AbstractResourceServiceBroker {
+
+    private static Logger log = LoggerFactory.getLogger(CacheableResourceServiceBroker.class);
 
     /**
      * Cache key attribute name for an invoked operation name.
@@ -120,7 +126,11 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
             Object cacheData = resourceDataCache.getData(cacheKey);
 
             if (cacheData != null) {
-                resource = (Resource) resourceResolver.fromCacheData(cacheData);
+                try {
+                    resource = (Resource) resourceResolver.fromCacheData(cacheData);
+                } catch (IOException e) {
+                    log.error("Failed to retrieve resource from cache data.", e);
+                }
             }
         }
 
@@ -128,10 +138,14 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
             resource = resourceResolver.resolve(absResourcePath, pathVariables);
 
             if (resource != null && cacheKey != null && resourceResolver.isCacheable(resource)) {
-                final Object cacheData = resourceResolver.toCacheData(resource);
+                try {
+                    final Object cacheData = resourceResolver.toCacheData(resource);
 
-                if (cacheData != null) {
-                    resourceDataCache.putData(cacheKey, cacheData);
+                    if (cacheData != null) {
+                        resourceDataCache.putData(cacheKey, cacheData);
+                    }
+                } catch (IOException e) {
+                    log.error("Failed to convert resource to cache data.", e);
                 }
             }
         }
@@ -155,7 +169,11 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
             Object cacheData = resourceDataCache.getData(cacheKey);
 
             if (cacheData != null) {
-                resource = (Resource) resourceResolver.fromCacheData(cacheData);
+                try {
+                    resource = (Resource) resourceResolver.fromCacheData(cacheData);
+                } catch (IOException e) {
+                    log.error("Failed to retrieve resource from cache data.", e);
+                }
             }
         }
 
@@ -163,10 +181,14 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
             resource = resourceResolver.findResources(baseAbsPath, pathVariables);
 
             if (resource != null && cacheKey != null && resourceResolver.isCacheable(resource)) {
-                final Object cacheData = resourceResolver.toCacheData(resource);
+                try {
+                    final Object cacheData = resourceResolver.toCacheData(resource);
 
-                if (cacheData != null) {
-                    resourceDataCache.putData(cacheKey, cacheData);
+                    if (cacheData != null) {
+                        resourceDataCache.putData(cacheKey, cacheData);
+                    }
+                } catch (IOException e) {
+                    log.error("Failed to convert resource to cache data.", e);
                 }
             }
         }

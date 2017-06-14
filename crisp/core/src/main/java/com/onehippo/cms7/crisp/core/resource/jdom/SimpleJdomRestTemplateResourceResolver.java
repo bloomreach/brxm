@@ -1,22 +1,30 @@
 /*
  * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  */
-package com.onehippo.cms7.crisp.core.resource.jackson;
+package com.onehippo.cms7.crisp.core.resource.jdom;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.onehippo.cms7.crisp.api.resource.Resource;
 import com.onehippo.cms7.crisp.api.resource.ResourceException;
 
-public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRestTemplateResourceResolver {
+public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemplateResourceResolver {
 
     private static ThreadLocal<Map<Resource, Object>> tlResourceResultCache = new ThreadLocal<Map<Resource, Object>>() {
         @Override
@@ -27,7 +35,7 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
 
     private boolean cacheEnabled;
 
-    public SimpleJacksonRestTemplateResourceResolver() {
+    public SimpleJdomRestTemplateResourceResolver() {
         super();
     }
 
@@ -43,24 +51,23 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
     public Resource resolve(String absPath, Map<String, Object> pathVariables) throws ResourceException {
         try {
             RestTemplate restTemplate = getRestTemplate();
-            ResponseEntity<String> result = restTemplate.getForEntity(getBaseResourceURI(absPath), String.class,
-                    pathVariables);
+            ResponseEntity<ByteArrayResource> result = restTemplate.getForEntity(getBaseResourceURI(absPath),
+                    ByteArrayResource.class, pathVariables);
 
             if (isSuccessfulResponse(result)) {
-                final String bodyText = result.getBody();
-                JsonNode jsonNode = getObjectMapper().readTree(bodyText);
-                Resource resource = new JacksonResource(jsonNode);
+                final ByteArrayResource body = result.getBody();
+                final byte [] bytes = body.getByteArray();
+                final Element rootElem = bytesToElement(bytes);
+                final Resource resource = new JdomResource(rootElem);
 
                 if (isCacheEnabled()) {
-                    tlResourceResultCache.get().put(resource, bodyText);
+                    tlResourceResultCache.get().put(resource, bytes);
                 }
 
                 return resource;
             } else {
                 throw new ResourceException("Unexpected response status: " + result.getStatusCode());
             }
-        } catch (JsonProcessingException e) {
-            throw new ResourceException("JSON processing error.", e);
         } catch (RestClientException e) {
             throw new ResourceException("REST client invocation error.", e);
         } catch (IOException e) {
@@ -75,24 +82,23 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
             throws ResourceException {
         try {
             RestTemplate restTemplate = getRestTemplate();
-            ResponseEntity<String> result = restTemplate.getForEntity(getBaseResourceURI(baseAbsPath), String.class,
-                    pathVariables);
+            ResponseEntity<ByteArrayResource> result = restTemplate.getForEntity(getBaseResourceURI(baseAbsPath),
+                    ByteArrayResource.class, pathVariables);
 
             if (isSuccessfulResponse(result)) {
-                final String bodyText = result.getBody();
-                JsonNode jsonNode = getObjectMapper().readTree(bodyText);
-                Resource rootResource = new JacksonResource(jsonNode);
+                final ByteArrayResource body = result.getBody();
+                final byte [] bytes = body.getByteArray();
+                final Element rootElem = bytesToElement(bytes);
+                final Resource rootResource = new JdomResource(rootElem);
 
                 if (isCacheEnabled()) {
-                    tlResourceResultCache.get().put(rootResource, bodyText);
+                    tlResourceResultCache.get().put(rootResource, bytes);
                 }
 
                 return rootResource;
             } else {
                 throw new ResourceException("Unexpected response status: " + result.getStatusCode());
             }
-        } catch (JsonProcessingException e) {
-            throw new ResourceException("JSON processing error.", e);
         } catch (RestClientException e) {
             throw new ResourceException("REST client invocation error.", e);
         } catch (IOException e) {
@@ -104,12 +110,12 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
 
     @Override
     public boolean isCacheable(Resource resource) {
-        return (isCacheEnabled() && resource instanceof JacksonResource);
+        return (isCacheEnabled() && resource instanceof JdomResource);
     }
 
     @Override
     public Object toCacheData(Resource resource) throws IOException {
-        if (!isCacheEnabled() || !(resource instanceof JacksonResource)) {
+        if (!isCacheEnabled() || !(resource instanceof JdomResource)) {
             return null;
         }
 
@@ -119,24 +125,39 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
             return body;
         }
 
-        return ((JacksonResource) resource).toJsonString(getObjectMapper());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
+        ((JdomResource) resource).write(new XMLOutputter(), baos);
+        return baos.toByteArray();
     }
 
     @Override
     public Resource fromCacheData(Object cacheData) throws IOException {
-        if (!isCacheEnabled() || !(cacheData instanceof String)) {
+        if (!isCacheEnabled() || !(cacheData instanceof byte[])) {
             return null;
         }
 
         try {
-            JsonNode jsonNode = getObjectMapper().readTree((String) cacheData);
-            Resource rootResource = new JacksonResource(jsonNode);
+            Element elem = bytesToElement((byte []) cacheData);
+            Resource rootResource = new JdomResource(elem);
             return rootResource;
-        } catch (JsonProcessingException e) {
-            throw new ResourceException("JSON processing error.", e);
+        } catch (JDOMException e) {
+            throw new ResourceException("JDOM parse error.", e);
         } catch (IOException e) {
             throw new ResourceException("IO error.", e);
         }
     }
 
+    private Element bytesToElement(byte [] bytes) throws JDOMException, IOException {
+        InputStream input = null;
+
+        try {
+            SAXBuilder jdomBuilder = new SAXBuilder();
+            input = new ByteArrayInputStream(bytes);
+            final Document document = jdomBuilder.build(input);
+            final Element elem = document.getRootElement();
+            return elem;
+        } finally {
+            IOUtils.closeQuietly(input);
+        }
+    }
 }

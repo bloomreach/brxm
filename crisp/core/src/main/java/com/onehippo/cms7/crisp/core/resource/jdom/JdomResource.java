@@ -1,5 +1,11 @@
+/*
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ */
 package com.onehippo.cms7.crisp.core.resource.jdom;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +15,7 @@ import org.jdom2.Attribute;
 import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.Text;
+import org.jdom2.output.XMLOutputter;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.jdom2.xpath.XPathHelper;
@@ -69,7 +76,19 @@ public class JdomResource extends AbstractResource {
             return ((Attribute) value).getValue();
         } else if (value instanceof Content) {
             if (value instanceof Element) {
-                return new JdomResource(this, (Element) value, ((Element) value).getName());
+                final Element elem = (Element) value;
+                if (jdomElem.equals(elem.getParent())) {
+                    // if the resolved element is a child of this resource's element, then let's return the resolved
+                    // child element to put the same parent in it.
+                    for (Resource childRes : getInternalAllChildren()) {
+                        if (elem.equals(((JdomResource) childRes).jdomElem)) {
+                            return childRes;
+                        }
+                    }
+                } else {
+                    // if the resolved item is not a child, let's simply return a resource having no parent.
+                    return new JdomResource(elem, elem.getName());
+                }
             } else if (value instanceof Text) {
                 return ((Text) value).getValue();
             }
@@ -171,6 +190,14 @@ public class JdomResource extends AbstractResource {
         return jdomElem.hashCode();
     }
 
+    public void write(XMLOutputter xmlOutputter, OutputStream out) throws IOException {
+        xmlOutputter.output(jdomElem, out);
+    }
+
+    public void write(XMLOutputter xmlOutputter, Writer writer) throws IOException {
+        xmlOutputter.output(jdomElem, writer);
+    }
+
     private ValueMap getInternalValueMap() {
         if (internalValueMap == null) {
             ValueMap tempValueMap = new DefaultValueMap();
@@ -200,7 +227,6 @@ public class JdomResource extends AbstractResource {
     private List<Resource> getInternalAllChildren() {
         if (internalAllChildren == null) {
             List<Resource> list = new LinkedList<>();
-            int index = 0;
 
             for (Element childElem : jdomElem.getChildren()) {
                 list.add(toChildFieldJacksonResource(childElem, childElem.getName()));

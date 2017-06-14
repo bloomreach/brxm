@@ -6,12 +6,15 @@ package com.onehippo.cms7.crisp.demo.example.commerce.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@XmlRootElement(name = "product")
 public class Product {
 
     private String sku;
