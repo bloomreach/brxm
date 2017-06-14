@@ -63,9 +63,6 @@ public class JcrContentProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(JcrContentProcessor.class);
 
-
-    private final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences = new ArrayList<>();
-
     /**
      * Import definition under the rootNode
      *
@@ -82,7 +79,9 @@ public class JcrContentProcessor {
         final Session session = parentNode.getSession();
         validateAppendAction(newNode.getPath(), actionType, session);
 
-        applyNode(newNode, parentNode, actionType);
+        final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences = new ArrayList<>();
+        applyNode(newNode, parentNode, actionType, unprocessedReferences);
+        applyUnprocessedReferences(unprocessedReferences);
     }
 
     /**
@@ -141,8 +140,9 @@ public class JcrContentProcessor {
             }
 
             final Node parentNode = calculateParentNode(definitionNode, session);
-            applyNode(definitionNode, parentNode, actionType);
-            applyUnprocessedReferences();
+            final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences = new ArrayList<>();
+            applyNode(definitionNode, parentNode, actionType, unprocessedReferences);
+            applyUnprocessedReferences(unprocessedReferences);
         } catch (Exception e) {
             log.warn(String.format("Content definition processing failed: %s", definitionNode.getName()), e);
             if (e instanceof RepositoryException) {
@@ -158,7 +158,8 @@ public class JcrContentProcessor {
         return session.getNode(path);
     }
 
-    private void applyNode(final DefinitionNode definitionNode, final Node parentNode, final ActionType actionType) throws RepositoryException, IOException {
+    private void applyNode(final DefinitionNode definitionNode, final Node parentNode, final ActionType actionType,
+                           final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences) throws RepositoryException, IOException {
 
         final Session session = parentNode.getSession();
         final String nodePath = constructNodePath(parentNode.getPath(), definitionNode.getName());
@@ -180,15 +181,16 @@ public class JcrContentProcessor {
         }
 
         final Node jcrNode = addNode(parentNode, definitionNode);
-        applyProperties(definitionNode, jcrNode);
-        applyChildNodes(definitionNode, jcrNode, actionType);
+        applyProperties(definitionNode, jcrNode, unprocessedReferences);
+        applyChildNodes(definitionNode, jcrNode, actionType, unprocessedReferences);
     }
 
-    private void applyChildNodes(final DefinitionNode modelNode, final Node jcrNode, final ActionType actionType) throws RepositoryException, IOException {
+    private void applyChildNodes(final DefinitionNode modelNode, final Node jcrNode, final ActionType actionType,
+                                 final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences) throws RepositoryException, IOException {
         log.debug(String.format("processing node '%s' defined in %s.", modelNode.getPath(), modelNode.getOrigin()));
         for (final String name : modelNode.getNodes().keySet()) {
             final DefinitionNode modelChild = modelNode.getNode(name);
-            applyNode(modelChild, jcrNode, actionType);
+            applyNode(modelChild, jcrNode, actionType, unprocessedReferences);
         }
     }
 
@@ -233,7 +235,9 @@ public class JcrContentProcessor {
         return modelNode.getProperty(JCR_PRIMARYTYPE).getValue().getString();
     }
 
-    private void applyProperties(final DefinitionNode source, final Node targetNode) throws RepositoryException, IOException {
+    private void applyProperties(final DefinitionNode source, final Node targetNode,
+                                 final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences)
+            throws RepositoryException, IOException {
         applyPrimaryAndMixinTypes(source, targetNode);
 
         for (DefinitionProperty modelProperty : source.getProperties().values()) {
@@ -313,7 +317,8 @@ public class JcrContentProcessor {
         }
     }
 
-    private void applyUnprocessedReferences() throws Exception {
+    private void applyUnprocessedReferences(final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences)
+            throws RepositoryException, IOException {
         for (Pair<DefinitionProperty, Node> unprocessedReference : unprocessedReferences) {
             final DefinitionProperty DefinitionProperty = unprocessedReference.getLeft();
             final Node jcrNode = unprocessedReference.getRight();
