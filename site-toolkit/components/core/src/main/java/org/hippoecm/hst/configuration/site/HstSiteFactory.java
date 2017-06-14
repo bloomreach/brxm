@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.unmodifiableMap;
+import static org.apache.commons.lang.StringUtils.substringAfterLast;
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 
 public class HstSiteFactory {
@@ -63,7 +64,6 @@ public class HstSiteFactory {
         }
 
         final String masterConfigPath = master.getConfigurationPath();
-        final String masterName = StringUtils.substringAfterLast(masterConfigPath, "/");
         HstNode masterConfiguration = hstNodeLoadingCache.getNode(masterConfigPath);
         if (masterConfiguration.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_OF)) {
             throw new ModelLoadingException(String.format("Invalid HST configuration for '%s' : It should be a master " +
@@ -81,6 +81,13 @@ public class HstSiteFactory {
             }
             final String branchOf = branchNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_OF);
 
+            final String masterName;
+            if (isPreviewSite) {
+                masterName = StringUtils.substringBefore(substringAfterLast(masterConfigPath, "/"), "-preview");
+            } else {
+                masterName = substringAfterLast(masterConfigPath, "/");
+            }
+            
             if (!masterName.equals(branchOf)) {
                 log.debug("Skipping branch '{}' because not a branch of '{}'.", branchNode.getName(), masterName);
                 continue;
