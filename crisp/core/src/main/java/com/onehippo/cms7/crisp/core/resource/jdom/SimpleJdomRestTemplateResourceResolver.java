@@ -3,11 +3,8 @@
  */
 package com.onehippo.cms7.crisp.core.resource.jdom;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -15,7 +12,6 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
-import org.jdom2.output.XMLOutputter;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
@@ -25,13 +21,6 @@ import com.onehippo.cms7.crisp.api.resource.Resource;
 import com.onehippo.cms7.crisp.api.resource.ResourceException;
 
 public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemplateResourceResolver {
-
-    private static ThreadLocal<Map<Resource, Object>> tlResourceResultCache = new ThreadLocal<Map<Resource, Object>>() {
-        @Override
-        protected Map<Resource, Object> initialValue() {
-            return new HashMap<>();
-        }
-    };
 
     private boolean cacheEnabled;
 
@@ -56,14 +45,8 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
 
             if (isSuccessfulResponse(result)) {
                 final ByteArrayResource body = result.getBody();
-                final byte [] bytes = body.getByteArray();
-                final Element rootElem = bytesToElement(bytes);
+                final Element rootElem = byteArrayResourceToElement(body);
                 final Resource resource = new JdomResource(rootElem);
-
-                if (isCacheEnabled()) {
-                    tlResourceResultCache.get().put(resource, bytes);
-                }
-
                 return resource;
             } else {
                 throw new ResourceException("Unexpected response status: " + result.getStatusCode());
@@ -87,14 +70,8 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
 
             if (isSuccessfulResponse(result)) {
                 final ByteArrayResource body = result.getBody();
-                final byte [] bytes = body.getByteArray();
-                final Element rootElem = bytesToElement(bytes);
+                final Element rootElem = byteArrayResourceToElement(body);
                 final Resource rootResource = new JdomResource(rootElem);
-
-                if (isCacheEnabled()) {
-                    tlResourceResultCache.get().put(rootResource, bytes);
-                }
-
                 return rootResource;
             } else {
                 throw new ResourceException("Unexpected response status: " + result.getStatusCode());
@@ -119,40 +96,20 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
             return null;
         }
 
-        Object body = tlResourceResultCache.get().remove(resource);
-
-        if (body != null) {
-            return body;
-        }
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
-        ((JdomResource) resource).write(new XMLOutputter(), baos);
-        return baos.toByteArray();
+        return resource;
     }
 
     @Override
     public Resource fromCacheData(Object cacheData) throws IOException {
-        if (!isCacheEnabled() || !(cacheData instanceof byte[])) {
-            return null;
-        }
-
-        try {
-            Element elem = bytesToElement((byte []) cacheData);
-            Resource rootResource = new JdomResource(elem);
-            return rootResource;
-        } catch (JDOMException e) {
-            throw new ResourceException("JDOM parse error.", e);
-        } catch (IOException e) {
-            throw new ResourceException("IO error.", e);
-        }
+        return (JdomResource) cacheData;
     }
 
-    private Element bytesToElement(byte [] bytes) throws JDOMException, IOException {
+    private Element byteArrayResourceToElement(final ByteArrayResource body) throws JDOMException, IOException {
         InputStream input = null;
 
         try {
             SAXBuilder jdomBuilder = new SAXBuilder();
-            input = new ByteArrayInputStream(bytes);
+            input = body.getInputStream();
             final Document document = jdomBuilder.build(input);
             final Element elem = document.getRootElement();
             return elem;
