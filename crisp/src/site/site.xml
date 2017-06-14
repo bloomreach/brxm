@@ -23,7 +23,8 @@
         <item name="Example with Marketo REST API" href="example-marketo-rest-api-config.html" />
       </item>
       <item name="Examples" href="examples.html">
-        <item name="Using Generic Resource Objects" href="example-using-generic-resources.html" />
+        <item name="Using Generic (JSON) Resource Objects" href="example-using-generic-json-resources.html" />
+        <item name="Using Generic (XML) Resource Objects" href="example-using-generic-xml-resources.html" />
         <item name="Web-hook Example to Invalidate Cache" href="example-webhook-invalidate-cache.html" />
       </item>
       <item name="FAQ" href="faq.html" />

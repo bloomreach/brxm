@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+-->
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document>
+  <properties>
+    <title>Example Using Generic (XML) Resource Objects</title>
+  </properties>
+  <body>
+
+    <section name="Example Using Generic XML Resource Objects">
+
+      <subsection name="Introduction">
+
+        <p>
+          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> is the primary object
+          representation to solve all the complex integration problems in a generic way.
+          So, the interface was designed to support all the different domain object representations from heterogeneous
+          backends easily by providing generic APIs to retrieve properties and child objects of domain objects.
+        </p>
+
+        <p>
+          One typical <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> implementation
+          nowadays is probably in XML data format. <strong>CRISP</strong> provides a default implementation of
+          <code>Resource</code> interface for XML data with
+          <a href="apidocs/com/onehippo/cms7/crisp/core/resource/jdom/JdomResource.html">JdomResource</a>
+          which uses <a href="http://www.jdom.org/">JDOM</a> library to parse XML data.
+        </p>
+
+      </subsection>
+
+      <subsection name="Single Resource Object from an XML Element">
+
+        <p>
+          Let's see a simple XML data representing a product data from a backend system:
+        </p>
+
+        <div class="brush: xml">
+          <source><![CDATA[
+<product>
+  <name>NEC MultiSync X431BT</name>
+  <sku>4150349</sku>
+  <description>MultiSync X431BT - 109.22 cm (43 ") , 1920 x 480, 16:4, 500 cd/m², 3000:1, 8 ms</description>
+  <extendedData>
+    <entry>
+      <key>title</key>
+      <value xsi:type="xs:string">NEC MultiSync X431BT</value>
+    </entry>
+    <entry>
+      <key>type</key>
+      <value xsi:type="xs:string">Link</value>
+    </entry>
+    <entry>
+      <key>uri</key>
+      <value xsi:type="xs:string">Incentro-HIC-Site/-/products/4150349</value>
+    </entry>
+    <entry>
+      <key>description</key>
+      <value xsi:type="xs:string">MultiSync X431BT - 109.22 cm (43 ") , 1920 x 480, 16:4, 500 cd/m², 3000:1, 8 ms</value>
+    </entry>
+  </extendedData>
+</product>
+          ]]></source>
+        </div>
+
+        <p>
+          The example XML data shown above can be mapped to a
+          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object. For more details,
+        </p>
+
+        <ul>
+          <li>
+            The top level XML Element is mapped to a <code>Resource</code> object.
+          </li>
+          <li>
+            Attributes of an Element are treated as primitive properties of <code>Resource</code> object, as type of String.
+          </li>
+          <li>
+            Child XML Element such as "name", "sku" and "extendedData" is treated as a child <code>Resource</code> object property.
+          </li>
+          <li>
+            Both primitive properties and nested <code>Resource</code> object properties can be accessed through
+            <code>Resource#getValueMap().get(String name)</code>.
+          </li>
+          <li>
+            <code>JdomResource</code> will return a String value or null for attributes, or child <code>Resource</code> object
+            when invoked on <code>Resource#getValueMap()#get(String name)</code>.
+            However, when invoked on <code>Resource#getValueMap()#get(String name, Class type)</code>, <code>JdomResource</code>
+            will try to convert each value to a properly typed value (e.g, String, Number, Resource, etc.) based
+            on the given type automatically.
+          </li>
+          <li>
+            In addition, for convenience, <code>JdomResource</code> implements <code>Resource#getDefaultValue()</code>
+            to return the text content String value of its underlying XML element object.
+            The implementation of <code>Resource#getDefaultValue(Class type)</code> in <code>JdomResource</code>
+            also tries to convert the default value to a properly typed value (e.g, String, Number, Resource, etc.)
+            based on the given type automatically.
+          </li>
+        </ul>
+
+        <p>
+          Suppose you retrieved single <code>Resource</code> object through <code>ResourceServiceBroker#resolve(...)</code> method.
+          Then you can easily access the properties and nested child resoruces like the following example:
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
+    Resource product = resourceServiceBroker.resolve("demoProductCatalogsXml", "/products.xml/sku/12345678901");
+
+    String name = (String) ((Resource) product.getValueMap().get("name")).getDefaultValue();
+    String sku = (String) ((Resource) product.getValueMap().get("sku")).getDefaultValue();
+    String description = (String) ((Resource) product.getValueMap().get("description")).getDefaultValue();
+
+    Resource extendedData = (Resource) product.getValueMap().get("extendedData");
+    // ...
+          ]]></source>
+        </div>
+
+        <p>
+          <code>JdomResource</code> also allows to use standard XPath expression in <code>Resource#getValue(String relPath)</code>
+          method implementation. So, you can simply use <code>Resource#getValue(String relPath)</code> by passing a relative
+          XPath expression like the following example:
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
+    Resource product = resourceServiceBroker.resolve("demoProductCatalogsXml", "/products/sku/12345678901");
+
+    // You can directly access "title" property of "extendedData" child resource object like this:
+    String title = ((Resource) product.getValue("extendedData/entry[key='description']/value")).getDefaultValue();
+    // ...
+          ]]></source>
+        </div>
+
+        <p>
+          Please see the JavaDoc for detail: <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a>.
+        </p>
+
+      </subsection>
+
+      <subsection name="Multiple Resource Collection from an XML element">
+
+        <p>
+          Let's see a simple XML data representing a collection of product data from a backend system:
+        </p>
+
+        <div class="brush: xml">
+          <source><![CDATA[
+<data>
+  <products>
+    <product>
+      <name>NEC MultiSync X431BT</name>
+      <sku>4150349</sku>
+      <description>MultiSync X431BT - 109.22 cm (43 ") , 1920 x 480, 16:4, 500 cd/m², 3000:1, 8 ms</description>
+      <extendedData>
+        <entry>
+          <key>title</key>
+          <value xsi:type="xs:string">NEC MultiSync X431BT</value>
+        </entry>
+        <entry>
+          <key>type</key>
+          <value xsi:type="xs:string">Link</value>
+        </entry>
+        <entry>
+          <key>uri</key>
+          <value xsi:type="xs:string">Incentro-HIC-Site/-/products/4150349</value>
+        </entry>
+        <entry>
+          <key>description</key>
+          <value xsi:type="xs:string">MultiSync X431BT - 109.22 cm (43 ") , 1920 x 480, 16:4, 500 cd/m², 3000:1, 8 ms</value>
+        </entry>
+      </extendedData>
+    </product>
+    <product>
+      <name>NEC PA271W</name>
+      <sku>4696003</sku>
+      <description>PA271W, 68.58 cm (27 ") LCD, 2560 x 1440, 6ms, 1000:1, 300cd/m2, 1.073B</description>
+      <extendedData>
+        <entry>
+          <key>title</key>
+          <value xsi:type="xs:string">NEC PA271W</value>
+        </entry>
+        <entry>
+          <key>type</key>
+          <value xsi:type="xs:string">Link</value>
+        </entry>
+        <entry>
+          <key>uri</key>
+          <value xsi:type="xs:string">Incentro-HIC-Site/-/products/4696003</value>
+        </entry>
+        <entry>
+          <key>description</key>
+          <value xsi:type="xs:string">PA271W, 68.58 cm (27 ") LCD, 2560 x 1440, 6ms, 1000:1, 300cd/m2, 1.073B</value>
+        </entry>
+      </extendedData>
+    </product>
+    <!-- SNIP -->
+  </products>
+</data>
+          ]]></source>
+        </div>
+
+        <p>
+          The example XML data shown above can be mapped to a
+          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object as well.
+          The <code>Resource</code> object represents the root XML element.
+        </p>
+
+        <ul>
+          <li>
+            <code>Resource#getChildren()</code> will return an iterable collection.
+          </li>
+        </ul>
+
+        <p>
+          Suppose you retrieved a <code>Resource</code> object containing product collection data
+          through <code>ResourceServiceBroker#findResources(...)</code> method.
+          Then you can easily iterate resoruces like the following example:
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
+    Resource data = resourceServiceBroker.findResources("demoProductCatalogsXml", "/products.xml");
+    Resource products = ((Resource) data.getValue("products")).getChildren();
+
+    for (Resource product : products.getChildren()) {
+        String name = (String) ((Resource) product.getValueMap().get("name")).getDefaultValue();
+        String sku = (String) ((Resource) product.getValueMap().get("sku")).getDefaultValue();
+        String description = (String) ((Resource) product.getValueMap().get("description")).getDefaultValue();
+        // ...
+    }
+          ]]></source>
+        </div>
+
+      </subsection>
+
+      <subsection name="Pagination with Resource Object">
+
+        <p>
+          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object supports paginating
+          methods. For example, you can pass <code>offset</code> index and <code>limit</code> count of the paginated
+          result on <code>Resource#getChildren(long offset, long limit)</code>
+          like the following example to retrieve only specific set of the page:
+        </p>
+
+        <div class="brush: java">
+          <source><![CDATA[
+    // ...
+    ResourceServiceBroker broker = HippoServiceRegistry.getService(ResourceServiceBroker.class);
+    Resource data = resourceServiceBroker.findResources("demoProductCatalogsXml", "/products.xml");
+
+    // The following will retrieve only the first page of the result when the page size is 10.
+    for (Resource lead : ((Resource) data.getValue("products")).getChildren(0, 10)) {
+        String name = (String) ((Resource) product.getValueMap().get("name")).getDefaultValue();
+        String sku = (String) ((Resource) product.getValueMap().get("sku")).getDefaultValue();
+        String description = (String) ((Resource) product.getValueMap().get("description")).getDefaultValue();
+        // ...
+    }
+          ]]></source>
+        </div>
+
+        <p>
+          Please see the JavaDoc for detail: <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a>.
+        </p>
+
+      </subsection>
+
+    </section>
+
+  </body>
+</document>

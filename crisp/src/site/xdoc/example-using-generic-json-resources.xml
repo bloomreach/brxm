@@ -6,11 +6,11 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <document>
   <properties>
-    <title>Example Using Generic Resource Objects</title>
+    <title>Example Using Generic (JSON) Resource Objects</title>
   </properties>
   <body>
 
-    <section name="Example Using Generic Resource Objects">
+    <section name="Example Using Generic (JSON) Resource Objects">
 
       <subsection name="Introduction">
 
@@ -26,7 +26,7 @@
           nowadays is probably in JSON data format. <strong>CRISP</strong> provides a default implementation of
           <code>Resource</code> interface for JSON data with
           <a href="apidocs/com/onehippo/cms7/crisp/core/resource/jackson/JacksonResource.html">JacksonResource</a>
-          which uses Jackson library to parse JSON data.
+          which uses <a href="https://github.com/FasterXML/jackson">Jackson</a> library to parse JSON data.
         </p>
 
       </subsection>
