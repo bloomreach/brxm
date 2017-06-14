@@ -73,21 +73,7 @@
       <sv:value>/hst:hst</sv:value> 
     </sv:property> 
   </sv:node>  
-  <sv:node sv:name="default-ecm-content"> 
-    <sv:property sv:name="jcr:primaryType" sv:type="Name"> 
-      <sv:value>hippo:initializeitem</sv:value> 
-    </sv:property>  
-    <sv:property sv:name="hippo:sequence" sv:type="Double"> 
-      <sv:value>32054</sv:value> 
-    </sv:property>  
-    <sv:property sv:name="hippo:contentresource" sv:type="String"> 
-      <sv:value>default-ecm-content.xml</sv:value> 
-    </sv:property>  
-    <sv:property sv:name="hippo:contentroot" sv:type="String"> 
-      <sv:value>/</sv:value> 
-    </sv:property> 
-  </sv:node>  
-  <sv:node sv:name="sitemap"> 
+  <sv:node sv:name="sitemap">
     <sv:property sv:name="jcr:primaryType" sv:type="Name"> 
       <sv:value>hippo:initializeitem</sv:value> 
     </sv:property>  
