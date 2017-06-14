@@ -3,6 +3,8 @@
  */
 package com.onehippo.cms7.crisp.api.resource;
 
+import java.io.IOException;
+
 import com.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
 
 /**
@@ -50,16 +52,18 @@ public interface ResourceCacheResolvable {
      * Convert the given {@code resource} to a cacheable data object to be stored in {@link ResourceDataCache}.
      * @param resource resource representation
      * @return converted the given {@code resource} to a cacheable data object to be stored in {@link ResourceDataCache}
+     * @throws IOException if IO error occurs
      */
-    Object toCacheData(Resource resource);
+    Object toCacheData(Resource resource) throws IOException;
 
     /**
      * Convert and restore back the given {@code cacheData} from the {@link ResourceDataCache} to a {@link Resource}
      * object.
      * @param cacheData cached data object that is stored in {@link ResourceDataCache}
      * @return {@link Resource} object converted from the {@code cacheData}
+     * @throws IOException if IO error occurs
      */
-    Resource fromCacheData(Object cacheData);
+    Resource fromCacheData(Object cacheData) throws IOException;
 
     /**
      * Returns a {@link ResourceDataCache} that represents the underlying cache store.

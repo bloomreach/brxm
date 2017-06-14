@@ -108,23 +108,22 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
     }
 
     @Override
-    public Object toCacheData(Resource resource) {
+    public Object toCacheData(Resource resource) throws IOException {
         if (!isCacheEnabled() || !(resource instanceof JacksonResource)) {
             return null;
         }
 
-        Object body = tlResourceResultCache.get().get(resource);
+        Object body = tlResourceResultCache.get().remove(resource);
 
         if (body != null) {
-            tlResourceResultCache.get().remove(resource);
             return body;
-        } else {
-            return ((JacksonResource) resource).toJsonString(getObjectMapper());
         }
+
+        return ((JacksonResource) resource).toJsonString(getObjectMapper());
     }
 
     @Override
-    public Resource fromCacheData(Object cacheData) {
+    public Resource fromCacheData(Object cacheData) throws IOException {
         if (!isCacheEnabled() || !(cacheData instanceof String)) {
             return null;
         }
