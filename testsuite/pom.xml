@@ -192,6 +192,7 @@
     <module>api</module>
     <module>random-numbers</module>
     <module>linear-algebra</module>
+    <module>linear-algebra-sub</module>
     <!-- End Add-on component context -->
     <module>content</module>
     <module>intranet-bootstrap</module>
