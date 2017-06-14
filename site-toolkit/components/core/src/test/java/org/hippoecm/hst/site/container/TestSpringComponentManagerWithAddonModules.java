@@ -44,20 +44,20 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TestSpringComponentManagerWithAddonModules {
-    
+
     private static final String WITH_ADDON_MODULES = "/META-INF/assembly/with-addon-modules.xml";
-    
+
     private static Logger log = LoggerFactory.getLogger(TestSpringComponentManagerWithAddonModules.class);
-    
+
     @Test
     public void testWithModuleDefinitions() throws Exception {
         Configuration configuration = new PropertiesConfiguration(getClass().getResource("/META-INF/assembly/with-addon-modules-config.properties"));
         SpringComponentManager componentManager = new SpringComponentManager(configuration);
-        componentManager.setConfigurationResources(new String [] { WITH_ADDON_MODULES });
-        
+        componentManager.setConfigurationResources(new String[]{WITH_ADDON_MODULES});
+
         // addon module definitions
         List<ModuleDefinition> addonModuleDefs = new ArrayList<ModuleDefinition>();
-        
+
         // build and add analytics module definition
         ModuleDefinition def1 = new ModuleDefinition();
         def1.setName("org.example.analytics");
@@ -72,7 +72,7 @@ public class TestSpringComponentManagerWithAddonModules {
         def12.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/statistics/*.xml"));
         def1.setModuleDefinitions(Arrays.asList(def11, def12));
         addonModuleDefs.add(def1);
-        
+
         // build and add analytics2 module definition 
         ModuleDefinition def2 = new ModuleDefinition();
         def2.setName("org.example.analytics2");
@@ -87,42 +87,42 @@ public class TestSpringComponentManagerWithAddonModules {
         def22.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics2/statistics/*.xml"));
         def2.setModuleDefinitions(Arrays.asList(def21, def22));
         addonModuleDefs.add(def2);
-        
+
         componentManager.setAddonModuleDefinitions(addonModuleDefs);
-        
+
         componentManager.initialize();
         componentManager.start();
-        
+
         // from the component manager spring assemblies...
-        assertEquals("[ComponentManager] Hello from with-addon-modules-config.properties", 
+        assertEquals("[ComponentManager] Hello from with-addon-modules-config.properties",
                 componentManager.getComponent("myGreeting"));
-        assertEquals("Hello from container", 
+        assertEquals("Hello from container",
                 componentManager.getComponent("containerGreeting"));
-        
+
         // from the analytics module...
-        assertEquals("[Analytics] Hello from with-addon-modules-config.properties", 
+        assertEquals("[Analytics] Hello from with-addon-modules-config.properties",
                 componentManager.getComponent("myGreeting", "org.example.analytics"));
-        assertEquals("Hello from analytics", 
+        assertEquals("Hello from analytics",
                 componentManager.getComponent("analyticsGreeting", "org.example.analytics"));
         assertNull(componentManager.getComponent("analytics2Greeting", "org.example.analytics"));
-        assertEquals("Hello from container", 
+        assertEquals("Hello from container",
                 componentManager.getComponent("containerGreeting", "org.example.analytics"));
         List<String> greetingList = componentManager.getComponent("greetingList", "org.example.analytics");
         assertNotNull(greetingList);
         assertEquals(2, greetingList.size());
         assertEquals("Hello from container", greetingList.get(0));
         assertEquals("Hello from analytics", greetingList.get(1));
-        
+
         // from the analytics/reports module...
-        assertEquals("[Analytics Reports] Hello from with-addon-modules-config.properties", 
+        assertEquals("[Analytics Reports] Hello from with-addon-modules-config.properties",
                 componentManager.getComponent("myGreeting", "org.example.analytics", "reports"));
-        assertEquals("Hello from analytics", 
+        assertEquals("Hello from analytics",
                 componentManager.getComponent("analyticsGreeting", "org.example.analytics", "reports"));
         assertNull(componentManager.getComponent("analytics2Greeting", "org.example.analytics", "reports"));
-        assertEquals("Hello from analytics reports", 
+        assertEquals("Hello from analytics reports",
                 componentManager.getComponent("analyticsReportsGreeting", "org.example.analytics", "reports"));
         assertNull(componentManager.getComponent("analytics2ReportsGreeting", "org.example.analytics", "reports"));
-        assertEquals("Hello from container", 
+        assertEquals("Hello from container",
                 componentManager.getComponent("containerGreeting", "org.example.analytics", "reports"));
         greetingList = componentManager.getComponent("greetingList", "org.example.analytics", "reports");
         assertNotNull(greetingList);
@@ -132,15 +132,15 @@ public class TestSpringComponentManagerWithAddonModules {
         assertEquals("Hello from analytics reports", greetingList.get(2));
 
         // from the analytics/statistics module...
-        assertEquals("[Analytics Statistics] Hello from with-addon-modules-config.properties", 
+        assertEquals("[Analytics Statistics] Hello from with-addon-modules-config.properties",
                 componentManager.getComponent("myGreeting", "org.example.analytics", "statistics"));
-        assertEquals("Hello from analytics", 
+        assertEquals("Hello from analytics",
                 componentManager.getComponent("analyticsGreeting", "org.example.analytics", "statistics"));
         assertNull(componentManager.getComponent("analytics2Greeting", "org.example.analytics", "statistics"));
-        assertEquals("Hello from analytics statistics", 
+        assertEquals("Hello from analytics statistics",
                 componentManager.getComponent("analyticsStatisticsGreeting", "org.example.analytics", "statistics"));
         assertNull(componentManager.getComponent("analytics2StatisticsGreeting", "org.example.analytics", "statistics"));
-        assertEquals("Hello from container", 
+        assertEquals("Hello from container",
                 componentManager.getComponent("containerGreeting", "org.example.analytics", "statistics"));
         greetingList = componentManager.getComponent("greetingList", "org.example.analytics", "statistics");
         assertNotNull(greetingList);
@@ -150,12 +150,12 @@ public class TestSpringComponentManagerWithAddonModules {
         assertEquals("Hello from analytics statistics", greetingList.get(2));
 
         // from the analytics2 module...
-        assertEquals("[Analytics2] Hello from with-addon-modules-config.properties", 
+        assertEquals("[Analytics2] Hello from with-addon-modules-config.properties",
                 componentManager.getComponent("myGreeting", "org.example.analytics2"));
-        assertEquals("Hello from analytics2", 
+        assertEquals("Hello from analytics2",
                 componentManager.getComponent("analytics2Greeting", "org.example.analytics2"));
         assertNull(componentManager.getComponent("analyticsGreeting", "org.example.analytics2"));
-        assertEquals("Hello from container", 
+        assertEquals("Hello from container",
                 componentManager.getComponent("containerGreeting", "org.example.analytics2"));
         greetingList = componentManager.getComponent("greetingList", "org.example.analytics2");
         assertNotNull(greetingList);
@@ -164,15 +164,15 @@ public class TestSpringComponentManagerWithAddonModules {
         assertEquals("Hello from analytics2", greetingList.get(1));
 
         // from the analytics2/reports module...
-        assertEquals("[Analytics2 Reports] Hello from with-addon-modules-config.properties", 
+        assertEquals("[Analytics2 Reports] Hello from with-addon-modules-config.properties",
                 componentManager.getComponent("myGreeting", "org.example.analytics2", "reports"));
-        assertEquals("Hello from analytics2", 
+        assertEquals("Hello from analytics2",
                 componentManager.getComponent("analytics2Greeting", "org.example.analytics2", "reports"));
         assertNull(componentManager.getComponent("analyticsGreeting", "org.example.analytics2", "reports"));
-        assertEquals("Hello from analytics2 reports", 
+        assertEquals("Hello from analytics2 reports",
                 componentManager.getComponent("analytics2ReportsGreeting", "org.example.analytics2", "reports"));
         assertNull(componentManager.getComponent("analyticsReportsGreeting", "org.example.analytics2", "reports"));
-        assertEquals("Hello from container", 
+        assertEquals("Hello from container",
                 componentManager.getComponent("containerGreeting", "org.example.analytics2", "reports"));
         greetingList = componentManager.getComponent("greetingList", "org.example.analytics2", "reports");
         assertNotNull(greetingList);
@@ -182,15 +182,15 @@ public class TestSpringComponentManagerWithAddonModules {
         assertEquals("Hello from analytics2 reports", greetingList.get(2));
 
         // from the analytics2/statistics module...
-        assertEquals("[Analytics2 Statistics] Hello from with-addon-modules-config.properties", 
+        assertEquals("[Analytics2 Statistics] Hello from with-addon-modules-config.properties",
                 componentManager.getComponent("myGreeting", "org.example.analytics2", "statistics"));
-        assertEquals("Hello from analytics2", 
+        assertEquals("Hello from analytics2",
                 componentManager.getComponent("analytics2Greeting", "org.example.analytics2", "statistics"));
         assertNull(componentManager.getComponent("analyticsGreeting", "org.example.analytics2", "statistics"));
-        assertEquals("Hello from analytics2 statistics", 
+        assertEquals("Hello from analytics2 statistics",
                 componentManager.getComponent("analytics2StatisticsGreeting", "org.example.analytics2", "statistics"));
         assertNull(componentManager.getComponent("analyticsStatisticsGreeting", "org.example.analytics2", "statistics"));
-        assertEquals("Hello from container", 
+        assertEquals("Hello from container",
                 componentManager.getComponent("containerGreeting", "org.example.analytics2", "statistics"));
         greetingList = componentManager.getComponent("greetingList", "org.example.analytics2", "statistics");
         assertNotNull(greetingList);
@@ -236,7 +236,7 @@ public class TestSpringComponentManagerWithAddonModules {
     private void addonModuleAssertions(final List<ModuleDefinition> addonModuleDefs) throws ConfigurationException {
         Configuration configuration = new PropertiesConfiguration(getClass().getResource("/META-INF/assembly/with-addon-modules-config.properties"));
         SpringComponentManager componentManager = new SpringComponentManager(configuration);
-        componentManager.setConfigurationResources(new String [] { WITH_ADDON_MODULES });
+        componentManager.setConfigurationResources(new String[]{WITH_ADDON_MODULES});
         componentManager.setAddonModuleDefinitions(addonModuleDefs);
 
         componentManager.initialize();
@@ -307,14 +307,53 @@ public class TestSpringComponentManagerWithAddonModules {
     }
 
     @Test
+    public void test_module_definition_containing_non_existing_parent_is_skipped() throws Exception {
+        List<ModuleDefinition> addonModuleDefs = new ArrayList<>();
+
+        // build and add analytics module definition
+        ModuleDefinition def1 = new ModuleDefinition();
+        def1.setName("org.example.analytics");
+        def1.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/*.xml"));
+
+        addonModuleDefs.add(def1);
+        Configuration configuration = new PropertiesConfiguration(getClass().getResource("/META-INF/assembly/with-addon-modules-config.properties"));
+        SpringComponentManager componentManager = new SpringComponentManager(configuration);
+        componentManager.setConfigurationResources(new String[]{WITH_ADDON_MODULES});
+        componentManager.setAddonModuleDefinitions(addonModuleDefs);
+
+        componentManager.initialize();
+        componentManager.start();
+
+        assertNotNull(componentManager.getComponent("analyticsGreeting", "org.example.analytics"));
+
+        componentManager.stop();
+        componentManager.close();
+
+        // non existing parent skips the addon
+        def1.setParent("org.example");
+
+        componentManager.initialize();
+        componentManager.start();
+
+        try {
+            componentManager.getComponent("analyticsGreeting", "org.example.analytics");
+            fail("Expected ModuleNotFoundException");
+        } catch (ModuleNotFoundException e) {
+            // correct
+        }
+        componentManager.stop();
+        componentManager.close();
+    }
+
+    @Test
     public void testHttpSessionApplicationEventListeners() throws Exception {
         Configuration configuration = new PropertiesConfiguration();
         SpringComponentManager componentManager = new SpringComponentManager(configuration);
-        componentManager.setConfigurationResources(new String [] { WITH_ADDON_MODULES });
-        
+        componentManager.setConfigurationResources(new String[]{WITH_ADDON_MODULES});
+
         // addon module definitions
         List<ModuleDefinition> addonModuleDefs = new ArrayList<ModuleDefinition>();
-        
+
         // build and add analytics module definition
         ModuleDefinition def1 = new ModuleDefinition();
         def1.setName("org.example.analytics");
@@ -329,9 +368,9 @@ public class TestSpringComponentManagerWithAddonModules {
         def12.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/statistics/*.xml"));
         def1.setModuleDefinitions(Arrays.asList(def11, def12));
         addonModuleDefs.add(def1);
-        
+
         componentManager.setAddonModuleDefinitions(addonModuleDefs);
-        
+
         componentManager.initialize();
         componentManager.start();
 
@@ -403,7 +442,7 @@ public class TestSpringComponentManagerWithAddonModules {
     public void testFailedModuleInstances() throws Exception {
         Configuration configuration = new PropertiesConfiguration();
         final SpringComponentManager componentManager = new SpringComponentManager(configuration);
-        componentManager.setConfigurationResources(new String [] { WITH_ADDON_MODULES });
+        componentManager.setConfigurationResources(new String[]{WITH_ADDON_MODULES});
 
         // addon module definitions
         List<ModuleDefinition> addonModuleDefs = new ArrayList<ModuleDefinition>();
@@ -445,7 +484,7 @@ public class TestSpringComponentManagerWithAddonModules {
         ServletContext servletContext = new MockServletContext();
         Configuration configuration = new PropertiesConfiguration();
         final SpringComponentManager componentManager = new SpringComponentManager(servletContext, configuration);
-        componentManager.setConfigurationResources(new String [] { WITH_ADDON_MODULES });
+        componentManager.setConfigurationResources(new String[]{WITH_ADDON_MODULES});
 
         // addon module definitions
         List<ModuleDefinition> addonModuleDefs = new ArrayList<ModuleDefinition>();
@@ -459,7 +498,7 @@ public class TestSpringComponentManagerWithAddonModules {
         componentManager.setAddonModuleDefinitions(addonModuleDefs);
         componentManager.initialize();
 
-        MyServletContextAwareSpringBean servletContextAwareBean =  componentManager.getComponent("servletContextAwareBean", "org.example.servletctxawaremodulebeans");
+        MyServletContextAwareSpringBean servletContextAwareBean = componentManager.getComponent("servletContextAwareBean", "org.example.servletctxawaremodulebeans");
 
         assertTrue(servletContextAwareBean.getServletContext() == servletContext);
 
