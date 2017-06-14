@@ -3,6 +3,8 @@
  */
 package com.onehippo.cms7.crisp.api.resource;
 
+import java.io.IOException;
+
 /**
  * Abstract {@link ResourceCacheResolvable} base class.
  */
@@ -25,7 +27,7 @@ public abstract class AbstractResourceCacheResolvable implements ResourceCacheRe
      * {@inheritDoc}
      */
     @Override
-    public Object toCacheData(Resource resource) {
+    public Object toCacheData(Resource resource) throws IOException {
         return null;
     }
 
@@ -33,7 +35,7 @@ public abstract class AbstractResourceCacheResolvable implements ResourceCacheRe
      * {@inheritDoc}
      */
     @Override
-    public Resource fromCacheData(Object cacheData) {
+    public Resource fromCacheData(Object cacheData) throws IOException {
         return null;
     }
 

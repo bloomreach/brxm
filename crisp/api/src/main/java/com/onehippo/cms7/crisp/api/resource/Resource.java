@@ -68,6 +68,36 @@ public interface Resource extends Serializable {
     Object getValue(String relPath);
 
     /**
+     * Resolves a property value of this resource by the given {@code relPath} and converts it into the given type.
+     * Or null if not resolved by the {@code relPath}.
+     * <p>If {@code relPath} is a relative value path, like <code>"content/title"</code>, then the return should
+     * be equivalent to the result of the call, <code>((Resource) getValueMap().get("content")).getValueMap().get("title")</code>
+     * if existing.
+     * <p>In addition, a path segment may contain an array index notation like <code>"content/images[1]/title"</code>.
+     * In this case, the value at <code>content/images</code> must be an array type <code>Resource</code> object which
+     * returns true on <code>Resource.isArray()</code>.</p>
+     * @param relPath property or child resource relative path
+     * @return a resolved property value of this resource by the given {@code relPath}. Or null if not resolved by the {@code relPath}
+     */
+    <T> T getValue(String relPath, Class<T> type);
+
+    /**
+     * Resolves the default property value of this resource if available, or null if unavailable.
+     * The default value resolution totally depends on the implementations. For example, an XML element based
+     * implementation may choose to return the text content of the underlying element.
+     * @return the default property value of this resource if available, or null if unavailable
+     */
+    Object getDefaultValue();
+
+    /**
+     * Resolves the default property value of this resource if available and converts it into the given type, or
+     * null if unavailable. The default value resolution totally depends on the implementations. For example, an XML element based
+     * implementation may choose to return the text content of the underlying element.
+     * @return the default property value of this resource if available, or null if unavailable
+     */
+    <T> T getDefaultValue(Class<T> type);
+
+    /**
      * Returns parent resource representation if there's any.
      * @return parent resource representation if there's any
      */

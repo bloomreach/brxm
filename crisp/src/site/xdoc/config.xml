@@ -6,11 +6,11 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <document>
   <properties>
-    <title>Configuring Hippo Addon CRISP</title>
+    <title>Configuring CRISP Addon</title>
   </properties>
   <body>
 
-    <section name="Configuring Hippo Addon CRISP">
+    <section name="Configuring CRISP Addon">
 
       <subsection name="Introduction">
         <p>

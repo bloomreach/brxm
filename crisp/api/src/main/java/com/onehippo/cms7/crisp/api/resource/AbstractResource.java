@@ -3,6 +3,7 @@
  */
 package com.onehippo.cms7.crisp.api.resource;
 
+import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -123,6 +124,7 @@ public abstract class AbstractResource implements Resource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isAnyChildContained() {
         return false;
     }
@@ -130,6 +132,7 @@ public abstract class AbstractResource implements Resource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isArray() {
         return false;
     }
@@ -208,4 +211,57 @@ public abstract class AbstractResource implements Resource {
 
         return value;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T getValue(String relPath, Class<T> type) {
+        final Object value = getValue(relPath);
+
+        if (value != null && type != null) {
+            if (value instanceof String) {
+                if (type == Integer.class) {
+                    return (T) Integer.valueOf((String) value);
+                } else if (type == Long.class) {
+                    return (T) Long.valueOf((String) value);
+                } else if (type == Double.class) {
+                    return (T) Double.valueOf((String) value);
+                } else if (type == Boolean.class) {
+                    return (T) Boolean.valueOf((String) value);
+                } else if (type == BigDecimal.class) {
+                    return (T) new BigDecimal((String) value);
+                }
+            }
+
+            if (!type.isAssignableFrom(value.getClass())) {
+                throw new IllegalArgumentException("The type doesn't match with the value type: " + value.getClass());
+            }
+        }
+
+        return (T) value;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <P>
+     * This default implementation is equivalent to <code>getValueMap().get("")</code> if not overriden.
+     * </P>
+     */
+    @Override
+    public Object getDefaultValue() {
+        return getValueMap().get("");
+    }
+
+    /**
+     * {@inheritDoc}
+     * <P>
+     * This default implementation is equivalent to <code>getValueMap().get("", type)</code> if not overriden.
+     * </P>
+     */
+    @Override
+    public <T> T getDefaultValue(Class<T> type) {
+        return getValueMap().get("", type);
+    }
+
 }
