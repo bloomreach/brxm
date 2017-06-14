@@ -22,6 +22,7 @@ import java.util.List;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.event.HttpSessionCreatedEvent;
 import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
@@ -200,6 +201,131 @@ public class TestSpringComponentManagerWithAddonModules {
 
         componentManager.stop();
         componentManager.close();
+    }
+
+    @Test
+    public void test_ordered_module_nested_definition_by_name_can_lookup_in_parent_module() throws Exception {
+        // addon module definitions
+        List<ModuleDefinition> addonModuleDefs = new ArrayList<ModuleDefinition>();
+
+        // build and add analytics module definition
+        ModuleDefinition def1 = new ModuleDefinition();
+        def1.setName("org.example.analytics");
+        def1.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/*.xml"));
+        // build and add analytics/reports module definition
+        ModuleDefinition def11 = new ModuleDefinition();
+        def11.setName("org.example.analytics.reports");
+        def11.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/reports/*.xml"));
+        // build and add analytics/statistics module definition
+        ModuleDefinition def12 = new ModuleDefinition();
+        // parent org.example.analytics.missing is missing but org.example.analytics exists so should use org.example.analytics
+        // as parent application context
+        def12.setName("org.example.analytics.missingparent.statistics");
+        def12.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/statistics/*.xml"));
+
+        addonModuleDefs.add(def1);
+        addonModuleDefs.add(def11);
+        addonModuleDefs.add(def12);
+        addonModuleAssertions(addonModuleDefs);
+    }
+
+    @Test
+    public void test_unordered_module_nested_definition_by_name_can_lookup_in_parent_module() throws Exception {
+        // addon module definitions
+        List<ModuleDefinition> addonModuleDefs = new ArrayList<ModuleDefinition>();
+
+        // build and add analytics module definition
+        ModuleDefinition def1 = new ModuleDefinition();
+        def1.setName("org.example.analytics");
+        def1.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/*.xml"));
+        // build and add analytics/reports module definition
+        ModuleDefinition def11 = new ModuleDefinition();
+        def11.setName("org.example.analytics.reports");
+        def11.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/reports/*.xml"));
+        // build and add analytics/statistics module definition
+        ModuleDefinition def12 = new ModuleDefinition();
+        // parent org.example.analytics.missing is missing but org.example.analytics exists so should use org.example.analytics
+        // as parent application context
+        def12.setName("org.example.analytics.missingparent.statistics");
+        def12.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/statistics/*.xml"));
+
+        addonModuleDefs.add(def12);
+        addonModuleDefs.add(def11);
+        addonModuleDefs.add(def1);
+        addonModuleAssertions(addonModuleDefs);
+    }
+
+    private void addonModuleAssertions(final List<ModuleDefinition> addonModuleDefs) throws ConfigurationException {
+        Configuration configuration = new PropertiesConfiguration(getClass().getResource("/META-INF/assembly/with-addon-modules-config.properties"));
+        SpringComponentManager componentManager = new SpringComponentManager(configuration);
+        componentManager.setConfigurationResources(new String [] { WITH_ADDON_MODULES });
+        componentManager.setAddonModuleDefinitions(addonModuleDefs);
+
+        componentManager.initialize();
+        componentManager.start();
+
+        beanAssertions(componentManager);
+
+        componentManager.stop();
+        componentManager.close();
+    }
+
+    private void beanAssertions(final SpringComponentManager componentManager) {
+        // from the component manager spring assemblies...
+        assertEquals("[ComponentManager] Hello from with-addon-modules-config.properties",
+                componentManager.getComponent("myGreeting"));
+        assertEquals("Hello from container",
+                componentManager.getComponent("containerGreeting"));
+
+        // from the analytics module...
+        assertEquals("[Analytics] Hello from with-addon-modules-config.properties",
+                componentManager.getComponent("myGreeting", "org.example.analytics"));
+        assertEquals("Hello from analytics",
+                componentManager.getComponent("analyticsGreeting", "org.example.analytics"));
+        assertNull(componentManager.getComponent("analytics2Greeting", "org.example.analytics"));
+        assertEquals("Hello from container",
+                componentManager.getComponent("containerGreeting", "org.example.analytics"));
+        List<String> greetingList = componentManager.getComponent("greetingList", "org.example.analytics");
+        assertNotNull(greetingList);
+        assertEquals(2, greetingList.size());
+        assertEquals("Hello from container", greetingList.get(0));
+        assertEquals("Hello from analytics", greetingList.get(1));
+
+        // from the analytics/reports module...
+        assertEquals("[Analytics Reports] Hello from with-addon-modules-config.properties",
+                componentManager.getComponent("myGreeting", "org.example.analytics.reports"));
+        assertEquals("Hello from analytics",
+                componentManager.getComponent("analyticsGreeting", "org.example.analytics.reports"));
+        assertNull(componentManager.getComponent("analytics2Greeting", "org.example.analytics.reports"));
+        assertEquals("Hello from analytics reports",
+                componentManager.getComponent("analyticsReportsGreeting", "org.example.analytics.reports"));
+        assertNull(componentManager.getComponent("analytics2ReportsGreeting", "org.example.analytics.reports"));
+        assertEquals("Hello from container",
+                componentManager.getComponent("containerGreeting", "org.example.analytics.reports"));
+        greetingList = componentManager.getComponent("greetingList", "org.example.analytics.reports");
+        assertNotNull(greetingList);
+        assertEquals(3, greetingList.size());
+        assertEquals("Hello from container", greetingList.get(0));
+        assertEquals("Hello from analytics", greetingList.get(1));
+        assertEquals("Hello from analytics reports", greetingList.get(2));
+
+        // from the analytics/statistics module...
+        assertEquals("[Analytics Statistics] Hello from with-addon-modules-config.properties",
+                componentManager.getComponent("myGreeting", "org.example.analytics.missingparent.statistics"));
+        assertEquals("Hello from analytics",
+                componentManager.getComponent("analyticsGreeting", "org.example.analytics.missingparent.statistics"));
+        assertNull(componentManager.getComponent("analytics2Greeting", "org.example.analytics.missingparent.statistics"));
+        assertEquals("Hello from analytics statistics",
+                componentManager.getComponent("analyticsStatisticsGreeting", "org.example.analytics.missingparent.statistics"));
+        assertNull(componentManager.getComponent("analytics2StatisticsGreeting", "org.example.analytics.missingparent.statistics"));
+        assertEquals("Hello from container",
+                componentManager.getComponent("containerGreeting", "org.example.analytics.missingparent.statistics"));
+        greetingList = componentManager.getComponent("greetingList", "org.example.analytics.missingparent.statistics");
+        assertNotNull(greetingList);
+        assertEquals(3, greetingList.size());
+        assertEquals("Hello from container", greetingList.get(0));
+        assertEquals("Hello from analytics", greetingList.get(1));
+        assertEquals("Hello from analytics statistics", greetingList.get(2));
     }
 
     @Test

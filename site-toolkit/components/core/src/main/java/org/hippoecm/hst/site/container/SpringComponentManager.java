@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import com.google.common.eventbus.EventBus;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.addon.module.ModuleInstance;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
@@ -41,6 +42,7 @@ import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.addon.module.runtime.ModuleInstanceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
@@ -149,17 +151,24 @@ public class SpringComponentManager implements ComponentManager {
         applicationContext.refresh();
 
         if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
+
+            // sort the addon module to makes sure the ones with the 'deepest' names are loaded last since they
+            // might rely on a different parent than applicationContext
+            sortAddonModuleDefinitions();
+
             addonModuleInstancesMap = Collections.synchronizedMap(new HashMap<String, ModuleInstance>());
             
             for (ModuleDefinition addonModuleDefinition : addonModuleDefinitions) {
                 ModuleInstance addonModuleInstance = new ModuleInstanceImpl(addonModuleDefinition);
-                
+
+                ApplicationContext parentApplicationContext = findParentApplicationContext(addonModuleInstance);
+
                 if (addonModuleInstance instanceof ComponentManagerAware) {
                     ((ComponentManagerAware) addonModuleInstance).setComponentManager(this);
                 }
                 
                 if (addonModuleInstance instanceof ApplicationContextAware) {
-                    ((ApplicationContextAware) addonModuleInstance).setApplicationContext(applicationContext);
+                    ((ApplicationContextAware) addonModuleInstance).setApplicationContext(parentApplicationContext);
                 }
                 
                 try {
@@ -178,9 +187,38 @@ public class SpringComponentManager implements ComponentManager {
             }
 
             synchronized (addonModuleInstancesMap) {
-                addonModuleInstancesList = Collections.synchronizedList(new ArrayList<ModuleInstance>(addonModuleInstancesMap.values()));
+                addonModuleInstancesList = Collections.synchronizedList(new ArrayList<>(addonModuleInstancesMap.values()));
             }
         }
+    }
+
+    private ApplicationContext findParentApplicationContext(final ModuleInstance addonModuleInstance) {
+        String currentName = addonModuleInstance.getName();
+        while (currentName.contains(".")) {
+            String parentName = StringUtils.substringBeforeLast(currentName, ".");
+            ModuleInstanceImpl parentModuleInstance = (ModuleInstanceImpl)addonModuleInstancesMap.get(parentName);
+            if (parentModuleInstance != null) {
+                // found a parent module
+                return parentModuleInstance.getApplicationContext();
+            }
+            currentName = parentName;
+        }
+        // the root is the parent since no other parent found
+        return applicationContext;
+    }
+
+    private void sortAddonModuleDefinitions() {
+        Collections.sort(addonModuleDefinitions, (o1, o2) -> {
+            int depth1 = o1.getName().split("\\.").length;
+            int depth2 = o2.getName().split("\\.").length;
+            if (depth1  == depth2 ) {
+                // no particular order
+                return o1.getName().compareTo(o2.getName());
+            }
+            // the deepest most be loaded latest because a 'deeper' name can possibly refer to a bean from
+            // an ancestor
+            return depth1 - depth2;
+        });
     }
 
     public void start() {
