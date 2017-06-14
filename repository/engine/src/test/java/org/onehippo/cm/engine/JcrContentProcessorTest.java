@@ -31,8 +31,6 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFactory;
 
-import com.google.common.io.Files;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +48,8 @@ import org.onehippo.cm.model.impl.ModelTestUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+
+import com.google.common.io.Files;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -200,8 +200,8 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
         importedNode.setProperty("binary", binary);
         session.save();
 
-        final JcrContentProcessor processingService = new JcrContentProcessor();
-        ModuleImpl module = processingService.exportNode(importedNode);
+        final ExportContentProcessor exportContentProcessor = new ExportContentProcessor();
+        ModuleImpl module = exportContentProcessor.exportNode(importedNode);
 
         File tempDir = Files.createTempDir();
         Path moduleRootPath = Paths.get(tempDir.getPath());

@@ -24,7 +24,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,8 +44,8 @@ import javax.jcr.util.TraversingItemVisitor;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.RevisionEvent;
 import org.hippoecm.repository.api.RevisionEventJournal;
+import org.onehippo.cm.engine.AutoExportContentProcessor;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
-import org.onehippo.cm.engine.JcrContentProcessor;
 import org.onehippo.cm.engine.JcrResourceInputProvider;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.FileConfigurationWriter;
@@ -65,9 +64,6 @@ import org.onehippo.cm.model.serializer.SourceSerializer;
 import org.onehippo.cm.model.util.ConfigurationModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 
@@ -483,10 +479,10 @@ public class EventJournalProcessor {
             }
         }
 
-        JcrContentProcessor jcrInputProcessor = new JcrContentProcessor(currentModel, configuration);
+        final AutoExportContentProcessor autoExportContentProcessor = new AutoExportContentProcessor(currentModel, configuration);
         for (String path : pendingChanges.getChangedConfig()) {
             log.info("Computing diff for path: \n\t{}", path);
-            jcrInputProcessor.exportConfigNode(eventProcessorSession, path, configSource);
+            autoExportContentProcessor.exportConfigNode(eventProcessorSession, path, configSource);
         }
 
         // empty defs rarely happen when a new node ends up having only excluded properties -- clean them up

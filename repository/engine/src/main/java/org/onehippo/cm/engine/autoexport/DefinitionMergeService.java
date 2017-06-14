@@ -15,9 +15,7 @@
  */
 package org.onehippo.cm.engine.autoexport;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,7 +39,7 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.onehippo.cm.engine.JcrContentProcessor;
+import org.onehippo.cm.engine.ExportContentProcessor;
 import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionItem;
 import org.onehippo.cm.model.DefinitionNode;
@@ -1123,7 +1121,7 @@ public class DefinitionMergeService {
                     final ContentDefinitionImpl def = (ContentDefinitionImpl) source.getDefinitions().get(0);
                     final String rootPath = def.getNode().getPath();
                     try {
-                        new JcrContentProcessor().exportNode(jcrSession.getNode(rootPath), def, true,
+                        new ExportContentProcessor().exportNode(jcrSession.getNode(rootPath), def, true,
                                 // exclude all paths that have their own sources
                                 Sets.difference(newSourcePaths, Sets.newTreeSet(Collections.singleton(rootPath))));
                     }
