@@ -898,34 +898,6 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
     }
 
     @Test
-    public void expect_uuid_to_be_retained_when_removed_from_the_model() throws Exception {
-        final String uuid = "e4ecf93e-2708-40b4-b091-51d84169a174";
-        final String definition
-                = "definitions:\n"
-                + "  config:\n"
-                + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      /child:\n"
-                + "        jcr:primaryType: nt:unstructured\n"
-                + "        jcr:uuid: "+uuid+"\n"
-                + "";
-        final ConfigurationModel baseline = applyDefinitions(definition);
-
-        final String update
-                = "definitions:\n"
-                + "  config:\n"
-                + "    /test:\n"
-                + "      jcr:primaryType: nt:unstructured\n"
-                + "      /child:\n"
-                + "        jcr:primaryType: nt:unstructured";
-        ExpectedEvents expectedEvents = new ExpectedEvents().expectPropertyRemoved("/test/child/" + JCR_UUID);
-        applyDefinitions(update, baseline, expectedEvents);
-
-        // Interesting enough, the node still has this identifier...
-        assertEquals(uuid, testNode.getNode("child").getIdentifier());
-    }
-
-    @Test
     public void expect_new_jcr_uuid_created_on_collision() throws Exception {
         final String uuid = "e4ecf93e-2708-40b4-b091-51d84169a174";
         final String definition
