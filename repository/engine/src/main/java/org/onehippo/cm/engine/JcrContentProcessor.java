@@ -69,19 +69,23 @@ public class JcrContentProcessor {
      * @param modelNode
      * @param parentNode
      */
-    public synchronized void importNode(final DefinitionNode modelNode, final Node parentNode, final ActionType actionType) throws RepositoryException, IOException {
+    public synchronized void importNode(final DefinitionNodeImpl modelNode, final Node parentNode, final ActionType actionType) throws RepositoryException, IOException {
         if (actionType == DELETE) {
             throw new IllegalArgumentException("DELETE action is not supported for import operation");
         }
 
-        final DefinitionNodeImpl newNode = constructNewParentNode(modelNode, parentNode.getPath());
+        try {
+            modelNode.getDefinition().setRootPath(constructNodePath(parentNode.getPath(), modelNode.getName()));
 
-        final Session session = parentNode.getSession();
-        validateAppendAction(newNode.getPath(), actionType, session);
+            final Session session = parentNode.getSession();
+            validateAppendAction(modelNode.getDefinition().getRootPath(), actionType, session);
 
-        final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences = new ArrayList<>();
-        applyNode(newNode, parentNode, actionType, unprocessedReferences);
-        applyUnprocessedReferences(unprocessedReferences);
+            final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences = new ArrayList<>();
+            applyNode(modelNode, parentNode, actionType, unprocessedReferences);
+            applyUnprocessedReferences(unprocessedReferences);
+        } finally {
+            modelNode.getDefinition().setRootPath(null);
+        }
     }
 
     /**
@@ -96,25 +100,6 @@ public class JcrContentProcessor {
         if (nodeExists && actionType == APPEND) {
             throw new ItemExistsException(String.format("Node already exists at path %s", nodePath));
         }
-    }
-
-    /**
-     * Create new definition node under given path path
-     * @param modelNode {@link DefinitionNode} source node
-     * @param path new path
-     * @return Node under the new path
-     */
-    private DefinitionNodeImpl constructNewParentNode(final DefinitionNode modelNode, final String path) throws RepositoryException {
-
-        final String newPath = constructNodePath(path, modelNode.getName());
-
-        final DefinitionNodeImpl node = (DefinitionNodeImpl) modelNode;
-        final DefinitionNodeImpl newNode = new DefinitionNodeImpl(newPath, modelNode.getName(), node.getDefinition());
-        newNode.getModifiableNodes().putAll(node.getModifiableNodes());
-        newNode.getModifiableProperties().putAll(node.getModifiableProperties());
-        newNode.setOrderBefore(node.getOrderBefore());
-        newNode.setIgnoreReorderedChildren(node.getIgnoreReorderedChildren());
-        return newNode;
     }
 
     private String constructNodePath(final String path, final String nodeName) {

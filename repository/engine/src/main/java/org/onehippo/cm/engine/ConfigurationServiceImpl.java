@@ -37,13 +37,13 @@ import org.onehippo.cm.engine.impl.ZipCompressor;
 import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.ExportModuleContext;
 import org.onehippo.cm.model.FileConfigurationWriter;
 import org.onehippo.cm.model.ImportModuleContext;
 import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.PathConfigurationReader;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
@@ -276,7 +276,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         final ModuleContext moduleContext = new ImportModuleContext(module, zipRootPath);
         try {
             new PathConfigurationReader().readModule(module, moduleContext, false);
-            final ContentDefinition contentDefinition = (ContentDefinition) module.getContentSources().iterator().next().getDefinitions().get(0);
+            final ContentDefinitionImpl contentDefinition = (ContentDefinitionImpl)module.getContentSources().iterator().next().getDefinitions().get(0);
             contentService.importNode(contentDefinition.getNode(), parentNode, ActionType.RELOAD);
         } catch (ParserException e) {
             throw new RuntimeException("Import failed", e);

@@ -176,7 +176,7 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
         saveContent(configModel1);
         session.save();
 
-        final ConfigurationModel configModel2 = createConfigurationModel(new String[]{source2});
+        final ConfigurationModelImpl configModel2 = createConfigurationModel(new String[]{source2});
 
         final JcrContentProcessor processingService = new JcrContentProcessor();
 
@@ -342,7 +342,7 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
         session.save();
     }
 
-    private ConfigurationModel createConfigurationModel(final String[] sources) throws Exception {
+    private ConfigurationModelImpl createConfigurationModel(final String[] sources) throws Exception {
         final ConfigurationModelImpl model = new ConfigurationModelImpl();
         for (int i = 0; i < sources.length; i++) {
             final List<AbstractDefinitionImpl> definitions = parseNoSort(sources[i], "test-module-" + i, false);

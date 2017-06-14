@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.jcr.Binary;
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -35,15 +36,13 @@ import javax.jcr.ValueFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.ConfigurationProperty;
-import org.onehippo.cm.model.ContentDefinition;
+import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.DefinitionProperty;
 import org.onehippo.cm.model.ModelItem;
 import org.onehippo.cm.model.ModelProperty;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
-import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -302,7 +301,8 @@ public abstract class ValueProcessor {
         if (property.isMultiple()) {
             indexPostfix = Integer.toString(valueIndex);
         }
-        switch (jcrValue.getType()) {
+        final int jcrType = jcrValue.getType();
+        switch (jcrType) {
             case STRING:
                 return new ValueImpl(jcrValue.getString());
             case BINARY:
@@ -323,16 +323,40 @@ public abstract class ValueProcessor {
             case URI:
             case NAME:
             case PATH:
+                return new ValueImpl(jcrValue.getString());
             case REFERENCE:
             case WEAKREFERENCE:
-                // REFERENCE and WEAKREFERENCE type values already are resolved to hold a validated uuid
-                return new ValueImpl(jcrValue.getString());
+                return getPathValue(property, jcrType, jcrValue, definitionNode);
             case DECIMAL:
                 return new ValueImpl(jcrValue.getDecimal());
             default:
-                final String msg = String.format("Unsupported jcrValue type '%s'.", jcrValue.getType());
+                final String msg = String.format("Unsupported jcrValue type '%s'.", jcrType);
                 throw new RuntimeException(msg);
         }
+    }
+
+    protected static ValueImpl getPathValue(final Property property, final int jcrType, final javax.jcr.Value jcrValue,
+                                            final DefinitionNode definitionNode) throws RepositoryException {
+        final String uuid = jcrValue.getString();
+        String path = null;
+        try {
+            Node jcrNode = property.getSession().getNodeByIdentifier(uuid);
+            path = jcrNode.getPath();
+            final String rootPath = definitionNode.getDefinition().getRootPath();
+            if (!"/".equals(rootPath)) {
+                if (path.equals(rootPath)) {
+                    path = "";
+                } else if (path.startsWith(rootPath+"/")) {
+                    path = path.substring(rootPath.length()+1);
+                }
+            }
+        } catch (ItemNotFoundException e) {
+            // might be a weakreference gone, or access denied: export uuid value instead of path
+        }
+        if (path != null) {
+            return new ValueImpl(path, ValueType.fromJcrType(jcrType), false, true);
+        }
+        return new ValueImpl(uuid, ValueType.fromJcrType(jcrType), false, false);
     }
 
     public static List<Value> determineVerifiedValues(final ModelProperty property, final Session session)
@@ -373,7 +397,7 @@ public abstract class ValueProcessor {
             String nodePath = identifier;
             if (!nodePath.startsWith("/")) {
                 // path reference is relative to content definition root path
-                final String rootPath = ((ContentDefinition) modelValue.getParent().getDefinition()).getNode().getPath();
+                final String rootPath = modelValue.getParent().getDefinition().getRootPath();
                 final StringBuilder pathBuilder = new StringBuilder(rootPath);
                 if (!StringUtils.EMPTY.equals(nodePath)) {
                     if (!"/".equals(rootPath)) {

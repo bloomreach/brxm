@@ -91,6 +91,7 @@ public class ExportContentProcessor {
             definitionNode = new DefinitionNodeImpl("/" + node.getName(), node.getName(), contentDefinition);
         }
         contentDefinition.setNode(definitionNode);
+        contentDefinition.setRootPath(node.getPath());
 
         exportProperties(node, definitionNode);
         definitionNode.sortProperties();

@@ -77,11 +77,11 @@ public class ConfigurationContentService {
     /**
      * Import ContentDefinition
      *
-     * @param node {@link DefinitionNode} to import
+     * @param node {@link DefinitionNodeImpl} to import
      * @param parentNode parent node
      * @param actionType action type
      */
-    public void importNode(DefinitionNode node, Node parentNode, ActionType actionType) throws RepositoryException, IOException {
+    public void importNode(DefinitionNodeImpl node, Node parentNode, ActionType actionType) throws RepositoryException, IOException {
         contentProcessingService.importNode(node, parentNode, actionType);
     }
 
