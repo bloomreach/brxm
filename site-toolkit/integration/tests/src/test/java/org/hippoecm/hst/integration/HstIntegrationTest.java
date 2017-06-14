@@ -162,7 +162,6 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                     validatePreviewConfiguration(mount, true);
                     // clean up preview again
                     remoteSession.getNode(mount.getPreviewHstSite().getConfigurationPath()).remove();
-                    remoteSession.getNode(mount.getChannel().getChannelPath() + "-preview").remove();
                     remoteSession.save();
 
                     localSession.refresh(false);
