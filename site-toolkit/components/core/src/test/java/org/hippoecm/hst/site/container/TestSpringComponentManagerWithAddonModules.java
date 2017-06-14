@@ -204,9 +204,9 @@ public class TestSpringComponentManagerWithAddonModules {
     }
 
     @Test
-    public void test_ordered_module_nested_definition_by_name_can_lookup_in_parent_module() throws Exception {
+    public void test_module_definition_can_lookup_in_parent_module() throws Exception {
         // addon module definitions
-        List<ModuleDefinition> addonModuleDefs = new ArrayList<ModuleDefinition>();
+        List<ModuleDefinition> addonModuleDefs = new ArrayList<>();
 
         // build and add analytics module definition
         ModuleDefinition def1 = new ModuleDefinition();
@@ -215,43 +215,21 @@ public class TestSpringComponentManagerWithAddonModules {
         // build and add analytics/reports module definition
         ModuleDefinition def11 = new ModuleDefinition();
         def11.setName("org.example.analytics.reports");
+        def11.setParent("org.example.analytics");
         def11.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/reports/*.xml"));
         // build and add analytics/statistics module definition
         ModuleDefinition def12 = new ModuleDefinition();
         // parent org.example.analytics.missing is missing but org.example.analytics exists so should use org.example.analytics
         // as parent application context
-        def12.setName("org.example.analytics.missingparent.statistics");
+        def12.setName("org.example.analytics.statistics");
+        def12.setParent("org.example.analytics");
         def12.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/statistics/*.xml"));
 
-        addonModuleDefs.add(def1);
-        addonModuleDefs.add(def11);
-        addonModuleDefs.add(def12);
-        addonModuleAssertions(addonModuleDefs);
-    }
-
-    @Test
-    public void test_unordered_module_nested_definition_by_name_can_lookup_in_parent_module() throws Exception {
-        // addon module definitions
-        List<ModuleDefinition> addonModuleDefs = new ArrayList<ModuleDefinition>();
-
-        // build and add analytics module definition
-        ModuleDefinition def1 = new ModuleDefinition();
-        def1.setName("org.example.analytics");
-        def1.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/*.xml"));
-        // build and add analytics/reports module definition
-        ModuleDefinition def11 = new ModuleDefinition();
-        def11.setName("org.example.analytics.reports");
-        def11.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/reports/*.xml"));
-        // build and add analytics/statistics module definition
-        ModuleDefinition def12 = new ModuleDefinition();
-        // parent org.example.analytics.missing is missing but org.example.analytics exists so should use org.example.analytics
-        // as parent application context
-        def12.setName("org.example.analytics.missingparent.statistics");
-        def12.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/statistics/*.xml"));
-
+        // order can be random
         addonModuleDefs.add(def12);
         addonModuleDefs.add(def11);
         addonModuleDefs.add(def1);
+
         addonModuleAssertions(addonModuleDefs);
     }
 
@@ -311,16 +289,16 @@ public class TestSpringComponentManagerWithAddonModules {
 
         // from the analytics/statistics module...
         assertEquals("[Analytics Statistics] Hello from with-addon-modules-config.properties",
-                componentManager.getComponent("myGreeting", "org.example.analytics.missingparent.statistics"));
+                componentManager.getComponent("myGreeting", "org.example.analytics.statistics"));
         assertEquals("Hello from analytics",
-                componentManager.getComponent("analyticsGreeting", "org.example.analytics.missingparent.statistics"));
-        assertNull(componentManager.getComponent("analytics2Greeting", "org.example.analytics.missingparent.statistics"));
+                componentManager.getComponent("analyticsGreeting", "org.example.analytics.statistics"));
+        assertNull(componentManager.getComponent("analytics2Greeting", "org.example.analytics.statistics"));
         assertEquals("Hello from analytics statistics",
-                componentManager.getComponent("analyticsStatisticsGreeting", "org.example.analytics.missingparent.statistics"));
-        assertNull(componentManager.getComponent("analytics2StatisticsGreeting", "org.example.analytics.missingparent.statistics"));
+                componentManager.getComponent("analyticsStatisticsGreeting", "org.example.analytics.statistics"));
+        assertNull(componentManager.getComponent("analytics2StatisticsGreeting", "org.example.analytics.statistics"));
         assertEquals("Hello from container",
-                componentManager.getComponent("containerGreeting", "org.example.analytics.missingparent.statistics"));
-        greetingList = componentManager.getComponent("greetingList", "org.example.analytics.missingparent.statistics");
+                componentManager.getComponent("containerGreeting", "org.example.analytics.statistics"));
+        greetingList = componentManager.getComponent("greetingList", "org.example.analytics.statistics");
         assertNotNull(greetingList);
         assertEquals(3, greetingList.size());
         assertEquals("Hello from container", greetingList.get(0));

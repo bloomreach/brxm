@@ -34,7 +34,7 @@ public class TestModuleDescriptorUtils {
         
         assertNotNull(moduleDefs);
         assertFalse(moduleDefs.isEmpty());
-        
+
         ModuleDefinition moduleDef = findModuleDefinitionByName(moduleDefs, "org.example.analytics");
         assertNotNull(moduleDef);
         assertEquals("org.example.analytics", moduleDef.getName());
@@ -68,8 +68,19 @@ public class TestModuleDescriptorUtils {
         assertEquals(1, configLocations.size());
         assertEquals("classpath*:META-INF/hst-assembly/addon/org/example/analytics/statistics/*.xml",
                 configLocations.get(0));
+
     }
-    
+
+    @Test
+    public void testModuleWithParent() throws Exception {
+
+        List<ModuleDefinition> moduleDefs =
+                ModuleDescriptorUtils.collectAllModuleDefinitions(Thread.currentThread().getContextClassLoader(), "META-INF/hst-assembly/addon/module-with-parent.xml");
+        ModuleDefinition moduleDef = findModuleDefinitionByName(moduleDefs, "org.example.analytics.with.parent");
+        assertEquals("org.example.analytics.with.parent", moduleDef.getName());
+        assertEquals("org.example.analytics", moduleDef.getParent());
+    }
+
     @Test
     public void testMultiResourcePathsLoading() throws Exception {
         List<ModuleDefinition> moduleDefs = 

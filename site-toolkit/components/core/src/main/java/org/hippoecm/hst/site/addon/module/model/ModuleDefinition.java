@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,10 +24,12 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(namespace="http://www.onehippo.org/schema/hst/hst-addon-module_1_0.xsd", name="module")
 @XmlType(namespace="http://www.onehippo.org/schema/hst/hst-addon-module_1_0.xsd", name="module",
-        propOrder={ "name", "configLocations", "moduleDefinitions" })
+        propOrder={ "name", "parent", "configLocations", "moduleDefinitions" })
 public class ModuleDefinition {
 
     private String name;
+    // if this module depends on a parent, this is the parent name, otherwise parent is null
+    private String parent;
     private List<String> configLocations;
     private List<ModuleDefinition> moduleDefinitions;
 
@@ -38,6 +40,15 @@ public class ModuleDefinition {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @XmlElement(name="parent")
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(final String parent) {
+        this.parent = parent;
     }
 
     @XmlElementWrapper(name="config-locations")

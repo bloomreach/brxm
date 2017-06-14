@@ -30,7 +30,6 @@ import com.google.common.eventbus.EventBus;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.addon.module.ModuleInstance;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
@@ -38,6 +37,7 @@ import org.hippoecm.hst.core.container.ComponentsException;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConfigurationImpl;
 import org.hippoecm.hst.core.container.ModuleNotFoundException;
+import org.hippoecm.hst.core.order.ObjectOrderer;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.addon.module.runtime.ModuleInstanceImpl;
 import org.slf4j.Logger;
@@ -152,16 +152,26 @@ public class SpringComponentManager implements ComponentManager {
 
         if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
 
-            // sort the addon module to makes sure the ones with the 'deepest' names are loaded last since they
-            // might rely on a different parent than applicationContext
-            sortAddonModuleDefinitions();
+            // sort the addon module to makes sure the ones that rely on a 'parent' are loaded after the parent is loaded
+            orderAddonModuleDefinitions();
 
             addonModuleInstancesMap = Collections.synchronizedMap(new HashMap<String, ModuleInstance>());
             
             for (ModuleDefinition addonModuleDefinition : addonModuleDefinitions) {
                 ModuleInstance addonModuleInstance = new ModuleInstanceImpl(addonModuleDefinition);
 
-                ApplicationContext parentApplicationContext = findParentApplicationContext(addonModuleInstance);
+                ApplicationContext parentApplicationContext;
+                if (addonModuleDefinition.getParent() != null) {
+                    ModuleInstanceImpl parentModuleInstance = (ModuleInstanceImpl)addonModuleInstancesMap.get(addonModuleDefinition.getParent());
+                    if (parentModuleInstance == null) {
+                        log.warn(String.format("Failed to initialize invalid module instance, %s, because the parent " +
+                                "'%s' does not exist. Module instance will be ignored.", addonModuleInstance.getFullName(), addonModuleDefinition.getParent()));
+                        continue;
+                    }
+                    parentApplicationContext = parentModuleInstance.getApplicationContext();
+                } else {
+                    parentApplicationContext = applicationContext;
+                }
 
                 if (addonModuleInstance instanceof ComponentManagerAware) {
                     ((ComponentManagerAware) addonModuleInstance).setComponentManager(this);
@@ -192,33 +202,12 @@ public class SpringComponentManager implements ComponentManager {
         }
     }
 
-    private ApplicationContext findParentApplicationContext(final ModuleInstance addonModuleInstance) {
-        String currentName = addonModuleInstance.getName();
-        while (currentName.contains(".")) {
-            String parentName = StringUtils.substringBeforeLast(currentName, ".");
-            ModuleInstanceImpl parentModuleInstance = (ModuleInstanceImpl)addonModuleInstancesMap.get(parentName);
-            if (parentModuleInstance != null) {
-                // found a parent module
-                return parentModuleInstance.getApplicationContext();
-            }
-            currentName = parentName;
+    private void orderAddonModuleDefinitions() {
+        ObjectOrderer<ModuleDefinition> objectOrderer = new ObjectOrderer<>("Addon Module Definition Orderer");
+        for (ModuleDefinition addonModuleDefinition : addonModuleDefinitions) {
+            objectOrderer.add(addonModuleDefinition, addonModuleDefinition.getName(), addonModuleDefinition.getParent(), null);
         }
-        // the root is the parent since no other parent found
-        return applicationContext;
-    }
-
-    private void sortAddonModuleDefinitions() {
-        Collections.sort(addonModuleDefinitions, (o1, o2) -> {
-            int depth1 = o1.getName().split("\\.").length;
-            int depth2 = o2.getName().split("\\.").length;
-            if (depth1  == depth2 ) {
-                // no particular order
-                return o1.getName().compareTo(o2.getName());
-            }
-            // the deepest most be loaded latest because a 'deeper' name can possibly refer to a bean from
-            // an ancestor
-            return depth1 - depth2;
-        });
+        addonModuleDefinitions = objectOrderer.getOrderedObjects();
     }
 
     public void start() {
