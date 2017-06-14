@@ -22,6 +22,7 @@ public class ContentDefinitionImpl extends AbstractDefinitionImpl
         implements ContentDefinition {
 
     private DefinitionNodeImpl node = new DefinitionNodeImpl("/", "/", this);
+    private String rootPath;
 
     public ContentDefinitionImpl(final SourceImpl source) {
         super(source);
@@ -47,6 +48,15 @@ public class ContentDefinitionImpl extends AbstractDefinitionImpl
 
     public DefinitionNodeImpl setRoot(final String path) {
         return node = new DefinitionNodeImpl(path, this);
+    }
+
+    @Override
+    public String getRootPath() {
+        return rootPath != null ? rootPath : node.getPath();
+    }
+
+    public void setRootPath(String rootPath) {
+        this.rootPath = rootPath;
     }
 
     /**

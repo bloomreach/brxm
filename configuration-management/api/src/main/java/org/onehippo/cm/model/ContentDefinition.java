@@ -17,4 +17,15 @@ package org.onehippo.cm.model;
 
 public interface ContentDefinition extends Definition, Comparable<ContentDefinition> {
     DefinitionNode getNode();
+    /**
+     * The effective root path of this content definition, which <em>may</em> be different from the
+     * {@link DefinitionNode#getPath()} of the {@link #getNode() definition root node}.
+     * <p>
+     * This can have been set/used for 'relative' content import/export definitions, while also keeping track
+     * (in process, tansient only) of the absolute root path as might be needed to resolve/map absolute references
+     * relatively.
+     * </p>
+     * @return the effective root path of this definition.
+     */
+    String getRootPath();
 }
