@@ -21,6 +21,9 @@
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
     <sv:value>mix:referenceable</sv:value>
   </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>ed307dfc-5774-4ac7-9feb-79b57e058bb2</sv:value>
+  </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
     <sv:value>new-document</sv:value>
     <sv:value>new-folder</sv:value>
@@ -31,6 +34,9 @@
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>302beda6-84a3-4636-bbab-63972219bca8</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>new-folder</sv:value>
@@ -43,6 +49,9 @@
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>37aa21b2-d5dd-4ac2-9e1c-9cb0f82dd099</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>new-image-folder</sv:value>
@@ -58,6 +67,9 @@
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>mix:referenceable</sv:value>
     </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>64eb45b7-5bc5-458b-86cf-274652390358</sv:value>
+    </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>new-file-folder</sv:value>
     </sv:property>
@@ -71,6 +83,9 @@
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>b576e833-4910-4c42-987c-8eeb8b23e06d</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
