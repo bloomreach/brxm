@@ -27,7 +27,7 @@
   <description>Hippo Addon CRISP Demo</description>
   <groupId>org.onehippo.cms7.demo</groupId>
   <artifactId>hippo-addon-crisp-demo</artifactId>
-  <version>0.9.4-SNAPSHOT</version>
+  <version>0.9.4</version>
   <packaging>pom</packaging>
 
   <!-- 
