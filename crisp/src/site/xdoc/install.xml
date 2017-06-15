@@ -34,31 +34,11 @@
         </ul>
 
         <p>
-          First of all, make sure you have Hippo Maven 2 Enterprise repository reference and dependency definitions
-          in dependency management section in the root pom.xml:
+          First of all, make sure you have dependency definitions in dependency management section in the root pom.xml:
         </p>
 
         <div class="brush: xml">
           <source><![CDATA[
-    <repositories>
-
-      <!-- SNIP -->
-
-      <repository>
-        <id>hippo-maven2-enterprise</id>
-        <name>Hippo Maven 2 Enterprise</name>
-        <url>https://maven.onehippo.com/maven2-enterprise/</url>
-        <releases>
-          <updatePolicy>never</updatePolicy>
-        </releases>
-      </repository>
-
-      <!-- SNIP -->
-
-    </repositories>
-
-    <!-- SNIP -->
-
     <dependencyManagement>
 
       <!-- SNIP -->
@@ -70,25 +50,25 @@
         <!-- NOTE: You should set a property named 'hippo-addon-crisp.version' to a version of this plugin! -->
 
         <dependency>
-          <groupId>com.onehippo.cms7</groupId>
+          <groupId>org.onehippo.cms7</groupId>
           <artifactId>hippo-addon-crisp-api</artifactId>
           <version>${hippo-addon-crisp.version}</version>
         </dependency>
 
         <dependency>
-          <groupId>com.onehippo.cms7</groupId>
+          <groupId>org.onehippo.cms7</groupId>
           <artifactId>hippo-addon-crisp-core</artifactId>
           <version>${hippo-addon-crisp.version}</version>
         </dependency>
 
         <dependency>
-          <groupId>com.onehippo.cms7</groupId>
+          <groupId>org.onehippo.cms7</groupId>
           <artifactId>hippo-addon-crisp-repository</artifactId>
           <version>${hippo-addon-crisp.version}</version>
         </dependency>
 
         <dependency>
-          <groupId>com.onehippo.cms7</groupId>
+          <groupId>org.onehippo.cms7</groupId>
           <artifactId>hippo-addon-crisp-hst</artifactId>
           <version>${hippo-addon-crisp.version}</version>
         </dependency>
@@ -129,17 +109,17 @@
       <!-- SNIP -->
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-api</artifactId>
       </dependency>
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-core</artifactId>
       </dependency>
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-hst</artifactId>
       </dependency>
 
@@ -162,7 +142,7 @@
       <!-- SNIP -->
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-repository</artifactId>
       </dependency>
 
@@ -211,7 +191,7 @@
       <id>cargo.run</id>
       <dependencies>
         <dependency>
-          <groupId>com.onehippo.cms7</groupId>
+          <groupId>org.onehippo.cms7</groupId>
           <artifactId>hippo-addon-crisp-api</artifactId>
           <scope>provided</scope>
         </dependency>
@@ -234,7 +214,7 @@
                 </systemProperties>
                 <dependencies>
                   <dependency>
-                    <groupId>com.onehippo.cms7</groupId>
+                    <groupId>org.onehippo.cms7</groupId>
                     <artifactId>hippo-addon-crisp-api</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
@@ -274,7 +254,7 @@
         <include>org.onehippo.cms7:hippo-cms7-commons</include>
         <include>org.onehippo.cms7:hippo-services</include>
         <!-- SNIP -->
-        <include>com.onehippo.cms7:hippo-addon-crisp-api</include>
+        <include>org.onehippo.cms7:hippo-addon-crisp-api</include>
       </includes>
     </dependencySet>
   </dependencySets>
@@ -305,18 +285,18 @@
 
       <!-- NOTE: hippo-addon-crisp-api JAR module must be 'provided' scope as it's provided by the container! -->
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-api</artifactId>
         <scope>provided</scope>
       </dependency>
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-core</artifactId>
       </dependency>
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-hst</artifactId>
       </dependency>
 
@@ -339,13 +319,13 @@
       <!-- SNIP -->
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-repository</artifactId>
       </dependency>
 
       <!-- NOTE: hippo-addon-crisp-api JAR module must be 'provided' scope as it's provided by the container! -->
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-api</artifactId>
         <scope>provided</scope>
       </dependency>

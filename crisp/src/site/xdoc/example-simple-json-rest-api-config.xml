@@ -45,7 +45,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
   <bean parent="abstractCrispSimpleJacksonRestTemplateResourceResolver"
-        class="com.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver">
+        class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver">
     <property name="baseUri" value="${example.commerce.api.base.uri}" />
     <property name="restTemplate">
       <bean class="org.springframework.web.client.RestTemplate">
@@ -53,14 +53,14 @@
       </bean>
     </property>
     <property name="resourceLinkResolver">
-      <bean class="com.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver">
+      <bean class="org.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver">
         <property name="templateSource">
           <value>http://www.example.com/products/${(preview == "true")?then("staging", "current")}/sku/${resource.valueMap['SKU']!"unknown"}/overview.html</value>
         </property>
       </bean>
     </property>
     <property name="resourceDataCache">
-      <bean class="com.onehippo.cms7.crisp.core.resource.SpringResourceDataCache">
+      <bean class="org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache">
         <constructor-arg>
           <bean class="org.springframework.cache.ehcache.EhCacheCache">
             <constructor-arg>
@@ -126,7 +126,7 @@
             You can add a custom <code>ResourceLinkResolver</code> in this property to generate a URI link for an external
             content or data item.
             For your convenience, <strong>CRISP</strong> module library has shipped with a generic Freemarker template based
-            custom resource link resolver component, <code>com.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver</code>,
+            custom resource link resolver component, <code>org.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver</code>,
             with which you can use templating technique to generate a URI string with a given <code>resource</code> object.
           </li>
           <li>

@@ -201,7 +201,7 @@
 
         <div class="brush: xml">
           <source><![CDATA[
-  <bean class="com.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver">
+  <bean class="org.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver">
     <property name="templateSource">
       <value>http://www.example.com/products/${(preview == "true")?then("staging", "current")}/sku/${resource.valueMap['SKU']!"unknown"}/overview.html</value>
     </property>

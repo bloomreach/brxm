@@ -10,7 +10,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd"&gt;&#xd;
 &#xd;
   &lt;bean parent="abstractCrispSimpleJacksonRestTemplateResourceResolver"&#xd;
-        class="com.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver"&gt;&#xd;
+        class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver"&gt;&#xd;
     &lt;property name="baseUri" value="${marketo.baseUrl}/rest/v1" /&gt;&#xd;
     &lt;property name="restTemplate"&gt;&#xd;
       &lt;bean class="org.springframework.security.oauth2.client.OAuth2RestTemplate"&gt;&#xd;
@@ -34,7 +34,7 @@
       &lt;/bean&gt;&#xd;
     &lt;/property&gt;&#xd;
     &lt;property name="resourceDataCache"&gt;&#xd;
-      &lt;bean class="com.onehippo.cms7.crisp.core.resource.SpringResourceDataCache"&gt;&#xd;
+      &lt;bean class="org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache"&gt;&#xd;
         &lt;constructor-arg&gt;&#xd;
           &lt;bean class="org.springframework.cache.ehcache.EhCacheCache"&gt;&#xd;
             &lt;constructor-arg&gt;&#xd;

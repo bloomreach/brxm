@@ -37,7 +37,7 @@
           <source><![CDATA[
 mvn org.apache.maven.plugins:maven-dependency-plugin:3.0.0:get \
     -DremoteRepositories=hippo-maven2-enterprise \
-    -DgroupId=com.onehippo.cms7 \
+    -DgroupId=org.onehippo.cms7 \
     -DartifactId=hippo-addon-crisp-demopkg \
     -Dversion=1.0.0 \
     -Dclassifier=src \

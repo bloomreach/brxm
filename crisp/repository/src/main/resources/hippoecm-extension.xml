@@ -16,7 +16,7 @@
       <sv:value>10000</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.onehippo.com/jcr/hippo/crisp/nt/1.0</sv:value>
+      <sv:value>http://www.onehippo.org/jcr/hippo/crisp/nt/1.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>crisp-types.cnd</sv:value>

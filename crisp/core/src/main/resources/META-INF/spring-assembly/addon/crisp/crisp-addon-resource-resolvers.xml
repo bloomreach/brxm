@@ -18,8 +18,8 @@
     <property name="cacheEnabled" value="true" />
   </bean>
 
-  <bean id="com.onehippo.cms7.crisp.api.resource.ResourceResolverProvider"
-        class="com.onehippo.cms7.crisp.core.resource.RepositoryMapResourceResolverProvider">
+  <bean id="org.onehippo.cms7.crisp.api.resource.ResourceResolverProvider"
+        class="org.onehippo.cms7.crisp.core.resource.RepositoryMapResourceResolverProvider">
     <property name="repository" ref="javax.jcr.Repository" />
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
   </bean>

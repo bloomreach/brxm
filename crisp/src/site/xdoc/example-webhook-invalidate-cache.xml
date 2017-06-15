@@ -67,14 +67,14 @@ $ curl http://localhost:8080/site/examples/invalidate-cache.jsp \
 <%@ page import="javax.servlet.http.HttpServletResponse" %>
 <%@ page import="org.slf4j.LoggerFactory" %>
 <%@ page import="org.slf4j.Logger" %>
-<%@ page import="com.onehippo.cms7.crisp.api.broker.ResourceServiceBroker" %>
-<%@ page import="com.onehippo.cms7.crisp.api.resource.ResourceDataCache" %>
-<%@ page import="com.onehippo.cms7.crisp.hst.module.CrispHstServices" %>
+<%@ page import="org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker" %>
+<%@ page import="org.onehippo.cms7.crisp.api.resource.ResourceDataCache" %>
+<%@ page import="org.onehippo.cms7.crisp.hst.module.CrispHstServices" %>
 
 <%!
 private static final String DEFAULT_SECRET = "some_secret";
 
-private static Logger log = LoggerFactory.getLogger("com.onehippo.cms7.crisp.demo.jsp.invalidate-cache");
+private static Logger log = LoggerFactory.getLogger("org.onehippo.cms7.crisp.demo.jsp.invalidate-cache");
 %>
 
 <%

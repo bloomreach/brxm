@@ -133,7 +133,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd"&gt;
 
   &lt;bean parent="abstractCrispSimpleJacksonRestTemplateResourceResolver"
-        class="com.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver"&gt;
+        class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver"&gt;
     &lt;property name="baseUri" value="${example.commerce.api.base.uri}" /&gt;
     &lt;property name="restTemplate"&gt;
       &lt;bean class="org.springframework.web.client.RestTemplate"&gt;
@@ -141,14 +141,14 @@
       &lt;/bean&gt;
     &lt;/property&gt;
     &lt;property name="resourceLinkResolver"&gt;
-      &lt;bean class="com.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver"&gt;
+      &lt;bean class="org.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver"&gt;
         &lt;property name="templateSource"&gt;
           &lt;value>http://www.example.com/products/${(preview == "true")?then("staging", "current")}/sku/${resource.valueMap['SKU']!"unknown"}/overview.html&lt;/value&gt;
         &lt;/property&gt;
       &lt;/bean&gt;
     &lt;/property&gt;
     &lt;property name="resourceDataCache"&gt;
-      &lt;bean class="com.onehippo.cms7.crisp.core.resource.SpringResourceDataCache"&gt;
+      &lt;bean class="org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache"&gt;
         &lt;constructor-arg&gt;
           &lt;bean class="org.springframework.cache.ehcache.EhCacheCache"&gt;
             &lt;constructor-arg&gt;
@@ -198,7 +198,7 @@
         <p>
           <strong><em>Note:</em></strong> <strong>CRISP Core</strong> will create a child <code>ApplicationContext</code>
           from the XML beans configuration in the <code>crisp:beandefinition</code> property and simply get a bean
-          of type, <code>com.onehippo.cms7.crisp.api.resource.ResourceResolver</code>, to register the bean for
+          of type, <code>org.onehippo.cms7.crisp.api.resource.ResourceResolver</code>, to register the bean for
           the <strong>resource space</strong>, the name of which is specified by the <code>ResourceResolver</code>
           configuration node name. Therefore, you don't have to set <code>id</code> attribute of the <code>ResourceResolver</code>
           bean definition.
@@ -214,7 +214,7 @@
 
         <p>
           In the example in the previous section, the <code>ResourceResolver</code> component is configured by the
-          bean definition with <code>class="com.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver"</code>.
+          bean definition with <code>class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver"</code>.
           <code>SimpleJacksonRestTemplateResourceResolver</code> is a <code>ResourceResolver</code> implementation
           that handles any JSON-based REST APIs in a generic way.
           Also, please note that the <code>ResourceResolver</code> bean has <code>parent="abstractCrispSimpleJacksonRestTemplateResourceResolver"</code>,

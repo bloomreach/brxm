@@ -38,7 +38,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
   <bean parent="abstractCrispSimpleJacksonRestTemplateResourceResolver"
-        class="com.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver">
+        class="org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver">
     <property name="baseUri" value="${salesforce.baseUrl}/services/data/v20.0" />
     <property name="restTemplate">
       <bean class="org.springframework.security.oauth2.client.OAuth2RestTemplate">
@@ -72,7 +72,7 @@
       </bean>
     </property>
     <property name="resourceDataCache">
-      <bean class="com.onehippo.cms7.crisp.core.resource.SpringResourceDataCache">
+      <bean class="org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache">
         <constructor-arg>
           <bean class="org.springframework.cache.ehcache.EhCacheCache">
             <constructor-arg>
