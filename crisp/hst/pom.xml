@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.onehippo.cms7</groupId>
+    <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-addon-crisp</artifactId>
     <version>0.9.4-SNAPSHOT</version>
   </parent>
@@ -18,7 +18,7 @@
   <dependencies>
 
     <dependency>
-      <groupId>com.onehippo.cms7</groupId>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-crisp-api</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>

@@ -6,14 +6,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.onehippo.cms7</groupId>
-    <artifactId>hippo-cms7-enterprise-release</artifactId>
-    <version>11.2.0</version>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-release</artifactId>
+    <version>11.2.1</version>
   </parent>
 
   <name>Hippo Addon CRISP Demo</name>
   <description>Hippo Addon CRISP Demo</description>
-  <groupId>com.onehippo.cms7.demo</groupId>
+  <groupId>org.onehippo.cms7.demo</groupId>
   <artifactId>hippo-addon-crisp-demo</artifactId>
   <version>0.9.4-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -92,14 +92,6 @@
       <name>Hippo maven 2 repository.</name>
       <url>https://maven.onehippo.com/maven2/</url>
     </repository>
-    <repository>
-      <id>hippo-maven2-enterprise</id>
-      <name>Hippo Maven 2 Enterprise</name>
-      <url>https://maven.onehippo.com/maven2-enterprise/</url>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
   </repositories>
 
   <dependencyManagement>
@@ -107,25 +99,25 @@
     <dependencies>
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-api</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-repository</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-core</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-hst</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -323,7 +315,7 @@
       <id>cargo.run</id>
       <dependencies>
         <dependency>
-          <groupId>com.onehippo.cms7</groupId>
+          <groupId>org.onehippo.cms7</groupId>
           <artifactId>hippo-addon-crisp-api</artifactId>
           <scope>provided</scope>
         </dependency>
@@ -394,7 +386,7 @@
                 </systemProperties>
                 <dependencies>
                   <dependency>
-                    <groupId>com.onehippo.cms7</groupId>
+                    <groupId>org.onehippo.cms7</groupId>
                     <artifactId>hippo-addon-crisp-api</artifactId>
                     <classpath>shared</classpath>
                   </dependency>

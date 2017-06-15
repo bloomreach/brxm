@@ -6,7 +6,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.onehippo.cms7.demo</groupId>
+    <groupId>org.onehippo.cms7.demo</groupId>
     <artifactId>hippo-addon-crisp-demo</artifactId>
     <version>0.9.4-SNAPSHOT</version>
   </parent>

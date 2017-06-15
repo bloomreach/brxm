@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.onehippo.cms7.demo</groupId>
+    <groupId>org.onehippo.cms7.demo</groupId>
     <artifactId>hippo-addon-crisp-demo-bootstrap</artifactId>
     <version>0.9.4-SNAPSHOT</version>
   </parent>
