@@ -36,7 +36,15 @@ describe('ProjectService', () => {
     }];
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm', ($provide) => {
+      $provide.decorator('$window', ($delegate) => {
+        Object.assign($delegate.parent, {
+          Hippo: {},
+        });
+
+        return $delegate;
+      });
+    });
 
     const configServiceMock = jasmine.createSpyObj('ConfigService', ['getCmsContextPath']);
     configServiceMock.getCmsContextPath.and.returnValue('/test/');
@@ -72,8 +80,10 @@ describe('ProjectService', () => {
     const currentBranch = branches[0];
     $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, branches);
     HstService.doGet.and.returnValue($q.when({ data: currentBranch.id }));
+
     ProjectService.load({ mountId });
     $httpBackend.flush();
+
     expect(ProjectService.projects).toEqual(branches);
     expect(ProjectService.selectedProject).toEqual(currentBranch);
     expect(HstService.doGet).toHaveBeenCalledWith(mountId, 'currentbranch');
@@ -84,9 +94,11 @@ describe('ProjectService', () => {
     $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, branches);
     HstService.doGet.and.returnValue($q.when({ data: currentBranch.id }));
     HstService.doPut.and.returnValue($q.when({ data: 'master' }));
+
     ProjectService.load({ mountId });
     $httpBackend.flush();
     ProjectService.selectProject('master');
+
     expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectmaster');
   });
 
@@ -95,9 +107,11 @@ describe('ProjectService', () => {
     $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, branches);
     HstService.doGet.and.returnValue($q.when({ data: currentBranch.id }));
     HstService.doPut.and.returnValue($q.when({ data: currentBranch.id }));
+
     ProjectService.load({ mountId });
     $httpBackend.flush();
     ProjectService.selectProject(branches[1].id);
+
     expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectbranch', branches[1].id);
   });
 });

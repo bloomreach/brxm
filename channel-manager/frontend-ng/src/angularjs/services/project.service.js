@@ -35,11 +35,13 @@ class ProjectService {
   }
 
   load(channel, branchId) {
+    const HippoGlobal = this.$window.parent.Hippo;
+
     this.urlPrefix = `${this.ConfigService.getCmsContextPath()}ws/projects/`;
     this.mountId = channel.mountId;
 
-    if (this.$window.parent.Hippo.Projects.events) {
-      this.events = this.$window.parent.Hippo.Projects.events;
+    if (HippoGlobal.Projects && HippoGlobal.Projects.events) {
+      this.events = HippoGlobal.Projects.events;
 
       this.events.subscribe('projects-changed', () => {
         this._setupProjects(branchId);
