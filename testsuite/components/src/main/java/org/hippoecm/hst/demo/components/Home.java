@@ -24,8 +24,6 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.channel.DemoChannelInfo;
-import org.hippoecm.hst.demo.container.HstConfigurationServiceAccessor;
-import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,10 +37,6 @@ public class Home extends BaseHstComponent {
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
-
-        HstConfigurationServiceAccessor hstConfigurationServiceAccessor = getComponentManager().getComponent(HstConfigurationServiceAccessor.class.getName());
-        // Proof we can access a spring addon wired component via org.hippoecm.hst.core.container.ComponentSupplier
-        System.out.println(" ---> " + hstConfigurationServiceAccessor.getHstConfigurationService());
 
         final HstRequestContext requestContext = request.getRequestContext();
         final Mount mount = requestContext.getResolvedMount().getMount();
