@@ -164,7 +164,7 @@ public class SpringComponentManager implements ComponentManager {
                 if (addonModuleDefinition.getParent() != null) {
                     ModuleInstanceImpl parentModuleInstance = (ModuleInstanceImpl)addonModuleInstancesMap.get(addonModuleDefinition.getParent());
                     if (parentModuleInstance == null) {
-                        log.warn(String.format("Failed to initialize invalid module instance, %s, because the parent " +
+                        log.error(String.format("Failed to initialize invalid module instance, %s, because the parent " +
                                 "'%s' does not exist. Module instance will be ignored.", addonModuleInstance.getFullName(), addonModuleDefinition.getParent()));
                         continue;
                     }
@@ -186,7 +186,7 @@ public class SpringComponentManager implements ComponentManager {
                     addonModuleInstance.initialize();
                     addonModuleInstancesMap.put(addonModuleInstance.getName(), addonModuleInstance);
                 } catch (Exception e) {
-                    log.warn("Failed to initialize invalid module instance, " + addonModuleInstance.getFullName() + ", which will be just closed and ignored.", e);
+                    log.error("Failed to initialize invalid module instance, " + addonModuleInstance.getFullName() + ", which will be just closed and ignored.", e);
                     
                     try {
                         addonModuleInstance.close();
