@@ -33,7 +33,6 @@ import javax.jcr.Session;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
-import org.onehippo.cm.engine.impl.ZipCompressor;
 import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.ConfigurationModel;

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.impl;
+package org.onehippo.cm.engine;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
