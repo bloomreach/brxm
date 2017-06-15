@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
 -->
 <!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
@@ -67,14 +79,14 @@ $ curl http://localhost:8080/site/examples/invalidate-cache.jsp \
 <%@ page import="javax.servlet.http.HttpServletResponse" %>
 <%@ page import="org.slf4j.LoggerFactory" %>
 <%@ page import="org.slf4j.Logger" %>
-<%@ page import="com.onehippo.cms7.crisp.api.broker.ResourceServiceBroker" %>
-<%@ page import="com.onehippo.cms7.crisp.api.resource.ResourceDataCache" %>
-<%@ page import="com.onehippo.cms7.crisp.hst.module.CrispHstServices" %>
+<%@ page import="org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker" %>
+<%@ page import="org.onehippo.cms7.crisp.api.resource.ResourceDataCache" %>
+<%@ page import="org.onehippo.cms7.crisp.hst.module.CrispHstServices" %>
 
 <%!
 private static final String DEFAULT_SECRET = "some_secret";
 
-private static Logger log = LoggerFactory.getLogger("com.onehippo.cms7.crisp.demo.jsp.invalidate-cache");
+private static Logger log = LoggerFactory.getLogger("org.onehippo.cms7.crisp.demo.jsp.invalidate-cache");
 %>
 
 <%

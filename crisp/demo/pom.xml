@@ -1,21 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.onehippo.cms7</groupId>
-    <artifactId>hippo-cms7-enterprise-release</artifactId>
-    <version>11.2.0</version>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-release</artifactId>
+    <version>11.2.1</version>
   </parent>
 
   <name>Hippo Addon CRISP Demo</name>
   <description>Hippo Addon CRISP Demo</description>
-  <groupId>com.onehippo.cms7.demo</groupId>
+  <groupId>org.onehippo.cms7.demo</groupId>
   <artifactId>hippo-addon-crisp-demo</artifactId>
-  <version>0.9.3</version>
+  <version>0.9.4</version>
   <packaging>pom</packaging>
 
   <!-- 
@@ -92,14 +104,6 @@
       <name>Hippo maven 2 repository.</name>
       <url>https://maven.onehippo.com/maven2/</url>
     </repository>
-    <repository>
-      <id>hippo-maven2-enterprise</id>
-      <name>Hippo Maven 2 Enterprise</name>
-      <url>https://maven.onehippo.com/maven2-enterprise/</url>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
   </repositories>
 
   <dependencyManagement>
@@ -107,25 +111,25 @@
     <dependencies>
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-api</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-repository</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-core</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>com.onehippo.cms7</groupId>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-crisp-hst</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -323,7 +327,7 @@
       <id>cargo.run</id>
       <dependencies>
         <dependency>
-          <groupId>com.onehippo.cms7</groupId>
+          <groupId>org.onehippo.cms7</groupId>
           <artifactId>hippo-addon-crisp-api</artifactId>
           <scope>provided</scope>
         </dependency>
@@ -394,7 +398,7 @@
                 </systemProperties>
                 <dependencies>
                   <dependency>
-                    <groupId>com.onehippo.cms7</groupId>
+                    <groupId>org.onehippo.cms7</groupId>
                     <artifactId>hippo-addon-crisp-api</artifactId>
                     <classpath>shared</classpath>
                   </dependency>

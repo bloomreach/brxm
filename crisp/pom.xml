@@ -1,22 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.onehippo.cms7</groupId>
-    <artifactId>hippo-cms7-enterprise-project</artifactId>
-    <version>28.5</version>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-project</artifactId>
+    <version>28.7</version>
   </parent>
 
   <name>Hippo Addon CRISP</name>
   <description>Hippo Addon CRISP</description>
   <artifactId>hippo-addon-crisp</artifactId>
-  <version>0.9.3</version>
+  <version>0.9.4</version>
   <packaging>pom</packaging>
-  <url>http://www.onehippo.com/</url>
+  <url>http://www.onehippo.org/</url>
   <inceptionYear>2017</inceptionYear>
 
   <properties>
@@ -53,40 +69,30 @@
 
   </properties>
 
-  <licenses>
-    <license>
-      <name>Hippo Enterprise Software License</name>
-      <url>https://www.onehippo.com/</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
   <repositories>
-    <repository>
+   <repository>
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
-      <url>http://maven.onehippo.com/maven2/</url>
-    </repository>
-    <repository>
-      <id>hippo-maven2-forge</id>
-      <name>Hippo Maven 2 Forge Repository</name>
-      <url>http://maven.onehippo.com/maven2-forge/</url>
-      <snapshots />
-    </repository>
-    <repository>
-      <id>hippo-maven2-enterprise</id>
-      <name>Hippo Maven 2 Enterprise</name>
-      <url>https://maven.onehippo.com/maven2-enterprise/</url>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
       <releases>
         <updatePolicy>never</updatePolicy>
       </releases>
     </repository>
+    <repository>
+      <id>hippo-maven2-forge</id>
+      <name>Hippo Maven 2 Forge repository</name>
+      <url>http://maven.onehippo.com/maven2-forge/</url>
+      <snapshots />
+    </repository>
   </repositories>
 
   <scm>
-    <connection>scm:git:https://code.onehippo.org/sandbox/hippo-addon-crisp.git</connection>
-    <developerConnection>scm:git:https://code.onehippo.org/sandbox/hippo-addon-crisp.git</developerConnection>
-    <url>https://code.onehippo.org/sandbox/hippo-addon-crisp.git</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-addon-crisp.git</connection>
+    <developerConnection>scm:git:https://code.onehippo.org/cms-community/hippo-addon-crisp.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-addon-crisp</url>
   </scm>
 
   <dependencyManagement>
@@ -408,12 +414,49 @@
     </plugins>
   </reporting>
 
-  <modules>
-    <module>api</module>
-    <module>core</module>
-    <module>repository</module>
-    <module>hst</module>
-    <module>demopkg</module>
-  </modules>
+  <profiles>
+
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>api</module>
+        <module>core</module>
+        <module>repository</module>
+        <module>hst</module>
+        <module>demopkg</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>pedantic</id>
+      <modules/>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <exclude>**/rat.txt</exclude>
+                <exclude>**/target/**/*</exclude>
+                <exclude>**/.classpath</exclude>
+                <exclude>**/.project</exclude>
+                <exclude>**/.settings/**/*</exclude>
+                <exclude>*.md</exclude>
+                <exclude>demo/**/*</exclude>
+                <exclude>core/src/test/resources/org/onehippo/cms7/crisp/core/broker/products.json</exclude>
+                <exclude>core/src/test/resources/org/onehippo/cms7/crisp/core/resource/jackson/widget.json</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
 
 </project>

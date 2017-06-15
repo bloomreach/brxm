@@ -135,7 +135,7 @@
           <sv:value>hst:containeritemcomponent</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
-          <sv:value>com.onehippo.cms7.crisp.demo.components.EventsContentComponent</sv:value>
+          <sv:value>org.onehippo.cms7.crisp.demo.components.EventsContentComponent</sv:value>
         </sv:property>
         <sv:property sv:name="hst:template" sv:type="String">
           <sv:value>eventspage-main</sv:value>
@@ -222,7 +222,7 @@
           <sv:value>hst:containeritemcomponent</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
-          <sv:value>com.onehippo.cms7.crisp.demo.components.NewsContentComponent</sv:value>
+          <sv:value>org.onehippo.cms7.crisp.demo.components.NewsContentComponent</sv:value>
         </sv:property>
         <sv:property sv:name="hst:template" sv:type="String">
           <sv:value>newspage-main</sv:value>
