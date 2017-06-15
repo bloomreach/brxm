@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -14,15 +14,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="content" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="documents" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         esv:merge="combine" xmlns:esv="http://www.onehippo.org/jcr/xmlimport">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippostd:folder</sv:value>
   </sv:property>
   <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+    <sv:value>hippo:named</sv:value>
     <sv:value>mix:versionable</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
+    <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:name" sv:type="String">
+    <sv:value>Documents</sv:value>
   </sv:property>
   <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
     <sv:value>preview</sv:value>
@@ -30,725 +35,244 @@
   </sv:property>
   <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
     <sv:value>new-folder</sv:value>
+    <sv:value>new-translated-folder</sv:value>
   </sv:property>
-  <sv:node sv:name="documents">
+  <sv:node sv:name="articles">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:folder</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:named</sv:value>
       <sv:value>mix:versionable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:name" sv:type="String">
-      <sv:value>Documents</sv:value>
+      <sv:value>e7579a94-7078-4812-8715-0bfbe7b5967c</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
       <sv:value>preview</sv:value>
       <sv:value>live</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
+      <sv:value>new-document</sv:value>
       <sv:value>new-folder</sv:value>
-      <sv:value>new-translated-folder</sv:value>
     </sv:property>
-    <sv:node sv:name="articles">
+    <sv:node sv:name="myarticle1">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:folder</sv:value>
+        <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:versionable</sv:value>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>e7579a94-7078-4812-8715-0bfbe7b5967c</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-        <sv:value>preview</sv:value>
-        <sv:value>live</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>new-document</sv:value>
-        <sv:value>new-folder</sv:value>
+        <sv:value>22637f9b-96a6-4c3e-8b8f-d46c40c35ee2</sv:value>
       </sv:property>
       <sv:node sv:name="myarticle1">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:handle</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>22637f9b-96a6-4c3e-8b8f-d46c40c35ee2</sv:value>
-        </sv:property>
-        <sv:node sv:name="myarticle1">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>testcontent:article</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>mix:versionable</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>db1bddc5-d29f-47a1-ac12-b34d97a82715</sv:value>
-          </sv:property>
-          <sv:property sv:name="testcontent:introduction" sv:type="String">
-            <sv:value>introduction</sv:value>
-          </sv:property>
-          <sv:property sv:name="testcontent:title" sv:type="String">
-            <sv:value>title</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-            <sv:value>preview</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-            <sv:value>content/documents/articles/myarticle1/myarticle1[2]</sv:value>
-            <sv:value>content/documents/articles/myarticle1</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:state" sv:type="String">
-            <sv:value>unpublished</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-            <sv:value>changed</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-            <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-            <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:node sv:name="testcontent:body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:html</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:content" sv:type="String">
-              <sv:value>&lt;html&gt;&lt;body&gt;&lt;a facetselect="link1"&gt;link1&lt;/a&gt;&lt;a facetselect="link2"&gt;link2&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
-            </sv:property>
-            <sv:node sv:name="link1">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:facetselect</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:docbase" sv:type="String">
-                <sv:value>93d6e872-e4df-4f65-b9bc-a02ad975b8ee</sv:value>
-              </sv:property>
-              <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
-              <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
-              <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
-            </sv:node>
-            <sv:node sv:name="link2">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:facetselect</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:docbase" sv:type="String">
-                <sv:value>fcfd3516-494a-4640-8f39-32b924052f3f</sv:value>
-              </sv:property>
-              <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
-              <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
-              <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
-            </sv:node>
-          </sv:node>
-        </sv:node>
-        <sv:node sv:name="myarticle1">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>testcontent:article</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>mix:versionable</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>118b876b-fc73-4400-89b8-5a0e2153628d</sv:value>
-          </sv:property>
-          <sv:property sv:name="testcontent:introduction" sv:type="String">
-            <sv:value>introduction</sv:value>
-          </sv:property>
-          <sv:property sv:name="testcontent:title" sv:type="String">
-            <sv:value>title published version</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-            <sv:value>live</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-            <sv:value>content/documents/articles/myarticle1</sv:value>
-            <sv:value>content/documents/articles/myarticle1/myarticle1</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:state" sv:type="String">
-            <sv:value>published</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-            <sv:value>changed</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-            <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-            <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:node sv:name="testcontent:body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:html</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:content" sv:type="String">
-              <sv:value>&lt;html&gt;&lt;body&gt;&lt;a facetselect="link1"&gt;link1&lt;/a&gt;&lt;a facetselect="link2"&gt;link2&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
-            </sv:property>
-            <sv:node sv:name="link1">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:facetselect</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:docbase" sv:type="String">
-                <sv:value>93d6e872-e4df-4f65-b9bc-a02ad975b8ee</sv:value>
-              </sv:property>
-              <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
-              <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
-              <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
-            </sv:node>
-            <sv:node sv:name="link2">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:facetselect</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:docbase" sv:type="String">
-                <sv:value>fcfd3516-494a-4640-8f39-32b924052f3f</sv:value>
-              </sv:property>
-              <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
-              <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
-              <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
-            </sv:node>
-          </sv:node>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="myarticle2">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:handle</sv:value>
+          <sv:value>testcontent:article</sv:value>
         </sv:property>
         <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:referenceable</sv:value>
+          <sv:value>mix:versionable</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>3732eae8-01ca-4bdd-8f2f-1f9654722ba8</sv:value>
+          <sv:value>db1bddc5-d29f-47a1-ac12-b34d97a82715</sv:value>
         </sv:property>
-        <sv:node sv:name="myarticle2">
+        <sv:property sv:name="testcontent:introduction" sv:type="String">
+          <sv:value>introduction</sv:value>
+        </sv:property>
+        <sv:property sv:name="testcontent:title" sv:type="String">
+          <sv:value>title</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
+          <sv:value>preview</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+          <sv:value>content/documents/articles/myarticle1/myarticle1[2]</sv:value>
+          <sv:value>content/documents/articles/myarticle1</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>unpublished</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>changed</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:node sv:name="testcontent:body">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>testcontent:article</sv:value>
+            <sv:value>hippostd:html</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>mix:versionable</sv:value>
+          <sv:property sv:name="hippostd:content" sv:type="String">
+            <sv:value>&lt;html&gt;&lt;body&gt;&lt;a facetselect="link1"&gt;link1&lt;/a&gt;&lt;a facetselect="link2"&gt;link2&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
           </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>b363e8be-2ec7-4f62-8ba0-2f9c7a335b17</sv:value>
-          </sv:property>
-          <sv:property sv:name="testcontent:introduction" sv:type="String">
-            <sv:value>introduction</sv:value>
-          </sv:property>
-          <sv:property sv:name="testcontent:title" sv:type="String">
-            <sv:value>title</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-            <sv:value>preview</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-            <sv:value>content/documents/articles/myarticle2</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:state" sv:type="String">
-            <sv:value>unpublished</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-            <sv:value>new</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-            <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-            <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:node sv:name="testcontent:body">
+          <sv:node sv:name="link1">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:html</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:content" sv:type="String">
-              <sv:value>&lt;html&gt;&lt;body&gt;body&lt;/body&gt;&lt;/html&gt;</sv:value>
-            </sv:property>
-          </sv:node>
-        </sv:node>
-      </sv:node>
-
-    </sv:node>
-    <sv:node sv:name="news">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:folder</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:versionable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>e0155dd8-69d3-4c80-bc0a-2b81eeb092c4</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>new-document</sv:value>
-        <sv:value>new-folder</sv:value>
-      </sv:property>
-      <sv:node sv:name="mynews1">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:handle</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>5901f6af-ee8d-4fdd-88d8-0d156c8f0805</sv:value>
-        </sv:property>
-        <sv:node sv:name="mynews1">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>testcontent:news</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>mix:versionable</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>d1847bd1-78da-4491-beab-e0e6d2fee3e0</sv:value>
-          </sv:property>
-          <sv:property sv:name="testcontent:date" sv:type="Date">
-            <sv:value>2010-01-05T09:03:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="testcontent:introduction" sv:type="String">
-            <sv:value>&lt;html&gt;&lt;body&gt;introduction&lt;/body&gt;&lt;/html&gt;</sv:value>
-          </sv:property>
-          <sv:property sv:name="testcontent:title" sv:type="String">
-            <sv:value>title</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-            <sv:value>preview</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-            <sv:value>content/documents/news/mynews1</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:state" sv:type="String">
-            <sv:value>unpublished</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-            <sv:value>new</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-            <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-            <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:node sv:name="testcontent:body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:html</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:content" sv:type="String">
-              <sv:value>&lt;html&gt;&lt;body&gt;&lt;a facetselect="link1"&gt;link1&lt;/a&gt;&lt;a facetselect="link2"&gt;link2&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
-            </sv:property>
-            <sv:node sv:name="link1">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:facetselect</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:docbase" sv:type="String">
-                <sv:value>3732eae8-01ca-4bdd-8f2f-1f9654722ba8</sv:value>
-              </sv:property>
-              <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
-              <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
-              <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
-            </sv:node>
-            <sv:node sv:name="link2">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:facetselect</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:docbase" sv:type="String">
-                <sv:value>cb3bb9bd-309d-47b0-8858-d92b46edc52f</sv:value>
-              </sv:property>
-              <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
-              <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
-              <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
-            </sv:node>
-          </sv:node>
-          <sv:node sv:name="testcontent:internallink">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:mirror</sv:value>
+              <sv:value>hippo:facetselect</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:docbase" sv:type="String">
-              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+              <sv:value>93d6e872-e4df-4f65-b9bc-a02ad975b8ee</sv:value>
             </sv:property>
+            <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
+            <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
+            <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
+          </sv:node>
+          <sv:node sv:name="link2">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:facetselect</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>fcfd3516-494a-4640-8f39-32b924052f3f</sv:value>
+            </sv:property>
+            <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
+            <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
+            <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
           </sv:node>
         </sv:node>
       </sv:node>
-    </sv:node>
-    <sv:node sv:name="events">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:folder</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:versionable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>cbd837ed-2f07-492e-94dc-409f089a4fcf</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-        <sv:value>preview</sv:value>
-        <sv:value>live</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>new-document</sv:value>
-        <sv:value>new-folder</sv:value>
-      </sv:property>
-      <sv:node sv:name="myevent1">
+      <sv:node sv:name="myarticle1">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:handle</sv:value>
+          <sv:value>testcontent:article</sv:value>
         </sv:property>
         <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:referenceable</sv:value>
+          <sv:value>mix:versionable</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>7721bbea-d48a-441a-ab54-ef9b63fd96cb</sv:value>
+          <sv:value>118b876b-fc73-4400-89b8-5a0e2153628d</sv:value>
         </sv:property>
-        <sv:node sv:name="myevent1">
+        <sv:property sv:name="testcontent:introduction" sv:type="String">
+          <sv:value>introduction</sv:value>
+        </sv:property>
+        <sv:property sv:name="testcontent:title" sv:type="String">
+          <sv:value>title published version</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
+          <sv:value>live</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+          <sv:value>content/documents/articles/myarticle1</sv:value>
+          <sv:value>content/documents/articles/myarticle1/myarticle1</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>published</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>changed</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:node sv:name="testcontent:body">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>testcontent:event</sv:value>
+            <sv:value>hippostd:html</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>mix:versionable</sv:value>
+          <sv:property sv:name="hippostd:content" sv:type="String">
+            <sv:value>&lt;html&gt;&lt;body&gt;&lt;a facetselect="link1"&gt;link1&lt;/a&gt;&lt;a facetselect="link2"&gt;link2&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
           </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>24c54e63-78d3-452f-a9f0-f216cc60c276</sv:value>
-          </sv:property>
-          <sv:property sv:name="testcontent:introduction" sv:type="String">
-            <sv:value>&lt;html&gt;&lt;body&gt;introduction&lt;/body&gt;&lt;/html&gt;</sv:value>
-          </sv:property>
-          <sv:property sv:name="testcontent:title" sv:type="String">
-            <sv:value>title</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-            <sv:value>preview</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-            <sv:value>content/documents/events/myevent1</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:state" sv:type="String">
-            <sv:value>unpublished</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-            <sv:value>new</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-            <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-            <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:node sv:name="testcontent:address">
+          <sv:node sv:name="link1">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>testcontent:address</sv:value>
+              <sv:value>hippo:facetselect</sv:value>
             </sv:property>
-            <sv:property sv:name="testcontent:number" sv:type="Long">
-              <sv:value>4</sv:value>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>93d6e872-e4df-4f65-b9bc-a02ad975b8ee</sv:value>
             </sv:property>
-            <sv:property sv:name="testcontent:street" sv:type="String">
-              <sv:value>Dolomieten</sv:value>
-            </sv:property>
+            <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
+            <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
+            <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
           </sv:node>
-          <sv:node sv:name="testcontent:date">
+          <sv:node sv:name="link2">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:date</sv:value>
+              <sv:value>hippo:facetselect</sv:value>
             </sv:property>
-            <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-              <sv:value>mix:referenceable</sv:value>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>fcfd3516-494a-4640-8f39-32b924052f3f</sv:value>
             </sv:property>
-            <sv:property sv:name="jcr:uuid" sv:type="String">
-              <sv:value>f2d61185-5bf6-48dd-9fd8-78b5a21297aa</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:date" sv:type="Date">
-              <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:dayofmonth" sv:type="Long">
-              <sv:value>26</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:dayofweek" sv:type="Long">
-              <sv:value>4</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:dayofyear" sv:type="Long">
-              <sv:value>86</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:hourofday" sv:type="Long">
-              <sv:value>12</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:minute" sv:type="Long">
-              <sv:value>3</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:month" sv:type="Long">
-              <sv:value>2</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:second" sv:type="Long">
-              <sv:value>0</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:weekofyear" sv:type="Long">
-              <sv:value>13</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:year" sv:type="Long">
-              <sv:value>2008</sv:value>
-            </sv:property>
-          </sv:node>
-          <sv:node sv:name="testcontent:body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:html</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:content" sv:type="String">
-              <sv:value>&lt;html&gt;&lt;body&gt;body&lt;/body&gt;&lt;/html&gt;</sv:value>
-            </sv:property>
+            <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
+            <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
+            <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
           </sv:node>
         </sv:node>
       </sv:node>
     </sv:node>
-    <sv:node sv:name="overviews">
+    <sv:node sv:name="myarticle2">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:folder</sv:value>
+        <sv:value>hippo:handle</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:versionable</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>4e557532-98ff-4673-a289-5cdbb2822eed</sv:value>
+        <sv:value>3732eae8-01ca-4bdd-8f2f-1f9654722ba8</sv:value>
       </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-        <sv:value>preview</sv:value>
-        <sv:value>live</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>new-document</sv:value>
-        <sv:value>new-folder</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="gallery">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippogallery:stdImageGallery</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:named</sv:value>
-      <sv:value>mix:versionable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>4e557532-98ff-4673-a2a9-5cdbb2822eed</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:name" sv:type="String">
-      <sv:value>images</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-      <sv:value>preview</sv:value>
-      <sv:value>live</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
-      <sv:value>new-image-folder</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="hippostd:gallerytype" sv:type="String">
-      <sv:value>hippogallery:imageset</sv:value>
-    </sv:property>
-    <sv:node sv:name="hippos">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippogallery:stdImageGallery</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:versionable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>f770e2fa-e24a-4a1b-beb3-2f4bf2617473</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-        <sv:value>preview</sv:value>
-        <sv:value>live</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>new-image-folder</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippostd:gallerytype" sv:type="String">
-        <sv:value>hippogallery:imageset</sv:value>
-      </sv:property>
-      <sv:node sv:name="Hippo.jpg">
+      <sv:node sv:name="myarticle2">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:handle</sv:value>
+          <sv:value>testcontent:article</sv:value>
         </sv:property>
         <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:referenceable</sv:value>
+          <sv:value>mix:versionable</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>0dbd96e9-6ecd-4a1e-be3a-815884b46826</sv:value>
+          <sv:value>b363e8be-2ec7-4f62-8ba0-2f9c7a335b17</sv:value>
         </sv:property>
-        <sv:node sv:name="Hippo.jpg">
+        <sv:property sv:name="testcontent:introduction" sv:type="String">
+          <sv:value>introduction</sv:value>
+        </sv:property>
+        <sv:property sv:name="testcontent:title" sv:type="String">
+          <sv:value>title</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
+          <sv:value>preview</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+          <sv:value>content/documents/articles/myarticle2</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>unpublished</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>new</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:node sv:name="testcontent:body">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippogallery:imageset</sv:value>
+            <sv:value>hippostd:html</sv:value>
           </sv:property>
-          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>mix:versionable</sv:value>
+          <sv:property sv:name="hippostd:content" sv:type="String">
+            <sv:value>&lt;html&gt;&lt;body&gt;body&lt;/body&gt;&lt;/html&gt;</sv:value>
           </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>d2d1f4f1-b4ea-4cd3-8afa-24772cf3ff99</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-            <sv:value>preview</sv:value>
-            <sv:value>live</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippogallery:filename" sv:type="String">
-            <sv:value>Hippo.jpg</sv:value>
-          </sv:property>
-          <sv:node sv:name="hippogallery:thumbnail">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippogallery:image</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippogallery:height" sv:type="Long">
-              <sv:value>81</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippogallery:width" sv:type="Long">
-              <sv:value>100</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:data" sv:type="Binary">
-              <sv:value>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</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:lastModified" sv:type="Date">
-              <sv:value>2008-09-11T14:02:28.068+02:00</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:mimeType" sv:type="String">
-              <sv:value>image/jpeg</sv:value>
-            </sv:property>
-          </sv:node>
-          <sv:node sv:name="hippogallery:original">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippogallery:image</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippogallery:height" sv:type="Long">
-              <sv:value>142</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippogallery:width" sv:type="Long">
-              <sv:value>175</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:data" sv:type="Binary">
-              <sv:value>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</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:lastModified" sv:type="Date">
-              <sv:value>2008-09-11T14:02:28.068+02:00</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:mimeType" sv:type="String">
-              <sv:value>image/jpeg</sv:value>
-            </sv:property>
-          </sv:node>
         </sv:node>
       </sv:node>
     </sv:node>
+
   </sv:node>
-  <sv:node sv:name="assets">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippogallery:stdAssetGallery</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:named</sv:value>
-      <sv:value>mix:versionable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>4e557532-bbbb-4673-a2a9-5cdbb2822eed</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:name" sv:type="String">
-      <sv:value>Assets</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-      <sv:value>preview</sv:value>
-      <sv:value>live</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
-      <sv:value>new-file-folder</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="hippostd:gallerytype" sv:type="String">
-      <sv:value>hippogallery:exampleAssetSet</sv:value>
-    </sv:property>
-    <sv:node sv:name="hippos">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippogallery:stdAssetGallery</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:versionable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>dd1f34b9-9e3c-4361-856b-f74e0c3436d8</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-        <sv:value>preview</sv:value>
-        <sv:value>live</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>new-file-folder</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippostd:gallerytype" sv:type="String">
-        <sv:value>hippogallery:exampleAssetSet</sv:value>
-      </sv:property>
-      <sv:node sv:name="Hippo.pdf">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:handle</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>52817c59-692f-4cd5-b9ef-7b3946de4ea5</sv:value>
-        </sv:property>
-        <sv:node sv:name="Hippo.pdf">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippogallery:exampleAssetSet</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>mix:versionable</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>f3f0b68d-4a8a-4a44-aa9b-475c6eae80af</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-            <sv:value>preview</sv:value>
-            <sv:value>live</sv:value>
-          </sv:property>
-          <sv:node sv:name="hippogallery:asset">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:resource</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:data" sv:type="Binary">
-              <sv:value>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bmRvYmoNCg0KMTAgMCBvYmoNCjw8IC9UeXBlIC9Gb250DQogICAvU3VidHlwZSAvVHJ1ZVR5cGUNCiAgIC9CYXNlRm9udCAvQkFBQUFBK0FyaWFsTVQNCiAgIC9GaXJzdENoYXIgMA0KICAgL0xhc3RDaGFyIDM4DQogICAvV2lkdGhzIFsgNzUwIDU1NiA1NTYgMzMzIDU1NiA4MzMgMjc3IDIyMg0KICAgICA1NTYgNTAwIDU1NiA1NTYgMjIyIDI3NyA1NTYgMjc3DQogICAgIDUwMCA1NTYgNTU2IDI3NyA2NjYgNTU2IDUwMCAyNzcNCiAgICAgNTU2IDU1NiAyNzcgNjY2IDgzMyA2NjYgNzIyIDY2Ng0KICAgICA2NjYgNzc3IDcyMiA2MTAgMjIyIDcyMiA3MjIgXQ0KICAgL0ZvbnREZXNjcmlwdG9yIDggMCBSDQogICAvVG9Vbmljb2RlIDkgMCBSDQo+Pg0KZW5kb2JqDQoNCjExIDAgb2JqDQo8PA0KICAgL0YxIDEwIDAgUg0KPj4NCmVuZG9iag0KDQoxMiAwIG9iag0KPDwgL0ltNCA0IDAgUg0KICAgPj4NCmVuZG9iag0KDQoxMyAwIG9iag0KPDwNCiAgIC9Gb250IDExIDAgUg0KICAgL1hPYmplY3QgMTIgMCBSDQogICAvUHJvY1NldCBbIC9QREYgL1RleHQgL0ltYWdlQyAvSW1hZ2VJIC9JbWFnZUIgXQ0KPj4NCmVuZG9iag0KDQoxIDAgb2JqDQo8PCAvVHlwZSAvUGFnZQ0KICAgL1BhcmVudCA1IDAgUg0KICAgL1Jlc291cmNlcyAxMyAwIFINCiAgIC9NZWRpYUJveCBbIDAgMCA1OTUgODQyIF0NCiAgIC9Hcm91cCA8PCAvUyAvVHJhbnNwYXJlbmN5IC9DUyAvRGV2aWNlUkdCIC9JIHRydWUgPj4NCiAgIC9Db250ZW50cyAyIDAgUg0KPj4NCmVuZG9iag0KDQo1IDAgb2JqDQo8PCAvVHlwZSAvUGFnZXMNCiAgIC9SZXNvdXJjZXMgMTMgMCBSDQogICAvTWVkaWFCb3ggWyAwIDAgNTk1IDg0MiBdDQogICAvS2lkcyBbIDEgMCBSDQogICAgICAgICAgIF0NCiAgIC9Db3VudCAxDQo+Pg0KZW5kb2JqDQoNCjE0IDAgb2JqDQo8PCAvVHlwZSAvQ2F0YWxvZw0KICAgL1BhZ2VzIDUgMCBSDQo+Pg0KZW5kb2JqDQoNCjE1IDAgb2JqDQo8PCAvQ3JlYXRvciA8RkVGRjAwNDQwMDcyMDA2MTAwNzc+DQovUHJvZHVjZXIgPEZFRkYwMDRGMDA3MDAwNjUwMDZFMDA0RjAwNjYwMDY2MDA2OTAwNjMwMDY1MDAyRTAwNkYwMDcyMDA2NzAwMjAwMDMyMDAyRTAwMzA+DQovQ3JlYXRpb25EYXRlIChEOjIwMDgwODExMTc1NDMyKzAyJzAwJykNCj4+DQplbmRvYmoNCg0KeHJlZg0KMCAxNg0KMDAwMDAwMDAwMCA2NTUzNSBmDQowMDAwMDMwMjgxIDAwMDAwIG4NCjAwMDAwMDAwMjEgMDAwMDAgbg0KMDAwMDAwNDEzOSAwMDAwMCBuDQowMDAwMDA0MTY2IDAwMDAwIG4NCjAwMDAwMzA0NjcgMDAwMDAgbg0KMDAwMDAxMDkxNSAwMDAwMCBuDQowMDAwMDI4OTY0IDAwMDAwIG4NCjAwMDAwMjg5OTAgMDAwMDAgbg0KMDAwMDAyOTIyNyAwMDAwMCBuDQowMDAwMDI5NzA5IDAwMDAwIG4NCjAwMDAwMzAwNzkgMDAwMDAgbg0KMDAwMDAzMDEyMiAwMDAwMCBuDQowMDAwMDMwMTY0IDAwMDAwIG4NCjAwMDAwMzA2MDQgMDAwMDAgbg0KMDAwMDAzMDY2NCAwMDAwMCBuDQp0cmFpbGVyDQo8PCAvU2l6ZSAxNg0KICAgL1Jvb3QgMTQgMCBSDQogICAvSW5mbyAxNSAwIFINCiAgIC9JRCBbIDxBQ0I0RDZCMTdCQ0IyMEI4QjRBQkIzMDY4QzBCOUZEND4NCiAgICAgICAgIDxBQ0I0RDZCMTdCQ0IyMEI4QjRBQkIzMDY4QzBCOUZEND4gXQ0KPj4NCnN0YXJ0eHJlZg0KMzA4NTUNCiUlRU9GDQo=</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:lastModified" sv:type="Date">
-              <sv:value>2008-09-11T14:02:07.506+02:00</sv:value>
-            </sv:property>
-            <sv:property sv:name="jcr:mimeType" sv:type="String">
-              <sv:value>application/pdf</sv:value>
-            </sv:property>
-          </sv:node>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="attic">
+  <sv:node sv:name="news">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:folder</sv:value>
     </sv:property>
@@ -756,7 +280,254 @@
       <sv:value>mix:versionable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>6c555eb9-3c1a-4ff1-ae1d-5d25f6759cc2</sv:value>
+      <sv:value>e0155dd8-69d3-4c80-bc0a-2b81eeb092c4</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
+      <sv:value>new-document</sv:value>
+      <sv:value>new-folder</sv:value>
+    </sv:property>
+    <sv:node sv:name="mynews1">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>5901f6af-ee8d-4fdd-88d8-0d156c8f0805</sv:value>
+      </sv:property>
+      <sv:node sv:name="mynews1">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>testcontent:news</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>mix:versionable</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>d1847bd1-78da-4491-beab-e0e6d2fee3e0</sv:value>
+        </sv:property>
+        <sv:property sv:name="testcontent:date" sv:type="Date">
+          <sv:value>2010-01-05T09:03:00.000+01:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="testcontent:introduction" sv:type="String">
+          <sv:value>&lt;html&gt;&lt;body&gt;introduction&lt;/body&gt;&lt;/html&gt;</sv:value>
+        </sv:property>
+        <sv:property sv:name="testcontent:title" sv:type="String">
+          <sv:value>title</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
+          <sv:value>preview</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+          <sv:value>content/documents/news/mynews1</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>unpublished</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>new</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:node sv:name="testcontent:body">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippostd:html</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:content" sv:type="String">
+            <sv:value>&lt;html&gt;&lt;body&gt;&lt;a facetselect="link1"&gt;link1&lt;/a&gt;&lt;a facetselect="link2"&gt;link2&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
+          </sv:property>
+          <sv:node sv:name="link1">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:facetselect</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>3732eae8-01ca-4bdd-8f2f-1f9654722ba8</sv:value>
+            </sv:property>
+            <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
+            <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
+            <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
+          </sv:node>
+          <sv:node sv:name="link2">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:facetselect</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:docbase" sv:type="String">
+              <sv:value>cb3bb9bd-309d-47b0-8858-d92b46edc52f</sv:value>
+            </sv:property>
+            <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
+            <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
+            <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
+          </sv:node>
+        </sv:node>
+        <sv:node sv:name="testcontent:internallink">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:mirror</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="events">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippostd:folder</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:versionable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>cbd837ed-2f07-492e-94dc-409f089a4fcf</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
+      <sv:value>preview</sv:value>
+      <sv:value>live</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
+      <sv:value>new-document</sv:value>
+      <sv:value>new-folder</sv:value>
+    </sv:property>
+    <sv:node sv:name="myevent1">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>7721bbea-d48a-441a-ab54-ef9b63fd96cb</sv:value>
+      </sv:property>
+      <sv:node sv:name="myevent1">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>testcontent:event</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>mix:versionable</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>24c54e63-78d3-452f-a9f0-f216cc60c276</sv:value>
+        </sv:property>
+        <sv:property sv:name="testcontent:introduction" sv:type="String">
+          <sv:value>&lt;html&gt;&lt;body&gt;introduction&lt;/body&gt;&lt;/html&gt;</sv:value>
+        </sv:property>
+        <sv:property sv:name="testcontent:title" sv:type="String">
+          <sv:value>title</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
+          <sv:value>preview</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+          <sv:value>content/documents/events/myevent1</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>unpublished</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>new</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:node sv:name="testcontent:address">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>testcontent:address</sv:value>
+          </sv:property>
+          <sv:property sv:name="testcontent:number" sv:type="Long">
+            <sv:value>4</sv:value>
+          </sv:property>
+          <sv:property sv:name="testcontent:street" sv:type="String">
+            <sv:value>Dolomieten</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="testcontent:date">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippostd:date</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>mix:referenceable</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>f2d61185-5bf6-48dd-9fd8-78b5a21297aa</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:date" sv:type="Date">
+            <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:dayofmonth" sv:type="Long">
+            <sv:value>26</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:dayofweek" sv:type="Long">
+            <sv:value>4</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:dayofyear" sv:type="Long">
+            <sv:value>86</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:hourofday" sv:type="Long">
+            <sv:value>12</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:minute" sv:type="Long">
+            <sv:value>3</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:month" sv:type="Long">
+            <sv:value>2</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:second" sv:type="Long">
+            <sv:value>0</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:weekofyear" sv:type="Long">
+            <sv:value>13</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:year" sv:type="Long">
+            <sv:value>2008</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="testcontent:body">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippostd:html</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:content" sv:type="String">
+            <sv:value>&lt;html&gt;&lt;body&gt;body&lt;/body&gt;&lt;/html&gt;</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="overviews">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippostd:folder</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:versionable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>4e557532-98ff-4673-a289-5cdbb2822eed</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
+      <sv:value>preview</sv:value>
+      <sv:value>live</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
+      <sv:value>new-document</sv:value>
+      <sv:value>new-folder</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
