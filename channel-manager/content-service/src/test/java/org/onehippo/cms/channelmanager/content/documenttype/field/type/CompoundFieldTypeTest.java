@@ -30,9 +30,11 @@ import javax.jcr.RepositoryException;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.repository.mock.MockNode;
 
@@ -56,7 +58,7 @@ public class CompoundFieldTypeTest {
     private CompoundFieldType fieldType;
     private FieldType stringField1;
     private FieldType stringField2;
-    private FieldType compoundField;
+    private CompoundFieldType compoundField;
     private Node node;
 
     @Before
@@ -417,6 +419,76 @@ public class CompoundFieldTypeTest {
         verify(node);
     }
 
+    @Test
+    public void writeFieldOtherId() throws ErrorWithPayloadException {
+        final Node node = createMock(Node.class);
+        final FieldPath fieldPath = new FieldPath("other:id");
+        final List<FieldValue> fieldValues = Collections.emptyList();
+        replay(node);
+
+        assertFalse(fieldType.writeField(node, fieldPath, fieldValues));
+        verify(node);
+    }
+
+    @Test
+    public void writeFieldUnknownChildNode() throws ErrorWithPayloadException {
+        final FieldPath fieldPath = new FieldPath(NODE_NAME + "/unknown:child");
+        final List<FieldValue> fieldValues = Collections.emptyList();
+
+        try {
+            fieldType.writeField(node, fieldPath, fieldValues);
+            fail("Exception not thrown");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+    }
+
+    @Test
+    public void writeFieldGetChildFails() throws ErrorWithPayloadException, RepositoryException {
+        final Node node = createMock(Node.class);
+        final FieldPath fieldPath = new FieldPath(NODE_NAME + "/" + STRING_PROPERTY_1);
+        final FieldValue fieldValue = new FieldValue("New value");
+
+        expect(node.hasNode(NODE_NAME)).andReturn(true);
+        expect(node.getNode(NODE_NAME)).andThrow(new RepositoryException());
+        expect(node.getPath()).andReturn("/test");
+        replay(node);
+
+        try {
+            fieldType.writeField(node, fieldPath, Collections.singletonList(fieldValue));
+            fail("Exception not thrown");
+        } catch (InternalServerErrorException e) {
+            verify(node);
+        }
+    }
+
+    @Test
+    public void writeFieldToStringProperty() throws ErrorWithPayloadException, RepositoryException {
+        final Node compound = node.addNode(NODE_NAME, "compound:type");
+        compound.setProperty(STRING_PROPERTY_1, "Value");
+
+        final FieldPath fieldPath = new FieldPath(NODE_NAME + "/" + STRING_PROPERTY_1);
+        final FieldValue fieldValue = new FieldValue("New value");
+
+        assertTrue(fieldType.writeField(node, fieldPath, Collections.singletonList(fieldValue)));
+        assertThat(compound.getProperty(STRING_PROPERTY_1).getString(), equalTo("New value"));
+    }
+
+    @Test
+    public void writeFieldToNestedCompound() throws ErrorWithPayloadException, RepositoryException {
+        compoundField.getFields().add(stringField1);
+
+        final Node compound = node.addNode(NODE_NAME, "compound:type");
+        final Node nestedCompound = compound.addNode("compound:field", "nestedcompound:type");
+
+        nestedCompound.setProperty(STRING_PROPERTY_1, "Value");
+
+        final FieldPath fieldPath = new FieldPath(NODE_NAME + "/compound:field/" + STRING_PROPERTY_1);
+        final FieldValue fieldValue = new FieldValue("New value");
+
+        assertTrue(fieldType.writeField(node, fieldPath, Collections.singletonList(fieldValue)));
+        assertThat(nestedCompound.getProperty(STRING_PROPERTY_1).getString(), equalTo("New value"));
+    }
 
     @Test
     public void validateEmpty() {

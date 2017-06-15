@@ -31,6 +31,7 @@ Failed to write singular String value to property test:id
 Failed to write multiple String value to property test:id
 Failed to read nodes for compound type 'node:name'
 Failed to write compound value to node node:name
+Failed to write value of compound field 'node:name/string:field1' to node '/test'
 Failed reading hints from workflow
 Failed to determine if field is of type CHOICE
 Failed to determine provider-based choices for field
