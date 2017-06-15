@@ -121,15 +121,15 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
 
     @Override
     public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
-        final String id = getId();
-        if (!fieldPath.startsWith(id)) {
+        if (!fieldPath.startsWith(getId())) {
             return false;
         }
+        final String nodeName = fieldPath.getFirstSegment();
         try {
-            if (!node.hasNode(id)) {
+            if (!node.hasNode(nodeName)) {
                 throw INVALID_DATA.get();
             }
-            final Node child = node.getNode(id);
+            final Node child = node.getNode(nodeName);
             return writeFieldValue(child, fieldPath.getRemainingSegments(), values);
         } catch (RepositoryException e) {
             log.warn("Failed to write value of choice field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(node), e);
@@ -139,10 +139,9 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
 
     @Override
     public boolean writeFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException {
-        final FieldPath remaining = fieldPath.getRemainingSegments();
-        final String chosenId = remaining.getFirstSegment();
+        final String chosenId = fieldPath.getFirstSegment();
         final NodeFieldType choice = findChoice(chosenId).orElseThrow(INVALID_DATA);
-        return choice.writeFieldValue(node, remaining.getRemainingSegments(), values);
+        return choice.writeFieldValue(node, fieldPath.getRemainingSegments(), values);
     }
 
     @Override

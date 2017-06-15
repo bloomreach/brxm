@@ -16,15 +16,18 @@
 
 package org.onehippo.cms.channelmanager.content.document.util;
 
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
  * Represents the path to field value in a document. It consists of a hierarchy of segments that are unique per level.
- * Segments cannot be empty.
+ * Segments can (optionally) have a numbered suffix in square brackets to distinguish 'same name siblings'.
  */
 public class FieldPath {
 
     private static final String SEPARATOR = "/";
+    private static final Pattern NUMBERED_SUFFIX = Pattern.compile("^\\[\\d\\]$");
 
     private final String firstSegment;
     private final String remainingSegments;
@@ -56,18 +59,31 @@ public class FieldPath {
 
     /**
      * @param id the ID to compare to
-     * @return whether this field path only consists of the given segment.
+     * @return whether this field path only consists of exactly the given segment.
      */
     public boolean is(final String id) {
         return firstSegment != null && firstSegment.equals(id) && StringUtils.isEmpty(remainingSegments);
     }
 
     /**
-     * @param segment the segment to compare the first segment to
-     * @return whether the first segment of this field path equals the given ID.
+     * @param segment the segment to compare the first segment to. A numbered suffix in the first segment is ignored
+     *                when comparing it to the given segment. For example, the field path "foo[2]/bar" starts with
+     *                "foo[2]", but is also starts with "foo". It does not start with "fo", though.
+     * @return whether the first segment of this field path equals the given segment.
      */
     public boolean startsWith(final String segment) {
-        return StringUtils.isNotEmpty(segment) && StringUtils.equals(segment, firstSegment);
+        return StringUtils.isNotEmpty(segment) && matchesFirstSegment(segment);
+    }
+
+    private boolean matchesFirstSegment(final String segment) {
+        if (firstSegment.equals(segment)) {
+            return true;
+        }
+        final String suffix = StringUtils.substringAfter(firstSegment, segment);
+        if (StringUtils.isEmpty(suffix)) {
+            return false;
+        }
+        return NUMBERED_SUFFIX.matcher(suffix).matches();
     }
 
     /**

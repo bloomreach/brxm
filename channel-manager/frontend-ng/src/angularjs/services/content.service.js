@@ -47,7 +47,8 @@ class ContentService {
   }
 
   _send(method, pathElements, data) {
-    const url = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), REST_API_PATH, ...pathElements);
+    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), REST_API_PATH, ...pathElements);
+    const url = encodeURI(path);
     const headers = {};
     return this.$http({ method, url, headers, data })
       .then(result => result.data);
