@@ -241,7 +241,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         }
         for (EsvNode child : node.getChildren()) {
             final String childPath = calculatePath(child, path, nodeDefinitions, node.getChildren());
-            if (!isContent(path) && isContent(childPath)) {
+            if (!path.equals("/content") && !isContent(path) && isContent(childPath)) {
                 throw new EsvParseException(
                         "Migration to content definitions is only supported when the entire resource is content; node "
                         + childPath + " defined at " + child.getSourceLocation()

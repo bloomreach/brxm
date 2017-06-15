@@ -144,7 +144,7 @@ public class InitializeInstruction {
     static final Logger log = LoggerFactory.getLogger(Esv2Yaml.class);
 
     private static final String[] standardContentRootPrefixes =
-            { "/content/documents/", "/content/gallery/", "/content/assets/" };
+            { "/content/documents", "/content/gallery", "/content/assets" };
 
     private final String name;
     private final Type type;
@@ -195,12 +195,12 @@ public class InitializeInstruction {
 
     public boolean isContent(final String path) {
         for (final String root : standardContentRootPrefixes) {
-            if (path.startsWith(root)) {
+            if (path.equals(root) || path.startsWith(root + "/")) {
                 return true;
             }
         }
-        for (String root : contentRoots) {
-            if (path.equals(root) || path.startsWith(root+"/")) {
+        for (final String root : contentRoots) {
+            if (path.equals(root) || path.startsWith(root + "/")) {
                 return true;
             }
         }
