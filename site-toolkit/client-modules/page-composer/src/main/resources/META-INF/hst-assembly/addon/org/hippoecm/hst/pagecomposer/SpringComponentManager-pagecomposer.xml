@@ -121,12 +121,11 @@
     <property name="templateHelper" ref="templateHelper"/>
   </bean>
 
-  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
-    <constructor-arg value="java.lang.Boolean" />
-    <property name="targetObject" ref="pageComposerPropertyPresentationFactories"/>
-    <property name="targetMethod" value="add"/>
-    <property name="arguments">
-      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.property.SwitchTemplatePropertyRepresentationFactory"/>
+  <bean id="pageComposerPropertyPresentationFactories" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.property.SwitchTemplatePropertyRepresentationFactory"/>
+      </list>
     </property>
   </bean>
 

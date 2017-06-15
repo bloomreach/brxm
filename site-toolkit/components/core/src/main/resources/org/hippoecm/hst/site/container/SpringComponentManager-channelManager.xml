@@ -82,13 +82,6 @@
     <property name="jcrPathTemplateComposer" ref="jcrPathTemplateComposer"/>
   </bean>
 
-  <bean id="pageComposerPropertyPresentationFactories" class="org.springframework.beans.factory.config.ListFactoryBean">
-    <property name="sourceList">
-      <list>
-      </list>
-    </property>
-  </bean>
-
   <!-- jaxrsHstConfigCxfServerFactoryBean needs to be available in the HST core component manager so downstream
        projects can access it -->
   <bean id="jaxrsHstConfigCxfServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
