@@ -28,9 +28,9 @@
 
         <p>
           From application's perspective, the main entry point to use <strong>CRISP</strong> services is
-          <a href="apidocs/com/onehippo/cms7/crisp/api/broker/ResourceServiceBroker.html">ResourceServiceBroker</a>.
+          <a href="apidocs/org/onehippo/cms7/crisp/api/broker/ResourceServiceBroker.html">ResourceServiceBroker</a>.
           You should always retrieve content or data via <code>ResourceServiceBroker</code> which always returns a
-          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> instance as a result.
+          <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> instance as a result.
         </p>
 
       </subsection>
@@ -183,7 +183,7 @@
 
         <p>
           Basically, a link for a <code>Resource</code> cannot be generated without a configured custom
-          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/ResourceLinkResolver.html">ResourceLinkResolver</a>
+          <a href="apidocs/org/onehippo/cms7/crisp/api/resource/ResourceLinkResolver.html">ResourceLinkResolver</a>
           component in a <code>ResourceResolver</code> component.
           Please see <a href="example-simple-json-rest-api-config.html">Example with Simple JSON REST API</a>
           page for an example configuration with a custom <code>ResourceLinkResolver</code>.

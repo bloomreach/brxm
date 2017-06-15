@@ -27,17 +27,17 @@
       <subsection name="Introduction">
 
         <p>
-          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> is the primary object
+          <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> is the primary object
           representation to solve all the complex integration problems in a generic way.
           So, the interface was designed to support all the different domain object representations from heterogeneous
           backends easily by providing generic APIs to retrieve properties and child objects of domain objects.
         </p>
 
         <p>
-          One typical <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> implementation
+          One typical <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> implementation
           nowadays is probably in JSON data format. <strong>CRISP</strong> provides a default implementation of
           <code>Resource</code> interface for JSON data with
-          <a href="apidocs/com/onehippo/cms7/crisp/core/resource/jackson/JacksonResource.html">JacksonResource</a>
+          <a href="apidocs/org/onehippo/cms7/crisp/core/resource/jackson/JacksonResource.html">JacksonResource</a>
           which uses <a href="https://github.com/FasterXML/jackson">Jackson</a> library to parse JSON data.
         </p>
 
@@ -67,7 +67,7 @@
 
         <p>
           The example JSON data shown above can be mapped to a
-          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object. For more details,
+          <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object. For more details,
         </p>
 
         <ul>
@@ -131,7 +131,7 @@
         </div>
 
         <p>
-          Please see the JavaDoc for detail: <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a>.
+          Please see the JavaDoc for detail: <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a>.
         </p>
 
       </subsection>
@@ -174,7 +174,7 @@
 
         <p>
           The example JSON data shown above can be mapped to a
-          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object as well, but
+          <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object as well, but
           the <code>Resource</code> object represents a collection (mapped to the root JSON Array object) instead.
         </p>
 
@@ -266,7 +266,7 @@
 
         <p>
           The example JSON data shown above can be mapped to a
-          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object too, but
+          <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object too, but
           you need to retrieve the "records" <code>Resource</code> object property first and get
           a collection (mapped to the root JSON Array object) from there in this case.
         </p>
@@ -297,7 +297,7 @@
       <subsection name="Pagination with Resource Object">
 
         <p>
-          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object supports paginating
+          <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object supports paginating
           methods. For example, you can pass <code>offset</code> index and <code>limit</code> count of the paginated
           result on <code>Resource#getChildren(long offset, long limit)</code>
           like the following example to retrieve only specific set of the page:
@@ -319,7 +319,7 @@
         </div>
 
         <p>
-          Please see the JavaDoc for detail: <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a>.
+          Please see the JavaDoc for detail: <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a>.
         </p>
 
       </subsection>

@@ -27,17 +27,17 @@
       <subsection name="Introduction">
 
         <p>
-          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> is the primary object
+          <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> is the primary object
           representation to solve all the complex integration problems in a generic way.
           So, the interface was designed to support all the different domain object representations from heterogeneous
           backends easily by providing generic APIs to retrieve properties and child objects of domain objects.
         </p>
 
         <p>
-          One typical <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> implementation
+          One typical <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> implementation
           nowadays is probably in XML data format. <strong>CRISP</strong> provides a default implementation of
           <code>Resource</code> interface for XML data with
-          <a href="apidocs/com/onehippo/cms7/crisp/core/resource/jdom/JdomResource.html">JdomResource</a>
+          <a href="apidocs/org/onehippo/cms7/crisp/core/resource/jdom/JdomResource.html">JdomResource</a>
           which uses <a href="http://www.jdom.org/">JDOM</a> library to parse XML data.
         </p>
 
@@ -79,7 +79,7 @@
 
         <p>
           The example XML data shown above can be mapped to a
-          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object. For more details,
+          <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object. For more details,
         </p>
 
         <ul>
@@ -149,7 +149,7 @@
         </div>
 
         <p>
-          Please see the JavaDoc for detail: <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a>.
+          Please see the JavaDoc for detail: <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a>.
         </p>
 
       </subsection>
@@ -218,7 +218,7 @@
 
         <p>
           The example XML data shown above can be mapped to a
-          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object as well.
+          <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object as well.
           The <code>Resource</code> object represents the root XML element.
         </p>
 
@@ -254,7 +254,7 @@
       <subsection name="Pagination with Resource Object">
 
         <p>
-          <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object supports paginating
+          <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a> object supports paginating
           methods. For example, you can pass <code>offset</code> index and <code>limit</code> count of the paginated
           result on <code>Resource#getChildren(long offset, long limit)</code>
           like the following example to retrieve only specific set of the page:
@@ -277,7 +277,7 @@
         </div>
 
         <p>
-          Please see the JavaDoc for detail: <a href="apidocs/com/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a>.
+          Please see the JavaDoc for detail: <a href="apidocs/org/onehippo/cms7/crisp/api/resource/Resource.html">Resource</a>.
         </p>
 
       </subsection>

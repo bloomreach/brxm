@@ -33,8 +33,8 @@
 
         <ul>
           <li>
-            <a href="https://maven.onehippo.com/maven2-enterprise/com/onehippo/cms7/hippo-addon-crisp-demopkg/1.0.0/hippo-addon-crisp-demopkg-1.0.0-src.zip">
-              https://maven.onehippo.com/maven2-enterprise/com/onehippo/cms7/hippo-addon-crisp-demopkg/1.0.0/hippo-addon-crisp-demopkg-1.0.0-src.zip
+            <a href="https://maven.onehippo.com/maven2/org/onehippo/cms7/hippo-addon-crisp-demopkg/1.0.0/hippo-addon-crisp-demopkg-1.0.0-src.zip">
+              https://maven.onehippo.com/maven2/org/onehippo/cms7/hippo-addon-crisp-demopkg/1.0.0/hippo-addon-crisp-demopkg-1.0.0-src.zip
             </a>
           </li>
         </ul>
@@ -60,7 +60,7 @@ mvn org.apache.maven.plugins:maven-dependency-plugin:3.0.0:get \
 
         <p>
           And, you will be able to find the zip file in your local Maven repository directory.
-          e.g, <code>~/.m2/repository/com/onehippo/cms7/hippo-addon-crisp-demopkg/1.0.0/hippo-addon-crisp-demopkg-1.0.0-src.zip</code>.
+          e.g, <code>~/.m2/repository/org/onehippo/cms7/hippo-addon-crisp-demopkg/1.0.0/hippo-addon-crisp-demopkg-1.0.0-src.zip</code>.
         </p>
 
         <p>
@@ -92,7 +92,7 @@ $ mvn -P cargo.run
           <li>You will see all the product list with custom-generated URI links at the bottom of the page.</li>
           <li>
             The external product data was retrieved through <code>ResourceServiceBroker</code>.
-            See <code>site/src/main/java/com/onehippo/cms7/crisp/demo/components/NewsContentComponent.java</code>
+            See <code>site/src/main/java/org/onehippo/cms7/crisp/demo/components/NewsContentComponent.java</code>
             and <code>bootstrap/webfiles/src/main/resources/site/freemarker/hstdefault/newspage-main.ftl</code>
             for detail.
           </li>
@@ -111,7 +111,7 @@ $ mvn -P cargo.run
           </li>
           <li>
             The external product data was retrieved through <code>ResourceServiceBroker</code>.
-            See <code>cms/src/main/java/com/onehippo/cms7/crisp/demo/cms/plugin/CommerceProductDataServiceFacade.java</code>
+            See <code>cms/src/main/java/org/onehippo/cms7/crisp/demo/cms/plugin/CommerceProductDataServiceFacade.java</code>
             for detail.
           </li>
         </ul>
