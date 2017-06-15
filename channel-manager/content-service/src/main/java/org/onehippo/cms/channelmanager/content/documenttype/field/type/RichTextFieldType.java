@@ -209,10 +209,15 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
     }
 
     @Override
-    public void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues) throws ErrorWithPayloadException {
+    public void writeValues(final Node node,
+                            final Optional<List<FieldValue>> optionalValues,
+                            final boolean validateValues) throws ErrorWithPayloadException {
         final String valueName = getId();
         final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
-        checkCardinality(values);
+
+        if (validateValues) {
+            checkCardinality(values);
+        }
 
         try {
             final NodeIterator children = node.getNodes(valueName);

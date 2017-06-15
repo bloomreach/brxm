@@ -202,6 +202,14 @@ public abstract class AbstractFieldType implements FieldType {
         }
     }
 
+    @Override
+    public final void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues)
+            throws ErrorWithPayloadException {
+        writeValues(node, optionalValues, true);
+    }
+
+    protected abstract void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean validateValues) throws ErrorWithPayloadException;
+
     @SuppressWarnings("unchecked")
     protected void checkCardinality(final List<FieldValue> values)
             throws ErrorWithPayloadException {

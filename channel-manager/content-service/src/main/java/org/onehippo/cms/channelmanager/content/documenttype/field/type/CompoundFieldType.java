@@ -107,11 +107,16 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
     }
 
     @Override
-    public void writeTo(final Node node, Optional<List<FieldValue>> optionalValues) throws ErrorWithPayloadException {
-        final String nodeName = getId();
+    protected void writeValues(final Node node,
+                               final Optional<List<FieldValue>> optionalValues,
+                               final boolean validateValues) throws ErrorWithPayloadException {
         final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
-        checkCardinality(values);
 
+        if (validateValues) {
+            checkCardinality(values);
+        }
+
+        final String nodeName = getId();
         try {
             NodeIterator children = node.getNodes(nodeName);
             FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);

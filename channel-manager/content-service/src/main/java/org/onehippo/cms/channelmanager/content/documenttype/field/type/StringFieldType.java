@@ -27,9 +27,10 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -131,23 +132,27 @@ public class StringFieldType extends AbstractFieldType {
     }
 
     @Override
-    public void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues)
-            throws ErrorWithPayloadException {
-        final String propertyName = getId();
-        final List<FieldValue> values = writeValues(optionalValues);
-        checkCardinality(values);
+    protected void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean validateValues) throws ErrorWithPayloadException {
+        final List<FieldValue> processedValues = processValues(optionalValues);
 
+        if (validateValues) {
+            checkCardinality(processedValues);
+        }
+
+        final String propertyName = getId();
         try {
-            if (values.isEmpty()) {
+            if (processedValues.isEmpty()) {
                 if (hasProperty(node, propertyName)) {
                     node.getProperty(propertyName).remove();
                 }
             } else {
-                final String[] strings = new String[values.size()];
+                final String[] strings = new String[processedValues.size()];
                 for (int i = 0; i < strings.length; i++) {
-                    strings[i] = values.get(i).findValue().orElseThrow(INVALID_DATA);
+                    final Optional<String> value = processedValues.get(i).findValue();
 
-                    if (maxLength != null && strings[i].length() > maxLength) {
+                    strings[i] = validateValues ? value.orElseThrow(INVALID_DATA) : value.orElse(StringUtils.EMPTY);
+
+                    if (validateValues && maxLength != null && strings[i].length() > maxLength) {
                         throw INVALID_DATA.get();
                     }
                 }
@@ -164,17 +169,22 @@ public class StringFieldType extends AbstractFieldType {
         }
     }
 
+    /**
+     * Hook for sub-classes to process values before writing them. The default implementation does nothing.
+     * @param optionalValues the values to process
+     * @return the processed values
+     */
+    protected List<FieldValue> processValues(final Optional<List<FieldValue>> optionalValues) {
+        return optionalValues.orElse(Collections.emptyList());
+    }
+
     @Override
     public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
         if (!fieldPath.is(getId())) {
             return false;
         }
-        writeTo(node, Optional.of(values));
+        writeValues(node, Optional.of(values), false);
         return true;
-    }
-
-    protected List<FieldValue> writeValues(final Optional<List<FieldValue>> optionalValues) {
-        return optionalValues.orElse(Collections.emptyList());
     }
 
     private boolean hasProperty(final Node node, final String propertyName) throws RepositoryException {
