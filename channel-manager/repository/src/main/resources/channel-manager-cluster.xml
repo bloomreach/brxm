@@ -67,9 +67,6 @@
       <sv:property sv:name="variantsPath" sv:type="String">
         <sv:value/>
       </sv:property>
-      <sv:property sv:name="projectsPath" sv:type="String">
-        <sv:value/>
-      </sv:property>
     </sv:node>
     <sv:node sv:name="layout.wireframe">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

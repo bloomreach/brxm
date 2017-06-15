@@ -26,7 +26,7 @@
   </md-input-container>
 
   <md-input-container ng-switch-when="DropDownList" class="md-block {{::channelProperty.qaClass}}" flex>
-    <label ng-class="{ 'md-required': ::channelProperty.required }">{{ ::channelProperty.label }}</label>
+    <label ng-class="::{ 'md-required': channelProperty.required }">{{ ::channelProperty.label }}</label>
     <md-select name="{{::channelProperty.field}}"
                ng-required="::channelProperty.required"
                ng-model="channelProperty.value"
@@ -42,7 +42,7 @@
   </md-input-container>
 
   <md-input-container ng-switch-when="ImageSetPath" class="md-block input-container-picker {{::channelProperty.qaClass}}">
-    <label ng-class="{ 'md-required': ::channelProperty.required }">{{ ::channelSettings.getLabel(field) }}</label>
+    <label ng-class="::{ 'md-required': channelProperty.required }">{{ ::channelSettings.getLabel(field) }}</label>
     <div layout="row">
       <div flex>
         <input type="text"
@@ -53,7 +53,7 @@
                ng-hide="channelProperty.value"
                ng-click="channelProperty.showPathPicker()"
                ng-disabled="::channelProperty.readOnly">
-        <img ng-class="{ 'readonly': ::channelProperty.readOnly }"
+        <img ng-class="::{ 'readonly': channelProperty.readOnly }"
              ng-if="channelProperty.value"
              ng-src="{{ channelProperty.getImageVariantPath() }}"
              ng-click="channelProperty.readOnly || channelProperty.showPathPicker()">
@@ -77,7 +77,7 @@
   </md-input-container>
 
   <md-input-container ng-switch-when="JcrPath" class="md-block input-container-picker {{::channelProperty.qaClass}}">
-    <label ng-class="{ 'md-required': ::channelProperty.required }">{{ ::channelSettings.getLabel(field) }}</label>
+    <label ng-class="::{ 'md-required': channelProperty.required }">{{ ::channelSettings.getLabel(field) }}</label>
     <div layout="row">
       <input type="text"
              name="{{::channelProperty.field}}"
@@ -107,7 +107,7 @@
   </md-input-container>
 
   <md-input-container ng-switch-default class="md-block {{::channelProperty.qaClass}}" flex>
-    <label ng-class="{ 'md-required': ::channelProperty.required }">{{ ::channelProperty.label }}</label>
+    <label ng-class="::{ 'md-required': channelProperty.required }">{{ ::channelProperty.label }}</label>
     <input type="text" name="{{::channelProperty.field}}"
            ng-required="::channelProperty.required"
            ng-model="channelProperty.value"
