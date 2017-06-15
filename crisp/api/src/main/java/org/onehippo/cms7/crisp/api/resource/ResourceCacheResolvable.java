@@ -49,6 +49,12 @@ import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
 public interface ResourceCacheResolvable {
 
     /**
+     * Returns true if caching is enabled with this.
+     * @return true if caching is enabled with this
+     */
+    boolean isCacheEnabled();
+
+    /**
      * Returns true if the given {@code resource} is cacheable.
      * <p>
      * Note that if an implementation does not want to cache {@link Resource} representations at all for any reason,
@@ -62,6 +68,13 @@ public interface ResourceCacheResolvable {
 
     /**
      * Convert the given {@code resource} to a cacheable data object to be stored in {@link ResourceDataCache}.
+     * <P>
+     * Implementations may simply return the {@code resource} object directly without any conversion if the the
+     * {@code resource} object can be stored (for example, the {@code resource} object is serializable) into the
+     * underlying cache store.
+     * Otherwise, the {@code resource} object can be converted to something else and returned in order to be stored
+     * into the underlying cache store by implementations.
+     * </P>
      * @param resource resource representation
      * @return converted the given {@code resource} to a cacheable data object to be stored in {@link ResourceDataCache}
      * @throws IOException if IO error occurs
@@ -71,6 +84,11 @@ public interface ResourceCacheResolvable {
     /**
      * Convert and restore back the given {@code cacheData} from the {@link ResourceDataCache} to a {@link Resource}
      * object.
+     * <P>
+     * Implementations may simply cast the {@code cacheData} object directly to {@link Resource} object without
+     * any conversion if the the resource object was stored directly into the underlying cache store.
+     * Otherwise, the {@code cacheData} object can be converted back to a {@link Resource} object by implementations.
+     * </P>
      * @param cacheData cached data object that is stored in {@link ResourceDataCache}
      * @return {@link Resource} object converted from the {@code cacheData}
      * @throws IOException if IO error occurs

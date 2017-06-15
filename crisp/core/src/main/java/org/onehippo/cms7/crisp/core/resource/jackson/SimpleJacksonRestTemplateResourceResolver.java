@@ -37,18 +37,8 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
         }
     };
 
-    private boolean cacheEnabled;
-
     public SimpleJacksonRestTemplateResourceResolver() {
         super();
-    }
-
-    public boolean isCacheEnabled() {
-        return cacheEnabled;
-    }
-
-    public void setCacheEnabled(boolean cacheEnabled) {
-        this.cacheEnabled = cacheEnabled;
     }
 
     @Override

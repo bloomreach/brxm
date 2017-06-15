@@ -25,9 +25,13 @@
               ref="org.springframework.http.client.ClientHttpRequestFactory" />
   </bean>
 
-  <bean id="abstractCrispSimpleJacksonRestTemplateResourceResolver" abstract="true"
+  <bean id="abstractCrispSimpleRestTemplateResourceResolver" abstract="true"
         parent="abstractCrispHttpRequestResourceResolver">
     <property name="cacheEnabled" value="true" />
+  </bean>
+
+  <bean id="abstractCrispSimpleJacksonRestTemplateResourceResolver" abstract="true"
+        parent="abstractCrispSimpleRestTemplateResourceResolver">
   </bean>
 
   <bean id="org.onehippo.cms7.crisp.api.resource.ResourceResolverProvider"

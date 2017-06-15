@@ -23,9 +23,30 @@ import java.io.IOException;
 public abstract class AbstractResourceCacheResolvable implements ResourceCacheResolvable {
 
     /**
+     * Flag whether or not this is enabled with caching.
+     */
+    private boolean cacheEnabled;
+
+    /**
      * {@link ResourceDataCache} representing an underlying cache store for {@link Resource} representations.
      */
     private ResourceDataCache resourceDataCache;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isCacheEnabled() {
+        return cacheEnabled;
+    }
+
+    /**
+     * Sets flag whether or not this is enabled with caching.
+     * @param cacheEnabled flag whether or not this is enabled with caching
+     */
+    public void setCacheEnabled(boolean cacheEnabled) {
+        this.cacheEnabled = cacheEnabled;
+    }
 
     /**
      * {@inheritDoc}
@@ -40,7 +61,11 @@ public abstract class AbstractResourceCacheResolvable implements ResourceCacheRe
      */
     @Override
     public Object toCacheData(Resource resource) throws IOException {
-        return null;
+        if (!isCacheEnabled()) {
+            return null;
+        }
+
+        return resource;
     }
 
     /**
@@ -48,7 +73,11 @@ public abstract class AbstractResourceCacheResolvable implements ResourceCacheRe
      */
     @Override
     public Resource fromCacheData(Object cacheData) throws IOException {
-        return null;
+        if (!isCacheEnabled()) {
+            return null;
+        }
+
+        return (Resource) cacheData;
     }
 
     /**

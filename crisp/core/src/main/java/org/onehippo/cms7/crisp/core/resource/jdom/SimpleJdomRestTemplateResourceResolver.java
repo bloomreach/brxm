@@ -33,18 +33,8 @@ import org.springframework.web.client.RestTemplate;
 
 public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemplateResourceResolver {
 
-    private boolean cacheEnabled;
-
     public SimpleJdomRestTemplateResourceResolver() {
         super();
-    }
-
-    public boolean isCacheEnabled() {
-        return cacheEnabled;
-    }
-
-    public void setCacheEnabled(boolean cacheEnabled) {
-        this.cacheEnabled = cacheEnabled;
     }
 
     @Override
@@ -99,20 +89,6 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
     @Override
     public boolean isCacheable(Resource resource) {
         return (isCacheEnabled() && resource instanceof JdomResource);
-    }
-
-    @Override
-    public Object toCacheData(Resource resource) throws IOException {
-        if (!isCacheEnabled() || !(resource instanceof JdomResource)) {
-            return null;
-        }
-
-        return resource;
-    }
-
-    @Override
-    public Resource fromCacheData(Object cacheData) throws IOException {
-        return (JdomResource) cacheData;
     }
 
     private Element byteArrayResourceToElement(final ByteArrayResource body) throws JDOMException, IOException {

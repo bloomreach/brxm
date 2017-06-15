@@ -248,12 +248,15 @@
               ref="org.springframework.http.client.ClientHttpRequestFactory" />
   </bean>
 
-  <!-- SNIP -->
-
-  <!-- Basic JSON Supporting (Jackson Library based) HTTP Client Enabled Abstract Base Bean Definition -->
-  <bean id="abstractCrispSimpleJacksonRestTemplateResourceResolver" abstract="true"
+  <!-- Basic Cache-enabled HTTP Client Enabled Abstract Base Bean Definition -->
+  <bean id="abstractCrispSimpleRestTemplateResourceResolver" abstract="true"
         parent="abstractCrispHttpRequestResourceResolver">
     <property name="cacheEnabled" value="true" />
+  </bean>
+
+  <!-- Basic Cache-enabled JSON Supporting (Jackson Library based) HTTP Client Enabled Abstract Base Bean Definition -->
+  <bean id="abstractCrispSimpleJacksonRestTemplateResourceResolver" abstract="true"
+        parent="abstractCrispSimpleRestTemplateResourceResolver">
   </bean>
 
   <!-- SNIP -->
