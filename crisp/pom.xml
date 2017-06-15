@@ -12,7 +12,8 @@
   distributed under the License is distributed on an "AS IS"
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
-  limitations under the License. -->
+  limitations under the License.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
@@ -407,12 +408,49 @@
     </plugins>
   </reporting>
 
-  <modules>
-    <module>api</module>
-    <module>core</module>
-    <module>repository</module>
-    <module>hst</module>
-    <module>demopkg</module>
-  </modules>
+  <profiles>
+
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>api</module>
+        <module>core</module>
+        <module>repository</module>
+        <module>hst</module>
+        <module>demopkg</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>pedantic</id>
+      <modules/>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <exclude>**/rat.txt</exclude>
+                <exclude>**/target/**/*</exclude>
+                <exclude>**/.classpath</exclude>
+                <exclude>**/.project</exclude>
+                <exclude>**/.settings/**/*</exclude>
+                <exclude>*.md</exclude>
+                <exclude>demo/**/*</exclude>
+                <exclude>core/src/test/resources/org/onehippo/cms7/crisp/core/broker/products.json</exclude>
+                <exclude>core/src/test/resources/org/onehippo/cms7/crisp/core/resource/jackson/widget.json</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
 
 </project>
