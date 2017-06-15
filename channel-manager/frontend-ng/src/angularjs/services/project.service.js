@@ -19,6 +19,7 @@ class ProjectService {
   constructor(
     $http,
     $q,
+    $window,
     ConfigService,
     PathService,
     HstService,
@@ -27,6 +28,7 @@ class ProjectService {
 
     this.$http = $http;
     this.$q = $q;
+    this.$window = $window;
     this.ConfigService = ConfigService;
     this.PathService = PathService;
     this.HstService = HstService;
@@ -36,15 +38,29 @@ class ProjectService {
     this.urlPrefix = `${this.ConfigService.getCmsContextPath()}ws/projects/`;
     this.mountId = channel.mountId;
 
+    if (this.$window.parent.Hippo.Projects.events) {
+      this.events = this.$window.parent.Hippo.Projects.events;
+
+      this.events.subscribe('projects-changed', () => {
+        this._setupProjects(branchId);
+      });
+    }
+
+    return this._setupProjects(branchId);
+  }
+
+  _setupProjects(branchId) {
     return this.getProjects()
       .then((projects) => {
         this.projects = projects;
+
         if (branchId) {
           return this.selectProject(branchId)
             .then(() => {
               this.selectedProject = this.projects.find(project => project.id === branchId);
             });
         }
+
         return this.getCurrentProject()
           .then((id) => {
             this.selectedProject = this.projects.find(project => project.id === id);
