@@ -148,7 +148,7 @@ class DocumentsServiceImpl implements DocumentsService {
             try {
                 session.save();
             } catch (RepositoryException e) {
-                log.warn("Failed to save changes to draft node of document {}", uuid, e);
+                log.warn("Failed to save changes to field '{}' in draft node of document {}", fieldPath, uuid, e);
                 throw new InternalServerErrorException();
             }
         }
