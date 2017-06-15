@@ -656,8 +656,11 @@ public class ConfigurationConfigService {
             return; // Successful merge, no action needed.
         }
 
+        if (jcrProperty.getDefinition().isProtected()) {
+            return; // protected properties cannot be removed, no need to even check or try
+        }
+
         if (baselineProperty != null) {
-            final Session session = jcrNode.getSession();
             if (!propertyIsIdentical(jcrProperty, baselineProperty)) {
                 final String msg = String.format("[OVERRIDE] Property '%s' originally defined in %s has been changed, " +
                                 "but will be deleted because it no longer is part of the configuration model.",
