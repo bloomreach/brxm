@@ -52,6 +52,14 @@
       <br/>
     </section>
     <section name="Release Notes of 0.9.x">
+      <subsection name="0.9.4">
+        <ul>
+          <li>
+            Correcting groupId, namespace, package names and license headers to be compliant with community projects.
+            e.g, From <code>com.onehippo.cms7.crisp.**</code> to <code>org.onehippo.cms7.crisp.**</code>.
+          </li>
+        </ul>
+      </subsection>
       <subsection name="0.9.3">
         <ul>
           <li>

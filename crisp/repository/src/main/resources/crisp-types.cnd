@@ -3,7 +3,7 @@
  */
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
-<crisp='http://www.onehippo.org/jcr/hippo/crisp/nt/1.0'>
+<crisp='http://www.onehippo.com/jcr/hippo/crisp/nt/1.0'> 
 
 [crisp:resourceresolver] > nt:base
 - crisp:propnames (string) multiple
