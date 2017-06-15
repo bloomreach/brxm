@@ -29,11 +29,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.repository.mock.MockNode;
 import org.powermock.api.easymock.PowerMock;
@@ -515,6 +517,47 @@ public class StringFieldTypeTest {
             assertNull(e.getPayload());
         }
         verify(node);
+    }
+
+    @Test
+    public void writeFieldOtherId() throws ErrorWithPayloadException {
+        final StringFieldType fieldType = new StringFieldType();
+        fieldType.setId(PROPERTY);
+
+        final Node node = createMock(Node.class);
+        final FieldPath fieldPath = new FieldPath("other:id");
+        final List<FieldValue> fieldValues = Collections.emptyList();
+        replay(node);
+
+        assertFalse(fieldType.writeField(node, fieldPath, fieldValues));
+        verify(node);
+    }
+
+    @Test
+    public void writeFieldSuccess() throws ErrorWithPayloadException, RepositoryException {
+        final StringFieldType fieldType = new StringFieldType();
+        fieldType.setId(PROPERTY);
+
+        final Node node = MockNode.root();
+        final FieldPath fieldPath = new FieldPath(PROPERTY);
+        final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("value"));
+
+        assertTrue(fieldType.writeField(node, fieldPath, fieldValues));
+        assertThat(node.getProperty(PROPERTY).getString(), equalTo("value"));
+    }
+
+    @Test
+    public void writeFieldDoesNotValidate() throws ErrorWithPayloadException, RepositoryException {
+        final StringFieldType fieldType = new StringFieldType();
+        fieldType.setId(PROPERTY);
+        fieldType.addValidator(FieldType.Validator.REQUIRED);
+
+        final Node node = MockNode.root();
+        final FieldPath fieldPath = new FieldPath(PROPERTY);
+        final FieldValue emptyValue = new FieldValue("");
+
+        assertTrue(fieldType.writeField(node, fieldPath, Collections.singletonList(emptyValue)));
+        assertThat(node.getProperty(PROPERTY).getString(), equalTo(""));
     }
 
     @Test
