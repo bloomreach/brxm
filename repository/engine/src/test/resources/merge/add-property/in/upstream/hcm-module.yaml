@@ -1,8 +1,5 @@
-# This file is used by ClasspathConfigurationModelReaderTest and needs to be at the root of test-classes during test
-groups:
-- group: test-group
-  projects:
-  - project: test-project
-    modules:
-    - module: upstream
-      after: [topmost]
+group: test-group
+project: test-project
+module:
+    name: upstream
+    after: [topmost]

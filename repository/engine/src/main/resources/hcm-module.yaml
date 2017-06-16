@@ -1,7 +1,3 @@
-groups:
-  - group: hippo-cms
-    projects:
-      - project: hippo-repository
-        modules:
-          - module: hippo-repository-engine
-
+group: hippo-cms
+project: hippo-repository
+module: hippo-repository-engine

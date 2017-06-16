@@ -176,10 +176,7 @@ public class DefinitionMergeTest {
             final PathConfigurationReader.ReadResult result =
                     readFromResource(modulePath + "/" + Constants.HCM_MODULE_YAML);
 
-            return result.getGroups().stream()
-                    .flatMap(group -> group.getProjects().stream())
-                    .flatMap(project -> project.getModules().stream())
-                    .findFirst().get();
+            return result.getModuleContext().getModule();
         }
 
         protected void writeAndCompare(String testName, ModuleImpl module) throws Exception {

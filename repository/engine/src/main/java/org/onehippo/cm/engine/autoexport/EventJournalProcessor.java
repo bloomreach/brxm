@@ -549,27 +549,24 @@ public class EventJournalProcessor {
                 // TODO: better yet, avoid this step via proper in-place resource updating on write
                 final PathConfigurationReader.ReadResult result =
                         new PathConfigurationReader().read(moduleDescriptorPath);
-                result.getGroups().stream()
-                        .flatMap(g -> g.getProjects().stream())
-                        .flatMap(p -> p.getModules().stream())
-                        .forEach(m -> {
-                            // store mvnPath again for later use
-                            m.setMvnPath(module.getMvnPath());
 
-                            // temporary hacks to enable more efficient update of baseline
-                            module.getRemovedConfigResources().forEach(m::addConfigResourceToRemove);
-                            module.getRemovedContentResources().forEach(m::addContentResourceToRemove);
-                            module.getConfigSources().forEach(source -> {
-                                m.getConfigSource(source.getPath())
-                                        .ifPresent(s -> { if (source.hasChangedSinceLoad()) { s.markChanged(); }});
-                            });
-                            module.getContentSources().forEach(source -> {
-                                m.getContentSource(source.getPath())
-                                        .ifPresent(s -> { if (source.hasChangedSinceLoad()) { s.markChanged(); }});
-                            });
+                final ModuleImpl loadedModule = result.getModuleContext().getModule();
+                // store mvnPath again for later use
+                loadedModule.setMvnPath(module.getMvnPath());
 
-                            reloadedModules.add(m);
-                        });
+                // temporary hacks to enable more efficient update of baseline
+                module.getRemovedConfigResources().forEach(loadedModule::addConfigResourceToRemove);
+                module.getRemovedContentResources().forEach(loadedModule::addContentResourceToRemove);
+                module.getConfigSources().forEach(source -> {
+                    loadedModule.getConfigSource(source.getPath())
+                            .ifPresent(s -> { if (source.hasChangedSinceLoad()) { s.markChanged(); }});
+                });
+                module.getContentSources().forEach(source -> {
+                    loadedModule.getContentSource(source.getPath())
+                            .ifPresent(s -> { if (source.hasChangedSinceLoad()) { s.markChanged(); }});
+                });
+
+                reloadedModules.add(loadedModule);
             }
 
             // 2) configuration.setLastRevision(lastRevision) (should NOT save the JCR session!)

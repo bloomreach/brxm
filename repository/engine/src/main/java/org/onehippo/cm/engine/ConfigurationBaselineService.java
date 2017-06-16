@@ -54,7 +54,7 @@ import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
-import org.onehippo.cm.model.parser.AggregatedModulesDescriptorParser;
+import org.onehippo.cm.model.parser.ModuleDescriptorParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -583,8 +583,7 @@ public class ConfigurationBaselineService {
      * @throws ParserException
      */
     protected void loadModuleDescriptor(final Node moduleNode, final List<GroupImpl> groups) throws RepositoryException, ParserException {
-        Collection<GroupImpl> moduleGroups;
-        ModuleImpl module;
+        final ModuleImpl module;
 
         Node descriptorNode = moduleNode.getNode(HCM_MODULE_DESCRIPTOR);
 
@@ -595,14 +594,8 @@ public class ConfigurationBaselineService {
             // parse descriptor with ModuleDescriptorParser
             // todo switch to single-module alternate parser
             InputStream is = IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8);
-            moduleGroups = new AggregatedModulesDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
+            module = new ModuleDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
                     .parse(is, moduleNode.getPath());
-
-            // This should always produce exactly one module!
-            module = moduleGroups.stream()
-                    .flatMap(g -> g.getProjects().stream())
-                    .flatMap(p -> p.getModules().stream())
-                    .findFirst().get();
 
             final double sequenceNumber = moduleNode.hasProperty(HCM_MODULE_SEQUENCE)
                     ? moduleNode.getProperty(HCM_MODULE_SEQUENCE).getDouble()
@@ -627,7 +620,7 @@ public class ConfigurationBaselineService {
         }
 
         // accumulate all groups
-        groups.addAll(moduleGroups);
+        groups.add(module.getProject().getGroup());
     }
 
     /**

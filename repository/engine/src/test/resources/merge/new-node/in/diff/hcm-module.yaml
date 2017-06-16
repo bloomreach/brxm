@@ -1,6 +1,3 @@
-groups:
-- group: runtime-group
-  projects:
-  - project: runtime-project
-    modules:
-    - module: runtime-module
+group: runtime-group
+project: runtime-project
+module: runtime-module
