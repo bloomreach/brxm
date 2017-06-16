@@ -53,9 +53,9 @@ public interface NodeFieldType extends FieldType {
      * @param node the node to write to
      * @param fieldPath the path to the field
      * @param values the values to write
-     * @return
-     * @throws ErrorWithPayloadException
-     * @throws RepositoryException
+     * @return true if the value has been written, false otherwise.
+     * @throws ErrorWithPayloadException when the field path or field value is wrong
+     * @throws RepositoryException when the write failed
      */
     boolean writeFieldValue(final Node node, FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException;
 
