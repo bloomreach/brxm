@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class CompositeConfigurationNodes {
         }
     }
 
-    private void addInherited(final HstNode configurationRootNode, final HstNode configurationsNode,
+    private void addInherited(final HstNode currentConfigurationRootNode, final HstNode configurationsNode,
                               final String inheritPath, final String[] relPaths, final Set<String> alreadyInherited) {
 
 
@@ -91,20 +91,20 @@ public class CompositeConfigurationNodes {
 
         if (inheritConfig != null) {
             if (alreadyInherited.contains(inheritConfig.getValueProvider().getIdentifier()  + "-" + inheritPath)) {
-                log.debug("Already inherited configuration '{}' for '{}'", configurationRootNode.getValueProvider().getPath(), inheritPath);
+                log.debug("Already inherited configuration '{}' for '{}'", currentConfigurationRootNode.getValueProvider().getPath(), inheritPath);
                 return;
             }
             alreadyInherited.add(inheritConfig.getValueProvider().getIdentifier() + "-" + inheritPath);
             if (!isValidInheritedNode(inheritConfig)) {
                 log.error("Relative inherit path '{}' for node '{}' does not point to a node of type " +
                                 "'{}' or '{}', or it does not point to a child node of '{}', or it does not exist. Fix this path.",
-                        new String[]{inheritPath, configurationRootNode.getValueProvider().getPath(),
+                        new String[]{inheritPath, currentConfigurationRootNode.getValueProvider().getPath(),
                                 NODETYPE_HST_CONFIGURATION, NODETYPE_HST_WORKSPACE, NODENAME_HST_WORKSPACE});
                 return;
             }
             orderedRootConfigurationNodeInheritanceList.add(inheritConfig);
             HstNode rootInheritedConfiguration = getHstConfiguration(inheritConfig);
-            populateCascadingInheritanceList(configurationRootNode, configurationsNode, relPaths, alreadyInherited, hstConfigsInheritedRelPath, rootInheritedConfiguration);
+            populateCascadingInheritanceList(currentConfigurationRootNode, configurationsNode, relPaths, alreadyInherited, hstConfigsInheritedRelPath, rootInheritedConfiguration);
         } else {
             // inherited config is null. This might be because for example 'subproject' inherits from '../corporate/hst:workspace/hst:pages' and
             // 'corporate' inherits from '../common/hst:workspace/hst:pages', and at the same time 'corporate' does not have 'hst:workspace/hst:pages'. Then,
@@ -117,7 +117,7 @@ public class CompositeConfigurationNodes {
             HstNode rootInheritedConfiguration = configurationsNode.getNode(rootName);
             if (rootInheritedConfiguration != null) {
                 // try cascading inheritance
-                populateCascadingInheritanceList(configurationRootNode, configurationsNode, relPaths, alreadyInherited, hstConfigsInheritedRelPath, rootInheritedConfiguration);
+                populateCascadingInheritanceList(currentConfigurationRootNode, configurationsNode, relPaths, alreadyInherited, hstConfigsInheritedRelPath, rootInheritedConfiguration);
             }
         }
     }
