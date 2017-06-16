@@ -106,14 +106,12 @@ class ChannelService {
 
   _initChannel(channelId, branchId) {
     return this.HstService.getChannel(channelId)
-      .then(channel => this._initProject(channel, branchId)
-          .then(() => this.SessionService.initialize(channel.hostname, channel.mountId)
-            .then(() => this._ensurePreviewHstConfigExists(channel))),
+      .then(channel =>
+        this._initProject(channel, branchId)
+          .then(() => this.SessionService.initialize(channel.hostname, channel.mountId))
+          .then(() => this._ensurePreviewHstConfigExists(channel)),
       )
       .catch((error) => {
-        // TODO: improve error handling.
-        // If this goes wrong, the CM won't work. display a toast explaining so
-        // and switch back to the channel overview.
         this.$log.error(`Failed to load channel '${channelId}'.`, error);
         return this.$q.reject();
       });
@@ -121,8 +119,7 @@ class ChannelService {
 
   _initProject(channel, branchId) {
     if (this.ConfigService.projectsEnabled) {
-      return this.ProjectService.load(channel, branchId)
-        .then(id => id);
+      return this.ProjectService.load(channel, branchId).then(id => id);
     }
     return this.$q.resolve();
   }
