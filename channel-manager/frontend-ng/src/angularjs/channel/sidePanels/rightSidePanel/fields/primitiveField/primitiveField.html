@@ -56,7 +56,7 @@
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
               ng-change="$ctrl.valueChanged()"
-              name="::$ctrl.getFieldName($index)"
+              name="{{::$ctrl.getFieldName($index)}}"
               placeholder=""
               aria-label="::$ctrl.fieldType.displayName"
               ng-required="::$ctrl.fieldType.required"
