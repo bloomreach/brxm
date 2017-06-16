@@ -60,7 +60,7 @@ public final class AutoExportServiceImpl implements EventListener {
             throws RepositoryException {
         final SimpleCredentials credentials = new SimpleCredentials(configurationSession.getUserID(), new char[]{});
         autoExportSession = configurationSession.impersonate(credentials);
-        configuration = new Configuration(autoExportSession.getNode(SERVICE_CONFIG_PATH));
+        configuration = new Configuration(configurationSession.getNode(SERVICE_CONFIG_PATH));
         manager = autoExportSession.getWorkspace().getObservationManager();
         nodeTypeChangesMonitor = new NodeTypeChangesMonitor(configuration);
         eventJournalProcessor = new EventJournalProcessor(configurationService, configuration, Collections.emptySet());

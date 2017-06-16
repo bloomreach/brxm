@@ -99,25 +99,26 @@ public class ConfigurationBaselineService {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationBaselineService.class);
 
-    private final Session configurationServiceSession;
+    //    private final Session configurationServiceSession;
     private final ConfigurationLockManager configurationLockManager;
 
     public ConfigurationBaselineService(final Session configurationServiceSession, final ConfigurationLockManager configurationLockManager) {
-        this.configurationServiceSession = configurationServiceSession;
+//        this.configurationServiceSession = configurationServiceSession;
         this.configurationLockManager = configurationLockManager;
     }
 
     /**
-     * Store a merged configuration model as a baseline configuration in the JCR.
+     * Store and session save a merged configuration model as a baseline configuration in the JCR.
      * The provided ConfigurationModel is assumed to be fully formed and validated.
      * @param model the configuration model to store as the new baseline
+     * @param session the session for processing the model
      */
-    public void storeBaseline(final ConfigurationModelImpl model) throws RepositoryException, IOException {
+    public void storeBaseline(final ConfigurationModelImpl model, final Session session) throws RepositoryException, IOException {
         configurationLockManager.lock();
         try {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
-            final Node hcmRootNode = configurationServiceSession.getNode(HCM_ROOT_PATH);
+            final Node hcmRootNode = session.getNode(HCM_ROOT_PATH);
 
             Node baseline = createNodeIfNecessary(hcmRootNode, HCM_BASELINE, NT_HCM_BASELINE, false);
 
@@ -156,7 +157,7 @@ public class ConfigurationBaselineService {
                 }
             }
 
-            configurationServiceSession.save();
+            session.save();
             stopWatch.stop();
             log.info("ConfigurationModel stored as baseline configuration in {}", stopWatch.toString());
         }
@@ -170,21 +171,24 @@ public class ConfigurationBaselineService {
     }
 
     /**
-     * Update the stored baseline for a set of modules as an atomic operation. This is primarily used by auto-export,
-     * which frequently updates existing modules. This method assumes that the modules already exist and that it is
+     * Update and session saves the stored baseline for a set of modules as an atomic operation.
+     * This is primarily used by auto-export, which frequently updates existing modules.
+     * This method assumes that the modules already exist and that it is
      * safe to call session.save() at any time without regard to the calling context.
      * @param modules the modules to be updated in the stored baseline
      * @param baselineModel
+     * @param session
      */
     protected ConfigurationModelImpl updateBaselineModules(final Collection<ModuleImpl> modules,
-                                                           final ConfigurationModelImpl baselineModel)
+                                                           final ConfigurationModelImpl baselineModel,
+                                                           final Session session)
             throws RepositoryException, IOException, ParserException {
         configurationLockManager.lock();
         try {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
 
-            final Node hcmRootNode = configurationServiceSession.getNode(HCM_ROOT_PATH);
+            final Node hcmRootNode = session.getNode(HCM_ROOT_PATH);
             Node baseline = hcmRootNode.getNode(HCM_BASELINE);
 
             final Set<ModuleImpl> newBaselineModules = new HashSet<>();
@@ -211,7 +215,7 @@ public class ConfigurationBaselineService {
             ConfigurationModelImpl newBaseline = mergeWithSourceModules(newBaselineModules, baselineModel);
             baseline.setProperty(HCM_DIGEST, newBaseline.getDigest());
 
-            configurationServiceSession.save();
+            session.save();
             stopWatch.stop();
             log.info("Updated module in baseline configuration in {}", stopWatch.toString());
 
@@ -231,7 +235,7 @@ public class ConfigurationBaselineService {
      * managed in storeBaseline().
      * @param module the module to store
      * @param moduleNode the JCR node destination for the module
-     * @see #storeBaseline(ConfigurationModelImpl)
+     * @see #storeBaseline(ConfigurationModelImpl, Session)
      */
     protected void storeBaselineModule(final ModuleImpl module, final Node moduleNode, final boolean incremental)
             throws RepositoryException, IOException {
@@ -345,7 +349,7 @@ public class ConfigurationBaselineService {
      * @param source the Source to store
      * @param configRootNode the JCR node destination for the config Sources and resources
      * @param rip provides access to raw data streams
-     * @see #storeBaseline(ConfigurationModelImpl)
+     * @see #storeBaseline(ConfigurationModelImpl, Session)
      */
     protected void storeBaselineConfigSource(final ConfigSourceImpl source, final Node configRootNode, final ResourceInputProvider rip)
             throws RepositoryException, IOException {
@@ -488,7 +492,7 @@ public class ConfigurationBaselineService {
     protected void storeBinary(InputStream is, Node resourceNode) throws IOException, RepositoryException {
         // store content as Binary
         BufferedInputStream bis = new BufferedInputStream(is);
-        Binary bin = configurationServiceSession.getValueFactory().createBinary(bis);
+        Binary bin = resourceNode.getSession().getValueFactory().createBinary(bis);
         resourceNode.setProperty(JcrConstants.JCR_DATA, bin);
     }
 
@@ -512,12 +516,13 @@ public class ConfigurationBaselineService {
     /**
      * Load a (partial) ConfigurationModel from the stored configuration baseline in the JCR. This model will not contain
      * content definitions, which are not stored in the baseline.
+     * @param session the session to load the baseline with
      * @throws Exception
      */
-    public ConfigurationModelImpl loadBaseline() throws RepositoryException, ParserException, IOException {
+    public ConfigurationModelImpl loadBaseline(final Session session) throws RepositoryException, ParserException, IOException {
         ConfigurationModelImpl result;
 
-        final Node hcmRootNode = configurationServiceSession.getNode(HCM_ROOT_PATH);
+        final Node hcmRootNode = session.getNode(HCM_ROOT_PATH);
         // if the baseline node doesn't exist yet...
         if (!hcmRootNode.hasNode(HCM_BASELINE)) {
             // ... there's nothing to load
@@ -748,11 +753,11 @@ public class ConfigurationBaselineService {
     /**
      * Obtain a flat set of all content paths applied in the past
      */
-    Set<String> getAppliedContentPaths() throws RepositoryException {
+    Set<String> getAppliedContentPaths(final Session session) throws RepositoryException {
         final Set<String> appliedContentPaths = new LinkedHashSet<>();
 
-        if (configurationServiceSession.nodeExists(HCM_CONTENT_NODE_PATH)) {
-            final Node hcmContentRoot = configurationServiceSession.getNode(HCM_CONTENT_NODE_PATH);
+        if (session.nodeExists(HCM_CONTENT_NODE_PATH)) {
+            final Node hcmContentRoot = session.getNode(HCM_CONTENT_NODE_PATH);
             if (hcmContentRoot.hasProperty(HCM_CONTENT_PATHS_APPLIED)) {
                 final Property pathsApplied = hcmContentRoot.getProperty(HCM_CONTENT_PATHS_APPLIED);
                 for (final javax.jcr.Value value : pathsApplied.getValues()) {
@@ -764,20 +769,23 @@ public class ConfigurationBaselineService {
     }
 
     /**
-     * Add a content path to (the end of) the set of all content paths applied
+     * Adds and session saves a content path to (the end of) the set of all content paths applied.
+     * Note: will <em>always</em> save the outstanding session changes, even if the path already is on the set.
+     * @param path the path to add
+     * @param session the session to use
      */
-    void addAppliedContentPath(final String path) throws RepositoryException {
-        final Set<String> appliedPaths = getAppliedContentPaths();
+    void addAppliedContentPath(final String path, final Session session) throws RepositoryException {
+        final Set<String> appliedPaths = getAppliedContentPaths(session);
         if (!appliedPaths.contains(path)) {
             appliedPaths.add(path);
             final String[] newPaths = appliedPaths.toArray(new String[appliedPaths.size()]);
-            getOrCreateContentNode().setProperty(HCM_CONTENT_PATHS_APPLIED, newPaths);
-            configurationServiceSession.save();
+            getOrCreateContentNode(session).setProperty(HCM_CONTENT_PATHS_APPLIED, newPaths);
         }
+        session.save();
     }
 
-    private Node getOrCreateContentNode() throws RepositoryException {
-        final Node rootNode = configurationServiceSession.getRootNode();
+    private Node getOrCreateContentNode(final Session session) throws RepositoryException {
+        final Node rootNode = session.getRootNode();
         final Node hcmRootNode = rootNode.hasNode(HCM_ROOT)
                 ? rootNode.getNode(HCM_ROOT)
                 : rootNode.addNode(HCM_ROOT, NT_HCM_ROOT);
@@ -787,9 +795,10 @@ public class ConfigurationBaselineService {
     }
 
     /**
-     * Update a module's stored sequence number to indicate that all content actions have been processed
+     * Updates and session saves a module's stored sequence number to indicate that all content actions have been processed
+     * Note: will <em>always</em> save the outstanding session changes, even if the module didn't have a sequence number to store.
      */
-    void updateModuleSequenceNumber(final ModuleImpl module) throws RepositoryException {
+    void updateModuleSequenceNumber(final ModuleImpl module, final Session session) throws RepositoryException {
         final Optional<Double> latestVersion = module.getActionsMap().keySet().stream().max(Double::compareTo);
         if (latestVersion.isPresent()) {
             // TODO: JCR encode this properly!
@@ -797,8 +806,8 @@ public class ConfigurationBaselineService {
 
             module.setSequenceNumber(latestVersion.get());
 
-            configurationServiceSession.getNode(moduleNodePath).setProperty(HCM_MODULE_SEQUENCE, latestVersion.get());
-            configurationServiceSession.save();
+            session.getNode(moduleNodePath).setProperty(HCM_MODULE_SEQUENCE, latestVersion.get());
         }
+        session.save();
     }
 }

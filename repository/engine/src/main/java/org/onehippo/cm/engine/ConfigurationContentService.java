@@ -113,7 +113,7 @@ public class ConfigurationContentService {
             final DefinitionNode contentNode = contentDefinition.getNode();
             final String baseNodePath = contentNode.getPath();
             final Optional<ActionType> optionalAction = findLastActionToApply(baseNodePath, actionsToProcess);
-            final boolean nodeAlreadyProcessed = configurationBaselineService.getAppliedContentPaths().contains(baseNodePath);
+            final boolean nodeAlreadyProcessed = configurationBaselineService.getAppliedContentPaths(session).contains(baseNodePath);
 
             if (optionalAction.isPresent() || !nodeAlreadyProcessed) {
                 final ActionType action = optionalAction.orElse(ActionType.APPEND);
@@ -123,9 +123,11 @@ public class ConfigurationContentService {
                     contentProcessingService.apply(contentNode, action, session);
 
                     if (!nodeAlreadyProcessed) {
-                        configurationBaselineService.addAppliedContentPath(baseNodePath);
+                        // will save all the session changes!
+                        configurationBaselineService.addAppliedContentPath(baseNodePath, session);
+                    } else {
+                        session.save();
                     }
-                    session.save();
                 } else {
                     log.warn(String.format("Base node '%s' is not categorized as content, skipping action '%s'.",
                             baseNodePath, action));
@@ -133,7 +135,7 @@ public class ConfigurationContentService {
             }
         }
 
-        configurationBaselineService.updateModuleSequenceNumber(module);
+        configurationBaselineService.updateModuleSequenceNumber(module, session);
     }
 
     /**

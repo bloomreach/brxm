@@ -93,7 +93,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     private String repoPath;
     private String repoConfig;
 
-    private Session configurationServiceSession;
     private ConfigurationServiceImpl configurationService;
 
     private ModuleManager moduleManager;
@@ -281,17 +280,17 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             ensureRootIsReferenceable(rootSession);
 
             final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
-            bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
 
             final StartRepositoryServicesTask startRepositoryServicesTask = () -> start(rootSession);
 
             if (Boolean.getBoolean("repo.yaml")) {
-                configurationServiceSession = bootstrapSession;
-                bootstrapSession = null;
-                configurationService = new ConfigurationServiceImpl().start(configurationServiceSession, startRepositoryServicesTask);
+                configurationService = new ConfigurationServiceImpl()
+                        .start(DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials),
+                                startRepositoryServicesTask);
                 HippoServiceRegistry.registerService(configurationService, new Class[]{ConfigurationService.class, InternalConfigurationService.class});
             }
             else {
+                bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
                 List<PostStartupTask> postStartupTasks = Collections.emptyList();
 
                 if (!initializedBefore(rootSession) || isContentBootstrapEnabled()) {
@@ -315,10 +314,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                     initializationProcessor.unlock(lockSession);
                 }
                 lockSession.logout();
-            }
-            if (configurationService == null && configurationServiceSession != null) {
-                configurationServiceSession.logout();
-                configurationServiceSession = null;
             }
             if (bootstrapSession != null) {
                 bootstrapSession.logout();
@@ -464,10 +459,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         if (configurationService != null) {
             HippoServiceRegistry.unregisterService(configurationService, ConfigurationService.class);
             configurationService.stop();
-        }
-        if (configurationServiceSession != null && configurationServiceSession.isLive()) {
-            configurationServiceSession.logout();
-            configurationServiceSession = null;
         }
         if (jackrabbitRepository != null) {
             try {

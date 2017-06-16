@@ -90,7 +90,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
         hcmContent.setProperty(HCM_CONTENT_PATHS_APPLIED, new String[] {"/a/b", "/c", "/a/d/e"});
         session.save();
 
-        final List<String> appliedPaths = new ArrayList<>(baselineService.getAppliedContentPaths());
+        final List<String> appliedPaths = new ArrayList<>(baselineService.getAppliedContentPaths(session));
 
         assertEquals(3, appliedPaths.size());
         assertEquals("/a/b", appliedPaths.get(0));
@@ -100,7 +100,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
 
     @Test
     public void expect_empty_set_if_root_node_missing() throws Exception {
-        assertTrue(baselineService.getAppliedContentPaths().isEmpty());
+        assertTrue(baselineService.getAppliedContentPaths(session).isEmpty());
     }
 
     @Test
@@ -110,8 +110,8 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
         hcmContent.setProperty(HCM_CONTENT_PATHS_APPLIED, new String[] {"/a/b", "/c", "/a/d/e"});
         session.save();
 
-        baselineService.addAppliedContentPath("/a/a");
-        final List<String> appliedPaths = new ArrayList<>(baselineService.getAppliedContentPaths());
+        baselineService.addAppliedContentPath("/a/a", session);
+        final List<String> appliedPaths = new ArrayList<>(baselineService.getAppliedContentPaths(session));
 
         assertEquals(4, appliedPaths.size());
         assertEquals("/a/b", appliedPaths.get(0));
@@ -127,8 +127,8 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
         hcmContent.setProperty(HCM_CONTENT_PATHS_APPLIED, new String[] {"/a/b", "/c", "/a/d/e"});
         session.save();
 
-        baselineService.addAppliedContentPath("/c");
-        final List<String> appliedPaths = new ArrayList<>(baselineService.getAppliedContentPaths());
+        baselineService.addAppliedContentPath("/c", session);
+        final List<String> appliedPaths = new ArrayList<>(baselineService.getAppliedContentPaths(session));
 
         assertEquals(3, appliedPaths.size());
         assertEquals("/a/b", appliedPaths.get(0));
@@ -138,8 +138,8 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
 
     @Test
     public void expect_baseline_nodes_to_be_created_when_addeing_applied_path() throws Exception {
-        baselineService.addAppliedContentPath("/c");
-        final List<String> appliedPaths = new ArrayList<>(baselineService.getAppliedContentPaths());
+        baselineService.addAppliedContentPath("/c", session);
+        final List<String> appliedPaths = new ArrayList<>(baselineService.getAppliedContentPaths(session));
 
         assertEquals(1, appliedPaths.size());
         assertEquals("/c", appliedPaths.get(0));
@@ -161,7 +161,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
 
         assertEquals(null, module.getSequenceNumber());
 
-        baselineService.updateModuleSequenceNumber(module);
+        baselineService.updateModuleSequenceNumber(module, session);
     }
 
     @Test
@@ -197,7 +197,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
 
         assertEquals(null, module.getSequenceNumber());
 
-        baselineService.updateModuleSequenceNumber(module);
+        baselineService.updateModuleSequenceNumber(module, session);
 
         assertEquals(Double.valueOf(1.1), module.getSequenceNumber());
         assertTrue(moduleBaseline.getProperty(HCM_MODULE_SEQUENCE).getDouble() == 1.1);

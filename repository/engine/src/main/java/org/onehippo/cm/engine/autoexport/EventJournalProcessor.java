@@ -313,6 +313,9 @@ public class EventJournalProcessor {
 
     private void processEvent(final RevisionEvent event) {
         try {
+            if (event.getPath().equals(Constants.CONFIG_LAST_REVISION_PROPERTY_NAME)) {
+                return;
+            }
             switch (event.getType()) {
                 case Event.PROPERTY_ADDED:
                 case Event.PROPERTY_CHANGED:

@@ -80,15 +80,27 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     private ConfigurationModelImpl baselineModel;
     private ConfigurationModelImpl runtimeConfigurationModel;
 
-    public ConfigurationServiceImpl start(final Session session, final StartRepositoryServicesTask startRepositoryServicesTask)
+    public ConfigurationServiceImpl start(final Session configurationServiceSession, final StartRepositoryServicesTask startRepositoryServicesTask)
             throws RepositoryException {
-        this.session = session;
+        session = configurationServiceSession;
+        log.info("ConfigurationService: start");
+        try {
+            init(startRepositoryServicesTask);
+            log.info("ConfigurationService: started");
+        } catch (RepositoryException e) {
+            log.error("Failed to start the ConfigurationService", e);
+            stop();
+            throw e;
+        }
+        return this;
+    }
+
+    private void init(final StartRepositoryServicesTask startRepositoryServicesTask) throws RepositoryException {
         lockManager = new ConfigurationLockManager(session);
         baselineService = new ConfigurationBaselineService(session, lockManager);
         configService = new ConfigurationConfigService();
         contentService = new ConfigurationContentService(baselineService);
 
-        log.info("ConfigurationService: start");
         ensureInitialized();
         lockManager.lock();
         try {
@@ -161,25 +173,22 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 log.error("Failed to release the configuration lock", e);
             }
         }
-        log.info("ConfigurationService: started");
-        return this;
     }
 
     public void stop() {
+        log.info("ConfigurationService: stop");
         if (autoExportService != null) {
             autoExportService.close();
             autoExportService = null;
         }
-        if (lockManager == null) {
-            return;
-        }
-        log.info("ConfigurationService: stop");
         boolean locked = false;
-        try {
-            lockManager.lock();
-            locked = true;
-        } catch (Exception e) {
-            log.error("Failed to claim the configuration lock", e);
+        if (lockManager != null) {
+            try {
+                lockManager.lock();
+                locked = true;
+            } catch (Exception e) {
+                log.error("Failed to claim the configuration lock", e);
+            }
         }
         try {
             if (runtimeConfigurationModel != null) {
@@ -201,12 +210,19 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 }
             }
         }
-        lockManager.stop();
-        lockManager = null;
         contentService = null;
         configService = null;
         baselineService = null;
-        session = null;
+        if (lockManager != null) {
+            lockManager.stop();
+            lockManager = null;
+        }
+        if (session != null) {
+            if (session.isLive()) {
+                session.logout();
+            }
+            session = null;
+        }
         log.info("ConfigurationService: stopped");
     }
 
@@ -235,7 +251,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     // TODO: confirm that this is the appropriate scope (public, but not exposed on interface)
     public boolean updateBaselineForAutoExport(final Collection<ModuleImpl> updatedModules) {
         try {
-            baselineModel = baselineService.updateBaselineModules(updatedModules, baselineModel);
+            baselineModel = baselineService.updateBaselineModules(updatedModules, baselineModel, session);
             runtimeConfigurationModel = mergeWithSourceModules(updatedModules, baselineModel);
             return true;
         }
@@ -363,7 +379,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     private ConfigurationModelImpl loadBaselineModel() throws RepositoryException {
         try {
-            ConfigurationModelImpl model = baselineService.loadBaseline();
+            ConfigurationModelImpl model = baselineService.loadBaseline(session);
             if (model == null) {
                 model = new ConfigurationModelImpl().build();
             }
@@ -418,7 +434,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
     private boolean storeBaselineModel(final ConfigurationModelImpl model) {
         try {
-            baselineService.storeBaseline(model);
+            baselineService.storeBaseline(model, session);
             // session.save() isn't necessary here, because storeBaseline() already does it
             return true;
         } catch (Exception e) {

@@ -200,12 +200,7 @@ public class Configuration {
         return enabled;
     }
 
-    public synchronized void setEnabled(final boolean enabled) throws RepositoryException {
-        node.setProperty(Constants.CONFIG_ENABLED_PROPERTY_NAME, enabled);
-        node.getSession().save();
-    }
-
-    public synchronized long getLastRevision() throws RepositoryException {
+    long getLastRevision() throws RepositoryException {
         if (lastRevision == null) {
             lastRevision = JcrUtils.getLongProperty(node, Constants.CONFIG_LAST_REVISION_PROPERTY_NAME, -1l);
         }
@@ -217,7 +212,7 @@ public class Configuration {
      * @param lastRevision the new value of the lastRevision property
      * @throws RepositoryException
      */
-    public synchronized void setLastRevision(final long lastRevision) throws RepositoryException {
+    void setLastRevision(final long lastRevision) throws RepositoryException {
         node.setProperty(Constants.CONFIG_LAST_REVISION_PROPERTY_NAME, lastRevision);
         this.lastRevision = lastRevision;
     }
