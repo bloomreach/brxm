@@ -145,6 +145,7 @@ public class EventJournalProcessor {
     private final ConfigurationServiceImpl configurationService;
     private final Session eventProcessorSession;
     private final String nodeTypeRegistryLastModifiedPropertyPath;
+    private final String lastRevisionPropertyPath;
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private final long minChangeLogAge = 250;
     private long lastRevision = -1;
@@ -183,6 +184,8 @@ public class EventJournalProcessor {
                 moduleSession.impersonate(new SimpleCredentials(moduleSession.getUserID(), "".toCharArray()));
         nodeTypeRegistryLastModifiedPropertyPath = configuration.getModuleConfigPath()
                 + "/" + Constants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME;
+        lastRevisionPropertyPath = configuration.getModuleConfigPath()
+                + "/" + Constants.CONFIG_LAST_REVISION_PROPERTY_NAME;
     }
 
     public void start() {
@@ -313,7 +316,7 @@ public class EventJournalProcessor {
 
     private void processEvent(final RevisionEvent event) {
         try {
-            if (event.getPath().equals(Constants.CONFIG_LAST_REVISION_PROPERTY_NAME)) {
+            if (event.getPath().equals(lastRevisionPropertyPath)) {
                 return;
             }
             switch (event.getType()) {
