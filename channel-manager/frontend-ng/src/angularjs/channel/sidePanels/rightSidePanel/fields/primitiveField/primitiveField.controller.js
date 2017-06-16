@@ -19,7 +19,6 @@ class PrimitiveFieldCtrl {
     'ngInject';
 
     this.FieldService = FieldService;
-    this.autoDraftInterval = null;
   }
 
   getFieldName(index) {
@@ -51,14 +50,14 @@ class PrimitiveFieldCtrl {
     this.hasFocus = true;
     this.onFieldFocus();
 
-    this.temporaryContent = angular.copy(this.fieldValues);
+    this.oldValues = angular.copy(this.fieldValues);
   }
 
   blurPrimitive() {
     delete this.hasFocus;
     this.onFieldBlur();
 
-    if (angular.toJson(this.temporaryContent) !== angular.toJson(this.fieldValues)) {
+    if (!angular.equals(this.oldValues, this.fieldValues)) {
       this.FieldService.draftField(this.getFieldName(), this.fieldValues);
     }
   }

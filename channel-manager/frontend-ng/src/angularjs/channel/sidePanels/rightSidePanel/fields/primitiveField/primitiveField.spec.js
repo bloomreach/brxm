@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-describe('PrimitiveField', () => {
+fdescribe('PrimitiveField', () => {
   let $componentController;
 
   let $ctrl;
+  let FieldService;
   let onFieldFocus;
   let onFieldBlur;
 
@@ -31,8 +32,9 @@ describe('PrimitiveField', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_) => {
+    inject((_$componentController_, _FieldService_) => {
       $componentController = _$componentController_;
+      FieldService = _FieldService_;
     });
 
     onFieldFocus = jasmine.createSpy('onFieldFocus');
@@ -179,5 +181,32 @@ describe('PrimitiveField', () => {
     expect($ctrl.hasFocus).toBeFalsy();
     expect(onFieldFocus).not.toHaveBeenCalled();
     expect(onFieldBlur).toHaveBeenCalled();
+  });
+
+  it('starts a draft timer when the value changed', () => {
+    spyOn(FieldService, 'startDraftTimer');
+
+    $ctrl.valueChanged();
+
+    expect(FieldService.startDraftTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues);
+  });
+
+  it('drafts the field on blur when the value has changed', () => {
+    spyOn(FieldService, 'draftField');
+
+    $ctrl.focusPrimitive();
+    fieldValues[1].value = 'Changed';
+    $ctrl.blurPrimitive();
+
+    expect(FieldService.draftField).toHaveBeenCalledWith('test-name/field:type', fieldValues);
+  });
+
+  it('does not draft the field on blur when the value has not changed', () => {
+    spyOn(FieldService, 'draftField');
+
+    $ctrl.focusPrimitive();
+    $ctrl.blurPrimitive();
+
+    expect(FieldService.draftField).not.toHaveBeenCalled();
   });
 });
