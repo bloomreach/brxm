@@ -24,3 +24,4 @@ Relative inherit path '../unittestcommon/hst:workspace/hst:containers/myReferenc
 An event handler will be registered for a path where no node currently is available
 Failed to register event listener
 Existing lock file
+Unable to register RepositoryStat

@@ -40,6 +40,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.hst.Channel;
@@ -50,7 +51,18 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
+import static org.hippoecm.hst.configuration.HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_BLUEPRINTS;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNELINFO;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONFIGURATION;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_BLUEPRINT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNEL;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNELINFO;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
@@ -460,59 +472,111 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         channelMngr.persist(blueprint.getId(), channel);
     }
 
-    public static interface TestInfoClass extends ChannelInfo {
+    public interface TestInfoClass extends ChannelInfo {
         @Parameter(name = "getme", defaultValue = "aap")
         String getGetme();
     }
 
+
+    @Test
+    public void missing_channel_node_in_blueprint_still_results_in_channel_node_created_project() throws Exception {
+        Node configNode = session.getRootNode().getNode("hst:hst");
+        Node bpFolder = configNode.getNode(NODENAME_HST_BLUEPRINTS);
+        Node bp = bpFolder.addNode("cmit-test-bp", NODETYPE_HST_BLUEPRINT);
+        bp.addNode(NODENAME_HST_CONFIGURATION, NODETYPE_HST_CONFIGURATION);
+        session.save();
+        Thread.sleep(100);
+        resetDummyHostOnRequestContext();
+        final Channel blueprintChannel = hstManager.getVirtualHosts().getBlueprint("cmit-test-bp").getPrototypeChannel();
+
+        blueprintChannel.setName("cmit-channel");
+        blueprintChannel.setUrl("http://cmit-myhost");
+        blueprintChannel.setContentRoot("/");
+
+        channelMngr.persist("cmit-test-bp", blueprintChannel);
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/cmit-channel/hst:workspace/hst:channel"));
+        resetDummyHostOnRequestContext();
+        assertEquals("cmit-channel", hstManager.getVirtualHosts().getChannelById("dev-localhost","cmit-channel").getName());
+    }
+
     @Test
     public void blueprintDefaultValuesAreCopied() throws Exception {
-        Node configNode = session.getRootNode().getNode("hst:hst");
-        Node bpFolder = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
-
-        Node bp = bpFolder.addNode("cmit-test-bp", HstNodeTypes.NODETYPE_HST_BLUEPRINT);
-        bp.addNode(HstNodeTypes.NODENAME_HST_CONFIGURATION, HstNodeTypes.NODETYPE_HST_CONFIGURATION);
-        Node channelBlueprint = bp.addNode(HstNodeTypes.NODENAME_HST_CHANNEL, HstNodeTypes.NODETYPE_HST_CHANNEL);
-        channelBlueprint.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, TestInfoClass.class.getName());
-        Node defaultChannelInfo = channelBlueprint.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
-        defaultChannelInfo.setProperty("getme", "noot");
+        createBlueprintWithChannel(true);
 
         session.save();
         Thread.sleep(100);
         resetDummyHostOnRequestContext();
-
         final Channel channel = hstManager.getVirtualHosts().getBlueprint("cmit-test-bp").getPrototypeChannel();
-
         channel.setName("cmit-channel");
         channel.setUrl("http://cmit-myhost");
         channel.setContentRoot("/");
         Map<String, Object> properties = channel.getProperties();
         assertTrue(properties.containsKey("getme"));
         assertEquals("noot", properties.get("getme"));
-
         channelMngr.persist("cmit-test-bp", channel);
         resetDummyHostOnRequestContext();
-
         TestInfoClass channelInfo = hstManager.getVirtualHosts().getChannelInfo(channel);
         assertEquals("noot", channelInfo.getGetme());
-
     }
 
+    private void createBlueprintWithChannel(final boolean belowWorkspace) throws RepositoryException {
+        Node configNode = session.getRootNode().getNode("hst:hst");
+        Node bpFolder = configNode.getNode(NODENAME_HST_BLUEPRINTS);
+        Node bp = bpFolder.addNode("cmit-test-bp", NODETYPE_HST_BLUEPRINT);
+        Node configuration = bp.addNode(NODENAME_HST_CONFIGURATION, NODETYPE_HST_CONFIGURATION);
+        Node channelBlueprint;
+        if (belowWorkspace) {
+            Node workspace = configuration.addNode(NODENAME_HST_WORKSPACE, NODETYPE_HST_WORKSPACE);
+            channelBlueprint = workspace.addNode(NODENAME_HST_CHANNEL, NODETYPE_HST_CHANNEL);
+        } else {
+            channelBlueprint = configuration.addNode(NODENAME_HST_CHANNEL, NODETYPE_HST_CHANNEL);
+        }
+        channelBlueprint.setProperty(CHANNEL_PROPERTY_CHANNELINFO_CLASS, TestInfoClass.class.getName());
+        Node defaultChannelInfo = channelBlueprint.addNode(NODENAME_HST_CHANNELINFO, NODETYPE_HST_CHANNELINFO);
+        defaultChannelInfo.setProperty("getme", "noot");
+    }
 
+    @Test
+    public void channel_node_in_blueprint_not_below_workspace_still_ends_up_below_workspace_of_created_project() throws Exception {
+        createBlueprintWithChannel(false);
+        session.save();
+        Thread.sleep(100);
+        resetDummyHostOnRequestContext();
+        final Channel channel = hstManager.getVirtualHosts().getBlueprint("cmit-test-bp").getPrototypeChannel();
+        channel.setName("cmit-channel");
+        channel.setUrl("http://cmit-myhost");
+        channel.setContentRoot("/");
+        channelMngr.persist("cmit-test-bp", channel);
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/cmit-channel/hst:workspace/hst:channel"));
+    }
+
+    @Test
+    public void channel_node_in_blueprint_below_workspace_still_ends_up_below_workspace_of_created_project() throws Exception {
+        createBlueprintWithChannel(true);
+        session.save();
+        Thread.sleep(100);
+        resetDummyHostOnRequestContext();
+        final Channel channel = hstManager.getVirtualHosts().getBlueprint("cmit-test-bp").getPrototypeChannel();
+        channel.setName("cmit-channel");
+        channel.setUrl("http://cmit-myhost");
+        channel.setContentRoot("/");
+        channelMngr.persist("cmit-test-bp", channel);
+        assertTrue(session.nodeExists("/hst:hst/hst:configurations/cmit-channel/hst:workspace/hst:channel"));
+    }
 
     @Test
     public void testChannelManagerEventListeners() throws Exception {
 
         Node configNode = session.getRootNode().getNode("hst:hst");
-        Node bpFolder = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
+        Node bpFolder = configNode.getNode(NODENAME_HST_BLUEPRINTS);
 
-        Node bp = bpFolder.addNode("cmit-test-bp2", HstNodeTypes.NODETYPE_HST_BLUEPRINT);
-        Node hstConfigNode = bp.addNode(HstNodeTypes.NODENAME_HST_CONFIGURATION, HstNodeTypes.NODETYPE_HST_CONFIGURATION);
+        Node bp = bpFolder.addNode("cmit-test-bp2", NODETYPE_HST_BLUEPRINT);
+        Node hstConfigNode = bp.addNode(NODENAME_HST_CONFIGURATION, NODETYPE_HST_CONFIGURATION);
         hstConfigNode.addNode("hst:sitemap", "hst:sitemap");
         hstConfigNode.setProperty("hst:inheritsfrom", new String[]{"../unittestcommon"});
-        Node channelBlueprint = bp.addNode(HstNodeTypes.NODENAME_HST_CHANNEL, HstNodeTypes.NODETYPE_HST_CHANNEL);
-        channelBlueprint.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, TestInfoClass.class.getName());
-        Node defaultChannelInfo = channelBlueprint.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
+        Node channelBlueprint = hstConfigNode.addNode(NODENAME_HST_CHANNEL, NODETYPE_HST_CHANNEL);
+        channelBlueprint.setProperty(CHANNEL_PROPERTY_CHANNELINFO_CLASS, TestInfoClass.class.getName());
+        Node defaultChannelInfo = channelBlueprint.addNode(NODENAME_HST_CHANNELINFO, NODETYPE_HST_CHANNELINFO);
         defaultChannelInfo.setProperty("getme", "noot");
 
         session.save();
@@ -584,13 +648,13 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
     @Test(expected = ChannelException.class)
     public void testChannelManagerShortCircuitingEventListeners() throws Exception {
         Node configNode = session.getRootNode().getNode("hst:hst");
-        Node bpFolder = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
+        Node bpFolder = configNode.getNode(NODENAME_HST_BLUEPRINTS);
 
-        Node bp = bpFolder.addNode("cmit-test-bp2", HstNodeTypes.NODETYPE_HST_BLUEPRINT);
-        bp.addNode(HstNodeTypes.NODENAME_HST_CONFIGURATION, HstNodeTypes.NODETYPE_HST_CONFIGURATION);
-        Node channelBlueprint = bp.addNode(HstNodeTypes.NODENAME_HST_CHANNEL, HstNodeTypes.NODETYPE_HST_CHANNEL);
-        channelBlueprint.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, TestInfoClass.class.getName());
-        Node defaultChannelInfo = channelBlueprint.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
+        Node bp = bpFolder.addNode("cmit-test-bp2", NODETYPE_HST_BLUEPRINT);
+        Node hstConfigNode = bp.addNode(NODENAME_HST_CONFIGURATION, NODETYPE_HST_CONFIGURATION);
+        Node channelBlueprint = hstConfigNode.addNode(NODENAME_HST_CHANNEL, NODETYPE_HST_CHANNEL);
+        channelBlueprint.setProperty(CHANNEL_PROPERTY_CHANNELINFO_CLASS, TestInfoClass.class.getName());
+        Node defaultChannelInfo = channelBlueprint.addNode(NODENAME_HST_CHANNELINFO, NODETYPE_HST_CHANNELINFO);
         defaultChannelInfo.setProperty("getme", "noot");
 
         session.save();

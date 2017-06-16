@@ -23,6 +23,9 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+
 public class BlueprintHandler {
 
     final static Logger log = LoggerFactory.getLogger(BlueprintHandler.class);
@@ -57,7 +60,10 @@ public class BlueprintHandler {
             }
         }
 
-        HstNode channelNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CHANNEL);
+        HstNode channelNode = blueprintNode.getNode("hst:configuration/" + NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_CHANNEL);
+        if (channelNode == null) {
+            channelNode = blueprintNode.getNode("hst:configuration/" + NODENAME_HST_CHANNEL);
+        }
         final Channel channel;
         if (channelNode != null) {
             channel = ChannelPropertyMapper.readBlueprintChannel(channelNode);

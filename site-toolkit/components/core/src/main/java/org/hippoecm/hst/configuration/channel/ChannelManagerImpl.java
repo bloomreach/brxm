@@ -57,6 +57,7 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.CHANNEL_PROPERTY_NAME;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNEL;
@@ -325,15 +326,22 @@ public class ChannelManagerImpl implements ChannelManager {
     private String reuseOrCopyConfiguration(final Session session, final Node configRoot, final Node blueprintNode, final String channelName, final Channel channel) throws ChannelException, RepositoryException {
         // first try to copy existing blueprint configuration
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
-            Node blueprintConfiguration = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATION);
-            Node hstConfigurations = configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS);
-            Node configuration = copyNodes(blueprintConfiguration, hstConfigurations, channelName);
+            final Node blueprintConfiguration = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATION);
+            final Node hstConfigurations = configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS);
+            final Node configuration = copyNodes(blueprintConfiguration, hstConfigurations, channelName);
             if (!configuration.hasNode(NODENAME_HST_WORKSPACE)) {
                 configuration.addNode(NODENAME_HST_WORKSPACE, NODETYPE_HST_WORKSPACE);
             }
-            Node workspace = configuration.getNode(NODENAME_HST_WORKSPACE);
-            Node channelNode = workspace.addNode(NODENAME_HST_CHANNEL, NODETYPE_HST_CHANNEL);
-            ChannelPropertyMapper.saveChannel(channelNode, channel);
+            if (configuration.hasNode(NODENAME_HST_CHANNEL)) {
+                // move the channel to workspace so it is editable
+                session.move(configuration.getPath() + "/" + NODENAME_HST_CHANNEL, configuration.getPath() +"/" + NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_CHANNEL);
+            }
+            final Node workspace = configuration.getNode(NODENAME_HST_WORKSPACE);
+            if (!workspace.hasNode(NODENAME_HST_CHANNEL)) {
+                workspace.addNode(NODENAME_HST_CHANNEL, NODETYPE_HST_CHANNEL);
+            }
+            // only reset the name
+            workspace.getNode(NODENAME_HST_CHANNEL).setProperty(CHANNEL_PROPERTY_NAME, channel.getName());
             return configuration.getPath();
         }
 
