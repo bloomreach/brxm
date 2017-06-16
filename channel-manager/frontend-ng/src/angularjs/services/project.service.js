@@ -34,6 +34,8 @@ class ProjectService {
     this.PathService = PathService;
     this.HstService = HstService;
     this.HippoGlobal = HippoGlobal;
+
+    this.listeners = [];
   }
 
   load(channel, branchId) {
@@ -76,6 +78,8 @@ class ProjectService {
   }
 
   selectProject(projectId) {
+    this.listeners.forEach(listener => listener());
+
     const project = this.projects.find(p => p.id === projectId);
     if (project) {
       return this.HstService.doPut(null, this.mountId, 'selectbranch', projectId)
@@ -93,6 +97,10 @@ class ProjectService {
     return this.HstService
       .doGet(this.mountId, 'currentbranch')
       .then(result => result.data);
+  }
+
+  registerChangeListener(cb) {
+    this.listeners.push(cb);
   }
 }
 
