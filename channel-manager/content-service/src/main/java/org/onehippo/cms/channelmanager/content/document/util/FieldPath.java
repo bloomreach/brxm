@@ -58,11 +58,11 @@ public class FieldPath {
     }
 
     /**
-     * @param id the ID to compare to
+     * @param segment the segment to compare to
      * @return whether this field path only consists of exactly the given segment.
      */
-    public boolean is(final String id) {
-        return firstSegment != null && firstSegment.equals(id) && StringUtils.isEmpty(remainingSegments);
+    public boolean is(final String segment) {
+        return firstSegment != null && firstSegment.equals(segment) && StringUtils.isEmpty(remainingSegments);
     }
 
     /**
