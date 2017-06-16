@@ -429,7 +429,7 @@ public class ChoiceFieldTypeTest {
         final Node node = MockNode.root();
         final Node choiceNode = node.addNode("choice", "compound1");
 
-        final FieldPath fieldPath = new FieldPath("choice/compound1/somefield");
+        final FieldPath fieldPath = new FieldPath("choice/somefield");
         final List<FieldValue> fieldValues = Collections.emptyList();
 
         expect(compound1.writeFieldValue(choiceNode, new FieldPath("somefield"), fieldValues)).andReturn(true);
@@ -446,7 +446,7 @@ public class ChoiceFieldTypeTest {
         final Node choiceNode1 = node.addNode("choice", "compound1");
         node.addNode("choice", "compound2");
 
-        final FieldPath fieldPath = new FieldPath("choice/compound1/somefield");
+        final FieldPath fieldPath = new FieldPath("choice/somefield");
         final List<FieldValue> fieldValues = Collections.emptyList();
 
         expect(compound1.writeFieldValue(choiceNode1, new FieldPath("somefield"), fieldValues)).andReturn(true);
@@ -463,7 +463,7 @@ public class ChoiceFieldTypeTest {
         node.addNode("choice", "compound1");
         final Node choiceNode2 = node.addNode("choice", "compound2");
 
-        final FieldPath fieldPath = new FieldPath("choice[2]/compound2/somefield");
+        final FieldPath fieldPath = new FieldPath("choice[2]/somefield");
         final List<FieldValue> fieldValues = Collections.emptyList();
 
         expect(compound2.writeFieldValue(choiceNode2, new FieldPath("somefield"), fieldValues)).andReturn(true);
@@ -472,6 +472,22 @@ public class ChoiceFieldTypeTest {
         assertTrue(choice.writeField(node, fieldPath, fieldValues));
 
         verify(compound2);
+    }
+
+    @Test
+    public void writeFieldUnknownChoice() throws ErrorWithPayloadException, RepositoryException {
+        final Node node = MockNode.root();
+        node.addNode("choice", "unknown:compound");
+
+        final FieldPath fieldPath = new FieldPath("choice/somefield");
+        final List<FieldValue> fieldValues = Collections.emptyList();
+
+        try {
+            choice.writeField(node, fieldPath, fieldValues);
+            fail("Exception not thrown");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
     }
 
     @Test

@@ -98,8 +98,8 @@ describe('ChoiceField', () => {
   });
 
   it('helps composing unique form field names', () => {
-    expect($ctrl.getFieldName(0)).toBe('test-name/choice2');
-    expect($ctrl.getFieldName(1)).toBe('test-name[2]/choice1');
-    expect($ctrl.getFieldName(2)).toBe('test-name[3]/choice2');
+    expect($ctrl.getFieldName(0)).toBe('test-name');
+    expect($ctrl.getFieldName(1)).toBe('test-name[2]');
+    expect($ctrl.getFieldName(2)).toBe('test-name[3]');
   });
 });

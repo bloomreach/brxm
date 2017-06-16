@@ -130,9 +130,9 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
 
     @Override
     public boolean writeFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException {
-        final String chosenId = fieldPath.getFirstSegment();
+        final String chosenId = node.getPrimaryNodeType().getName();
         final NodeFieldType choice = findChoice(chosenId).orElseThrow(INVALID_DATA);
-        return choice.writeFieldValue(node, fieldPath.getRemainingSegments(), values);
+        return choice.writeFieldValue(node, fieldPath, values);
     }
 
     @Override
