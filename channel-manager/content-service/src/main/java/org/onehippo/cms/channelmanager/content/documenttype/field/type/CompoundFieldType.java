@@ -27,7 +27,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
@@ -128,20 +127,7 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
 
     @Override
     public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
-        if (!fieldPath.startsWith(getId())) {
-            return false;
-        }
-        try {
-            final String childName = fieldPath.getFirstSegment();
-            if (!node.hasNode(childName)) {
-                throw INVALID_DATA.get();
-            }
-            final Node child = node.getNode(childName);
-            return writeFieldValue(child, fieldPath.getRemainingSegments(), values);
-        } catch (RepositoryException e) {
-            log.warn("Failed to write value of compound field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(node), e);
-            throw new InternalServerErrorException();
-        }
+        return FieldTypeUtils.writeFieldNodeValue(node, fieldPath, values, this);
     }
 
     @Override

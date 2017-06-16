@@ -28,6 +28,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
@@ -46,7 +47,10 @@ import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * FieldTypeUtils provides utility methods for populating and dealing with field types.
@@ -98,6 +102,8 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
     }
+
+    private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
 
     private static class TypeDescriptor {
         public final Class<? extends FieldType> fieldTypeClass;
@@ -263,6 +269,23 @@ public class FieldTypeUtils {
             }
         }
         return false;
+    }
+
+    public static boolean writeFieldNodeValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values, final NodeFieldType field) throws ErrorWithPayloadException {
+        if (!fieldPath.startsWith(field.getId())) {
+            return false;
+        }
+        final String childName = fieldPath.getFirstSegment();
+        try {
+            if (!node.hasNode(childName)) {
+                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
+            }
+            final Node child = node.getNode(childName);
+            return field.writeFieldValue(child, fieldPath.getRemainingSegments(), values);
+        } catch (RepositoryException e) {
+            log.warn("Failed to write value of field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(node), e);
+            throw new InternalServerErrorException();
+        }
     }
 
     /**

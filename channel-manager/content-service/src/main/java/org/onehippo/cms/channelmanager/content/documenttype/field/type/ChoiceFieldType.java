@@ -27,10 +27,9 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
-import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
@@ -126,20 +125,7 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
 
     @Override
     public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
-        if (!fieldPath.startsWith(getId())) {
-            return false;
-        }
-        final String nodeName = fieldPath.getFirstSegment();
-        try {
-            if (!node.hasNode(nodeName)) {
-                throw INVALID_DATA.get();
-            }
-            final Node child = node.getNode(nodeName);
-            return writeFieldValue(child, fieldPath.getRemainingSegments(), values);
-        } catch (RepositoryException e) {
-            log.warn("Failed to write value of choice field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(node), e);
-            throw new InternalServerErrorException();
-        }
+        return FieldTypeUtils.writeFieldNodeValue(node, fieldPath, values, this);
     }
 
     @Override
