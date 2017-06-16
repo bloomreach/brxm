@@ -44,6 +44,7 @@
     <!-- editors per field type -->
     <input ng-switch-when="STRING"
            ng-model="fieldValue.value"
+           ng-change="$ctrl.valueChanged()"
            name="{{::$ctrl.getFieldName($index)}}"
            placeholder=""
            ng-attr-maxlength="{{::$ctrl.fieldType.maxLength}}"
@@ -54,17 +55,19 @@
 
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
+              ng-change="$ctrl.valueChanged()"
               name="::$ctrl.getFieldName($index)"
               placeholder=""
               aria-label="::$ctrl.fieldType.displayName"
               ng-required="::$ctrl.fieldType.required"
               md-no-resize
-              ng-focus="$ctrl.onFieldFocus()"
-              ng-blur="$ctrl.onFieldBlur()">
+              ng-focus="$ctrl.focusPrimitive()"
+              ng-blur="$ctrl.blurPrimitive()">
     </textarea>
 
     <ckeditor ng-switch-when="HTML"
               ng-model="fieldValue.value"
+              ng-change="$ctrl.valueChanged()"
               id="fieldValue.id"
               name="::$ctrl.getFieldName($index)"
               aria-label="::$ctrl.fieldType.displayName"

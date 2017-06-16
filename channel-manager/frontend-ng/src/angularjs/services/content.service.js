@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,8 +42,13 @@ class ContentService {
     return this._send('GET', ['documenttypes', id]);
   }
 
+  draftField(documentId, fieldName, value) {
+    return this._send('PUT', ['documents', documentId, 'draft', fieldName], value);
+  }
+
   _send(method, pathElements, data) {
-    const url = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), REST_API_PATH, ...pathElements);
+    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), REST_API_PATH, ...pathElements);
+    const url = encodeURI(path);
     const headers = {};
     return this.$http({ method, url, headers, data })
       .then(result => result.data);

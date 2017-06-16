@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,5 +117,57 @@ describe('ContentService', () => {
     $httpBackend.flush();
 
     expect(result).toEqual(docType);
+  });
+
+  it('can draft a field', () => {
+    const successCallback = jasmine.createSpy('successCallback');
+    const failureCallback = jasmine.createSpy('failureCallback');
+    const fieldValue = [{ value: 'bla' }];
+
+    $httpBackend.expectPUT('/test/ws/content/documents/123/draft/somefield', fieldValue).respond(200);
+    ContentService.draftField('123', 'somefield', fieldValue).then(successCallback, failureCallback);
+    $httpBackend.flush();
+
+    expect(successCallback).toHaveBeenCalled();
+    expect(failureCallback).not.toHaveBeenCalled();
+  });
+
+  it('can draft a child field', () => {
+    const successCallback = jasmine.createSpy('successCallback');
+    const failureCallback = jasmine.createSpy('failureCallback');
+    const fieldValue = [{ value: 'bla' }];
+
+    $httpBackend.expectPUT('/test/ws/content/documents/123/draft/somefield/childfield', fieldValue).respond(200);
+    ContentService.draftField('123', 'somefield/childfield', fieldValue).then(successCallback, failureCallback);
+    $httpBackend.flush();
+
+    expect(successCallback).toHaveBeenCalled();
+    expect(failureCallback).not.toHaveBeenCalled();
+  });
+
+  it('can draft a field with a numbered suffix', () => {
+    const successCallback = jasmine.createSpy('successCallback');
+    const failureCallback = jasmine.createSpy('failureCallback');
+    const fieldValue = [{ value: 'bla' }];
+
+    $httpBackend.expectPUT('/test/ws/content/documents/123/draft/choice%5B2%5D', fieldValue).respond(200);
+    ContentService.draftField('123', 'choice[2]', fieldValue).then(successCallback, failureCallback);
+    $httpBackend.flush();
+
+    expect(successCallback).toHaveBeenCalled();
+    expect(failureCallback).not.toHaveBeenCalled();
+  });
+
+  it('fails to draft a field', () => {
+    const successCallback = jasmine.createSpy('successCallback');
+    const failureCallback = jasmine.createSpy('failureCallback');
+    const fieldValue = [{ value: 'bla' }];
+
+    $httpBackend.expectPUT('/test/ws/content/documents/123/draft/somefield', fieldValue).respond(403);
+    ContentService.draftField('123', 'somefield', fieldValue).then(successCallback, failureCallback);
+    $httpBackend.flush();
+
+    expect(successCallback).not.toHaveBeenCalled();
+    expect(failureCallback).toHaveBeenCalled();
   });
 });

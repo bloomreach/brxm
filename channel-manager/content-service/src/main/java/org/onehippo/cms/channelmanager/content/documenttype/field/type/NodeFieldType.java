@@ -16,10 +16,13 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
 /**
@@ -27,10 +30,40 @@ import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
  */
 public interface NodeFieldType extends FieldType {
 
+    /**
+     * Reads a single field value from a node.
+     * @param node the node to read from
+     * @return the value read
+     */
     FieldValue readValue(final Node node);
 
+    /**
+     * Writes a single field value to a node.
+     * @param node the node to write to
+     * @param fieldValue the value to write
+     * @throws ErrorWithPayloadException when the field value is wrong
+     * @throws RepositoryException when the write failed
+     */
     void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException;
 
+    /**
+     * Writes a field value to the field specified by the field path. Can be this field or a child field in case of
+     * compound or compound-like fields.
+     *
+     * @param node the node to write to
+     * @param fieldPath the path to the field
+     * @param values the values to write
+     * @return true if the value has been written, false otherwise.
+     * @throws ErrorWithPayloadException when the field path or field value is wrong
+     * @throws RepositoryException when the write failed
+     */
+    boolean writeFieldValue(final Node node, FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException;
+
+    /**
+     * Validates the value.
+     * @param value value to validate
+     * @return true of the value is valid, false otherwise.
+     */
     boolean validateValue(final FieldValue value);
 
 }

@@ -16,11 +16,14 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.document.model.Document;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
 /**
@@ -55,11 +58,29 @@ public interface DocumentsService {
      * @param document Document containing the to-be-persisted content
      * @param session  user-authenticated, invocation-scoped JCR session.
      *                 In case of a bad request, changes may be pending.
+     * @param locale   Locale of the CMS user
      * @return         JSON-serializable representation of the persisted document
      * @throws ErrorWithPayloadException
      *                 If updating the draft failed
      */
     Document updateDraft(String uuid, Document document, Session session, Locale locale) throws ErrorWithPayloadException;
+
+    /**
+     * Update a single field value in the draft version of a document.
+     *
+     * The persisted value may differ from the posted one (e.g. when fields are subject to additional processing
+     * before being persisted).
+     *
+     * @param uuid     UUID of the document
+     * @param fieldPath Path to the field in the document
+     * @param fieldValues Field values containing the to-be-persisted content
+     * @param session  user-authenticated, invocation-scoped JCR session.
+     *                 In case of a bad request, changes may be pending.
+     * @param locale   Locale of the CMS user
+     * @throws ErrorWithPayloadException
+     *                 If updating the draft failed
+     */
+    void updateDraftField(String uuid, FieldPath fieldPath, List<FieldValue> fieldValues, Session session, Locale locale) throws ErrorWithPayloadException;
 
     /**
      * Delete the draft version of a document, such that it is available for others to edit.

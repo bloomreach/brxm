@@ -25,6 +25,9 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -32,6 +35,7 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.ckeditor.HippoPicker;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -46,9 +50,6 @@ import org.onehippo.cms7.services.htmlprocessor.richtext.model.RichTextProcessor
 import org.onehippo.cms7.services.htmlprocessor.visit.FacetTagProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * A document field of type hippostd:html.
@@ -208,10 +209,15 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
     }
 
     @Override
-    public void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues) throws ErrorWithPayloadException {
+    public void writeValues(final Node node,
+                            final Optional<List<FieldValue>> optionalValues,
+                            final boolean validateValues) throws ErrorWithPayloadException {
         final String valueName = getId();
         final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
-        checkCardinality(values);
+
+        if (validateValues) {
+            checkCardinality(values);
+        }
 
         try {
             final NodeIterator children = node.getNodes(valueName);
@@ -226,6 +232,18 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
     public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException {
         final String html = write(fieldValue.getValue(), node);
         node.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, html);
+    }
+
+    @Override
+    public boolean writeFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException {
+        if (!fieldPath.is(getId())) {
+            return false;
+        }
+        if (values.isEmpty()) {
+            throw INVALID_DATA.get();
+        }
+        writeValue(node, values.get(0));
+        return true;
     }
 
     @Override

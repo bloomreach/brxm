@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldType;
@@ -43,6 +44,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextF
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -597,6 +599,59 @@ public class FieldTypeUtilsTest {
         replay(field1, field2);
 
         FieldTypeUtils.writeFieldValues(valueMap, Arrays.asList(field1, field2), node);
+
+        verify(field1, field2);
+    }
+
+    @Test
+    public void writeFieldValueWithEmptyFieldPath() throws ErrorWithPayloadException {
+        final FieldPath emptyFieldPath = new FieldPath("");
+        final List<FieldValue> fieldValues = Collections.emptyList();
+        final List<FieldType> fields = Collections.emptyList();
+        final Node node = createMock(Node.class);
+
+        assertFalse(FieldTypeUtils.writeFieldValue(emptyFieldPath, fieldValues, fields, node));
+    }
+
+    @Test
+    public void writeFieldValueReturnsAfterFirstSuccessfulWrite() throws ErrorWithPayloadException {
+        final FieldPath fieldPath = new FieldPath("ns:field");
+        final FieldValue value = new FieldValue("value");
+        final List<FieldValue> fieldValues = Collections.singletonList(value);
+        final FieldType field1 = createMock("field1", FieldType.class);
+        final FieldType field2 = createMock("field2", FieldType.class);
+        final FieldType field3 = createMock("field3", FieldType.class);
+
+        final List<FieldType> fields = Arrays.asList(field1, field2, field3);
+        final Node node = createMock(Node.class);
+
+        expect(field1.writeField(node, fieldPath, fieldValues)).andReturn(false);
+        expect(field2.writeField(node, fieldPath, fieldValues)).andReturn(true);
+
+        replay(field1, field2, field3);
+
+        assertTrue(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, node));
+
+        verify(field1, field2, field3);
+    }
+
+    @Test
+    public void writeFieldValueWhenAllWritesFail() throws ErrorWithPayloadException {
+        final FieldPath fieldPath = new FieldPath("ns:field");
+        final FieldValue value = new FieldValue("value");
+        final List<FieldValue> fieldValues = Collections.singletonList(value);
+        final FieldType field1 = createMock("field1", FieldType.class);
+        final FieldType field2 = createMock("field2", FieldType.class);
+
+        final List<FieldType> fields = Arrays.asList(field1, field2);
+        final Node node = createMock(Node.class);
+
+        expect(field1.writeField(node, fieldPath, fieldValues)).andReturn(false);
+        expect(field2.writeField(node, fieldPath, fieldValues)).andReturn(false);
+
+        replay(field1, field2);
+
+        assertFalse(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, node));
 
         verify(field1, field2);
     }

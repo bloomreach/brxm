@@ -22,6 +22,8 @@ import java.util.Optional;
 
 import javax.jcr.Node;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -30,8 +32,6 @@ import org.onehippo.cms7.services.htmlprocessor.model.HtmlProcessorModel;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class FormattedTextFieldType extends StringFieldType {
 
@@ -91,8 +91,8 @@ public class FormattedTextFieldType extends StringFieldType {
     }
 
     @Override
-    protected List<FieldValue> writeValues(final Optional<List<FieldValue>> optionalValues) {
-        List<FieldValue> values = super.writeValues(optionalValues);
+    protected List<FieldValue> processValues(final Optional<List<FieldValue>> optionalValues) {
+        List<FieldValue> values = super.processValues(optionalValues);
         for (final FieldValue value : values) {
             value.setValue(write(value.getValue()));
         }

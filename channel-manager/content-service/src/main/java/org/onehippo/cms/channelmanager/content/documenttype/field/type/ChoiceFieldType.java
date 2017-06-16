@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
@@ -103,9 +104,14 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     }
 
     @Override
-    public void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues) throws ErrorWithPayloadException {
+    protected void writeValues(final Node node,
+                               final Optional<List<FieldValue>> optionalValues,
+                               final boolean validateValues) throws ErrorWithPayloadException {
         final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
-        checkCardinality(values);
+
+        if (validateValues) {
+            checkCardinality(values);
+        }
 
         try {
             removeInvalidChoices(node); // This is symmetric to ignoring them in #readValues.
@@ -115,6 +121,18 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
             log.warn("Failed to write value for choice type '{}'", getId(), e);
             throw new InternalServerErrorException();
         }
+    }
+
+    @Override
+    public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
+        return FieldTypeUtils.writeFieldNodeValue(node, fieldPath, values, this);
+    }
+
+    @Override
+    public boolean writeFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException {
+        final String chosenId = node.getPrimaryNodeType().getName();
+        final NodeFieldType choice = findChoice(chosenId).orElseThrow(INVALID_DATA);
+        return choice.writeFieldValue(node, fieldPath, values);
     }
 
     @Override

@@ -28,21 +28,23 @@ Failed to read property 'caption'
 Failed to retrieve draft node
 Failed to read string field 'test:id' from 'bla'
 Failed to write singular String value to property test:id
-Failed to write multiple String value to property test:id
 Failed to read nodes for compound type 'node:name'
 Failed to write compound value to node node:name
+Failed to write value of compound field 'node:name/string:field1' to node '/test'
 Failed reading hints from workflow
 Failed to determine if field is of type CHOICE
 Failed to determine provider-based choices for field
 Failed to determine list-based choices for field
 Failed to read nodes for choice type 'choice'
 Failed to write value for choice type 'choice'
+Failed to write value of field 'choice/child' to node '/test'
 Node with identifier 'unknown-uuid' does not exist
 Failed to retrieve type of document '/bla'
 Failed to retrieve JCR session for node '/bla'
 User 'admin' failed to re-obtain ownership of document
 Failed to dispose of editable instance
 Failed to save changes to draft node of document uuid
+Failed to save changes to field 'ns:field' in draft node of document uuid
 Failed to persist changes
 Failed to retrieve editor config node content type '/bla'
 Failed to retrieve content type 'namespaced:type'
