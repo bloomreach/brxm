@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.model.parser.ParserException;
 
-import static org.junit.Assert.assertEquals;
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
 public class SerializerTest extends AbstractBaseTest {
@@ -61,7 +60,7 @@ public class SerializerTest extends AbstractBaseTest {
         final PathConfigurationReader.ReadResult result = readFromResource(moduleConfig, explicitSequencing);
 
         final FileConfigurationWriter writer = new FileConfigurationWriter();
-        writer.write(folder.getRoot().toPath(), result.getGroups(), result.getModuleContexts(), explicitSequencing);
+        writer.write(folder.getRoot().toPath(), result.getModuleContext(), explicitSequencing);
 
         final Path expectedRoot = findBase(moduleConfig);
         final Path actualRoot = folder.getRoot().toPath();

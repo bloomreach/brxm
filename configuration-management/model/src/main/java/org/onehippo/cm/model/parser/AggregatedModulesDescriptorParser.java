@@ -18,7 +18,6 @@ package org.onehippo.cm.model.parser;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.onehippo.cm.model.impl.GroupImpl;
@@ -34,6 +33,7 @@ import static org.onehippo.cm.model.Constants.MODULE_KEY;
 import static org.onehippo.cm.model.Constants.PROJECTS_KEY;
 import static org.onehippo.cm.model.Constants.PROJECT_KEY;
 
+@Deprecated
 public class AggregatedModulesDescriptorParser extends AbstractBaseParser {
 
     public AggregatedModulesDescriptorParser(final boolean explicitSequencing) {

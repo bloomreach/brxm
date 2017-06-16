@@ -41,7 +41,7 @@ import static org.onehippo.cm.model.Constants.MODULE_KEY;
 import static org.onehippo.cm.model.Constants.PROJECTS_KEY;
 import static org.onehippo.cm.model.Constants.PROJECT_KEY;
 
-
+@Deprecated
 public class AggregatedModulesDescriptorSerializer extends AbstractBaseSerializer {
 
     public AggregatedModulesDescriptorSerializer(final boolean explicitSequencing) {

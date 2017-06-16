@@ -1,7 +1,4 @@
 # This file is used by ClasspathConfigurationModelReaderTest and needs to be located at TestModuleFileSource/src/main/resources
-groups:
-- group: test-group
-  projects:
-  - project: test-project
-    modules:
-    - module: test-module
+group: test-group
+project: test-project
+module: test-module

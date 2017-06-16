@@ -32,7 +32,7 @@ public class ConfigurationVerifier {
         final Path moduleDescriptorPath = Paths.get(args[0]);
         final PathConfigurationReader.ReadResult result = new PathConfigurationReader().read(moduleDescriptorPath, true);
         ConfigurationModelImpl model = new ConfigurationModelImpl();
-        result.getGroups().forEach(model::addGroup);
+        model.addGroup(result.getModuleContext().getModule().getProject().getGroup());
         model.build();
     }
 }

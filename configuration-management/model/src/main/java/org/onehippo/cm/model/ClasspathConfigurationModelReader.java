@@ -39,8 +39,6 @@ import org.onehippo.cm.model.parser.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Throwables;
-
 public class ClasspathConfigurationModelReader {
 
     private static final Logger log = LoggerFactory.getLogger(ClasspathConfigurationModelReader.class);
@@ -135,13 +133,9 @@ public class ClasspathConfigurationModelReader {
                         new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
 
                 // store mvnSourcePath on each module for later use by auto-export
-                result.getGroups().stream()
-                        .flatMap(g -> g.getProjects().stream())
-                        .flatMap(p -> p.getModules().stream())
-                        .forEach(m -> {
-                            m.setMvnPath(mvnModulePath);
-                            modulesFromSourceFiles.add(m);
-                        });
+                final ModuleImpl module = result.getModuleContext().getModule();
+                module.setMvnPath(mvnModulePath);
+                modulesFromSourceFiles.add(module);
             }
 
         }
@@ -184,7 +178,7 @@ public class ClasspathConfigurationModelReader {
                 // Hang onto a reference to this FS, so we can close it later with ConfigurationModel.close()
                 groups.getLeft().add(fs);
 
-                groups.getRight().addAll(result.getGroups());
+                groups.getRight().add(result.getModuleContext().getModule().getProject().getGroup());
             }
             else {
                 // if part of the classpath is a raw dir on the native filesystem, just use the default FileSystem
@@ -194,7 +188,7 @@ public class ClasspathConfigurationModelReader {
                 final PathConfigurationReader.ReadResult result =
                         new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
 
-                groups.getRight().addAll(result.getGroups());
+                groups.getRight().add(result.getModuleContext().getModule().getProject().getGroup());
             }
         }
         return groups;

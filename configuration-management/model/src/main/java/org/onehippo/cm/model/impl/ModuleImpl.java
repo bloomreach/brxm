@@ -25,7 +25,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -53,13 +52,12 @@ import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.SourceParser;
-import org.onehippo.cm.model.serializer.AggregatedModulesDescriptorSerializer;
+import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.DEFAULT_DIGEST;
-import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
 import static org.onehippo.cm.model.Constants.HCM_CONTENT_FOLDER;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
@@ -585,7 +583,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
      */
     public String compileDummyDescriptor() {
         // serialize a dummy module descriptor for this module
-        final AggregatedModulesDescriptorSerializer moduleDescriptorSerializer = new AggregatedModulesDescriptorSerializer(DEFAULT_EXPLICIT_SEQUENCING);
 
         // create a dummy group->project->module setup with just the data relevant to this Module
         GroupImpl group = new GroupImpl(getProject().getGroup().getName());
@@ -602,7 +599,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             // todo switch to single-module alternate serializer
-            moduleDescriptorSerializer.serialize(baos, Collections.singleton(group));
+            final ModuleDescriptorSerializer descriptorSerializer = new ModuleDescriptorSerializer();
+            descriptorSerializer.serialize(baos, dummyModule);
             return baos.toString(StandardCharsets.UTF_8.name());
         }
         catch (IOException e) {

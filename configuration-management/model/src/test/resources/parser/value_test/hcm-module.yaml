@@ -1,6 +1,3 @@
-groups:
-- group: base
-  projects:
-  - project: project1
-    modules:
-    - module: module1
+group: base
+project: project1
+module: module1

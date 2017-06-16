@@ -21,27 +21,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiPredicate;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.parser.ActionListParser;
-import org.onehippo.cm.model.parser.AggregatedModulesDescriptorParser;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
+import org.onehippo.cm.model.parser.ModuleDescriptorParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.SourceParser;
-import org.onehippo.cm.model.util.FileConfigurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Maps;
 
 public class PathConfigurationReader {
 
@@ -50,25 +42,15 @@ public class PathConfigurationReader {
     private final boolean explicitSequencing;
 
     public static class ReadResult {
-        private final Collection<GroupImpl> groups;
-        private final Map<Module, ModuleContext> moduleContexts;
 
-        public ReadResult(Collection<GroupImpl> groups, Map<Module, ModuleContext> moduleContexts) {
-            this.groups = groups;
-            this.moduleContexts = moduleContexts;
+        private final ModuleContext moduleContext;
+
+        public ReadResult(ModuleContext moduleContext) {
+            this.moduleContext = moduleContext;
         }
 
-        // note: this method is currently only used for testing purposes
-        public Map<String, GroupImpl> getGroupsMap() {
-            return Maps.uniqueIndex(groups, GroupImpl::getName);
-        }
-
-        public Collection<GroupImpl> getGroups() {
-            return groups;
-        }
-
-        public Map<Module, ModuleContext> getModuleContexts() {
-            return moduleContexts;
+        public ModuleContext getModuleContext() {
+            return moduleContext;
         }
     }
 
@@ -97,28 +79,14 @@ public class PathConfigurationReader {
     public ReadResult read(final Path moduleDescriptorPath, final boolean verifyOnly) throws IOException, ParserException {
         final InputStream moduleDescriptorInputStream = moduleDescriptorPath.toUri().toURL().openStream();
 
-        // todo switch to single-module alternate parser
-        final AggregatedModulesDescriptorParser moduleDescriptorParser = new AggregatedModulesDescriptorParser(explicitSequencing);
-        final Collection<GroupImpl> groups = moduleDescriptorParser
-                .parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
+        final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
+        final ModuleImpl module = moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
 
-        final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(groups);
-        final Map<Module, ModuleContext> moduleContexts = new HashMap<>();
-
-        for (GroupImpl group : groups) {
-            for (ProjectImpl project : group.getProjects()) {
-                for (ModuleImpl module : project.getModules()) {
-
-                    final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath, hasMultipleModules);
-                    moduleContexts.put(module, moduleContext);
-
-                    // Set the input providers on the Module directly, so it doesn't need to be held in a Map on ConfigurationModel
-                    readModule(module, moduleContext, verifyOnly);
-                }
-            }
-        }
-
-        return new ReadResult(groups, moduleContexts);
+        final boolean hasMultipleModules = false;
+        final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath, hasMultipleModules);
+        // Set the input providers on the Module directly, so it doesn't need to be held in a Map on ConfigurationModel
+        readModule(module, moduleContext, verifyOnly);
+        return new ReadResult(moduleContext);
     }
 
     /**

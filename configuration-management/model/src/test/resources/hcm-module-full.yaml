@@ -1,0 +1,9 @@
+group:
+    name: hippo-cms
+    after: second
+project:
+    name: hippo-addon-urlrewriter
+    after: [hippo-cms, hippo-repository, hippo-site-toolkit, hippo-plugin-selections]
+module:
+    name: sdfgdf
+    after: hippo-cms

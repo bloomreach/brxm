@@ -40,6 +40,7 @@ public final class Constants {
     public static final String PROJECT_KEY = "project";
     public static final String MODULE_KEY = "module";
     public static final String AFTER_KEY = "after";
+    public static final String NAME_KEY = "name";
 
     // Following keys used in module yaml
     public static final String DEFINITIONS = "definitions";

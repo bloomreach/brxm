@@ -23,7 +23,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -40,6 +39,8 @@ import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.SourceParser;
 
+import com.google.common.collect.ImmutableMap;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -48,11 +49,11 @@ public class ParserValueTest extends AbstractBaseTest {
     @Test
     public void expect_value_test_loads() throws IOException, ParserException, URISyntaxException {
         final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/value_test/"+ Constants.HCM_MODULE_YAML);
-        final Map<String, GroupImpl> groups = result.getGroupsMap();
 
-        assertEquals(1, groups.size());
+        final ModuleContext moduleContext = result.getModuleContext();
+        final GroupImpl group = moduleContext.getModule().getProject().getGroup();
 
-        final GroupImpl base = assertGroup(groups, "base", new String[0], 1);
+        final GroupImpl base = assertGroup(ImmutableMap.of(group.getName(), group), "base", new String[0], 1);
         final ProjectImpl project = assertProject(base, "project1", new String[0], 1);
         final ModuleImpl module = assertModule(project, "module1", new String[0], 2);
         final SourceImpl source = assertSource(module, "base.yaml", 5);

@@ -16,7 +16,6 @@
 package org.onehippo.cm.model;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,19 +23,13 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import javax.jcr.Session;
-
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
-import org.onehippo.cm.model.serializer.AggregatedModulesDescriptorSerializer;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
+import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 import org.onehippo.cm.model.serializer.SourceSerializer;
 import org.onehippo.cm.model.util.FileConfigurationUtils;
 import org.slf4j.Logger;
@@ -58,25 +51,16 @@ public class FileConfigurationWriter {
     }
 
     void write(final Path destination,
-               final Collection<? extends Group> groups,
-               final Map<Module, ModuleContext> moduleContextMap,
+               final ModuleContext moduleContext,
                final boolean explicitSequencing) throws IOException {
-        final AggregatedModulesDescriptorSerializer moduleDescriptorSerializer = new AggregatedModulesDescriptorSerializer(explicitSequencing);
         final Path moduleDescriptorPath = destination.resolve(Constants.HCM_MODULE_YAML);
 
+        final ModuleDescriptorSerializer moduleDescriptorSerializer = new ModuleDescriptorSerializer(explicitSequencing);
         try (final OutputStream moduleDescriptorOutputStream = new FileOutputStream(moduleDescriptorPath.toFile())) {
-            moduleDescriptorSerializer.serialize(moduleDescriptorOutputStream, groups);
+            moduleDescriptorSerializer.serialize(moduleDescriptorOutputStream, moduleContext.getModule());
         }
-
-        for (Group group : groups) {
-            for (Project project : group.getProjects()) {
-                for (Module module : project.getModules()) {
-                    final ModuleContext moduleContext = moduleContextMap.get(module);
-                    moduleContext.createOutputProviders(moduleDescriptorPath);
-                    writeModule(module, explicitSequencing, moduleContext);
-                }
-            }
-        }
+        moduleContext.createOutputProviders(moduleDescriptorPath);
+        writeModule(moduleContext.getModule(), explicitSequencing, moduleContext);
     }
 
     public void writeModule(final Module module, final ModuleContext moduleContext, final boolean incremental)

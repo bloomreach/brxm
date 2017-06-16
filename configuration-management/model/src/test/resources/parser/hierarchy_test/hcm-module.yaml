@@ -1,13 +1,3 @@
-groups:
-- group: base
-  projects:
-  - project: project1
-    modules:
-    - module: module1
-- group: myhippoproject
-  after: base
-  projects:
-  - project: project2
-    after: [project1, foo/bar]
-    modules:
-    - module: module2
+group: base
+project: project1
+module: module1

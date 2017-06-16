@@ -66,6 +66,10 @@ public class ModuleContext {
         this.multiModule = multiModule;
     }
 
+    public ModuleImpl getModule() {
+        return module;
+    }
+
     /**
      * @return {@link Path} to hcm-actions.yaml of current module
      */

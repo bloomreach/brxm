@@ -16,7 +16,6 @@
 package org.onehippo.cm.model;
 
 import java.io.IOException;
-import java.util.Map;
 
 import org.junit.Test;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
@@ -29,6 +28,8 @@ import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.parser.ParserException;
 
+import com.google.common.collect.ImmutableMap;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -38,8 +39,10 @@ public class HierarchyTest extends AbstractBaseTest {
     @Test
     public void expect_hierarchy_test_loads() throws IOException, ParserException {
         final PathConfigurationReader.ReadResult result = readFromTestJar("/parser/hierarchy_test/"+ Constants.HCM_MODULE_YAML);
-        final Map<String, GroupImpl> groups = result.getGroupsMap();
-        assertEquals(2, groups.size());
+        ModuleImpl module = result.getModuleContext().getModule();
+
+        GroupImpl group = module.getProject().getGroup();
+        ImmutableMap<String, GroupImpl> groups = ImmutableMap.of(group.getName(), group);
 
         final GroupImpl base = assertGroup(groups, "base", new String[0], 1);
         final ProjectImpl project1 = assertProject(base, "project1", new String[0], 1);
@@ -123,15 +126,6 @@ public class HierarchyTest extends AbstractBaseTest {
 //        final ConfigDefinition source2definition2 = assertDefinition(source2, 1, ConfigDefinition.class);
 //        assertNode(source2definition2, "/hippo:configuration/hippo:queries/hippo:templates/new-image", "new-image", source2definition2, 1, 2);
 
-        final GroupImpl myhippoproject = assertGroup(groups, "myhippoproject", new String[]{"base"}, 1);
-        final ProjectImpl project2 = assertProject(myhippoproject, "project2", new String[]{"project1", "foo/bar"}, 1);
-        final ModuleImpl module2 = assertModule(project2, "module2", new String[0], 1);
-        final SourceImpl baseSource = assertSource(module2, "config.yaml", 1);
-        final ConfigDefinitionImpl baseDefinition = assertDefinition(baseSource, 0, ConfigDefinitionImpl.class);
-
-        final DefinitionNodeImpl rootDefinition2 =
-                assertNode(baseDefinition, "/node-with-sub-node/sub-node", "sub-node", baseDefinition, 0, 1);
-        assertProperty(rootDefinition2, "/node-with-sub-node/sub-node/property", "property", baseDefinition, ValueType.STRING, "override");
     }
 
 }
