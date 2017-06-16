@@ -115,7 +115,7 @@ public interface FieldType {
      * @param node the node for this field in the document field hierarchy
      * @param fieldPath the path to the field to write
      * @param value the value to write
-     * @return
+     * @return true if the value has been written, false otherwise.
      * @throws ErrorWithPayloadException
      *                      indicates that writing the provided value ran into an unrecoverable error
      */
