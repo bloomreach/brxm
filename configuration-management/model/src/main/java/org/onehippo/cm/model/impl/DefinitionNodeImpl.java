@@ -131,20 +131,27 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         return node;
     }
 
-    public DefinitionNodeImpl addNodeBefore(final String name, final String before) {
+    /**
+     * Insert a new node before the one with the name given by beforeThis.
+     * @param name
+     * @param beforeThis
+     * @return
+     */
+    public DefinitionNodeImpl addNodeBefore(final String name, final String beforeThis) {
         // we need to perform an O(n)*2 insert by clearing and rebuilding the nodes map
 
         // handle case where order-before mentions a node that isn't actually listed here yet
-        if (!modifiableNodes.containsKey(before)) {
+        if (!modifiableNodes.containsKey(beforeThis)) {
             // add at end as usual, and also set the order-before here as a flag to the caller about what happened
-            return addNode(name).setOrderBefore(before);
+            return addNode(name).setOrderBefore(beforeThis);
         }
 
         // copy the existing child nodes, inserting at the right place
         LinkedHashMap<String, DefinitionNodeImpl> newView = new LinkedHashMap<>();
+        final String indexedBeforeThis = createIndexedName(beforeThis);
         DefinitionNodeImpl node = null;
         for (Map.Entry<String, DefinitionNodeImpl> entry : modifiableNodes.entrySet()) {
-            if (createIndexedName(entry.getKey()).equals(createIndexedName(before))) {
+            if (createIndexedName(entry.getKey()).equals(indexedBeforeThis)) {
                 node = new DefinitionNodeImpl(name, this);
                 newView.put(name, node);
             }
@@ -157,6 +164,31 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
 
         // it should be impossible for this to be null here
         return node;
+    }
+
+    /**
+     * Reorder existing child nodes of this parent node.
+     * @param childNode the child that should be before the one specified by beforeThis
+     * @param beforeThis the child that should be after childNode
+     * @throws IllegalArgumentException if either of the parameters is not a child of this node
+     */
+    public void orderBefore(final DefinitionNodeImpl childNode, final DefinitionNodeImpl beforeThis) {
+        if (childNode.getParent() != this || beforeThis.getParent() != this) {
+            throw new IllegalArgumentException("Cannot reorder nodes that do not belong to this parent!");
+        }
+
+        // copy the existing child nodes, inserting at the right place
+        LinkedHashMap<String, DefinitionNodeImpl> newView = new LinkedHashMap<>();
+        for (Map.Entry<String, DefinitionNodeImpl> entry : modifiableNodes.entrySet()) {
+            if (entry.getValue() == beforeThis) {
+                newView.put(name, childNode);
+            }
+            newView.put(entry.getKey(), entry.getValue());
+        }
+
+        // clear and copy back into the existing child nodes map
+        modifiableNodes.clear();
+        modifiableNodes.putAll(newView);
     }
 
     public DefinitionPropertyImpl addProperty(final String name, final ValueImpl value) {

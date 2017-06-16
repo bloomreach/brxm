@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.PropertyOperation;
@@ -100,7 +101,7 @@ public class ConfigurationTreeBuilder {
      * (Currently, this includes only .meta:order-before directives that may span multiple source files.
      * @return
      */
-    ConfigurationTreeBuilder finishModule() {
+    public ConfigurationTreeBuilder finishModule() {
         if (!delayedOrdering.isEmpty()) {
             // report on all errors, not just the first one
             List<String> msgs = new ArrayList<>();
@@ -196,7 +197,8 @@ public class ConfigurationTreeBuilder {
                 }
                 if (parent.getNode(orderBeforeIndexedName) == null) {
                     // delay reporting an error for a missing sibling until after the module is done processing
-                    delayedOrdering.put(definitionNode.getParent().getPath() + "/" + orderBeforeIndexedName, definitionNode);
+                    final String parentPath = StringUtils.substringBeforeLast(definitionNode.getPath(), "/");
+                    delayedOrdering.put(parentPath + "/" + orderBeforeIndexedName, definitionNode);
                 }
             }
             applyNodeOrdering(node, definitionNode, parent, orderBefore, orderFirst, orderBeforeIndexedName);
