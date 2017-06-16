@@ -48,7 +48,7 @@
         <sv:value>&lt;html&gt;&lt;body&gt;o what a
           night&lt;/body&gt;&lt;/html&gt;</sv:value>
       </sv:property>
-      <sv:property sv:name="sample:subject" sv:type="String">
+      <sv:property sv:name="sample:subject" sv:type="String" sv:multiple="true">
         <sv:value>onderwerp</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:state" sv:type="String">
