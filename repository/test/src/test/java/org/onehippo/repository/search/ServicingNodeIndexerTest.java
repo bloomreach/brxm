@@ -22,6 +22,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -30,7 +31,7 @@ import static junit.framework.Assert.assertTrue;
 
 public class ServicingNodeIndexerTest extends RepositoryTestCase {
 
-
+    @Ignore
     @Test
     public void testExcludeFromNodeScope() throws RepositoryException {
 

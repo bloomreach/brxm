@@ -27,8 +27,8 @@ import javax.jcr.Node;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.parser.ActionListParser;
@@ -51,6 +51,7 @@ import static org.onehippo.cm.engine.Constants.NT_HCM_PROJECT;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
 
+@Ignore
 public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigServiceTest {
 
     private ConfigurationBaselineService baselineService;

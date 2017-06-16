@@ -27,17 +27,20 @@ import org.apache.commons.io.FileUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.decorating.RepositoryDecorator;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.InternalHippoRepository;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
 
 public class ExternalRepositorySyncRevisionServiceTest {
 
     private static final Credentials credentials = new SimpleCredentials("admin", "admin".toCharArray());
 
+    @Ignore
     @Test
     public void testSyncRevision() throws Exception {
         final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
