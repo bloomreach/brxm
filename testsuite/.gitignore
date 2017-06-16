@@ -54,6 +54,10 @@ linear-algebra/.classpath
 linear-algebra/.project
 linear-algebra/.settings
 linear-algebra/target
+linear-algebra-sub/.classpath
+linear-algebra-sub/.project
+linear-algebra-sub/.settings
+linear-algebra-sub/target
 /node_modules
 prod-server-config/.classpath
 prod-server-config/.project
