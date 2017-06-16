@@ -1,5 +1,0 @@
-definitions:
-  config:
-    /topmost/upstream/exportSecond:
-      jcr:primaryType: nt:unstructured
-      newPropertyToSecond: I'm also new

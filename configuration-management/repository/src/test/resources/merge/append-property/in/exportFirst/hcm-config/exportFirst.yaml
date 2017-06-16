@@ -1,9 +1,0 @@
-definitions:
-  config:
-    /topmost/upstream/exportFirst:
-      jcr:primaryType: nt:unstructured
-      existingPropertyWithLocalDef: ["Don't call it a comeback"]
-      existingPropertyWithAddInSecond: [value1]
-      propertyWithResources:
-        type: binary
-        resource: [testResource.bin]

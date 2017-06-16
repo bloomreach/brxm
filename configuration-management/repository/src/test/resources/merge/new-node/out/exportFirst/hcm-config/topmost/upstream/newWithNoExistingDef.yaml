@@ -1,6 +1,0 @@
-definitions:
-  config:
-    /topmost/upstream/newWithNoExistingDef:
-      jcr:primaryType: nt:unstructured
-      /newAsChild0:
-        jcr:primaryType: nt:unstructured

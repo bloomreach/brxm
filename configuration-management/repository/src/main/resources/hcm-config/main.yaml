@@ -1,8 +1,0 @@
-definitions:
-  namespace:
-    hcm:
-      uri: http://www.onehippo.org/jcr/hcm/1.0
-      cnd: hcm.cnd
-    autoexport:
-      uri: http://www.onehippo.org/autoexport/1.1
-      cnd: autoexport.cnd

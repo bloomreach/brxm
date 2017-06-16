@@ -1,4 +1,0 @@
-definitions:
-  config:
-    /topmost/upstream:
-      jcr:primaryType: nt:unstructured

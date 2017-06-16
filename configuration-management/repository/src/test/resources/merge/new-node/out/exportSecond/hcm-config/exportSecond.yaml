@@ -1,9 +1,0 @@
-definitions:
-  config:
-    /topmost/upstream/exportSecond:
-      jcr:primaryType: nt:unstructured
-      /newAsRoot:
-        .meta:ignore-reordered-children: true
-        jcr:primaryType: nt:unstructured
-        /newAsChild2:
-          jcr:primaryType: nt:unstructured

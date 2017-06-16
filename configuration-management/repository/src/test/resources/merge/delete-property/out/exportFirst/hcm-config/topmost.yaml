@@ -1,5 +1,0 @@
-definitions:
-  config:
-    /topmost/upstream:
-      existingPropertyNewlyAdded:
-        operation: delete

@@ -1,7 +1,0 @@
-groups:
-  - group: hippo-cms
-    projects:
-      - project: hippo-configuration-management
-        after: hippo-repository
-        modules:
-          - module: hippo-configuration-management-backend

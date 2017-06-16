@@ -1,6 +1,0 @@
-definitions:
-  config:
-    /topmost/upstream:
-      .meta:delete: true
-    /topmost/upstreamToDelete:
-      .meta:delete: true

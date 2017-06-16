@@ -1,4 +1,0 @@
-definitions:
-  config:
-    /exportFirstExistingRoot/shouldAddToDef/shouldCreateNewFile:
-      jcr:primaryType: nt:unstructured
