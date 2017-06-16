@@ -58,6 +58,7 @@ public interface DocumentsService {
      * @param document Document containing the to-be-persisted content
      * @param session  user-authenticated, invocation-scoped JCR session.
      *                 In case of a bad request, changes may be pending.
+     * @param locale   Locale of the CMS user
      * @return         JSON-serializable representation of the persisted document
      * @throws ErrorWithPayloadException
      *                 If updating the draft failed
@@ -75,7 +76,7 @@ public interface DocumentsService {
      * @param fieldValues Field values containing the to-be-persisted content
      * @param session  user-authenticated, invocation-scoped JCR session.
      *                 In case of a bad request, changes may be pending.
-     * @return         JSON-serializable representation of the persisted document
+     * @param locale   Locale of the CMS user
      * @throws ErrorWithPayloadException
      *                 If updating the draft failed
      */
