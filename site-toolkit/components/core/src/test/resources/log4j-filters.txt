@@ -1,5 +1,5 @@
 #
-#  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+#  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
 #
 #  Licensed under the Apache License, Version 2.0 (the  "License");
 #  you may not use this file except in compliance with the License.
@@ -21,3 +21,6 @@ Cannot add cms location
 Cannot lookup referenced component
 Cannot find hst:template
 Relative inherit path '../unittestcommon/hst:workspace/hst:containers/myReferenceableContainer'
+An event handler will be registered for a path where no node currently is available
+Failed to register event listener
+Existing lock file

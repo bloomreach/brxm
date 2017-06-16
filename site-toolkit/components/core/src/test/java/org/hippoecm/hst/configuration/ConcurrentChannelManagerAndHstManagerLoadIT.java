@@ -35,12 +35,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
@@ -48,9 +46,9 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.hippoecm.hst.util.JcrSessionUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.hst.Channel;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -183,8 +181,6 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 		mountNode.getSession().save();
 		// load the model first ones to make sure async model is really async
 		hstManager.getVirtualHosts();
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-
 		try {
 			final int synchronousJobCount = 1000;
 			for (int i = 0; i < synchronousJobCount; i++) {
@@ -193,9 +189,8 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 				String nextVal = "testVal"+counter;
 				mountNode.setProperty(TEST_PROP, nextVal);
 				// Make sure to directly invalidate and do not wait for jcr event which is async and might arrive too late
-                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(mountNode.getSession(), mountNode.getSession().getNode("/hst:hst"), false);
                 mountNode.getSession().save();
-                invalidator.eventPaths(pathsToBeChanged);
+				Thread.sleep(100);
 
 				// ASYNC load
 				final VirtualHosts asyncHosts = hstManager.getVirtualHosts(true);
@@ -244,7 +239,6 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 		final Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
 		assertTrue(channels.size() == 2);
 		final Channel existingChannel = channels.values().iterator().next();
-        final EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
         try {
 			final int jobCount = 1000;
 			Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(jobCount);
@@ -315,9 +309,8 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 									Node node = getSession1().getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 									node.setProperty(TEST_PROP, nextVal);
 									// Make sure to directly invalidate and do not wait for jcr event which is async and might arrive too late
-                                    String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(node.getSession(), node.getSession().getNode("/hst:hst"), false);
                                     node.getSession().save();
-                                    invalidator.eventPaths(pathsToBeChanged);
+									Thread.sleep(100);
 
 									JobResultWrapperModifyMount result = new JobResultWrapperModifyMount();
 									result.testPropAfterChange = nextVal;

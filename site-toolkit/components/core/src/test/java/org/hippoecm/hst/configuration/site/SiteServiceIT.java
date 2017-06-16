@@ -20,15 +20,12 @@ import java.util.HashSet;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import com.google.common.base.Optional;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
@@ -46,6 +43,7 @@ import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.hst.Channel;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 
@@ -159,10 +157,9 @@ public class SiteServiceIT extends AbstractTestConfigurations {
                 // add a change by setting 'lockedby' on preview channel node
                 session.getNode(configPath + "-preview/hst:channel").setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "someonelikeyou");
             }
-            String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+
             session.save();
-            invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-            invalidator.eventPaths(pathsToBeChanged);
+            Thread.sleep(100);
 
             {
                 final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
@@ -401,11 +398,6 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         return siteService.siteMap;
     }
 
-    protected Session createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-    }
-
     @Test
     public void channels_for_branches_get_loaded_as_well() throws Exception {
         Session session = createSession();
@@ -555,7 +547,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             createHstConfigBackup(session);
             createBranch(session, "unittestproject-branchid-000", "branchid-000");
             session.save();
-
+            Thread.sleep(100);
             Node mountNode = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 
             Channel branch = hstManager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject-branchid-000");

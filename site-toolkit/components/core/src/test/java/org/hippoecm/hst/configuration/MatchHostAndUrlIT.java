@@ -88,11 +88,6 @@ public class MatchHostAndUrlIT extends AbstractTestConfigurations {
 
     }
 
-    protected Session createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-    }
-
     /*
      * This test should match the sitemap item /news/* which has a relative content path /News/${1}
      * The HttpServletRequest does not have a context path

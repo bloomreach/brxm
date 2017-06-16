@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import java.security.PrivilegedActionException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,6 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -40,7 +38,6 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -48,7 +45,6 @@ import org.junit.Test;
 import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
-import junit.framework.Assert;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNotSame;
@@ -63,7 +59,6 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
 
     private ChannelManagerImpl channelMngr;
     private HstManager hstManager;
-    private EventPathsInvalidator invalidator;
     private Session session;
 
     public interface TestChannelInfo extends ChannelInfo {
@@ -86,7 +81,6 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         requestContext.setSession(session);
         ModifiableRequestContextProvider.set(requestContext);
 
-        invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
         channelMngr = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
         hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         final VirtualHosts virtualHosts = hstManager.getVirtualHosts();
@@ -132,9 +126,8 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
     public void previews_add_channels_with_preview_id() throws Exception {
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject", "/hst:hst/hst:configurations/unittestproject-preview");
 
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
+        Thread.sleep(100);
 
         final HstManager manager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         Map<String, Channel> channels = manager.getVirtualHosts().getChannels("dev-localhost");
@@ -201,9 +194,8 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         final Channel unittestproject = channels.get("unittestproject");
         final Channel unittestsubproject = channels.get("unittestsubproject");
         session.getNode(unittestproject.getChannelPath()).setProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME, "new value");
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
+        Thread.sleep(100);
         final Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels("dev-localhost");
         assertNotSame(unittestproject, channelsAgain.get("unittestproject"));
         assertFalse(unittestproject.getName().equals(channelsAgain.get("unittestproject").getName()));
@@ -236,9 +228,8 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
 
         Node workspace = session.getNode("/hst:hst/hst:configurations/unittestproject-preview").addNode("hst:workspace");
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:channel", workspace.getPath()  + "/hst:channel");
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
+        Thread.sleep(100);
         final Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels("dev-localhost");
         // now the preview channel should be loaded
         assertTrue("There should be a preview channel since there is a node now in workspace",
@@ -401,10 +392,8 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         String channelId = channelMngr.persist(blueprint.getId(), channel);
         resetDummyHostOnRequestContext();
 
-        // for direct jcr node changes, we need to trigger an invalidation event ourselves
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
+        Thread.sleep(100);
         resetDummyHostOnRequestContext();
 
         // manager should reload
@@ -423,7 +412,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
     }
 
     @Test
-    public void channels_not_referenced_by_mount_in_hostgroup_are_not_in_hostgroup() throws ChannelException, RepositoryException, PrivilegedActionException, ContainerException {
+    public void channels_not_referenced_by_mount_in_hostgroup_are_not_in_hostgroup() throws Exception {
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
         int numberOfChannerBeforeAddingAnOrphanOne = channels.size();
 
@@ -433,10 +422,8 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         Node newChannelNode = session.getNode("/hst:hst/hst:configurations/foo/hst:channel");
         newChannelNode.setProperty("hst:name", "CMIT Test Channel");
 
-        // for direct jcr node changes, we need to trigger an invalidation event ourselves
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
+        Thread.sleep(100);
         resetDummyHostOnRequestContext();
 
         channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
@@ -490,10 +477,8 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         Node defaultChannelInfo = channelBlueprint.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
         defaultChannelInfo.setProperty("getme", "noot");
 
-        // for direct jcr node changes, we need to trigger an invalidation event ourselves
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
+        Thread.sleep(100);
         resetDummyHostOnRequestContext();
 
         final Channel channel = hstManager.getVirtualHosts().getBlueprint("cmit-test-bp").getPrototypeChannel();
@@ -530,10 +515,8 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         Node defaultChannelInfo = channelBlueprint.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
         defaultChannelInfo.setProperty("getme", "noot");
 
-        // for direct jcr node changes, we need to trigger an invalidation event ourselves
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
+        Thread.sleep(100);
         resetDummyHostOnRequestContext();
 
         Channel channel = hstManager.getVirtualHosts().getBlueprint("cmit-test-bp2").getPrototypeChannel();
@@ -610,10 +593,8 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         Node defaultChannelInfo = channelBlueprint.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
         defaultChannelInfo.setProperty("getme", "noot");
 
-        // for direct jcr node changes, we need to trigger an invalidation event ourselves
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        invalidator.eventPaths(pathsToBeChanged);
+        Thread.sleep(100);
         resetDummyHostOnRequestContext();
 
         final ChannelManagerImpl channelMngr = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());

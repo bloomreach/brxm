@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,14 @@
 package org.hippoecm.hst.configuration;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.nodetype.ConstraintViolationException;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.After;
 import org.junit.Before;
@@ -272,10 +268,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         // add new config nodes
         createHstWorkspaceAndReferenceableContainer("foo/bar/myReferenceableContainer", "/hst:hst/hst:configurations/unittestproject");
         addComponentReference(testComponent, "containerReferencePreserveMyName", "foo/bar/myReferenceableContainer");
-
-        // trigger events as during tests the jcr event listeners are not enabled
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        invalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/" + HstNodeTypes.NODENAME_HST_WORKSPACE, testComponent.getPath());
+        Thread.sleep(100);
 
         {
             // reload model after changes
@@ -298,9 +291,8 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
             componentNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"name1", "name2"});
             componentNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"value1", "value2"});
             session.save();
+            Thread.sleep(100);
 
-            // trigger reload
-            invalidator.eventPaths(canonicalJcrPath);
             mount = hstSitesManager.getVirtualHosts().getMountByIdentifier(getLocalhostRootMountId());
             component = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage").
                     getChildByName(TEST_COMPONENT_NODE_NAME).getChildByName("containerReferencePreserveMyName");
@@ -336,10 +328,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         createHstWorkspaceAndReferenceableContainer("myReferenceableContainer",
                 "/hst:hst/hst:configurations/unittestproject");
         addComponentReference(testComponent, "localcontainer", "myReferenceableContainer");
-
-        // trigger events as during tests the jcr event listeners are not enabled
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        invalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/" + HstNodeTypes.NODENAME_HST_WORKSPACE, testComponent.getPath());
+        Thread.sleep(100);
 
         {
             final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -433,6 +422,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         assertInheritanceAndModelReloadWorks(getLocalhostSubProjectMountId(), true);
     }
 
+    @Test
     public void cascading_workspace_inheritance_order_by_first_inheritance_first() throws Exception {
         removePagesAndSiteMapFromSubConfig();
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
@@ -488,8 +478,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         // in 'unittestsubproject' to be from 'unittestproject' instead of from 'unittestcommon'
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestsubproject",
                 new String[]{"../unittestproject/hst:workspace", "../unittestproject"});
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        invalidator.eventPaths("/hst:hst/hst:configurations/unittestsubproject");
+        Thread.sleep(100);
         final VirtualHosts vhostsNew = hstSitesManager.getVirtualHosts();
         {
             final Mount mount = vhostsNew.getMountByIdentifier(getLocalhostSubProjectMountId());
@@ -538,9 +527,7 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         final Node componentItem = session.getNodeByIdentifier(itemUUID);
         componentItem.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"valueNew"});
         session.save();
-        // trigger events as during tests the jcr event listeners are not enabled
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        invalidator.eventPaths(componentItem.getPath());
+        Thread.sleep(100);
         {
             final VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -692,12 +679,6 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         //hstSitesManager.invalidate();
         return highestAncestorPath;
     }
-
-    protected Session createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-    }
-
 
     public String getLocalhostRootMountId() throws RepositoryException {
         return session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();

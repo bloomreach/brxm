@@ -83,11 +83,6 @@ public class NoChannelsOrBlueprintsIT extends AbstractTestConfigurations {
         assertTrue(vhosts.getBlueprints().isEmpty());
     }
 
-    protected Session createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-    }
-
     private void removeChannelNodes(final Session session) throws RepositoryException {
         QueryResult result = session.getWorkspace().getQueryManager().createQuery("/jcr:root/hst:hst//element(*,hst:channel)", "xpath").execute();
         for (Node node : new NodeIterable(result.getNodes())) {

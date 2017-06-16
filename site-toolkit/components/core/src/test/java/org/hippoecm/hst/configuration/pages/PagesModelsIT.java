@@ -19,22 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
-import javax.jcr.SimpleCredentials;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.hippoecm.hst.util.JcrSessionUtils;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -53,7 +48,7 @@ import static org.junit.Assert.assertTrue;
 public class PagesModelsIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
-    private HippoSession session;
+    private Session session;
 
     @Override
     @Before
@@ -70,12 +65,6 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         restoreHstConfigBackup(session);
         session.logout();
         super.tearDown();
-    }
-
-
-    protected HippoSession createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return (HippoSession)repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
     @Test
@@ -225,12 +214,8 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         }
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages");
-
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-
-        invalidator.eventPaths(pathsToBeChanged);
+        Thread.sleep(100);
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -254,8 +239,8 @@ public class PagesModelsIT extends AbstractTestConfigurations {
             setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                     inheritanceVariant);
 
-            pathsToBeChanged = new String[]{"/hst:hst/hst:configurations/unittestproject"};
-            invalidator.eventPaths(pathsToBeChanged);
+            Thread.sleep(100);
+
             {
                 VirtualHosts vhosts = hstManager.getVirtualHosts();
                 final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -268,9 +253,8 @@ public class PagesModelsIT extends AbstractTestConfigurations {
             final Node homePageNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages/homepage");
             homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo"});
             homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"bar"});
-            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             session.save();
-            invalidator.eventPaths(pathsToBeChanged);
+            Thread.sleep(100);
             {
                 VirtualHosts vhosts = hstManager.getVirtualHosts();
                 final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -281,9 +265,8 @@ public class PagesModelsIT extends AbstractTestConfigurations {
 
             homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_NAMES).remove();
             homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_VALUES).remove();
-            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             session.save();
-            invalidator.eventPaths(pathsToBeChanged);
+            Thread.sleep(100);
         }
     }
 
@@ -331,9 +314,8 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
 
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
         session.save();
-        invalidator.eventPaths(new String[] {"/hst:hst/hst:configurations/unittestproject"});
+        Thread.sleep(100);
 
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
