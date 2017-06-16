@@ -23,6 +23,7 @@ class ProjectService {
     ConfigService,
     PathService,
     HstService,
+    HippoGlobal,
   ) {
     'ngInject';
 
@@ -32,16 +33,15 @@ class ProjectService {
     this.ConfigService = ConfigService;
     this.PathService = PathService;
     this.HstService = HstService;
+    this.HippoGlobal = HippoGlobal;
   }
 
   load(channel, branchId) {
-    const HippoGlobal = this.$window.parent.Hippo;
-
     this.urlPrefix = `${this.ConfigService.getCmsContextPath()}ws/projects/`;
     this.mountId = channel.mountId;
 
-    if (HippoGlobal.Projects && HippoGlobal.Projects.events) {
-      this.events = HippoGlobal.Projects.events;
+    if (this.HippoGlobal.Projects && this.HippoGlobal.Projects.events) {
+      this.events = this.HippoGlobal.Projects.events;
 
       this.events.subscribe('projects-changed', () => {
         this._setupProjects(branchId);

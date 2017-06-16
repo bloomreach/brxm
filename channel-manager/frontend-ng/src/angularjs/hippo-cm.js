@@ -47,6 +47,9 @@ import scrollToIfDirective from './directives/scrollToIf.directive';
 import startWithSlashFilter from './filters/startWithSlash.filter';
 import getByPropertyFilter from './filters/getByProperty.filter';
 import incrementPropertyFilter from './filters/incrementProperty.filter';
+import HippoGlobal from './services/hippoGlobal.service';
+
+
 import channelModule from './channel/channel';
 import config from './hippo-cm.config';
 import run from './hippo-cm.run';
@@ -80,6 +83,7 @@ const hippoCmng = angular
   .service('FeedbackService', FeedbackService)
   .service('PathService', PathService)
   .service('ProjectService', ProjectService)
+  .service('HippoGlobal', HippoGlobal)
   .directive('illegalCharacters', illegalCharactersDirective)
   .directive('stopPropagation', stopPropagationDirective)
   .directive('scrollToIf', scrollToIfDirective)
