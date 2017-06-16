@@ -27,7 +27,7 @@
       <md-list class="qa-sitemap">
         <md-list-item class="md-2-line qa-sitemap-item"
                       ng-class="{'list-item-active': $ctrl.isActiveSiteMapItem(item) }"
-                      ng-repeat="item in $ctrl.getSiteMap() track by item.pathInfo"
+                      ng-repeat="item in $ctrl.getSiteMap() track by $ctrl.getSiteMapItemHash(item)"
                       md-autofocus="$ctrl.isActiveSiteMapItem(item)"
                       ng-click="$ctrl.showPage(item)">
           <div class="md-list-item-text">
