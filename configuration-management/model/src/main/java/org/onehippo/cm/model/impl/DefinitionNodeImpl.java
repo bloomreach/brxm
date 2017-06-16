@@ -30,8 +30,11 @@ import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.ModelItem;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.util.SnsUtils;
 
 import com.google.common.collect.Maps;
+
+import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 
 public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
 
@@ -141,7 +144,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         LinkedHashMap<String, DefinitionNodeImpl> newView = new LinkedHashMap<>();
         DefinitionNodeImpl node = null;
         for (Map.Entry<String, DefinitionNodeImpl> entry : modifiableNodes.entrySet()) {
-            if (entry.getKey().equals(before)) {
+            if (createIndexedName(entry.getKey()).equals(createIndexedName(before))) {
                 node = new DefinitionNodeImpl(name, this);
                 newView.put(name, node);
             }

@@ -224,6 +224,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
                     addContentDefinitions(new HashSet<>(module.getContentDefinitions()));
                     addWebFileBundleDefinitions(module.getWebFileBundleDefinitions());
                     module.getConfigDefinitions().forEach(configurationTreeBuilder::push);
+                    configurationTreeBuilder.finishModule();
                 }
             }
         }

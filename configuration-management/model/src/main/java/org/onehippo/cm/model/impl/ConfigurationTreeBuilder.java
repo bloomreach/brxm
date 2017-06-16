@@ -18,6 +18,7 @@ package org.onehippo.cm.model.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ import static org.onehippo.cm.model.PropertyOperation.ADD;
 import static org.onehippo.cm.model.PropertyOperation.DELETE;
 import static org.onehippo.cm.model.PropertyOperation.OVERRIDE;
 import static org.onehippo.cm.model.PropertyOperation.REPLACE;
+import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 
 public class ConfigurationTreeBuilder {
 
@@ -47,6 +49,8 @@ public class ConfigurationTreeBuilder {
     private static final String REP_ROOT_NT = "rep:root";
 
     private final ConfigurationNodeImpl root;
+
+    private final Map<String, DefinitionNodeImpl> delayedOrdering = new LinkedHashMap<>();
 
     ConfigurationTreeBuilder() {
         root = new ConfigurationNodeImpl();
@@ -90,6 +94,25 @@ public class ConfigurationTreeBuilder {
         this.root = root;
     }
 
+    /**
+     * Call after all calls to {@link #push(ContentDefinitionImpl)} have been completed for a particular Module.
+     * This checks for error conditions that must be validated in the context of a complete set of a Module's definitions.
+     * (Currently, this includes only .meta:order-before directives that may span multiple source files.
+     * @return
+     */
+    ConfigurationTreeBuilder finishModule() {
+        if (!delayedOrdering.isEmpty()) {
+            // report on all errors, not just the first one
+            List<String> msgs = new ArrayList<>();
+            for (final DefinitionNodeImpl definitionNode : delayedOrdering.values()) {
+                msgs.add(String.format("Invalid orderBefore: '%s' for node '%s' defined in '%s': no sibling named '%s'.",
+                        definitionNode.getOrderBefore(), definitionNode.getPath(), definitionNode.getOrigin(), definitionNode.getOrderBefore()));
+            }
+            throw new IllegalArgumentException(String.join("\n", msgs));
+        }
+        return this;
+    }
+
     ConfigurationNodeImpl build() {
         // validation of the input and construction of the tree happens at "push time".
 
@@ -112,7 +135,7 @@ public class ConfigurationTreeBuilder {
      */
     public void mergeNode(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
         if (definitionNode.isDeleted()) {
-            final String indexedName = SnsUtils.createIndexedName(definitionNode.getName());
+            final String indexedName = createIndexedName(definitionNode.getName());
             if (SnsUtils.hasSns(indexedName, node.getParent().getNodes().keySet())) {
                 node.getParent().removeNode(indexedName, true);
             } else {
@@ -164,7 +187,7 @@ public class ConfigurationTreeBuilder {
                         orderBefore, node.getPath(), definitionNode.getOrigin(), parent.getPath(), META_IGNORE_REORDERED_CHILDREN);
             }
             final boolean orderFirst = "".equals(orderBefore);
-            final String orderBeforeIndexedName = SnsUtils.createIndexedName(orderBefore);
+            final String orderBeforeIndexedName = createIndexedName(orderBefore);
             if (!orderFirst) {
                 if (node.getName().equals(orderBeforeIndexedName)) {
                     final String msg = String.format("Invalid orderBefore: '%s' for node '%s' defined in '%s': targeting this node itself.",
@@ -172,44 +195,21 @@ public class ConfigurationTreeBuilder {
                     throw new IllegalArgumentException(msg);
                 }
                 if (parent.getNode(orderBeforeIndexedName) == null) {
-                    final String msg = String.format("Invalid orderBefore: '%s' for node '%s' defined in '%s': no sibling named '%s'.",
-                            orderBeforeIndexedName, node.getPath(), definitionNode.getOrigin(), orderBeforeIndexedName);
-                    throw new IllegalArgumentException(msg);
+                    // delay reporting an error for a missing sibling until after the module is done processing
+                    delayedOrdering.put(definitionNode.getParent().getPath() + "/" + orderBeforeIndexedName, definitionNode);
                 }
             }
-            boolean first = true;
-            boolean prevIsSrc = false;
-            for (String name : parent.getNodes().keySet()) {
-                if (name.equals(node.getName())) {
-                    // current == src
-                    if (first && orderFirst) {
-                        // src already first
-                        logger.warn("Unnecessary orderBefore: '' (first) for node '{}' defined in '{}': already first child of '{}'.",
-                                node.getPath(), definitionNode.getOrigin(), parent.getPath());
-                        break;
-                    }
-                    // track src for next loop, once
-                    prevIsSrc = true;
-                } else if (orderFirst) {
-                    // current != src != first
-                    parent.orderBefore(node.getName(), name);
-                    break;
-                } else if (name.equals(orderBeforeIndexedName)) {
-                    // found dest: only reorder if prev != src
-                    if (prevIsSrc) {
-                        // previous was src, current is dest: already is right order
-                        logger.warn("Unnecessary orderBefore: '{}' for node '{}' defined in '{}': already ordered before sibling '{}'.",
-                                orderBefore, node.getPath(), definitionNode.getOrigin(), orderBeforeIndexedName);
-                    } else {
-                        // dest < src: reorder
-                        parent.orderBefore(node.getName(), orderBeforeIndexedName);
-                    }
-                    break;
-                } else {
-                    prevIsSrc = false;
-                }
-                first = false;
-            }
+            applyNodeOrdering(node, definitionNode, parent, orderBefore, orderFirst, orderBeforeIndexedName);
+        }
+
+        final String indexedPath = createIndexedName(definitionNode.getPath());
+        if (delayedOrdering.containsKey(indexedPath)) {
+            // this node was referenced in a delayed ordering, so we need to apply that ordering now
+            // apply node ordering from the perspective of the other, saved node
+            final DefinitionNodeImpl otherDefNode = delayedOrdering.remove(indexedPath);
+            final ConfigurationNodeImpl otherNode = parent.getNode(createIndexedName(otherDefNode.getName()));
+            applyNodeOrdering(otherNode, otherDefNode, parent, otherDefNode.getOrderBefore(), false,
+                    createIndexedName(otherDefNode.getOrderBefore()));
         }
 
         for (DefinitionPropertyImpl property: definitionNode.getModifiableProperties().values()) {
@@ -220,7 +220,7 @@ public class ConfigurationTreeBuilder {
 
         final Map<String, ConfigurationNodeImpl> children = node.getModifiableNodes();
         for (DefinitionNodeImpl definitionChild : definitionNode.getModifiableNodes().values()) {
-            final String indexedName = SnsUtils.createIndexedName(definitionChild.getName());
+            final String indexedName = createIndexedName(definitionChild.getName());
             final ConfigurationNodeImpl child;
             if (children.containsKey(indexedName)) {
                 child = children.get(indexedName);
@@ -239,6 +239,42 @@ public class ConfigurationTreeBuilder {
                 }
             }
             mergeNode(child, definitionChild);
+        }
+    }
+
+    protected void applyNodeOrdering(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode, final ConfigurationNodeImpl parent, final String orderBefore, final boolean orderFirst, final String orderBeforeIndexedName) {
+        boolean first = true;
+        boolean prevIsSrc = false;
+        for (String name : parent.getNodes().keySet()) {
+            if (name.equals(node.getName())) {
+                // current == src
+                if (first && orderFirst) {
+                    // src already first
+                    logger.warn("Unnecessary orderBefore: '' (first) for node '{}' defined in '{}': already first child of '{}'.",
+                            node.getPath(), definitionNode.getOrigin(), parent.getPath());
+                    break;
+                }
+                // track src for next loop, once
+                prevIsSrc = true;
+            } else if (orderFirst) {
+                // current != src != first
+                parent.orderBefore(node.getName(), name);
+                break;
+            } else if (name.equals(orderBeforeIndexedName)) {
+                // found dest: only reorder if prev != src
+                if (prevIsSrc) {
+                    // previous was src, current is dest: already is right order
+                    logger.warn("Unnecessary orderBefore: '{}' for node '{}' defined in '{}': already ordered before sibling '{}'.",
+                            orderBefore, node.getPath(), definitionNode.getOrigin(), orderBeforeIndexedName);
+                } else {
+                    // dest < src: reorder
+                    parent.orderBefore(node.getName(), orderBeforeIndexedName);
+                }
+                break;
+            } else {
+                prevIsSrc = false;
+            }
+            first = false;
         }
     }
 
@@ -362,7 +398,7 @@ public class ConfigurationTreeBuilder {
 
         final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(name);
         if (nameAndIndex.getRight() > 1) {
-            final String expectedSibling = SnsUtils.createIndexedName(nameAndIndex.getLeft(), nameAndIndex.getRight() - 1);
+            final String expectedSibling = createIndexedName(nameAndIndex.getLeft(), nameAndIndex.getRight() - 1);
             if (parent.getNode(expectedSibling) == null) {
                 final String msg = String.format("%s defines node '%s', but no sibling named '%s' was found",
                         definitionNode.getOrigin(), definitionNode.getPath(), expectedSibling);
@@ -597,7 +633,7 @@ public class ConfigurationTreeBuilder {
 
         final String[] pathSegments = path.substring(1).split("/");
         for (int i = 0; i < pathSegments.length; i++) {
-            pathSegments[i] = SnsUtils.createIndexedName(pathSegments[i]);
+            pathSegments[i] = createIndexedName(pathSegments[i]);
         }
         return pathSegments;
     }

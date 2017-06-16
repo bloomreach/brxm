@@ -18,6 +18,7 @@ package org.onehippo.cm.model.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,7 +63,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         final ContentDefinitionImpl definition = (ContentDefinitionImpl)definitions.get(0);
         builder.push(definition);
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
         assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
@@ -93,7 +94,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         final ContentDefinitionImpl definition = (ContentDefinitionImpl)definitions.get(0);
         builder.push(definition);
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
         assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
@@ -142,7 +143,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         final ContentDefinitionImpl definition = (ContentDefinitionImpl)definitions.get(0);
         builder.push(definition);
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes, property1]", sortedCollectionToString(root.getProperties()));
         assertEquals(PropertyType.SINGLE, root.getProperty("property1").getType());
@@ -178,7 +179,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
         builder.push((ContentDefinitionImpl)definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
         assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
@@ -229,7 +230,7 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
         builder.push((ContentDefinitionImpl)definitions2.get(0));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
         assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
@@ -270,7 +271,7 @@ public class ConfigurationTreeBuilderTest {
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Unnecessary orderBefore: '' (first) for node '/a/b'")));
         }
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[b[1], c[1], d[1]]", sortedCollectionToString(a.getNodes()));
@@ -299,7 +300,7 @@ public class ConfigurationTreeBuilderTest {
             assertTrue(interceptor.messages()
                     .anyMatch(m->m.startsWith("Unnecessary orderBefore: 'c' for node '/a/b'")));
         }
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[b[1], c[1], d[1]]", sortedCollectionToString(a.getNodes()));
@@ -324,7 +325,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[d[1], b[1], c[1]]", sortedCollectionToString(a.getNodes()));
@@ -353,7 +354,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[b[1], e[1], c[1], d[1], f[1]]", sortedCollectionToString(a.getNodes()));
@@ -382,7 +383,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[b[1], d[1], e[1], c[1], f[1]]", sortedCollectionToString(a.getNodes()));
@@ -408,7 +409,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -436,7 +437,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -466,7 +467,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -499,7 +500,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[b[1], d[1]]", sortedCollectionToString(a.getNodes()));
@@ -524,7 +525,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[]", sortedCollectionToString(a.getNodes()));
@@ -558,7 +559,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -608,7 +609,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
         builder.push((ContentDefinitionImpl) definitions.get(2));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -636,7 +637,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
         builder.push((ContentDefinitionImpl) definitions.get(2));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -664,7 +665,7 @@ public class ConfigurationTreeBuilderTest {
                     .anyMatch(m->m.equals("test-group/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.")));
         }
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
         assertEquals("[]", sortedCollectionToString(b.getNodes()));
@@ -692,7 +693,7 @@ public class ConfigurationTreeBuilderTest {
                     .anyMatch(m->m.equals("test-group/test-project/test-module [string]: Trying to merge delete node /a/b/c that does not exist.")));
         }
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
         assertEquals("[c[1]]", sortedCollectionToString(b.getNodes()));
@@ -721,7 +722,7 @@ public class ConfigurationTreeBuilderTest {
                     .anyMatch(m->m.equals("test-group/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.")));
         }
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
         assertEquals("[]", sortedCollectionToString(b.getNodes()));
@@ -751,7 +752,7 @@ public class ConfigurationTreeBuilderTest {
                     .anyMatch(m->m.equals("test-group/test-project/test-module [string]: Trying to merge delete node /a/b/c that does not exist.")));
         }
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
         assertEquals("[c[1]]", sortedCollectionToString(b.getNodes()));
@@ -834,7 +835,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ContentDefinitionImpl) definitions.get(1));
         builder.push((ContentDefinitionImpl) definitions.get(2));
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -866,7 +867,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
         builder.push((ContentDefinitionImpl) definitions.get(2));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -891,7 +892,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
         builder.push((ContentDefinitionImpl)definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
         assertEquals("[a[1]]", sortedCollectionToString(root.getNodes()));
@@ -935,7 +936,7 @@ public class ConfigurationTreeBuilderTest {
                     .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [string]' specifies value equivalent to existing property.")));
         }
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -970,7 +971,7 @@ public class ConfigurationTreeBuilderTest {
                     .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [string]' specifies value equivalent to existing property.")));
         }
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1004,7 +1005,7 @@ public class ConfigurationTreeBuilderTest {
                     .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [string]' specifies value equivalent to existing property.")));
         }
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1042,7 +1043,7 @@ public class ConfigurationTreeBuilderTest {
             assertEquals(0, interceptor.getEvents().size());
         }
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1067,7 +1068,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
         builder.push((ContentDefinitionImpl)definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1095,7 +1096,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
         builder.push((ContentDefinitionImpl)definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1121,7 +1122,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1150,7 +1151,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1201,7 +1202,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1253,7 +1254,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1298,7 +1299,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1322,7 +1323,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1347,7 +1348,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1370,7 +1371,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1419,7 +1420,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1443,7 +1444,7 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1491,7 +1492,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
         builder.push((ContentDefinitionImpl) definitions.get(2));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         final ConfigurationNodeImpl b = a.getNode("b[1]");
@@ -1613,7 +1614,7 @@ public class ConfigurationTreeBuilderTest {
                             "'test-group/test-project/test-module [string]': " +
                             "parent '/a' already configured with '.meta:ignore-reordered-children: true'")));
         }
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[b[1], c[1], d[1]]", sortedCollectionToString(a.getNodes()));
@@ -1637,7 +1638,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         final ContentDefinitionImpl definition = (ContentDefinitionImpl)definitions.get(0);
         builder.push(definition);
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl test = root.getNode("test[1]");
         assertEquals("[sns[1], sns[2]]", sortedCollectionToString(test.getNodes()));
@@ -1672,7 +1673,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(yaml2);
         builder.push((ContentDefinitionImpl) definition2.get(0));
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[sns[1], sns[2]]", sortedCollectionToString(a.getNodes()));
@@ -1693,7 +1694,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(delete);
         builder.push((ContentDefinitionImpl) definition2.get(0));
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[sns[1], sns[2]]", sortedCollectionToString(a.getNodes()));
@@ -1714,7 +1715,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(delete);
         builder.push((ContentDefinitionImpl) definition2.get(0));
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[sns[1], sns[2]]", sortedCollectionToString(a.getNodes()));
@@ -1737,7 +1738,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ContentDefinitionImpl) definition2.get(0));
         builder.push((ContentDefinitionImpl) definition2.get(0));
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[]", sortedCollectionToString(a.getNodes()));
@@ -1755,7 +1756,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        .meta:order-before: sns[1]";
         final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(orderBefore);
         builder.push((ContentDefinitionImpl) definition2.get(0));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[sns[1], sns[2], sns[3]]", sortedCollectionToString(a.getNodes()));
@@ -1776,7 +1777,7 @@ public class ConfigurationTreeBuilderTest {
                 + "        .meta:order-before: sns[3]";
         final List<AbstractDefinitionImpl> definition2 = ModelTestUtils.parseNoSort(orderBefore);
         builder.push((ContentDefinitionImpl) definition2.get(0));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[sns[1], sns[2], sns[3]]", sortedCollectionToString(a.getNodes()));
@@ -1824,7 +1825,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
         builder.push((ContentDefinitionImpl) definitions2.get(0));
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         assertEquals("[jcr:primaryType]", sortedCollectionToString(root.getNode("a[1]").getProperties()));
         assertEquals(ConfigurationItemCategory.RUNTIME, root.getNode("a[1]").getChildPropertyCategory("property"));
     }
@@ -1853,7 +1854,7 @@ public class ConfigurationTreeBuilderTest {
                     .anyMatch(m->m.equals("Trying to modify non-configuration property '/a/property', skipping.")));
         }
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         assertEquals("[jcr:primaryType]", sortedCollectionToString(root.getNode("a[1]").getProperties()));
         assertEquals(ConfigurationItemCategory.RUNTIME, root.getNode("a[1]").getChildPropertyCategory("property"));
     }
@@ -1880,7 +1881,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
         builder.push((ContentDefinitionImpl) definitions2.get(0));
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[jcr:primaryType, property]", sortedCollectionToString(a.getProperties()));
         assertEquals("value", valueToString(a.getProperty("property")));
@@ -1916,7 +1917,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ContentDefinitionImpl) definitions2.get(0));
         builder.push((ContentDefinitionImpl) definitions2.get(1));
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[d[1]]", sortedCollectionToString(a.getNodes()));
         assertEquals(ConfigurationItemCategory.RUNTIME, a.getChildNodeCategory("b[1]"));
@@ -1947,7 +1948,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[b[1], d[1]]", sortedCollectionToString(a.getNodes()));
         assertEquals(ConfigurationItemCategory.RUNTIME, a.getChildNodeCategory("c[1]"));
@@ -2002,7 +2003,7 @@ public class ConfigurationTreeBuilderTest {
             assertEquals("test-group/test-project/test-module [string] contains definition rooted at unreachable node '/a/b'. Closest ancestor is at '/'.", e.getMessage());
         }
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         assertEquals("[b[1]]", sortedCollectionToString(root.getNodes()));
         assertEquals("[jcr:uuid, jcr:primaryType, jcr:mixinTypes]", sortedCollectionToString(root.getProperties()));
     }
@@ -2034,7 +2035,7 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
         builder.push((ContentDefinitionImpl) definitions2.get(0));
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[b[1]]", sortedCollectionToString(a.getNodes()));
         assertEquals("[jcr:primaryType, property]", sortedCollectionToString(a.getNode("b[1]").getProperties()));
@@ -2058,7 +2059,7 @@ public class ConfigurationTreeBuilderTest {
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
 
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         assertEquals(ConfigurationItemCategory.RUNTIME, root.getNode("a[1]").getNode("b[1]").getResidualNodeCategory());
     }
 
@@ -2077,7 +2078,7 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         builder.push((ContentDefinitionImpl) definitions.get(0));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
 
         assertEquals(ConfigurationItemCategory.CONFIG,  root.getChildNodeCategory("default[1]"));
         assertEquals(ConfigurationItemCategory.RUNTIME, root.getChildNodeCategory("non-existing-node[1]"));
@@ -2104,7 +2105,7 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         builder.push((ContentDefinitionImpl) definitions.get(0));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl node = root.getNode("node[1]");
 
         assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildNodeCategory("default[1]"));
@@ -2133,7 +2134,7 @@ public class ConfigurationTreeBuilderTest {
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         builder.push((ContentDefinitionImpl) definitions.get(0));
-        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl node = root.getNode("node[1]");
 
         assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildNodeCategory("default[1]"));
@@ -2143,5 +2144,56 @@ public class ConfigurationTreeBuilderTest {
         assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildPropertyCategory("default"));
         assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildPropertyCategory("non-existing-property"));
         assertEquals(ConfigurationItemCategory.RUNTIME, node.getChildPropertyCategory("override"));
+    }
+
+    @Test
+    public void test_delayed_ordering_success() throws Exception {
+        String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /first:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        .meta:order-before: second\n";
+
+        List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      /second:\n"
+                + "        jcr:primaryType: foo\n";
+        definitions = ModelTestUtils.parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        final ConfigurationNodeImpl root = builder.finishModule().build();
+        final ConfigurationNodeImpl node = root.getNode("node[1]");
+
+        final Iterator<ConfigurationNodeImpl> nodeIterator = node.getNodes().values().iterator();
+        assertEquals("first[1]", nodeIterator.next().getName());
+        assertEquals("second[1]", nodeIterator.next().getName());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_delayed_ordering_failure() throws Exception {
+        String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /first:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        .meta:order-before: doesnotexist\n";
+
+        List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      /second:\n"
+                + "        jcr:primaryType: foo\n";
+        definitions = ModelTestUtils.parseNoSort(yaml);
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        final ConfigurationNodeImpl root = builder.finishModule().build();
     }
 }
