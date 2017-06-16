@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-fdescribe('PrimitiveField', () => {
+describe('PrimitiveField', () => {
   let $componentController;
 
   let $ctrl;
