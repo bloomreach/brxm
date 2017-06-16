@@ -260,7 +260,7 @@ public class FieldTypeUtils {
     }
 
     public static boolean writeFieldValue(final FieldPath fieldPath, final List<FieldValue> fieldValues, final List<FieldType> fields, final Node node) throws ErrorWithPayloadException {
-        if (fieldPath.isEmpty() || fieldValues.isEmpty()) {
+        if (fieldPath.isEmpty()) {
             return false;
         }
         for (FieldType field : fields) {

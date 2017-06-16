@@ -614,16 +614,6 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void writeFieldValueWithoutValue() throws ErrorWithPayloadException {
-        final FieldPath fieldPath = new FieldPath("ns:field");
-        final List<FieldValue> emptyFieldValue = Collections.emptyList();
-        final List<FieldType> fields = Collections.emptyList();
-        final Node node = createMock(Node.class);
-
-        assertFalse(FieldTypeUtils.writeFieldValue(fieldPath, emptyFieldValue, fields, node));
-    }
-
-    @Test
     public void writeFieldValueReturnsAfterFirstSuccessfulWrite() throws ErrorWithPayloadException {
         final FieldPath fieldPath = new FieldPath("ns:field");
         final FieldValue value = new FieldValue("value");
