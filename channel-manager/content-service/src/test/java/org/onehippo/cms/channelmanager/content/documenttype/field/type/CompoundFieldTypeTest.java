@@ -491,6 +491,22 @@ public class CompoundFieldTypeTest {
     }
 
     @Test
+    public void writeFieldToSecondCompound() throws ErrorWithPayloadException, RepositoryException {
+        final Node compound1 = node.addNode(NODE_NAME, "compound:type");
+        final Node compound2 = node.addNode(NODE_NAME, "compound:type");
+
+        compound1.setProperty(STRING_PROPERTY_1, "Value in compound 1");
+        compound2.setProperty(STRING_PROPERTY_1, "Value in compound 2");
+
+        final FieldPath fieldPath = new FieldPath(NODE_NAME + "[2]/" + STRING_PROPERTY_1);
+        final FieldValue fieldValue = new FieldValue("New value for compound 2");
+
+        assertTrue(fieldType.writeField(node, fieldPath, Collections.singletonList(fieldValue)));
+        assertThat(compound1.getProperty(STRING_PROPERTY_1).getString(), equalTo("Value in compound 1"));
+        assertThat(compound2.getProperty(STRING_PROPERTY_1).getString(), equalTo("New value for compound 2"));
+    }
+
+    @Test
     public void validateEmpty() {
         assertTrue(fieldType.validate(Collections.emptyList()));
     }

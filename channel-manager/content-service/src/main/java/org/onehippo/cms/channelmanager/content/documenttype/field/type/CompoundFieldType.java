@@ -128,15 +128,15 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
 
     @Override
     public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
-        final String id = getId();
-        if (!fieldPath.startsWith(id)) {
+        if (!fieldPath.startsWith(getId())) {
             return false;
         }
         try {
-            if (!node.hasNode(id)) {
+            final String childName = fieldPath.getFirstSegment();
+            if (!node.hasNode(childName)) {
                 throw INVALID_DATA.get();
             }
-            final Node child = node.getNode(id);
+            final Node child = node.getNode(childName);
             return writeFieldValue(child, fieldPath.getRemainingSegments(), values);
         } catch (RepositoryException e) {
             log.warn("Failed to write value of compound field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(node), e);
