@@ -47,6 +47,11 @@ public class GroupImpl implements Group {
         this.name = name;
     }
 
+    public GroupImpl(final String name, final String... after) {
+        this(name);
+        Collections.addAll(modifiableAfter, after);
+    }
+
     @Override
     public String getName() {
         return name;
