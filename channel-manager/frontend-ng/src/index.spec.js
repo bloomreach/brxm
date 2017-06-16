@@ -122,6 +122,9 @@ function mockHost() {
         return parentIFramePanel;
       },
     },
+    Hippo: {
+      Events: createMessageBus(),
+    },
   };
 }
 

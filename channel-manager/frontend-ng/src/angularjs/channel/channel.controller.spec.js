@@ -23,6 +23,7 @@ describe('ChannelCtrl', () => {
   let $timeout;
   let ChannelCtrl;
   let ChannelService;
+  let CmsService;
   let SidePanelService;
   let ComponentsService;
   let FeedbackService;
@@ -32,7 +33,7 @@ describe('ChannelCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$timeout_, _$q_, _FeedbackService_, _ChannelService_) => {
+    inject(($controller, _$rootScope_, _$timeout_, _$q_, _FeedbackService_, _ChannelService_, _CmsService_) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
@@ -40,6 +41,7 @@ describe('ChannelCtrl', () => {
       $q = _$q_;
       FeedbackService = _FeedbackService_;
       ChannelService = _ChannelService_;
+      CmsService = _CmsService_;
 
       const $stateParams = {
         initialRenderPath: '/testPath',
@@ -187,8 +189,12 @@ describe('ChannelCtrl', () => {
   });
 
   it('opens the content editor in the right sidepanel when told so', () => {
+    spyOn(CmsService, 'reportUsageStatistic');
+
     ChannelCtrl.editContent('testUuid');
+
     expect(SidePanelService.open).toHaveBeenCalledWith('right', 'testUuid');
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditContent');
   });
 
   it('should return channel toolbar display status', () => {

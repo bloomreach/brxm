@@ -97,6 +97,10 @@ class CmsService {
     return hostToIFrame.unsubscribe(topic, callback, scope);
   }
 
+  reportUsageStatistic(name) {
+    this.$window.parent.Hippo.Events.publish(name);
+  }
+
   getConfig() {
     const iframePanel = this.getParentIFramePanel();
     const config = iframePanel.initialConfig.iframeConfig;

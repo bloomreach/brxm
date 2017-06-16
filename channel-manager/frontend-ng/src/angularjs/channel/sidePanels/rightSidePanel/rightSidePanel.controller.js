@@ -261,6 +261,7 @@ class RightSidePanelCtrl {
         this.doc = savedDoc;
         this._resetForm();
         this.HippoIframeService.reload();
+        this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
       })
       .catch((response) => {
         let params = {};
@@ -352,6 +353,12 @@ class RightSidePanelCtrl {
 
     // mode can be 'view' or 'edit', so the event names can be 'view-content' and 'edit-content'
     this.CmsService.publish('open-content', this.documentId, mode);
+
+    if (mode === 'view') {
+      this.CmsService.reportUsageStatistic('CMSChannelsContentPublish');
+    } else if (mode === 'edit') {
+      this.CmsService.reportUsageStatistic('CMSChannelsContentEditor');
+    }
   }
 
   _saveDraft() {
@@ -427,6 +434,7 @@ class RightSidePanelCtrl {
     if (state === true) {
       this.$element.addClass('fullwidth');
       this.ChannelService.setToolbarDisplayed(false);
+      this.CmsService.reportUsageStatistic('CMSChannelsFullScreen');
     } else {
       this.$element.removeClass('fullwidth');
       this.ChannelService.setToolbarDisplayed(true);

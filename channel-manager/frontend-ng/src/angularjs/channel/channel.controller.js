@@ -23,9 +23,9 @@ class ChannelCtrl {
     $timeout,
     $translate,
     ChannelService,
+    CmsService,
     ConfigService,
     SidePanelService,
-    CmsService,
     FeedbackService,
     HippoIframeService,
     PageMetaDataService,
@@ -37,6 +37,7 @@ class ChannelCtrl {
     this.$timeout = $timeout;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.SidePanelService = SidePanelService;
     this.FeedbackService = FeedbackService;
@@ -87,6 +88,7 @@ class ChannelCtrl {
 
   editContent(contentUuid) {
     this.SidePanelService.open('right', contentUuid);
+    this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
   }
 
   getRenderVariant() {
