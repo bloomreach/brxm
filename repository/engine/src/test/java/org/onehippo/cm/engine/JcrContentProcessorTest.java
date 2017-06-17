@@ -48,6 +48,7 @@ import org.onehippo.cm.model.impl.ModelTestUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import com.google.common.io.Files;
 
@@ -157,17 +158,23 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
     @Test(expected = ItemExistsException.class)
     public void append_existing_content() throws Exception {
         applyAndSaveDefinitions(new String[]{source1});
-        applyAndSaveDefinitions(new String[]{source1_reload}, ActionType.APPEND);
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(JcrContentProcessor.class).build()) {
+            JcrContentProcessorTest.this.applyAndSaveDefinitions(new String[]{source1_reload}, ActionType.APPEND);
+        };
     }
 
     @Test(expected = PathNotFoundException.class)
     public void process_orphaned_content() throws Exception {
-        applyAndSaveDefinitions(new String[]{orphanedNode});
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(JcrContentProcessor.class).build()) {
+            applyAndSaveDefinitions(new String[]{orphanedNode});
+        };
     }
 
     @Test(expected = RuntimeException.class)
     public void process_typeless_content() throws Exception {
-        applyAndSaveDefinitions(new String[]{typelessNode});
+        try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(JcrContentProcessor.class).build()) {
+            applyAndSaveDefinitions(new String[]{typelessNode});
+        };
     }
 
     @Test
