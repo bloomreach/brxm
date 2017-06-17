@@ -27,9 +27,10 @@ import org.apache.commons.io.FileUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.decorating.RepositoryDecorator;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.InternalHippoRepository;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -38,9 +39,16 @@ import static org.junit.Assert.assertTrue;
 
 public class ExternalRepositorySyncRevisionServiceTest {
 
+    @BeforeClass
+    public static void clearRepository() {
+        // when run together with other RepositoryTestCase based tests *and*
+        // -Dorg.onehippo.repository.test.keepserver=true
+        // then an existing RepositoryImpl may already be (kept) running, which can interfere with this test
+        RepositoryTestCase.clearRepository();
+    }
+
     private static final Credentials credentials = new SimpleCredentials("admin", "admin".toCharArray());
 
-    @Ignore
     @Test
     public void testSyncRevision() throws Exception {
         final File tmpdir = new File(System.getProperty("java.io.tmpdir"));

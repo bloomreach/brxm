@@ -27,7 +27,6 @@ import javax.jcr.Node;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
@@ -51,11 +50,11 @@ import static org.onehippo.cm.engine.Constants.NT_HCM_PROJECT;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
 
-@Ignore
 public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigServiceTest {
 
     private ConfigurationBaselineService baselineService;
     private ConfigurationLockManager configurationLockManager;
+    private boolean baselineAlreadyCreated;
 
     @Before
     public void load_hcm_cnd() throws Exception {
@@ -68,6 +67,10 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
 
         final InputStream cndStream = getClass().getClassLoader().getResourceAsStream("hcm-config/hcm.cnd");
         BootstrapUtils.initializeNodetypes(session, cndStream, "hcm.cnd");
+        if (session.nodeExists(HCM_ROOT_PATH)) {
+            baselineAlreadyCreated = true;
+            session.getNode(HCM_ROOT_PATH).remove();
+        }
         session.save();
         cndStream.close();
 
@@ -78,9 +81,16 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
     @After
     public void cleanup_baseline_nodes() throws Exception {
         configurationLockManager.stop();
-        if (session.nodeExists(HCM_ROOT_PATH)) {
-            session.getNode(HCM_ROOT_PATH).remove();
-            session.save();
+        if (baselineAlreadyCreated) {
+            if (!session.nodeExists(HCM_ROOT_PATH)) {
+                session.getRootNode().addNode(HCM_ROOT, NT_HCM_ROOT);
+                session.save();
+            }
+        } else {
+            if (session.nodeExists(HCM_ROOT_PATH)) {
+                session.getNode(HCM_ROOT_PATH).remove();
+                session.save();
+            }
         }
     }
 
