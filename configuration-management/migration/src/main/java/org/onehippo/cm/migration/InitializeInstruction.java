@@ -19,9 +19,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.PropertyType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,6 +160,7 @@ public class InitializeInstruction {
     private String contentPath;
     private String sourcePath;
     private final String[] contentRoots;
+    private final Set<String> newContentRoots;
 
     protected boolean isDownStream(final InitializeInstruction other) {
         if (other.getType() != Type.CONTENTRESOURCE) {
@@ -195,6 +198,10 @@ public class InitializeInstruction {
     }
 
     public boolean isContent(final String path) {
+        return isContent(path, false);
+    }
+
+    public boolean isContent(final String path, final boolean registerNewContentRoot) {
         // exclude paths matching the content root *prefixes* (hence not being content)
         for (final String root : standardContentRootPrefixes) {
             if (path.equals(root)) {
@@ -203,19 +210,37 @@ public class InitializeInstruction {
         }
         // once the above match exclusion is checked, any path extending from /content is regarded content
         if (path.startsWith(CONTENT_ROOT+"/")) {
+            if (registerNewContentRoot) {
+                boolean register = true;
+                for (final String root : standardContentRootPrefixes) {
+                    if (root.equals(CONTENT_ROOT)) {
+                        continue;
+                    } else if (path.startsWith(root + "/")) {
+                        register = false;
+                    }
+                }
+                if (register) {
+                    newContentRoots.add(CONTENT_ROOT + "/" +
+                            StringUtils.substringBefore(path.substring(CONTENT_ROOT.length()+1), "/"));
+                }
+            }
             return true;
         }
 
         // if specified check additional custom contentRoots
         for (final String root : contentRoots) {
             if (path.equals(root) || path.startsWith(root + "/")) {
+                if (registerNewContentRoot) {
+                    newContentRoots.add(root);
+                }
                 return true;
             }
         }
         return false;
     }
 
-    public static void parse(final EsvNode node, final List<InitializeInstruction> instructions, final String[] contentRoots) throws EsvParseException {
+    public static void parse(final EsvNode node, final List<InitializeInstruction> instructions,
+                             final String[] contentRoots, final Set<String> newContentRoots) throws EsvParseException {
         // cater for initializeitems having 2 instructions (namespace+cnd, contentdelete+contentresource)
         InitializeInstruction first = null;
         InitializeInstruction second = null;
@@ -230,22 +255,22 @@ public class InitializeInstruction {
                 InitializeInstruction instruction;
                 switch (type) {
                     case CONTENTRESOURCE:
-                        instruction = new SourceInitializeInstruction(node, type, first, contentRoots);
+                        instruction = new SourceInitializeInstruction(node, type, first, contentRoots, newContentRoots);
                         break;
                     case RESOURCEBUNDLES:
-                        instruction = new ResourceBundlesInitializeInstruction(node, type, first, contentRoots);
+                        instruction = new ResourceBundlesInitializeInstruction(node, type, first);
                         break;
                     case CONTENTDELETE:
                     case CONTENTPROPDELETE:
                     case CONTENTPROPSET:
                     case CONTENTPROPADD:
-                        instruction = new ContentInitializeInstruction(node, type, first, contentRoots);
+                        instruction = new ContentInitializeInstruction(node, type, first, contentRoots, newContentRoots);
                         break;
                     case WEBFILEBUNDLE:
-                        instruction = new WebFileBundleInstruction(node, type, first, contentRoots);
+                        instruction = new WebFileBundleInstruction(node, type, first);
                         break;
                     default:
-                        instruction = new InitializeInstruction(node, type, first, contentRoots);
+                        instruction = new InitializeInstruction(node, type, first, null, null);
                 }
                 if (first != null) {
                     second = instruction;
@@ -267,7 +292,8 @@ public class InitializeInstruction {
     }
 
     protected InitializeInstruction(final EsvNode instructionNode, final Type type,
-                                    final InitializeInstruction combinedWith, final String[] contentRoots)
+                                    final InitializeInstruction combinedWith, final String[] contentRoots,
+                                    final Set<String> newContentRoots)
             throws EsvParseException
     {
         this.instructionNode = instructionNode;
@@ -277,6 +303,7 @@ public class InitializeInstruction {
         final String value = getPropertyValue("hippo:sequence", PropertyType.DOUBLE, false);
         this.sequence = value != null ? Double.valueOf(value) : -1.0;
         this.contentRoots = contentRoots;
+        this.newContentRoots = newContentRoots;
     }
 
     public void setCombinedWith(final InitializeInstruction combinedWith) {

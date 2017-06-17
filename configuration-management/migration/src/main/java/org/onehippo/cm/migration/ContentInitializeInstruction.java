@@ -41,10 +41,11 @@ import static org.onehippo.cm.model.PropertyType.SINGLE;
 public class ContentInitializeInstruction extends InitializeInstruction {
 
     protected ContentInitializeInstruction(final EsvNode instructionNode, final Type type,
-                                           final InitializeInstruction combinedWith, final String[] contentRoots)
+                                           final InitializeInstruction combinedWith, final String[] contentRoots,
+                                           final Set<String> newContentRoots)
             throws EsvParseException
     {
-        super(instructionNode, type, combinedWith, contentRoots);
+        super(instructionNode, type, combinedWith, contentRoots, newContentRoots);
     }
 
     private String getNodePath() {

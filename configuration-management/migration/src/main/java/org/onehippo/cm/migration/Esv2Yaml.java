@@ -215,6 +215,9 @@ public class Esv2Yaml {
 
             if ("hippo:initialize".equals(rootNode.getName())) {
 
+                // keep track of new/custom content roots for declaring their category in main.yaml later
+                final Set<String> newContentRoots = new HashSet<>();
+
                 // parse and create list of initializeitem instructions
                 final List<InitializeInstruction> instructions = new ArrayList<>();
                 final Set<String> initializeItemNames = new HashSet<>();
@@ -224,7 +227,7 @@ public class Esv2Yaml {
                         if (!initializeItemNames.add(child.getName())) {
                             throw new EsvParseException("Duplicate hippo:initializeitem name: " + child.getName());
                         }
-                        InitializeInstruction.parse(child, instructions, contentRoots);
+                        InitializeInstruction.parse(child, instructions, contentRoots, newContentRoots);
                     } else {
                         log.warn("Ignored " + HIPPOECM_EXTENSION_FILE + " node: " + child.getName());
                     }
@@ -266,7 +269,7 @@ public class Esv2Yaml {
 
                 processInitializeInstructions(mainSource, instructions);
 
-                for (String contentRoot : contentRoots) {
+                for (String contentRoot : newContentRoots) {
                     final ConfigDefinitionImpl definition = mainSource.addConfigDefinition();
                     final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(
                             contentRoot, StringUtils.substringAfterLast(contentRoot, "/"), definition);

@@ -52,10 +52,11 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
     private EsvNode sourceNode;
 
     public SourceInitializeInstruction(final EsvNode instructionNode, final Type type,
-                                       final InitializeInstruction combinedWith, final String[] contentRoots)
+                                       final InitializeInstruction combinedWith, final String[] contentRoots,
+                                       final Set<String> newContentRoots)
             throws EsvParseException
     {
-        super(instructionNode, type, combinedWith, contentRoots);
+        super(instructionNode, type, combinedWith, contentRoots, newContentRoots);
     }
 
     public EsvNode getSourceNode() {
@@ -84,7 +85,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                               final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions,
                               final Set<DefinitionNode> deltaNodes) throws EsvParseException {
         final SourceImpl source;
-        if (isContent(getContentPath())) {
+        if (isContent(getContentPath(), true)) {
             source = module.addContentSource(getSourcePath());
         } else {
             source = module.addConfigSource(getSourcePath());
