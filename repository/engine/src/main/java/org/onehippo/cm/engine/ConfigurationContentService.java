@@ -129,8 +129,8 @@ public class ConfigurationContentService {
                         session.save();
                     }
                 } else {
-                    log.warn(String.format("Base node '%s' is not categorized as content, skipping action '%s'.",
-                            baseNodePath, action));
+                    log.error(String.format("Base node '%s' in '%s' is not categorized as content, skipping action '%s'.",
+                            baseNodePath, contentDefinition.getOrigin(), action));
                 }
             }
         }
