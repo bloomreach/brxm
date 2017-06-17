@@ -33,8 +33,6 @@
 
   </Appenders>
   <Loggers>
-    <Logger name="org.onehippo.cm.model.parser.AbstractBaseParser" level="debug"/>
-
     <Logger name="org.apache.jackrabbit" level="warn"/>
     <Logger name="org.hippoecm.repository" level="warn"/>
     <Logger name="org.onehippo.repository.bootstrap" level="warn"/>

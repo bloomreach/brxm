@@ -88,18 +88,6 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="deleteeventlogcleanupmodule">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentdelete" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:modules/eventlogcleanup</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>12.0</sv:value>
-    </sv:property>
-  </sv:node>
-
   <sv:node sv:name="repository-logger-module">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
