@@ -14,32 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="gallery" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         esv:merge="combine" xmlns:esv="http://www.onehippo.org/jcr/xmlimport">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippogallery:stdImageGallery</sv:value>
-  </sv:property>
-  <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:named</sv:value>
-    <sv:value>mix:versionable</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>4e557532-98ff-4673-a2a9-5cdbb2822eed</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:name" sv:type="String">
-    <sv:value>images</sv:value>
-  </sv:property>
-  <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-    <sv:value>preview</sv:value>
-    <sv:value>live</sv:value>
-  </sv:property>
-  <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
-    <sv:value>new-image-folder</sv:value>
-  </sv:property>
-  <sv:property sv:multiple="true" sv:name="hippostd:gallerytype" sv:type="String">
-    <sv:value>hippogallery:imageset</sv:value>
-  </sv:property>
-  <sv:node sv:name="hippos">
+<sv:node sv:name="hippos" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippogallery:stdImageGallery</sv:value>
     </sv:property>
@@ -128,5 +103,4 @@
         </sv:node>
       </sv:node>
     </sv:node>
-  </sv:node>
 </sv:node>

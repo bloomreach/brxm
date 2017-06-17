@@ -80,43 +80,85 @@
   </sv:node>
 
   <!-- testcontent content -->
-  <sv:node sv:name="content-documents">
+  <sv:node sv:name="content-documents-articles">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>testcontent-documents.xml</sv:value>
+      <sv:value>testcontent-documents-articles.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/content</sv:value>
+      <sv:value>/content/documents</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>3004.0</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="content-gallery">
+  <sv:node sv:name="content-documents-news">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>testcontent-gallery.xml</sv:value>
+      <sv:value>testcontent-documents-news.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/content</sv:value>
+      <sv:value>/content/documents</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3004.1</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="content-documents-events">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>testcontent-documents-events.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/content/documents</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3004.2</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="content-documents-overviews">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>testcontent-documents-overviews.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/content/documents</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>3004.3</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="content-gallery-hippos">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>testcontent-gallery-hippos.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/content/gallery</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>3004.0</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="content-assets">
+  <sv:node sv:name="content-assets-hippos">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>testcontent-assets.xml</sv:value>
+      <sv:value>testcontent-assets-hippos.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/content</sv:value>
+      <sv:value>/content/assets</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>3004.0</sv:value>
