@@ -143,8 +143,9 @@ public class InitializeInstruction {
 
     static final Logger log = LoggerFactory.getLogger(Esv2Yaml.class);
 
+    private static final String CONTENT_ROOT = "/content";
     private static final String[] standardContentRootPrefixes =
-            { "/content/documents/", "/content/gallery/", "/content/assets/" };
+            {CONTENT_ROOT, "/content/documents", "/content/gallery", "/content/assets", "/content/attic" };
 
     private final String name;
     private final Type type;
@@ -194,11 +195,18 @@ public class InitializeInstruction {
     }
 
     public boolean isContent(final String path) {
+        // exclude paths matching the content root *prefixes* (hence not being content)
         for (final String root : standardContentRootPrefixes) {
-            if (path.startsWith(root)) {
-                return true;
+            if (path.equals(root)) {
+                return false;
             }
         }
+        // once the above match exclusion is checked, any path extending from /content is regarded content
+        if (path.startsWith(CONTENT_ROOT+"/")) {
+            return true;
+        }
+
+        // if specified check additional custom contentRoots
         for (final String root : contentRoots) {
             if (path.equals(root) || path.startsWith(root + "/")) {
                 return true;
