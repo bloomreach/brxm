@@ -45,7 +45,10 @@ public class MigrationConfigWriter extends FileConfigurationWriter {
         final Path sourceBasePath = moduleContext.getInputProvider(source).getBasePath();
         final Path destBasePath = ((FileResourceOutputProvider) moduleContext.getOutputProvider(source)).getModulePath();
 
-        final String itemRelativePath = copyItem.getValue().getString();
+        String itemRelativePath = copyItem.getValue().getString();
+        if (itemRelativePath.startsWith("/")) {
+            itemRelativePath = itemRelativePath.substring(1);
+        }
 
         final Path oldItemPath = sourceBasePath.resolve(itemRelativePath);
         final Path newItemPath = destBasePath.resolve(itemRelativePath);
