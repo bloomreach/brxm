@@ -89,7 +89,6 @@ public class EsvProperty {
             "hst:containers",
             "hst:componentconfigurationmappingvalues",
             "hst:componentconfigurationmappingnames",
-            "hst:excludedforlinkrewriting",
             "hst:sitemapitemhandlerids",
             "hst:inheritsfrom",
             "hst:formfieldmessages",
