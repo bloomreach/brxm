@@ -165,7 +165,7 @@
       <dependency>
         <groupId>org.onehippo.cms7.hst</groupId>
         <artifactId>hst-test</artifactId>
-        <version>${hippo.repository.version}</version>
+        <version>${hippo.hst.version}</version>
         <type>pom</type>
       </dependency>
     </dependencies>
