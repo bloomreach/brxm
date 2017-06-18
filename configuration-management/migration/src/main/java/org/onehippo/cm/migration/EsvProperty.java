@@ -65,6 +65,7 @@ public class EsvProperty {
             "hippostd:foldertype",
             "hippostd:gallerytype",
             "hippostd:modify",
+            "hippostd:tags",
             "hipposys:users",
             "hipposys:groups",
             "hipposys:excluded",
