@@ -16,6 +16,7 @@
 package org.onehippo.cm.model.parser;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ import static org.onehippo.cm.model.Constants.META_IGNORE_REORDERED_CHILDREN;
 import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_KEY;
 import static org.onehippo.cm.model.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
 import static org.onehippo.cm.model.Constants.URI_KEY;
+import static org.yaml.snakeyaml.nodes.NodeId.scalar;
 
 public class ConfigSourceParser extends SourceParser {
 
@@ -175,7 +177,13 @@ public class ConfigSourceParser extends SourceParser {
     }
 
     private void constructWebFileBundleDefinition(final Node definitionNode, final ConfigSourceImpl source) throws ParserException {
-        final List<Node> nodes = asSequence(definitionNode);
+        List<Node> nodes;
+        if (definitionNode.getNodeId() == scalar) {
+            nodes = new ArrayList<>();
+            nodes.add(asScalar(definitionNode));
+        } else {
+            nodes = asSequence(definitionNode);
+        }
         for (Node node : nodes) {
             final String name = asStringScalar(node);
             for (Definition definition : source.getModifiableDefinitions()) {

@@ -1038,19 +1038,19 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void webFileBundleWithScalarValue() {
+    public void webFileBundleWithNonStringScalarValue() {
         final String yaml = "definitions:\n"
                 + "  webfilebundle:\n"
-                + "    scalar";
+                + "    42";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node webFilesValue = firstDefinitionTuple(root).getValueNode();
 
-        assertParserException(root, webFilesValue, "Node must be a sequence");
+        assertParserException(root, webFilesValue, "Scalar must be a string");
     }
 
     @Test
-    public void webFileBundleWithNonStringValue() {
+    public void webFileBundleWithNonStringSequenceValue() {
         final String yaml = "definitions:\n"
                 + "  webfilebundle: [42]";
 

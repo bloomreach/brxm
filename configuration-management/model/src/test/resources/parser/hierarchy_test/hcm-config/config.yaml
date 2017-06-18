@@ -56,4 +56,4 @@ definitions:
           operation: add
           type: name
           value: ['some:mixin']
-  webfilebundle: [site]
+  webfilebundle: site
