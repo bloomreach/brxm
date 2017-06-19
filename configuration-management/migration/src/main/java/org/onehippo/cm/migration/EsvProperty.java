@@ -106,7 +106,8 @@ public class EsvProperty {
             "robotstxt:sitemap",
             "targeting:propertynames",
             "targeting:propertyvalues",
-            "targeting:skipUserAgents"
+            "targeting:skipUserAgents",
+            "watchedModules"
     ));
 
     private final String name;
