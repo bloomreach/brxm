@@ -54,7 +54,7 @@ public class AbstractWatcherIT {
         FileUtils.forceMkdir(webFilesDirectory);
         webFilesDirectory.deleteOnExit();
 
-        watchModuleDir = webFilesDirectory.toPath().getParent().getParent().getParent();
+        watchModuleDir = webFilesDirectory.toPath().getParent().getParent().getParent().getParent();
         projectBaseDir = watchModuleDir.getParent().getParent();
 
         System.setProperty(PROJECT_BASEDIR_PROPERTY, projectBaseDir.toString());
