@@ -32,7 +32,7 @@ class PagePropertiesCtrl {
       path: '',
     };
 
-    // The PageActionsCtrl has retrieved the page meta-data when opening the page menu.
+    // The PageActionsService has retrieved the page meta-data when opening the page menu.
     // Now, it is available through the SiteMapItemService.
     this.item = SiteMapItemService.get();
     this.isEditable = SiteMapItemService.isEditable();
