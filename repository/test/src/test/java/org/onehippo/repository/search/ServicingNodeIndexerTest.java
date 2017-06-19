@@ -22,7 +22,6 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -31,7 +30,6 @@ import static junit.framework.Assert.assertTrue;
 
 public class ServicingNodeIndexerTest extends RepositoryTestCase {
 
-    @Ignore
     @Test
     public void testExcludeFromNodeScope() throws RepositoryException {
 
@@ -42,7 +40,9 @@ public class ServicingNodeIndexerTest extends RepositoryTestCase {
             user.setProperty("hipposys:password", "password");
             session.save();
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
-            Query query = queryManager.createQuery("//*[jcr:contains(. ,'password')]", Query.XPATH);
+            Query query = queryManager.createQuery("/jcr:root/"
+                    +HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH +
+                    "//*[jcr:contains(. ,'password')]", Query.XPATH);
 
             assertFalse(query.execute().getNodes().hasNext());
 
