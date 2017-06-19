@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.TemplateEngineException;
+import org.hippoecm.frontend.editor.editor.EditorForm;
+import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
@@ -292,6 +294,33 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
             return link;
         } else {
             return new Label("add").setVisible(false);
+        }
+    }
+
+    @Override
+    public void onMoveItemUp(final JcrNodeModel model, final AjaxRequestTarget target) {
+        super.onMoveItemUp(model, target);
+        validateModelObjects();
+    }
+
+    @Override
+    public void onRemoveItem(final JcrNodeModel childModel, final AjaxRequestTarget target) {
+        super.onRemoveItem(childModel, target);
+        validateModelObjects();
+    }
+
+    /**
+     * If validation has already been done, trigger it again. This is useful when items in the form
+     * have moved to a different location or have been removed. After redrawing a possible error message
+     * is shown at the correct field.
+     */
+    private void validateModelObjects() {
+        final EditorPlugin editorPlugin = findParent(EditorPlugin.class);
+        if (editorPlugin != null && editorPlugin.getForm() instanceof EditorForm) {
+            final EditorForm editorForm = (EditorForm) editorPlugin.getForm();
+            if (editorForm.hasErrorMessage()) {
+                editorForm.onValidateModelObjects();
+            }
         }
     }
 }
