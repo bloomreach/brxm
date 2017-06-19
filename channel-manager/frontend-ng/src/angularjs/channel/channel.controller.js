@@ -22,13 +22,15 @@ class ChannelCtrl {
     $stateParams,
     $timeout,
     $translate,
+    ChannelActionsService,
     ChannelService,
-    ConfigService,
-    SidePanelService,
     CmsService,
+    ConfigService,
     FeedbackService,
     HippoIframeService,
+    PageActionsService,
     PageMetaDataService,
+    SidePanelService,
     ) {
     'ngInject';
 
@@ -36,12 +38,14 @@ class ChannelCtrl {
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
     this.$translate = $translate;
+    this.ChannelActionsService = ChannelActionsService;
     this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
-    this.SidePanelService = SidePanelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.PageActionsService = PageActionsService;
     this.PageMetaDataService = PageMetaDataService;
+    this.SidePanelService = SidePanelService;
 
     this.projectsEnabled = ConfigService.projectsEnabled;
 
@@ -51,6 +55,10 @@ class ChannelCtrl {
     this.HippoIframeService.load($stateParams.initialRenderPath);
 
     CmsService.subscribe('clear-channel', () => this._clear());
+
+    this.menus = [
+      ChannelActionsService.getMenu(subPage => this.showSubpage(subPage)),
+      PageActionsService.getMenu(subPage => this.showSubpage(subPage))];
   }
 
   _clear() {

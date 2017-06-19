@@ -19,10 +19,7 @@
     <div class="md-toolbar-tools">
       <div flex="30" layout layout-align="start center">
         <left-side-panel-toggle disabled="channelCtrl.isControlsDisabled()"></left-side-panel-toggle>
-
-        <channel-actions on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
-
-        <page-actions ng-if="channelCtrl.isEditable()" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
+        <dropdown-menu items="channelCtrl.menus"></dropdown-menu>
       </div>
 
       <div flex="40" layout layout-align="center center">
