@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,11 +40,10 @@ public class Classification implements IDetachable {
         this.canonical = canonical;
     }
 
-
     public IDetachable getId() {
         return id;
     }
-    
+
     public List<String> getKeys() {
         return values;
     }
@@ -53,9 +52,37 @@ public class Classification implements IDetachable {
         return getKeys().contains(key);
     }
 
+    /**
+     * Returns the size of keys.
+     * @return the size of keys
+     */
+    public int getKeyCount() {
+        return values.size();
+    }
+
+    /**
+     * Returns the index of the {@code key}, or -1 if this {@code key} does not exist.
+     * @param key category key
+     * @return the index of the {@code key}, or -1 if this {@code key} does not exist
+     */
+    public int indexOfKey(String key) {
+        return values.indexOf(key);
+    }
+
     public void addKey(String key) {
         if (!values.contains(key)) {
             values.add(key);
+        }
+    }
+
+    /**
+     * Inserts the specified {@code key} at the specified position.
+     * @param index index
+     * @param key category key
+     */
+    public void addKey(int index, String key) {
+        if (!values.contains(key)) {
+            values.add(index, key);
         }
     }
 
@@ -63,7 +90,6 @@ public class Classification implements IDetachable {
         if (values.contains(key)) {
             values.remove(key);
         }
-
     }
 
     public void detach() {

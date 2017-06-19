@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -217,4 +217,10 @@ div.taxonomy-details a:hover {
 .hippo-preview-document .taxonomy-editor .hippo-editor-field select {
   border: 1px solid #d4d6d8;
   padding: 8px;
+}
+
+.hippo-editor-field-subfield-controls.taxonomy-plugin {
+  background-color: #e8e8ea;
+  border: 1px solid #d4d6d8;
+  padding: 2px;
 }

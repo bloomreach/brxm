@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,8 +25,12 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -54,10 +58,12 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.diff.LCS;
 import org.hippoecm.frontend.plugins.standards.diff.LCS.Change;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
@@ -126,6 +132,8 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
             final Label label = new Label("key", categoryTextModel);
             item.add(label);
             label.add(new AttributeModifier("title", categoryTextModel));
+
+            addControlsToListItem(item);
         }
     }
 
@@ -153,6 +161,8 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
                     label.add(CssClass.append("hippo-diff-removed"));
                     break;
             }
+
+            addControlsToListItem(item);
         }
     }
 
@@ -438,4 +448,81 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         return new ResourceModel(INVALID_TAXONOMY_KEY);
     }
 
+    private void addControlsToListItem(final ListItem<?> item) {
+        final boolean isEditMode = (mode == Mode.EDIT);
+
+        final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModelObject());
+        final int itemCount = classification.getKeyCount();
+        final int itemIndex = item.getIndex();
+
+        final WebMarkupContainer controls = new WebMarkupContainer("controls");
+        controls.setVisible(isEditMode);
+
+        final MarkupContainer upLink = new AjaxLink("up") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                final String curKey = (String) item.getModelObject();
+                if (classification.containsKey(curKey)) {
+                    final int curIndex = classification.indexOfKey(curKey);
+                    classification.removeKey(curKey);
+                    classification.addKey(curIndex - 1, curKey);
+                    dao.save(classification);
+                    target.add(TaxonomyPickerPlugin.this);
+                }
+            }
+        };
+        upLink.setEnabled(isEditMode && itemIndex > 0);
+        upLink.setVisible(isEditMode);
+        final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP);
+        upLink.add(upIcon);
+        controls.add(upLink);
+
+        final MarkupContainer downLink = new AjaxLink("down") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                final String curKey = (String) item.getModelObject();
+                if (classification.containsKey(curKey)) {
+                    final int curIndex = classification.indexOfKey(curKey);
+                    classification.removeKey(curKey);
+                    classification.addKey(curIndex + 1, curKey);
+                    dao.save(classification);
+                    target.add(TaxonomyPickerPlugin.this);
+                }
+            }
+        };
+        downLink.setEnabled(isEditMode && itemIndex < itemCount - 1);
+        downLink.setVisible(isEditMode);
+        final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
+        downLink.add(downIcon);
+        controls.add(downLink);
+
+        final MarkupContainer removeLink = new AjaxLink("remove") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                final String curKey = (String) item.getModelObject();
+                if (classification.containsKey(curKey)) {
+                    classification.removeKey(curKey);
+                    if (classification.isCanonised()) {
+                        // change canonical key if current is the one that is removed
+                        if (curKey.equals(classification.getCanonical())) {
+                            classification.setCanonical(null);
+                            final List<String> allKeys = classification.getKeys();
+                            if (!allKeys.isEmpty()) {
+                                classification.setCanonical(allKeys.get(0));
+                            }
+                        }
+                    }
+                    dao.save(classification);
+                    target.add(TaxonomyPickerPlugin.this);
+                }
+            }
+        };
+        removeLink.setEnabled(isEditMode);
+        removeLink.setVisible(isEditMode);
+        final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
+        removeLink.add(removeIcon);
+        controls.add(removeLink);
+
+        item.add(controls);
+    }
 }
