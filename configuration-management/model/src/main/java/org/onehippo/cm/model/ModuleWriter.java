@@ -31,24 +31,17 @@ import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 import org.onehippo.cm.model.serializer.SourceSerializer;
-import org.onehippo.cm.model.util.FileConfigurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.nodes.Node;
 
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
-public class FileConfigurationWriter {
+public class ModuleWriter {
 
-    private static final Logger log = LoggerFactory.getLogger(FileConfigurationWriter.class);
+    private static final Logger log = LoggerFactory.getLogger(ModuleWriter.class);
 
-    private ResourceInputProvider jcrRip;
-
-    public FileConfigurationWriter() {}
-
-    public FileConfigurationWriter(final ResourceInputProvider jcrRip) {
-        this.jcrRip = jcrRip;
-    }
+    public ModuleWriter() {}
 
     void write(final Path destination,
                final ModuleContext moduleContext,
@@ -63,41 +56,18 @@ public class FileConfigurationWriter {
         writeModule(moduleContext.getModule(), explicitSequencing, moduleContext);
     }
 
-    public void writeModule(final Module module, final ModuleContext moduleContext, final boolean incremental)
+    public void writeModule(final Module module, final ModuleContext moduleContext)
             throws IOException {
-        writeModule(module, DEFAULT_EXPLICIT_SEQUENCING, moduleContext, incremental);
+        writeModule(module, DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
     }
 
     public void writeModule(final Module module, final boolean explicitSequencing,
                             final ModuleContext moduleContext) throws IOException {
-        writeModule(module, explicitSequencing, moduleContext, false);
-    }
-
-    public void writeModule(final Module module, final boolean explicitSequencing,
-                            final ModuleContext moduleContext,
-                            final boolean incremental) throws IOException {
-
-        // remove deleted resources before processing new resource names
-        if (incremental) {
-            log.debug("removing config resources: \n\t{}", String.join("\n\t", module.getRemovedConfigResources()));
-            log.debug("removing content resources: \n\t{}", String.join("\n\t", module.getRemovedContentResources()));
-            for (final String removed : module.getRemovedConfigResources()) {
-                final Path removedPath =
-                        FileConfigurationUtils.getResourcePath(moduleContext.getConfigRoot(), null, removed);
-                Files.deleteIfExists(removedPath);
-            }
-            for (final String removed : module.getRemovedContentResources()) {
-                final Path removedPath =
-                        FileConfigurationUtils.getResourcePath(moduleContext.getContentRoot(), null, removed);
-                Files.deleteIfExists(removedPath);
-            }
-        }
 
         moduleContext.collectExistingFilesAndResolveNewResources();
 
         for (final Source source : module.getSources()) {
-            // short-circuit processing of unchanged sources
-            if (incremental && !source.hasChangedSinceLoad()) {
+            if (sourceShouldBeSkipped(source)) {
                 continue;
             }
 
@@ -125,6 +95,10 @@ public class FileConfigurationWriter {
                 }
             }
         }
+    }
+
+    boolean sourceShouldBeSkipped(final Source source) {
+        return false;
     }
 
     private OutputStream getSourceOutputStream(final ModuleContext moduleContext, final Source source) throws IOException {
@@ -180,13 +154,7 @@ public class FileConfigurationWriter {
     }
 
     // TODO: move this processing somewhere else
-    private InputStream getValueInputProvider(final ValueImpl value) throws IOException {
-        final String internalResourcePath = value.getInternalResourcePath();
-        if (internalResourcePath != null && value.isNewResource()) {
-            return jcrRip.getResourceInputStream(null, internalResourcePath);
-        }
-        else {
-            return value.getResourceInputStream();
-        }
+    InputStream getValueInputProvider(final ValueImpl value) throws IOException {
+        return value.getResourceInputStream();
     }
 }

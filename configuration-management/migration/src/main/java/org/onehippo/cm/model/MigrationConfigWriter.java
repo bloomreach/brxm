@@ -23,7 +23,7 @@ import org.onehippo.cm.migration.ResourceProcessor;
 
 import static org.onehippo.cm.migration.ResourceProcessor.deleteEmptyDirectory;
 
-public class MigrationConfigWriter extends FileConfigurationWriter {
+public class MigrationConfigWriter extends ModuleWriter {
 
     private MigrationMode mode;
 

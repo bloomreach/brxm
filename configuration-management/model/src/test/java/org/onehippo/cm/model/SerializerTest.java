@@ -59,7 +59,7 @@ public class SerializerTest extends AbstractBaseTest {
     private void readAndWrite(final String moduleConfig, final boolean explicitSequencing) throws IOException, ParserException {
         final PathConfigurationReader.ReadResult result = readFromResource(moduleConfig, explicitSequencing);
 
-        final FileConfigurationWriter writer = new FileConfigurationWriter();
+        final ModuleWriter writer = new ModuleWriter();
         writer.write(folder.getRoot().toPath(), result.getModuleContext(), explicitSequencing);
 
         final Path expectedRoot = findBase(moduleConfig);
