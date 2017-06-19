@@ -242,6 +242,20 @@ public class EventJournalProcessor {
         }
     }
 
+    private long skipToHeadRevision(RevisionEventJournal eventJournal) throws RepositoryException {
+        RevisionEvent lastEvent = null;
+        while (eventJournal.hasNext()) {
+            lastEvent = eventJournal.nextEvent();
+        }
+        if (lastEvent != null) {
+            log.info("Skipping to initial eventjournal head revision: {} ", lastEvent.getRevision());
+            configuration.setLastRevision(lastEvent.getRevision());
+            configuration.getModuleSession().save();
+            return lastEvent.getRevision();
+        }
+        return -1;
+    }
+
     private boolean processEvents() throws RepositoryException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -253,6 +267,9 @@ public class EventJournalProcessor {
             final ObservationManager observationManager = eventProcessorSession.getWorkspace().getObservationManager();
             eventJournal = (RevisionEventJournal)observationManager.getEventJournal();
             lastRevision = configuration.getLastRevision();
+            if (lastRevision == -1) {
+                lastRevision = skipToHeadRevision(eventJournal);
+            }
         }
         try {
             eventJournal.skipToRevision(lastRevision);
