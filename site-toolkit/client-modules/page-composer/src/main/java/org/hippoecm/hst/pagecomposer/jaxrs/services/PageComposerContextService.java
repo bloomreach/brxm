@@ -22,15 +22,16 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
 
 public class PageComposerContextService {
 
@@ -70,16 +71,20 @@ public class PageComposerContextService {
     }
 
     public String getRenderingMountId() {
-        final String renderingMountId = (String) getRequestContext().getServletRequest().getSession(true).getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID);
+        final String renderingMountId = (String) getRequestContext().getServletRequest().getSession(true).getAttribute(CMS_REQUEST_RENDERING_MOUNT_ID);
         if (renderingMountId == null) {
             throw new IllegalStateException("Could not find rendering mount id on request session.");
         }
         return renderingMountId;
     }
 
+    public void removeRenderingMountId() {
+        getRequestContext().getServletRequest().getSession(true).removeAttribute(CMS_REQUEST_RENDERING_MOUNT_ID);
+    }
+
 
     public boolean isRenderingMountSet() {
-        return getRequestContext().getServletRequest().getSession(true).getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID) != null;
+        return getRequestContext().getServletRequest().getSession(true).getAttribute(CMS_REQUEST_RENDERING_MOUNT_ID) != null;
     }
 
     public String getEditingLiveConfigurationPath() {
@@ -132,7 +137,7 @@ public class PageComposerContextService {
     }
 
     /**
-     * @return the preview {@link org.hippoecm.hst.configuration.channel.Channel} and <code>null</code> if there is no
+     * @return the preview {@link Channel} and <code>null</code> if there is no
      * preview channel available
      */
     public Channel getEditingPreviewChannel() {

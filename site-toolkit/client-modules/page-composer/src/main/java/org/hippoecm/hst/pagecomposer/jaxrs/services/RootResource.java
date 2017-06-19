@@ -187,6 +187,7 @@ public class RootResource extends AbstractConfigResource {
             publishSynchronousEvent(new BeforeChannelDeleteEvent(channel, mountsOfChannel, hstRequestContext));
 
             channelService.deleteChannel(session, channel, mountsOfChannel);
+            getPageComposerContextService().removeRenderingMountId();
             HstConfigurationUtils.persistChanges(session);
 
             return Response.ok().build();

@@ -55,7 +55,15 @@ public class HstConfigLockedCheckInvokerPreprocessor implements InvokerPreproces
             log.debug("Not yet a rendering mount set.");
             return null;
         }
-        final Channel channel = pageComposerContextService.getEditingPreviewChannel();
+
+        final Channel channel;
+        try {
+            channel = pageComposerContextService.getEditingPreviewChannel();
+        } catch (IllegalStateException e) {
+            log.info("Cannot find the editing (preview) channel any more. Most likely removed");
+            // return null because most likely this is a call to select a new channel
+            return null;
+        }
         if (channel == null) {
             return null;
         }

@@ -697,6 +697,10 @@ public class MountDecoratorImpl implements MountDecorator {
         @Override
         public Mount getMountByIdentifier(final String uuid) {
             final Mount mountByIdentifier = delegatee.getMountByIdentifier(uuid);
+            if (mountByIdentifier == null) {
+                log.info("Cannot find a mount for uuid '{}'. Most likely just removed.", uuid);
+                return null;
+            }
             return decorateMountAsPreview(mountByIdentifier);
         }
 
