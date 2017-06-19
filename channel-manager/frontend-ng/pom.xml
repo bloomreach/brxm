@@ -74,6 +74,8 @@
             <configuration>
                 <filesets>
                     <fileset>
+                        <directory>cache</directory>
+                        <directory>coverage</directory>
                         <directory>node_modules</directory>
                         <followSymlinks>false</followSymlinks>
                     </fileset>
