@@ -30,21 +30,17 @@ md-toolbar.hippo-toolbar {
     text-transform: none;
   }
 
-  channel-actions .md-button,
-  page-actions .md-button {
-    margin: 0;
-    min-width: 0;
-    padding-left: 8px;
-    padding-right: 8px;
+  md-menu-bar {
+    padding-left: 2px;
+
+    md-menu > .md-button {
+      margin-right: 0;
+      min-width: initial;
+    }
   }
 
-  channel-actions {
-    .md-button {
-      margin-left: 8px;
-    }
-    md-icon {
-      fill: $toolbar-channel-changes-color;
-    }
+  .channel-menu-button md-icon {
+    fill: $toolbar-channel-changes-color;
   }
 
   .md-icon-button {
