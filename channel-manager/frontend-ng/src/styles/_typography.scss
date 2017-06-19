@@ -1,4 +1,4 @@
-// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+body {
+  font-family: $font-family;
+}
+
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+}
+
 // Support 'dense' layout of forms in which fields take up less space.
 // This concept is part of the Material spec but not implemented in Angular Material.
-
 h1,
 h2,
 h3,
