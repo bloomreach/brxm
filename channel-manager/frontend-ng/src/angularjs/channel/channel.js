@@ -18,6 +18,7 @@ import channelSubpageModule from './subpage/subpage';
 import channelPageModule from './page/page';
 import channelPageActionsModule from './page/actions/actions';
 import channelActionsModule from './actions/actions';
+import channelMenuModule from './menu/menu';
 import channelSidePanelModule from './sidePanels/sidePanel';
 import channelHippoIframeModule from './hippoIframe/hippoIframe';
 import channelSitemenuModule from './sitemenu/editor';
@@ -37,6 +38,7 @@ const channelModule = angular
     channelPageModule.name,
     channelPageActionsModule.name,
     channelActionsModule.name,
+    channelMenuModule.name,
     channelSidePanelModule.name,
     channelHippoIframeModule.name,
     channelSitemenuModule.name,

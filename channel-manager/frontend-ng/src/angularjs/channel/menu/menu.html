@@ -1,0 +1,42 @@
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<md-menu-bar class="dropdown-menu">
+  <md-menu ng-repeat="menu in $ctrl.items track by menu.name" ng-if="menu.isVisible()">
+    <md-button aria-label="{{ ::menu.translationKey | translate }}"
+               class="qa-{{ ::menu.name }}-menu-button {{ ::menu.name }}-menu-button"
+               ng-click="menu.onClick(); $mdMenu.open()">
+      {{ ::menu.translationKey | translate }}
+      <md-icon ng-if="menu.hasIconName() && menu.isIconVisible()">{{::menu.iconName}}</md-icon>
+      <md-icon ng-if="menu.hasIconSrc() && menu.isIconVisible()" md-svg-src="{{ ::menu.iconSrc}}"></md-icon>
+    </md-button>
+    <md-menu-content class="qa-{{ ::menu.name }}-menu {{ ::menu.name }}-menu dropdown-menu-content" width="{{ ::menu.width}}">
+      <md-menu-item ng-class="{'md-indent': menu.hasIcons()}"
+                    ng-repeat-start="item in menu.items track by item.name"
+                    ng-if="item.type === 'action' && item.isVisible()">
+        <md-icon ng-if="item.hasIconName() && item.isIconVisible()">{{::item.iconName}}</md-icon>
+        <md-icon ng-if="item.hasIconSrc() && item.isIconVisible()" md-svg-src="{{ ::item.iconSrc}}"></md-icon>
+        <md-button class="qa-{{ ::menu.name }}-menu-{{ ::item.name }}-action"
+                   aria-label="{{ ::item.translationKey | translate }}"
+                   ng-disabled="!item.isEnabled()"
+                   ng-click="item.onClick()">
+          {{ ::item.translationKey | translate }}
+        </md-button>
+      </md-menu-item>
+      <md-menu-divider ng-repeat-end ng-if="item.type == 'divider' && item.isVisible()"></md-menu-divider>
+    </md-menu-content>
+  </md-menu>
+</md-menu-bar>
