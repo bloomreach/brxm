@@ -127,7 +127,7 @@ public abstract class ValueProcessor {
             final String msg = String.format(
                     "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
                     modelItem.getPath(), modelItem.getOrigin(), modelValue.getType());
-            throw new RuntimeException(msg);
+            throw new RuntimeException(msg, e);
         }
     }
 

@@ -38,8 +38,8 @@ import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.ExportModuleContext;
-import org.onehippo.cm.model.FileConfigurationWriter;
 import org.onehippo.cm.model.ModuleContext;
+import org.onehippo.cm.model.ModuleWriter;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
@@ -214,7 +214,7 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
         Path moduleRootPath = Paths.get(tempDir.getPath());
 
         ModuleContext moduleContext = new ExportModuleContext(module, moduleRootPath);
-        new FileConfigurationWriter(new JcrResourceInputProvider(session))
+        new ModuleWriter()
                 .writeModule(module, org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
         tempDir.delete();
     }

@@ -47,8 +47,8 @@ import org.hippoecm.repository.api.RevisionEventJournal;
 import org.onehippo.cm.engine.AutoExportContentProcessor;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.JcrResourceInputProvider;
+import org.onehippo.cm.model.AutoExportModuleWriter;
 import org.onehippo.cm.model.ConfigurationItemCategory;
-import org.onehippo.cm.model.FileConfigurationWriter;
 import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.PathConfigurationReader;
 import org.onehippo.cm.model.ValueType;
@@ -540,15 +540,14 @@ public class EventJournalProcessor {
             final Path projectPath = Paths.get(projectDir);
 
             // write each module to the file system
-            FileConfigurationWriter writer =
-                    new FileConfigurationWriter(new JcrResourceInputProvider(eventProcessorSession));
+            final AutoExportModuleWriter writer = new AutoExportModuleWriter(new JcrResourceInputProvider(eventProcessorSession));
             for (ModuleImpl module : mergedModules) {
                 final Path moduleDescriptorPath = projectPath.resolve(module.getMvnPath())
                         .resolve(org.onehippo.cm.model.Constants.MAVEN_MODULE_DESCRIPTOR);
                 final ModuleContext ctx = new ModuleContext(module, moduleDescriptorPath, false);
                 ctx.createOutputProviders(moduleDescriptorPath);
 
-                writer.writeModule(module, ctx, true);
+                writer.writeModule(module, ctx);
 
                 // then reload the modules, so we get a nice, clean, purely-File-based view of the sources
                 // TODO: share this logic with ClasspathConfigurationModelReader somehow

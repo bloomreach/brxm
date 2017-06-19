@@ -37,9 +37,9 @@ import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ExportModuleContext;
-import org.onehippo.cm.model.FileConfigurationWriter;
 import org.onehippo.cm.model.ImportModuleContext;
 import org.onehippo.cm.model.ModuleContext;
+import org.onehippo.cm.model.ModuleWriter;
 import org.onehippo.cm.model.PathConfigurationReader;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
@@ -271,7 +271,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
         final ModuleContext moduleContext = new ExportModuleContext(module, modulePath);
         try {
-            new FileConfigurationWriter().writeModule(module, moduleContext, false);
+            new ModuleWriter().writeModule(module, moduleContext);
             File file = File.createTempFile("export", "zip");
             final ZipCompressor zipCompressor = new ZipCompressor();
             zipCompressor.zipDirectory(dirToZip.toPath(), file.getAbsolutePath());

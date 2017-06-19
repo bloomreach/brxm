@@ -27,8 +27,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.Constants;
-import org.onehippo.cm.model.FileConfigurationWriter;
 import org.onehippo.cm.model.ModuleContext;
+import org.onehippo.cm.model.ModuleWriter;
 import org.onehippo.cm.model.PathConfigurationReader;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.singletonList;
-import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
 public class DefinitionMergeTest {
 
@@ -180,13 +179,13 @@ public class DefinitionMergeTest {
         }
 
         protected void writeAndCompare(String testName, ModuleImpl module) throws Exception {
-            final FileConfigurationWriter writer = new FileConfigurationWriter();
+            final ModuleWriter writer = new ModuleWriter();
 
             // write module to a new temp dir
             Path mOut = output.newFolder(module.getName()).toPath();
             final ModuleContext moduleContext = new ModuleContext(module, in(testName, module));
             moduleContext.createOutputProviders(mOut);
-            writer.writeModule(module, DEFAULT_EXPLICIT_SEQUENCING, moduleContext);
+            writer.writeModule(module, moduleContext);
 
             // in case we expect an empty output for a module, we need to create the empty dir to compare against,
             // since the normal mvn resource copy will not recreate empty dirs in target
