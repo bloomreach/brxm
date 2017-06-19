@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,3 @@
 import './vendor.scss';
 import './index.scss';
 import './angularjs/hippo-cm';
-
-// disable webpack hot module reload for javascript
-if (module.hot) {
-  module.hot.decline();
-}
