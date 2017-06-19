@@ -87,21 +87,7 @@
       <sv:value>/hst:hst</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="default-ecm-content">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30155.0</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>default-ecm-content.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="sitemap-en">
+  <sv:node sv:name="taxonomydemo-en-sitemap">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -109,13 +95,41 @@
       <sv:value>30156.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/sitemap-en.xml</sv:value>
+      <sv:value>hstconfiguration/taxonomydemo-en/sitemap.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/taxonomydemo-en</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="sitemap-fr">
+  <sv:node sv:name="taxonomydemo-en-sitemenus">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>30157.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hstconfiguration/taxonomydemo-en/sitemenus.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/taxonomydemo-en</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="taxonomydemo-en-channel">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>30158.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hstconfiguration/taxonomydemo-en/channel.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/taxonomydemo-en</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="taxonomydemo-fr-sitemap">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -123,13 +137,41 @@
       <sv:value>30156.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/sitemap-fr.xml</sv:value>
+      <sv:value>hstconfiguration/taxonomydemo-fr/sitemap.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/taxonomydemo-fr</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="sitemap-nl">
+  <sv:node sv:name="taxonomydemo-fr-sitemenus">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>30157.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hstconfiguration/taxonomydemo-fr/sitemenus.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/taxonomydemo-fr</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="taxonomydemo-fr-channel">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>30158.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hstconfiguration/taxonomydemo-fr/channel.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/taxonomydemo-fr</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="taxonomydemo-nl-sitemap">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -137,13 +179,13 @@
       <sv:value>30156.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/sitemap-nl.xml</sv:value>
+      <sv:value>hstconfiguration/taxonomydemo-nl/sitemap.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/taxonomydemo-nl</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="sitemenus-en">
+  <sv:node sv:name="taxonomydemo-nl-sitemenus">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -151,35 +193,21 @@
       <sv:value>30157.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/sitemenus-en.xml</sv:value>
+      <sv:value>hstconfiguration/taxonomydemo-nl/sitemenus.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/taxonomydemo-en</sv:value>
+      <sv:value>/hst:hst/hst:configurations/taxonomydemo-nl</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="sitemenus-fr">
+  <sv:node sv:name="taxonomydemo-nl-channel">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30157.0</sv:value>
+      <sv:value>30158.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/sitemenus-fr.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/taxonomydemo-fr</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="sitemenus-nl">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30157.0</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/sitemenus-nl.xml</sv:value>
+      <sv:value>hstconfiguration/taxonomydemo-nl/channel.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/taxonomydemo-nl</sv:value>
@@ -336,20 +364,6 @@
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hst-virtualhosts.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hst-channels">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>32062.1</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>channels.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst</sv:value>
