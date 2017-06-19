@@ -85,6 +85,11 @@ public class RootResourceTest extends AbstractResourceTest {
         protected void resetSession() {
             // override to mock this method
         }
+
+        @Override
+        protected void removeRenderingMountId() {
+            // nothing
+        }
     }
 
     @Before
