@@ -37,7 +37,6 @@
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-request.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-resourcebundle.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-trace.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-observation.xml" />
 
   <bean id="org.hippoecm.hst.core.linking.HstLinkCreator.binaryLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">

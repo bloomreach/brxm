@@ -23,8 +23,11 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MountService;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -38,14 +41,17 @@ import static org.junit.Assert.assertNull;
 
 public class PreviewConfigurationInheritanceIT extends AbstractTestConfigurations {
 
-    private HstManager hstSitesManager;
+    private HstManager hstManager;
     private Session session;
+    private EventPathsInvalidator invalidator;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        this.hstSitesManager = getComponent(HstManager.class.getName());
+        this.hstManager = getComponent(HstManager.class.getName());
+        this.invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+
         this.session = createSession();
         createHstConfigBackup(session);
         movePagesToWorkspace("/hst:hst/hst:configurations/unittestcommon", session);
@@ -80,7 +86,9 @@ public class PreviewConfigurationInheritanceIT extends AbstractTestConfiguration
         // only the live configuration will inherit from the 'unittestcommon/hst:workspace'
         session.getNode("/hst:hst/hst:configurations/unittestproject").setProperty(GENERAL_PROPERTY_INHERITS_FROM,
                 new String[]{"../unittestcommon", "../unittestcommon/hst:workspace"});
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
+        invalidator.eventPaths(pathsToBeChanged);
         inheritanceAndInvalidationAssertions();
     }
     @Test
@@ -88,13 +96,15 @@ public class PreviewConfigurationInheritanceIT extends AbstractTestConfiguration
         // only the live configuration will inherit from the 'unittestcommon/hst:workspace/hst:pages'
         session.getNode("/hst:hst/hst:configurations/unittestproject").setProperty(GENERAL_PROPERTY_INHERITS_FROM,
                 new String[]{"../unittestcommon", "../unittestcommon/hst:workspace/hst:pages"});
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
+        invalidator.eventPaths(pathsToBeChanged);
         inheritanceAndInvalidationAssertions();
     }
 
     private void inheritanceAndInvalidationAssertions() throws Exception {
         {
-            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier());
             final HstComponentConfiguration livePageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
             assertNotNull("live configuration should had inherited 'hst:pages/homepage' from unittestcommon/hst:workspace", livePageComponent);
@@ -103,10 +113,11 @@ public class PreviewConfigurationInheritanceIT extends AbstractTestConfiguration
             assertNotNull("preview configuration should had inherited 'hst:pages/homepage' via live that in turns inherits from unittestcommon/hst:workspace", previewPageComponent);
         }
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages/homepage").remove();
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths(pathsToBeChanged);
         {
-            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier());
             final HstComponentConfiguration livePageComponent = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage");
             assertNull("live configuration should not have 'hst:pages/homepage' since removed from inherited", livePageComponent);

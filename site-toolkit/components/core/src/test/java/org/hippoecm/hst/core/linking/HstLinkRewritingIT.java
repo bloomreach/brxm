@@ -21,10 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -33,7 +30,6 @@ import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 
@@ -159,7 +155,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
             }
 
             session.save();
-            Thread.sleep(1000);
+            Thread.sleep(100);
 
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
@@ -192,7 +188,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
             }
 
             session.save();
-            Thread.sleep(1000);
+            Thread.sleep(100);
 
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);

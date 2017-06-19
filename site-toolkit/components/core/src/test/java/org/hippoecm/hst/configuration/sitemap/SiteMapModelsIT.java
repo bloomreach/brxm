@@ -26,11 +26,14 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -271,8 +274,10 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap");
 
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths(pathsToBeChanged);
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
             final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -296,7 +301,8 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
             setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                     inheritanceVariant);
 
-            Thread.sleep(100);
+            pathsToBeChanged = new String[]{"/hst:hst/hst:configurations/unittestproject"};
+            invalidator.eventPaths(pathsToBeChanged);
             {
                 VirtualHosts vhosts = hstManager.getVirtualHosts();
                 final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -309,8 +315,9 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
             final Node homePageNode = session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/home");
             homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo"});
             homePageNode.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"bar"});
+            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             session.save();
-            Thread.sleep(100);
+            invalidator.eventPaths(pathsToBeChanged);
             {
                 VirtualHosts vhosts = hstManager.getVirtualHosts();
                 final Mount mount = vhosts.getMountByIdentifier(getLocalhostRootMountId());
@@ -321,8 +328,9 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
 
             homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_NAMES).remove();
             homePageNode.getProperty(GENERAL_PROPERTY_PARAMETER_VALUES).remove();
+            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             session.save();
-            Thread.sleep(100);
+            invalidator.eventPaths(pathsToBeChanged);
         }
     }
 
@@ -374,8 +382,9 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         setWorkspaceInheritance("/hst:hst/hst:configurations/unittestproject",
                 new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
 
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
         session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestproject"});
 
         {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
@@ -415,8 +424,10 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         newsDefault.addMixin(HstNodeTypes.MIXINTYPE_HST_EDITABLE);
         newsDefault.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
 
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths(pathsToBeChanged);
 
         mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
         final HstSite hstSite = mount.getMount().getHstSite();

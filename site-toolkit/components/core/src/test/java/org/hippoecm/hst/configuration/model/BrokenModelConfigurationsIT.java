@@ -35,6 +35,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ResolvedSiteMapItemImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -58,6 +59,7 @@ import static org.junit.Assert.fail;
 public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
+    private EventPathsInvalidator invalidator;
     private Session session;
 
     @Override
@@ -67,6 +69,7 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         session = createSession();
         createHstConfigBackup(session);
         hstManager = getComponent(HstManager.class.getName());
+        invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
     }
 
     @Override
@@ -97,7 +100,9 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
 
         session.getNode("/hst:hst").remove();
         session.save();
-        Thread.sleep(100);
+        // trigger a reload below a /hst:hst node since /hst:hst or / is ignored in
+        // HstEventsCollector
+        invalidator.eventPaths("/hst:hst/hst:hosts");
         assertTrue(((HstManagerImpl) hstManager).state == HstManagerImpl.BuilderState.STALE);
 
         Log4jInterceptor.onWarn().deny(HstManagerImpl.class).run( () -> {
@@ -119,7 +124,9 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
 
         restoreHstConfigBackup(session);
 
-        Thread.sleep(100);
+        // trigger a reload below a /hst:hst node since /hst:hst or / is ignored in
+        // HstEventsCollector
+        invalidator.eventPaths("/hst:hst/hst:hosts");
 
         final VirtualHosts finalModel = hstManager.getVirtualHosts();
         assertNotSame(finalModel, firstModel);
@@ -151,9 +158,9 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         assertTrue(resolvedMount.getMount().getChannel() == channels.get("unittestproject"));
         // now remove sites node
         session.getNode("/hst:hst/hst:sites").remove();
-        session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths("/hst:hst/hst:sites");
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.STALE);
+        session.save();
 
         Log4jInterceptor.onWarn().deny(HstManagerImpl.class).run( () -> {
             try {
@@ -173,7 +180,7 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         });
 
         restoreHstConfigBackup(session);
-        Thread.sleep(100);
+        invalidator.eventPaths("/hst:hst/hst:sites");
 
         final VirtualHosts finalModel = hstManager.getVirtualHosts();
         assertNotSame(finalModel, firstModel);
@@ -190,9 +197,9 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
         // now remove /hst:hst/hst:sites/unittestproject node
         session.getNode("/hst:hst/hst:sites/unittestproject").remove();
-        session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths("/hst:hst/hst:sites");
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.STALE);
+        session.save();
 
         Log4jInterceptor.onWarn().deny(MountService.class, VirtualHostService.class, VirtualHostsService.class).run( () -> {
             try {
@@ -221,9 +228,9 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
 
         // restore the unittestproject
         JcrUtils.copy(session, "/hst-backup/hst:sites/unittestproject", "/hst:hst/hst:sites/unittestproject");
-        session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths("/hst:hst/hst:sites");
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.STALE);
+        session.save();
         final VirtualHosts finalModel = hstManager.getVirtualHosts();
         assertNotSame(finalModel, firstModel);
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.UP2DATE);
@@ -241,9 +248,9 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         // now remove /hst:hst/hst:sites/unittestproject node
         String origContentValue = session.getNode("/hst:hst/hst:sites/unittestproject").getProperty("hst:content").getString();
         session.getNode("/hst:hst/hst:sites/unittestproject").getProperty("hst:content").remove();
-        session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths("/hst:hst/hst:sites/unittestproject");
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.STALE);
+        session.save();
 
         Log4jInterceptor.onWarn().deny(MountService.class, VirtualHostService.class, VirtualHostsService.class).run( () -> {
             try {
@@ -271,9 +278,9 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
 
         // restore the unittestproject
         session.getNode("/hst:hst/hst:sites/unittestproject").setProperty("hst:content", origContentValue);
-        session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths("/hst:hst/hst:sites/unittestproject");
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.STALE);
+        session.save();
         final VirtualHosts finalModel = hstManager.getVirtualHosts();
         assertNotSame(finalModel, firstModel);
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.UP2DATE);
@@ -307,7 +314,7 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
 
             session.getNode("/hst:hst/hst:sites/unittestproject").getProperty("hst:content").remove();
             session.save();
-            Thread.sleep(100);
+            invalidator.eventPaths("/hst:hst/hst:sites/unittestproject");
 
             Log4jInterceptor.onWarn().deny(MountService.class).run( () -> {
                 try {
@@ -325,8 +332,8 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
             session.getNode("/hst:hst/hst:sites/unittestproject").setProperty("hst:content", origContentProp);
             // now set the mountpoint directly to a content node (REST mount points like for images/assets have this)
             session.getNode(absPathToRootMount).setProperty("hst:mountpoint", "/unittestcontent/documents/unittestproject");
+            invalidator.eventPaths(absPathToRootMount, "/hst:hst/hst:sites/unittestproject");
             session.save();
-            Thread.sleep(100);
             final VirtualHosts changedModel = hstManager.getVirtualHosts();
 
             final ResolvedMount newResolvedMount = changedModel.matchMount("localhost", "/site", "home");
@@ -340,8 +347,8 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         {
             // now set the mountpoint directly to a content node (REST mount points like for images/assets have this)
             session.getNode(absPathToRootMount).setProperty("hst:mountpoint", "/hst:hst/hst:hosts");
+            invalidator.eventPaths(absPathToRootMount);
             session.save();
-            Thread.sleep(100);
             final VirtualHosts changedModel = hstManager.getVirtualHosts();
 
             final ResolvedMount newResolvedMount = changedModel.matchMount("localhost", "/site", "home");
@@ -461,8 +468,8 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
 
         // now break the references
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage").setProperty("hst:referencecomponent", "nonexisting....");
+        invalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage");
         session.save();
-        Thread.sleep(100);
         {
             Log4jInterceptor.onWarn().deny(HstComponentConfigurationService.class).run( () -> {
                 try {
@@ -537,7 +544,7 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
 
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home").setProperty("hst:componentconfigurationid","nonexisting");
         session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home");
         {
             Log4jInterceptor.onWarn().deny(ResolvedSiteMapItemImpl.class).run( () -> {
                 try {
@@ -603,8 +610,8 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
 
         // now remove templates
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:templates").remove();
+        invalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon");
         session.save();
-        Thread.sleep(100);
         {
             Log4jInterceptor.onWarn().deny(HstComponentConfigurationService.class).run( () -> {
                 try {
@@ -686,8 +693,8 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         }
 
         session.getNode("/hst:hst/hst:configurations/"+channelName + "/hst:channel").remove();
+        invalidator.eventPaths("/hst:hst/hst:configurations/"+channelName);
         session.save();
-        Thread.sleep(100);
         {
             try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(VirtualHostsService.class).build()) {
                 final VirtualHosts model = hstManager.getVirtualHosts();
@@ -705,7 +712,7 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
             final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
             final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
             assertFalse("there is no preview channel but still preview channel should be a different instance than the " +
-                    "live channel",
+                            "live channel",
                     mount.getChannel() == mount.getPreviewChannel());
             assertEquals("Since there is no preview channel, the id must be the same",
                     mount.getChannel().getId(), mount.getPreviewChannel().getId());
@@ -716,14 +723,14 @@ public class BrokenModelConfigurationsIT extends AbstractTestConfigurations {
         JcrUtils.copy(session, configPath, configPath+"-preview");
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths(pathsToBeChanged);
 
         {
             VirtualHosts model = hstManager.getVirtualHosts();
             final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
             final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
             assertEquals("Since there is a preview channel, the id must be the same as live id + '-preview'",
-                mount.getChannel().getId() + "-preview", mount.getPreviewChannel().getId());
+                    mount.getChannel().getId() + "-preview", mount.getPreviewChannel().getId());
         }
 
     }

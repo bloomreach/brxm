@@ -1,12 +1,12 @@
 /*
  *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,10 +27,13 @@ import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -184,8 +187,11 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         Node globalConfig = session.getNode("/hst:hst/hst:configurations/global");
         globalConfig.addNode("hst:pages", "hst:pages");
 
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+
         session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths(pathsToBeChanged);
 
         final ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
         final ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/");
@@ -211,8 +217,9 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
 
         // remove node again
         session.getNode("/hst:hst/hst:configurations/global").getNode("hst:pages").remove();
+        pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths(pathsToBeChanged);
 
         // now we expect the same instance again from cache
         final ResolvedMount mountSecondAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
@@ -237,8 +244,9 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
 
         globalConfig = session.getNode("/hst:hst/hst:configurations/global");
         globalConfig.addNode("hst:sitemenus", "hst:sitemenus");
+        pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths(pathsToBeChanged);
 
         // now we expect still the same instance again from cache as only sitemenus has changed
         final ResolvedMount mountThirdAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
@@ -280,8 +288,10 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         Node defaultComponents = session.getNode("/hst:hst/hst:configurations/hst:default/hst:components");
         defaultComponents.addNode("testNewUniqueNamedNodeInHstDefaultConfigurationTriggersReloadAll", "hst:component");
 
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths(pathsToBeChanged);
 
         ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
         ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
@@ -308,8 +318,10 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
 
         Node defaultSitemap = session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap");
         defaultSitemap.addNode("testNewUniqueNamedNodeInHstDefaultConfigurationTriggersReloadAll", "hst:sitemapitem");
+        invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths(pathsToBeChanged);
 
         ResolvedMount mountAgain1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
         ResolvedMount mountAgain2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
@@ -354,8 +366,10 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         Node commonCatalog = configurationsNode.addNode("hst:catalog", "hst:catalog");
         commonCatalog.addNode("testNewUniqueNamedNodeInCommonCatalogTriggersReloadAll", "hst:containeritempackage");
 
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
-        Thread.sleep(100);
+        invalidator.eventPaths(pathsToBeChanged);
 
         ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
         ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");

@@ -25,3 +25,5 @@ An event handler will be registered for a path where no node currently is availa
 Failed to register event listener
 Existing lock file
 Unable to register RepositoryStat
+A service was already registered with name
+Initializing module scheduler failed

@@ -114,10 +114,9 @@ public class CustomMountAndVirtualCmsHostAugmenterIT extends AbstractTestConfigu
             session.getNode("/hst:hst/hst:hosts/dev-localhost")
                     .setProperty(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION, "http://www.unit.test");
             session.save();
-            Thread.sleep(100);
+            HstManager hstManager = getComponent(HstManager.class.getName());
 
-            HstManager hstSitesManager = getComponent(HstManager.class.getName());
-            final List<String> hostGroupNames = hstSitesManager.getVirtualHosts().getHostGroupNames();
+            final List<String> hostGroupNames = hstManager.getVirtualHosts().getHostGroupNames();
 
             assertTrue(hostGroupNames.size() == 3);
 
@@ -126,9 +125,9 @@ public class CustomMountAndVirtualCmsHostAugmenterIT extends AbstractTestConfigu
             augmenter.setMountType("composer");
             augmenter.setMountNamedPipeline("ComposerPipeline");
 
-            augmenter.augment((MutableVirtualHosts)hstSitesManager.getVirtualHosts());
+            augmenter.augment((MutableVirtualHosts)hstManager.getVirtualHosts());
 
-            final ResolvedMount justTheWwwUnitTestRootMount = hstSitesManager.getVirtualHosts().matchMount("www.unit.test", "/site", "_rp");
+            final ResolvedMount justTheWwwUnitTestRootMount = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "_rp");
             assertNotNull(justTheWwwUnitTestRootMount);
             assertEquals("",justTheWwwUnitTestRootMount.getResolvedMountPath());
             assertEquals("hst:root",justTheWwwUnitTestRootMount.getMount().getName());
