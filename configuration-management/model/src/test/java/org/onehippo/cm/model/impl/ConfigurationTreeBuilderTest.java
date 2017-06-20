@@ -933,7 +933,7 @@ public class ConfigurationTreeBuilderTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [string]' specifies value equivalent to existing property.")));
+                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [string]' specifies value equivalent to existing property, defined in '[test-group/test-project/test-module [string]]'.")));
         }
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
@@ -968,7 +968,7 @@ public class ConfigurationTreeBuilderTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl)definitions2.get(0));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [string]' specifies value equivalent to existing property.")));
+                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [string]' specifies value equivalent to existing property, defined in '[test-group/test-project/test-module [string]]'.")));
         }
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
@@ -1002,7 +1002,7 @@ public class ConfigurationTreeBuilderTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl)definitions.get(1));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [string]' specifies value equivalent to existing property.")));
+                   .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [string]' specifies value equivalent to existing property, defined in '[test-group/test-project/test-module [string]]'.")));
         }
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
