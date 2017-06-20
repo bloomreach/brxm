@@ -1,12 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="content">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:component</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:componentclassname" sv:type="String">
-    <sv:value>org.onehippo.forge.contentblocksdemo.components.Detail</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>base.main.content</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/contentblocksdemo/hst:components/content:
+      jcr:primaryType: hst:component
+      hst:componentclassname: org.onehippo.forge.contentblocksdemo.components.Detail
+      hst:template: base.main.content

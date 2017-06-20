@@ -1,7 +1,27 @@
-{"hippo:types": {
-  "contentblocksdemo:providercompounddocument": {"en": {"jcr:name": "Document with provider"}},
-  "contentblocksdemo:contentblocksdocument": {"en": {"jcr:name": "Document with list config"}},
-  "contentblocksdemo:imageblock": {"en": {"jcr:name": "Image Block"}},
-  "contentblocksdemo:textblock": {"en": {"jcr:name": "Text Block"}},
-  "contentblocksdemo:videoblock": {"en": {"jcr:name": "Video Block"}}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/contentblocksdemo:imageblock:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Image Block
+    /hippo:configuration/hippo:translations/hippo:types/contentblocksdemo:videoblock:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Video Block
+    /hippo:configuration/hippo:translations/hippo:types/contentblocksdemo:contentblocksdocument:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Document with list config
+    /hippo:configuration/hippo:translations/hippo:types/contentblocksdemo:textblock:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Text Block
+    /hippo:configuration/hippo:translations/hippo:types/contentblocksdemo:providercompounddocument:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Document with provider

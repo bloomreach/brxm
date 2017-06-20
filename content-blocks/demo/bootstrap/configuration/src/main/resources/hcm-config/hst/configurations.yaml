@@ -1,8 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:configurations" xmlns:esv="http://www.onehippo.org/jcr/xmlimport" esv:merge="combine">
-  <sv:node sv:name="contentblocksdemo">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:configuration</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations:
+      /contentblocksdemo:
+        jcr:primaryType: hst:configuration

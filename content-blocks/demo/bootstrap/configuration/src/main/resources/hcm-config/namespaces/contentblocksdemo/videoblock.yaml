@@ -1,137 +1,49 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="videoblock">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposysedit:templatetype</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>editor:editable</sv:value>
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:node sv:name="hipposysedit:nodetype">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>1c3f989b-97f0-40b4-8906-0ec5827ca52e</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:nodetype</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:referenceable</sv:value>
-        <sv:value>hipposysedit:remodel</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>a06e0cba-91d9-46a0-89ee-7dd69abbe35b</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
-        <sv:value>hippo:compound</sv:value>
-        <sv:value>hippostd:relaxed</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposysedit:uri" sv:type="String">
-        <sv:value>http://www.onehippo.org/contentblocksdemo/nt/1.0</sv:value>
-      </sv:property>
-      <sv:node sv:name="video">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:field</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-          <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-          <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
-          <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>contentblocksdemo:video</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
-          <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:type" sv:type="String">
-          <sv:value>String</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="hipposysedit:prototypes">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:prototypeset</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:prototype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>contentblocksdemo:videoblock</sv:value>
-      </sv:property>
-      <sv:property sv:name="contentblocksdemo:video" sv:type="String">
-        <sv:value/>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="editor:templates">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>editor:templateset</sv:value>
-    </sv:property>
-    <sv:node sv:name="_default_">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugincluster</sv:value>
-      </sv:property>
-      <sv:property sv:name="frontend:properties" sv:type="String" sv:multiple="true">
-        <sv:value>mode</sv:value>
-      </sv:property>
-      <sv:property sv:name="frontend:references" sv:type="String" sv:multiple="true">
-        <sv:value>wicket.model</sv:value>
-        <sv:value>model.compareTo</sv:value>
-        <sv:value>engine</sv:value>
-        <sv:value>validator.id</sv:value>
-      </sv:property>
-      <sv:property sv:name="frontend:services" sv:type="String" sv:multiple="true">
-        <sv:value>wicket.id</sv:value>
-        <sv:value>validator.id</sv:value>
-      </sv:property>
-      <sv:node sv:name="root">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="item" sv:type="String">
-          <sv:value>${cluster.id}.field</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="video">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="caption" sv:type="String">
-          <sv:value>Video Url</sv:value>
-        </sv:property>
-        <sv:property sv:name="field" sv:type="String">
-          <sv:value>video</sv:value>
-        </sv:property>
-        <sv:property sv:name="hint" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${cluster.id}.field</sv:value>
-        </sv:property>
-        <sv:node sv:name="cluster.options">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:namespaces/contentblocksdemo/videoblock:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 1c3f989b-97f0-40b4-8906-0ec5827ca52e
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          jcr:uuid: a06e0cba-91d9-46a0-89ee-7dd69abbe35b
+          hipposysedit:node: true
+          hipposysedit:supertype: ['hippo:compound', 'hippostd:relaxed']
+          hipposysedit:uri: http://www.onehippo.org/contentblocksdemo/nt/1.0
+          /video:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentblocksdemo:video
+            hipposysedit:primary: false
+            hipposysedit:type: String
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: contentblocksdemo:videoblock
+          contentblocksdemo:video: ''
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          frontend:properties: [mode]
+          frontend:references: [wicket.model, model.compareTo, engine, validator.id]
+          frontend:services: [wicket.id, validator.id]
+          /root:
+            jcr:primaryType: frontend:plugin
+            item: ${cluster.id}.field
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+          /video:
+            jcr:primaryType: frontend:plugin
+            caption: Video Url
+            field: video
+            hint: ''
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+            wicket.id: ${cluster.id}.field
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig

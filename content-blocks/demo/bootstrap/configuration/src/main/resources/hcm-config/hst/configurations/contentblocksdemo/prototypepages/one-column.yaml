@@ -1,36 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="one-column">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:component</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>hst:prototypemeta</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:displayname" sv:type="String">
-    <sv:value>One column</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:referencecomponent" sv:type="String">
-    <sv:value>hst:abstractpages/base</sv:value>
-  </sv:property>
-  <sv:node sv:name="main">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:node sv:name="content">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>one-column.main.content</sv:value>
-      </sv:property>
-      <sv:node sv:name="container">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containercomponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:xtype" sv:type="String">
-          <sv:value>HST.vBox</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/contentblocksdemo/hst:prototypepages/one-column:
+      jcr:primaryType: hst:component
+      jcr:mixinTypes: ['hst:prototypemeta']
+      hst:displayname: One column
+      hst:referencecomponent: hst:abstractpages/base
+      /main:
+        jcr:primaryType: hst:component
+        /content:
+          jcr:primaryType: hst:component
+          hst:template: one-column.main.content
+          /container:
+            jcr:primaryType: hst:containercomponent
+            hst:xtype: HST.vBox

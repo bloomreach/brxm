@@ -1,19 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="hst:containers" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:containercomponentfolder</sv:value>
-  </sv:property>
-  <sv:node sv:name="home">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:containercomponentfolder</sv:value>
-    </sv:property>
-    <sv:node sv:name="container">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containercomponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.vBox</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/contentblocksdemo/hst:workspace/hst:containers:
+      jcr:primaryType: hst:containercomponentfolder
+      /home:
+        jcr:primaryType: hst:containercomponentfolder
+        /container:
+          jcr:primaryType: hst:containercomponent
+          hst:xtype: HST.vBox
