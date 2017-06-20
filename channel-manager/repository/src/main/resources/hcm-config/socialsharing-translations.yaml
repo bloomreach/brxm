@@ -1,7 +1,4 @@
 definitions:
   config:
-    /hippo:configuration/hippo:translations/hippo:workflows:
-      jcr:primaryType: hipposys:resourcebundles
-      /en:
-        jcr:primaryType: hipposys:resourcebundle
-        socialsharing: Share
+    /hippo:configuration/hippo:translations/hippo:workflows/en:
+      socialsharing: Share
