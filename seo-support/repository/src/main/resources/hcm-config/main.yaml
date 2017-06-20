@@ -1,79 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hippo:initialize">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippo:initializefolder</sv:value>
-  </sv:property>
-
-  <sv:node sv:name="seosupport">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>20000</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://forge.onehippo.org/seosupport/nt/1.0</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
-      <sv:value>seosupport.cnd</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="seosupport-namespace-replacement">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>20000.1</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentdelete" sv:type="String">
-      <sv:value>/hippo:namespaces/seosupport</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>seosupport-namespace.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="hide-seosupport-from-configuration">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>20000.2</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hide-seosupport.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-tree-views/configuration/configurationBrowser/filters</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="seosupport-type-translations">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:resourcebundles" sv:type="String">
-      <sv:value>type-translations.json</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>20001</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="seosupport-component-param-translations">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:resourcebundles" sv:type="String">
-      <sv:value>component-param-translations.json</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>20002</sv:value>
-    </sv:property>
-  </sv:node>
-
-</sv:node>
+definitions:
+  namespace:
+    seosupport:
+      uri: http://forge.onehippo.org/seosupport/nt/1.0
+      cnd: seosupport.cnd
+  config:
+    /hippo:configuration/hippo:translations:
+      /hippo:types:
+        jcr:primaryType: hipposys:resourcebundles
+      /hippo:hst:
+        jcr:primaryType: hipposys:resourcebundles
+        /componentparameters:
+          jcr:primaryType: hipposys:resourcebundles
+          /org:
+            jcr:primaryType: hipposys:resourcebundles
+            /onehippo:
+              jcr:primaryType: hipposys:resourcebundles
+              /forge:
+                jcr:primaryType: hipposys:resourcebundles
+                /seo:
+                  jcr:primaryType: hipposys:resourcebundles
+                  /support:
+                    jcr:primaryType: hipposys:resourcebundles

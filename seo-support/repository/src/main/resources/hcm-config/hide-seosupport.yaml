@@ -1,13 +1,8 @@
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         xmlns:esv="http://www.onehippo.org/jcr/xmlimport"
-         sv:name="hideSEOSupportNamespace" esv:merge="insert" esv:location="showOtherNamespaces">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:pluginconfig</sv:value>
-  </sv:property>
-  <sv:property sv:name="display" sv:type="Boolean">
-    <sv:value>false</sv:value>
-  </sv:property>
-  <sv:property sv:name="path" sv:type="String">
-    <sv:value>/hippo:namespaces/seosupport</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-tree-views/configuration/configurationBrowser/filters:
+      /hideSEOSupportNamespace:
+        .meta:order-before: showOtherNamespaces
+        jcr:primaryType: frontend:pluginconfig
+        display: false
+        path: /hippo:namespaces/seosupport

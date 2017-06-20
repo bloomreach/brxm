@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-plugin-seo-support
+    after: [hippo-cms, hippo-site-toolkit]
+module: hippo-plugin-seo-support-repository

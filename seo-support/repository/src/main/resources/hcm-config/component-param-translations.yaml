@@ -1,36 +1,22 @@
-{
-  "hippo:hst": {
-    "componentparameters": {
-      "org": {
-        "onehippo": {
-          "forge": {
-            "seo": {
-              "support": {
-                "SEOHelperComponentParamsInfo": {
-                  "en": {
-                    "group.descriptionsettings": "Description settings for the meta-description tag",
-                    "site-title": "Site Title",
-                    "template-page-title": "Template Page Title",
-                    "dc-language": "DC-language",
-                    "document-title-bean-props": "Title field(s) in the documents",
-                    "site-title-in-template": "Use title-tag provided by page templates",
-                    "enable-dc-language": "Enable DC Language",
-                    "dc-terms-link": "DC Terms Link",
-                    "menu-item-allow-expanded": "Use Expanded Menu Item",
-                    "site-dc-copyright-link": "Site DC Copyright Link",
-                    "menu-name": "Menu Name",
-                    "group.dcsettings": "Dublin Core settings",
-                    "default-meta-description": "Default Meta Description",
-                    "document-description-bean-props": "Description Field(s) in the documents",
-                    "dc-schema-link": "DC Schema Link",
-                    "group.titlesettings": "Title settings for the title-tag"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        dc-language: DC-language
+        dc-schema-link: DC Schema Link
+        dc-terms-link: DC Terms Link
+        default-meta-description: Default Meta Description
+        document-description-bean-props: Description Field(s) in the documents
+        document-title-bean-props: Title field(s) in the documents
+        enable-dc-language: Enable DC Language
+        group.dcsettings: Dublin Core settings
+        group.descriptionsettings: Description settings for the meta-description tag
+        group.titlesettings: Title settings for the title-tag
+        menu-item-allow-expanded: Use Expanded Menu Item
+        menu-name: Menu Name
+        site-dc-copyright-link: Site DC Copyright Link
+        site-title: Site Title
+        site-title-in-template: Use title-tag provided by page templates
+        template-page-title: Template Page Title
