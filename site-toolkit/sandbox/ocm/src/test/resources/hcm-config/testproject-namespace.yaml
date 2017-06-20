@@ -3,15 +3,12 @@ definitions:
     /hippo:namespaces/testproject:
       jcr:primaryType: hipposysedit:namespace
       jcr:mixinTypes: ['mix:referenceable']
-      jcr:uuid: 322e0ee1-5a5d-4d1c-a15a-397bfa9b64ee
       /basedocument:
         jcr:primaryType: hipposysedit:templatetype
         jcr:mixinTypes: ['mix:referenceable']
-        jcr:uuid: 3ee76e49-f3c4-47e3-971b-b7a95a8a3030
         /hipposysedit:nodetype:
           jcr:primaryType: hippo:handle
           jcr:mixinTypes: ['mix:referenceable']
-          jcr:uuid: 25b7c05b-f143-492d-9db1-d99347cfdc7a
           /hipposysedit:nodetype:
             jcr:primaryType: hipposysedit:nodetype
             jcr:mixinTypes: ['hipposysedit:remodel']
@@ -20,15 +17,12 @@ definitions:
       /textpage:
         jcr:primaryType: hipposysedit:templatetype
         jcr:mixinTypes: ['mix:referenceable']
-        jcr:uuid: 8341d42f-4815-483e-a1fd-08dd25abcfd0
         /hipposysedit:nodetype:
           jcr:primaryType: hippo:handle
           jcr:mixinTypes: ['mix:referenceable']
-          jcr:uuid: d2870ca9-1240-4bf1-a564-2611baa4e13b
           /hipposysedit:nodetype:
             jcr:primaryType: hipposysedit:nodetype
             jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
-            jcr:uuid: 6ef8d567-d4ce-48b9-beea-3af71f46f9f0
             hipposysedit:node: true
             hipposysedit:supertype: ['testproject:basedocument']
             hipposysedit:uri: http://www.hippoecm.org/hst/nt/testproject/1.0
@@ -69,7 +63,6 @@ definitions:
           /hipposysedit:prototype:
             jcr:primaryType: testproject:textpage
             jcr:mixinTypes: ['mix:referenceable']
-            jcr:uuid: f99f9955-bdfa-43ac-83e9-e5b1e43be410
             hippostd:state: unpublished
             hippostdpubwf:createdBy: admin
             hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
@@ -87,15 +80,12 @@ definitions:
       /newspage:
         jcr:primaryType: hipposysedit:templatetype
         jcr:mixinTypes: ['mix:referenceable']
-        jcr:uuid: a844cc4d-705a-484f-a86e-9a65d10a9507
         /hipposysedit:nodetype:
           jcr:primaryType: hippo:handle
           jcr:mixinTypes: ['mix:referenceable']
-          jcr:uuid: b82fb2ee-0e28-4748-bc32-d46d580d57eb
           /hipposysedit:nodetype:
             jcr:primaryType: hipposysedit:nodetype
             jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
-            jcr:uuid: 3ed0ce75-1398-4772-836c-861d3b92a2c2
             hipposysedit:node: true
             hipposysedit:supertype: ['testproject:basedocument']
             hipposysedit:uri: http://www.hippoecm.org/hst/nt/testproject/1.0
@@ -136,7 +126,6 @@ definitions:
           /hipposysedit:prototype:
             jcr:primaryType: testproject:newspage
             jcr:mixinTypes: ['mix:referenceable']
-            jcr:uuid: b7c4ea75-7c8d-4ac8-9ff7-775b2a900927
             hippostd:state: unpublished
             hippostdpubwf:createdBy: admin
             hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00

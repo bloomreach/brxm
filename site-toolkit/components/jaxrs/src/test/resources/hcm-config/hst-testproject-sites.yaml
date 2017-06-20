@@ -1,22 +1,7 @@
 definitions:
   config:
     /hst:hst/hst:sites:
-      jcr:primaryType: hst:sites
       /testproject-live:
         jcr:primaryType: hst:site
         hst:configurationpath: /hst:unittestconfiguration/hst:configuration
-        /hst:content:
-          jcr:primaryType: hippo:facetselect
-          hippo:docbase: abababab-5fa8-48a8-b03b-4524373d992a
-          hippo:facets: ['hippo:availability']
-          hippo:modes: [single]
-          hippo:values: [live]
-      /testproject-preview:
-        jcr:primaryType: hst:site
         hst:configurationpath: /hst:unittestconfiguration/hst:configuration
-        /hst:content:
-          jcr:primaryType: hippo:facetselect
-          hippo:docbase: abababab-5fa8-48a8-b03b-4524373d992a
-          hippo:facets: ['hippo:availability']
-          hippo:modes: [single]
-          hippo:values: [preview]

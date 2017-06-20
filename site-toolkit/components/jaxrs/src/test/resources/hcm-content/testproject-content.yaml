@@ -1,18 +1,15 @@
 /testcontent:
   jcr:primaryType: hippostd:directory
   jcr:mixinTypes: ['mix:referenceable']
-  jcr:uuid: abababab-511b-49e0-92b5-126970694fa8
   hippostd:foldertype: [new-document, new-folder]
   /gallery:
     jcr:primaryType: hippogallery:stdImageGallery
     jcr:mixinTypes: ['mix:referenceable']
-    jcr:uuid: abababab-98ff-4673-a2a9-5cdbb2822eed
     hippostd:foldertype: [new-image-folder]
     hippostd:gallerytype: ['hippogallery:exampleImageSet']
   /assets:
     jcr:primaryType: hippogallery:stdAssetGallery
     jcr:mixinTypes: ['mix:referenceable']
-    jcr:uuid: abababab-bbbb-4673-a2a9-5cdbb2822eed
     hippostd:foldertype: [new-file-folder]
     hippostd:gallerytype: ['hippogallery:exampleAssetSet']
   /attic:
@@ -25,7 +22,7 @@
     /testproject:
       jcr:primaryType: hippostd:folder
       jcr:mixinTypes: ['mix:referenceable']
-      jcr:uuid: abababab-5fa8-48a8-b03b-4524373d992a
+      jcr:uuid: cccccccc-5fa8-48a8-b03b-4524373d992a
       hippostd:foldertype: [new-folder, new-document]
       /testproducts:
         jcr:primaryType: hippostd:folder

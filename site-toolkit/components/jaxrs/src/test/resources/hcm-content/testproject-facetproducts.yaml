@@ -3,7 +3,7 @@
   jcr:mixinTypes: ['mix:referenceable']
   /tag cloud browsing:
     jcr:primaryType: hippofacnav:facetnavigation
-    hippo:docbase: abababab-5fa8-48a8-b03b-4524373d992a
+    hippo:docbase: cccccccc-5fa8-48a8-b03b-4524373d992a
     hippofacnav:facetnodenames: ['tags${limit:10}']
     hippofacnav:facets: ['hippostd:tags']
     hippofacnav:filters: ['jcr:primaryType=testproject:productdocument']
@@ -11,7 +11,7 @@
     hippofacnav:sortby: ['testproject:price']
   /index page:
     jcr:primaryType: hippofacnav:facetnavigation
-    hippo:docbase: abababab-5fa8-48a8-b03b-4524373d992a
+    hippo:docbase: cccccccc-5fa8-48a8-b03b-4524373d992a
     hippofacnav:facetnodenames: ['index${hide:''index''}', 'brand${after:''index''}']
     hippofacnav:facets: ["testproject:brand$[\n                {name:'a - d', resolution:'string',\
         \ lower:'a', upper:'e'},\n                {name:'e - h', resolution:'string',\
@@ -26,7 +26,7 @@
     hippofacnav:sortby: ['testproject:price']
   /faceted navigation:
     jcr:primaryType: hippofacnav:facetnavigation
-    hippo:docbase: abababab-5fa8-48a8-b03b-4524373d992a
+    hippo:docbase: cccccccc-5fa8-48a8-b03b-4524373d992a
     hippofacnav:facetnodenames: ['5 most common brands${limit:5}', created, constructiondate,
       mileage, price]
     hippofacnav:facets: ['testproject:brand', "testproject:created$[\n           \

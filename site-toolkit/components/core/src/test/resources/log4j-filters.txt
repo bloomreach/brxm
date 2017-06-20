@@ -27,3 +27,4 @@ Existing lock file
 Unable to register RepositoryStat
 A service was already registered with name
 Initializing module scheduler failed
+Trying to delete node

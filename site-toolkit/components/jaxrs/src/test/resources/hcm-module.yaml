@@ -2,4 +2,6 @@ group:
   name: hippo-cms-test
   after: hippo-cms
 project: hippo-site-toolkit
-module: hippo-site-toolkit-components-jaxrs-test
+module:
+  name: hippo-site-toolkit-components-jaxrs-test
+  after: hippo-site-toolkit-toolkit-resources-addon-unittestcontents
