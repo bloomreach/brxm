@@ -2,3 +2,7 @@ definitions:
   config:
     /hippo:configuration/hippo:translations:
       jcr:primaryType: hipposys:resourcebundles
+      /hippo:templates:
+        jcr:primaryType: hipposys:resourcebundles
+        /en:
+          jcr:primaryType: hipposys:resourcebundle
