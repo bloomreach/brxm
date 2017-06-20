@@ -895,6 +895,7 @@
         <repo.path>${project.build.directory}/storage</repo.path>
         <repo.config />
         <repo.bootstrap />
+        <repo.autoexport.allowed>true</repo.autoexport.allowed>
       </properties>
       <dependencies>
         <dependency>
@@ -950,6 +951,7 @@
                   <repo.path>${repo.path}</repo.path>
                   <repo.config>${repo.config}</repo.config>
                   <repo.bootstrap>${repo.bootstrap}</repo.bootstrap>
+                  <repo.autoexport.allowed>${repo.autoexport.allowed}</repo.autoexport.allowed>
                 </systemProperties>
                 <zipUrlInstaller>
                   <downloadDir>${settings.localRepository}/org/codehaus/cargo/cargo-container-archives</downloadDir>
