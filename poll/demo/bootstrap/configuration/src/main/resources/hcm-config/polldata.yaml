@@ -1,10 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:esv="http://www.onehippo.org/jcr/xmlimport" sv:name="polldata" esv:merge="combine">
-  <sv:node sv:name="polldemo">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>poll:polldata</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>mix:lockable</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /polldata:
+      /polldemo:
+        jcr:primaryType: poll:polldata
+        jcr:mixinTypes: ['mix:lockable']

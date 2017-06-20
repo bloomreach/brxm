@@ -1,95 +1,45 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="poll.component.ftl" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:template</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>8e1312b5-5756-4aba-aab3-54733e46741a</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:script" sv:type="String">
-    <sv:value>&lt;#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;
-
-&lt;div id="poll"&gt;
-  &lt;#if pollDocument??&gt;
-    &lt;#if pollDocument.poll.text??&gt;
-      &lt;h3&gt;${pollDocument.poll.text}&lt;/h3&gt;
-    &lt;/#if&gt;
-    &lt;span id="noCookieSupportMessage"&gt;The poll cannot be shown because the browser does not support cookies&lt;/span&gt;
-
-    &lt;#-- Render Poll Form if not yet voted (voteSuccess not defined) or voting failed (voteSuccess is false) --&gt;
-    &lt;#if !(voteSuccess??) || voteSuccess == false&gt;
-      &lt;div id="pollDiv"&gt;
-        &lt;#if pollDocument.poll.introduction??&gt;
-          &lt;p id=""&gt;${pollDocument.poll.introduction}&lt;/p&gt;
-        &lt;/#if&gt;
-
-        &lt;!-- The Poll --&gt;
-        &lt;form id="form-poll" method="post" action="&lt;@hst.actionURL /&gt;"&gt;
-          &lt;input type="hidden" name="path" value="${path}"/&gt;
-          &lt;div&gt;
-            &lt;#list pollDocument.poll.options as curOption&gt;
-              &lt;div&gt;
-                &lt;input id="${curOption.value}" name="option" type="radio" value="${curOption.value}"
-                       &lt;#if option?? &amp;&amp; curOption == option&gt;selected="true"&lt;/#if&gt; /&gt;
-                &lt;label for="${curOption.value}"&gt;${curOption.label}&lt;/label&gt;
-              &lt;/div&gt;
-            &lt;/#list&gt;
-          &lt;/div&gt;
-          &lt;button class="submit" type="submit"&gt;Vote&lt;/button&gt;
-          &lt;#if voteSuccess??&gt; &lt;#-- Implies voteSuccess == "false" --&gt;
-            &lt;div&gt;Sorry, processing the vote has failed&lt;/div&gt;
-          &lt;/#if&gt;
-        &lt;/form&gt;
-      &lt;/div&gt;
-    &lt;/#if&gt;
-
-    &lt;ul id="pollResults" class="poll-results-list"&gt;
-      &lt;#list pollVotes.options as curOption&gt;
-        &lt;li&gt;
-          &lt;div class="poll-graph-bar"&gt;
-            &lt;span class="poll-meter" style="width: ${curOption.votesPercentage}%"&gt; &lt;/span&gt;
-          &lt;/div&gt;
-          &lt;#if curOption.votesCount == 1&gt;
-            ${curOption.label} - ${curOption.votesPercentage}% (${curOption.votesCount} vote)
-          &lt;#else&gt;
-            ${curOption.label} - ${curOption.votesPercentage}% (${curOption.votesCount} votes)
-          &lt;/#if&gt;
-        &lt;/li&gt;
-      &lt;/#list&gt;
-      &lt;#if pollVotes.totalVotesPercentage != 100&gt;
-	      &lt;li&gt;
-	     	Due to rounding the percentages don't add up to 100%
-	      &lt;/li&gt;
-	  &lt;/#if&gt;
-    &lt;/ul&gt;
-
-    &lt;script  type="text/javascript"&gt;
-      if (&lt;#if voteSuccess?? &amp;&amp; voteSuccess == true&gt;1&lt;#else&gt;0&lt;/#if&gt;) {
-        hide("noCookieSupportMessage");
-      } else if (checkBrowserSupportsCookies()) {
-        hide("noCookieSupportMessage");
-        hide("pollResults");
-      } else {
-        hide("pollDiv");
-        hide("pollResults");
-      }
-
-      function hide(id) {
-        var element = document.getElementById(id);
-        element.parentNode.removeChild(element);
-      }
-
-      function checkBrowserSupportsCookies() {
-        var cookieDate=new Date();
-        var cookieString="testCookieSupport"+cookieDate.toUTCString();
-        document.cookie="testCookieSupport="+cookieString;
-        return document.cookie.length &gt; 0;
-      }
-    &lt;/script&gt;
-
-  &lt;#else&gt;
-    No poll available
-  &lt;/#if&gt;
-&lt;/div&gt;</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:templates/poll.component.ftl:
+      jcr:primaryType: hst:template
+      jcr:uuid: 8e1312b5-5756-4aba-aab3-54733e46741a
+      hst:script: "<#assign hst=JspTaglibs[\"http://www.hippoecm.org/jsp/hst/core\"\
+        ]>\n\n<div id=\"poll\">\n  <#if pollDocument??>\n    <#if pollDocument.poll.text??>\n\
+        \      <h3>${pollDocument.poll.text}</h3>\n    </#if>\n    <span id=\"noCookieSupportMessage\"\
+        >The poll cannot be shown because the browser does not support cookies</span>\n\
+        \n    <#-- Render Poll Form if not yet voted (voteSuccess not defined) or\
+        \ voting failed (voteSuccess is false) -->\n    <#if !(voteSuccess??) || voteSuccess\
+        \ == false>\n      <div id=\"pollDiv\">\n        <#if pollDocument.poll.introduction??>\n\
+        \          <p id=\"\">${pollDocument.poll.introduction}</p>\n        </#if>\n\
+        \n        <!-- The Poll -->\n        <form id=\"form-poll\" method=\"post\"\
+        \ action=\"<@hst.actionURL />\">\n          <input type=\"hidden\" name=\"\
+        path\" value=\"${path}\"/>\n          <div>\n            <#list pollDocument.poll.options\
+        \ as curOption>\n              <div>\n                <input id=\"${curOption.value}\"\
+        \ name=\"option\" type=\"radio\" value=\"${curOption.value}\"\n          \
+        \             <#if option?? && curOption == option>selected=\"true\"</#if>\
+        \ />\n                <label for=\"${curOption.value}\">${curOption.label}</label>\n\
+        \              </div>\n            </#list>\n          </div>\n          <button\
+        \ class=\"submit\" type=\"submit\">Vote</button>\n          <#if voteSuccess??>\
+        \ <#-- Implies voteSuccess == \"false\" -->\n            <div>Sorry, processing\
+        \ the vote has failed</div>\n          </#if>\n        </form>\n      </div>\n\
+        \    </#if>\n\n    <ul id=\"pollResults\" class=\"poll-results-list\">\n \
+        \     <#list pollVotes.options as curOption>\n        <li>\n          <div\
+        \ class=\"poll-graph-bar\">\n            <span class=\"poll-meter\" style=\"\
+        width: ${curOption.votesPercentage}%\"> </span>\n          </div>\n      \
+        \    <#if curOption.votesCount == 1>\n            ${curOption.label} - ${curOption.votesPercentage}%\
+        \ (${curOption.votesCount} vote)\n          <#else>\n            ${curOption.label}\
+        \ - ${curOption.votesPercentage}% (${curOption.votesCount} votes)\n      \
+        \    </#if>\n        </li>\n      </#list>\n      <#if pollVotes.totalVotesPercentage\
+        \ != 100>\n\t      <li>\n\t     \tDue to rounding the percentages don't add\
+        \ up to 100%\n\t      </li>\n\t  </#if>\n    </ul>\n\n    <script  type=\"\
+        text/javascript\">\n      if (<#if voteSuccess?? && voteSuccess == true>1<#else>0</#if>)\
+        \ {\n        hide(\"noCookieSupportMessage\");\n      } else if (checkBrowserSupportsCookies())\
+        \ {\n        hide(\"noCookieSupportMessage\");\n        hide(\"pollResults\"\
+        );\n      } else {\n        hide(\"pollDiv\");\n        hide(\"pollResults\"\
+        );\n      }\n\n      function hide(id) {\n        var element = document.getElementById(id);\n\
+        \        element.parentNode.removeChild(element);\n      }\n\n      function\
+        \ checkBrowserSupportsCookies() {\n        var cookieDate=new Date();\n  \
+        \      var cookieString=\"testCookieSupport\"+cookieDate.toUTCString();\n\
+        \        document.cookie=\"testCookieSupport=\"+cookieString;\n        return\
+        \ document.cookie.length > 0;\n      }\n    </script>\n\n  <#else>\n    No\
+        \ poll available\n  </#if>\n</div>"

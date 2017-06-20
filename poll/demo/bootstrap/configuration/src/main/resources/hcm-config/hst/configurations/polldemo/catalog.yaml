@@ -1,39 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:catalog">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:catalog</sv:value>
-  </sv:property>
-  <sv:node sv:name="polldemo-catalog">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:containeritempackage</sv:value>
-    </sv:property>
-    <sv:node sv:name="custompoll">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containeritemcomponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.plugins.polldemo.components.CustomPollDocumentComponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:label" sv:type="String">
-        <sv:value>Custom Poll</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
-        <sv:value>poll-pollCompoundName</sv:value>
-        <sv:value>poll-docsPath</sv:value>
-        <sv:value>poll-dataPath</sv:value>
-        <sv:value>poll-docsClass</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
-        <sv:value>polldemo:poll</sv:value>
-        <sv:value>/</sv:value>
-        <sv:value>polldata</sv:value>
-        <sv:value>org.onehippo.plugins.polldemo.beans.CustomPollDocument</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>custompoll-component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.Item</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/polldemo/hst:catalog:
+      jcr:primaryType: hst:catalog
+      /polldemo-catalog:
+        jcr:primaryType: hst:containeritempackage
+        /custompoll:
+          jcr:primaryType: hst:containeritemcomponent
+          hst:componentclassname: org.onehippo.plugins.polldemo.components.CustomPollDocumentComponent
+          hst:label: Custom Poll
+          hst:parameternames: [poll-pollCompoundName, poll-docsPath, poll-dataPath,
+            poll-docsClass]
+          hst:parametervalues: ['polldemo:poll', /, polldata, org.onehippo.plugins.polldemo.beans.CustomPollDocument]
+          hst:template: custompoll-component
+          hst:xtype: HST.Item

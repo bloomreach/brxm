@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:esv="http://www.onehippo.org/jcr/xmlimport" sv:name="hst:catalog" esv:merge="combine">
-  <sv:node sv:name="essentials-catalog">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:containeritempackage</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:catalog:
+      /essentials-catalog:
+        jcr:primaryType: hst:containeritempackage

@@ -1,25 +1,23 @@
-{
-  "hippo:types": {
-    "poll:option": {
-      "en": {
-        "poll:value": "Value",
-        "jcr:name": "Option",
-        "poll:label": "Label"
-      }
-    },
-    "poll:poll": {
-      "en": {
-        "poll:introduction": "Introduction (optional)",
-        "poll:options": "Options",
-        "jcr:name": "Poll Compound",
-        "poll:text": "Text"
-      }
-    },
-    "poll:polldocument": {
-      "en": {
-        "jcr:name": "Poll",
-        "poll:poll": "Poll"
-      }
-    }
-  }
-}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/poll:option:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Option
+        poll:label: Label
+        poll:value: Value
+    /hippo:configuration/hippo:translations/hippo:types/poll:poll:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Poll Compound
+        poll:introduction: Introduction (optional)
+        poll:options: Options
+        poll:text: Text
+    /hippo:configuration/hippo:translations/hippo:types/poll:polldocument:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Poll
+        poll:poll: Poll

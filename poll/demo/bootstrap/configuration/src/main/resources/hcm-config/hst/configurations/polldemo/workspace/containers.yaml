@@ -1,144 +1,54 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:containers">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:containercomponentfolder</sv:value>
-  </sv:property>
-  <sv:node sv:name="base">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:containercomponentfolder</sv:value>
-    </sv:property>
-    <sv:node sv:name="top">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containercomponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:label" sv:type="String">
-        <sv:value>Top</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.Span</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="footer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containercomponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:label" sv:type="String">
-        <sv:value>Footer</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.vBox</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="homepage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:containercomponentfolder</sv:value>
-    </sv:property>
-    <sv:node sv:name="main">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containercomponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:label" sv:type="String">
-        <sv:value>Home Page Main</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:lastmodified" sv:type="Date">
-        <sv:value>2016-08-19T13:01:47.489+02:00</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.vBox</sv:value>
-      </sv:property>
-      <sv:node sv:name="poll">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containeritemcomponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-          <sv:value>org.onehippo.forge.poll.component.PollDocumentComponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:iconpath" sv:type="String">
-          <sv:value>resources/poll/catalog-poll.png</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:label" sv:type="String">
-          <sv:value>Poll</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
-          <sv:value>poll-pollCompoundName</sv:value>
-          <sv:value>poll-dataPath</sv:value>
-          <sv:value>poll-docsPath</sv:value>
-          <sv:value>poll-docsClass</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
-          <sv:value>poll:poll</sv:value>
-          <sv:value>polldata</sv:value>
-          <sv:value>/content/documents/polldemo/polls/example-poll</sv:value>
-          <sv:value>org.onehippo.forge.poll.contentbean.PollDocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-          <sv:value>poll.component.ftl</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:xtype" sv:type="String">
-          <sv:value>HST.Item</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="pagenotfound">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:containercomponentfolder</sv:value>
-    </sv:property>
-    <sv:node sv:name="main">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containercomponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:label" sv:type="String">
-        <sv:value>Page-Not-Found Main</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.vBox</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="custompoll">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:containercomponentfolder</sv:value>
-    </sv:property>
-    <sv:node sv:name="main">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containercomponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:lastmodified" sv:type="Date">
-        <sv:value>2016-08-19T13:01:47.489+02:00</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.vBox</sv:value>
-      </sv:property>
-      <sv:node sv:name="custompoll">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containeritemcomponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-          <sv:value>org.onehippo.plugins.polldemo.components.CustomPollDocumentComponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:label" sv:type="String">
-          <sv:value>Custom Poll</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
-          <sv:value>poll-pollCompoundName</sv:value>
-          <sv:value>poll-dataPath</sv:value>
-          <sv:value>poll-docsPath</sv:value>
-          <sv:value>poll-docsClass</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
-          <sv:value>polldemo:poll</sv:value>
-          <sv:value>polldata</sv:value>
-          <sv:value>/content/documents/polldemo/polls/custom-example-poll</sv:value>
-          <sv:value>org.onehippo.plugins.polldemo.beans.CustomPollDocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-          <sv:value>custompoll-component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:xtype" sv:type="String">
-          <sv:value>HST.Item</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/polldemo/hst:workspace/hst:containers:
+      jcr:primaryType: hst:containercomponentfolder
+      /base:
+        jcr:primaryType: hst:containercomponentfolder
+        /top:
+          jcr:primaryType: hst:containercomponent
+          hst:label: Top
+          hst:xtype: HST.Span
+        /footer:
+          jcr:primaryType: hst:containercomponent
+          hst:label: Footer
+          hst:xtype: HST.vBox
+      /homepage:
+        jcr:primaryType: hst:containercomponentfolder
+        /main:
+          jcr:primaryType: hst:containercomponent
+          hst:label: Home Page Main
+          hst:lastmodified: 2016-08-19T13:01:47.489+02:00
+          hst:xtype: HST.vBox
+          /poll:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentclassname: org.onehippo.forge.poll.component.PollDocumentComponent
+            hst:iconpath: resources/poll/catalog-poll.png
+            hst:label: Poll
+            hst:parameternames: [poll-pollCompoundName, poll-dataPath, poll-docsPath,
+              poll-docsClass]
+            hst:parametervalues: ['poll:poll', polldata, /content/documents/polldemo/polls/example-poll,
+              org.onehippo.forge.poll.contentbean.PollDocument]
+            hst:template: poll.component.ftl
+            hst:xtype: HST.Item
+      /pagenotfound:
+        jcr:primaryType: hst:containercomponentfolder
+        /main:
+          jcr:primaryType: hst:containercomponent
+          hst:label: Page-Not-Found Main
+          hst:xtype: HST.vBox
+      /custompoll:
+        jcr:primaryType: hst:containercomponentfolder
+        /main:
+          jcr:primaryType: hst:containercomponent
+          hst:lastmodified: 2016-08-19T13:01:47.489+02:00
+          hst:xtype: HST.vBox
+          /custompoll:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentclassname: org.onehippo.plugins.polldemo.components.CustomPollDocumentComponent
+            hst:label: Custom Poll
+            hst:parameternames: [poll-pollCompoundName, poll-dataPath, poll-docsPath,
+              poll-docsClass]
+            hst:parametervalues: ['polldemo:poll', polldata, /content/documents/polldemo/polls/custom-example-poll,
+              org.onehippo.plugins.polldemo.beans.CustomPollDocument]
+            hst:template: custompoll-component
+            hst:xtype: HST.Item

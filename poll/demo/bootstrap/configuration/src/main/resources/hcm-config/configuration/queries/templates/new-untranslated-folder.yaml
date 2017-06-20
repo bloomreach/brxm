@@ -1,45 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="new-untranslated-folder">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippostd:templatequery</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>hipposys:implementation</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippostd:icon" sv:type="String">
-    <sv:value>addfolder_ico</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippostd:modify" sv:type="String" sv:multiple="true">
-    <sv:value>./_name</sv:value>
-    <sv:value>$name</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:classname" sv:type="String">
-    <sv:value>org.hippoecm.repository.impl.query.DirectPath</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:language" sv:type="String">
-    <sv:value>xpath</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:statement" sv:type="String">
-    <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-untranslated-folder/hippostd:templates/node()
-    </sv:value>
-  </sv:property>
-  <sv:node sv:name="hippostd:templates">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippostd:templates</sv:value>
-    </sv:property>
-    <sv:node sv:name="hippostd:folder">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:folder</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:versionable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>92eb469f-636c-4e88-a5f4-2839491523fb</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-        <sv:value>new-resource-bundle</sv:value>
-        <sv:value>new-untranslated-folder</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:queries/hippo:templates/new-untranslated-folder:
+      jcr:primaryType: hippostd:templatequery
+      jcr:mixinTypes: ['hipposys:implementation']
+      hippostd:icon: addfolder_ico
+      hippostd:modify: [./_name, $name]
+      hipposys:classname: org.hippoecm.repository.impl.query.DirectPath
+      jcr:language: xpath
+      jcr:statement: "/jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-untranslated-folder/hippostd:templates/node()\n\
+        \    "
+      /hippostd:templates:
+        jcr:primaryType: hippostd:templates
+        /hippostd:folder:
+          jcr:primaryType: hippostd:folder
+          jcr:mixinTypes: ['mix:versionable']
+          jcr:uuid: 92eb469f-636c-4e88-a5f4-2839491523fb
+          hippostd:foldertype: [new-resource-bundle, new-untranslated-folder]

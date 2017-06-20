@@ -1,26 +1,28 @@
-{"hippo:templates": {
-  "en":   {
-    "new-resource-bundle": "new resource bundle",
-    "new-untranslated-folder": "new untranslated folder",
-    "new-poll-folder": "new poll folder",
-    "new-poll-document": "new poll document"
-  },
-  "nl":   {
-    "new-resource-bundle": "nieuwe resource bundle",
-    "new-untranslated-folder": "nieuwe onvertaalde map",
-    "new-poll-folder": "nieuwe pollmap",
-    "new-poll-document": "nieuwe poll"
-  },
-  "de":   {
-    "new-resource-bundle": "Neues Resource-Bundle",
-    "new-untranslated-folder": "Neuer nicht übersetzter Ordner",
-    "new-poll-folder": "Neuer Poll-Ordner",
-    "new-poll-document": "Neue Poll"
-  },
-  "fr":   {
-    "new-resource-bundle": "nouveau resource bundle",
-    "new-untranslated-folder": "nouveau dossier non traduit",
-    "new-poll-folder": "nouveau dossier sondage",
-    "new-poll-document": "nouveau sondage"
-  }
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      jcr:primaryType: hipposys:resourcebundles
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        new-poll-document: Neue Poll
+        new-poll-folder: Neuer Poll-Ordner
+        new-resource-bundle: Neues Resource-Bundle
+        new-untranslated-folder: Neuer nicht übersetzter Ordner
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        new-poll-document: new poll document
+        new-poll-folder: new poll folder
+        new-resource-bundle: new resource bundle
+        new-untranslated-folder: new untranslated folder
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        new-poll-document: nouveau sondage
+        new-poll-folder: nouveau dossier sondage
+        new-resource-bundle: nouveau resource bundle
+        new-untranslated-folder: nouveau dossier non traduit
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        new-poll-document: nieuwe poll
+        new-poll-folder: nieuwe pollmap
+        new-resource-bundle: nieuwe resource bundle
+        new-untranslated-folder: nieuwe onvertaalde map

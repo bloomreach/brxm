@@ -1,9 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="polldata" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>poll:polldata</sv:value>
-  </sv:property>
-  <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>mix:lockable</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /polldata:
+      .meta:residual-child-node-category: runtime
+      jcr:primaryType: poll:polldata
+      jcr:mixinTypes: ['hippo:lockable', 'mix:lockable']
+      hippo:lockExpirationTime:
+        .meta:category: runtime
+      jcr:lockOwner:
+        .meta:category: runtime
+      jcr:lockIsDeep:
+        .meta:category: runtime
