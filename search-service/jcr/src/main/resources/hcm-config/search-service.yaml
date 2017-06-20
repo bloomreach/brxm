@@ -1,26 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
- Copyright 2016 Hippo B.V. (http://www.onehippo.com)
--->
-<sv:node sv:name="search-service" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:module</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:className" sv:type="String">
-    <sv:value>org.onehippo.cms7.services.search.jcr.service.SearchServiceModule</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:cmsonly" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
-  <sv:node sv:name="hippo:moduleconfig">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:moduleconfig</sv:value>
-    </sv:property>
-    <sv:property sv:name="wildcard.postfix.enabled" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="wildcard.postfix.minlength" sv:type="Long">
-      <sv:value>3</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/search-service:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.cms7.services.search.jcr.service.SearchServiceModule
+      hipposys:cmsonly: true
+      /hippo:moduleconfig:
+        jcr:primaryType: hipposys:moduleconfig
+        wildcard.postfix.enabled: true
+        wildcard.postfix.minlength: 3

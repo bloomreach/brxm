@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-addon-search-service
+    after: hippo-repository
+module: hippo-search-service-jcr
