@@ -1,715 +1,316 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="news">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippostd:folder</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>hippotranslation:translated</sv:value>
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>5f23ded9-d96b-420d-821a-2fd807062693</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-    <sv:value>new-news-folder</sv:value>
-    <sv:value>new-news-document</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippotranslation:id" sv:type="String">
-    <sv:value>498fa3e1-9b77-41c3-a4a0-a249a7137b1a</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippotranslation:locale" sv:type="String">
-    <sv:value>en</sv:value>
-  </sv:property>
-  <sv:node sv:name="2014">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippostd:folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>hippotranslation:translated</sv:value>
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>eaaf2a22-2e40-4c82-8f6e-4eeaa9d44ac9</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-      <sv:value>new-news-folder</sv:value>
-      <sv:value>new-news-document</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:id" sv:type="String">
-      <sv:value>e5c5598f-a4b4-4345-aba5-422f528b6c4f</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:locale" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:node sv:name="12">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:folder</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippotranslation:translated</sv:value>
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>b8b1cb19-681f-45b5-83ad-9057fa9e23a5</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-        <sv:value>new-news-folder</sv:value>
-        <sv:value>new-news-document</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>6157550e-7dca-4b64-81d4-af795fe405e5</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippotranslation:locale" sv:type="String">
-        <sv:value>en</sv:value>
-      </sv:property>
-      <sv:node sv:name="the-medusa-news">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:handle</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>hippo:named</sv:value>
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>c580ac64-3874-4717-a6d9-e5ad72080abe</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:name" sv:type="String">
-          <sv:value>The medusa news</sv:value>
-        </sv:property>
-        <sv:node sv:name="the-medusa-news">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>dashboarddocumentwizarddemo:newsdocument</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>mix:referenceable</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>fb670399-5482-4b83-8e7d-358ff83a8485</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:author" sv:type="String">
-            <sv:value>OBO</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:date" sv:type="Date">
-            <sv:value>2014-12-11T11:11:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:documenttype" sv:type="String">
-            <sv:value>news</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:introduction" sv:type="String">
-            <sv:value>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:location" sv:type="String">
-            <sv:value>AMS</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:source" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:title" sv:type="String">
-            <sv:value>The medusa news</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-            <sv:value>live</sv:value>
-            <sv:value>preview</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-            <sv:value>news/2014/12/the-medusa-news</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:holder" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:state" sv:type="String">
-            <sv:value>published</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-            <sv:value>live</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-            <sv:value>2013-11-12T13:03:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-            <sv:value>2013-11-12T13:04:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-            <sv:value>2013-11-12T13:04:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:id" sv:type="String">
-            <sv:value>5abef487-8c0b-4e65-8ace-37eeba0bc86e</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:locale" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:node sv:name="dashboarddocumentwizarddemo:content">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:html</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:content" sv:type="String">
-              <sv:value>&lt;html&gt;
-          &lt;body&gt;
+/content/documents/dashboarddocumentwizarddemo/news:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+  jcr:uuid: 5f23ded9-d96b-420d-821a-2fd807062693
+  hippostd:foldertype: [new-news-folder, new-news-document]
+  hippotranslation:id: 498fa3e1-9b77-41c3-a4a0-a249a7137b1a
+  hippotranslation:locale: en
+  /2014:
+    jcr:primaryType: hippostd:folder
+    jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+    jcr:uuid: eaaf2a22-2e40-4c82-8f6e-4eeaa9d44ac9
+    hippostd:foldertype: [new-news-folder, new-news-document]
+    hippotranslation:id: e5c5598f-a4b4-4345-aba5-422f528b6c4f
+    hippotranslation:locale: en
+    /12:
+      jcr:primaryType: hippostd:folder
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: b8b1cb19-681f-45b5-83ad-9057fa9e23a5
+      hippostd:foldertype: [new-news-folder, new-news-document]
+      hippotranslation:id: 6157550e-7dca-4b64-81d4-af795fe405e5
+      hippotranslation:locale: en
+      /the-medusa-news:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        jcr:uuid: c580ac64-3874-4717-a6d9-e5ad72080abe
+        hippo:name: The medusa news
+        /the-medusa-news:
+          jcr:primaryType: dashboarddocumentwizarddemo:newsdocument
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: fb670399-5482-4b83-8e7d-358ff83a8485
+          dashboarddocumentwizarddemo:author: OBO
+          dashboarddocumentwizarddemo:date: 2014-12-11T11:11:00+01:00
+          dashboarddocumentwizarddemo:documenttype: news
+          dashboarddocumentwizarddemo:introduction: Lorem ipsum dolor sit amet, consectetur
+            adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
+            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+            qui officia deserunt mollit anim id est laborum
+          dashboarddocumentwizarddemo:location: AMS
+          dashboarddocumentwizarddemo:source: ''
+          dashboarddocumentwizarddemo:title: The medusa news
+          hippo:availability: [live, preview]
+          hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2013-11-12T13:03:00+01:00
+          hippostdpubwf:lastModificationDate: 2013-11-12T13:04:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2013-11-12T13:04:00+01:00
+          hippotranslation:id: 5abef487-8c0b-4e65-8ace-37eeba0bc86e
+          hippotranslation:locale: en
+          /dashboarddocumentwizarddemo:content:
+            jcr:primaryType: hippostd:html
+            hippostd:content: |-
+              <html>
+                        <body>
 
-          &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-          dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-          sunt in culpa qui officia deserunt mollit anim id est laborum&lt;/p&gt;
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum</p>
 
-          &lt;p&gt; &lt;/p&gt;
+                        <p> </p>
 
-          &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-          dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-          sunt in culpa qui officia deserunt mollit anim id est laborum&lt;/p&gt;
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum</p>
 
-          &lt;p&gt; &lt;/p&gt;
+                        <p> </p>
 
-          &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-          dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-          sunt in culpa qui officia deserunt mollit anim id est laborum &lt;/p&gt;
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum </p>
 
-          &lt;/body&gt;
-          &lt;/html&gt;</sv:value>
-            </sv:property>
-          </sv:node>
-          <sv:node sv:name="dashboarddocumentwizarddemo:image">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippogallerypicker:imagelink</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:docbase" sv:type="String">
-              <sv:value>4709f797-61ae-4c36-93d4-63b5d50fc200</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true"/>
-            <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
-            <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
-          </sv:node>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="2013-harvest">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:handle</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>hippo:named</sv:value>
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>30092f4e-2ef7-4c72-86a5-8ce895908937</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:name" sv:type="String">
-          <sv:value>2013 harvest</sv:value>
-        </sv:property>
-        <sv:node sv:name="2013-harvest">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>dashboarddocumentwizarddemo:newsdocument</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>mix:referenceable</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>ee82f199-b05f-4058-9bab-2dbabff5fc6b</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:author" sv:type="String">
-            <sv:value>obo</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:date" sv:type="Date">
-            <sv:value>2014-12-11T11:11:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:documenttype" sv:type="String">
-            <sv:value>news</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:introduction" sv:type="String">
-            <sv:value>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:location" sv:type="String">
-            <sv:value>AMS</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:source" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:title" sv:type="String">
-            <sv:value>2013 harvest</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-            <sv:value>live</sv:value>
-            <sv:value>preview</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-            <sv:value>news/2014/12/2013-harvest</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:holder" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:state" sv:type="String">
-            <sv:value>published</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-            <sv:value>live</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-            <sv:value>2013-11-12T14:31:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-            <sv:value>2013-11-12T14:31:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-            <sv:value>2013-11-12T14:31:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:id" sv:type="String">
-            <sv:value>e3482ce3-2181-40ad-89d5-4702be57b178</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:locale" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:node sv:name="dashboarddocumentwizarddemo:content">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:html</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:content" sv:type="String">
-              <sv:value>&lt;html&gt;
-          &lt;body&gt;
+                        </body>
+                        </html>
+          /dashboarddocumentwizarddemo:image:
+            jcr:primaryType: hippogallerypicker:imagelink
+            hippo:docbase: 4709f797-61ae-4c36-93d4-63b5d50fc200
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []
+      /2013-harvest:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        jcr:uuid: 30092f4e-2ef7-4c72-86a5-8ce895908937
+        hippo:name: 2013 harvest
+        /2013-harvest:
+          jcr:primaryType: dashboarddocumentwizarddemo:newsdocument
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: ee82f199-b05f-4058-9bab-2dbabff5fc6b
+          dashboarddocumentwizarddemo:author: obo
+          dashboarddocumentwizarddemo:date: 2014-12-11T11:11:00+01:00
+          dashboarddocumentwizarddemo:documenttype: news
+          dashboarddocumentwizarddemo:introduction: Lorem ipsum dolor sit amet, consectetur
+            adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
+            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+            qui officia deserunt mollit anim id est laborum
+          dashboarddocumentwizarddemo:location: AMS
+          dashboarddocumentwizarddemo:source: ''
+          dashboarddocumentwizarddemo:title: 2013 harvest
+          hippo:availability: [live, preview]
+          hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2013-11-12T14:31:00+01:00
+          hippostdpubwf:lastModificationDate: 2013-11-12T14:31:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2013-11-12T14:31:00+01:00
+          hippotranslation:id: e3482ce3-2181-40ad-89d5-4702be57b178
+          hippotranslation:locale: en
+          /dashboarddocumentwizarddemo:content:
+            jcr:primaryType: hippostd:html
+            hippostd:content: |-
+              <html>
+                        <body>
 
-          &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-          dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-          sunt in culpa qui officia deserunt mollit anim id est laborum&lt;/p&gt;
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum</p>
 
-          &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-          dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-          sunt in culpa qui officia deserunt mollit anim id est laborum&lt;/p&gt;
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum</p>
 
-          &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-          dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-          sunt in culpa qui officia deserunt mollit anim id est laborum &lt;/p&gt;
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum </p>
 
-          &lt;/body&gt;
-          &lt;/html&gt;</sv:value>
-            </sv:property>
-          </sv:node>
-          <sv:node sv:name="dashboarddocumentwizarddemo:image">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippogallerypicker:imagelink</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:docbase" sv:type="String">
-              <sv:value>beff458e-e07a-4065-8cad-8d96b67d13ec</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true"/>
-            <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
-            <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
-          </sv:node>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="the-gastropoda-news">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:handle</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>hippo:named</sv:value>
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>aeda2bcd-b21d-4ead-a2e6-c64a2ca051c8</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:name" sv:type="String">
-          <sv:value>The gastropoda news</sv:value>
-        </sv:property>
-        <sv:node sv:name="the-gastropoda-news">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>dashboarddocumentwizarddemo:newsdocument</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>mix:referenceable</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>4c5df868-2c26-492c-99b5-9c16e7a12cd9</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:author" sv:type="String">
-            <sv:value>OBO</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:date" sv:type="Date">
-            <sv:value>2014-12-11T11:11:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:documenttype" sv:type="String">
-            <sv:value>news</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:introduction" sv:type="String">
-            <sv:value>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:location" sv:type="String">
-            <sv:value>AMS</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:source" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:title" sv:type="String">
-            <sv:value>The gastropoda news</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-            <sv:value>live</sv:value>
-            <sv:value>preview</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-            <sv:value>news/2014/12/the-gastropoda-news</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:holder" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:state" sv:type="String">
-            <sv:value>published</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-            <sv:value>live</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-            <sv:value>2013-11-12T12:50:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-            <sv:value>2013-11-12T12:52:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-            <sv:value>2013-11-12T12:52:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:id" sv:type="String">
-            <sv:value>a26a5894-f1b1-4164-8ed9-90621622a777</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:locale" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:node sv:name="dashboarddocumentwizarddemo:content">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:html</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:content" sv:type="String">
-              <sv:value>&lt;html&gt;
-          &lt;body&gt;
+                        </body>
+                        </html>
+          /dashboarddocumentwizarddemo:image:
+            jcr:primaryType: hippogallerypicker:imagelink
+            hippo:docbase: beff458e-e07a-4065-8cad-8d96b67d13ec
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []
+      /the-gastropoda-news:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        jcr:uuid: aeda2bcd-b21d-4ead-a2e6-c64a2ca051c8
+        hippo:name: The gastropoda news
+        /the-gastropoda-news:
+          jcr:primaryType: dashboarddocumentwizarddemo:newsdocument
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 4c5df868-2c26-492c-99b5-9c16e7a12cd9
+          dashboarddocumentwizarddemo:author: OBO
+          dashboarddocumentwizarddemo:date: 2014-12-11T11:11:00+01:00
+          dashboarddocumentwizarddemo:documenttype: news
+          dashboarddocumentwizarddemo:introduction: Lorem ipsum dolor sit amet, consectetur
+            adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
+            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+            qui officia deserunt mollit anim id est laborum
+          dashboarddocumentwizarddemo:location: AMS
+          dashboarddocumentwizarddemo:source: ''
+          dashboarddocumentwizarddemo:title: The gastropoda news
+          hippo:availability: [live, preview]
+          hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2013-11-12T12:50:00+01:00
+          hippostdpubwf:lastModificationDate: 2013-11-12T12:52:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2013-11-12T12:52:00+01:00
+          hippotranslation:id: a26a5894-f1b1-4164-8ed9-90621622a777
+          hippotranslation:locale: en
+          /dashboarddocumentwizarddemo:content:
+            jcr:primaryType: hippostd:html
+            hippostd:content: |-
+              <html>
+                        <body>
 
-          &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-          dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-          sunt in culpa qui officia deserunt mollit anim id est laborum&lt;/p&gt;
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum</p>
 
-          &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-          dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-          sunt in culpa qui officia deserunt mollit anim id est laborum &lt;/p&gt;
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum </p>
 
-          &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-          dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-          sunt in culpa qui officia deserunt mollit anim id est laborum &lt;/p&gt;
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                        sunt in culpa qui officia deserunt mollit anim id est laborum </p>
 
-          &lt;/body&gt;
-          &lt;/html&gt;</sv:value>
-            </sv:property>
-          </sv:node>
-          <sv:node sv:name="dashboarddocumentwizarddemo:image">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippogallerypicker:imagelink</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:docbase" sv:type="String">
-              <sv:value>3c740fcf-8ec5-4f00-a713-ff96caa645c8</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true"/>
-            <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
-            <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
-          </sv:node>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="a-good-news">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:handle</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>hippo:named</sv:value>
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>68c26d44-61ab-4503-a3e6-6e91029de7dc</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:name" sv:type="String">
-          <sv:value>A good news</sv:value>
-        </sv:property>
-        <sv:node sv:name="a-good-news">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>dashboarddocumentwizarddemo:newsdocument</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>mix:referenceable</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>78cebd04-8294-40aa-a914-4310dcd43db3</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:author" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:date" sv:type="Date">
-            <sv:value>2014-12-11T11:57:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:documenttype" sv:type="String">
-            <sv:value>news</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:introduction" sv:type="String">
-            <sv:value>this is a good news</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:location" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:source" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:title" sv:type="String">
-            <sv:value>The good news</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true"/>
-          <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-            <sv:value>news/2014/12/a-good-news/a-good-news[3]</sv:value>
-            <sv:value>news/2014/12/a-good-news/a-good-news[2]</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:state" sv:type="String">
-            <sv:value>draft</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-            <sv:value>live</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-            <sv:value>2014-12-11T11:56:57.459+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-            <sv:value>2014-12-11T11:56:57.459+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:id" sv:type="String">
-            <sv:value>c6013d53-8f15-4674-a302-05db1ba22c6b</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:locale" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:node sv:name="dashboarddocumentwizarddemo:content">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:html</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:content" sv:type="String">
-              <sv:value>&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
-            </sv:property>
-          </sv:node>
-          <sv:node sv:name="dashboarddocumentwizarddemo:image">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippogallerypicker:imagelink</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:docbase" sv:type="String">
-              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true"/>
-            <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
-            <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
-          </sv:node>
-        </sv:node>
-        <sv:node sv:name="a-good-news">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>dashboarddocumentwizarddemo:newsdocument</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>mix:versionable</sv:value>
-            <sv:value>mix:referenceable</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>e226e117-726f-49b8-a1e5-f4a34fdccb27</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:author" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:date" sv:type="Date">
-            <sv:value>2014-12-11T11:57:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:documenttype" sv:type="String">
-            <sv:value>news</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:introduction" sv:type="String">
-            <sv:value>this is a good news</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:location" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:source" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:title" sv:type="String">
-            <sv:value>The good news</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-            <sv:value>preview</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-            <sv:value>news/2014/12/a-good-news/a-good-news[3]</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:state" sv:type="String">
-            <sv:value>unpublished</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-            <sv:value>live</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-            <sv:value>2014-12-11T11:56:57.459+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-            <sv:value>2014-12-11T11:57:16.090+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:id" sv:type="String">
-            <sv:value>c6013d53-8f15-4674-a302-05db1ba22c6b</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:locale" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:node sv:name="dashboarddocumentwizarddemo:content">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:html</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:content" sv:type="String">
-              <sv:value>&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
-            </sv:property>
-          </sv:node>
-          <sv:node sv:name="dashboarddocumentwizarddemo:image">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippogallerypicker:imagelink</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:docbase" sv:type="String">
-              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true"/>
-            <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
-            <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
-          </sv:node>
-        </sv:node>
-        <sv:node sv:name="a-good-news">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>dashboarddocumentwizarddemo:newsdocument</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-            <sv:value>mix:referenceable</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>66238bb5-57de-4f8a-b9a7-5431b64c5ea0</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:author" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:date" sv:type="Date">
-            <sv:value>2014-12-11T11:57:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:documenttype" sv:type="String">
-            <sv:value>news</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:introduction" sv:type="String">
-            <sv:value>this is a good news</sv:value>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:location" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:source" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="dashboarddocumentwizarddemo:title" sv:type="String">
-            <sv:value>The good news</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-            <sv:value>live</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-            <sv:value>news/2014/12/a-good-news/a-good-news[2]</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:state" sv:type="String">
-            <sv:value>published</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-            <sv:value>live</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-            <sv:value>2014-12-11T11:56:57.459+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-            <sv:value>2014-12-11T11:57:16.090+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-            <sv:value>2014-12-11T11:57:18.320+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:id" sv:type="String">
-            <sv:value>c6013d53-8f15-4674-a302-05db1ba22c6b</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:locale" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:node sv:name="dashboarddocumentwizarddemo:content">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:html</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:content" sv:type="String">
-              <sv:value>&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
-            </sv:property>
-          </sv:node>
-          <sv:node sv:name="dashboarddocumentwizarddemo:image">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippogallerypicker:imagelink</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:docbase" sv:type="String">
-              <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true"/>
-            <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
-            <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
-          </sv:node>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+                        </body>
+                        </html>
+          /dashboarddocumentwizarddemo:image:
+            jcr:primaryType: hippogallerypicker:imagelink
+            hippo:docbase: 3c740fcf-8ec5-4f00-a713-ff96caa645c8
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []
+      /a-good-news:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        jcr:uuid: 68c26d44-61ab-4503-a3e6-6e91029de7dc
+        hippo:name: A good news
+        /a-good-news[1]:
+          jcr:primaryType: dashboarddocumentwizarddemo:newsdocument
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 78cebd04-8294-40aa-a914-4310dcd43db3
+          dashboarddocumentwizarddemo:author: ''
+          dashboarddocumentwizarddemo:date: 2014-12-11T11:57:00+01:00
+          dashboarddocumentwizarddemo:documenttype: news
+          dashboarddocumentwizarddemo:introduction: this is a good news
+          dashboarddocumentwizarddemo:location: ''
+          dashboarddocumentwizarddemo:source: ''
+          dashboarddocumentwizarddemo:title: The good news
+          hippo:availability: []
+          hippostd:state: draft
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2014-12-11T11:56:57.459+01:00
+          hippostdpubwf:lastModificationDate: 2014-12-11T11:56:57.459+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippotranslation:id: c6013d53-8f15-4674-a302-05db1ba22c6b
+          hippotranslation:locale: en
+          /dashboarddocumentwizarddemo:content:
+            jcr:primaryType: hippostd:html
+            hippostd:content: <html><body></body></html>
+          /dashboarddocumentwizarddemo:image:
+            jcr:primaryType: hippogallerypicker:imagelink
+            hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []
+        /a-good-news[2]:
+          jcr:primaryType: dashboarddocumentwizarddemo:newsdocument
+          jcr:mixinTypes: ['mix:versionable', 'mix:referenceable']
+          jcr:uuid: e226e117-726f-49b8-a1e5-f4a34fdccb27
+          dashboarddocumentwizarddemo:author: ''
+          dashboarddocumentwizarddemo:date: 2014-12-11T11:57:00+01:00
+          dashboarddocumentwizarddemo:documenttype: news
+          dashboarddocumentwizarddemo:introduction: this is a good news
+          dashboarddocumentwizarddemo:location: ''
+          dashboarddocumentwizarddemo:source: ''
+          dashboarddocumentwizarddemo:title: The good news
+          hippo:availability: [preview]
+          hippostd:state: unpublished
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2014-12-11T11:56:57.459+01:00
+          hippostdpubwf:lastModificationDate: 2014-12-11T11:57:16.090+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippotranslation:id: c6013d53-8f15-4674-a302-05db1ba22c6b
+          hippotranslation:locale: en
+          /dashboarddocumentwizarddemo:content:
+            jcr:primaryType: hippostd:html
+            hippostd:content: <html><body></body></html>
+          /dashboarddocumentwizarddemo:image:
+            jcr:primaryType: hippogallerypicker:imagelink
+            hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []
+        /a-good-news[3]:
+          jcr:primaryType: dashboarddocumentwizarddemo:newsdocument
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 66238bb5-57de-4f8a-b9a7-5431b64c5ea0
+          dashboarddocumentwizarddemo:author: ''
+          dashboarddocumentwizarddemo:date: 2014-12-11T11:57:00+01:00
+          dashboarddocumentwizarddemo:documenttype: news
+          dashboarddocumentwizarddemo:introduction: this is a good news
+          dashboarddocumentwizarddemo:location: ''
+          dashboarddocumentwizarddemo:source: ''
+          dashboarddocumentwizarddemo:title: The good news
+          hippo:availability: [live]
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2014-12-11T11:56:57.459+01:00
+          hippostdpubwf:lastModificationDate: 2014-12-11T11:57:16.090+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2014-12-11T11:57:18.320+01:00
+          hippotranslation:id: c6013d53-8f15-4674-a302-05db1ba22c6b
+          hippotranslation:locale: en
+          /dashboarddocumentwizarddemo:content:
+            jcr:primaryType: hippostd:html
+            hippostd:content: <html><body></body></html>
+          /dashboarddocumentwizarddemo:image:
+            jcr:primaryType: hippogallerypicker:imagelink
+            hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []

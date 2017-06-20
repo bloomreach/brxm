@@ -1,42 +1,48 @@
-{
-  "hippo:templates":   {
-    "en":     {
-      "new-news-document": "new news item",
-      "new-news-folder": "new news folder",
-      "new-events-document": "new event",
-      "new-events-folder": "new events folder"
-    },
-    "nl":     {
-      "new-news-document": "nieuw nieuwsbericht",
-      "new-news-folder": "nieuwe nieuwsmap",
-      "new-events-document": "nieuw event",
-      "new-events-folder": "nieuwe eventsmap"
-    },
-    "de":     {
-      "new-news-document": "Neues News",
-      "new-events-document": "Neues Event"
-    },
-    "fr":     {
-      "new-news-document": "nouveau news",
-      "new-news-folder": "un nouveau dossier news",
-      "new-events-document": "nouveau event",
-      "new-events-folder": "un nouveau dossier events"
-    },
-    "it":     {
-      "new-news-document": "nouvo news",
-      "new-news-folder": "Nuova cartella news",
-      "new-events-document": "nouvo event",
-      "new-events-folder": "Nuova cartella events"
-    }
-  },
-  "hippo:types":   {
-    "dashboarddocumentwizarddemo:eventsdocument":     {
-      "en": {"jcr:name": "Event"},
-      "nl": {"jcr:name": "Event"}
-    },
-    "dashboarddocumentwizarddemo:newsdocument":     {
-      "en": {"jcr:name": "News Item"},
-      "nl": {"jcr:name": "Nieuwsbericht"}
-    }
-  }
-}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/dashboarddocumentwizarddemo:eventsdocument:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Event
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Event
+    /hippo:configuration/hippo:translations/hippo:types/dashboarddocumentwizarddemo:newsdocument:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: News Item
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Nieuwsbericht
+    /hippo:configuration/hippo:translations/hippo:templates:
+      jcr:primaryType: hipposys:resourcebundles
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        new-events-document: Neues Event
+        new-news-document: Neues News
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        new-events-document: new event
+        new-events-folder: new events folder
+        new-news-document: new news item
+        new-news-folder: new news folder
+      /it:
+        jcr:primaryType: hipposys:resourcebundle
+        new-events-document: nouvo event
+        new-events-folder: Nuova cartella events
+        new-news-document: nouvo news
+        new-news-folder: Nuova cartella news
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        new-events-document: nouveau event
+        new-events-folder: un nouveau dossier events
+        new-news-document: nouveau news
+        new-news-folder: un nouveau dossier news
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        new-events-document: nieuw event
+        new-events-folder: nieuwe eventsmap
+        new-news-document: nieuw nieuwsbericht
+        new-news-folder: nieuwe nieuwsmap

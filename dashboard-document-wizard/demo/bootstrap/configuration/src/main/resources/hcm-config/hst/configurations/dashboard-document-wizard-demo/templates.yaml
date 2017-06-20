@@ -1,61 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:templates">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:templates</sv:value>
-  </sv:property>
-  <sv:node sv:name="base-layout">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>freemarker/dashboarddocumentwizarddemo/base-layout.ftl</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="base-top-menu">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>freemarker/dashboarddocumentwizarddemo/base-top-menu.ftl</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="base-footer">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>freemarker/dashboarddocumentwizarddemo/base-footer.ftl</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="homepage-main">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>freemarker/dashboarddocumentwizarddemo/homepage-main.ftl</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="pagenotfound-main">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>freemarker/dashboarddocumentwizarddemo/pagenotfound-main.ftl</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="newspage-main">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>freemarker/dashboarddocumentwizarddemo/newspage-main.ftl</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="eventspage-main">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>freemarker/dashboarddocumentwizarddemo/eventspage-main.ftl</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/dashboarddocumentwizarddemo/hst:templates:
+      jcr:primaryType: hst:templates
+      /base-layout:
+        jcr:primaryType: hst:template
+        hst:renderpath: freemarker/dashboarddocumentwizarddemo/base-layout.ftl
+      /base-top-menu:
+        jcr:primaryType: hst:template
+        hst:renderpath: freemarker/dashboarddocumentwizarddemo/base-top-menu.ftl
+      /base-footer:
+        jcr:primaryType: hst:template
+        hst:renderpath: freemarker/dashboarddocumentwizarddemo/base-footer.ftl
+      /homepage-main:
+        jcr:primaryType: hst:template
+        hst:renderpath: freemarker/dashboarddocumentwizarddemo/homepage-main.ftl
+      /pagenotfound-main:
+        jcr:primaryType: hst:template
+        hst:renderpath: freemarker/dashboarddocumentwizarddemo/pagenotfound-main.ftl
+      /newspage-main:
+        jcr:primaryType: hst:template
+        hst:renderpath: freemarker/dashboarddocumentwizarddemo/newspage-main.ftl
+      /eventspage-main:
+        jcr:primaryType: hst:template
+        hst:renderpath: freemarker/dashboarddocumentwizarddemo/eventspage-main.ftl

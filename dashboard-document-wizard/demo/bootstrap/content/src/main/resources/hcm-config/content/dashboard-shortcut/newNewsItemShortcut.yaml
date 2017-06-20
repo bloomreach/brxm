@@ -1,71 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Copyright 2001-2010 Hippo (www.hippo.nl)
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-    implied.
-    See the License for the specific language governing permissions and
-    limitations under the License
-
--->
-<sv:node xmlns:frontend="http://www.onehippo.org/jcr/frontend/nt/2.0" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="newNewsItemShortcut">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:plugin</sv:value>
-  </sv:property>
-  <sv:property sv:name="baseFolder" sv:type="String">
-    <sv:value>/content/documents/dashboarddocumentwizarddemo/news</sv:value>
-  </sv:property>
-  <sv:property sv:name="browser.id" sv:type="String">
-    <sv:value>service.browse</sv:value>
-  </sv:property>
-  <sv:property sv:name="documentType" sv:type="String">
-    <sv:value>dashboarddocumentwizarddemo:newsdocument</sv:value>
-  </sv:property>
-  <sv:property sv:name="plugin.class" sv:type="String">
-    <sv:value>org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin</sv:value>
-  </sv:property>
-  <sv:property sv:name="wicket.id" sv:type="String">
-    <sv:value>shortcut</sv:value>
-  </sv:property>
-  <sv:property sv:name="workaround" sv:type="Long">
-    <sv:value>1</sv:value>
-  </sv:property>
-  <sv:node sv:name="nl">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:pluginconfig</sv:value>
-    </sv:property>
-    <sv:property sv:name="date-label" sv:type="String">
-      <sv:value>Jaar/maand-folders</sv:value>
-    </sv:property>
-    <sv:property sv:name="name-label" sv:type="String">
-      <sv:value>Naam document</sv:value>
-    </sv:property>
-    <sv:property sv:name="shortcut-link-label" sv:type="String">
-      <sv:value>Maak een nieuwsdocument aan</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="en">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:pluginconfig</sv:value>
-    </sv:property>
-    <sv:property sv:name="date-label" sv:type="String">
-      <sv:value>Year/month folders</sv:value>
-    </sv:property>
-    <sv:property sv:name="name-label" sv:type="String">
-      <sv:value>Doc name</sv:value>
-    </sv:property>
-    <sv:property sv:name="shortcut-link-label" sv:type="String">
-      <sv:value>Create a news document</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
-
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-dashshortcuts/newNewsItemShortcut:
+      jcr:primaryType: frontend:plugin
+      baseFolder: /content/documents/dashboarddocumentwizarddemo/news
+      browser.id: service.browse
+      documentType: dashboarddocumentwizarddemo:newsdocument
+      plugin.class: org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin
+      wicket.id: shortcut
+      workaround: 1
+      /nl:
+        jcr:primaryType: frontend:pluginconfig
+        date-label: Jaar/maand-folders
+        name-label: Naam document
+        shortcut-link-label: Maak een nieuwsdocument aan
+      /en:
+        jcr:primaryType: frontend:pluginconfig
+        date-label: Year/month folders
+        name-label: Doc name
+        shortcut-link-label: Create a news document

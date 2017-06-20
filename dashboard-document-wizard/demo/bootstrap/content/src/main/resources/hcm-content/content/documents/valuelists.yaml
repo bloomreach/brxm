@@ -1,108 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Copyright 2001-2010 Hippo (www.hippo.nl)
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-    implied.
-    See the License for the specific language governing permissions and
-    limitations under the License
-
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="valuelists">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippostd:folder</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-    <sv:value>new-folder</sv:value>
-    <sv:value>new-document</sv:value>
-  </sv:property>
-  <sv:node sv:name="eventtypes">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-
-    <sv:node sv:name="eventtypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>selection:valuelist</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>audition</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Audition</sv:value>
-        </sv:property>
-      </sv:node>
-
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>conference</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Conference</sv:value>
-        </sv:property>
-      </sv:node>
-
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>banquet</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Banquet</sv:value>
-        </sv:property>
-      </sv:node>
-
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>concert</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Concert</sv:value>
-        </sv:property>
-      </sv:node>
-
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>ceremony</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Ceremony</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+/content/documents/valuelists:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['mix:referenceable']
+  hippostd:foldertype: [new-folder, new-document]
+  /eventtypes:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    /eventtypes:
+      jcr:primaryType: selection:valuelist
+      jcr:mixinTypes: ['mix:referenceable']
+      /selection:listitem[1]:
+        jcr:primaryType: selection:listitem
+        selection:key: audition
+        selection:label: Audition
+      /selection:listitem[2]:
+        jcr:primaryType: selection:listitem
+        selection:key: conference
+        selection:label: Conference
+      /selection:listitem[3]:
+        jcr:primaryType: selection:listitem
+        selection:key: banquet
+        selection:label: Banquet
+      /selection:listitem[4]:
+        jcr:primaryType: selection:listitem
+        selection:key: concert
+        selection:label: Concert
+      /selection:listitem[5]:
+        jcr:primaryType: selection:listitem
+        selection:key: ceremony
+        selection:label: Ceremony

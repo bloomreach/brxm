@@ -1,70 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Copyright 2001-2010 Hippo (www.hippo.nl)
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-    implied.
-    See the License for the specific language governing permissions and
-    limitations under the License
-
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="newEventShortcut">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:plugin</sv:value>
-  </sv:property>
-  <sv:property sv:name="baseFolder" sv:type="String">
-    <sv:value>/content/documents/dashboarddocumentwizarddemo/events</sv:value>
-  </sv:property>
-  <sv:property sv:name="browser.id" sv:type="String">
-    <sv:value>service.browse</sv:value>
-  </sv:property>
-  <sv:property sv:name="classificationType" sv:type="String">
-    <sv:value>list</sv:value>
-  </sv:property>
-  <sv:property sv:name="documentType" sv:type="String">
-    <sv:value>dashboarddocumentwizarddemo:eventsdocument</sv:value>
-  </sv:property>
-  <sv:property sv:name="plugin.class" sv:type="String">
-    <sv:value>org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin</sv:value>
-  </sv:property>
-  <sv:property sv:name="valueListPath" sv:type="String">
-    <sv:value>/content/documents/valuelists/eventtypes</sv:value>
-  </sv:property>
-  <sv:property sv:name="wicket.id" sv:type="String">
-    <sv:value>shortcut</sv:value>
-  </sv:property>
-  <sv:property sv:name="workaround" sv:type="Long">
-    <sv:value>2</sv:value>
-  </sv:property>
-  <sv:node sv:name="nl">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:pluginconfig</sv:value>
-    </sv:property>
-    <sv:property sv:name="list-label" sv:type="String">
-      <sv:value>Thema</sv:value>
-    </sv:property>
-    <sv:property sv:name="shortcut-link-label" sv:type="String">
-      <sv:value>Maak een gebeurtenisdocument aan</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="en">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:pluginconfig</sv:value>
-    </sv:property>
-    <sv:property sv:name="list-label" sv:type="String">
-      <sv:value>Theme</sv:value>
-    </sv:property>
-    <sv:property sv:name="shortcut-link-label" sv:type="String">
-      <sv:value>Create an event document</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-dashshortcuts/newEventShortcut:
+      jcr:primaryType: frontend:plugin
+      baseFolder: /content/documents/dashboarddocumentwizarddemo/events
+      browser.id: service.browse
+      classificationType: list
+      documentType: dashboarddocumentwizarddemo:eventsdocument
+      plugin.class: org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin
+      valueListPath: /content/documents/valuelists/eventtypes
+      wicket.id: shortcut
+      workaround: 2
+      /nl:
+        jcr:primaryType: frontend:pluginconfig
+        list-label: Thema
+        shortcut-link-label: Maak een gebeurtenisdocument aan
+      /en:
+        jcr:primaryType: frontend:pluginconfig
+        list-label: Theme
+        shortcut-link-label: Create an event document

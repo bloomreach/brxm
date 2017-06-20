@@ -1,582 +1,198 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="events">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippostd:folder</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>hippotranslation:translated</sv:value>
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>5e81c718-35bd-48f4-b715-34f53acdf8b6</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-    <sv:value>new-events-folder</sv:value>
-    <sv:value>new-events-document</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippotranslation:id" sv:type="String">
-    <sv:value>402fd7e1-e2d0-4168-be30-fc9c05577728</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippotranslation:locale" sv:type="String">
-    <sv:value>en</sv:value>
-  </sv:property>
-  <sv:node sv:name="audition">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippostd:folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>hippotranslation:translated</sv:value>
-      <sv:value>mix:versionable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>714b9fff-d4be-4f71-aedc-21cfbfa549f5</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-      <sv:value>new-events-folder</sv:value>
-      <sv:value>new-events-document</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:id" sv:type="String">
-      <sv:value>159e6d40-81f1-453c-9e28-ca5cb0c0b74f</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:locale" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:node sv:name="karaoke-party">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:named</sv:value>
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>e9f12012-363c-4059-8dcb-4204a52e346f</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:name" sv:type="String">
-        <sv:value>Karaoke Party</sv:value>
-      </sv:property>
-      <sv:node sv:name="karaoke-party">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>dashboarddocumentwizarddemo:eventsdocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>06f97b40-0273-42da-9fb9-7f9221bc82e4</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:date" sv:type="Date">
-          <sv:value>2014-12-11T11:00:00.000+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:documenttype" sv:type="String">
-          <sv:value>event</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:enddate" sv:type="Date">
-          <sv:value>2014-12-11T14:00:00.000+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:introduction" sv:type="String">
-          <sv:value>Wanted: a good karaoke singer</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:location" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:title" sv:type="String">
-          <sv:value>Karaoke Singer</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true"/>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>events/audition/karaoke-party/karaoke-party[3]</sv:value>
-          <sv:value>events/audition/karaoke-party/karaoke-party[2]</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>draft</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:49:06.765+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:52:45.179+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>378dc750-fdf8-4b34-b71c-323b09240118</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:locale" sv:type="String">
-          <sv:value>en</sv:value>
-        </sv:property>
-        <sv:node sv:name="dashboarddocumentwizarddemo:content">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value>&lt;p&gt;If you,&lt;/p&gt; 
-&lt;p&gt;1. Can sing very well&lt;/p&gt; 
-&lt;p&gt;2. Knows lots of pop song&lt;/p&gt; 
-&lt;p&gt;&amp;nbsp;&lt;/p&gt; 
-&lt;p&gt;Please join the audition!&lt;/p&gt;</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="dashboarddocumentwizarddemo:image">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippogallerypicker:imagelink</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true"/>
-          <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
-          <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="karaoke-party">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>dashboarddocumentwizarddemo:eventsdocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:versionable</sv:value>
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>e4a5bafe-5a19-47e7-a28f-43070ce2d9f3</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:date" sv:type="Date">
-          <sv:value>2014-12-11T11:00:00.000+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:documenttype" sv:type="String">
-          <sv:value>event</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:enddate" sv:type="Date">
-          <sv:value>2014-12-11T14:00:00.000+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:introduction" sv:type="String">
-          <sv:value>Wanted: a good karaoke singer</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:location" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:title" sv:type="String">
-          <sv:value>Karaoke Singer</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-          <sv:value>preview</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>events/audition/karaoke-party/karaoke-party[3]</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>unpublished</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:49:06.765+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:54:34.094+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>378dc750-fdf8-4b34-b71c-323b09240118</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:locale" sv:type="String">
-          <sv:value>en</sv:value>
-        </sv:property>
-        <sv:node sv:name="dashboarddocumentwizarddemo:content">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value>&lt;p&gt;If you,&lt;/p&gt; 
-&lt;p&gt;1. Can sing very well&lt;/p&gt; 
-&lt;p&gt;2. Knows lots of pop song&lt;/p&gt; 
-&lt;p&gt;&amp;nbsp;&lt;/p&gt; 
-&lt;p&gt;Please join the audition!&lt;/p&gt;</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="dashboarddocumentwizarddemo:image">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippogallerypicker:imagelink</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true"/>
-          <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
-          <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="karaoke-party">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>dashboarddocumentwizarddemo:eventsdocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>c3b6dfcf-21fa-4b76-aa89-19b1d7fdf782</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:date" sv:type="Date">
-          <sv:value>2014-12-11T11:00:00.000+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:documenttype" sv:type="String">
-          <sv:value>event</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:enddate" sv:type="Date">
-          <sv:value>2014-12-11T14:00:00.000+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:introduction" sv:type="String">
-          <sv:value>Wanted: a good karaoke singer</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:location" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:title" sv:type="String">
-          <sv:value>Karaoke Singer</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>events/audition/karaoke-party/karaoke-party[2]</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>published</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:49:06.765+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:54:34.094+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:54:42.455+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>378dc750-fdf8-4b34-b71c-323b09240118</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:locale" sv:type="String">
-          <sv:value>en</sv:value>
-        </sv:property>
-        <sv:node sv:name="dashboarddocumentwizarddemo:content">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value>&lt;p&gt;If you,&lt;/p&gt; 
-&lt;p&gt;1. Can sing very well&lt;/p&gt; 
-&lt;p&gt;2. Knows lots of pop song&lt;/p&gt; 
-&lt;p&gt;&amp;nbsp;&lt;/p&gt; 
-&lt;p&gt;Please join the audition!&lt;/p&gt;</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="dashboarddocumentwizarddemo:image">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippogallerypicker:imagelink</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true"/>
-          <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
-          <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="concert">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippostd:folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>hippotranslation:translated</sv:value>
-      <sv:value>mix:versionable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>71088d0a-fab5-4762-b457-05104d6a68f2</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-      <sv:value>new-events-folder</sv:value>
-      <sv:value>new-events-document</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:id" sv:type="String">
-      <sv:value>70319e3c-4fd8-4f1c-a7ee-8e4433a7a215</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:locale" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:node sv:name="christmas-concert">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:named</sv:value>
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>abd75e92-6586-41cd-8e70-627e6dafc383</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:name" sv:type="String">
-        <sv:value>Christmas Concert</sv:value>
-      </sv:property>
-      <sv:node sv:name="christmas-concert">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>dashboarddocumentwizarddemo:eventsdocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>7d39eb35-5c82-4c99-9341-f57d74545729</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:date" sv:type="Date">
-          <sv:value>2014-12-25T14:00:00.000+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:documenttype" sv:type="String">
-          <sv:value>event</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:enddate" sv:type="Date">
-          <sv:value>2014-12-25T17:00:00.000+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:introduction" sv:type="String">
-          <sv:value>Carols for the whole family!</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:location" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:title" sv:type="String">
-          <sv:value>Christmas Concert</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true"/>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>events/concert/christmas-concert/christmas-concert[2]</sv:value>
-          <sv:value>events/concert/christmas-concert/christmas-concert[3]</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>draft</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:55:09.358+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:55:09.358+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>f66ddda6-1de2-467f-a2b5-1765a1c4d501</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:locale" sv:type="String">
-          <sv:value>en</sv:value>
-        </sv:property>
-        <sv:node sv:name="dashboarddocumentwizarddemo:content">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value>&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="dashboarddocumentwizarddemo:image">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippogallerypicker:imagelink</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true"/>
-          <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
-          <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="christmas-concert">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>dashboarddocumentwizarddemo:eventsdocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:versionable</sv:value>
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>6744caf0-d8cf-4eaa-8f2e-018b1f101f6d</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:date" sv:type="Date">
-          <sv:value>2014-12-25T14:00:00.000+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:documenttype" sv:type="String">
-          <sv:value>event</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:enddate" sv:type="Date">
-          <sv:value>2014-12-25T17:00:00.000+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:introduction" sv:type="String">
-          <sv:value>Carols for the whole family!</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:location" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:title" sv:type="String">
-          <sv:value>Christmas Concert</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-          <sv:value>preview</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>events/concert/christmas-concert/christmas-concert[3]</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>unpublished</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:55:09.358+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:56:01.158+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>f66ddda6-1de2-467f-a2b5-1765a1c4d501</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:locale" sv:type="String">
-          <sv:value>en</sv:value>
-        </sv:property>
-        <sv:node sv:name="dashboarddocumentwizarddemo:content">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value>&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="dashboarddocumentwizarddemo:image">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippogallerypicker:imagelink</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true"/>
-          <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
-          <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="christmas-concert">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>dashboarddocumentwizarddemo:eventsdocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>b56159b8-1bf1-418d-8771-62560c18a7e4</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:date" sv:type="Date">
-          <sv:value>2014-12-25T14:00:00.000+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:documenttype" sv:type="String">
-          <sv:value>event</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:enddate" sv:type="Date">
-          <sv:value>2014-12-25T17:00:00.000+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:introduction" sv:type="String">
-          <sv:value>Carols for the whole family!</sv:value>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:location" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="dashboarddocumentwizarddemo:title" sv:type="String">
-          <sv:value>Christmas Concert</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>events/concert/christmas-concert/christmas-concert[2]</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>published</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:55:09.358+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:56:01.158+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-          <sv:value>2014-12-11T11:56:04.394+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>f66ddda6-1de2-467f-a2b5-1765a1c4d501</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:locale" sv:type="String">
-          <sv:value>en</sv:value>
-        </sv:property>
-        <sv:node sv:name="dashboarddocumentwizarddemo:content">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value>&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="dashboarddocumentwizarddemo:image">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippogallerypicker:imagelink</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true"/>
-          <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true"/>
-          <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true"/>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+/content/documents/dashboarddocumentwizarddemo/events:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+  jcr:uuid: 5e81c718-35bd-48f4-b715-34f53acdf8b6
+  hippostd:foldertype: [new-events-folder, new-events-document]
+  hippotranslation:id: 402fd7e1-e2d0-4168-be30-fc9c05577728
+  hippotranslation:locale: en
+  /audition:
+    jcr:primaryType: hippostd:folder
+    jcr:mixinTypes: ['hippotranslation:translated', 'mix:versionable']
+    jcr:uuid: 714b9fff-d4be-4f71-aedc-21cfbfa549f5
+    hippostd:foldertype: [new-events-folder, new-events-document]
+    hippotranslation:id: 159e6d40-81f1-453c-9e28-ca5cb0c0b74f
+    hippotranslation:locale: en
+    /karaoke-party:
+      jcr:primaryType: hippo:handle
+      jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+      jcr:uuid: e9f12012-363c-4059-8dcb-4204a52e346f
+      hippo:name: Karaoke Party
+      /karaoke-party[1]:
+        jcr:primaryType: dashboarddocumentwizarddemo:eventsdocument
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 06f97b40-0273-42da-9fb9-7f9221bc82e4
+        dashboarddocumentwizarddemo:date: 2014-12-11T11:00:00+01:00
+        dashboarddocumentwizarddemo:documenttype: event
+        dashboarddocumentwizarddemo:enddate: 2014-12-11T14:00:00+01:00
+        dashboarddocumentwizarddemo:introduction: 'Wanted: a good karaoke singer'
+        dashboarddocumentwizarddemo:location: ''
+        dashboarddocumentwizarddemo:title: Karaoke Singer
+        hippo:availability: []
+        hippostd:state: draft
+        hippostdpubwf:createdBy: admin
+        hippostdpubwf:creationDate: 2014-12-11T11:49:06.765+01:00
+        hippostdpubwf:lastModificationDate: 2014-12-11T11:52:45.179+01:00
+        hippostdpubwf:lastModifiedBy: admin
+        hippotranslation:id: 378dc750-fdf8-4b34-b71c-323b09240118
+        hippotranslation:locale: en
+        /dashboarddocumentwizarddemo:content:
+          jcr:primaryType: hippostd:html
+          hippostd:content: "<p>If you,</p> \n<p>1. Can sing very well</p> \n<p>2.\
+            \ Knows lots of pop song</p> \n<p>&nbsp;</p> \n<p>Please join the audition!</p>"
+        /dashboarddocumentwizarddemo:image:
+          jcr:primaryType: hippogallerypicker:imagelink
+          hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+          hippo:facets: []
+          hippo:modes: []
+          hippo:values: []
+      /karaoke-party[2]:
+        jcr:primaryType: dashboarddocumentwizarddemo:eventsdocument
+        jcr:mixinTypes: ['mix:versionable', 'mix:referenceable']
+        jcr:uuid: e4a5bafe-5a19-47e7-a28f-43070ce2d9f3
+        dashboarddocumentwizarddemo:date: 2014-12-11T11:00:00+01:00
+        dashboarddocumentwizarddemo:documenttype: event
+        dashboarddocumentwizarddemo:enddate: 2014-12-11T14:00:00+01:00
+        dashboarddocumentwizarddemo:introduction: 'Wanted: a good karaoke singer'
+        dashboarddocumentwizarddemo:location: ''
+        dashboarddocumentwizarddemo:title: Karaoke Singer
+        hippo:availability: [preview]
+        hippostd:state: unpublished
+        hippostdpubwf:createdBy: admin
+        hippostdpubwf:creationDate: 2014-12-11T11:49:06.765+01:00
+        hippostdpubwf:lastModificationDate: 2014-12-11T11:54:34.094+01:00
+        hippostdpubwf:lastModifiedBy: admin
+        hippotranslation:id: 378dc750-fdf8-4b34-b71c-323b09240118
+        hippotranslation:locale: en
+        /dashboarddocumentwizarddemo:content:
+          jcr:primaryType: hippostd:html
+          hippostd:content: "<p>If you,</p> \n<p>1. Can sing very well</p> \n<p>2.\
+            \ Knows lots of pop song</p> \n<p>&nbsp;</p> \n<p>Please join the audition!</p>"
+        /dashboarddocumentwizarddemo:image:
+          jcr:primaryType: hippogallerypicker:imagelink
+          hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+          hippo:facets: []
+          hippo:modes: []
+          hippo:values: []
+      /karaoke-party[3]:
+        jcr:primaryType: dashboarddocumentwizarddemo:eventsdocument
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: c3b6dfcf-21fa-4b76-aa89-19b1d7fdf782
+        dashboarddocumentwizarddemo:date: 2014-12-11T11:00:00+01:00
+        dashboarddocumentwizarddemo:documenttype: event
+        dashboarddocumentwizarddemo:enddate: 2014-12-11T14:00:00+01:00
+        dashboarddocumentwizarddemo:introduction: 'Wanted: a good karaoke singer'
+        dashboarddocumentwizarddemo:location: ''
+        dashboarddocumentwizarddemo:title: Karaoke Singer
+        hippo:availability: [live]
+        hippostd:state: published
+        hippostdpubwf:createdBy: admin
+        hippostdpubwf:creationDate: 2014-12-11T11:49:06.765+01:00
+        hippostdpubwf:lastModificationDate: 2014-12-11T11:54:34.094+01:00
+        hippostdpubwf:lastModifiedBy: admin
+        hippostdpubwf:publicationDate: 2014-12-11T11:54:42.455+01:00
+        hippotranslation:id: 378dc750-fdf8-4b34-b71c-323b09240118
+        hippotranslation:locale: en
+        /dashboarddocumentwizarddemo:content:
+          jcr:primaryType: hippostd:html
+          hippostd:content: "<p>If you,</p> \n<p>1. Can sing very well</p> \n<p>2.\
+            \ Knows lots of pop song</p> \n<p>&nbsp;</p> \n<p>Please join the audition!</p>"
+        /dashboarddocumentwizarddemo:image:
+          jcr:primaryType: hippogallerypicker:imagelink
+          hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+          hippo:facets: []
+          hippo:modes: []
+          hippo:values: []
+  /concert:
+    jcr:primaryType: hippostd:folder
+    jcr:mixinTypes: ['hippotranslation:translated', 'mix:versionable']
+    jcr:uuid: 71088d0a-fab5-4762-b457-05104d6a68f2
+    hippostd:foldertype: [new-events-folder, new-events-document]
+    hippotranslation:id: 70319e3c-4fd8-4f1c-a7ee-8e4433a7a215
+    hippotranslation:locale: en
+    /christmas-concert:
+      jcr:primaryType: hippo:handle
+      jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+      jcr:uuid: abd75e92-6586-41cd-8e70-627e6dafc383
+      hippo:name: Christmas Concert
+      /christmas-concert[1]:
+        jcr:primaryType: dashboarddocumentwizarddemo:eventsdocument
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 7d39eb35-5c82-4c99-9341-f57d74545729
+        dashboarddocumentwizarddemo:date: 2014-12-25T14:00:00+01:00
+        dashboarddocumentwizarddemo:documenttype: event
+        dashboarddocumentwizarddemo:enddate: 2014-12-25T17:00:00+01:00
+        dashboarddocumentwizarddemo:introduction: Carols for the whole family!
+        dashboarddocumentwizarddemo:location: ''
+        dashboarddocumentwizarddemo:title: Christmas Concert
+        hippo:availability: []
+        hippostd:state: draft
+        hippostdpubwf:createdBy: admin
+        hippostdpubwf:creationDate: 2014-12-11T11:55:09.358+01:00
+        hippostdpubwf:lastModificationDate: 2014-12-11T11:55:09.358+01:00
+        hippostdpubwf:lastModifiedBy: admin
+        hippotranslation:id: f66ddda6-1de2-467f-a2b5-1765a1c4d501
+        hippotranslation:locale: en
+        /dashboarddocumentwizarddemo:content:
+          jcr:primaryType: hippostd:html
+          hippostd:content: <html><body></body></html>
+        /dashboarddocumentwizarddemo:image:
+          jcr:primaryType: hippogallerypicker:imagelink
+          hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+          hippo:facets: []
+          hippo:modes: []
+          hippo:values: []
+      /christmas-concert[2]:
+        jcr:primaryType: dashboarddocumentwizarddemo:eventsdocument
+        jcr:mixinTypes: ['mix:versionable', 'mix:referenceable']
+        jcr:uuid: 6744caf0-d8cf-4eaa-8f2e-018b1f101f6d
+        dashboarddocumentwizarddemo:date: 2014-12-25T14:00:00+01:00
+        dashboarddocumentwizarddemo:documenttype: event
+        dashboarddocumentwizarddemo:enddate: 2014-12-25T17:00:00+01:00
+        dashboarddocumentwizarddemo:introduction: Carols for the whole family!
+        dashboarddocumentwizarddemo:location: ''
+        dashboarddocumentwizarddemo:title: Christmas Concert
+        hippo:availability: [preview]
+        hippostd:state: unpublished
+        hippostdpubwf:createdBy: admin
+        hippostdpubwf:creationDate: 2014-12-11T11:55:09.358+01:00
+        hippostdpubwf:lastModificationDate: 2014-12-11T11:56:01.158+01:00
+        hippostdpubwf:lastModifiedBy: admin
+        hippotranslation:id: f66ddda6-1de2-467f-a2b5-1765a1c4d501
+        hippotranslation:locale: en
+        /dashboarddocumentwizarddemo:content:
+          jcr:primaryType: hippostd:html
+          hippostd:content: <html><body></body></html>
+        /dashboarddocumentwizarddemo:image:
+          jcr:primaryType: hippogallerypicker:imagelink
+          hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+          hippo:facets: []
+          hippo:modes: []
+          hippo:values: []
+      /christmas-concert[3]:
+        jcr:primaryType: dashboarddocumentwizarddemo:eventsdocument
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: b56159b8-1bf1-418d-8771-62560c18a7e4
+        dashboarddocumentwizarddemo:date: 2014-12-25T14:00:00+01:00
+        dashboarddocumentwizarddemo:documenttype: event
+        dashboarddocumentwizarddemo:enddate: 2014-12-25T17:00:00+01:00
+        dashboarddocumentwizarddemo:introduction: Carols for the whole family!
+        dashboarddocumentwizarddemo:location: ''
+        dashboarddocumentwizarddemo:title: Christmas Concert
+        hippo:availability: [live]
+        hippostd:state: published
+        hippostdpubwf:createdBy: admin
+        hippostdpubwf:creationDate: 2014-12-11T11:55:09.358+01:00
+        hippostdpubwf:lastModificationDate: 2014-12-11T11:56:01.158+01:00
+        hippostdpubwf:lastModifiedBy: admin
+        hippostdpubwf:publicationDate: 2014-12-11T11:56:04.394+01:00
+        hippotranslation:id: f66ddda6-1de2-467f-a2b5-1765a1c4d501
+        hippotranslation:locale: en
+        /dashboarddocumentwizarddemo:content:
+          jcr:primaryType: hippostd:html
+          hippostd:content: <html><body></body></html>
+        /dashboarddocumentwizarddemo:image:
+          jcr:primaryType: hippogallerypicker:imagelink
+          hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+          hippo:facets: []
+          hippo:modes: []
+          hippo:values: []
