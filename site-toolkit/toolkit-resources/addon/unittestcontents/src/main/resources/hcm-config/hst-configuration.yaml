@@ -1,7 +1,6 @@
 definitions:
   config:
     /hst:hst/hst:configurations:
-      jcr:primaryType: hst:configurations
       /unittestcommon:
         jcr:primaryType: hst:configuration
       /unittestproject:
