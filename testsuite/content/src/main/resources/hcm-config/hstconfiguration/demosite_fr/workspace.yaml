@@ -1,60 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:workspace">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:workspace</sv:value>
-  </sv:property>
-  <sv:node sv:name="hst:containers">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:containercomponentfolder</sv:value>
-    </sv:property>
-    <sv:node sv:name="bodyhome">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:containercomponentfolder</sv:value>
-      </sv:property>
-      <sv:node sv:name="container-1">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containercomponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:xtype" sv:type="String">
-          <sv:value>HST.vBox</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="container-2">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containercomponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:xtype" sv:type="String">
-          <sv:value>HST.vBox</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="hst:channel">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:channel</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:channelinfoclass" sv:type="String">
-      <sv:value>org.hippoecm.hst.demo.channel.DemoChannelInfo</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:name" sv:type="String">
-      <sv:value>French Demo Site</sv:value>
-    </sv:property>
-    <sv:node sv:name="hst:channelinfo">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:channelinfo</sv:value>
-      </sv:property>
-      <sv:property sv:name="test" sv:type="String">
-        <sv:value>Some prop</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="hst:pages">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:pages</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hst:sitemap">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemap</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite_fr/hst:workspace:
+      jcr:primaryType: hst:workspace
+      /hst:containers:
+        jcr:primaryType: hst:containercomponentfolder
+        /bodyhome:
+          jcr:primaryType: hst:containercomponentfolder
+          /container-1:
+            jcr:primaryType: hst:containercomponent
+            hst:xtype: HST.vBox
+          /container-2:
+            jcr:primaryType: hst:containercomponent
+            hst:xtype: HST.vBox
+      /hst:channel:
+        jcr:primaryType: hst:channel
+        hst:channelinfoclass: org.hippoecm.hst.demo.channel.DemoChannelInfo
+        hst:name: French Demo Site
+        /hst:channelinfo:
+          jcr:primaryType: hst:channelinfo
+          test: Some prop
+      /hst:pages:
+        jcr:primaryType: hst:pages
+      /hst:sitemap:
+        jcr:primaryType: hst:sitemap

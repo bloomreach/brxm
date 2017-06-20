@@ -1,79 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-
-    Copyright (C) 2010 Hippo B.V.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-  sv:name="hst:sites">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:sites</sv:value>
-  </sv:property>
-
-  <sv:node sv:name="demosite">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents/demosite</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="demosite_fr">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents/demosite_fr</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="demosite_it">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents/demosite_it</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="demosite_de">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents/demosite_de</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="demosite_nl">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents/demosite_nl</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="demosite-test-many">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents/demosite</sv:value>
-    </sv:property>
-  </sv:node>
-
-</sv:node>
-  
-  
+definitions:
+  config:
+    /hst:hst/hst:sites:
+      jcr:primaryType: hst:sites
+      /demosite:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents/demosite
+      /demosite_fr:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents/demosite_fr
+      /demosite_it:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents/demosite_it
+      /demosite_de:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents/demosite_de
+      /demosite_nl:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents/demosite_nl
+      /demosite-test-many:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents/demosite

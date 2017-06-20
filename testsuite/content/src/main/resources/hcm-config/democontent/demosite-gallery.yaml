@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"  xmlns:h="http://www.onehippo.org/jcr/xmlimport" sv:name="gallery" h:merge="combine">
-  <sv:property sv:name="hippostd:gallerytype" sv:type="String" h:merge="override" sv:multiple="true">
-    <sv:value>demosite:qaimageset</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /content/gallery:
+      hippostd:gallerytype:
+        operation: override
+        type: string
+        value: ['demosite:qaimageset']

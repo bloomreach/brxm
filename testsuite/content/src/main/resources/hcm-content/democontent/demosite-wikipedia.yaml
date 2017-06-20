@@ -1,46 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="wikipedia">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippostd:folder</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>mix:referenceable</sv:value>
-    <sv:value>hippotranslation:translated</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>0d298512-4512-4ba0-b21d-600c20f706d9</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippostd:foldertype" sv:type="String">
-    <sv:value>new-translated-folder-demosite</sv:value>
-    <sv:value>new-document-demosite</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippotranslation:locale" sv:type="String">
-    <sv:value>en</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippotranslation:id" sv:type="String">
-    <sv:value>demosite-wikipedia-folder-id</sv:value>
-  </sv:property>
-  <sv:node sv:name="faceted">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippofacnav:facetnavigation</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippofacnav:limit" sv:type="Long">
-      <sv:value>10</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:docbase" sv:type="String">
-      <sv:value>0d298512-4512-4ba0-b21d-600c20f706d9</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippofacnav:facets" sv:type="String" sv:multiple="true">
-      <sv:value>hippostdpubwf:createdBy</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippofacnav:facetnodenames" sv:type="String" sv:multiple="true">
-      <sv:value>Created by</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippofacnav:skipresultsetfacetsavailable" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippofacnav:filters" sv:type="String">
-      <sv:value>jcr:primaryType=demosite:wikidocument</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+/content/documents/demosite/wikipedia:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+  jcr:uuid: 0d298512-4512-4ba0-b21d-600c20f706d9
+  hippostd:foldertype: [new-translated-folder-demosite, new-document-demosite]
+  hippotranslation:id: demosite-wikipedia-folder-id
+  hippotranslation:locale: en
+  /faceted:
+    jcr:primaryType: hippofacnav:facetnavigation
+    hippo:docbase: 0d298512-4512-4ba0-b21d-600c20f706d9
+    hippofacnav:facetnodenames: [Created by]
+    hippofacnav:facets: ['hippostdpubwf:createdBy']
+    hippofacnav:filters: ['jcr:primaryType=demosite:wikidocument']
+    hippofacnav:limit: 10
+    hippofacnav:skipresultsetfacetsavailable: true

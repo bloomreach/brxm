@@ -1,300 +1,114 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="qaimageset">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposysedit:templatetype</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>editor:editable</sv:value>
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>e1de6139-7373-4dd7-8c4d-12a1956c998c</sv:value>
-  </sv:property>
-  <sv:node sv:name="hipposysedit:nodetype">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>4c00dad2-6070-4ecc-accc-0486115e6b5a</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:nodetype</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hipposysedit:remodel</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
-        <sv:value>hippo:document</sv:value>
-        <sv:value>hippogallery:imageset</sv:value>
-        <sv:value>hippogallery:relaxed</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposysedit:uri" sv:type="String">
-        <sv:value>http://www.hippoecm.org/hst/nt/demosite/1.0</sv:value>
-      </sv:property>
-      <sv:node sv:name="filename">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:field</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>hippogallery:filename</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:type" sv:type="String">
-          <sv:value>String</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="description">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:field</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>hippogallery:description</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:type" sv:type="String">
-          <sv:value>String</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="thumbnail">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:field</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:autocreated" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>hippogallery:thumbnail</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:type" sv:type="String">
-          <sv:value>hippogallery:image</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="original">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:field</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>hippogallery:original</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:type" sv:type="String">
-          <sv:value>hippogallery:image</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="largethumbnail">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:field</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>demosite:largethumbnail</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:type" sv:type="String">
-          <sv:value>hippogallery:image</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="hipposysedit:prototypes">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:prototypeset</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:prototype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>demosite:qaimageset</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:versionable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>00448c52-b8e9-432d-b8a6-1229067f8e2f</sv:value>
-      </sv:property>
-      <sv:node sv:name="hippogallery:thumbnail">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippogallery:image</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:data" sv:type="Binary">
-          <sv:value>R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:lastModified" sv:type="Date">
-          <sv:value>1970-01-01T00:00:00.000Z</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mimeType" sv:type="String">
-          <sv:value>image/gif</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="hippogallery:original">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippogallery:image</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:data" sv:type="Binary">
-          <sv:value>R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:lastModified" sv:type="Date">
-          <sv:value>1970-01-01T00:00:00.000Z</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mimeType" sv:type="String">
-          <sv:value>image/gif</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="demosite:largethumbnail">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippogallery:image</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:data" sv:type="Binary">
-          <sv:value>R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:lastModified" sv:type="Date">
-          <sv:value>1970-01-01T00:00:00.000Z</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mimeType" sv:type="String">
-          <sv:value>image/gif</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="editor:templates">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>editor:templateset</sv:value>
-    </sv:property>
-    <sv:node sv:name="_default_">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugincluster</sv:value>
-      </sv:property>
-      <sv:property sv:name="frontend:properties" sv:type="String" sv:multiple="true">
-        <sv:value>mode</sv:value>
-      </sv:property>
-      <sv:property sv:name="frontend:references" sv:type="String" sv:multiple="true">
-        <sv:value>model.compareTo</sv:value>
-        <sv:value>wicket.model</sv:value>
-        <sv:value>engine</sv:value>
-      </sv:property>
-      <sv:property sv:name="frontend:services" sv:type="String" sv:multiple="true">
-        <sv:value>wicket.id</sv:value>
-      </sv:property>
-      <sv:property sv:name="mode" sv:type="String">
-        <sv:value>edit</sv:value>
-      </sv:property>
-      <sv:node sv:name="root">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="item" sv:type="String">
-          <sv:value>${cluster.id}.field</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="filename">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="caption" sv:type="String">
-          <sv:value>file name</sv:value>
-        </sv:property>
-        <sv:property sv:name="field" sv:type="String">
-          <sv:value>filename</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.gallery.editor.FileNameDisplayPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="translator.id" sv:type="String">
-          <sv:value>${cluster.id}.translator</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${cluster.id}.field</sv:value>
-        </sv:property>
-        <sv:node sv:name="cluster.options">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="description">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="caption" sv:type="String">
-          <sv:value>description</sv:value>
-        </sv:property>
-        <sv:property sv:name="field" sv:type="String">
-          <sv:value>description</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="translator.id" sv:type="String">
-          <sv:value>${cluster.id}.translator</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${cluster.id}.field</sv:value>
-        </sv:property>
-        <sv:node sv:name="cluster.options">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="thumbnail">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="caption" sv:type="String">
-          <sv:value>thumbnail</sv:value>
-        </sv:property>
-        <sv:property sv:name="field" sv:type="String">
-          <sv:value>thumbnail</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${cluster.id}.field</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="original">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="caption" sv:type="String">
-          <sv:value>original</sv:value>
-        </sv:property>
-        <sv:property sv:name="field" sv:type="String">
-          <sv:value>original</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${cluster.id}.field</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="largethumbnail">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="caption" sv:type="String">
-          <sv:value>largethumbnail</sv:value>
-        </sv:property>
-        <sv:property sv:name="field" sv:type="String">
-          <sv:value>largethumbnail</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${cluster.id}.field</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:namespaces/demosite/qaimageset:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      jcr:uuid: e1de6139-7373-4dd7-8c4d-12a1956c998c
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 4c00dad2-6070-4ecc-accc-0486115e6b5a
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['hipposysedit:remodel']
+          hipposysedit:node: true
+          hipposysedit:supertype: ['hippo:document', 'hippogallery:imageset', 'hippogallery:relaxed']
+          hipposysedit:uri: http://www.hippoecm.org/hst/nt/demosite/1.0
+          /filename:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:path: hippogallery:filename
+            hipposysedit:type: String
+          /description:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:path: hippogallery:description
+            hipposysedit:type: String
+          /thumbnail:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:autocreated: true
+            hipposysedit:mandatory: true
+            hipposysedit:path: hippogallery:thumbnail
+            hipposysedit:primary: true
+            hipposysedit:type: hippogallery:image
+          /original:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:path: hippogallery:original
+            hipposysedit:type: hippogallery:image
+          /largethumbnail:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:path: demosite:largethumbnail
+            hipposysedit:type: hippogallery:image
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: demosite:qaimageset
+          jcr:mixinTypes: ['mix:versionable']
+          jcr:uuid: 00448c52-b8e9-432d-b8a6-1229067f8e2f
+          /hippogallery:thumbnail:
+            jcr:primaryType: hippogallery:image
+            jcr:data:
+              type: binary
+              resource: /namespaces/demosite/qaimageset/prototypes/prototype/thumbnail/thumbnail.gif
+            jcr:lastModified: 1970-01-01T00:00:00Z
+            jcr:mimeType: image/gif
+          /hippogallery:original:
+            jcr:primaryType: hippogallery:image
+            jcr:data:
+              type: binary
+              resource: /namespaces/demosite/qaimageset/prototypes/prototype/original/original.gif
+            jcr:lastModified: 1970-01-01T00:00:00Z
+            jcr:mimeType: image/gif
+          /demosite:largethumbnail:
+            jcr:primaryType: hippogallery:image
+            jcr:data:
+              type: binary
+              resource: /namespaces/demosite/qaimageset/prototypes/prototype/largethumbnail/largethumbnail.gif
+            jcr:lastModified: 1970-01-01T00:00:00Z
+            jcr:mimeType: image/gif
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          frontend:properties: [mode]
+          frontend:references: [model.compareTo, wicket.model, engine]
+          frontend:services: [wicket.id]
+          mode: edit
+          /root:
+            jcr:primaryType: frontend:plugin
+            item: ${cluster.id}.field
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+          /filename:
+            jcr:primaryType: frontend:plugin
+            caption: file name
+            field: filename
+            plugin.class: org.hippoecm.frontend.plugins.gallery.editor.FileNameDisplayPlugin
+            translator.id: ${cluster.id}.translator
+            wicket.id: ${cluster.id}.field
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+          /description:
+            jcr:primaryType: frontend:plugin
+            caption: description
+            field: description
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+            translator.id: ${cluster.id}.translator
+            wicket.id: ${cluster.id}.field
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+          /thumbnail:
+            jcr:primaryType: frontend:plugin
+            caption: thumbnail
+            field: thumbnail
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+            wicket.id: ${cluster.id}.field
+          /original:
+            jcr:primaryType: frontend:plugin
+            caption: original
+            field: original
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+            wicket.id: ${cluster.id}.field
+          /largethumbnail:
+            jcr:primaryType: frontend:plugin
+            caption: largethumbnail
+            field: largethumbnail
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+            wicket.id: ${cluster.id}.field

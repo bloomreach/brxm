@@ -1,197 +1,67 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-
-    Copyright (C) 2010 Hippo B.V.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<sv:node sv:name="hst:sitemap" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:sitemap</sv:value>
-  </sv:property>
-  <sv:node sv:name="home">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/home</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:refId" sv:type="String">
-      <sv:value>homeId</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>common/home-page</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="about">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/detailpage</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:refId" sv:type="String">
-      <sv:value>aboutId</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>common/about-us</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="news">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/newsarchive</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>news</sv:value>
-    </sv:property>
-    <sv:node sv:name="_any_">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemapitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-        <sv:value>hst:pages/newsarchive</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-        <sv:value>news/${1}</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="_any_.html">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemapitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-        <sv:value>hst:pages/detailpage</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-        <sv:value>go-back-link</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-        <sv:value>/news</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-        <sv:value>news/${1}</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="rss.xml">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:components/rss</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>news</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="search">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/searchpage</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="error">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/errorpage</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="_any_">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/errorpage</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="todo">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:components/bodyhome/content/todolist</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="faceted">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/facetedaddproduct</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>faceted</sv:value>
-    </sv:property>
-    <sv:node sv:name="_any_">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemapitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-        <sv:value>hst:pages/faceted</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-        <sv:value>faceted/${1}</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="_any_.html">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemapitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-        <sv:value>hst:pages/faceted_detailpage</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-        <sv:value>faceted/${1}</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="products">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/productoverview</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>products</sv:value>
-    </sv:property>
-    <sv:node sv:name="_any_.html">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemapitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-        <sv:value>hst:pages/productpage</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-        <sv:value>products/${1}</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  
-  <sv:node sv:name="sites">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/sitesoverview</sv:value>
-    </sv:property>
-  </sv:node>
-  
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite-test-many/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /home:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/home
+        hst:refId: homeId
+        hst:relativecontentpath: common/home-page
+      /about:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/detailpage
+        hst:refId: aboutId
+        hst:relativecontentpath: common/about-us
+      /news:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/newsarchive
+        hst:relativecontentpath: news
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsarchive
+          hst:relativecontentpath: news/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/detailpage
+          hst:parameternames: [go-back-link]
+          hst:parametervalues: [/news]
+          hst:relativecontentpath: news/${1}
+      /rss.xml:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:components/rss
+        hst:relativecontentpath: news
+      /search:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/searchpage
+      /error:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/errorpage
+      /_any_:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/errorpage
+      /todo:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:components/bodyhome/content/todolist
+      /faceted:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/facetedaddproduct
+        hst:relativecontentpath: faceted
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/faceted
+          hst:relativecontentpath: faceted/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/faceted_detailpage
+          hst:relativecontentpath: faceted/${1}
+      /products:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/productoverview
+        hst:relativecontentpath: products
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/productpage
+          hst:relativecontentpath: products/${1}
+      /sites:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/sitesoverview

@@ -1,284 +1,107 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:sitemenus">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:sitemenus</sv:value>
-  </sv:property>
-  <sv:node sv:name="main">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemenu</sv:value>
-    </sv:property>
-    <sv:node sv:name="Home">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>home</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="French Home by path">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:mountalias" sv:type="String">
-        <sv:value>fr_site</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>accueil</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="French Home by id">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:mountalias" sv:type="String">
-        <sv:value>fr_site</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>homeId</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="About">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>about</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Mashup">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>mashup</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="News">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:depth" sv:type="Long">
-        <sv:value>1</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>news</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:repobased" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="News1">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:depth" sv:type="Long">
-        <sv:value>1</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>news1</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:repobased" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="News2">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:depth" sv:type="Long">
-        <sv:value>1</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>news2</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:repobased" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="NewsCtxOnly">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:depth" sv:type="Long">
-        <sv:value>1</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>newsctxonly/foo/bar</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:repobased" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="NewsImageVariant">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:depth" sv:type="Long">
-        <sv:value>1</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>newsimagevariant</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:repobased" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="AllLinksForANewsItem">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>alllinkforanewsitem</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Products">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>products</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Search">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>search</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Faceted (JCR)">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:depth" sv:type="Long">
-        <sv:value>1</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>faceted</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:repobased" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Solr Search">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>solrsearch</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Solr Faceted">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>solrfaceting</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Solr Indexer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>solrindexer</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="GoGreen Solr Indexer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>gogreen-rest-product-indexer</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Wikipedia">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>wikipedia</sv:value>
-      </sv:property>
-      <sv:node sv:name="Archive">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:sitemenuitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-          <sv:value>wikipedia/archive</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="Translations">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:sitemenuitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-          <sv:value>wikipedia/translations</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="Form Component Example">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>form</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Contact-Spring">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>contact-spring</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Contact-Spring-Context">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>contact-spring-context</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Contact-Dispatch">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>contact-dispatch</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Contact-SpringMVC">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>contact-springmvc</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Algebra">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>algebra</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="prepareBeforeRender Example">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>preparecalls</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="Spring Web MVC Integration Example">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>springapp/news</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite/hst:workspace/hst:sitemenus:
+      jcr:primaryType: hst:sitemenus
+      /main:
+        jcr:primaryType: hst:sitemenu
+        /Home:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: home
+        /French Home by path:
+          jcr:primaryType: hst:sitemenuitem
+          hst:mountalias: fr_site
+          hst:referencesitemapitem: accueil
+        /French Home by id:
+          jcr:primaryType: hst:sitemenuitem
+          hst:mountalias: fr_site
+          hst:referencesitemapitem: homeId
+        /About:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: about
+        /Mashup:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: mashup
+        /News:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: news
+          hst:repobased: true
+        /News1:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: news1
+          hst:repobased: true
+        /News2:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: news2
+          hst:repobased: true
+        /NewsCtxOnly:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: newsctxonly/foo/bar
+          hst:repobased: true
+        /NewsImageVariant:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: newsimagevariant
+          hst:repobased: true
+        /AllLinksForANewsItem:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: alllinkforanewsitem
+        /Products:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: products
+        /Search:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: search
+        /Faceted (JCR):
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: faceted
+          hst:repobased: true
+        /Solr Search:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: solrsearch
+        /Solr Faceted:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: solrfaceting
+        /Solr Indexer:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: solrindexer
+        /GoGreen Solr Indexer:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: gogreen-rest-product-indexer
+        /Wikipedia:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: wikipedia
+          /Archive:
+            jcr:primaryType: hst:sitemenuitem
+            hst:referencesitemapitem: wikipedia/archive
+          /Translations:
+            jcr:primaryType: hst:sitemenuitem
+            hst:referencesitemapitem: wikipedia/translations
+        /Form Component Example:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: form
+        /Contact-Spring:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: contact-spring
+        /Contact-Spring-Context:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: contact-spring-context
+        /Contact-Dispatch:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: contact-dispatch
+        /Contact-SpringMVC:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: contact-springmvc
+        /Algebra:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: algebra
+        /prepareBeforeRender Example:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: preparecalls
+        /Spring Web MVC Integration Example:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: springapp/news

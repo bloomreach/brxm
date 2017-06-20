@@ -1,27 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="hst:sitemenus" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenus</sv:value>
-    </sv:property>
-    <sv:node sv:name="main">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemenu</sv:value>
-        </sv:property>
-        <sv:node sv:name="Accueil">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>homeId</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="A propos">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>a-propos</sv:value>
-            </sv:property>
-        </sv:node>
-    </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite_fr/hst:workspace/hst:sitemenus:
+      jcr:primaryType: hst:sitemenus
+      /main:
+        jcr:primaryType: hst:sitemenu
+        /Accueil:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: homeId
+        /A propos:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: a-propos

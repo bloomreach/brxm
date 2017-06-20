@@ -1,81 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Copyright 2015 Hippo B.V. (http://www.onehippo.com)
-
-Licensed under the Apache License, Version 2.0 (the  "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS"
-BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License. -->
-<sv:node
-  sv:name="Example News Date Field Update Demo with Manual Update Reporting" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:updaterinfo</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:batchsize" sv:type="Long">
-    <sv:value>10</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:description" sv:type="String">
-    <sv:value/>
-  </sv:property>
-  <sv:property sv:name="hipposys:dryrun" sv:type="Boolean">
-    <sv:value>false</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:parameters" sv:type="String">
-    <sv:value/>
-  </sv:property>
-  <sv:property sv:name="hipposys:query" sv:type="String">
-    <sv:value>/jcr:root</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:script" sv:type="String">
-    <sv:value>/**&#xd;
- * ExampleNewsDocumentDateFieldUpdateDemoVisitor is a script that does manual node iteration&#xd;
- * in an original iteration cycle and reports updated node manually in order to be aligned&#xd;
- * with the built-in batch commit/revert feature of the groovy updater engine&#xd;
- * for demonstration purpose.&#xd;
- */&#xd;
-package org.hippoecm.frontend.plugins.cms.admin.updater&#xd;
-&#xd;
-import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
-import java.util.*&#xd;
-import javax.jcr.*&#xd;
-import javax.jcr.query.*&#xd;
-&#xd;
-class ExampleNewsDocumentDateFieldUpdateDemoVisitor extends BaseNodeUpdateVisitor {&#xd;
-&#xd;
-  boolean doUpdate(Node node) {&#xd;
-    log.debug "Visiting node at ${node.path} just as an entry point in this demo."&#xd;
-    &#xd;
-    // new date field value from the current time&#xd;
-    def now = Calendar.getInstance()&#xd;
-    &#xd;
-    // do manual query and node iteration&#xd;
-    def query = node.session.workspace.queryManager.createQuery("//element(*,demosite:newsdocument)", "xpath")&#xd;
-    def result = query.execute()&#xd;
-    &#xd;
-    for (NodeIterator nodeIt = result.getNodes(); nodeIt.hasNext(); ) {&#xd;
-      def newsNode = nodeIt.nextNode()&#xd;
-      newsNode.setProperty("demosite:date", now)&#xd;
-      // report updated to the engine manually here.&#xd;
-      visitorContext.reportUpdated(newsNode.path)&#xd;
-    }&#xd;
-    &#xd;
-    return false&#xd;
-  }&#xd;
-&#xd;
-  boolean undoUpdate(Node node) {&#xd;
-    throw new UnsupportedOperationException('Updater does not implement undoUpdate method')&#xd;
-  }&#xd;
-&#xd;
-}</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:throttle" sv:type="Long">
-    <sv:value>1000</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:update/hippo:registry/Example News Date Field Update Demo with Manual Update Reporting:
+      jcr:primaryType: hipposys:updaterinfo
+      hipposys:batchsize: 10
+      hipposys:description: ''
+      hipposys:dryrun: false
+      hipposys:parameters: ''
+      hipposys:query: /jcr:root
+      hipposys:script: "/**\r\n * ExampleNewsDocumentDateFieldUpdateDemoVisitor is\
+        \ a script that does manual node iteration\r\n * in an original iteration\
+        \ cycle and reports updated node manually in order to be aligned\r\n * with\
+        \ the built-in batch commit/revert feature of the groovy updater engine\r\n\
+        \ * for demonstration purpose.\r\n */\r\npackage org.hippoecm.frontend.plugins.cms.admin.updater\r\
+        \n\r\nimport org.onehippo.repository.update.BaseNodeUpdateVisitor\r\nimport\
+        \ java.util.*\r\nimport javax.jcr.*\r\nimport javax.jcr.query.*\r\n\r\nclass\
+        \ ExampleNewsDocumentDateFieldUpdateDemoVisitor extends BaseNodeUpdateVisitor\
+        \ {\r\n\r\n  boolean doUpdate(Node node) {\r\n    log.debug \"Visiting node\
+        \ at ${node.path} just as an entry point in this demo.\"\r\n    \r\n    //\
+        \ new date field value from the current time\r\n    def now = Calendar.getInstance()\r\
+        \n    \r\n    // do manual query and node iteration\r\n    def query = node.session.workspace.queryManager.createQuery(\"\
+        //element(*,demosite:newsdocument)\", \"xpath\")\r\n    def result = query.execute()\r\
+        \n    \r\n    for (NodeIterator nodeIt = result.getNodes(); nodeIt.hasNext();\
+        \ ) {\r\n      def newsNode = nodeIt.nextNode()\r\n      newsNode.setProperty(\"\
+        demosite:date\", now)\r\n      // report updated to the engine manually here.\r\
+        \n      visitorContext.reportUpdated(newsNode.path)\r\n    }\r\n    \r\n \
+        \   return false\r\n  }\r\n\r\n  boolean undoUpdate(Node node) {\r\n    throw\
+        \ new UnsupportedOperationException('Updater does not implement undoUpdate\
+        \ method')\r\n  }\r\n\r\n}"
+      hipposys:throttle: 1000

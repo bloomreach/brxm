@@ -1,132 +1,46 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Copyright 2014 Hippo B.V. (http://www.onehippo.com)
-
-Licensed under the Apache License, Version 2.0 (the  "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS"
-BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License. -->
-<sv:node sv:name="hst:templates" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:templates</sv:value>
-  </sv:property>
-  <sv:node sv:name="base.header">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/base/header.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="base.main">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/base/main.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="base.main.content">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/base/main/content.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="base.main.leftmenu">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/base/main/leftmenu.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="base.main.list">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/base/main/list.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="base.main.right">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/base/main/right.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="home.main.content">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/home/main/content.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="layout.webpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>webfile:/ftl/layout/webpage.ftl</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="news.main.content">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/news/main/content.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="notfound.main.content">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/notfound/main/content.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="one-column.main.content">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/one-column/main/content.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="overview.main.content">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/overview/main/content.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="search.main.content">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/search/main/content.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="two-columns.main.content">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/two-columns/main/content.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:templates:
+      jcr:primaryType: hst:templates
+      /base.header:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/base/header.jsp
+      /base.main:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/base/main.jsp
+      /base.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/base/main/content.jsp
+      /base.main.leftmenu:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/base/main/leftmenu.jsp
+      /base.main.list:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/base/main/list.jsp
+      /base.main.right:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/base/main/right.jsp
+      /home.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/home/main/content.jsp
+      /layout.webpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: webfile:/ftl/layout/webpage.ftl
+      /news.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/news/main/content.jsp
+      /notfound.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/notfound/main/content.jsp
+      /one-column.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/one-column/main/content.jsp
+      /overview.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/overview/main/content.jsp
+      /search.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/search/main/content.jsp
+      /two-columns.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/two-columns/main/content.jsp

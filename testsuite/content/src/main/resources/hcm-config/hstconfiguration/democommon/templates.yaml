@@ -1,361 +1,139 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:templates">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:templates</sv:value>
-  </sv:property>
-  <sv:node sv:name="webpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/templates/webpage.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="header">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/header/header.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="footer">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/footer/footer.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="datetime">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:isnamed" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>DateTimeServlet</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="threecolumnlayout">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/layout/threecolumnlayout.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="leftmenu">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/leftmenu.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="right">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/right.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="homepage.ftl">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:script" sv:type="String">
-      <sv:value xmlns:h="http://www.onehippo.org/jcr/xmlimport"
-                h:file="/hstconfiguration/democommon/binaries/homepage.ftl" />
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="homelayout">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/layout/homelayout.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="archive">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/archive.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="alllinkforanewsitem">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/alllinkforanewsitem.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="detailpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>ftl/components/main/detailpage.ftl</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="detailimagevariantpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/detailimagevariantpage.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="detailwikipage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/detailwikipage.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="rss">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/templates/rss.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="searchresults">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/search.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="solrsearchresults">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/solrsearch.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="solrright">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/solrright.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="solrsuggest-ajax">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/solrsuggest-ajaxresult.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="solrfaceting">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/solrfaceting.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="todolist">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/todolist.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="bodyerror">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/error.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="wikipedia">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/wikipedia.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="solrindexer">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/solrindexer.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="gogreenindexer">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/gogreenindexer.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="facetedaddproduct">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/facetedaddproduct.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="faceted">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/faceted.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="facetedright">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/facetedright.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="facetedproductpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/facetedproductpage.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="productpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/productpage.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="formpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/formpage.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="contactspring">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>/spring/contactspring.do</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="contactspringmvc">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>/spring/contactspringmvc.do</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="thankyou">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/thankyou.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="banner">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/banner.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="block">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/block.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="mashup">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/layout/mashup.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="algebra">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/algebra.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="preparecalls">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/preparecalls.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="preparecaller">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/preparecaller.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="single">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/templates/single.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="copyright">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>/examples/copyright.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="esisingle">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>/examples/esisingle.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="wikipediatranslations">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/wikipediatranslations.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/democommon/hst:templates:
+      jcr:primaryType: hst:templates
+      /webpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/templates/webpage.jsp
+      /header:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/header/header.jsp
+      /footer:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/footer/footer.jsp
+      /datetime:
+        jcr:primaryType: hst:template
+        hst:isnamed: true
+        hst:renderpath: DateTimeServlet
+      /threecolumnlayout:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/layout/threecolumnlayout.jsp
+      /leftmenu:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/leftmenu.jsp
+      /right:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/right.jsp
+      /homepage.ftl:
+        jcr:primaryType: hst:template
+        hst:script:
+          type: string
+          resource: /hstconfiguration/democommon/binaries/homepage.ftl
+      /homelayout:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/layout/homelayout.jsp
+      /archive:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/archive.jsp
+      /alllinkforanewsitem:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/alllinkforanewsitem.jsp
+      /detailpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: ftl/components/main/detailpage.ftl
+      /detailimagevariantpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/detailimagevariantpage.jsp
+      /detailwikipage:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/detailwikipage.jsp
+      /rss:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/templates/rss.jsp
+      /searchresults:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/search.jsp
+      /solrsearchresults:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/solrsearch.jsp
+      /solrright:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/solrright.jsp
+      /solrsuggest-ajax:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/solrsuggest-ajaxresult.jsp
+      /solrfaceting:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/solrfaceting.jsp
+      /todolist:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/todolist.jsp
+      /bodyerror:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/error.jsp
+      /wikipedia:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/wikipedia.jsp
+      /solrindexer:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/solrindexer.jsp
+      /gogreenindexer:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/gogreenindexer.jsp
+      /facetedaddproduct:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/facetedaddproduct.jsp
+      /faceted:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/faceted.jsp
+      /facetedright:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/facetedright.jsp
+      /facetedproductpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/facetedproductpage.jsp
+      /productpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/productpage.jsp
+      /formpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/formpage.jsp
+      /contactspring:
+        jcr:primaryType: hst:template
+        hst:renderpath: /spring/contactspring.do
+      /contactspringmvc:
+        jcr:primaryType: hst:template
+        hst:renderpath: /spring/contactspringmvc.do
+      /thankyou:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/thankyou.jsp
+      /banner:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/banner.jsp
+      /block:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/block.jsp
+      /mashup:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/layout/mashup.jsp
+      /algebra:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/algebra.jsp
+      /preparecalls:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/preparecalls.jsp
+      /preparecaller:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/preparecaller.jsp
+      /single:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/templates/single.jsp
+      /copyright:
+        jcr:primaryType: hst:template
+        hst:renderpath: /examples/copyright.jsp
+      /esisingle:
+        jcr:primaryType: hst:template
+        hst:renderpath: /examples/esisingle.jsp
+      /wikipediatranslations:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/wikipediatranslations.jsp

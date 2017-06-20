@@ -1,558 +1,196 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-
-    Copyright (C) 2010 - 2012 Hippo B.V.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<sv:node sv:name="hst:pages" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:pages</sv:value>
-  </sv:property>
-  <sv:node sv:name="standard">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>webpage</sv:value>
-    </sv:property>
-    <sv:node sv:name="header">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/header</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="footer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/footer</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="home">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodyhome</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="newsarchive">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodynewsarchive</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="alllinkforanewsitem">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/alllinkforanewsitem</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="wikipediaarchive">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <!-- reuse/misuse newsarchive. Not really clean  -->
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>10235913-f97f-4fc9-9b4d-78de1ee8fdda</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodywikipediaarchive</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="detailpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:page_errorhandlerclassname" sv:type="String">
-      <sv:value>org.hippoecm.hst.demo.util.SimplePageErrorHandler</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:parameternames" sv:type="String">
-      <sv:value>org.hippoecm.hst.demo.util.SimplePageErrorHandler.errorPage</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:parametervalues" sv:type="String">
-      <sv:value>/error</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodydetailpage</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-
-  <sv:node sv:name="detailimagevariantpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/detailpage</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/general_threecolumnlayout</sv:value>
-      </sv:property>
-      <sv:node sv:name="content">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-          <sv:value>org.hippoecm.hst.demo.components.Detail</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-          <sv:value>detailimagevariantpage</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="detailwikipage" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/detailpage</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/general_threecolumnlayout</sv:value>
-      </sv:property>
-      <sv:node sv:name="content">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-          <sv:value>detailwikipage</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="searchpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodysearch</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="solrsearchpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodysolrsearch</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="solrfacetingpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodysolrfaceting</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="faceted">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodyfaceted</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="facetedaddproduct">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodyfacetedaddproduct</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="wikipedia">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodywikipedia</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="solrindexer">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodysolrindexer</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="gogreenindexer">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodygogreenindexer</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="faceted_detailpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodyfaceted_detailpage</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="errorpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentclassname" sv:type="String">
-      <sv:value>org.hippoecm.hst.demo.components.Set404Component</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodyerror</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="productoverview">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodyproductoverview</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="productpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodyproductpage</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="formpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodyformpage</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="contactspringpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodycontactspringformpage</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="contactspringcontextpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodycontactspringcontextformpage</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="contactdispatchpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodycontactdispatchformpage</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="contactspringmvcpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodycontactspringmvcformpage</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="thankyou">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodythankyoupage</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="single">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>single</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="copyright">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/single</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/copyright</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="esisinglepage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/single</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/esisinglecomponent</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="wikipediatranslations">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodywikipediatranslations</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-</sv:node>
-
+definitions:
+  config:
+    /hst:hst/hst:configurations/democommon/hst:pages:
+      jcr:primaryType: hst:pages
+      /standard:
+        jcr:primaryType: hst:component
+        hst:template: webpage
+        /header:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/header
+        /footer:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/footer
+      /home:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodyhome
+      /newsarchive:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodynewsarchive
+      /alllinkforanewsitem:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/alllinkforanewsitem
+      /wikipediaarchive:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          jcr:uuid: 10235913-f97f-4fc9-9b4d-78de1ee8fdda
+          hst:referencecomponent: hst:components/bodywikipediaarchive
+      /detailpage:
+        jcr:primaryType: hst:component
+        hst:page_errorhandlerclassname: org.hippoecm.hst.demo.util.SimplePageErrorHandler
+        hst:parameternames: [org.hippoecm.hst.demo.util.SimplePageErrorHandler.errorPage]
+        hst:parametervalues: [/error]
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodydetailpage
+      /detailimagevariantpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/detailpage
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/general_threecolumnlayout
+          /content:
+            jcr:primaryType: hst:component
+            hst:componentclassname: org.hippoecm.hst.demo.components.Detail
+            hst:template: detailimagevariantpage
+      /detailwikipage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/detailpage
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/general_threecolumnlayout
+          /content:
+            jcr:primaryType: hst:component
+            hst:template: detailwikipage
+      /searchpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodysearch
+      /solrsearchpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodysolrsearch
+      /solrfacetingpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodysolrfaceting
+      /faceted:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodyfaceted
+      /facetedaddproduct:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodyfacetedaddproduct
+      /wikipedia:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodywikipedia
+      /solrindexer:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodysolrindexer
+      /gogreenindexer:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodygogreenindexer
+      /faceted_detailpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodyfaceted_detailpage
+      /errorpage:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.demo.components.Set404Component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodyerror
+      /productoverview:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodyproductoverview
+      /productpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodyproductpage
+      /formpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodyformpage
+      /contactspringpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodycontactspringformpage
+      /contactspringcontextpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodycontactspringcontextformpage
+      /contactdispatchpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodycontactdispatchformpage
+      /contactspringmvcpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodycontactspringmvcformpage
+      /thankyou:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodythankyoupage
+      /single:
+        jcr:primaryType: hst:component
+        hst:template: single
+      /copyright:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/single
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/copyright
+      /esisinglepage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/single
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/esisinglecomponent
+      /wikipediatranslations:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodywikipediatranslations

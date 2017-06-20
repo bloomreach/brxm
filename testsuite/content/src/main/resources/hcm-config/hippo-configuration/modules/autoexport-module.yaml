@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:esv="http://www.onehippo.org/jcr/xmlimport"
-         sv:name="hippo:moduleconfig" esv:merge="combine">
-  <sv:property sv:name="autoexport:enabled" sv:type="Boolean" esv:merge="override">
-    <sv:value>false</sv:value>
-  </sv:property>
-  <sv:property sv:name="autoexport:modules" sv:type="String" sv:multiple="true" esv:merge="append">
-    <sv:value>intranet-bootstrap/content:/content/documents/intranet</sv:value>
-    <sv:value>intranet-bootstrap/configuration:/hippo:namespaces/intranet</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
+      autoexport:enabled:
+        operation: override
+        type: boolean
+        value: false
+      autoexport:modules:
+        operation: add
+        type: string
+        value: ['intranet-bootstrap/content:/content/documents/intranet', 'intranet-bootstrap/configuration:/hippo:namespaces/intranet']

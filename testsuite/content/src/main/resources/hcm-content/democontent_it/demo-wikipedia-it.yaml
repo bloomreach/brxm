@@ -1,36 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-
-    Copyright (C) 2010 Hippo B.V.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<sv:node sv:name="wikipedia" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippostd:directory</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>mix:referenceable</sv:value>
-    <sv:value>hippotranslation:translated</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippotranslation:locale" sv:type="String">
-    <sv:value>it</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippotranslation:id" sv:type="String">
-    <sv:value>demosite-wikipedia-folder-id</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippostd:foldertype" sv:type="String">
-    <sv:value>new-translated-folder-demosite</sv:value>
-    <sv:value>new-document-demosite</sv:value>
-  </sv:property>
-</sv:node>
+/content/documents/demosite_it/wikipedia:
+  jcr:primaryType: hippostd:directory
+  jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+  hippostd:foldertype: [new-translated-folder-demosite, new-document-demosite]
+  hippotranslation:id: demosite-wikipedia-folder-id
+  hippotranslation:locale: it

@@ -1,97 +1,37 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="hst:sitemap" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:sitemap</sv:value>
-  </sv:property>
-  <sv:node sv:name="error">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/errorpage</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:refId" sv:type="String">
-      <sv:value>error</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="_any_">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/errorpage</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="wikipedia">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/wikipedia</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>wikipedia</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:refId" sv:type="String">
-      <sv:value>aboutId</sv:value>
-    </sv:property>
-    <sv:node sv:name="archive">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemapitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-        <sv:value>hst:pages/wikipediaarchive</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-        <sv:value>wikipedia/faceted</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:refId" sv:type="String">
-        <sv:value>homeId</sv:value>
-      </sv:property>
-      <sv:node sv:name="_any_">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-          <sv:value>hst:pages/wikipediaarchive</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-          <sv:value>wikipedia/archive/${1}</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="_any_.html">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-          <sv:value>hst:pages/detailwikipage</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-          <sv:value>wikipedia/archive/${1}</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="_any_">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemapitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-        <sv:value>hst:pages/wikipediaarchive</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-        <sv:value>wikipedia/${1}</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="_any_.html">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemapitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-        <sv:value>hst:pages/detailwikipage</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-        <sv:value>wikipedia/${1}</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite_nl/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /error:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/errorpage
+        hst:refId: error
+      /_any_:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/errorpage
+      /wikipedia:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/wikipedia
+        hst:refId: aboutId
+        hst:relativecontentpath: wikipedia
+        /archive:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/wikipediaarchive
+          hst:refId: homeId
+          hst:relativecontentpath: wikipedia/faceted
+          /_any_:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/wikipediaarchive
+            hst:relativecontentpath: wikipedia/archive/${1}
+          /_any_.html:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/detailwikipage
+            hst:relativecontentpath: wikipedia/archive/${1}
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/wikipediaarchive
+          hst:relativecontentpath: wikipedia/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/detailwikipage
+          hst:relativecontentpath: wikipedia/${1}

@@ -1,12 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="it" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:pluginconfig</sv:value>
-  </sv:property>
-  <sv:property sv:name="country" sv:type="String">
-    <sv:value>it</sv:value>
-  </sv:property>
-  <sv:property sv:name="language" sv:type="String">
-    <sv:value>it</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/localeProviderService/it:
+      jcr:primaryType: frontend:pluginconfig
+      country: it
+      language: it

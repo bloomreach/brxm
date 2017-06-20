@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" sv:name="new-image-folder" h:merge="combine">
-  <sv:node sv:name="hippostd:templates" h:merge="combine">
-    <sv:node sv:name="image gallery" h:merge="combine">
-      <sv:property sv:name="hippostd:gallerytype" sv:type="String" h:merge="override" sv:multiple="true">
-        <sv:value>demosite:qaimageset</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:queries/hippo:templates/new-image-folder:
+      /hippostd:templates:
+        /image gallery:
+          hippostd:gallerytype:
+            operation: override
+            type: string
+            value: ['demosite:qaimageset']

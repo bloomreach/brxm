@@ -1,87 +1,32 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Copyright 2016 Hippo B.V. (http://www.onehippo.com)
-
-Licensed under the Apache License, Version 2.0 (the  "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS"
-BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License. -->
-<sv:node sv:name="Example Fix Translation ID And Locales" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:updaterinfo</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:batchsize" sv:type="Long">
-    <sv:value>10</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:description" sv:type="String">
-    <sv:value>Fix translation locale and translation ID based on the base English content for each localized folder/document.</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:dryrun" sv:type="Boolean">
-    <sv:value>false</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:parameters" sv:type="String">
-    <sv:value>{&#xd;
-  "translationLocales": [&#xd;
-    "de", "fr", "it", "nl"&#xd;
-  ]&#xd;
-}</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:query" sv:type="String">
-    <sv:value>/jcr:root/content/documents/demosite//element(*,hippotranslation:translated)</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:script" sv:type="String">
-    <sv:value>package org.hippoecm.frontend.plugins.cms.admin.updater&#xd;
-&#xd;
-import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
-import javax.jcr.Node&#xd;
-&#xd;
-class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
-&#xd;
-  def session&#xd;
-&#xd;
-  void initialize(Session session) {&#xd;
-    this.session = session&#xd;
-  }&#xd;
-  &#xd;
-  boolean doUpdate(Node node) {&#xd;
-    log.debug "Visiting translated node ${node.path}"&#xd;
-&#xd;
-    def updated = false&#xd;
-    def relPath = node.path.substring("/content/documents/demosite/".length())&#xd;
-    def translationId = node.getProperty("hippotranslation:id").getString()&#xd;
-&#xd;
-    if (translationId?.trim()) {&#xd;
-      [ "de", "fr", "it", "nl" ].each { locale -&gt;&#xd;
-        def translatedNodePath = "/content/documents/demosite_" + locale + "/" + relPath&#xd;
-        log.debug "TranslatedNodePath: ${translatedNodePath}"&#xd;
-&#xd;
-        if (this.session.nodeExists(translatedNodePath)) {&#xd;
-          def translatedNode = this.session.getNode(translatedNodePath)&#xd;
-          translatedNode.setProperty("hippotranslation:id", translationId)&#xd;
-          translatedNode.setProperty("hippotranslation:locale", locale)&#xd;
-          log.debug "Updated translated node ${translatedNode.path}"&#xd;
-          updated = true&#xd;
-        }&#xd;
-      }&#xd;
-    }&#xd;
-    &#xd;
-    return updated&#xd;
-  }&#xd;
-&#xd;
-  boolean undoUpdate(Node node) {&#xd;
-    throw new UnsupportedOperationException('Updater does not implement undoUpdate method')&#xd;
-  }&#xd;
-&#xd;
-}</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:throttle" sv:type="Long">
-    <sv:value>1000</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:update/hippo:registry/Example Fix Translation ID And Locales:
+      jcr:primaryType: hipposys:updaterinfo
+      hipposys:batchsize: 10
+      hipposys:description: Fix translation locale and translation ID based on the
+        base English content for each localized folder/document.
+      hipposys:dryrun: false
+      hipposys:parameters: "{\r\n  \"translationLocales\": [\r\n    \"de\", \"fr\"\
+        , \"it\", \"nl\"\r\n  ]\r\n}"
+      hipposys:query: /jcr:root/content/documents/demosite//element(*,hippotranslation:translated)
+      hipposys:script: "package org.hippoecm.frontend.plugins.cms.admin.updater\r\n\
+        \r\nimport org.onehippo.repository.update.BaseNodeUpdateVisitor\r\nimport\
+        \ javax.jcr.Node\r\n\r\nclass UpdaterTemplate extends BaseNodeUpdateVisitor\
+        \ {\r\n\r\n  def session\r\n\r\n  void initialize(Session session) {\r\n \
+        \   this.session = session\r\n  }\r\n  \r\n  boolean doUpdate(Node node) {\r\
+        \n    log.debug \"Visiting translated node ${node.path}\"\r\n\r\n    def updated\
+        \ = false\r\n    def relPath = node.path.substring(\"/content/documents/demosite/\"\
+        .length())\r\n    def translationId = node.getProperty(\"hippotranslation:id\"\
+        ).getString()\r\n\r\n    if (translationId?.trim()) {\r\n      [ \"de\", \"\
+        fr\", \"it\", \"nl\" ].each { locale ->\r\n        def translatedNodePath\
+        \ = \"/content/documents/demosite_\" + locale + \"/\" + relPath\r\n      \
+        \  log.debug \"TranslatedNodePath: ${translatedNodePath}\"\r\n\r\n       \
+        \ if (this.session.nodeExists(translatedNodePath)) {\r\n          def translatedNode\
+        \ = this.session.getNode(translatedNodePath)\r\n          translatedNode.setProperty(\"\
+        hippotranslation:id\", translationId)\r\n          translatedNode.setProperty(\"\
+        hippotranslation:locale\", locale)\r\n          log.debug \"Updated translated\
+        \ node ${translatedNode.path}\"\r\n          updated = true\r\n        }\r\
+        \n      }\r\n    }\r\n    \r\n    return updated\r\n  }\r\n\r\n  boolean undoUpdate(Node\
+        \ node) {\r\n    throw new UnsupportedOperationException('Updater does not\
+        \ implement undoUpdate method')\r\n  }\r\n\r\n}"
+      hipposys:throttle: 1000

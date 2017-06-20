@@ -1,162 +1,78 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-
-    Copyright (C) 2011-2016 Hippo B.V.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<sv:node sv:name="hst:templates" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:templates</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>246bd2bc-f68c-4ea1-baed-506d832c4606</sv:value>
-  </sv:property>
-  <sv:node sv:name="homepage.ftl">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>687a34af-bed0-4938-aeab-21d7435f0f83</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:script" sv:type="String">
-      <sv:value>&lt;#ftl output_format="HTML" auto_esc=false&gt;&#xd;
-&#xd;
-&lt;#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;&#xd;
-&lt;#assign fmt=JspTaglibs["http://java.sun.com/jsp/jstl/fmt"]&gt;&#xd;
-&#xd;
-&lt;@hst.defineObjects/&gt;&#xd;
-&#xd;
-  &lt;div class="yui-u"&gt;&#xd;
-&#xd;
-    &lt;#autoesc&gt;&#xd;
-      &lt;h1&gt;${document.title}&lt;/h1&gt;&#xd;
-      &lt;p&gt;${document.summary}&lt;/p&gt;&#xd;
-    &lt;/#autoesc&gt;&#xd;
-&#xd;
-    &lt;@hst.html hippohtml=document.html/&gt;&#xd;
-&#xd;
-    &lt;p&gt;Example channel property: '${channelInfoExample}'&lt;/p&gt;&#xd;
-    &lt;p&gt;Example mount property fetched through hst component: '${testParamFromMount!}'&lt;/p&gt;&#xd;
-&#xd;
-    &lt;#if "${document.resource!}" != ""&gt;&#xd;
-      &lt;@hst.link var="resource" hippobean=document.resource /&gt; &#xd;
-      &lt;#if "${resource!}" != ""&gt; &#xd;
-        &lt;a href="${resource}"&gt;${document.resource.name}&lt;/a&gt;&#xd;
-      &lt;/#if&gt; &#xd;
-    &lt;/#if&gt; &#xd;
-&#xd;
-    &lt;div&gt; &#xd;
-      &lt;@hst.include ref="todolist"/&gt;&#xd;
-    &lt;/div&gt; &#xd;
-&#xd;
-    &lt;div class="bannersHome"&gt; &#xd;
-      &lt;@hst.include ref="banners-div"/&gt; &#xd;
-    &lt;/div&gt; &#xd;
-    &#xd;
-    &lt;div class="bannersHome"&gt;&#xd;
-      &lt;@hst.include ref="banners-table"/&gt; &#xd;
-    &lt;/div&gt; &#xd;
-&#xd;
-    &lt;div class="bannersHome"&gt;&#xd;
-      &lt;@hst.include ref="banners-ol"/&gt; &#xd;
-    &lt;/div&gt; &#xd;
-&#xd;
-    &lt;div class="bannersHome"&gt;&#xd;
-      &lt;@hst.include ref="banners-ul"/&gt; &#xd;
-    &lt;/div&gt; &#xd;
-&#xd;
-    &lt;div style="border-width: 4px; border-style: solid; border-color: red; "&gt;&#xd;
-      &lt;p&gt;&#xd;
-        Apart from this text, this container should be EMPTY as the banners should be skipped &#xd;
-        by ExampleComponentWindowFilter due to parameter ExampleComponentWindowFilter.hide = true&#xd;
-      &lt;/p&gt;&#xd;
-      &lt;@hst.include ref="container-with-skipped-banners"/&gt; &#xd;
-    &lt;/div&gt; &#xd;
-&#xd;
-    &lt;hr/&gt;&#xd;
-    &#xd;
-    &lt;p&gt;Dummy Example REST links &lt;/p&gt; &#xd;
-    &lt;@hst.link var="imageset" hippobean=image mount="restapi-gallery" /&gt; &#xd;
-    &lt;@hst.link var="original" hippobean=image subPath="original" mount="restapi-gallery"/&gt; &#xd;
-    &lt;@hst.link var="thumbnail" hippobean=image subPath="thumbnail" mount="restapi-gallery"/&gt; &#xd;
-    &#xd;
-    &lt;p&gt; &#xd;
-      ImageSet : &#xd;
-      &lt;a target="_blank" href="${imageset}"&gt;${imageset}&lt;/a&gt;&#xd;
-    &lt;/p&gt; &#xd;
-    &#xd;
-    &lt;p&gt;&#xd;
-      Thumbnail : &#xd;
-      &lt;a target="_blank" href="${thumbnail}"&gt;${thumbnail}&lt;/a&gt;&#xd;
-    &lt;/p&gt;&#xd;
-    &#xd;
-    &lt;p&gt; &#xd;
-      Original : &#xd;
-      &lt;a target="_blank" href="${original}"&gt;${original}&lt;/a&gt;&#xd;
-    &lt;/p&gt;&#xd;
-&#xd;
-    &lt;br/&gt;&lt;br/&gt;&#xd;
-&#xd;
-    &lt;hr/&gt;&#xd;
-    &lt;p&gt;Test Example HST URLs (escaped by default)&lt;/p&gt;&#xd;
-    &lt;pre&gt;&lt;xmp&gt;RENDER URL: &lt;@hst.renderURL&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.renderURL&gt;&#xd;
-RESOURCE URL: &lt;@hst.resourceURL&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.resourceURL&gt;&#xd;
-COMPONENT RENDERING URL: &lt;@hst.componentRenderingURL&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.componentRenderingURL&gt;&#xd;
-ACTION URL: &lt;@hst.actionURL&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.actionURL&gt;&#xd;
-LINK URL: &lt;@hst.link path="/news"&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.link&gt;&lt;/xmp&gt;&lt;/pre&gt;&#xd;
-&#xd;
-    &lt;hr/&gt;&#xd;
-    &lt;p&gt;Test Example HST URLs (not escaped by escapeXml="false")&lt;/p&gt;&#xd;
-    &lt;pre&gt;&lt;xmp&gt;RENDER URL: &lt;@hst.renderURL escapeXml=false&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.renderURL&gt;&#xd;
-RESOURCE URL: &lt;@hst.resourceURL escapeXml=false&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.resourceURL&gt;&#xd;
-COMPONENT RENDERING URL: &lt;@hst.componentRenderingURL escapeXml=false&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.componentRenderingURL&gt;&#xd;
-ACTION URL: &lt;@hst.actionURL escapeXml=false&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.actionURL&gt;&#xd;
-LINK URL: &lt;@hst.link path="/news" escapeXml=false&gt;&lt;@hst.param name="a" value="one"/&gt;&lt;@hst.param name="b" value="two"/&gt;&lt;/@hst.link&gt;&lt;/xmp&gt;&lt;/pre&gt;&#xd;
-&#xd;
-    &lt;br/&gt;&lt;br/&gt;&#xd;
-&#xd;
-    &lt;hr&gt;&#xd;
-    &#xd;
-    &lt;div style="border-width: 2px; border-style: solid; border-color: blue; "&gt;&#xd;
-      Child content window names:&#xd;
-      &lt;#list hstResponse.childContentNames as childContentName&gt;&#xd;
-        ${childContentName}&lt;#sep&gt;, &#xd;
-      &lt;/#list&gt;&#xd;
-    &lt;/div&gt;&#xd;
-    &lt;br/&gt;&lt;br/&gt;&#xd;
-    &#xd;
-    &lt;div style="color:red"&gt;&#xd;
-      Note: this page is loaded by a repository freemarker template, &#xd;
-      see [/hst:hst/hst:configurations/demosite/hst:templates/homepage.ftl] &#xd;
-    &lt;/div&gt;&#xd;
-&lt;p&gt;&#xd;
-    &lt;@hst.setBundle basename="org.onehippo.hst.demo.resources.GeneralTranslationsBundle"/&gt;&#xd;
-    The following should be the value from the default resource bundle: &lt;@fmt.message key="key.available.languages"/&gt;&#xd;
-&lt;/p&gt;&#xd;
-&lt;p&gt;&#xd;
-    &lt;@fmt.setLocale value="fr"/&gt;&#xd;
-    &lt;@hst.setBundle basename="org.onehippo.hst.demo.resources.GeneralTranslationsBundle"/&gt;&#xd;
-    The following should be the value from the French resource bundle: &lt;@fmt.message key="key.available.languages"/&gt;&#xd;
-&lt;/p&gt;&#xd;
-&lt;p&gt;&#xd;
-    &lt;@fmt.setLocale value="en"/&gt;&#xd;
-    &lt;@hst.setBundle basename="org.onehippo.hst.demo.resources.GeneralTranslationsBundle"/&gt;&#xd;
-    The following should be the value from the English resource bundle: &lt;@fmt.message key="key.available.languages"/&gt;&#xd;
-&lt;/p&gt;&#xd;
-    &lt;p style="height: 30em;"&gt; &lt;/p&gt; &#xd;
-  &#xd;
-  &lt;/div&gt;</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite/hst:templates:
+      jcr:primaryType: hst:templates
+      jcr:uuid: 246bd2bc-f68c-4ea1-baed-506d832c4606
+      /homepage.ftl:
+        jcr:primaryType: hst:template
+        jcr:uuid: 687a34af-bed0-4938-aeab-21d7435f0f83
+        hst:script: "<#ftl output_format=\"HTML\" auto_esc=false>\r\n\r\n<#assign\
+          \ hst=JspTaglibs[\"http://www.hippoecm.org/jsp/hst/core\"]>\r\n<#assign\
+          \ fmt=JspTaglibs[\"http://java.sun.com/jsp/jstl/fmt\"]>\r\n\r\n<@hst.defineObjects/>\r\
+          \n\r\n  <div class=\"yui-u\">\r\n\r\n    <#autoesc>\r\n      <h1>${document.title}</h1>\r\
+          \n      <p>${document.summary}</p>\r\n    </#autoesc>\r\n\r\n    <@hst.html\
+          \ hippohtml=document.html/>\r\n\r\n    <p>Example channel property: '${channelInfoExample}'</p>\r\
+          \n    <p>Example mount property fetched through hst component: '${testParamFromMount!}'</p>\r\
+          \n\r\n    <#if \"${document.resource!}\" != \"\">\r\n      <@hst.link var=\"\
+          resource\" hippobean=document.resource /> \r\n      <#if \"${resource!}\"\
+          \ != \"\"> \r\n        <a href=\"${resource}\">${document.resource.name}</a>\r\
+          \n      </#if> \r\n    </#if> \r\n\r\n    <div> \r\n      <@hst.include\
+          \ ref=\"todolist\"/>\r\n    </div> \r\n\r\n    <div class=\"bannersHome\"\
+          > \r\n      <@hst.include ref=\"banners-div\"/> \r\n    </div> \r\n    \r\
+          \n    <div class=\"bannersHome\">\r\n      <@hst.include ref=\"banners-table\"\
+          /> \r\n    </div> \r\n\r\n    <div class=\"bannersHome\">\r\n      <@hst.include\
+          \ ref=\"banners-ol\"/> \r\n    </div> \r\n\r\n    <div class=\"bannersHome\"\
+          >\r\n      <@hst.include ref=\"banners-ul\"/> \r\n    </div> \r\n\r\n  \
+          \  <div style=\"border-width: 4px; border-style: solid; border-color: red;\
+          \ \">\r\n      <p>\r\n        Apart from this text, this container should\
+          \ be EMPTY as the banners should be skipped \r\n        by ExampleComponentWindowFilter\
+          \ due to parameter ExampleComponentWindowFilter.hide = true\r\n      </p>\r\
+          \n      <@hst.include ref=\"container-with-skipped-banners\"/> \r\n    </div>\
+          \ \r\n\r\n    <hr/>\r\n    \r\n    <p>Dummy Example REST links </p> \r\n\
+          \    <@hst.link var=\"imageset\" hippobean=image mount=\"restapi-gallery\"\
+          \ /> \r\n    <@hst.link var=\"original\" hippobean=image subPath=\"original\"\
+          \ mount=\"restapi-gallery\"/> \r\n    <@hst.link var=\"thumbnail\" hippobean=image\
+          \ subPath=\"thumbnail\" mount=\"restapi-gallery\"/> \r\n    \r\n    <p>\
+          \ \r\n      ImageSet : \r\n      <a target=\"_blank\" href=\"${imageset}\"\
+          >${imageset}</a>\r\n    </p> \r\n    \r\n    <p>\r\n      Thumbnail : \r\
+          \n      <a target=\"_blank\" href=\"${thumbnail}\">${thumbnail}</a>\r\n\
+          \    </p>\r\n    \r\n    <p> \r\n      Original : \r\n      <a target=\"\
+          _blank\" href=\"${original}\">${original}</a>\r\n    </p>\r\n\r\n    <br/><br/>\r\
+          \n\r\n    <hr/>\r\n    <p>Test Example HST URLs (escaped by default)</p>\r\
+          \n    <pre><xmp>RENDER URL: <@hst.renderURL><@hst.param name=\"a\" value=\"\
+          one\"/><@hst.param name=\"b\" value=\"two\"/></@hst.renderURL>\r\nRESOURCE\
+          \ URL: <@hst.resourceURL><@hst.param name=\"a\" value=\"one\"/><@hst.param\
+          \ name=\"b\" value=\"two\"/></@hst.resourceURL>\r\nCOMPONENT RENDERING URL:\
+          \ <@hst.componentRenderingURL><@hst.param name=\"a\" value=\"one\"/><@hst.param\
+          \ name=\"b\" value=\"two\"/></@hst.componentRenderingURL>\r\nACTION URL:\
+          \ <@hst.actionURL><@hst.param name=\"a\" value=\"one\"/><@hst.param name=\"\
+          b\" value=\"two\"/></@hst.actionURL>\r\nLINK URL: <@hst.link path=\"/news\"\
+          ><@hst.param name=\"a\" value=\"one\"/><@hst.param name=\"b\" value=\"two\"\
+          /></@hst.link></xmp></pre>\r\n\r\n    <hr/>\r\n    <p>Test Example HST URLs\
+          \ (not escaped by escapeXml=\"false\")</p>\r\n    <pre><xmp>RENDER URL:\
+          \ <@hst.renderURL escapeXml=false><@hst.param name=\"a\" value=\"one\"/><@hst.param\
+          \ name=\"b\" value=\"two\"/></@hst.renderURL>\r\nRESOURCE URL: <@hst.resourceURL\
+          \ escapeXml=false><@hst.param name=\"a\" value=\"one\"/><@hst.param name=\"\
+          b\" value=\"two\"/></@hst.resourceURL>\r\nCOMPONENT RENDERING URL: <@hst.componentRenderingURL\
+          \ escapeXml=false><@hst.param name=\"a\" value=\"one\"/><@hst.param name=\"\
+          b\" value=\"two\"/></@hst.componentRenderingURL>\r\nACTION URL: <@hst.actionURL\
+          \ escapeXml=false><@hst.param name=\"a\" value=\"one\"/><@hst.param name=\"\
+          b\" value=\"two\"/></@hst.actionURL>\r\nLINK URL: <@hst.link path=\"/news\"\
+          \ escapeXml=false><@hst.param name=\"a\" value=\"one\"/><@hst.param name=\"\
+          b\" value=\"two\"/></@hst.link></xmp></pre>\r\n\r\n    <br/><br/>\r\n\r\n\
+          \    <hr>\r\n    \r\n    <div style=\"border-width: 2px; border-style: solid;\
+          \ border-color: blue; \">\r\n      Child content window names:\r\n     \
+          \ <#list hstResponse.childContentNames as childContentName>\r\n        ${childContentName}<#sep>,\
+          \ \r\n      </#list>\r\n    </div>\r\n    <br/><br/>\r\n    \r\n    <div\
+          \ style=\"color:red\">\r\n      Note: this page is loaded by a repository\
+          \ freemarker template, \r\n      see [/hst:hst/hst:configurations/demosite/hst:templates/homepage.ftl]\
+          \ \r\n    </div>\r\n<p>\r\n    <@hst.setBundle basename=\"org.onehippo.hst.demo.resources.GeneralTranslationsBundle\"\
+          />\r\n    The following should be the value from the default resource bundle:\
+          \ <@fmt.message key=\"key.available.languages\"/>\r\n</p>\r\n<p>\r\n   \
+          \ <@fmt.setLocale value=\"fr\"/>\r\n    <@hst.setBundle basename=\"org.onehippo.hst.demo.resources.GeneralTranslationsBundle\"\
+          />\r\n    The following should be the value from the French resource bundle:\
+          \ <@fmt.message key=\"key.available.languages\"/>\r\n</p>\r\n<p>\r\n   \
+          \ <@fmt.setLocale value=\"en\"/>\r\n    <@hst.setBundle basename=\"org.onehippo.hst.demo.resources.GeneralTranslationsBundle\"\
+          />\r\n    The following should be the value from the English resource bundle:\
+          \ <@fmt.message key=\"key.available.languages\"/>\r\n</p>\r\n    <p style=\"\
+          height: 30em;\"> </p> \r\n  \r\n  </div>"

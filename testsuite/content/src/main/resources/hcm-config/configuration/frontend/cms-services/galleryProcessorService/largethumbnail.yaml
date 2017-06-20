@@ -1,15 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="demosite:largethumbnail" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:pluginconfig</sv:value>
-  </sv:property>
-  <sv:property sv:name="height" sv:type="Long">
-    <sv:value>300</sv:value>
-  </sv:property>
-  <sv:property sv:name="upscaling" sv:type="Boolean">
-    <sv:value>false</sv:value>
-  </sv:property>
-  <sv:property sv:name="width" sv:type="Long">
-    <sv:value>400</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService/demosite:largethumbnail:
+      jcr:primaryType: frontend:pluginconfig
+      height: 300
+      upscaling: false
+      width: 400

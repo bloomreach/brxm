@@ -1,36 +1,48 @@
-{
-  "hippo:templates":   {
-    "en":     {
-      "new-translated-folder-demosite": "new translated folder",
-      "new-folder-demosite": "new folder",
-      "new-document-demosite": "new document"
-    },
-    "nl":     {
-      "new-translated-folder-demosite": "nieuwe vertaalde map",
-      "new-folder-demosite": "nieuwe map",
-      "new-document-demosite": "nieuw document"
-    },
-    "de":     {
-      "new-folder-demosite": "Neuer Ordner",
-      "new-document-demosite": "Neues Dokument"
-    },
-    "fr":     {
-      "new-translated-folder-demosite": "un nouveau dossier traduit",
-      "new-folder-demosite": "nouveau dossier",
-      "new-document-demosite": "nouveau document"
-    },
-    "it":     {
-      "new-translated-folder-demosite": "Nuova cartella tradotta",
-      "new-folder-demosite": "nouva cartella",
-      "new-document-demosite": "nouvo documento"
-    }
-  },
-  "hippo:types": {"demosite:qaimageset":   {
-    "nl": {"jcr:name": "nlLargethumbnail"},
-    "en": {"jcr:name": "Largethumbnail"},
-    "fr": {"jcr:name": "Originale"},
-    "de": {"jcr:name": "deLargethumbnail"},
-    "it": {"jcr:name": "Originale"},
-    "fe": {"jcr:name": "frLargethumbnail"}
-  }}
-}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/demosite:qaimageset:
+      jcr:primaryType: hipposys:resourcebundles
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: deLargethumbnail
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Largethumbnail
+      /it:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Originale
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Originale
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: nlLargethumbnail
+      /fe:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: frLargethumbnail
+    /hippo:configuration/hippo:translations/hippo:templates:
+      jcr:primaryType: hipposys:resourcebundles
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        new-document-demosite: Neues Dokument
+        new-folder-demosite: Neuer Ordner
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        new-document-demosite: new document
+        new-folder-demosite: new folder
+        new-translated-folder-demosite: new translated folder
+      /it:
+        jcr:primaryType: hipposys:resourcebundle
+        new-document-demosite: nouvo documento
+        new-folder-demosite: nouva cartella
+        new-translated-folder-demosite: Nuova cartella tradotta
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        new-document-demosite: nouveau document
+        new-folder-demosite: nouveau dossier
+        new-translated-folder-demosite: un nouveau dossier traduit
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        new-document-demosite: nieuw document
+        new-folder-demosite: nieuwe map
+        new-translated-folder-demosite: nieuwe vertaalde map

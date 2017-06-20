@@ -1,63 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-
-    Copyright (C) 2010 Hippo B.V.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<sv:node sv:name="hst:templates" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:templates</sv:value>
-  </sv:property>
-  <sv:node sv:name="homepage.ftl">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:script" sv:type="String">
-      <sv:value>&lt;#assign&#xd;
-        hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;&#xd;
-        &lt;div class="yui-u"&gt; &lt;h1&gt;${document.title}&lt;/h1&gt;&#xd;
-        &lt;p&gt;${document.summary}&lt;/p&gt; &lt;@hst.html &#xd;
-        hippohtml=document.html/&gt; &lt;p&gt; &lt;/p&gt;&#xd;
-        &lt;#if "${document.resource!}" != ""&gt;&#xd;
-        &lt;@hst.link var="resource"&#xd;
-        hippobean=document.resource /&gt; &lt;#if&#xd;
-        "${resource!}" != ""&gt; &lt;a&#xd;
-        href="${resource}"&gt;${document.resource.name}&lt;/a&gt;&#xd;
-        &lt;/#if&gt; &lt;/#if&gt; &lt;div&gt; &lt;@hst.include ref="todolist"/&gt;&#xd;
-        &lt;/div&gt; &lt;div class="bannersHome"&gt; &lt;@hst.include&#xd;
-        ref="banners"/&gt; &lt;/div&gt; &lt;div class="bannersHome"&gt;&#xd;
-        &lt;@hst.include ref="morebanners"/&gt; &lt;/div&gt; &#xd;
-        &lt;div class="bannersHome" id="container-1"&gt;&#xd;
-        &lt;@hst.include ref="container-1"/&gt;&#xd;
-        &lt;/div&gt;&#xd;
-        &lt;div class="bannersHome" id="container-2"&gt;&#xd;
-        &lt;@hst.include ref="container-2"/&gt;&#xd;
-        &lt;/div&gt;&#xd;
-        &lt;hr/&gt;&#xd;
-        &lt;p&#xd;
-        style="height: 30em;"&gt; &lt;/p&gt; &lt;/div&gt;</sv:value>
-    </sv:property>
-  </sv:node>
-  
-  <sv:node sv:name="sitesoverview">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>jsp/components/main/sitesoverview.jsp</sv:value>
-    </sv:property>
-  </sv:node>
-  
-  
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite-test-many/hst:templates:
+      jcr:primaryType: hst:templates
+      /homepage.ftl:
+        jcr:primaryType: hst:template
+        hst:script: "<#assign\r\n        hst=JspTaglibs[\"http://www.hippoecm.org/jsp/hst/core\"\
+          ]>\r\n        <div class=\"yui-u\"> <h1>${document.title}</h1>\r\n     \
+          \   <p>${document.summary}</p> <@hst.html \r\n        hippohtml=document.html/>\
+          \ <p> </p>\r\n        <#if \"${document.resource!}\" != \"\">\r\n      \
+          \  <@hst.link var=\"resource\"\r\n        hippobean=document.resource />\
+          \ <#if\r\n        \"${resource!}\" != \"\"> <a\r\n        href=\"${resource}\"\
+          >${document.resource.name}</a>\r\n        </#if> </#if> <div> <@hst.include\
+          \ ref=\"todolist\"/>\r\n        </div> <div class=\"bannersHome\"> <@hst.include\r\
+          \n        ref=\"banners\"/> </div> <div class=\"bannersHome\">\r\n     \
+          \   <@hst.include ref=\"morebanners\"/> </div> \r\n        <div class=\"\
+          bannersHome\" id=\"container-1\">\r\n        <@hst.include ref=\"container-1\"\
+          />\r\n        </div>\r\n        <div class=\"bannersHome\" id=\"container-2\"\
+          >\r\n        <@hst.include ref=\"container-2\"/>\r\n        </div>\r\n \
+          \       <hr/>\r\n        <p\r\n        style=\"height: 30em;\"> </p> </div>"
+      /sitesoverview:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/sitesoverview.jsp
