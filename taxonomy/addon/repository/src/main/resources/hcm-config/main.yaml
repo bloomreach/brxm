@@ -3,9 +3,3 @@ definitions:
     hippotaxonomy:
       uri: http://www.hippoecm.org/hippotaxonomy/nt/1.2
       cnd: hippotaxonomy.cnd
-  config:
-    /hippo:configuration/hippo:translations:
-      /hippo:cms:
-        jcr:primaryType: hipposys:resourcebundles
-      /hippo:types:
-        jcr:primaryType: hipposys:resourcebundles
