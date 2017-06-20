@@ -1,32 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="autoreload">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:module</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:className" sv:type="String">
-    <sv:value>org.onehippo.cms7.services.autoreload.AutoReloadServiceModule</sv:value>
-  </sv:property>
-  <sv:node sv:name="hippo:moduleconfig">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:moduleconfig</sv:value>
-    </sv:property>
-    <sv:property sv:name="enabled" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/autoreload:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.cms7.services.autoreload.AutoReloadServiceModule
+      /hippo:moduleconfig:
+        jcr:primaryType: hipposys:moduleconfig
+        enabled: true
