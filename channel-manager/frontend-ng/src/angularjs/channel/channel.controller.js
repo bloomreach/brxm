@@ -65,6 +65,10 @@ class ChannelCtrl {
     return !this.isChannelLoaded() || !this.isPageLoaded();
   }
 
+  isConfigurationLocked() {
+    return this.ChannelService.isConfigurationLocked();
+  }
+
   isChannelLoaded() {
     return this.ChannelService.hasChannel();
   }

@@ -214,6 +214,10 @@ class ChannelService {
     return this.SessionService.hasWriteAccess() && this.hasChannel() && this.channel.previewHstConfigExists;
   }
 
+  isConfigurationLocked() {
+    return this.getChannel().configurationLocked;
+  }
+
   recordOwnChange() {
     const user = this.ConfigService.cmsUser;
 
