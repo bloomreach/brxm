@@ -1,30 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="forge-news-sitemap-feed" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:component</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:componentclassname" sv:type="String">
-    <sv:value>org.onehippo.forge.sitemap.components.NewsSitemapFeed</sv:value>
-  </sv:property>
-  <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-    <sv:value>publicationDateProperty</sv:value>
-    <sv:value>documentTypes</sv:value>
-    <sv:value>propertyCriteria</sv:value>
-    <sv:value>timezone</sv:value>
-    <sv:value>publicationName</sv:value>
-    <sv:value>publicationLanguage</sv:value>
-    <sv:value>newsInformationProvider</sv:value>
-  </sv:property>
-  <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-    <sv:value>${publicationDateProperty}</sv:value>
-    <sv:value>${documentTypes}</sv:value>
-    <sv:value>${propertyCriteria}</sv:value>
-    <sv:value>${timezone}</sv:value>
-    <sv:value>${publicationName}</sv:value>
-    <sv:value>${publicationLanguage}</sv:value>
-    <sv:value>${newsInformationProvider}</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>forge-sitemap-feed.ftl</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:components/forge-news-sitemap-feed:
+      jcr:primaryType: hst:component
+      hst:componentclassname: org.onehippo.forge.sitemap.components.NewsSitemapFeed
+      hst:parameternames: [publicationDateProperty, documentTypes, propertyCriteria,
+        timezone, publicationName, publicationLanguage, newsInformationProvider]
+      hst:parametervalues: ['${publicationDateProperty}', '${documentTypes}', '${propertyCriteria}',
+        '${timezone}', '${publicationName}', '${publicationLanguage}', '${newsInformationProvider}']
+      hst:template: forge-sitemap-feed.ftl

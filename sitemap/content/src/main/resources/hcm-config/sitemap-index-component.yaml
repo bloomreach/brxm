@@ -1,22 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="forge-sitemap-index-feed">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:component</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:componentclassname" sv:type="String">
-    <sv:value>org.onehippo.forge.sitemap.components.SitemapIndexFeed</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
-    <sv:value>sitemap-location-foldername</sv:value>
-    <sv:value>assets-url-prefix</sv:value>
-    <sv:value>additional-sitemap-file-url</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
-    <sv:value>${sitemap-location-foldername}</sv:value>
-    <sv:value>${assets-url-prefix}</sv:value>
-    <sv:value>${additional-sitemap-file-url}</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:template" sv:type="String">
-    <sv:value>forge-sitemap-feed.ftl</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:components/forge-sitemap-index-feed:
+      jcr:primaryType: hst:component
+      hst:componentclassname: org.onehippo.forge.sitemap.components.SitemapIndexFeed
+      hst:parameternames: [sitemap-location-foldername, assets-url-prefix, additional-sitemap-file-url]
+      hst:parametervalues: ['${sitemap-location-foldername}', '${assets-url-prefix}',
+        '${additional-sitemap-file-url}']
+      hst:template: forge-sitemap-feed.ftl

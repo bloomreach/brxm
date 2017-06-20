@@ -1,12 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="sitemap.xml">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:sitemapitem</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-    <sv:value>hst:components/forge-sitemap-feed</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:hiddeninchannelmanager" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:sitemap/sitemap.xml:
+      jcr:primaryType: hst:sitemapitem
+      hst:componentconfigurationid: hst:components/forge-sitemap-feed
+      hst:hiddeninchannelmanager: true
