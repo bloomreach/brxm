@@ -606,8 +606,8 @@ public class ConfigurationTreeBuilder {
             final ValueImpl existingValue = property.getValue();
             if (existingValue != null) {
                 if (definitionProperty.getValue().equals(property.getValue())) {
-                    logger.warn("Property '{}' defined in '{}' specifies value equivalent to existing property.",
-                            definitionProperty.getPath(), definitionProperty.getOrigin());
+                    logger.warn("Property '{}' defined in '{}' specifies value equivalent to existing property, defined in '{}'.",
+                            definitionProperty.getPath(), definitionProperty.getOrigin(), property.getOrigin());
                 }
             }
         } else {
