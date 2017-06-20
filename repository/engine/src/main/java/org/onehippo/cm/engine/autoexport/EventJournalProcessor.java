@@ -31,6 +31,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
@@ -155,13 +156,13 @@ public class EventJournalProcessor {
     private ConfigurationModelImpl currentModel;
 
     private ScheduledFuture<?> future;
-    private volatile boolean taskFailed;
+    private AtomicBoolean taskFailed = new AtomicBoolean();
     private final Runnable task = () -> {
-        if (!taskFailed) {
+        if (!taskFailed.get()) {
             try {
                 tryProcessEvents();
             } catch (Exception e) {
-                taskFailed = true;
+                taskFailed.set(true);
                 AutoExportServiceImpl.log.error(e.getClass().getName() + " : " + e.getMessage(), e);
                 if (future != null && (!future.isCancelled() || !future.isDone())) {
                     future.cancel(true);
@@ -190,6 +191,7 @@ public class EventJournalProcessor {
 
     public void start() {
         synchronized (executor) {
+            taskFailed.set(false);
             if (future == null || future.isCancelled() || future.isDone()) {
                 future = executor.scheduleWithFixedDelay(task, 0, minChangeLogAge, TimeUnit.MILLISECONDS);
             }
@@ -210,7 +212,7 @@ public class EventJournalProcessor {
 
     public void runOnce() {
         synchronized (executor) {
-            if (!taskFailed) {
+            if (!taskFailed.get()) {
                 executor.submit(task);
             }
         }
