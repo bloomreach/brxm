@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-fdescribe('ProjectService', () => {
+describe('ProjectService', () => {
   let $httpBackend;
   let $q;
   let ConfigService;
