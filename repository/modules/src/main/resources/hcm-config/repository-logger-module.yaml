@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/logger:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.hippoecm.repository.logging.RepositoryLogger

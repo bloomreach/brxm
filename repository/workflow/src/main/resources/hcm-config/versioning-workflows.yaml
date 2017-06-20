@@ -1,0 +1,14 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/versioning:
+      jcr:primaryType: hipposys:workflowcategory
+      /handle:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.onehippo.repository.documentworkflow.DocumentWorkflowImpl
+        hipposys:display: Versioning workflow
+        hipposys:nodetype: hippo:handle
+        hipposys:privileges: ['hippo:author']
+        hipposys:subtype: hippostdpubwf:document
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          scxml-definition: documentworkflow

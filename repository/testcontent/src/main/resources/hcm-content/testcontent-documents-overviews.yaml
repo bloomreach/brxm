@@ -1,0 +1,6 @@
+/content/documents/overviews:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['mix:versionable']
+  jcr:uuid: 4e557532-98ff-4673-a289-5cdbb2822eed
+  hippo:availability: [preview, live]
+  hippostd:foldertype: [new-document, new-folder]

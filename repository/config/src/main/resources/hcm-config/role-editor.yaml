@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:roles/editor:
+      jcr:primaryType: hipposys:role
+      hipposys:privileges: ['jcr:read', 'jcr:write', 'hippo:editor']
+      hipposys:roles: [author]

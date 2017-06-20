@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /live:
+      jcr:primaryType: nt:unstructured
+      /content:
+        jcr:primaryType: hippo:facetselect
+        hippo:docbase: b05f6e96-b81d-4a24-acb6-e29a0a0dc65c
+        hippo:facets: ['hippostd:state']
+        hippo:modes: [single]
+        hippo:values: [published]

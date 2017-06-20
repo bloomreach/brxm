@@ -1,0 +1,26 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/translation-internal:
+      jcr:primaryType: hipposys:workflowcategory
+      /folder:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
+        hipposys:display: Workflow on folders
+        hipposys:nodetype: hippostd:folder
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          attic:
+            type: path
+            value: /content/attic
+          modify-on-copy: ['./hippostdpubwf:lastModificationDate', $now, './hippostdpubwf:lastModifiedBy',
+            $holder]
+      /directory:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
+        hipposys:display: Workflow on directories
+        hipposys:nodetype: hippostd:directory
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          attic:
+            type: path
+            value: /content/attic

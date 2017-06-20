@@ -1,0 +1,80 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/templates:
+      jcr:primaryType: hipposys:domain
+      /hippo-namespacefolder:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-namespacefolder:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:namespacefolder
+      /hippo-namespace:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-namespace:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:namespace
+      /hippo-template:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-template:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:templatetype
+      /hippostd-templatequery:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippostd-templatequery:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippostd:templatequery
+      /hippo-nodetype:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-nodetype:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:nodetype
+      /type-hippo-prototypes:
+        jcr:primaryType: hipposys:domainrule
+        /nodetype-hippo-prototypeset:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:prototypeset
+      /type-hippo-prototype:
+        jcr:primaryType: hipposys:domainrule
+        /nodetype-hippo-prototype:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodename
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:prototype
+      /hippo-field:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-field:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:field
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [everybody]
+        hipposys:role: readonly

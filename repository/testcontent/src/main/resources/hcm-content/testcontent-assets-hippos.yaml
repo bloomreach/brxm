@@ -1,0 +1,23 @@
+/content/assets/hippos:
+  jcr:primaryType: hippogallery:stdAssetGallery
+  jcr:mixinTypes: ['mix:versionable']
+  jcr:uuid: dd1f34b9-9e3c-4361-856b-f74e0c3436d8
+  hippo:availability: [preview, live]
+  hippostd:foldertype: [new-file-folder]
+  hippostd:gallerytype: ['hippogallery:exampleAssetSet']
+  /Hippo.pdf:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: 52817c59-692f-4cd5-b9ef-7b3946de4ea5
+    /Hippo.pdf:
+      jcr:primaryType: hippogallery:exampleAssetSet
+      jcr:mixinTypes: ['mix:versionable']
+      jcr:uuid: f3f0b68d-4a8a-4a44-aa9b-475c6eae80af
+      hippo:availability: [preview, live]
+      /hippogallery:asset:
+        jcr:primaryType: hippo:resource
+        jcr:data:
+          type: binary
+          resource: /content/assets/hippos/hippo.pdf/hippo.pdf/asset/data.pdf
+        jcr:lastModified: 2008-09-11T14:02:07.506+02:00
+        jcr:mimeType: application/pdf

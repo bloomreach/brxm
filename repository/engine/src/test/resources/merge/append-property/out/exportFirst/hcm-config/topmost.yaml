@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /topmost/upstream:
+      existingPropertyNewlyAdded:
+        operation: add
+        type: string
+        value: [And now I have more than one value]

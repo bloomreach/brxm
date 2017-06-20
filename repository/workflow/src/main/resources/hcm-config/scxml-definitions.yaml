@@ -1,0 +1,101 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/scxmlregistry/hippo:moduleconfig/hipposcxml:definitions:
+      jcr:primaryType: hipposcxml:definitions
+      /documentworkflow:
+        jcr:primaryType: hipposcxml:scxml
+        hipposcxml:source:
+          type: string
+          resource: /documentworkflow.scxml
+        /action:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.scxml.ActionAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /result:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.scxml.ResultAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /feedback:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.scxml.FeedbackAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /configVariant:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.ConfigVariantAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /copyVariant:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.CopyVariantAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /workflowRequest:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.WorkflowRequestAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /archiveDocument:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.ArchiveDocumentAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /isModified:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.IsModifiedAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /scheduleWorkflow:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.ScheduleWorkflowAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /copyDocument:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.CopyDocumentAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /moveDocument:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.MoveDocumentAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /renameDocument:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.RenameDocumentAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /setHolder:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.SetHolderAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /deleteRequest:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.DeleteRequestAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /logEvent:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.scxml.LogEventAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /version:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.VersionVariantAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /listVersions:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.ListVersionsVariantAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /retrieveVersion:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.RetrieveVersionAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /restoreVersion:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.RestoreVersionAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /versionRestoreTo:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.VersionRestoreToAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /workflowException:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.scxml.WorkflowExceptionAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /requestAction:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.RequestActionAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /rejectRequest:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.RejectRequestAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml

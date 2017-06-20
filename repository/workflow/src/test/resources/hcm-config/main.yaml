@@ -1,0 +1,8 @@
+definitions:
+  namespace:
+    test-repository-test:
+      uri: http://www.onehippo.org/test-repository-test-unused
+      cnd: repository-test.cnd
+    reviewed-actions-test-nodetypes:
+      uri: http://www.onehippo.org/reviewed-actions-test-nodetypes-unused
+      cnd: reviewedaction-test.cnd

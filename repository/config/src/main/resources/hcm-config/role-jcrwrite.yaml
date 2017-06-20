@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:roles/readwrite:
+      jcr:primaryType: hipposys:role
+      hipposys:privileges: ['jcr:read', 'jcr:write']

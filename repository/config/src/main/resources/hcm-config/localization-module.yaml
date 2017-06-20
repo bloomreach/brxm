@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/localizer:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.repository.l10n.LocalizationModule

@@ -1,0 +1,87 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/defaultwrite:
+      jcr:primaryType: hipposys:domain
+      /nt-unstructured:
+        jcr:primaryType: hipposys:domainrule
+        /type-nt-unstructured:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: nt:unstructured
+      /hippo-facetsearch:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-facetsearch:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippo:facetsearch
+      /hippo-facetselect:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-facetselect:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippo:facetselect
+      /hippo-mirror:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-mirror:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippo:mirror
+      /hippo-handle:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-handle:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippo:handle
+      /document-holder:
+        jcr:primaryType: hipposys:domainrule
+        /match_holder_with_username:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: hippostd:holder
+          hipposys:filter: false
+          hipposys:type: String
+          hipposys:value: __user__
+      /self:
+        jcr:primaryType: hipposys:domainrule
+        /match-nodename-with-username:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodename
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: __user__
+        /type-hippo-user:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposys:user
+      /hippo-translation:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-translation:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippo:translation
+      /readwrite:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [author, editor, admin]
+        hipposys:role: readwrite

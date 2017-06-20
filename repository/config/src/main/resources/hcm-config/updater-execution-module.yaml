@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/updater-execution:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.repository.update.UpdaterExecutionModule

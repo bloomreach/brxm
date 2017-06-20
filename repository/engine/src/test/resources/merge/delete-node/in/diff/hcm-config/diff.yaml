@@ -1,0 +1,13 @@
+definitions:
+  config:
+    /exportFirstExistingRoot:
+      # should result in def disappearing from exportFirst
+      .meta:delete: true
+    /topmost/upstreamToDelete:
+      # should result in new delete-def in exportFirst
+      .meta:delete: true
+    /topmost:
+      /upstream:
+        # should result in new delete-def in exportFirst, removed def in exportSecond, and removed exportSecond Source
+        # but should NOT remove entire def from exportFirst.yaml
+        .meta:delete: true

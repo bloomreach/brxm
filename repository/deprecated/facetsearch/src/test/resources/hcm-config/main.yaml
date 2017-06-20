@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    test-repository-test:
+      uri: http://www.onehippo.org/test-repository-test-unused
+      cnd: repository-test.cnd

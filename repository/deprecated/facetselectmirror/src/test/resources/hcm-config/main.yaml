@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    test:
+      uri: http://www.onehippo.org/jcr/hippo/test/nt/1.0
+      cnd: repository-test.cnd

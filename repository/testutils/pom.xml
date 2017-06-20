@@ -35,10 +35,6 @@
       <version>${restassured.version}</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-testutils</artifactId>
       <version>${hippo.testutils.version}</version>

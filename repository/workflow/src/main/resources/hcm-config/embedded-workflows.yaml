@@ -1,0 +1,67 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/embedded:
+      jcr:primaryType: hipposys:workflowcategory
+      /gallery:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
+        hipposys:display: Workflow on documents in galleries
+        hipposys:nodetype: hippostd:gallery
+        hipposys:privileges: ['hippo:author']
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          attic:
+            type: path
+            value: /content/attic
+      /folder-extended:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
+        hipposys:display: Workflow on documents in folders (editors)
+        hipposys:nodetype: hippostd:folder
+        hipposys:privileges: ['hippo:editor']
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          attic:
+            type: path
+            value: /content/attic
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+      /folder:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
+        hipposys:display: Workflow on documents in folders (authors)
+        hipposys:nodetype: hippostd:folder
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          attic:
+            type: path
+            value: /content/attic
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+      /directory-extended:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
+        hipposys:display: Workflow on documents in directories (editors)
+        hipposys:nodetype: hippostd:directory
+        hipposys:privileges: ['hippo:editor']
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          attic:
+            type: path
+            value: /content/attic
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+      /directory:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
+        hipposys:display: Workflow on documents in directories (authors)
+        hipposys:nodetype: hippostd:directory
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          attic:
+            type: path
+            value: /content/attic
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+      /root:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
+        hipposys:display: Workflow on documents in folders
+        hipposys:nodetype: rep:root
+        hipposys:privileges: ['hippo:admin']

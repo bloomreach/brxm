@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /topmost/upstream:
+      existingPropertyAddedInExport: "I already existed in exportFirst"
+    /topmost/upstream/exportFirst:
+      jcr:primaryType: nt:unstructured
+      existingPropertyWithLocalDef: "Don't call it a comeback"

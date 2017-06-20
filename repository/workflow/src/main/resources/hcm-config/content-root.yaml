@@ -1,0 +1,33 @@
+definitions:
+  config:
+    /content:
+      .meta:residual-child-node-category: runtime
+      jcr:primaryType: hippostd:folder
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: ed307dfc-5774-4ac7-9feb-79b57e058bb2
+      hippostd:foldertype: [new-document, new-folder]
+      /documents:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: hippostd:folder
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 302beda6-84a3-4636-bbab-63972219bca8
+        hippostd:foldertype: [new-folder, new-translated-folder]
+      /gallery:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: hippogallery:stdImageGallery
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 37aa21b2-d5dd-4ac2-9e1c-9cb0f82dd099
+        hippostd:foldertype: [new-image-folder]
+        hippostd:gallerytype: ['hippogallery:imageset']
+      /assets:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: hippogallery:stdAssetGallery
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 64eb45b7-5bc5-458b-86cf-274652390358
+        hippostd:foldertype: [new-file-folder]
+        hippostd:gallerytype: ['hippogallery:exampleAssetSet']
+      /attic:
+        .meta:residual-child-node-category: runtime
+        jcr:primaryType: hippostd:folder
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: b576e833-4910-4c42-987c-8eeb8b23e06d

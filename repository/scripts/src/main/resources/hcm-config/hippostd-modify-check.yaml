@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:update/hippo:registry/StdModifyPropertyCheck:
+      jcr:primaryType: hipposys:updaterinfo
+      hipposys:batchsize: -1
+      hipposys:dryrun: false
+      hipposys:query: //element(*, hippostd:templatequery)
+      hipposys:script:
+        type: string
+        resource: /hippostd-modify-check.groovy
+      hipposys:throttle: 0

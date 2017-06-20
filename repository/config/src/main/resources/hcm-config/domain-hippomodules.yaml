@@ -1,0 +1,26 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/hippomodules:
+      jcr:primaryType: hipposys:domain
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [everybody]
+        hipposys:role: readonly
+      /modulefolder:
+        jcr:primaryType: hipposys:domainrule
+        /type-modulefolder:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposys:modulefolder
+      /module:
+        jcr:primaryType: hipposys:domainrule
+        /type-module:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposys:module

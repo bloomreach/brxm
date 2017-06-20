@@ -1,0 +1,19 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:update:
+      jcr:primaryType: hipposys:update
+      jcr:mixinTypes: ['hippo:lockable']
+      hippo:lockExpirationTime:
+        .meta:category: runtime
+      jcr:lockOwner:
+        .meta:category: runtime
+      jcr:lockIsDeep:
+        .meta:category: runtime
+      /hippo:registry:
+        jcr:primaryType: hipposys:updaterfolder
+      /hippo:queue:
+        .meta:residual-child-node-category: runtime
+        jcr:primaryType: hipposys:updaterfolder
+      /hippo:history:
+        .meta:residual-child-node-category: runtime
+        jcr:primaryType: hipposys:updaterfolder

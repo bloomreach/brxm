@@ -1,0 +1,41 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:derivatives/date:
+      jcr:primaryType: hipposys:deriveddefinition
+      hipposys:classname: org.hippoecm.faceteddate.DerivedDataFunction
+      hipposys:nodetype: hippostd:date
+      hipposys:serialver: 1
+      /hipposys:accessed:
+        jcr:primaryType: hipposys:propertyreferences
+        /date:
+          jcr:primaryType: hipposys:relativepropertyreference
+          hipposys:relPath: hippostd:date
+      /hipposys:derived:
+        jcr:primaryType: hipposys:propertyreferences
+        /year:
+          jcr:primaryType: hipposys:relativepropertyreference
+          hipposys:relPath: hippostd:year
+        /month:
+          jcr:primaryType: hipposys:relativepropertyreference
+          hipposys:relPath: hippostd:month
+        /weekofyear:
+          jcr:primaryType: hipposys:relativepropertyreference
+          hipposys:relPath: hippostd:weekofyear
+        /dayofweek:
+          jcr:primaryType: hipposys:relativepropertyreference
+          hipposys:relPath: hippostd:dayofweek
+        /dayofmonth:
+          jcr:primaryType: hipposys:relativepropertyreference
+          hipposys:relPath: hippostd:dayofmonth
+        /dayofyear:
+          jcr:primaryType: hipposys:relativepropertyreference
+          hipposys:relPath: hippostd:dayofyear
+        /hourofday:
+          jcr:primaryType: hipposys:relativepropertyreference
+          hipposys:relPath: hippostd:hourofday
+        /minute:
+          jcr:primaryType: hipposys:relativepropertyreference
+          hipposys:relPath: hippostd:minute
+        /second:
+          jcr:primaryType: hipposys:relativepropertyreference
+          hipposys:relPath: hippostd:second

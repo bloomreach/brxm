@@ -1,0 +1,21 @@
+definitions:
+  config:
+    /topmost/upstream:
+      existingPropertyNewlyAdded:
+        operation: add
+        value: ["And now I have more than one value"]
+      /exportFirst:
+        existingPropertyWithAddInSecond:
+          operation: add
+          value: [value3]
+        existingPropertyWithLocalDef:
+          operation: add
+          value: ['... I''ve been here the whole time']
+        propertyWithResources:
+          operation: add
+          type: binary
+          resource: [testResource2.bin]
+    /topmost/upstream/exportSecond:
+      newPropertyToSecond:
+        operation: add
+        value: ["I'm also new"]

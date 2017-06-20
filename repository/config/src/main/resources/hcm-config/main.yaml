@@ -1,0 +1,11 @@
+definitions:
+  namespace:
+    hippostd:
+      uri: http://www.onehippo.org/jcr/hippostd/nt/2.0
+      cnd: hippostd.cnd
+    hippolog:
+      uri: http://www.onehippo.org/jcr/hippolog/nt/2.0
+      cnd: hippolog.cnd
+    hippotranslation:
+      uri: http://www.onehippo.org/jcr/hippotranslation/nt/1.0
+      cnd: hippotranslation.cnd

@@ -59,7 +59,7 @@ import org.onehippo.repository.scxml.WorkflowExceptionAction;
 public class BaseDocumentWorkflowTest {
 
     protected static String loadSCXML() throws Exception {
-        return IOUtils.toString(DocumentWorkflowTest.class.getResourceAsStream("/documentworkflow.scxml"));
+        return IOUtils.toString(DocumentWorkflowTest.class.getResourceAsStream("/hcm-config/documentworkflow.scxml"));
     }
 
     protected static void createDocumentWorkflowSCXMLRegistry() throws Exception {

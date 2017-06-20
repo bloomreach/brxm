@@ -1,0 +1,28 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/gallery:
+      jcr:primaryType: hipposys:workflowcategory
+      /image-gallery:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.gallery.impl.GalleryWorkflowImpl
+        hipposys:display: Workflow on gallery image folders
+        hipposys:nodetype: hippogallery:stdImageGallery
+        hipposys:privileges: ['hippo:author']
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          attic:
+            type: path
+            value: /content/attic
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+      /asset-gallery:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.gallery.impl.GalleryWorkflowImpl
+        hipposys:display: Workflow on asset gallery folders
+        hipposys:nodetype: hippogallery:stdAssetGallery
+        hipposys:privileges: ['hippo:author']
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          attic:
+            type: path
+            value: /content/attic
+          modify-on-copy: ['./hippotranslation:id', $uuid]

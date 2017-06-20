@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/core:
+      jcr:primaryType: hipposys:workflowcategory
+      /handle:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.DefaultWorkflowImpl
+        hipposys:display: Default workflow
+        hipposys:nodetype: hippo:handle
+        hipposys:subtype: hippo:document
+      /default:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.DefaultWorkflowImpl
+        hipposys:display: Default workflow
+        hipposys:nodetype: hippo:document

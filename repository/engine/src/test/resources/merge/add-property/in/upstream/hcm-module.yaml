@@ -1,0 +1,5 @@
+group: test-group
+project: test-project
+module:
+    name: upstream
+    after: [topmost]

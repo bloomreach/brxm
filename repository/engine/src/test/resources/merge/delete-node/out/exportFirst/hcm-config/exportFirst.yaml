@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /topmost:
+      /anotherNodeNotBeingDeleted:
+        jcr:primaryType: nt:unstructured

@@ -1,0 +1,85 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:queries/hippo:templates:
+      jcr:primaryType: hipposys:queryfolder
+      /new-document:
+        jcr:primaryType: hippostd:templatequery
+        hippostd:icon: adddocument_ico
+        hippostd:modify: [./_name, $name, './hippotranslation:locale', $inherited,
+          './hippotranslation:id', $uuid, './hippostdpubwf:createdBy', $holder, './hippostdpubwf:creationDate',
+          $now, './hippostdpubwf:lastModifiedBy', $holder, './hippostdpubwf:lastModificationDate',
+          $now, './hippostd:holder', $holder]
+        jcr:language: xpath
+        jcr:statement: //element(*,hipposysedit:namespacefolder)/element(*,mix:referenceable)/element(*,hipposysedit:templatetype)/hipposysedit:prototypes/element(hipposysedit:prototype,hippo:document)
+      /simple:
+        jcr:primaryType: hippostd:templatequery
+        jcr:mixinTypes: ['hipposys:implementation']
+        hippostd:icon: adddocument_ico
+        hippostd:modify: [./_name, $name, ./_node/_name, $name]
+        hipposys:classname: org.hippoecm.repository.impl.query.DirectPath
+        jcr:language: xpath
+        jcr:statement: /jcr:root/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/node()
+        /hippostd:templates:
+          jcr:primaryType: hippostd:templates
+          /new-document:
+            jcr:primaryType: hippo:handle
+            jcr:mixinTypes: ['mix:referenceable']
+            jcr:uuid: 5787e06d-345a-4879-878b-84fa3ac830c1
+            /new-document:
+              jcr:primaryType: hippostd:document
+              jcr:mixinTypes: ['mix:versionable']
+              jcr:uuid: c5fcf887-e0f2-4d07-813f-30606b3415e8
+              hippostd:content: <html><body></body></html>
+              hippostd:language: en
+              hippostd:state: draft
+      /new-folder:
+        jcr:primaryType: hippostd:templatequery
+        jcr:mixinTypes: ['hipposys:implementation']
+        hippostd:icon: addfolder_ico
+        hippostd:modify: [./_name, $name]
+        hipposys:classname: org.hippoecm.repository.impl.query.DirectPath
+        jcr:language: xpath
+        jcr:statement: /jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-folder/hippostd:templates/node()
+        /hippostd:templates:
+          jcr:primaryType: hippostd:templates
+          /hippostd:folder:
+            jcr:primaryType: hippostd:folder
+            jcr:mixinTypes: ['mix:versionable']
+            jcr:uuid: 36414d02-4f0f-475b-8443-dd6f450a6475
+            hippostd:foldertype: [new-document, new-folder]
+      /new-collection:
+        jcr:primaryType: hippostd:templatequery
+        jcr:mixinTypes: ['hipposys:implementation']
+        hippostd:icon: addfolder_ico
+        hippostd:modify: [./_name, $name]
+        hipposys:classname: org.hippoecm.repository.impl.query.DirectPath
+        jcr:language: xpath
+        jcr:statement: /jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-collection/hippostd:templates/node()
+        /hippostd:templates:
+          jcr:primaryType: hippostd:templates
+          /hippostd:folder:
+            jcr:primaryType: hippostd:folder
+            jcr:mixinTypes: ['mix:versionable']
+            hippostd:foldertype: [new-collection, new-document]
+          /hippostd:directory:
+            jcr:primaryType: hippostd:directory
+            jcr:mixinTypes: ['mix:versionable']
+            hippostd:foldertype: [new-collection, new-document]
+      /new-translated-folder:
+        jcr:primaryType: hippostd:templatequery
+        jcr:mixinTypes: ['hipposys:implementation']
+        hippostd:icon: addfolder_ico
+        hippostd:modify: [./_name, $name, './hippotranslation:id', $uuid, './hippotranslation:locale',
+          $inherited]
+        hipposys:classname: org.hippoecm.repository.impl.query.DirectPath
+        jcr:language: xpath
+        jcr:statement: /jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-translated-folder/hippostd:templates/node()
+        /hippostd:templates:
+          jcr:primaryType: hippostd:templates
+          /hippostd:folder:
+            jcr:primaryType: hippostd:folder
+            jcr:mixinTypes: ['mix:versionable', 'hippotranslation:translated']
+            jcr:uuid: ac140384-57b2-458d-8207-a66a577c1f14
+            hippostd:foldertype: [new-translated-folder, new-document]
+            hippotranslation:id: generated id
+            hippotranslation:locale: inherited locale
