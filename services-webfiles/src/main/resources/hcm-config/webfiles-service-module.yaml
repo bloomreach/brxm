@@ -1,98 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="webfiles">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:module</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:className" sv:type="String">
-    <sv:value>org.onehippo.cms7.services.webfiles.WebFilesServiceModule</sv:value>
-  </sv:property>
-  <sv:node sv:name="hippo:moduleconfig">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:moduleconfig</sv:value>
-    </sv:property>
-    <sv:property sv:name="excludedDirectories" sv:type="String" sv:multiple="true">
-      <!-- Arch -->
-      <sv:value>.arch-ids</sv:value>
-      <!-- BitKeeper -->
-      <sv:value>BitKeeper</sv:value>
-      <!-- Bazaar -->
-      <sv:value>.bzr</sv:value>
-      <!-- CVS -->
-      <sv:value>CVS</sv:value>
-      <!-- darcs -->
-      <sv:value>_darcs</sv:value>
-      <sv:value>.darcsrepo</sv:value>
-      <!-- git -->
-      <sv:value>.git</sv:value>
-      <!-- Mercurial -->
-      <sv:value>.hg</sv:value>
-      <!-- Serena Dimensions Version 10 -->
-      <sv:value>.metadata</sv:value>
-      <!-- RCS -->
-      <sv:value>RCS</sv:value>
-      <!-- SCCS -->
-      <sv:value>SCCS</sv:value>
-      <!-- Subversion -->
-      <sv:value>.svn</sv:value>
-    </sv:property>
-    <sv:property sv:name="includedFiles" sv:type="String" sv:multiple="true">
-      <sv:value>*.css</sv:value>
-      <sv:value>*.eot</sv:value>
-      <sv:value>*.ftl</sv:value>
-      <sv:value>*.gif</sv:value>
-      <sv:value>*.html</sv:value>
-      <sv:value>*.ico</sv:value>
-      <sv:value>*.jpeg</sv:value>
-      <sv:value>*.jpg</sv:value>
-      <sv:value>*.js</sv:value>
-      <sv:value>*.json</sv:value>
-      <sv:value>*.map</sv:value>
-      <sv:value>*.otf</sv:value>
-      <sv:value>*.png</sv:value>
-      <sv:value>*.svg</sv:value>
-      <sv:value>*.ttf</sv:value>
-      <sv:value>*.woff</sv:value>
-      <sv:value>*.xml</sv:value>
-      <sv:value>*.properties</sv:value>
-    </sv:property>
-    <sv:property sv:name="useWatchServiceOnOsNames" sv:type="String" sv:multiple="true">
-      <sv:value>Linux</sv:value>
-      <!--
-        Disabled: <sv:value>Windows*</sv:value>
-
-        Two JDK issues are annoying enough to disable the Watch Service on Windows for now:
-        - JDK-7052697: Windows locks watched directories so parents of watched directories can't be renamed
-        - JDK-6972833: Windows does not close the file descriptor of a watched directory fast enough, so
-                       directories can't be removed as long as they contain child directories
-
-        Disabled: <sv:value>Mac OS X</sv:value>
-
-        There is no native implementation of WatchService for Mac OS X yet.
-      -->
-    </sv:property>
-    <sv:property sv:name="watchDelayMillis" sv:type="Long">
-      <sv:value>500</sv:value>
-    </sv:property>
-    <sv:property sv:name="maxFileLengthKb" sv:type="Long">
-      <sv:value>256</sv:value>
-    </sv:property>
-    <sv:property sv:name="watchedModules" sv:type="String" sv:multiple="true">
-      <sv:value>repository-data/webfiles</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/webfiles:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.cms7.services.webfiles.WebFilesServiceModule
+      hipposys:cmsonly:
+        operation: delete
+      /hippo:moduleconfig:
+        jcr:primaryType: hipposys:moduleconfig
+        excludedDirectories: [.arch-ids, BitKeeper, .bzr, CVS, _darcs, .darcsrepo,
+          .git, .hg, .metadata, RCS, SCCS, .svn]
+        includedFiles: ['*.css', '*.eot', '*.ftl', '*.gif', '*.html', '*.ico', '*.jpeg',
+          '*.jpg', '*.js', '*.json', '*.map', '*.otf', '*.png', '*.svg', '*.ttf',
+          '*.woff', '*.xml', '*.properties', '*.txt', '*.woff2']
+        maxFileLengthKb: 256
+        useWatchServiceOnOsNames: [Linux]
+        watchDelayMillis: 500
+        watchedModules: [repository-data/webfiles]
