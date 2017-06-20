@@ -193,6 +193,8 @@ public class BrowserTest {
         public boolean isSafari() {
             return agent.equals("safari");
         }
+
+        public boolean isEdge() { return agent.equals("edge");}
         
     }
 

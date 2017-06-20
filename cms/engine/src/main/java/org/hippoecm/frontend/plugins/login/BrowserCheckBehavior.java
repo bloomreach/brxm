@@ -136,6 +136,8 @@ public class BrowserCheckBehavior extends Behavior {
                 return info.isChrome();
             } else if (agent.equals("opera")) {
                 return info.isOpera();
+            } else if (agent.equals("edge")) {
+                return info.isEdge();
             }
             return false;
         }
@@ -154,6 +156,8 @@ public class BrowserCheckBehavior extends Behavior {
 
         boolean isInternetExplorer();
 
+        boolean isEdge();
+
         int getMajor();
 
         int getMinor();
@@ -165,6 +169,7 @@ public class BrowserCheckBehavior extends Behavior {
         private static final String CHROME = "Chrome";
         private static final String SHIRETOKO = "Shiretoko";
         private static final String FIREFOX = "Firefox";
+        private static final String EDGE = "Edge";
         private WebClientInfo info;
         private int major;
         private int minor;
@@ -191,6 +196,8 @@ public class BrowserCheckBehavior extends Behavior {
                         String v = ua.substring(ua.indexOf(MSIE));
                         parseMajorMinor(v.substring(5, v.indexOf(';')));
                     }
+                } else if(isEdge()) {
+                    setVersions(EDGE);
                 }
             }
         }
@@ -236,6 +243,11 @@ public class BrowserCheckBehavior extends Behavior {
 
         public boolean isSafari() {
             return info.getProperties().isBrowserSafari() && !isChrome();
+        }
+
+        public boolean isEdge() {
+            final String userAgent = info.getUserAgent();
+            return userAgent.contains(EDGE);
         }
 
         public int getMajor() {
