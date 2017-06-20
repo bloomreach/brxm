@@ -53,6 +53,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,9 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.CHANNEL_PROPERTY_NAME;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNEL;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITE_CONFIGURATIONPATH;
 
 public class ChannelManagerImpl implements ChannelManager {
 
@@ -289,17 +292,6 @@ public class ChannelManagerImpl implements ChannelManager {
             final Node sitesNode = configRoot.getNode(sites);
             final Node liveSiteNode = createSiteNode(sitesNode, channelName, channelContentRootPath);
 
-            if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
-                Node blueprintSiteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
-                if (blueprintSiteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-                    String explicitConfigPath = blueprintSiteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
-                    liveSiteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, explicitConfigPath);
-                    // TODO if there is already a site pointing to this configuration, the added channel won't have it's
-                    // TODO own channel node meaning it won't show up in channels.
-                    // TODO see https://issues.onehippo.com/browse/HSTTWO-3976
-                }
-            }
-
             final String mountPointPath = liveSiteNode.getPath();
             channel.setHstMountPoint(mountPointPath);
 
@@ -324,10 +316,11 @@ public class ChannelManagerImpl implements ChannelManager {
 
 
     private String reuseOrCopyConfiguration(final Session session, final Node configRoot, final Node blueprintNode, final String channelName, final Channel channel) throws ChannelException, RepositoryException {
+        final Node hstConfigurations = configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS);
         // first try to copy existing blueprint configuration
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
             final Node blueprintConfiguration = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATION);
-            final Node hstConfigurations = configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS);
+
             final Node configuration = copyNodes(blueprintConfiguration, hstConfigurations, channelName);
             if (!configuration.hasNode(NODENAME_HST_WORKSPACE)) {
                 configuration.addNode(NODENAME_HST_WORKSPACE, NODETYPE_HST_WORKSPACE);
@@ -346,17 +339,40 @@ public class ChannelManagerImpl implements ChannelManager {
         }
 
         // next, try to reuse the configuration path specified in the hst:site node of the blueprint
-        // TODO When creating a new channel from a blueprint that reuses an existing hst configuration, it cannot be displayed in the channel mngr
-        // TODO see https://issues.onehippo.com/browse/HSTTWO-3976
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
             Node siteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
-            if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-                String configurationPath = siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
+            if (siteNode.hasProperty(SITE_CONFIGURATIONPATH)) {
+                String configurationPath = siteNode.getProperty(SITE_CONFIGURATIONPATH).getString();
                 if (!session.nodeExists(configurationPath)) {
                     throw new ChannelException(
                             "Blueprint '" + blueprintNode.getPath() + "' does not have an hst:configuration node, and its hst:site node points to a non-existing node: '" + configurationPath + "'");
                 }
-                return configurationPath;
+                // the blueprint site node has explicit pointer to configuration. We will create a configuration for
+                // the new site that inherits everything. The new channel *will* however gets its own hst:workspace/hst:channel
+                // node otherwise the channel won't be visible in the channel manager and we'll copy the 'inherited' channel
+                // its channel node if it has one.
+                Node configuration = hstConfigurations.addNode(channelName, NODETYPE_HST_CONFIGURATION);
+                Node workspaceNode = configuration.addNode(NODENAME_HST_WORKSPACE, NODETYPE_HST_WORKSPACE);
+                Node inherited = session.getNode(configurationPath);
+                final Node inheritedChannelNode;
+                if (inherited.hasNode(NODENAME_HST_CHANNEL)) {
+                    inheritedChannelNode = inherited.getNode(NODENAME_HST_CHANNEL);
+                } else if (inherited.hasNode(NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_CHANNEL)) {
+                    inheritedChannelNode = inherited.getNode(NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_CHANNEL);
+                } else {
+                    inheritedChannelNode = null;
+                }
+
+                if (inheritedChannelNode != null) {
+                    Node channelNode = JcrUtils.copy(session, inheritedChannelNode.getPath(), workspaceNode.getPath() + "/" + NODENAME_HST_CHANNEL);
+                    channelNode.setProperty(CHANNEL_PROPERTY_NAME, channel.getName());
+                } else {
+                    Node channelNode = workspaceNode.addNode(NODENAME_HST_CHANNEL, NODETYPE_HST_CHANNEL);
+                    channelNode.setProperty(CHANNEL_PROPERTY_NAME, channel.getName());
+                }
+                configuration.setProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM,
+                        new String[]{"../"+inherited.getName(), "../" + inherited.getName() + "/" + NODENAME_HST_WORKSPACE});
+                return configuration.getPath();
             }
         }
 
