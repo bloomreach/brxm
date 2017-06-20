@@ -1,9 +1,7 @@
-{
-  "hippo:types": {
-    "resourcebundle:resourcebundle": {
-      "en": {
-        "jcr:name": "Resource Bundle"
-      }
-    }
-  }
-}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/resourcebundle:resourcebundle:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Resource Bundle
