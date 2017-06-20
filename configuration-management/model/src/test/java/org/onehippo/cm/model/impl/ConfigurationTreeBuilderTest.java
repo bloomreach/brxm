@@ -1095,7 +1095,11 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl)definitions.get(1));
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
+            builder.push((ContentDefinitionImpl)definitions.get(1));
+            assertTrue(interceptor.messages()
+                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-group/test-project/test-module [string]' specifies values equivalent to existing property, defined in '[test-group/test-project/test-module [string]]'.")));
+        }
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1150,7 +1154,11 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            assertTrue(interceptor.messages()
+                    .anyMatch(m->m.equals("Property '/a/b/property2' defined in 'test-group/test-project/test-module [string]' claims to ADD values, but property doesn't exist yet. Applying default behaviour.")));
+        }
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1298,7 +1306,11 @@ public class ConfigurationTreeBuilderTest {
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            assertTrue(interceptor.messages()
+                    .anyMatch(m->m.equals("Property '/a/b/jcr:primaryType' defined in 'test-group/test-project/test-module [string]' specifies value equivalent to existing property, defined in '[test-group/test-project/test-module [string]]'.")));
+        }
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -1491,7 +1503,11 @@ public class ConfigurationTreeBuilderTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
-        builder.push((ContentDefinitionImpl) definitions.get(2));
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
+            builder.push((ContentDefinitionImpl) definitions.get(2));
+            assertTrue(interceptor.messages()
+                    .anyMatch(m->m.equals("Property '/a/b/c/property1' defined in 'test-group/test-project/test-module [string]' has already been deleted. This property is not re-created.")));
+        }
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         final ConfigurationNodeImpl a = root.getNode("a[1]");
@@ -2165,7 +2181,11 @@ public class ConfigurationTreeBuilderTest {
                 + "      /second:\n"
                 + "        jcr:primaryType: foo\n";
         definitions = ModelTestUtils.parseNoSort(yaml);
-        builder.push((ContentDefinitionImpl) definitions.get(0));
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
+            builder.push((ContentDefinitionImpl) definitions.get(0));
+            assertTrue(interceptor.messages()
+                    .anyMatch(m->m.equals("Unnecessary orderBefore: 'second' for node '/node/first' defined in 'test-group/test-project/test-module [string]': already ordered before sibling 'second[1]'.")));
+        }
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl node = root.getNode("node[1]");
 

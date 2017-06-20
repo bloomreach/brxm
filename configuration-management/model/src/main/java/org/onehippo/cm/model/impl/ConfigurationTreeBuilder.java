@@ -620,8 +620,8 @@ public class ConfigurationTreeBuilder {
                             return;
                         }
                     }
-                    logger.warn("Property '{}' defined in '{}' specifies values equivalent to existing property.",
-                            definitionProperty.getPath(), definitionProperty.getOrigin());
+                    logger.warn("Property '{}' defined in '{}' specifies values equivalent to existing property, defined in '{}'.",
+                            definitionProperty.getPath(), definitionProperty.getOrigin(), property.getOrigin());
                 }
             }
         }
