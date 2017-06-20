@@ -1,28 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="TaxonomyTranslatedUpdater" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:updaterinfo</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:batchsize" sv:type="Long">
-    <sv:value>10</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:description" sv:type="String">
-    <sv:value>The taxonomy category localization model was based on deprecated hippo:translated and hippo:translation types and made use of same-name sibling nodes. This model has been changed to one that does not make use of same-name siblings and is not based on deprecated node types. This updater will migrate taxonomies to make use of the new taxonomy localization model. Run this updater after upgrading to Hippo 11.</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:dryrun" sv:type="Boolean">
-    <sv:value>false</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:parameters" sv:type="String">
-    <sv:value/>
-  </sv:property>
-  <sv:property sv:name="hipposys:query" sv:type="String">
-    <sv:value>//element(*, hippotaxonomy:taxonomy)</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:class" sv:type="String">
-    <sv:value>org.onehippo.taxonomy.plugin.TaxonomyTranslationsUpdater</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:throttle" sv:type="Long">
-    <sv:value>1000</sv:value>
-  </sv:property>
-</sv:node>
-
+definitions:
+  config:
+    /hippo:configuration/hippo:update/hippo:registry/TaxonomyTranslatedUpdater:
+      jcr:primaryType: hipposys:updaterinfo
+      hipposys:batchsize: 10
+      hipposys:class: org.onehippo.taxonomy.plugin.TaxonomyTranslationsUpdater
+      hipposys:description: The taxonomy category localization model was based on
+        deprecated hippo:translated and hippo:translation types and made use of same-name
+        sibling nodes. This model has been changed to one that does not make use of
+        same-name siblings and is not based on deprecated node types. This updater
+        will migrate taxonomies to make use of the new taxonomy localization model.
+        Run this updater after upgrading to Hippo 11.
+      hipposys:dryrun: false
+      hipposys:parameters: ''
+      hipposys:query: //element(*, hippotaxonomy:taxonomy)
+      hipposys:throttle: 1000

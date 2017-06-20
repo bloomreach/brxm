@@ -1,130 +1,39 @@
-<?xml version="1.0" encoding="UTF-8"?>
-  <!--
-  Copyright 2007-2009 Hippo
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="taxonomies">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:plugincluster</sv:value>
-  </sv:property>
-  <sv:property sv:name="frontend:references" sv:type="String">
-    <sv:value>browser.id</sv:value>
-    <sv:value>editor.id</sv:value>
-  </sv:property>
-  <sv:property sv:name="frontend:services" sv:type="String">
-    <sv:value>wicket.id</sv:value>
-    <sv:value>model.folder</sv:value>
-  </sv:property>
-
-  <sv:property sv:name="model.folder" sv:type="String">
-    <sv:value>${cluster.id}.model.folder</sv:value>
-  </sv:property>
-
-  <sv:node sv:name="sectionPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.browse.section.BrowsingSectionPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>${wicket.id}</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.tree</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.tree" sv:type="String">
-      <sv:value>${cluster.id}.tree</sv:value>
-    </sv:property>
-    <sv:property sv:name="title" sv:type="String">
-      <sv:value>section-taxonomies</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.folder" sv:type="String">
-      <sv:value>${model.folder}</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.folder.root" sv:type="String">
-      <sv:value>/content/taxonomies</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="tree">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>${cluster.id}.tree</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>${model.folder}</sv:value>
-    </sv:property>
-    <sv:property sv:name="rootless" sv:type="String">
-      <sv:value>false</sv:value>
-    </sv:property>
-  
-    <!-- Wicket tree helper properties -->
-    <sv:property sv:name="bind.to.layout.unit" sv:type="String">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="register.context.menu" sv:type="String">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="use.width.from.classname" sv:type="String">
-      <sv:value>false</sv:value>
-    </sv:property>
-  
-    <sv:property sv:name="nodename.max.length" sv:type="Long">
-      <sv:value>23</sv:value>
-    </sv:property>
-    <sv:property sv:name="path" sv:type="String">
-      <sv:value>/content/taxonomies</sv:value>
-    </sv:property>
-  
-    <sv:node sv:name="module.workflow">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="workflow.categories" sv:type="String">
-        <sv:value>taxonomies</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="filters">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:node sv:name="hideHandleType">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:property sv:name="child" sv:type="String">
-          <sv:value>hippo:handle</sv:value>
-        </sv:property>
-        <sv:property sv:name="display" sv:type="Boolean">
-          <sv:value>false</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-tree-views/taxonomies:
+      jcr:primaryType: frontend:plugincluster
+      frontend:references: [browser.id, editor.id]
+      frontend:services: [wicket.id, model.folder]
+      model.folder: ${cluster.id}.model.folder
+      /sectionPlugin:
+        jcr:primaryType: frontend:plugin
+        extension.tree: ${cluster.id}.tree
+        model.folder: ${model.folder}
+        model.folder.root: /content/taxonomies
+        plugin.class: org.hippoecm.frontend.plugins.cms.browse.section.BrowsingSectionPlugin
+        title: section-taxonomies
+        wicket.extensions: extension.tree
+        wicket.id: ${wicket.id}
+      /tree:
+        jcr:primaryType: frontend:plugin
+        bind.to.layout.unit: 'true'
+        nodename.max.length: 23
+        path: /content/taxonomies
+        plugin.class: org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin
+        register.context.menu: 'true'
+        rootless: 'false'
+        use.width.from.classname: 'false'
+        wicket.id: ${cluster.id}.tree
+        wicket.model: ${model.folder}
+        /module.workflow:
+          jcr:primaryType: frontend:plugin
+          browser.id: ${browser.id}
+          editor.id: ${editor.id}
+          plugin.class: org.hippoecm.addon.workflow.ContextWorkflowPlugin
+          workflow.categories: taxonomies
+        /filters:
+          jcr:primaryType: frontend:pluginconfig
+          /hideHandleType:
+            jcr:primaryType: frontend:pluginconfig
+            child: hippo:handle
+            display: false

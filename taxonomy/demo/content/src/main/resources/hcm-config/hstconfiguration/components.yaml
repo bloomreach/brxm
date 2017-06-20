@@ -1,195 +1,72 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:components">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:components</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>3e646bc3-f1f1-4adf-8f73-3e9c0a712f7d</sv:value>
-  </sv:property>
-  <sv:node sv:name="header">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>bb67f694-b569-44d8-96fe-467b95219273</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>header</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="bodyhome">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>6384a81c-e859-4e3e-a8dd-5ca5910e91ed</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>homelayout</sv:value>
-    </sv:property>
-    <sv:node sv:name="bodynav">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>12f523e3-77b1-4862-ab19-051ff27a2fd1</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.taxonomy.demo.components.LeftMenu</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>leftmenu</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="bodymain">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>742c9025-1233-4354-b79b-9824196ed987</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.taxonomy.demo.components.Home</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>homepage</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="general">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>0bd7f4a6-5309-43b4-bc39-2122bab9337c</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>threecolumnlayout</sv:value>
-    </sv:property>
-    <sv:node sv:name="leftmenu">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>ef00d331-dfcc-4567-832b-efc13ab20d2a</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.taxonomy.demo.components.LeftMenu</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>leftmenu</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="right">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>291c66a4-128f-4a7f-bb74-c06907cb2686</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>right</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="detail">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>960863bd-9066-4a45-9a05-ba5a6f5c850f</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:components/general</sv:value>
-    </sv:property>
-    <sv:node sv:name="content">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>4d9b2274-26cc-4848-be2b-37d9c0424e63</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.taxonomy.demo.components.Detail</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>detail</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="taxonomytree">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>be64d25b-cc23-4824-811a-6920b9f43197</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:components/general</sv:value>
-    </sv:property>
-    <sv:node sv:name="content">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>21cfe8a8-26b3-43d1-8bcc-369b5b1c4e4b</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.taxonomy.demo.components.TaxonomyTreeComponent</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>taxonomytree</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="taxonomycategoryresult">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>33556579-c7a7-44c0-99c9-149f48d4bdd3</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:components/general</sv:value>
-    </sv:property>
-    <sv:node sv:name="content">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>11cbb735-83c1-49f8-9c65-60798eb6276c</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.taxonomy.demo.components.TaxonomyCategoryResult</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>taxonomycategoryresult</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="search">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>355cac44-bd7c-4681-a436-f691c69a8ece</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:components/general</sv:value>
-    </sv:property>
-    <sv:node sv:name="content">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>cf6f0989-385b-4daa-95c5-c62fc86efd3f</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.taxonomy.demo.components.Search</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>search</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/taxonomydemo-common/hst:components:
+      jcr:primaryType: hst:components
+      jcr:uuid: 3e646bc3-f1f1-4adf-8f73-3e9c0a712f7d
+      /header:
+        jcr:primaryType: hst:component
+        jcr:uuid: bb67f694-b569-44d8-96fe-467b95219273
+        hst:template: header
+      /bodyhome:
+        jcr:primaryType: hst:component
+        jcr:uuid: 6384a81c-e859-4e3e-a8dd-5ca5910e91ed
+        hst:template: homelayout
+        /bodynav:
+          jcr:primaryType: hst:component
+          jcr:uuid: 12f523e3-77b1-4862-ab19-051ff27a2fd1
+          hst:componentclassname: org.onehippo.taxonomy.demo.components.LeftMenu
+          hst:template: leftmenu
+        /bodymain:
+          jcr:primaryType: hst:component
+          jcr:uuid: 742c9025-1233-4354-b79b-9824196ed987
+          hst:componentclassname: org.onehippo.taxonomy.demo.components.Home
+          hst:template: homepage
+      /general:
+        jcr:primaryType: hst:component
+        jcr:uuid: 0bd7f4a6-5309-43b4-bc39-2122bab9337c
+        hst:template: threecolumnlayout
+        /leftmenu:
+          jcr:primaryType: hst:component
+          jcr:uuid: ef00d331-dfcc-4567-832b-efc13ab20d2a
+          hst:componentclassname: org.onehippo.taxonomy.demo.components.LeftMenu
+          hst:template: leftmenu
+        /right:
+          jcr:primaryType: hst:component
+          jcr:uuid: 291c66a4-128f-4a7f-bb74-c06907cb2686
+          hst:template: right
+      /detail:
+        jcr:primaryType: hst:component
+        jcr:uuid: 960863bd-9066-4a45-9a05-ba5a6f5c850f
+        hst:referencecomponent: hst:components/general
+        /content:
+          jcr:primaryType: hst:component
+          jcr:uuid: 4d9b2274-26cc-4848-be2b-37d9c0424e63
+          hst:componentclassname: org.onehippo.taxonomy.demo.components.Detail
+          hst:template: detail
+      /taxonomytree:
+        jcr:primaryType: hst:component
+        jcr:uuid: be64d25b-cc23-4824-811a-6920b9f43197
+        hst:referencecomponent: hst:components/general
+        /content:
+          jcr:primaryType: hst:component
+          jcr:uuid: 21cfe8a8-26b3-43d1-8bcc-369b5b1c4e4b
+          hst:componentclassname: org.onehippo.taxonomy.demo.components.TaxonomyTreeComponent
+          hst:template: taxonomytree
+      /taxonomycategoryresult:
+        jcr:primaryType: hst:component
+        jcr:uuid: 33556579-c7a7-44c0-99c9-149f48d4bdd3
+        hst:referencecomponent: hst:components/general
+        /content:
+          jcr:primaryType: hst:component
+          jcr:uuid: 11cbb735-83c1-49f8-9c65-60798eb6276c
+          hst:componentclassname: org.onehippo.taxonomy.demo.components.TaxonomyCategoryResult
+          hst:template: taxonomycategoryresult
+      /search:
+        jcr:primaryType: hst:component
+        jcr:uuid: 355cac44-bd7c-4681-a436-f691c69a8ece
+        hst:referencecomponent: hst:components/general
+        /content:
+          jcr:primaryType: hst:component
+          jcr:uuid: cf6f0989-385b-4daa-95c5-c62fc86efd3f
+          hst:componentclassname: org.onehippo.taxonomy.demo.components.Search
+          hst:template: search

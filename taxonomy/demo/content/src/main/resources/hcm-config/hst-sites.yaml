@@ -1,30 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:sites">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:sites</sv:value>
-  </sv:property>
-  <sv:node sv:name="taxonomydemo-nl">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="taxonomydemo-en">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="taxonomydemo-fr">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:sites:
+      jcr:primaryType: hst:sites
+      /taxonomydemo-nl:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents
+      /taxonomydemo-en:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents
+      /taxonomydemo-fr:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents

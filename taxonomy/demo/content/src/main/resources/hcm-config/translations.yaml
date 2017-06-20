@@ -1,40 +1,38 @@
-{
-  "hippo:types": {
-    "taxonomydemo:doubletaxonomy": {
-      "en": {
-        "hippotaxonomy:keys": "Taxonomy",
-        "taxonomydemo:alternatekeys": "Secondary taxonomy"
-      },
-      "nl": {
-        "taxonomydemo:alternatekeys": "Secundaire taxonomie",
-        "hippotaxonomy:keys": "Taxonomie"
-      },
-      "fr": {
-        "taxonomydemo:alternatekeys": "Taxonomie secondaire",
-        "hippotaxonomy:keys": "Taxonomie"
-      },
-      "de": {
-        "taxonomydemo:alternatekeys": "Sekundäre Taxonomie",
-        "hippotaxonomy:keys": "Taxonomie"
-      }
-    },
-    "taxonomydemo:canontextpage": {
-      "en": {
-        "jcr:name": "Canonised Text page"
-      },
-      "nl": {
-        "jcr:name": "Gecanoniseerd Tekstpagina"
-      }
-    },
-    "taxonomydemo:textpage": {
-      "en": {
-        "jcr:name": "Text page",
-        "hippotaxonomy:keys": "Taxonomy"
-      },
-      "nl": {
-        "jcr:name": "Tekstpagina",
-        "hippotaxonomy:keys": "Taxonomie"
-      }
-    }
-  }
-}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/taxonomydemo:canontextpage:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Canonised Text page
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Gecanoniseerd Tekstpagina
+    /hippo:configuration/hippo:translations/hippo:types/taxonomydemo:doubletaxonomy:
+      jcr:primaryType: hipposys:resourcebundles
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        hippotaxonomy:keys: Taxonomie
+        taxonomydemo:alternatekeys: Sekundäre Taxonomie
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        hippotaxonomy:keys: Taxonomy
+        taxonomydemo:alternatekeys: Secondary taxonomy
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        hippotaxonomy:keys: Taxonomie
+        taxonomydemo:alternatekeys: Taxonomie secondaire
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        hippotaxonomy:keys: Taxonomie
+        taxonomydemo:alternatekeys: Secundaire taxonomie
+    /hippo:configuration/hippo:translations/hippo:types/taxonomydemo:textpage:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        hippotaxonomy:keys: Taxonomy
+        jcr:name: Text page
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        hippotaxonomy:keys: Taxonomie
+        jcr:name: Tekstpagina

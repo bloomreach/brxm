@@ -1,9 +1,7 @@
-{
-  "hippo:cms": {
-    "sections": {
-      "en": {
-        "section-taxonomies": "Taxonomies"
-      }
-    }
-  }
-}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/sections:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        section-taxonomies: Taxonomies

@@ -1,45 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="hst:sitemenus" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenus</sv:value>
-    </sv:property>
-    <sv:node sv:name="main">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemenu</sv:value>
-        </sv:property>
-        <sv:node sv:name="home">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>root</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="about">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>about</sv:value>
-            </sv:property>
-        </sv:node>
-        
-        <sv:node sv:name="taxonomies">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>taxonomies</sv:value>
-            </sv:property>
-            <sv:node sv:name="Example">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>hst:sitemenuitem</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                    <sv:value>taxonomies/exampletaxonomy</sv:value>
-                </sv:property>
-            </sv:node>
-        </sv:node>
-    </sv:node>
-</sv:node>
-
+definitions:
+  config:
+    /hst:hst/hst:configurations/taxonomydemo-en/hst:sitemenus:
+      jcr:primaryType: hst:sitemenus
+      /main:
+        jcr:primaryType: hst:sitemenu
+        /home:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: root
+        /about:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: about
+        /taxonomies:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: taxonomies
+          /Example:
+            jcr:primaryType: hst:sitemenuitem
+            hst:referencesitemapitem: taxonomies/exampletaxonomy

@@ -1,919 +1,313 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="taxonomydemo">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposysedit:namespace</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>ecdcad3f-96c2-4d11-b235-c10c021a321a</sv:value>
-  </sv:property>
-  <sv:node sv:name="basedocument">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>2fb70e98-df1b-4817-8b72-e9e54fe4e828</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>cbc58c7b-c6ca-48a6-bdc9-a2398e62b4bb</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
-          <sv:value>hippo:document</sv:value>
-          <sv:value>hippostdpubwf:document</sv:value>
-          <sv:value>hippostd:publishableSummary</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/hst/nt/taxonomydemo/1.2</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="textpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>editor:editable</sv:value>
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>2bb547a5-a8a3-4a30-a7e3-7726be1558bc</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>1f3b7a9b-bf6e-4d41-bb8c-e37a434b0e21</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:referenceable</sv:value>
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>2e89b891-d5db-467e-b323-8ae5e60b5fcc</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
-          <sv:value>taxonomydemo:basedocument</sv:value>
-          <sv:value>hippotaxonomy:classifiable</sv:value>
-          <sv:value>hippostd:relaxed</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/hst/nt/taxonomydemo/1.2</sv:value>
-        </sv:property>
-        <sv:node sv:name="title">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>taxonomydemo:title</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="summary">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>taxonomydemo:summary</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="body">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>taxonomydemo:body</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>taxonomydemo:textpage</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:referenceable</sv:value>
-          <sv:value>hippotaxonomy:classifiable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>664fe767-93f3-48d7-90af-49a48b835730</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>unpublished</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>new</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="taxonomydemo:summary" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="taxonomydemo:title" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:node sv:name="taxonomydemo:body">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value/>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="editor:templates">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>editor:templateset</sv:value>
-      </sv:property>
-      <sv:node sv:name="_default_">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:properties" sv:type="String" sv:multiple="true">
-          <sv:value>mode</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String" sv:multiple="true">
-          <sv:value>engine</sv:value>
-          <sv:value>wicket.model</sv:value>
-          <sv:value>model.compareTo</sv:value>
-          <sv:value>validator.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:services" sv:type="String" sv:multiple="true">
-          <sv:value>wicket.id</sv:value>
-          <sv:value>validator.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="mode" sv:type="String">
-          <sv:value>edit</sv:value>
-        </sv:property>
-        <sv:node sv:name="root">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="extension.main" sv:type="String">
-            <sv:value>${cluster.id}.main</sv:value>
-          </sv:property>
-          <sv:property sv:name="extension.select" sv:type="String">
-            <sv:value>${cluster.id}.select</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.onehippo.taxonomy.demo.layout.Annotated</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.extensions" sv:type="String" sv:multiple="true">
-            <sv:value>extension.main</sv:value>
-            <sv:value>extension.select</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${wicket.id}</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="main">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.main</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="title">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="caption" sv:type="String">
-            <sv:value>Title</sv:value>
-          </sv:property>
-          <sv:property sv:name="engine" sv:type="String">
-            <sv:value>${engine}</sv:value>
-          </sv:property>
-          <sv:property sv:name="field" sv:type="String">
-            <sv:value>title</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
-          <sv:property sv:name="model.compareTo" sv:type="String">
-            <sv:value>${model.compareTo}</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.size" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="summary">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="caption" sv:type="String">
-            <sv:value>Summary</sv:value>
-          </sv:property>
-          <sv:property sv:name="engine" sv:type="String">
-            <sv:value>${engine}</sv:value>
-          </sv:property>
-          <sv:property sv:name="field" sv:type="String">
-            <sv:value>summary</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
-          <sv:property sv:name="model.compareTo" sv:type="String">
-            <sv:value>${model.compareTo}</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.size" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="body">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="caption" sv:type="String">
-            <sv:value>Body</sv:value>
-          </sv:property>
-          <sv:property sv:name="engine" sv:type="String">
-            <sv:value>${engine}</sv:value>
-          </sv:property>
-          <sv:property sv:name="field" sv:type="String">
-            <sv:value>body</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
-          <sv:property sv:name="model.compareTo" sv:type="String">
-            <sv:value>${model.compareTo}</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.height" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="template.width" sv:type="String">
-            <sv:value>100%</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="classifiable">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="mixin" sv:type="String">
-            <sv:value>hippotaxonomy:classifiable</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.select</sv:value>
-          </sv:property>
-          <sv:node sv:name="cluster.options">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>frontend:pluginconfig</sv:value>
-            </sv:property>
-            <sv:property sv:name="taxonomy.name" sv:type="String">
-              <sv:value>exampletaxonomy</sv:value>
-            </sv:property>
-          </sv:node>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="canontextpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>editor:editable</sv:value>
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>a2cfbfec-14b1-44b1-abe1-5ce03ad0634b</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>78874f45-ce41-4949-9ae9-f388d9062dc1</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:referenceable</sv:value>
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>9eea6790-8eb0-468e-8bda-fa5e6572b204</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
-          <sv:value>hippo:document</sv:value>
-          <sv:value>hippostdpubwf:document</sv:value>
-          <sv:value>hippostd:publishableSummary</sv:value>
-          <sv:value>hippotaxonomy:canonised</sv:value>
-          <sv:value>hippostd:relaxed</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/hst/nt/taxonomydemo/1.2</sv:value>
-        </sv:property>
-        <sv:node sv:name="title">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>taxonomydemo:title</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="summary">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>taxonomydemo:summary</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="body">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>taxonomydemo:body</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>taxonomydemo:canontextpage</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:referenceable</sv:value>
-          <sv:value>hippotaxonomy:canonised</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>c7a83f10-4a5d-42c0-829d-dfdf2ecc7d06</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>unpublished</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>new</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotaxonomy:canonkey" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="taxonomydemo:summary" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="taxonomydemo:title" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:node sv:name="taxonomydemo:body">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value/>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="editor:templates">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>editor:templateset</sv:value>
-      </sv:property>
-      <sv:node sv:name="_default_">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:properties" sv:type="String" sv:multiple="true">
-          <sv:value>mode</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String" sv:multiple="true">
-          <sv:value>engine</sv:value>
-          <sv:value>wicket.model</sv:value>
-          <sv:value>model.compareTo</sv:value>
-          <sv:value>validator.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:services" sv:type="String" sv:multiple="true">
-          <sv:value>wicket.id</sv:value>
-          <sv:value>validator.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="mode" sv:type="String">
-          <sv:value>edit</sv:value>
-        </sv:property>
-        <sv:node sv:name="root">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="extension.main" sv:type="String">
-            <sv:value>${cluster.id}.main</sv:value>
-          </sv:property>
-          <sv:property sv:name="extension.select" sv:type="String">
-            <sv:value>${cluster.id}.select</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.onehippo.taxonomy.demo.layout.Annotated</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.extensions" sv:type="String" sv:multiple="true">
-            <sv:value>extension.main</sv:value>
-            <sv:value>extension.select</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${wicket.id}</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="main">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.main</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="title">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="caption" sv:type="String">
-            <sv:value>Title</sv:value>
-          </sv:property>
-          <sv:property sv:name="engine" sv:type="String">
-            <sv:value>${engine}</sv:value>
-          </sv:property>
-          <sv:property sv:name="field" sv:type="String">
-            <sv:value>title</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
-          <sv:property sv:name="model.compareTo" sv:type="String">
-            <sv:value>${model.compareTo}</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.size" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="summary">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="caption" sv:type="String">
-            <sv:value>Summary</sv:value>
-          </sv:property>
-          <sv:property sv:name="engine" sv:type="String">
-            <sv:value>${engine}</sv:value>
-          </sv:property>
-          <sv:property sv:name="field" sv:type="String">
-            <sv:value>summary</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
-          <sv:property sv:name="model.compareTo" sv:type="String">
-            <sv:value>${model.compareTo}</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.size" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="body">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="caption" sv:type="String">
-            <sv:value>Body</sv:value>
-          </sv:property>
-          <sv:property sv:name="engine" sv:type="String">
-            <sv:value>${engine}</sv:value>
-          </sv:property>
-          <sv:property sv:name="field" sv:type="String">
-            <sv:value>body</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
-          <sv:property sv:name="model.compareTo" sv:type="String">
-            <sv:value>${model.compareTo}</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.height" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="template.width" sv:type="String">
-            <sv:value>100%</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="taxonomy">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="caption" sv:type="String">
-            <sv:value>Taxonomy (caption)</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
-          <sv:property sv:name="model.compareTo" sv:type="String">
-            <sv:value>${model.compareTo}</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.onehippo.taxonomy.demo.plugin.AdditionalFieldCustomTaxonomyPickerPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="taxonomy.classification.dao" sv:type="String">
-            <sv:value>service.taxonomy.dao</sv:value>
-          </sv:property>
-          <sv:property sv:name="taxonomy.id" sv:type="String">
-            <sv:value>service.taxonomy</sv:value>
-          </sv:property>
-          <sv:property sv:name="taxonomy.name" sv:type="String">
-            <sv:value>exampletaxonomy</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.select</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="doubletaxonomy">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>editor:editable</sv:value>
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>9831b4f4-ec7d-4f05-a135-76d2a8e8dab7</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>3972204f-d386-43f4-982d-da7a49b32865</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:referenceable</sv:value>
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>486c5a95-dee4-49af-87c1-b57fe86b7d25</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
-          <sv:value>taxonomydemo:basedocument</sv:value>
-          <sv:value>hippostd:relaxed</sv:value>
-          <sv:value>hippotranslation:translated</sv:value>
-          <sv:value>hippotaxonomy:classifiable</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/hst/nt/taxonomydemo/1.2</sv:value>
-        </sv:property>
-        <sv:node sv:name="extrataxonomy">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>taxonomydemo:alternatekeys</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>taxonomydemo:doubletaxonomy</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:referenceable</sv:value>
-          <sv:value>hippotaxonomy:classifiable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>31f6fa58-aef7-41bf-83e6-b6e48089f8a3</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
-        <sv:property sv:name="hippostd:holder" sv:type="String">
-          <sv:value>holder</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>draft</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>new</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2014-06-12T17:19:37.772+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2014-06-12T17:19:37.772+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>document-type-locale-id</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:locale" sv:type="String">
-          <sv:value>document-type-locale</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="editor:templates">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>editor:templateset</sv:value>
-      </sv:property>
-      <sv:node sv:name="_default_">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:properties" sv:type="String" sv:multiple="true">
-          <sv:value>mode</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String" sv:multiple="true">
-          <sv:value>wicket.model</sv:value>
-          <sv:value>model.compareTo</sv:value>
-          <sv:value>engine</sv:value>
-          <sv:value>validator.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:services" sv:type="String" sv:multiple="true">
-          <sv:value>wicket.id</sv:value>
-          <sv:value>validator.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="translator.id" sv:type="String">
-          <sv:value>${cluster.id}.translator</sv:value>
-        </sv:property>
-        <sv:node sv:name="root">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="extension.left" sv:type="String">
-            <sv:value>${cluster.id}.left</sv:value>
-          </sv:property>
-          <sv:property sv:name="extension.right" sv:type="String">
-            <sv:value>${cluster.id}.right</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.layout.TwoColumn</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.extensions" sv:type="String" sv:multiple="true">
-            <sv:value>extension.left</sv:value>
-            <sv:value>extension.right</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="left">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>${cluster.id}.left.item</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.left</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="right">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>${cluster.id}.right.item</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.right</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="classifiable">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="mixin" sv:type="String">
-            <sv:value>hippotaxonomy:classifiable</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.left.item</sv:value>
-          </sv:property>
-          <sv:node sv:name="cluster.options">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>frontend:pluginconfig</sv:value>
-            </sv:property>
-            <sv:property sv:name="taxonomy.name" sv:type="String">
-              <sv:value>exampletaxonomy</sv:value>
-            </sv:property>
-          </sv:node>
-        </sv:node>
-        <sv:node sv:name="extrataxonomy">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="field" sv:type="String">
-            <sv:value>extrataxonomy</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
-          <sv:property sv:name="model.compareTo" sv:type="String">
-            <sv:value>${model.compareTo}</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.onehippo.taxonomy.plugin.TaxonomyPickerPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="taxonomy.classification.dao" sv:type="String">
-            <sv:value>service.taxonomy.dao.alternate</sv:value>
-          </sv:property>
-          <sv:property sv:name="taxonomy.id" sv:type="String">
-            <sv:value>service.taxonomy</sv:value>
-          </sv:property>
-          <sv:property sv:name="taxonomy.name" sv:type="String">
-            <sv:value>exampletaxonomy</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.left.item</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:namespaces/taxonomydemo:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: ecdcad3f-96c2-4d11-b235-c10c021a321a
+      /basedocument:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 2fb70e98-df1b-4817-8b72-e9e54fe4e828
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: cbc58c7b-c6ca-48a6-bdc9-a2398e62b4bb
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document', 'hippostd:publishableSummary']
+            hipposysedit:uri: http://www.hippoecm.org/hst/nt/taxonomydemo/1.2
+      /textpage:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        jcr:uuid: 2bb547a5-a8a3-4a30-a7e3-7726be1558bc
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 1f3b7a9b-bf6e-4d41-bb8c-e37a434b0e21
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+            jcr:uuid: 2e89b891-d5db-467e-b323-8ae5e60b5fcc
+            hipposysedit:node: true
+            hipposysedit:supertype: ['taxonomydemo:basedocument', 'hippotaxonomy:classifiable',
+              'hippostd:relaxed']
+            hipposysedit:uri: http://www.hippoecm.org/hst/nt/taxonomydemo/1.2
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: taxonomydemo:title
+              hipposysedit:type: String
+            /summary:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: taxonomydemo:summary
+              hipposysedit:type: String
+            /body:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: taxonomydemo:body
+              hipposysedit:type: hippostd:html
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: taxonomydemo:textpage
+            jcr:mixinTypes: ['mix:referenceable', 'hippotaxonomy:classifiable']
+            jcr:uuid: 664fe767-93f3-48d7-90af-49a48b835730
+            hippostd:state: unpublished
+            hippostdpubwf:createdBy: admin
+            hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
+            hippostdpubwf:lastModificationDate: 2010-02-04T16:32:28.068+02:00
+            hippostdpubwf:lastModifiedBy: admin
+            taxonomydemo:summary: ''
+            taxonomydemo:title: ''
+            /taxonomydemo:body:
+              jcr:primaryType: hippostd:html
+              hippostd:content: ''
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [engine, wicket.model, model.compareTo, validator.id]
+            frontend:services: [wicket.id, validator.id]
+            mode: edit
+            /root:
+              jcr:primaryType: frontend:plugin
+              extension.main: ${cluster.id}.main
+              extension.select: ${cluster.id}.select
+              plugin.class: org.onehippo.taxonomy.demo.layout.Annotated
+              wicket.extensions: [extension.main, extension.select]
+              wicket.id: ${wicket.id}
+            /main:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+              wicket.id: ${cluster.id}.main
+            /title:
+              jcr:primaryType: frontend:plugin
+              caption: Title
+              engine: ${engine}
+              field: title
+              mode: ${mode}
+              model.compareTo: ${model.compareTo}
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              template.size: ''
+              wicket.id: ${cluster.id}.field
+              wicket.model: ${wicket.model}
+            /summary:
+              jcr:primaryType: frontend:plugin
+              caption: Summary
+              engine: ${engine}
+              field: summary
+              mode: ${mode}
+              model.compareTo: ${model.compareTo}
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              template.size: ''
+              wicket.id: ${cluster.id}.field
+              wicket.model: ${wicket.model}
+            /body:
+              jcr:primaryType: frontend:plugin
+              caption: Body
+              engine: ${engine}
+              field: body
+              mode: ${mode}
+              model.compareTo: ${model.compareTo}
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              template.height: ''
+              template.width: 100%
+              wicket.id: ${cluster.id}.field
+              wicket.model: ${wicket.model}
+            /classifiable:
+              jcr:primaryType: frontend:plugin
+              mixin: hippotaxonomy:classifiable
+              plugin.class: org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin
+              wicket.id: ${cluster.id}.select
+              /cluster.options:
+                jcr:primaryType: frontend:pluginconfig
+                taxonomy.name: exampletaxonomy
+      /canontextpage:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        jcr:uuid: a2cfbfec-14b1-44b1-abe1-5ce03ad0634b
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 78874f45-ce41-4949-9ae9-f388d9062dc1
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+            jcr:uuid: 9eea6790-8eb0-468e-8bda-fa5e6572b204
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document', 'hippostd:publishableSummary',
+              'hippotaxonomy:canonised', 'hippostd:relaxed']
+            hipposysedit:uri: http://www.hippoecm.org/hst/nt/taxonomydemo/1.2
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: taxonomydemo:title
+              hipposysedit:type: String
+            /summary:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: taxonomydemo:summary
+              hipposysedit:type: String
+            /body:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: taxonomydemo:body
+              hipposysedit:type: hippostd:html
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: taxonomydemo:canontextpage
+            jcr:mixinTypes: ['mix:referenceable', 'hippotaxonomy:canonised']
+            jcr:uuid: c7a83f10-4a5d-42c0-829d-dfdf2ecc7d06
+            hippostd:state: unpublished
+            hippostdpubwf:createdBy: admin
+            hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
+            hippostdpubwf:lastModificationDate: 2010-02-04T16:32:28.068+02:00
+            hippostdpubwf:lastModifiedBy: admin
+            hippotaxonomy:canonkey: ''
+            taxonomydemo:summary: ''
+            taxonomydemo:title: ''
+            /taxonomydemo:body:
+              jcr:primaryType: hippostd:html
+              hippostd:content: ''
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [engine, wicket.model, model.compareTo, validator.id]
+            frontend:services: [wicket.id, validator.id]
+            mode: edit
+            /root:
+              jcr:primaryType: frontend:plugin
+              extension.main: ${cluster.id}.main
+              extension.select: ${cluster.id}.select
+              plugin.class: org.onehippo.taxonomy.demo.layout.Annotated
+              wicket.extensions: [extension.main, extension.select]
+              wicket.id: ${wicket.id}
+            /main:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+              wicket.id: ${cluster.id}.main
+            /title:
+              jcr:primaryType: frontend:plugin
+              caption: Title
+              engine: ${engine}
+              field: title
+              mode: ${mode}
+              model.compareTo: ${model.compareTo}
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              template.size: ''
+              wicket.id: ${cluster.id}.field
+              wicket.model: ${wicket.model}
+            /summary:
+              jcr:primaryType: frontend:plugin
+              caption: Summary
+              engine: ${engine}
+              field: summary
+              mode: ${mode}
+              model.compareTo: ${model.compareTo}
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              template.size: ''
+              wicket.id: ${cluster.id}.field
+              wicket.model: ${wicket.model}
+            /body:
+              jcr:primaryType: frontend:plugin
+              caption: Body
+              engine: ${engine}
+              field: body
+              mode: ${mode}
+              model.compareTo: ${model.compareTo}
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              template.height: ''
+              template.width: 100%
+              wicket.id: ${cluster.id}.field
+              wicket.model: ${wicket.model}
+            /taxonomy:
+              jcr:primaryType: frontend:plugin
+              caption: Taxonomy (caption)
+              mode: ${mode}
+              model.compareTo: ${model.compareTo}
+              plugin.class: org.onehippo.taxonomy.demo.plugin.AdditionalFieldCustomTaxonomyPickerPlugin
+              taxonomy.classification.dao: service.taxonomy.dao
+              taxonomy.id: service.taxonomy
+              taxonomy.name: exampletaxonomy
+              wicket.id: ${cluster.id}.select
+              wicket.model: ${wicket.model}
+      /doubletaxonomy:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        jcr:uuid: 9831b4f4-ec7d-4f05-a135-76d2a8e8dab7
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 3972204f-d386-43f4-982d-da7a49b32865
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+            jcr:uuid: 486c5a95-dee4-49af-87c1-b57fe86b7d25
+            hipposysedit:node: true
+            hipposysedit:supertype: ['taxonomydemo:basedocument', 'hippostd:relaxed',
+              'hippotranslation:translated', 'hippotaxonomy:classifiable']
+            hipposysedit:uri: http://www.hippoecm.org/hst/nt/taxonomydemo/1.2
+            /extrataxonomy:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:multiple: true
+              hipposysedit:path: taxonomydemo:alternatekeys
+              hipposysedit:type: String
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: taxonomydemo:doubletaxonomy
+            jcr:mixinTypes: ['mix:referenceable', 'hippotaxonomy:classifiable']
+            jcr:uuid: 31f6fa58-aef7-41bf-83e6-b6e48089f8a3
+            hippostd:holder: holder
+            hippostd:state: draft
+            hippostdpubwf:createdBy: ''
+            hippostdpubwf:creationDate: 2014-06-12T17:19:37.772+02:00
+            hippostdpubwf:lastModificationDate: 2014-06-12T17:19:37.772+02:00
+            hippostdpubwf:lastModifiedBy: ''
+            hippotranslation:id: document-type-locale-id
+            hippotranslation:locale: document-type-locale
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [wicket.model, model.compareTo, engine, validator.id]
+            frontend:services: [wicket.id, validator.id]
+            translator.id: ${cluster.id}.translator
+            /root:
+              jcr:primaryType: frontend:plugin
+              extension.left: ${cluster.id}.left
+              extension.right: ${cluster.id}.right
+              plugin.class: org.hippoecm.frontend.editor.layout.TwoColumn
+              wicket.extensions: [extension.left, extension.right]
+            /left:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.left.item
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+              wicket.id: ${cluster.id}.left
+            /right:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.right.item
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+              wicket.id: ${cluster.id}.right
+            /classifiable:
+              jcr:primaryType: frontend:plugin
+              mixin: hippotaxonomy:classifiable
+              plugin.class: org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin
+              wicket.id: ${cluster.id}.left.item
+              /cluster.options:
+                jcr:primaryType: frontend:pluginconfig
+                taxonomy.name: exampletaxonomy
+            /extrataxonomy:
+              jcr:primaryType: frontend:plugin
+              field: extrataxonomy
+              mode: ${mode}
+              model.compareTo: ${model.compareTo}
+              plugin.class: org.onehippo.taxonomy.plugin.TaxonomyPickerPlugin
+              taxonomy.classification.dao: service.taxonomy.dao.alternate
+              taxonomy.id: service.taxonomy
+              taxonomy.name: exampletaxonomy
+              wicket.id: ${cluster.id}.left.item
+              wicket.model: ${wicket.model}

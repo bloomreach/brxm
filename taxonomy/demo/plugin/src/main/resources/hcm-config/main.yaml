@@ -1,53 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         sv:name="hippo:initialize">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippo:initializefolder</sv:value>
-  </sv:property>
-
-  <sv:node sv:name="taxonomydemo-custom-taxonomy-editor">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30220.0</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces/hippotaxonomy/taxonomy/editor:templates/_default_/root/plugin.class</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentpropset" sv:type="String">
-      <sv:value>org.onehippo.taxonomy.demo.plugin.AdditionalFieldCustomTaxonomyEditorPlugin</sv:value>
-    </sv:property>
-  </sv:node>
-<!-- TODO HIPPLUG-283?
-  <sv:node sv:name="textpage-custom-taxonomy-field">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30251.0</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>textpage-custom-taxonomy-field.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces/taxonomydemo/textpage/editor:templates/_default_</sv:value>
-    </sv:property>
-  </sv:node>
--->
-  <sv:node sv:name="canontextpage-custom-taxonomy-field">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30251.1</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces/taxonomydemo/canontextpage/editor:templates/_default_/taxonomy/plugin.class</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentpropset" sv:type="String">
-      <sv:value>org.onehippo.taxonomy.demo.plugin.AdditionalFieldCustomTaxonomyPickerPlugin</sv:value>
-    </sv:property>
-  </sv:node>
-
- </sv:node>
+definitions:
+  config:
+    /hippo:namespaces/hippotaxonomy/taxonomy/editor:templates/_default_/root:
+      plugin.class: org.onehippo.taxonomy.demo.plugin.AdditionalFieldCustomTaxonomyEditorPlugin
+    /hippo:namespaces/taxonomydemo/canontextpage/editor:templates/_default_/taxonomy:
+      plugin.class: org.onehippo.taxonomy.demo.plugin.AdditionalFieldCustomTaxonomyPickerPlugin

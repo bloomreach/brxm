@@ -1,155 +1,57 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:pages">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:pages</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>4d7c769f-fa95-4c41-90f7-31d98d7d38fe</sv:value>
-  </sv:property>
-  <sv:node sv:name="standard">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>92c518c0-b0e6-4591-bd9e-2c626cbbc63f</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>webpage</sv:value>
-    </sv:property>
-    <sv:node sv:name="header">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>e3cb8674-6f87-4c14-853a-cc184bfc22c5</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/header</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="home">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>90493386-9f7c-45d6-91e1-9dad95142c3a</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>d4c06f9d-e09c-49e8-8c55-7ecb5cb52fa0</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/bodyhome</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="detailpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>9b049e6c-dcf4-42cd-a3ea-effd8ff0ba7f</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>f6620e1b-599e-4f44-a988-fae05a391653</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/detail</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="taxonomypage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>ece1e05f-7073-4740-8e2c-2ed86f81f3b4</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>762a0912-4f01-4cee-8481-18c0ff5a9809</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
-        <sv:value>root</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
-        <sv:value>${1}</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/taxonomytree</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="taxonomyresultpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>ac95a451-0f81-4be6-b3a0-9b4a993072ca</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>dadb4375-6e27-4c29-ad4c-7f3d15055c03</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
-        <sv:value>root</sv:value>
-        <sv:value>path</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
-        <sv:value>${1}</sv:value>
-        <sv:value>${2}</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/taxonomycategoryresult</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="searchpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>7085b0bb-3791-43a9-955d-e1a074fabc79</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:pages/standard</sv:value>
-    </sv:property>
-    <sv:node sv:name="body">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>e26cbda7-b2e0-4019-95b7-617f3cebbfee</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencecomponent" sv:type="String">
-        <sv:value>hst:components/search</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/taxonomydemo-common/hst:pages:
+      jcr:primaryType: hst:pages
+      jcr:uuid: 4d7c769f-fa95-4c41-90f7-31d98d7d38fe
+      /standard:
+        jcr:primaryType: hst:component
+        jcr:uuid: 92c518c0-b0e6-4591-bd9e-2c626cbbc63f
+        hst:template: webpage
+        /header:
+          jcr:primaryType: hst:component
+          jcr:uuid: e3cb8674-6f87-4c14-853a-cc184bfc22c5
+          hst:referencecomponent: hst:components/header
+      /home:
+        jcr:primaryType: hst:component
+        jcr:uuid: 90493386-9f7c-45d6-91e1-9dad95142c3a
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          jcr:uuid: d4c06f9d-e09c-49e8-8c55-7ecb5cb52fa0
+          hst:referencecomponent: hst:components/bodyhome
+      /detailpage:
+        jcr:primaryType: hst:component
+        jcr:uuid: 9b049e6c-dcf4-42cd-a3ea-effd8ff0ba7f
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          jcr:uuid: f6620e1b-599e-4f44-a988-fae05a391653
+          hst:referencecomponent: hst:components/detail
+      /taxonomypage:
+        jcr:primaryType: hst:component
+        jcr:uuid: ece1e05f-7073-4740-8e2c-2ed86f81f3b4
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          jcr:uuid: 762a0912-4f01-4cee-8481-18c0ff5a9809
+          hst:parameternames: [root]
+          hst:parametervalues: ['${1}']
+          hst:referencecomponent: hst:components/taxonomytree
+      /taxonomyresultpage:
+        jcr:primaryType: hst:component
+        jcr:uuid: ac95a451-0f81-4be6-b3a0-9b4a993072ca
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          jcr:uuid: dadb4375-6e27-4c29-ad4c-7f3d15055c03
+          hst:parameternames: [root, path]
+          hst:parametervalues: ['${1}', '${2}']
+          hst:referencecomponent: hst:components/taxonomycategoryresult
+      /searchpage:
+        jcr:primaryType: hst:component
+        jcr:uuid: 7085b0bb-3791-43a9-955d-e1a074fabc79
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          jcr:uuid: e26cbda7-b2e0-4019-95b7-617f3cebbfee
+          hst:referencecomponent: hst:components/search
