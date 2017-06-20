@@ -329,6 +329,7 @@
                 <exclude>utilities/src/main/java/org/onehippo/repository/util/DateMathParser.java</exclude>
                 <!-- repository content XML -->
                 <exclude>*/src/test/resources/**/*.xml</exclude>
+                <exclude>*/src/test/resources/**/*.txt</exclude>
                 <exclude>test/checker-repository.xml</exclude>
                 <exclude>test/checker-storage/**</exclude>
                 <!-- cxf slf4j logger configuration -->
