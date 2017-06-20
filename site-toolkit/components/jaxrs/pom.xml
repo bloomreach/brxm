@@ -203,6 +203,9 @@
           <systemPropertyVariables>
             <repo.path>${project.build.directory}</repo.path>
           </systemPropertyVariables>
+          <excludes>
+            <exclude>**/TestHippoFacetNavigationContentResource.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>
