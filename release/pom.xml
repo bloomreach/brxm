@@ -43,6 +43,7 @@
 
     <hippo.jackrabbit.version>2.14.0-h1-SNAPSHOT</hippo.jackrabbit.version>
 
+    <hippo.configuration-management.version>1.0.0-SNAPSHOT</hippo.configuration-management.version>
     <hippo.addon-hst-configuration-editor.version>4.0.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <hippo.addon-channel-manager.version>5.0.0-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>4.0.0-SNAPSHOT</hippo.addon-search-service.version>
@@ -174,6 +175,19 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-testutils</artifactId>
         <version>${hippo.testutils.version}</version>
+      </dependency>
+
+      <!-- Hippo Configuration Management -->
+      <dependency>
+        <groupId>org.onehippo.cms</groupId>
+        <artifactId>hippo-configuration-management-api</artifactId>
+        <version>${hippo.configuration-management.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms</groupId>
+        <artifactId>hippo-configuration-management-model</artifactId>
+        <version>${hippo.configuration-management.version}</version>
       </dependency>
 
       <!-- All Hippo Services artifacts -->
@@ -904,6 +918,10 @@
       <artifactId>hippo-services</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.cms</groupId>
+      <artifactId>hippo-configuration-management-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
     </dependency>
@@ -1023,6 +1041,11 @@
                   <dependency>
                     <groupId>org.onehippo.cms7</groupId>
                     <artifactId>hippo-services-autoreload</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms</groupId>
+                    <artifactId>hippo-configuration-management-api</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
                 </dependencies>
