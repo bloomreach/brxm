@@ -1,85 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License. -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:sites">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:sites</sv:value>
-  </sv:property>
-  <sv:node sv:name="unittestproject">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestproject</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="unittestsubproject">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestsubproject</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="intranettestproject">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestproject</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <!-- meant for the partial sites unit tests -->
-  <sv:node sv:name="global">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestproject</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="sub1">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <!-- sub1 directly points to common folder !! -->
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestproject/common</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="subsub1">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestproject/common/aboutfolder</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="sub2">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestproject/News</sv:value>
-    </sv:property>
-  </sv:node>
-
-
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:sites:
+      jcr:primaryType: hst:sites
+      /unittestproject:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject
+      /unittestsubproject:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestsubproject
+      /intranettestproject:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject
+      /global:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject
+      /sub1:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject/common
+      /subsub1:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject/common/aboutfolder
+      /sub2:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject/News

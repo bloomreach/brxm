@@ -1,441 +1,153 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node sv:name="unittestproject" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposysedit:namespace</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>322e0ee1-5a5d-4d1c-a15a-397bfa9b64ee</sv:value>
-  </sv:property>
-  <sv:node sv:name="basedocument">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>3ee76e49-f3c4-47e3-971b-b7a95a8a3030</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>25b7c05b-f143-492d-9db1-d99347cfdc7a</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>hippo:document</sv:value>
-          <sv:value>hippostdpubwf:document</sv:value>
-          <sv:value>hippostd:publishableSummary</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/hst/nt/unittestproject/1.0</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="textpage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>8341d42f-4815-483e-a1fd-08dd25abcfd0</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>d2870ca9-1240-4bf1-a564-2611baa4e13b</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>6ef8d567-d4ce-48b9-beea-3af71f46f9f0</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>unittestproject:basedocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/hst/nt/unittestproject/1.0</sv:value>
-        </sv:property>
-        <sv:node sv:name="title">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>unittestproject:title</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="summary">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>unittestproject:summary</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="body">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>unittestproject:body</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="date">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>unittestproject:date</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>Date</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>unittestproject:textpage</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>f99f9955-bdfa-43ac-83e9-e5b1e43be410</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:date" sv:type="Date">
-          <sv:value>2009-10-23T12:44:11.055+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:summary" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="unittestproject:title" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>draft</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>new</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
-        </sv:property>
-        <sv:node sv:name="unittestproject:body">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value>&lt;html&gt; &lt;body&gt;
-              &lt;p&gt;body&lt;/p&gt; &lt;/body&gt;
-              &lt;/html&gt;</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="newspage">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>a844cc4d-705a-484f-a86e-9a65d10a9507</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>b82fb2ee-0e28-4748-bc32-d46d580d57eb</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>3ed0ce75-1398-4772-836c-861d3b92a2c2</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>unittestproject:basedocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/hst/nt/unittestproject/1.0</sv:value>
-        </sv:property>
-        <sv:node sv:name="title">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>unittestproject:title</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="summary">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>unittestproject:summary</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="body">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>unittestproject:body</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="date">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>unittestproject:date</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>Date</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>unittestproject:newspage</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>b7c4ea75-7c8d-4ac8-9ff7-775b2a900927</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:date" sv:type="Date">
-          <sv:value>2009-10-23T12:44:11.055+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="unittestproject:summary" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="unittestproject:title" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>draft</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>new</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
-        </sv:property>
-        <sv:node sv:name="unittestproject:body">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippostd:html</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value>&lt;html&gt; &lt;body&gt;
-              &lt;p&gt;body&lt;/p&gt; &lt;/body&gt;
-              &lt;/html&gt;</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:namespaces/unittestproject:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 322e0ee1-5a5d-4d1c-a15a-397bfa9b64ee
+      /basedocument:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 3ee76e49-f3c4-47e3-971b-b7a95a8a3030
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 25b7c05b-f143-492d-9db1-d99347cfdc7a
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document', 'hippostd:publishableSummary']
+            hipposysedit:uri: http://www.hippoecm.org/hst/nt/unittestproject/1.0
+      /textpage:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 8341d42f-4815-483e-a1fd-08dd25abcfd0
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: d2870ca9-1240-4bf1-a564-2611baa4e13b
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+            jcr:uuid: 6ef8d567-d4ce-48b9-beea-3af71f46f9f0
+            hipposysedit:node: true
+            hipposysedit:supertype: ['unittestproject:basedocument']
+            hipposysedit:uri: http://www.hippoecm.org/hst/nt/unittestproject/1.0
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: unittestproject:title
+              hipposysedit:primary: false
+              hipposysedit:type: String
+            /summary:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: unittestproject:summary
+              hipposysedit:primary: false
+              hipposysedit:type: String
+            /body:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: unittestproject:body
+              hipposysedit:primary: false
+              hipposysedit:type: hippostd:html
+            /date:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: unittestproject:date
+              hipposysedit:primary: false
+              hipposysedit:type: Date
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: unittestproject:textpage
+            jcr:mixinTypes: ['mix:referenceable']
+            jcr:uuid: f99f9955-bdfa-43ac-83e9-e5b1e43be410
+            hippostd:state: draft
+            hippostdpubwf:createdBy: admin
+            hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+            hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+            hippostdpubwf:lastModifiedBy: admin
+            unittestproject:date: 2009-10-23T12:44:11.055+02:00
+            unittestproject:summary: ''
+            unittestproject:title: ''
+            /unittestproject:body:
+              jcr:primaryType: hippostd:html
+              hippostd:content: |-
+                <html> <body>
+                              <p>body</p> </body>
+                              </html>
+      /newspage:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: a844cc4d-705a-484f-a86e-9a65d10a9507
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: b82fb2ee-0e28-4748-bc32-d46d580d57eb
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+            jcr:uuid: 3ed0ce75-1398-4772-836c-861d3b92a2c2
+            hipposysedit:node: true
+            hipposysedit:supertype: ['unittestproject:basedocument']
+            hipposysedit:uri: http://www.hippoecm.org/hst/nt/unittestproject/1.0
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: unittestproject:title
+              hipposysedit:primary: false
+              hipposysedit:type: String
+            /summary:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: unittestproject:summary
+              hipposysedit:primary: false
+              hipposysedit:type: String
+            /body:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: unittestproject:body
+              hipposysedit:primary: false
+              hipposysedit:type: hippostd:html
+            /date:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:multiple: false
+              hipposysedit:ordered: false
+              hipposysedit:path: unittestproject:date
+              hipposysedit:primary: false
+              hipposysedit:type: Date
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: unittestproject:newspage
+            jcr:mixinTypes: ['mix:referenceable']
+            jcr:uuid: b7c4ea75-7c8d-4ac8-9ff7-775b2a900927
+            hippostd:state: draft
+            hippostdpubwf:createdBy: admin
+            hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+            hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+            hippostdpubwf:lastModifiedBy: admin
+            unittestproject:date: 2009-10-23T12:44:11.055+02:00
+            unittestproject:summary: ''
+            unittestproject:title: ''
+            /unittestproject:body:
+              jcr:primaryType: hippostd:html
+              hippostd:content: |-
+                <html> <body>
+                              <p>body</p> </body>
+                              </html>

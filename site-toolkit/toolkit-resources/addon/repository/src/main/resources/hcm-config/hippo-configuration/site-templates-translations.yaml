@@ -1,10 +1,10 @@
-{
-  "hippo:templates" : {
-    "en" : {
-      "new-subsite" : "new subsite"
-    },
-    "nl" : {
-      "new-subsite" : "nieuwe subsite"
-    }
-  }
-}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        new-subsite: new subsite
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        new-subsite: nieuwe subsite

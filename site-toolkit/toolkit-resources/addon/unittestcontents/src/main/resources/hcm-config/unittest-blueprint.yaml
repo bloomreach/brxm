@@ -1,112 +1,42 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="testblueprint">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:blueprint</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:name" sv:type="String">
-    <sv:value>Test Blueprint</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:description" sv:type="String">
-    <sv:value>Blueprint for unit tests</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:contentRoot" sv:type="String">
-    <sv:value>/unittestcontent/documents</sv:value>
-  </sv:property>
-  <sv:node sv:name="hst:configuration">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:configuration</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:inheritsfrom" sv:type="String" sv:multiple="true">
-      <sv:value>../unittestcommon</sv:value>
-    </sv:property>
-    <sv:node sv:name="hst:pages">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:pages</sv:value>
-      </sv:property>
-      <sv:node sv:name="defaultpage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-          <sv:value>com.onehippo.gogreen.components.BaseComponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
-          <sv:value>org.hippoecm.hst.core.container.custom.errorhandler</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
-          <sv:value>com.onehippo.gogreen.exceptions.CustomPageErrorHandler</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:template" sv:type="String">
-          <sv:value>layout.webpage.ftl</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hst:sitemap">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemap</sv:value>
-      </sv:property>
-      <sv:node sv:name="news">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-          <sv:value>hst:pages/news-overview</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:refId" sv:type="String">
-          <sv:value>news</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-          <sv:value>news</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hst:sitemenus">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenus</sv:value>
-      </sv:property>
-      <sv:node sv:name="mainnavigation">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:sitemenu</sv:value>
-        </sv:property>
-        <sv:node sv:name="Home">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemenuitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-            <sv:value>home</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="hst:site">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <!-- TODO create also a blueprint with explicit hst:configurationpath, see https://issues.onehippo.com/browse/HSTTWO-3976 -->
-    <!--<sv:property sv:name="hst:configurationpath" sv:type="String">-->
-      <!--<sv:value>/hst:hst/hst:configurations/unittestsubproject</sv:value>-->
-    <!--</sv:property>-->
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestproject</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hst:mount">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:mount</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:alias" sv:type="String">
-      <sv:value>site</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hst:channel">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:channel</sv:value>
-    </sv:property>
-    <sv:node sv:name="hst:channelinfo">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:channelinfo</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:blueprints/testblueprint:
+      jcr:primaryType: hst:blueprint
+      hst:contentRoot: /unittestcontent/documents
+      hst:description: Blueprint for unit tests
+      hst:name: Test Blueprint
+      /hst:configuration:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../unittestcommon]
+        /hst:pages:
+          jcr:primaryType: hst:pages
+          /defaultpage:
+            jcr:primaryType: hst:component
+            hst:componentclassname: com.onehippo.gogreen.components.BaseComponent
+            hst:parameternames: [org.hippoecm.hst.core.container.custom.errorhandler]
+            hst:parametervalues: [com.onehippo.gogreen.exceptions.CustomPageErrorHandler]
+            hst:template: layout.webpage.ftl
+        /hst:sitemap:
+          jcr:primaryType: hst:sitemap
+          /news:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/news-overview
+            hst:refId: news
+            hst:relativecontentpath: news
+        /hst:sitemenus:
+          jcr:primaryType: hst:sitemenus
+          /mainnavigation:
+            jcr:primaryType: hst:sitemenu
+            /Home:
+              jcr:primaryType: hst:sitemenuitem
+              hst:referencesitemapitem: home
+      /hst:site:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject
+      /hst:mount:
+        jcr:primaryType: hst:mount
+        hst:alias: site
+      /hst:channel:
+        jcr:primaryType: hst:channel
+        /hst:channelinfo:
+          jcr:primaryType: hst:channelinfo

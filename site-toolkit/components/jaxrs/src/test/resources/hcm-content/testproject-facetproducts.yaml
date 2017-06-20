@@ -1,137 +1,59 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!--
-    Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
-    
-    Licensed under the Apache License, Version 2.0 (the  "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-    
-    http://www.apache.org/licenses/LICENSE-2.0
-    
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS"
-    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License. -->
-<sv:node sv:name="faceted" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="tag cloud browsing">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippofacnav:facetnavigation</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>abababab-5fa8-48a8-b03b-4524373d992a</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:limit" sv:type="Long">
-            <sv:value>10</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:sortby" sv:type="String">
-            <sv:value>testproject:price</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:facets" sv:type="String">
-            <sv:value>hippostd:tags</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:facetnodenames" sv:type="String">
-            <sv:value>tags${limit:10}</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:filters" sv:type="String">
-            <sv:value>jcr:primaryType=testproject:productdocument</sv:value>
-        </sv:property>
-    </sv:node>
-    <sv:node sv:name="index page">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippofacnav:facetnavigation</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>abababab-5fa8-48a8-b03b-4524373d992a</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:limit" sv:type="Long">
-            <sv:value>10</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:sortby" sv:type="String">
-            <sv:value>testproject:price</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:facets" sv:type="String">
-            <sv:value>testproject:brand$[
-                {name:'a - d', resolution:'string', lower:'a', upper:'e'},
-                {name:'e - h', resolution:'string', lower:'e', upper:'i'},
-                {name:'i - l', resolution:'string', lower:'i', upper:'l'},
-                {name:'m - p', resolution:'string', lower:'m', upper:'p'},
-                {name:'q - t', resolution:'string', lower:'q', upper:'u'},
-                {name:'u - z', resolution:'string', lower:'u', upper:'{'},
-                {name:'all', resolution:'string'}
-            ]</sv:value>
-            <sv:value>testproject:brand</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:facetnodenames" sv:type="String">
-            <sv:value>index${hide:'index'}</sv:value>
-            <sv:value>brand${after:'index'}</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:filters" sv:type="String">
-            <sv:value>jcr:primaryType=testproject:productdocument</sv:value>
-        </sv:property>
-    </sv:node>
-    <sv:node sv:name="faceted navigation">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippofacnav:facetnavigation</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>abababab-5fa8-48a8-b03b-4524373d992a</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:limit" sv:type="Long">
-            <sv:value>10</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:sortby" sv:type="String">
-            <sv:value>testproject:price</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:facetnodenames" sv:type="String">
-            <sv:value>5 most common brands${limit:5}</sv:value>
-            <sv:value>created</sv:value>
-            <sv:value>constructiondate</sv:value>
-            <sv:value>mileage</sv:value>
-            <sv:value>price</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:facets" sv:type="String">
-            <sv:value>testproject:brand</sv:value>
-            <sv:value>testproject:created$[
-                {name:'today', resolution:'day', begin:0, end:1},
-                {name:'yesterday', resolution:'day', begin:-1, end:0}, 
-                {name:'last 7 days',resolution:'day', begin:-6, end:1}, 
-                {name:'this month', resolution:'month', begin:0, end:1}, 
-                {name:'this year', resolution:'year', begin:0, end:1}, 
-                {name:'before', resolution:'year', end:0}
-                ]</sv:value>
-            <sv:value>testproject:constructiondate$[
-                {name:'2004 - now', resolution:'year', begin:-6, end:1},
-                {name:'2001 - 2003', resolution:'year', begin:-9, end:-6}, 
-                {name:'1998 - 2000',resolution:'year', begin:-12, end:-9}, 
-                {name:'1995 - 1997', resolution:'year', begin:-15, end:-12}, 
-                {name:'until 1994', resolution:'year', end:-15}
-                ]</sv:value>
-            <sv:value>testproject:mileage$[
-                {name:'&lt; 20.000 km', resolution:'long', begin:0, end:20000},
-                {name:'&lt; 50.000 km', resolution:'long', begin:0, end:50000},
-                {name:'&lt; 100.000 km', resolution:'long', begin:0, end:100000},
-                {name:'&lt; 150.000 km', resolution:'long', begin:0, end:150000},
-                {name:'all', resolution:'long'}
-                ]</sv:value>
-            <sv:value>testproject:price$[
-                {name:'0 - 5.000', resolution:'double', begin:0, end:5000},
-                {name:'5.000 - 10.000', resolution:'double', begin:5000, end:10000},
-                {name:'10.000 - 15.000', resolution:'double', begin:10000, end:15000},
-                {name:'15.000 - 20.000', resolution:'double', begin:15000, end:20000},
-                {name:'20.000 - 25.000', resolution:'double', begin:20000, end:25000},
-                {name:'25.000 - 100.000', resolution:'double', begin:25000, end:100000},
-                {name:'more than 100.000', resolution:'double', begin:100000}
-                ]</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippofacnav:filters" sv:type="String">
-            <sv:value>jcr:primaryType=testproject:productdocument</sv:value>
-        </sv:property>
-    </sv:node>
-</sv:node>
+/testcontent/documents/testproject/facettestproducts/faceted:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['mix:referenceable']
+  /tag cloud browsing:
+    jcr:primaryType: hippofacnav:facetnavigation
+    hippo:docbase: abababab-5fa8-48a8-b03b-4524373d992a
+    hippofacnav:facetnodenames: ['tags${limit:10}']
+    hippofacnav:facets: ['hippostd:tags']
+    hippofacnav:filters: ['jcr:primaryType=testproject:productdocument']
+    hippofacnav:limit: 10
+    hippofacnav:sortby: ['testproject:price']
+  /index page:
+    jcr:primaryType: hippofacnav:facetnavigation
+    hippo:docbase: abababab-5fa8-48a8-b03b-4524373d992a
+    hippofacnav:facetnodenames: ['index${hide:''index''}', 'brand${after:''index''}']
+    hippofacnav:facets: ["testproject:brand$[\n                {name:'a - d', resolution:'string',\
+        \ lower:'a', upper:'e'},\n                {name:'e - h', resolution:'string',\
+        \ lower:'e', upper:'i'},\n                {name:'i - l', resolution:'string',\
+        \ lower:'i', upper:'l'},\n                {name:'m - p', resolution:'string',\
+        \ lower:'m', upper:'p'},\n                {name:'q - t', resolution:'string',\
+        \ lower:'q', upper:'u'},\n                {name:'u - z', resolution:'string',\
+        \ lower:'u', upper:'{'},\n                {name:'all', resolution:'string'}\n\
+        \            ]", 'testproject:brand']
+    hippofacnav:filters: ['jcr:primaryType=testproject:productdocument']
+    hippofacnav:limit: 10
+    hippofacnav:sortby: ['testproject:price']
+  /faceted navigation:
+    jcr:primaryType: hippofacnav:facetnavigation
+    hippo:docbase: abababab-5fa8-48a8-b03b-4524373d992a
+    hippofacnav:facetnodenames: ['5 most common brands${limit:5}', created, constructiondate,
+      mileage, price]
+    hippofacnav:facets: ['testproject:brand', "testproject:created$[\n           \
+        \     {name:'today', resolution:'day', begin:0, end:1},\n                {name:'yesterday',\
+        \ resolution:'day', begin:-1, end:0}, \n                {name:'last 7 days',resolution:'day',\
+        \ begin:-6, end:1}, \n                {name:'this month', resolution:'month',\
+        \ begin:0, end:1}, \n                {name:'this year', resolution:'year',\
+        \ begin:0, end:1}, \n                {name:'before', resolution:'year', end:0}\n\
+        \                ]", "testproject:constructiondate$[\n                {name:'2004\
+        \ - now', resolution:'year', begin:-6, end:1},\n                {name:'2001\
+        \ - 2003', resolution:'year', begin:-9, end:-6}, \n                {name:'1998\
+        \ - 2000',resolution:'year', begin:-12, end:-9}, \n                {name:'1995\
+        \ - 1997', resolution:'year', begin:-15, end:-12}, \n                {name:'until\
+        \ 1994', resolution:'year', end:-15}\n                ]", "testproject:mileage$[\n\
+        \                {name:'< 20.000 km', resolution:'long', begin:0, end:20000},\n\
+        \                {name:'< 50.000 km', resolution:'long', begin:0, end:50000},\n\
+        \                {name:'< 100.000 km', resolution:'long', begin:0, end:100000},\n\
+        \                {name:'< 150.000 km', resolution:'long', begin:0, end:150000},\n\
+        \                {name:'all', resolution:'long'}\n                ]", "testproject:price$[\n\
+        \                {name:'0 - 5.000', resolution:'double', begin:0, end:5000},\n\
+        \                {name:'5.000 - 10.000', resolution:'double', begin:5000,\
+        \ end:10000},\n                {name:'10.000 - 15.000', resolution:'double',\
+        \ begin:10000, end:15000},\n                {name:'15.000 - 20.000', resolution:'double',\
+        \ begin:15000, end:20000},\n                {name:'20.000 - 25.000', resolution:'double',\
+        \ begin:20000, end:25000},\n                {name:'25.000 - 100.000', resolution:'double',\
+        \ begin:25000, end:100000},\n                {name:'more than 100.000', resolution:'double',\
+        \ begin:100000}\n                ]"]
+    hippofacnav:filters: ['jcr:primaryType=testproject:productdocument']
+    hippofacnav:limit: 10
+    hippofacnav:sortby: ['testproject:price']
