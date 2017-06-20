@@ -1,433 +1,131 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="content">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippostd:folder</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>8e752210-9621-43ad-bb89-0d5728ab2790</sv:value>
-  </sv:property>
-  
-  <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-    <sv:value>new-folder</sv:value>
-    <sv:value>new-document</sv:value>
-  </sv:property>
-  <sv:node sv:name="en">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippostd:folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippotranslation:translated</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>5e5cb8f9-c404-4212-baf0-924431ec047d</sv:value>
-    </sv:property>
-    
-    <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-      <sv:value>new-translated-folder</sv:value>
-      <sv:value>new-document</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:id" sv:type="String">
-      <sv:value>a7891c2c-1602-47c0-86ba-4c1af54ec0bd</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:locale" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:node sv:name="multilingual1">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>4d899238-3a1e-4d4e-bf50-eab560fa7ced</sv:value>
-      </sv:property>
-      <sv:node sv:name="multilingual1">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selectiondemo:multilingualdocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>hippostd:relaxed</sv:value>
-          <sv:value>mix:referenceable</sv:value>
-          <sv:value>hippotranslation:translated</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>18931c42-d2f0-44b9-a444-5d922e2a4b99</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-          <sv:value>live</sv:value>
-          <sv:value>preview</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:holder" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>published</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2011-10-05T22:06:16.371+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2011-10-05T22:11:06.723+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-          <sv:value>2011-10-17T13:36:32.322+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>f0510f7c-a060-4f8a-a708-b1f5003b4e0f</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:locale" sv:type="String">
-          <sv:value>en</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:dynamicdropdown" sv:type="String">
-          <sv:value>three</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:title" sv:type="String">
-          <sv:value>Multilingual Document One</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="example">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>4f200fd8-cd63-48cb-8429-9e8e05da8435</sv:value>
-      </sv:property>
-      <sv:node sv:name="example">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selectiondemo:textdocument</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>43a50479-dfc7-46e4-9bd8-e68194da8c7a</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>example/example[3]</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:holder" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>published</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2014-09-01T12:44:32.032+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-          <sv:value>2014-09-01T12:44:40.889+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:booleanradiogroup" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:customdynamicdropdown" sv:type="String">
-          <sv:value>custom2</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:dynamicdropdown" sv:type="String">
-          <sv:value>two</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:dynamicdropdown_observable" sv:type="String">
-          <sv:value>europe</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:dynamicdropdown_observer" sv:type="String">
-          <sv:value>belgium</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:groupeddropdown" sv:type="String">
-          <sv:value>fordfiesta</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="selectiondemo:multicheckboxes" sv:type="String">
-          <sv:value>two</sv:value>
-          <sv:value>three</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="selectiondemo:multipalette" sv:type="String">
-          <sv:value>five</sv:value>
-          <sv:value>four</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="selectiondemo:multiselectlist" sv:type="String">
-          <sv:value>one</sv:value>
-          <sv:value>two</sv:value>
-          <sv:value>five</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:staticdropdown" sv:type="String">
-          <sv:value>sv2</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:stringradiogroup" sv:type="String">
-          <sv:value>four</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:title" sv:type="String">
-          <sv:value>An example document showing variants of select controls</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="example">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selectiondemo:textdocument</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>83774fc1-cedb-4348-948d-33443fc5923d</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String"/>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>example/example</sv:value>
-          <sv:value>example/example[3]</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>draft</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2014-09-01T12:44:25.355+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:booleanradiogroup" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:customdynamicdropdown" sv:type="String">
-          <sv:value>custom2</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:dynamicdropdown" sv:type="String">
-          <sv:value>two</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:dynamicdropdown_observable" sv:type="String">
-          <sv:value>europe</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:dynamicdropdown_observer" sv:type="String">
-          <sv:value>belgium</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:groupeddropdown" sv:type="String">
-          <sv:value>fordfiesta</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="selectiondemo:multicheckboxes" sv:type="String">
-          <sv:value>two</sv:value>
-          <sv:value>three</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="selectiondemo:multipalette" sv:type="String">
-          <sv:value>five</sv:value>
-          <sv:value>four</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="selectiondemo:multiselectlist" sv:type="String">
-          <sv:value>one</sv:value>
-          <sv:value>two</sv:value>
-          <sv:value>five</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:staticdropdown" sv:type="String">
-          <sv:value>sv2</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:stringradiogroup" sv:type="String">
-          <sv:value>four</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:title" sv:type="String">
-          <sv:value>An example document showing variants of select controls</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="example">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selectiondemo:textdocument</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:referenceable</sv:value>
-          <sv:value>mix:versionable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>89d0a88a-cd6d-4fec-8116-9a5b7909851f</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
-          <sv:value>preview</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-          <sv:value>example/example</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>unpublished</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2014-09-01T12:44:32.032+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:booleanradiogroup" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:customdynamicdropdown" sv:type="String">
-          <sv:value>custom2</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:dynamicdropdown" sv:type="String">
-          <sv:value>two</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:dynamicdropdown_observable" sv:type="String">
-          <sv:value>europe</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:dynamicdropdown_observer" sv:type="String">
-          <sv:value>belgium</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:groupeddropdown" sv:type="String">
-          <sv:value>fordfiesta</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="selectiondemo:multicheckboxes" sv:type="String">
-          <sv:value>two</sv:value>
-          <sv:value>three</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="selectiondemo:multipalette" sv:type="String">
-          <sv:value>five</sv:value>
-          <sv:value>four</sv:value>
-        </sv:property>
-        <sv:property sv:multiple="true" sv:name="selectiondemo:multiselectlist" sv:type="String">
-          <sv:value>one</sv:value>
-          <sv:value>two</sv:value>
-          <sv:value>five</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:staticdropdown" sv:type="String">
-          <sv:value>sv2</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:stringradiogroup" sv:type="String">
-          <sv:value>four</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:title" sv:type="String">
-          <sv:value>An example document showing variants of select controls</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="nl">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippostd:folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippotranslation:translated</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>f530959a-48e9-45d6-813f-e883bd3e0b1f</sv:value>
-    </sv:property>
-    
-    <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-      <sv:value>new-translated-folder</sv:value>
-      <sv:value>new-document</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:id" sv:type="String">
-      <sv:value>a7891c2c-1602-47c0-86ba-4c1af54ec0bd</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:locale" sv:type="String">
-      <sv:value>nl</sv:value>
-    </sv:property>
-    <sv:node sv:name="multilingual1">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>fbd54e9c-1625-4270-b357-7cab7693aeb8</sv:value>
-      </sv:property>
-      <sv:node sv:name="multilingual1">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selectiondemo:multilingualdocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>hippostd:relaxed</sv:value>
-          <sv:value>mix:referenceable</sv:value>
-          <sv:value>hippotranslation:translated</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>a853f3bc-cb34-4b3b-a212-2aa985f0c61f</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-          <sv:value>live</sv:value>
-          <sv:value>preview</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:holder" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>published</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-          <sv:value>live</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-          <sv:value>2011-10-05T22:09:25.397+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-          <sv:value>2011-10-17T13:36:22.313+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-          <sv:value>admin</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-          <sv:value>2011-10-17T13:36:37.417+02:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>f0510f7c-a060-4f8a-a708-b1f5003b4e0f</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:locale" sv:type="String">
-          <sv:value>nl</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:dynamicdropdown" sv:type="String">
-          <sv:value>one</sv:value>
-        </sv:property>
-        <sv:property sv:name="selectiondemo:title" sv:type="String">
-          <sv:value>Meertalig Document Eén</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+/content/documents/content:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['mix:referenceable']
+  jcr:uuid: 8e752210-9621-43ad-bb89-0d5728ab2790
+  hippostd:foldertype: [new-folder, new-document]
+  /en:
+    jcr:primaryType: hippostd:folder
+    jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+    jcr:uuid: 5e5cb8f9-c404-4212-baf0-924431ec047d
+    hippostd:foldertype: [new-translated-folder, new-document]
+    hippotranslation:id: a7891c2c-1602-47c0-86ba-4c1af54ec0bd
+    hippotranslation:locale: en
+    /multilingual1:
+      jcr:primaryType: hippo:handle
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 4d899238-3a1e-4d4e-bf50-eab560fa7ced
+      /multilingual1:
+        jcr:primaryType: selectiondemo:multilingualdocument
+        jcr:mixinTypes: ['hippostd:relaxed', 'mix:referenceable', 'hippotranslation:translated']
+        jcr:uuid: 18931c42-d2f0-44b9-a444-5d922e2a4b99
+        hippo:availability: [live, preview]
+        hippostd:holder: admin
+        hippostd:state: published
+        hippostdpubwf:createdBy: admin
+        hippostdpubwf:creationDate: 2011-10-05T22:06:16.371+02:00
+        hippostdpubwf:lastModificationDate: 2011-10-05T22:11:06.723+02:00
+        hippostdpubwf:lastModifiedBy: admin
+        hippostdpubwf:publicationDate: 2011-10-17T13:36:32.322+02:00
+        hippotranslation:id: f0510f7c-a060-4f8a-a708-b1f5003b4e0f
+        hippotranslation:locale: en
+        selectiondemo:dynamicdropdown: three
+        selectiondemo:title: Multilingual Document One
+    /example:
+      jcr:primaryType: hippo:handle
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 4f200fd8-cd63-48cb-8429-9e8e05da8435
+      /example[1]:
+        jcr:primaryType: selectiondemo:textdocument
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 43a50479-dfc7-46e4-9bd8-e68194da8c7a
+        hippo:availability: [live]
+        hippostd:holder: admin
+        hippostd:state: published
+        hippostdpubwf:createdBy: admin
+        hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
+        hippostdpubwf:lastModificationDate: 2014-09-01T12:44:32.032+02:00
+        hippostdpubwf:lastModifiedBy: admin
+        hippostdpubwf:publicationDate: 2014-09-01T12:44:40.889+02:00
+        selectiondemo:booleanradiogroup: true
+        selectiondemo:customdynamicdropdown: custom2
+        selectiondemo:dynamicdropdown: two
+        selectiondemo:dynamicdropdown_observable: europe
+        selectiondemo:dynamicdropdown_observer: belgium
+        selectiondemo:groupeddropdown: fordfiesta
+        selectiondemo:multicheckboxes: [two, three]
+        selectiondemo:multipalette: [five, four]
+        selectiondemo:multiselectlist: [one, two, five]
+        selectiondemo:staticdropdown: sv2
+        selectiondemo:stringradiogroup: four
+        selectiondemo:title: An example document showing variants of select controls
+      /example[2]:
+        jcr:primaryType: selectiondemo:textdocument
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 83774fc1-cedb-4348-948d-33443fc5923d
+        hippo:availability: []
+        hippostd:state: draft
+        hippostdpubwf:createdBy: admin
+        hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
+        hippostdpubwf:lastModificationDate: 2014-09-01T12:44:25.355+02:00
+        hippostdpubwf:lastModifiedBy: admin
+        selectiondemo:booleanradiogroup: true
+        selectiondemo:customdynamicdropdown: custom2
+        selectiondemo:dynamicdropdown: two
+        selectiondemo:dynamicdropdown_observable: europe
+        selectiondemo:dynamicdropdown_observer: belgium
+        selectiondemo:groupeddropdown: fordfiesta
+        selectiondemo:multicheckboxes: [two, three]
+        selectiondemo:multipalette: [five, four]
+        selectiondemo:multiselectlist: [one, two, five]
+        selectiondemo:staticdropdown: sv2
+        selectiondemo:stringradiogroup: four
+        selectiondemo:title: An example document showing variants of select controls
+      /example[3]:
+        jcr:primaryType: selectiondemo:textdocument
+        jcr:mixinTypes: ['mix:referenceable', 'mix:versionable']
+        jcr:uuid: 89d0a88a-cd6d-4fec-8116-9a5b7909851f
+        hippo:availability: [preview]
+        hippostd:state: unpublished
+        hippostdpubwf:createdBy: admin
+        hippostdpubwf:creationDate: 2010-02-04T16:32:28.068+02:00
+        hippostdpubwf:lastModificationDate: 2014-09-01T12:44:32.032+02:00
+        hippostdpubwf:lastModifiedBy: admin
+        selectiondemo:booleanradiogroup: true
+        selectiondemo:customdynamicdropdown: custom2
+        selectiondemo:dynamicdropdown: two
+        selectiondemo:dynamicdropdown_observable: europe
+        selectiondemo:dynamicdropdown_observer: belgium
+        selectiondemo:groupeddropdown: fordfiesta
+        selectiondemo:multicheckboxes: [two, three]
+        selectiondemo:multipalette: [five, four]
+        selectiondemo:multiselectlist: [one, two, five]
+        selectiondemo:staticdropdown: sv2
+        selectiondemo:stringradiogroup: four
+        selectiondemo:title: An example document showing variants of select controls
+  /nl:
+    jcr:primaryType: hippostd:folder
+    jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+    jcr:uuid: f530959a-48e9-45d6-813f-e883bd3e0b1f
+    hippostd:foldertype: [new-translated-folder, new-document]
+    hippotranslation:id: a7891c2c-1602-47c0-86ba-4c1af54ec0bd
+    hippotranslation:locale: nl
+    /multilingual1:
+      jcr:primaryType: hippo:handle
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: fbd54e9c-1625-4270-b357-7cab7693aeb8
+      /multilingual1:
+        jcr:primaryType: selectiondemo:multilingualdocument
+        jcr:mixinTypes: ['hippostd:relaxed', 'mix:referenceable', 'hippotranslation:translated']
+        jcr:uuid: a853f3bc-cb34-4b3b-a212-2aa985f0c61f
+        hippo:availability: [live, preview]
+        hippostd:holder: admin
+        hippostd:state: published
+        hippostdpubwf:createdBy: admin
+        hippostdpubwf:creationDate: 2011-10-05T22:09:25.397+02:00
+        hippostdpubwf:lastModificationDate: 2011-10-17T13:36:22.313+02:00
+        hippostdpubwf:lastModifiedBy: admin
+        hippostdpubwf:publicationDate: 2011-10-17T13:36:37.417+02:00
+        hippotranslation:id: f0510f7c-a060-4f8a-a708-b1f5003b4e0f
+        hippotranslation:locale: nl
+        selectiondemo:dynamicdropdown: one
+        selectiondemo:title: Meertalig Document Eén

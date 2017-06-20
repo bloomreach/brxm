@@ -1,22 +1,22 @@
-{"hippo:types": {
-  "selectiondemo:textdocument":   {
-    "nl":     {
-      "selectiondemo:booleanradiogroup=true": "Ja",
-      "selectiondemo:booleanradiogroup=false": "Nee"
-    },
-    "en":     {
-      "selectiondemo:booleanradiogroup=true": "Yes",
-      "selectiondemo:booleanradiogroup=false": "No"
-    }
-  },
-  "selectiondemo:multilingualdocument":   {
-    "nl":     {
-      "selectiondemo:booleanradiogroup=true": "Ja",
-      "selectiondemo:booleanradiogroup=false": "Nee"
-    },
-    "en":     {
-      "selectiondemo:booleanradiogroup=true": "Yes",
-      "selectiondemo:booleanradiogroup=false": "No"
-    }
-  }
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/selectiondemo:textdocument:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        selectiondemo:booleanradiogroup=false: 'No'
+        selectiondemo:booleanradiogroup=true: 'Yes'
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        selectiondemo:booleanradiogroup=false: Nee
+        selectiondemo:booleanradiogroup=true: Ja
+    /hippo:configuration/hippo:translations/hippo:types/selectiondemo:multilingualdocument:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        selectiondemo:booleanradiogroup=false: 'No'
+        selectiondemo:booleanradiogroup=true: 'Yes'
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        selectiondemo:booleanradiogroup=false: Nee
+        selectiondemo:booleanradiogroup=true: Ja

@@ -1,273 +1,94 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="chained">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippostd:folder</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>hippo:named</sv:value>
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>461acf46-1c10-4aa6-ab7d-a393d2647a9d</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:name" sv:type="String">
-    <sv:value>Interdependent / Chained</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-    <sv:value>new-document</sv:value>
-    <sv:value>new-folder</sv:value>
-  </sv:property>
-  <sv:node sv:name="continents">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>hippo:named</sv:value>
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>59ae78cc-192b-4764-8224-6e73133efb26</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:name" sv:type="String">
-      <sv:value>1 - Continents</sv:value>
-    </sv:property>
-    <sv:node sv:name="continents">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>selection:valuelist</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippotranslation:translated</sv:value>
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>57164487-d849-4f54-bf17-16b0e5025a4c</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-        <sv:value>live</sv:value>
-        <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>08306f8b-48c7-4489-b62a-4b20ce6136db</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippotranslation:locale" sv:type="String">
-        <sv:value>en</sv:value>
-      </sv:property>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>africa</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Africa</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>europe</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Europe</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="africa">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>hippo:named</sv:value>
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>a941736b-4d51-4038-8ffa-4c5fa5bfdc9e</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:name" sv:type="String">
-      <sv:value>1.1 - Africa</sv:value>
-    </sv:property>
-    <sv:node sv:name="africa">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>selection:valuelist</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippotranslation:translated</sv:value>
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>835e7193-5266-4deb-b880-fdc7df331388</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-        <sv:value>live</sv:value>
-        <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>edaf6f38-7b53-415b-807f-3e8d4260a2e1</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippotranslation:locale" sv:type="String">
-        <sv:value>en</sv:value>
-      </sv:property>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>algeria</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Algeria</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>burundi</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Burundi</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>congo</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Congo</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>djibouti</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Djibouti</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="europe">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>hippo:named</sv:value>
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>5966ae23-3395-473a-9ced-0a5f7db48903</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:name" sv:type="String">
-      <sv:value>1.2 - Europe</sv:value>
-    </sv:property>
-    <sv:node sv:name="europe">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>selection:valuelist</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippotranslation:translated</sv:value>
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>419201e3-d746-479e-98ad-18377d01fa7f</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-        <sv:value>live</sv:value>
-        <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>fe560ef3-3fc5-40d8-b1c4-34f21d88474c</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippotranslation:locale" sv:type="String">
-        <sv:value>en</sv:value>
-      </sv:property>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>austria</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Austria</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>belgium</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Belgium</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>croatia</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Croatia</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>denmark</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Denmark</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>estonia</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Estonia</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>france</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>France</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>germany</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Germany</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+/content/documents/valuelists/chained:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+  jcr:uuid: 461acf46-1c10-4aa6-ab7d-a393d2647a9d
+  hippo:name: Interdependent / Chained
+  hippostd:foldertype: [new-document, new-folder]
+  /continents:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: 59ae78cc-192b-4764-8224-6e73133efb26
+    hippo:name: 1 - Continents
+    /continents:
+      jcr:primaryType: selection:valuelist
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: 57164487-d849-4f54-bf17-16b0e5025a4c
+      hippo:availability: [live, preview]
+      hippotranslation:id: 08306f8b-48c7-4489-b62a-4b20ce6136db
+      hippotranslation:locale: en
+      /selection:listitem[1]:
+        jcr:primaryType: selection:listitem
+        selection:key: africa
+        selection:label: Africa
+      /selection:listitem[2]:
+        jcr:primaryType: selection:listitem
+        selection:key: europe
+        selection:label: Europe
+  /africa:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: a941736b-4d51-4038-8ffa-4c5fa5bfdc9e
+    hippo:name: 1.1 - Africa
+    /africa:
+      jcr:primaryType: selection:valuelist
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: 835e7193-5266-4deb-b880-fdc7df331388
+      hippo:availability: [live, preview]
+      hippotranslation:id: edaf6f38-7b53-415b-807f-3e8d4260a2e1
+      hippotranslation:locale: en
+      /selection:listitem[1]:
+        jcr:primaryType: selection:listitem
+        selection:key: algeria
+        selection:label: Algeria
+      /selection:listitem[2]:
+        jcr:primaryType: selection:listitem
+        selection:key: burundi
+        selection:label: Burundi
+      /selection:listitem[3]:
+        jcr:primaryType: selection:listitem
+        selection:key: congo
+        selection:label: Congo
+      /selection:listitem[4]:
+        jcr:primaryType: selection:listitem
+        selection:key: djibouti
+        selection:label: Djibouti
+  /europe:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: 5966ae23-3395-473a-9ced-0a5f7db48903
+    hippo:name: 1.2 - Europe
+    /europe:
+      jcr:primaryType: selection:valuelist
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: 419201e3-d746-479e-98ad-18377d01fa7f
+      hippo:availability: [live, preview]
+      hippotranslation:id: fe560ef3-3fc5-40d8-b1c4-34f21d88474c
+      hippotranslation:locale: en
+      /selection:listitem[1]:
+        jcr:primaryType: selection:listitem
+        selection:key: austria
+        selection:label: Austria
+      /selection:listitem[2]:
+        jcr:primaryType: selection:listitem
+        selection:key: belgium
+        selection:label: Belgium
+      /selection:listitem[3]:
+        jcr:primaryType: selection:listitem
+        selection:key: croatia
+        selection:label: Croatia
+      /selection:listitem[4]:
+        jcr:primaryType: selection:listitem
+        selection:key: denmark
+        selection:label: Denmark
+      /selection:listitem[5]:
+        jcr:primaryType: selection:listitem
+        selection:key: estonia
+        selection:label: Estonia
+      /selection:listitem[6]:
+        jcr:primaryType: selection:listitem
+        selection:key: france
+        selection:label: France
+      /selection:listitem[7]:
+        jcr:primaryType: selection:listitem
+        selection:key: germany
+        selection:label: Germany

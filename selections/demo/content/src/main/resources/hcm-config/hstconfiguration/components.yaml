@@ -1,123 +1,90 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:components">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:components</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>a8d1ca78-ea32-4e02-83f9-cb20a4c95dc1</sv:value>
-  </sv:property>
-  <sv:node sv:name="header">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>211e0460-598c-4dcc-8804-4345fb8e6d2e</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>header</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="bodygeneral">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>f543fb43-623b-4fec-bb17-eb6357840f28</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>threecolumnlayout</sv:value>
-    </sv:property>
-    <sv:node sv:name="leftmenu">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>6e1c67a0-c40e-42b0-8ea1-fe5a4994ab2c</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.forge.selectiondemo.components.LeftMenu</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>leftmenu</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="right">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>462c5e31-5218-4aa0-9ac8-a041ef413010</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.forge.selectiondemo.components.Right</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>right</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="bodyhome">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>e4c6412e-1f14-46d8-8ab9-822a4625acb4</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:template" sv:type="String">
-      <sv:value>homelayout</sv:value>
-    </sv:property>
-    <sv:node sv:name="bodynav">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>625c8b13-b0a6-4523-872c-cb7453e84d5b</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.forge.selectiondemo.components.LeftMenu</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>leftmenu</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="bodymain">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>ec1ebacd-e168-4eb6-bee6-7eced550e06b</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.forge.selectiondemo.components.Home</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>homepage</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="bodymultilingual">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:component</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>73f61ba6-5ecd-4d5c-b511-cf031b72402f</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:referencecomponent" sv:type="String">
-      <sv:value>hst:components/bodygeneral</sv:value>
-    </sv:property>
-    <sv:node sv:name="content">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:component</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>77e0a0c5-87c7-4434-903a-1531fcbcb4d8</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.onehippo.forge.selectiondemo.components.Multilingual</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:template" sv:type="String">
-        <sv:value>multilingual</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/selectiondemo/hst:components:
+      jcr:primaryType: hst:components
+      jcr:uuid: a8d1ca78-ea32-4e02-83f9-cb20a4c95dc1
+      /header:
+        jcr:primaryType: hst:component
+        jcr:uuid: 211e0460-598c-4dcc-8804-4345fb8e6d2e
+        hst:template: header
+      /bodygeneral:
+        jcr:primaryType: hst:component
+        jcr:uuid: f543fb43-623b-4fec-bb17-eb6357840f28
+        hst:template: threecolumnlayout
+        /leftmenu:
+          jcr:primaryType: hst:component
+          jcr:uuid: 6e1c67a0-c40e-42b0-8ea1-fe5a4994ab2c
+          hst:componentclassname: org.onehippo.forge.selectiondemo.components.LeftMenu
+          hst:template: leftmenu
+        /right:
+          jcr:primaryType: hst:component
+          jcr:uuid: 462c5e31-5218-4aa0-9ac8-a041ef413010
+          hst:componentclassname: org.onehippo.forge.selectiondemo.components.Right
+          hst:template: right
+      /bodyhome:
+        jcr:primaryType: hst:component
+        jcr:uuid: e4c6412e-1f14-46d8-8ab9-822a4625acb4
+        hst:template: homelayout
+        /bodynav:
+          jcr:primaryType: hst:component
+          jcr:uuid: 625c8b13-b0a6-4523-872c-cb7453e84d5b
+          hst:componentclassname: org.onehippo.forge.selectiondemo.components.LeftMenu
+          hst:template: leftmenu
+        /bodymain:
+          jcr:primaryType: hst:component
+          jcr:uuid: ec1ebacd-e168-4eb6-bee6-7eced550e06b
+          hst:componentclassname: org.onehippo.forge.selectiondemo.components.Home
+          hst:template: homepage
+      /bodymultilingual:
+        jcr:primaryType: hst:component
+        jcr:uuid: 73f61ba6-5ecd-4d5c-b511-cf031b72402f
+        hst:referencecomponent: hst:components/bodygeneral
+        /content:
+          jcr:primaryType: hst:component
+          jcr:uuid: 77e0a0c5-87c7-4434-903a-1531fcbcb4d8
+          hst:componentclassname: org.onehippo.forge.selectiondemo.components.Multilingual
+          hst:template: multilingual
+    /hst:hst/hst:configurations/selectiondemo-nl/hst:components:
+      jcr:primaryType: hst:components
+      jcr:uuid: a8d1ca78-ea32-4e02-83f9-cb20a4c95dc1
+      /header:
+        jcr:primaryType: hst:component
+        jcr:uuid: 211e0460-598c-4dcc-8804-4345fb8e6d2e
+        hst:template: header
+      /bodygeneral:
+        jcr:primaryType: hst:component
+        jcr:uuid: f543fb43-623b-4fec-bb17-eb6357840f28
+        hst:template: threecolumnlayout
+        /leftmenu:
+          jcr:primaryType: hst:component
+          jcr:uuid: 6e1c67a0-c40e-42b0-8ea1-fe5a4994ab2c
+          hst:componentclassname: org.onehippo.forge.selectiondemo.components.LeftMenu
+          hst:template: leftmenu
+        /right:
+          jcr:primaryType: hst:component
+          jcr:uuid: 462c5e31-5218-4aa0-9ac8-a041ef413010
+          hst:componentclassname: org.onehippo.forge.selectiondemo.components.Right
+          hst:template: right
+      /bodyhome:
+        jcr:primaryType: hst:component
+        jcr:uuid: e4c6412e-1f14-46d8-8ab9-822a4625acb4
+        hst:template: homelayout
+        /bodynav:
+          jcr:primaryType: hst:component
+          jcr:uuid: 625c8b13-b0a6-4523-872c-cb7453e84d5b
+          hst:componentclassname: org.onehippo.forge.selectiondemo.components.LeftMenu
+          hst:template: leftmenu
+        /bodymain:
+          jcr:primaryType: hst:component
+          jcr:uuid: ec1ebacd-e168-4eb6-bee6-7eced550e06b
+          hst:componentclassname: org.onehippo.forge.selectiondemo.components.Home
+          hst:template: homepage
+      /bodymultilingual:
+        jcr:primaryType: hst:component
+        jcr:uuid: 73f61ba6-5ecd-4d5c-b511-cf031b72402f
+        hst:referencecomponent: hst:components/bodygeneral
+        /content:
+          jcr:primaryType: hst:component
+          jcr:uuid: 77e0a0c5-87c7-4434-903a-1531fcbcb4d8
+          hst:componentclassname: org.onehippo.forge.selectiondemo.components.Multilingual
+          hst:template: multilingual

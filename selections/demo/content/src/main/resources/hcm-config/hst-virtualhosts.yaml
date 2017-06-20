@@ -1,71 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:hosts">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:virtualhosts</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:defaultcontextpath" sv:type="String">
-    <sv:value>/site</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:defaulthostname" sv:type="String">
-    <sv:value>localhost</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:diagnosticsenabled" sv:type="Boolean">
-    <sv:value>false</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:homepage" sv:type="String">
-    <sv:value>root</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:locale" sv:type="String">
-    <sv:value>en_US</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:pagenotfound" sv:type="String">
-    <sv:value>error</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:scheme" sv:type="String">
-    <sv:value>http</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:showcontextpath" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:showport" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:versioninpreviewheader" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
-  <sv:node sv:name="dev-localhost">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:virtualhostgroup</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:cmslocation" sv:type="String">
-      <sv:value>http://localhost:8080/cms</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:defaultport" sv:type="Long">
-      <sv:value>8080</sv:value>
-    </sv:property>
-    <sv:node sv:name="localhost">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:virtualhost</sv:value>
-      </sv:property>
-      <sv:node sv:name="hst:root">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:mount</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:mountpoint" sv:type="String">
-          <sv:value>/hst:hst/hst:sites/selectiondemo</sv:value>
-        </sv:property>
-        <sv:node sv:name="nl">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:mount</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:locale" sv:type="String">
-            <sv:value>nl_NL</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:mountpoint" sv:type="String">
-            <sv:value>/hst:hst/hst:sites/selectiondemo-nl</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:hosts:
+      jcr:primaryType: hst:virtualhosts
+      hst:defaultcontextpath: /site
+      hst:defaulthostname: localhost
+      hst:diagnosticsenabled: false
+      hst:homepage: root
+      hst:locale: en_US
+      hst:pagenotfound: error
+      hst:scheme: http
+      hst:showcontextpath: true
+      hst:showport: true
+      hst:versioninpreviewheader: true
+      /dev-localhost:
+        jcr:primaryType: hst:virtualhostgroup
+        hst:cmslocation: http://localhost:8080/cms
+        hst:defaultport: 8080
+        /localhost:
+          jcr:primaryType: hst:virtualhost
+          /hst:root:
+            jcr:primaryType: hst:mount
+            hst:mountpoint: /hst:hst/hst:sites/selectiondemo
+            /nl:
+              jcr:primaryType: hst:mount
+              hst:locale: nl_NL
+              hst:mountpoint: /hst:hst/hst:sites/selectiondemo-nl

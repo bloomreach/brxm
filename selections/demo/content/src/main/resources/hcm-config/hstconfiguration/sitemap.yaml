@@ -1,28 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:sitemap">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:sitemap</sv:value>
-  </sv:property>
-  <sv:node sv:name="root">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/home</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>example</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="multilingual">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-      <sv:value>hst:pages/multilingual</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>multilingual1</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/selectiondemo/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /root:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/home
+        hst:relativecontentpath: example
+      /multilingual:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/multilingual
+        hst:relativecontentpath: multilingual1
+    /hst:hst/hst:configurations/selectiondemo-nl/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /root:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/home
+        hst:relativecontentpath: example
+      /multilingual:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/multilingual
+        hst:relativecontentpath: multilingual1

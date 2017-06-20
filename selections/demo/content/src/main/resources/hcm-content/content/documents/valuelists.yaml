@@ -1,268 +1,91 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="valuelists">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippostd:folder</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>2f98b6cd-b468-4cb8-99d1-54174e3c6cce</sv:value>
-  </sv:property>
-  
-  <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-    <sv:value>new-folder</sv:value>
-    <sv:value>new-translated-folder</sv:value>
-    <sv:value>new-document</sv:value>
-  </sv:property>
-  <sv:node sv:name="valuelist1">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>c651bf1e-f7ef-4efc-aa35-edaae5b4b047</sv:value>
-    </sv:property>
-    <sv:node sv:name="valuelist1">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>selection:valuelist</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>a914203e-7352-4423-a3bb-11f34d0d2d2e</sv:value>
-      </sv:property>
-      
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>one</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Dynamic Value 1</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>two</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Dynamic Value 2</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>three</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Dynamic Value 3</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>four</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Dynamic Value 4</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="selection:listitem">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:listitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:key" sv:type="String">
-          <sv:value>five</sv:value>
-        </sv:property>
-        <sv:property sv:name="selection:label" sv:type="String">
-          <sv:value>Dynamic Value 5</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="en">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippostd:folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippotranslation:translated</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>a83c6f22-8cc5-4301-ac01-e720ff38eafd</sv:value>
-    </sv:property>
-    
-    <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-      <sv:value>new-translated-folder</sv:value>
-      <sv:value>new-document</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:id" sv:type="String">
-      <sv:value>af173719-a9c4-4df2-83a5-7c6e11ae8e5b</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:locale" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:node sv:name="valuelist-en">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>56c56e6a-1700-4c83-af4b-748a210af7c6</sv:value>
-      </sv:property>
-      <sv:node sv:name="valuelist-en">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:valuelist</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:referenceable</sv:value>
-          <sv:value>hippotranslation:translated</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>feb27b82-cddc-4067-ab2d-012772c40512</sv:value>
-        </sv:property>
-        
-        <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>64c0f4ce-5fba-4ccc-a5fd-112a73d7d80a</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:locale" sv:type="String">
-          <sv:value>en</sv:value>
-        </sv:property>
-        <sv:node sv:name="selection:listitem">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>selection:listitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="selection:key" sv:type="String">
-            <sv:value>one</sv:value>
-          </sv:property>
-          <sv:property sv:name="selection:label" sv:type="String">
-            <sv:value>English Value One</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="selection:listitem">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>selection:listitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="selection:key" sv:type="String">
-            <sv:value>two</sv:value>
-          </sv:property>
-          <sv:property sv:name="selection:label" sv:type="String">
-            <sv:value>English Value Two</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="selection:listitem">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>selection:listitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="selection:key" sv:type="String">
-            <sv:value>three</sv:value>
-          </sv:property>
-          <sv:property sv:name="selection:label" sv:type="String">
-            <sv:value>English Value Three</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="nl">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippostd:folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippotranslation:translated</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>c731abf7-dc49-418a-9cbb-e6660d8aff5a</sv:value>
-    </sv:property>
-    
-    <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-      <sv:value>new-translated-folder</sv:value>
-      <sv:value>new-document</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:id" sv:type="String">
-      <sv:value>af173719-a9c4-4df2-83a5-7c6e11ae8e5b</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippotranslation:locale" sv:type="String">
-      <sv:value>nl</sv:value>
-    </sv:property>
-    <sv:node sv:name="valuelist-nl">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>3815a9dd-04ce-4485-872e-18972e0958e1</sv:value>
-      </sv:property>
-      <sv:node sv:name="valuelist-nl">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>selection:valuelist</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:referenceable</sv:value>
-          <sv:value>hippotranslation:translated</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>b110d054-b7e3-4ceb-8deb-807ce77d48ff</sv:value>
-        </sv:property>
-        
-        <sv:property sv:name="hippotranslation:id" sv:type="String">
-          <sv:value>64c0f4ce-5fba-4ccc-a5fd-112a73d7d80a</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippotranslation:locale" sv:type="String">
-          <sv:value>nl</sv:value>
-        </sv:property>
-        <sv:node sv:name="selection:listitem">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>selection:listitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="selection:key" sv:type="String">
-            <sv:value>one</sv:value>
-          </sv:property>
-          <sv:property sv:name="selection:label" sv:type="String">
-            <sv:value>Nederlandse Waarde Een</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="selection:listitem">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>selection:listitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="selection:key" sv:type="String">
-            <sv:value>two</sv:value>
-          </sv:property>
-          <sv:property sv:name="selection:label" sv:type="String">
-            <sv:value>Nederlandse Waarde Twee</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="selection:listitem">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>selection:listitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="selection:key" sv:type="String">
-            <sv:value>three</sv:value>
-          </sv:property>
-          <sv:property sv:name="selection:label" sv:type="String">
-            <sv:value>Nederlandse Waarde Drie</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+/content/documents/valuelists:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['mix:referenceable']
+  jcr:uuid: 2f98b6cd-b468-4cb8-99d1-54174e3c6cce
+  hippostd:foldertype: [new-folder, new-translated-folder, new-document]
+  /valuelist1:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: c651bf1e-f7ef-4efc-aa35-edaae5b4b047
+    /valuelist1:
+      jcr:primaryType: selection:valuelist
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: a914203e-7352-4423-a3bb-11f34d0d2d2e
+      /selection:listitem[1]:
+        jcr:primaryType: selection:listitem
+        selection:key: one
+        selection:label: Dynamic Value 1
+      /selection:listitem[2]:
+        jcr:primaryType: selection:listitem
+        selection:key: two
+        selection:label: Dynamic Value 2
+      /selection:listitem[3]:
+        jcr:primaryType: selection:listitem
+        selection:key: three
+        selection:label: Dynamic Value 3
+      /selection:listitem[4]:
+        jcr:primaryType: selection:listitem
+        selection:key: four
+        selection:label: Dynamic Value 4
+      /selection:listitem[5]:
+        jcr:primaryType: selection:listitem
+        selection:key: five
+        selection:label: Dynamic Value 5
+  /en:
+    jcr:primaryType: hippostd:folder
+    jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+    jcr:uuid: a83c6f22-8cc5-4301-ac01-e720ff38eafd
+    hippostd:foldertype: [new-translated-folder, new-document]
+    hippotranslation:id: af173719-a9c4-4df2-83a5-7c6e11ae8e5b
+    hippotranslation:locale: en
+    /valuelist-en:
+      jcr:primaryType: hippo:handle
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 56c56e6a-1700-4c83-af4b-748a210af7c6
+      /valuelist-en:
+        jcr:primaryType: selection:valuelist
+        jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+        jcr:uuid: feb27b82-cddc-4067-ab2d-012772c40512
+        hippotranslation:id: 64c0f4ce-5fba-4ccc-a5fd-112a73d7d80a
+        hippotranslation:locale: en
+        /selection:listitem[1]:
+          jcr:primaryType: selection:listitem
+          selection:key: one
+          selection:label: English Value One
+        /selection:listitem[2]:
+          jcr:primaryType: selection:listitem
+          selection:key: two
+          selection:label: English Value Two
+        /selection:listitem[3]:
+          jcr:primaryType: selection:listitem
+          selection:key: three
+          selection:label: English Value Three
+  /nl:
+    jcr:primaryType: hippostd:folder
+    jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+    jcr:uuid: c731abf7-dc49-418a-9cbb-e6660d8aff5a
+    hippostd:foldertype: [new-translated-folder, new-document]
+    hippotranslation:id: af173719-a9c4-4df2-83a5-7c6e11ae8e5b
+    hippotranslation:locale: nl
+    /valuelist-nl:
+      jcr:primaryType: hippo:handle
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 3815a9dd-04ce-4485-872e-18972e0958e1
+      /valuelist-nl:
+        jcr:primaryType: selection:valuelist
+        jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+        jcr:uuid: b110d054-b7e3-4ceb-8deb-807ce77d48ff
+        hippotranslation:id: 64c0f4ce-5fba-4ccc-a5fd-112a73d7d80a
+        hippotranslation:locale: nl
+        /selection:listitem[1]:
+          jcr:primaryType: selection:listitem
+          selection:key: one
+          selection:label: Nederlandse Waarde Een
+        /selection:listitem[2]:
+          jcr:primaryType: selection:listitem
+          selection:key: two
+          selection:label: Nederlandse Waarde Twee
+        /selection:listitem[3]:
+          jcr:primaryType: selection:listitem
+          selection:key: three
+          selection:label: Nederlandse Waarde Drie
