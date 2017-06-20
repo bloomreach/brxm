@@ -1,8 +1,8 @@
-{
-  "hippo:templates": {
-    "en": {
-      "new-namespace": "New namespace",
-      "new-type": "New Type"
-    }
-  }
-}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        new-namespace: New namespace
+        new-type: New Type

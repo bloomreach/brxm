@@ -1,39 +1,37 @@
-{
-  "hippo:types": {
-    "hippostd:folder": {
-      "en": {
-        "jcr:name": "folder"
-      }
-    },
-    "hippostd:directory": {
-      "en": {
-        "jcr:name": "unordered folder"
-      }
-    },
-    "hippostd:publishable": {
-      "en": {
-        "hippostd:state=unpublished": "Offline",
-        "jcr:name": "Publishable",
-        "hippostd:state=published": "Live",
-        "hippostd:state=draft": "Draft"
-      }
-    },
-    "hippostd:taggable": {
-      "en": {
-        "jcr:name": "Taggable"
-      }
-    },
-    "hippostd:date": {
-      "en": {
-        "hippostd:dayofweek=1": "monday",
-        "hippostd:dayofweek=2": "tuesday",
-        "hippostd:dayofweek=5": "friday",
-        "hippostd:dayofweek=6": "saturday",
-        "hippostd:dayofweek=3": "wednesday",
-        "hippostd:dayofweek=4": "thursday",
-        "jcr:name": "Faceted Date",
-        "hippostd:dayofweek=7": "sunday"
-      }
-    }
-  }
-}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:publishable:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        hippostd:state=draft: Draft
+        hippostd:state=published: Live
+        hippostd:state=unpublished: Offline
+        jcr:name: Publishable
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:taggable:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Taggable
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:date:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        hippostd:dayofweek=1: monday
+        hippostd:dayofweek=2: tuesday
+        hippostd:dayofweek=3: wednesday
+        hippostd:dayofweek=4: thursday
+        hippostd:dayofweek=5: friday
+        hippostd:dayofweek=6: saturday
+        hippostd:dayofweek=7: sunday
+        jcr:name: Faceted Date
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:directory:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: unordered folder
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:folder:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: folder

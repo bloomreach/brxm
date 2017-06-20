@@ -1,80 +1,31 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"  xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine" sv:name="gallery">
-  <sv:node sv:name="image-gallery" h:merge="overlay">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
-    </sv:property>
-    <sv:node sv:name="frontend:renderer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="gallery.processor.id" sv:type="String">
-        <sv:value>service.gallery.processor</sv:value>
-      </sv:property>
-      <sv:property sv:name="gallery.thumbnail.size" sv:type="Long">
-        <sv:value>60</sv:value>
-      </sv:property>
-      <sv:property sv:name="option.label" sv:type="String">
-        <sv:value>add-image</sv:value>
-      </sv:property>
-      <sv:property sv:name="option.text" sv:type="String">
-        <sv:value>add-image-label</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.gallery.GalleryWorkflowPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="validator.id" sv:type="String">
-        <sv:value>service.gallery.image.validation</sv:value>
-      </sv:property>
-      <sv:property sv:name="fileupload.maxItems" sv:type="String">
-        <sv:value>25</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="asset-gallery" h:merge="overlay">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
-    </sv:property>
-    <sv:node sv:name="frontend:renderer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="gallery.thumbnail.size" sv:type="Long">
-        <sv:value>60</sv:value>
-      </sv:property>
-      <sv:property sv:name="option.label" sv:type="String">
-        <sv:value>add-asset</sv:value>
-      </sv:property>
-      <sv:property sv:name="option.text" sv:type="String">
-        <sv:value>add-file-label</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.gallery.GalleryWorkflowPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="gallery.processor.id" sv:type="String">
-        <sv:value>asset.gallery.processor</sv:value>
-      </sv:property>
-      <sv:property sv:name="validator.id" sv:type="String">
-        <sv:value>service.gallery.asset.validation</sv:value>
-      </sv:property>
-      <sv:property sv:name="fileupload.maxItems" sv:type="String">
-        <sv:value>25</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/gallery:
+      /image-gallery:
+        jcr:primaryType:
+          operation: override
+          type: name
+          value: frontend:workflow
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          fileupload.maxItems: '25'
+          gallery.processor.id: service.gallery.processor
+          gallery.thumbnail.size: 60
+          option.label: add-image
+          option.text: add-image-label
+          plugin.class: org.hippoecm.frontend.plugins.gallery.GalleryWorkflowPlugin
+          validator.id: service.gallery.image.validation
+      /asset-gallery:
+        jcr:primaryType:
+          operation: override
+          type: name
+          value: frontend:workflow
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          fileupload.maxItems: '25'
+          gallery.processor.id: asset.gallery.processor
+          gallery.thumbnail.size: 60
+          option.label: add-asset
+          option.text: add-file-label
+          plugin.class: org.hippoecm.frontend.plugins.gallery.GalleryWorkflowPlugin
+          validator.id: service.gallery.asset.validation

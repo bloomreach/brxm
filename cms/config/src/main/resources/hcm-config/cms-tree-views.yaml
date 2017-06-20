@@ -1,737 +1,266 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         sv:name="cms-tree-views">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:clusterfolder</sv:value>
-  </sv:property>
-  <sv:node sv:name="documents">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugincluster</sv:value>
-    </sv:property>
-    <sv:property sv:name="frontend:references" sv:type="String">
-      <sv:value>browser.id</sv:value>
-      <sv:value>editor.id</sv:value>
-    </sv:property>
-    <sv:property sv:name="frontend:services" sv:type="String">
-      <sv:value>wicket.id</sv:value>
-      <sv:value>model.folder</sv:value>
-    </sv:property>
-
-    <!-- Wicket tree helper properties -->
-    <sv:property sv:name="frontend:properties" sv:type="String">
-      <sv:value>use.width.from.classname</sv:value>
-      <sv:value>bind.to.layout.unit</sv:value>
-      <sv:value>workflow.enabled</sv:value>
-      <sv:value>nodetypes</sv:value>
-      <sv:value>root.path</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.folder" sv:type="String">
-      <sv:value>${cluster.id}.model.folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="root.path" sv:type="String">
-      <sv:value>/content/documents</sv:value>
-    </sv:property>
-    <sv:property sv:name="nodetypes" sv:type="String" sv:multiple="true">
-    </sv:property>
-    <sv:node sv:name="sectionPlugin">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.cms.browse.section.SearchingSectionPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.extensions" sv:type="String">
-        <sv:value>extension.tree</sv:value>
-        <sv:value>extension.addfolder</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.addfolder" sv:type="String">
-        <sv:value>${cluster.id}.addfolder</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.tree" sv:type="String">
-        <sv:value>${cluster.id}.tree</sv:value>
-      </sv:property>
-      <sv:property sv:name="title" sv:type="String">
-        <sv:value>section-documents</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.folder.root" sv:type="String">
-        <sv:value>${root.path}</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="documentsBrowser">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${cluster.id}.tree</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
-      </sv:property>
-      <sv:property sv:name="path" sv:type="String">
-        <sv:value>${root.path}</sv:value>
-      </sv:property>
-      <sv:property sv:name="rootless" sv:type="String">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:node sv:name="module.workflow">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="workflow.categories" sv:type="String">
-          <sv:value>threepane</sv:value>
-          <sv:value>folder-translations</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="filters">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:node sv:name="showFolderType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippostd:folder</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="showDirectoryType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippostd:directory</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideHandleType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippo:handle</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideResultsetType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippo:facetresult</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="addfolderPlugin">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="option.location" sv:type="String">
-        <sv:value>/content/documents</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderShortcutPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${cluster.id}.addfolder</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.variant" sv:type="String">
-        <sv:value>addfolder</sv:value>
-      </sv:property>
-      <sv:property sv:name="workflow.categories" sv:type="String">
-        <sv:value>threepane</sv:value>
-      </sv:property>
-      <sv:property sv:name="workflow.translated" sv:type="String">
-        <sv:value>new-translated-folder</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="images">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugincluster</sv:value>
-    </sv:property>
-    <sv:property sv:name="frontend:references" sv:type="String">
-      <sv:value>browser.id</sv:value>
-      <sv:value>editor.id</sv:value>
-    </sv:property>
-    <sv:property sv:name="frontend:services" sv:type="String">
-      <sv:value>wicket.id</sv:value>
-      <sv:value>model.folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="frontend:properties" sv:type="String">
-      <sv:value>use.width.from.classname</sv:value>
-      <sv:value>bind.to.layout.unit</sv:value>
-      <sv:value>workflow.enabled</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.folder" sv:type="String">
-      <sv:value>${cluster.id}.model.folder</sv:value>
-    </sv:property>
-    <sv:node sv:name="sectionPlugin">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.cms.browse.section.SearchingSectionPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.extensions" sv:type="String">
-        <sv:value>extension.tree</sv:value>
-        <sv:value>extension.addfolder</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.addfolder" sv:type="String">
-        <sv:value>${cluster.id}.addfolder</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.tree" sv:type="String">
-        <sv:value>${cluster.id}.tree</sv:value>
-      </sv:property>
-      <sv:property sv:name="title" sv:type="String">
-        <sv:value>section-images</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.folder.root" sv:type="String">
-        <sv:value>/content/gallery</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="imagesBrowser">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="nodename.max.length" sv:type="Long">
-        <sv:value>23</sv:value>
-      </sv:property>
-      <sv:property sv:name="path" sv:type="String">
-        <sv:value>/content/gallery</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="rootless" sv:type="String">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${cluster.id}.tree</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
-      </sv:property>
-      <sv:node sv:name="module.workflow">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="workflow.categories" sv:type="String">
-          <sv:value>gallery</sv:value>
-          <sv:value>threepane</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="filters">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:node sv:name="showGalleryType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippostd:gallery</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideUnstructuredType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>nt:unstructured</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideHandleType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippo:handle</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideFacetSearchType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippo:facetsearch</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideFolderType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippostd:folder</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideDirectoryType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippostd:directory</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="addfolderPlugin">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="option.location" sv:type="String">
-        <sv:value>/content/gallery</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderShortcutPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${cluster.id}.addfolder</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.variant" sv:type="String">
-        <sv:value>addfolder</sv:value>
-      </sv:property>
-      <sv:property sv:name="workflow.categories" sv:type="String">
-        <sv:value>threepane</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="assets">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugincluster</sv:value>
-    </sv:property>
-    <sv:property sv:name="frontend:references" sv:type="String">
-      <sv:value>browser.id</sv:value>
-      <sv:value>editor.id</sv:value>
-    </sv:property>
-    <sv:property sv:name="frontend:services" sv:type="String">
-      <sv:value>wicket.id</sv:value>
-      <sv:value>model.folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="frontend:properties" sv:type="String">
-      <sv:value>use.width.from.classname</sv:value>
-      <sv:value>bind.to.layout.unit</sv:value>
-      <sv:value>workflow.enabled</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.folder" sv:type="String">
-      <sv:value>${cluster.id}.model.folder</sv:value>
-    </sv:property>
-    <sv:node sv:name="sectionPlugin">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.cms.browse.section.SearchingSectionPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.extensions" sv:type="String">
-        <sv:value>extension.tree</sv:value>
-        <sv:value>extension.addfolder</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.addfolder" sv:type="String">
-        <sv:value>${cluster.id}.addfolder</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.tree" sv:type="String">
-        <sv:value>${cluster.id}.tree</sv:value>
-      </sv:property>
-      <sv:property sv:name="title" sv:type="String">
-        <sv:value>section-files</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.folder.root" sv:type="String">
-        <sv:value>/content/assets</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="filesBrowser">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="nodename.max.length" sv:type="Long">
-        <sv:value>23</sv:value>
-      </sv:property>
-      <sv:property sv:name="path" sv:type="String">
-        <sv:value>/content/assets</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="rootless" sv:type="String">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${cluster.id}.tree</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
-      </sv:property>
-      <sv:node sv:name="module.workflow">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="workflow.categories" sv:type="String">
-          <sv:value>gallery</sv:value>
-          <sv:value>threepane</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="filters">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:node sv:name="showGalleryType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippostd:gallery</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideUnstructuredType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>nt:unstructured</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideHandleType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippo:handle</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideFacetSearchType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippo:facetsearch</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideFolderType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippostd:folder</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideDirectoryType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippostd:directory</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="addfolderPlugin">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="option.location" sv:type="String">
-        <sv:value>/content/assets</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderShortcutPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${cluster.id}.addfolder</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.variant" sv:type="String">
-        <sv:value>addfolder</sv:value>
-      </sv:property>
-      <sv:property sv:name="workflow.categories" sv:type="String">
-        <sv:value>threepane</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="configuration">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugincluster</sv:value>
-    </sv:property>
-    <sv:property sv:name="frontend:references" sv:type="String">
-      <sv:value>browser.id</sv:value>
-      <sv:value>editor.id</sv:value>
-    </sv:property>
-    <sv:property sv:name="frontend:services" sv:type="String">
-      <sv:value>wicket.id</sv:value>
-      <sv:value>model.folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="frontend:properties" sv:type="String">
-      <sv:value>use.width.from.classname</sv:value>
-      <sv:value>bind.to.layout.unit</sv:value>
-      <sv:value>workflow.enabled</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.folder" sv:type="String">
-      <sv:value>${cluster.id}.model.folder</sv:value>
-    </sv:property>
-    <sv:node sv:name="sectionPlugin">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.cms.browse.section.BrowsingSectionPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.extensions" sv:type="String">
-        <sv:value>extension.tree</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.tree" sv:type="String">
-        <sv:value>${cluster.id}.tree</sv:value>
-      </sv:property>
-      <sv:property sv:name="title" sv:type="String">
-        <sv:value>section-configuration</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.folder.root" sv:type="String">
-        <sv:value>/</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="configurationBrowser">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="nodename.max.length" sv:type="Long">
-        <sv:value>23</sv:value>
-      </sv:property>
-      <sv:property sv:name="path" sv:type="String">
-        <sv:value>/hippo:namespaces</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="rootless" sv:type="String">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${cluster.id}.tree</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
-      </sv:property>
-      <sv:node sv:name="module.workflow">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="workflow.categories" sv:type="String">
-          <sv:value>editor</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="filters">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:node sv:name="showNamespacesAsDocumentTypes">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="name" sv:type="String">
-            <sv:value>document types</sv:value>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideChildrenOfNamespace">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="parent" sv:type="String">
-            <sv:value>hipposysedit:namespace</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideHippoNamespace">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces/hippo</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideGalleryNamespace">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces/hippogallery</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideHippostdNamespace">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces/hippostd</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideHippostdpubwfNamespace">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces/hippostdpubwf</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideSystemNamespace">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces/system</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideFrontendNamespace">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces/frontend</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideHipposyseditNamespace">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/hippo:namespaces/hipposysedit</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="showOtherNamespaces">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hipposysedit:namespace</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideFolderType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippostd:folder</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideHandleType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippo:handle</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-tree-views:
+      jcr:primaryType: frontend:clusterfolder
+      /documents:
+        jcr:primaryType: frontend:plugincluster
+        frontend:properties: [use.width.from.classname, bind.to.layout.unit, workflow.enabled,
+          nodetypes, root.path]
+        frontend:references: [browser.id, editor.id]
+        frontend:services: [wicket.id, model.folder]
+        model.folder: ${cluster.id}.model.folder
+        nodetypes: []
+        root.path: /content/documents
+        /sectionPlugin:
+          jcr:primaryType: frontend:plugin
+          extension.addfolder: ${cluster.id}.addfolder
+          extension.tree: ${cluster.id}.tree
+          model.folder.root: ${root.path}
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.section.SearchingSectionPlugin
+          title: section-documents
+          wicket.extensions: [extension.tree, extension.addfolder]
+        /documentsBrowser:
+          jcr:primaryType: frontend:plugin
+          path: ${root.path}
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin
+          rootless: 'true'
+          wicket.id: ${cluster.id}.tree
+          wicket.model: ${model.folder}
+          /module.workflow:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin
+            workflow.categories: [threepane, folder-translations]
+          /filters:
+            jcr:primaryType: frontend:pluginconfig
+            /showFolderType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:folder
+              display: true
+            /showDirectoryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:directory
+              display: true
+            /hideHandleType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:handle
+              display: false
+            /hideResultsetType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:facetresult
+              display: false
+            /hideFacNavType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippofacnav:facetnavigation
+              display: false
+        /addfolderPlugin:
+          jcr:primaryType: frontend:plugin
+          option.location: /content/documents
+          plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderShortcutPlugin
+          wicket.id: ${cluster.id}.addfolder
+          wicket.variant: addfolder
+          workflow.categories: threepane
+          workflow.translated: new-translated-folder
+      /images:
+        jcr:primaryType: frontend:plugincluster
+        frontend:properties: [use.width.from.classname, bind.to.layout.unit, workflow.enabled,
+          nodetypes]
+        frontend:references: [browser.id, editor.id]
+        frontend:services: [wicket.id, model.folder]
+        model.folder: ${cluster.id}.model.folder
+        /sectionPlugin:
+          jcr:primaryType: frontend:plugin
+          extension.addfolder: ${cluster.id}.addfolder
+          extension.tree: ${cluster.id}.tree
+          model.folder.root: /content/gallery
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.section.SearchingSectionPlugin
+          title: section-images
+          wicket.extensions: [extension.tree, extension.addfolder]
+        /imagesBrowser:
+          jcr:primaryType: frontend:plugin
+          nodename.max.length: 23
+          path: /content/gallery
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin
+          rootless: 'true'
+          wicket.id: ${cluster.id}.tree
+          wicket.model: ${model.folder}
+          /module.workflow:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin
+            workflow.categories: [gallery, threepane]
+          /filters:
+            jcr:primaryType: frontend:pluginconfig
+            /showGalleryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:gallery
+              display: true
+            /hideUnstructuredType:
+              jcr:primaryType: frontend:pluginconfig
+              child: nt:unstructured
+              display: false
+            /hideHandleType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:handle
+              display: false
+            /hideFacetSearchType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:facetsearch
+              display: false
+            /hideFolderType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:folder
+              display: false
+            /hideDirectoryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:directory
+              display: false
+            /hideFacNavType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippofacnav:facetnavigation
+              display: false
+        /addfolderPlugin:
+          jcr:primaryType: frontend:plugin
+          option.location: /content/gallery
+          plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderShortcutPlugin
+          wicket.id: ${cluster.id}.addfolder
+          wicket.variant: addfolder
+          workflow.categories: threepane
+      /assets:
+        jcr:primaryType: frontend:plugincluster
+        frontend:properties: [use.width.from.classname, bind.to.layout.unit, workflow.enabled,
+          nodetypes]
+        frontend:references: [browser.id, editor.id]
+        frontend:services: [wicket.id, model.folder]
+        model.folder: ${cluster.id}.model.folder
+        /sectionPlugin:
+          jcr:primaryType: frontend:plugin
+          extension.addfolder: ${cluster.id}.addfolder
+          extension.tree: ${cluster.id}.tree
+          model.folder.root: /content/assets
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.section.SearchingSectionPlugin
+          title: section-files
+          wicket.extensions: [extension.tree, extension.addfolder]
+        /filesBrowser:
+          jcr:primaryType: frontend:plugin
+          nodename.max.length: 23
+          path: /content/assets
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin
+          rootless: 'true'
+          wicket.id: ${cluster.id}.tree
+          wicket.model: ${model.folder}
+          /module.workflow:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin
+            workflow.categories: [gallery, threepane]
+          /filters:
+            jcr:primaryType: frontend:pluginconfig
+            /showGalleryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:gallery
+              display: true
+            /hideUnstructuredType:
+              jcr:primaryType: frontend:pluginconfig
+              child: nt:unstructured
+              display: false
+            /hideHandleType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:handle
+              display: false
+            /hideFacetSearchType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:facetsearch
+              display: false
+            /hideFolderType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:folder
+              display: false
+            /hideDirectoryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:directory
+              display: false
+            /hideFacNavType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippofacnav:facetnavigation
+              display: false
+        /addfolderPlugin:
+          jcr:primaryType: frontend:plugin
+          option.location: /content/assets
+          plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderShortcutPlugin
+          wicket.id: ${cluster.id}.addfolder
+          wicket.variant: addfolder
+          workflow.categories: threepane
+      /configuration:
+        jcr:primaryType: frontend:plugincluster
+        frontend:properties: [use.width.from.classname, bind.to.layout.unit, workflow.enabled]
+        frontend:references: [browser.id, editor.id]
+        frontend:services: [wicket.id, model.folder]
+        model.folder: ${cluster.id}.model.folder
+        /sectionPlugin:
+          jcr:primaryType: frontend:plugin
+          extension.tree: ${cluster.id}.tree
+          model.folder.root: /hippo:namespaces
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.section.BrowsingSectionPlugin
+          title: section-configuration
+          wicket.extensions: extension.tree
+        /configurationBrowser:
+          jcr:primaryType: frontend:plugin
+          nodename.max.length: 23
+          path: /hippo:namespaces
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin
+          rootless: 'false'
+          wicket.id: ${cluster.id}.tree
+          wicket.model: ${model.folder}
+          /module.workflow:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.addon.workflow.ContextWorkflowManagerPlugin
+            workflow.categories: editor
+          /filters:
+            jcr:primaryType: frontend:pluginconfig
+            /showNamespacesAsDocumentTypes:
+              jcr:primaryType: frontend:pluginconfig
+              display: true
+              name: document types
+              path: /hippo:namespaces
+            /hideChildrenOfNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              parent: hipposysedit:namespace
+            /hideHippoNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/hippo
+            /hideGalleryNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/hippogallery
+            /hideHippostdNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/hippostd
+            /hideHippostdpubwfNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/hippostdpubwf
+            /hideSystemNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/system
+            /hideFrontendNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/frontend
+            /hideHipposyseditNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/hipposysedit
+            /showOtherNamespaces:
+              jcr:primaryType: frontend:pluginconfig
+              child: hipposysedit:namespace
+              display: true
+            /hideFolderType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:folder
+              display: false
+            /hideHandleType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:handle
+              display: false

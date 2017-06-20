@@ -1,24 +1,22 @@
-{
-  "hippo:types": {
-    "hippo:query": {
-      "en": {
-        "jcr:name": "Query"
-      }
-    },
-    "hippo:resource": {
-      "en": {
-        "jcr:name": "Resource"
-      }
-    },
-    "hippo:facetselect": {
-      "en": {
-        "jcr:name": "Faceted Link"
-      }
-    },
-    "hippo:mirror": {
-      "en": {
-        "jcr:name": "Link"
-      }
-    }
-  }
-}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippo:query:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Query
+    /hippo:configuration/hippo:translations/hippo:types/hippo:mirror:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Link
+    /hippo:configuration/hippo:translations/hippo:types/hippo:resource:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Resource
+    /hippo:configuration/hippo:translations/hippo:types/hippo:facetselect:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Faceted Link

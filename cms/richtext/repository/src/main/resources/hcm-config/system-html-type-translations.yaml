@@ -1,9 +1,7 @@
-{
-  "hippo:types": {
-    "hipposys:html": {
-      "en": {
-        "jcr:name": "Formatted text"
-      }
-    }
-  }
-}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:html:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Formatted text

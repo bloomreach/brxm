@@ -1,67 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node sv:name="localeProviderService" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:plugin</sv:value>
-  </sv:property>
-  <sv:property sv:name="plugin.class" sv:type="String">
-    <sv:value>org.hippoecm.frontend.translation.LocaleProviderPlugin</sv:value>
-  </sv:property>
-  <sv:node sv:name="en">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:pluginconfig</sv:value>
-    </sv:property>
-    <sv:property sv:name="language" sv:type="String">
-      <sv:value>en</sv:value>
-    </sv:property>
-    <sv:property sv:name="country" sv:type="String">
-      <sv:value>us</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="nl">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:pluginconfig</sv:value>
-    </sv:property>
-    <sv:property sv:name="language" sv:type="String">
-      <sv:value>nl</sv:value>
-    </sv:property>
-    <sv:property sv:name="country" sv:type="String">
-      <sv:value>nl</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="de">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:pluginconfig</sv:value>
-    </sv:property>
-    <sv:property sv:name="language" sv:type="String">
-      <sv:value>de</sv:value>
-    </sv:property>
-    <sv:property sv:name="country" sv:type="String">
-      <sv:value>de</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="fr">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:pluginconfig</sv:value>
-    </sv:property>
-    <sv:property sv:name="language" sv:type="String">
-      <sv:value>fr</sv:value>
-    </sv:property>
-    <sv:property sv:name="country" sv:type="String">
-      <sv:value>fr</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/localeProviderService:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.hippoecm.frontend.translation.LocaleProviderPlugin
+      /en:
+        jcr:primaryType: frontend:pluginconfig
+        country: us
+        language: en
+      /nl:
+        jcr:primaryType: frontend:pluginconfig
+        country: nl
+        language: nl
+      /de:
+        jcr:primaryType: frontend:pluginconfig
+        country: de
+        language: de
+      /fr:
+        jcr:primaryType: frontend:pluginconfig
+        country: fr
+        language: fr

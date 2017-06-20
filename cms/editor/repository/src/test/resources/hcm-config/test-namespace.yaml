@@ -1,1189 +1,413 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="test">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposysedit:namespace</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <!-- "test:test"-->
-  <sv:node sv:name="test">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-      <sv:value>editor:editable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.0</sv:value>
-        </sv:property>
-        <sv:node sv:name="title">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:title</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
-        </sv:property>
-        <sv:node sv:name="title">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:title</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="child">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:child</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>nt:unstructured</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="editor:templates">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>editor:templateset</sv:value>
-      </sv:property>
-      <sv:node sv:name="_default_">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:properties" sv:type="String">
-          <sv:value>mode</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>engine</sv:value>
-          <sv:value>wicket.model</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:node sv:name="root">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="title">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="field" sv:type="String">
-            <sv:value>title</sv:value>
-          </sv:property>
-          <sv:property sv:name="caption" sv:type="String">
-            <sv:value>Title</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.css" sv:type="String">
-            <sv:value>hippo-template-default-title</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="child">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="field" sv:type="String">
-            <sv:value>child</sv:value>
-          </sv:property>
-          <sv:property sv:name="caption" sv:type="String">
-            <sv:value>Child</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.css" sv:type="String">
-            <sv:value>hippo-template-default-title</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>test:test</sv:value>
-        </sv:property>
-        <sv:property sv:name="test:title" sv:type="String">
-          <sv:value>title</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- end "test:test"-->
-  <!-- "test:pseudo"-->
-  <sv:node sv:name="pseudo">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:type" sv:type="String">
-          <sv:value>test:test</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- "test:pseudo"-->
-  <!-- "test:inheriting"-->
-  <sv:node sv:name="inheriting">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>test:test</sv:value>
-        </sv:property>
-        <sv:node sv:name="extra">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:extra</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.0</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>test:test</sv:value>
-        </sv:property>
-        <sv:node sv:name="extra">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:extra</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- end "test:inheriting"-->
-  <!-- "test:mixinTest"-->
-  <sv:node sv:name="mixinTest">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>test:mixinTest</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>test:mixin</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- end "test:mixinTest"-->
-  <!-- "test:superMixinTest"-->
-  <sv:node sv:name="superMixinTest">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>test:mixinTest</sv:value>
-          <sv:value>test:mixin</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>test:superMixinTest</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- end "test:superMixinTest"-->
-  <!-- "test:validator"-->
-  <sv:node sv:name="validator">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
-        </sv:property>
-        <sv:node sv:name="optional">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:optional</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="nonempty">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:nonempty</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:validators" sv:type="String">
-            <sv:value>nonempty</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="escaped">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:escaped</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:validators" sv:type="String">
-            <sv:value>escaped</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="email">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:email</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:validators" sv:type="String">
-            <sv:value>email</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="mandatory">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:mandatory</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:validators" sv:type="String">
-            <sv:value>required</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="multiple">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:multiple</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:validators" sv:type="String">
-            <sv:value>required</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="autocreated">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:autocreated</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:autocreated" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:validators" sv:type="String">
-            <sv:value>required</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="protected">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:protected</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:protected" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:validators" sv:type="String">
-            <sv:value>required</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <!-- end "test:validator"-->
-  <!-- "test:container"-->
-  <sv:node sv:name="container">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
-        </sv:property>
-        <sv:node sv:name="base">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:base</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>test:validator</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="single">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:single</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>test:validator</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:validators" sv:type="String">
-            <sv:value>required</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="multiple">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:multiple</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>test:validator</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:validators" sv:type="String">
-            <sv:value>required</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="any-validator">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>*</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>test:validator</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:validators" sv:type="String">
-            <sv:value>required</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="uncascaded">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:uncascaded</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>test:uncascaded</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <!-- end "test:container"-->
-  <!-- "test:uncascaded"-->
-  <sv:node sv:name="uncascaded">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:cascadevalidation" sv:type="Boolean">
-          <sv:value>false</sv:value>
-        </sv:property>
-        <sv:node sv:name="property">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:property</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:validators" sv:type="String">
-            <sv:value>required</sv:value>
-            <sv:value>non-empty</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- "test:uncascaded"-->
-  <!-- "test:legacy"-->
-  <sv:node sv:name="legacy">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
-        </sv:property>
-        <sv:node sv:name="a">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:a</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="b">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:b</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- "test:legacy"-->
-  <!-- "test:new"-->
-  <sv:node sv:name="new">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- "test:new"-->
-  <!-- "test:edited"-->
-  <sv:node sv:name="edited">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-      <sv:value>editor:editable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:node sv:name="title">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:title</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="child">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:child</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>nt:unstructured</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="editor:templates">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>editor:templateset</sv:value>
-      </sv:property>
-      <sv:node sv:name="_default_">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:properties" sv:type="String">
-          <sv:value>mode</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>engine</sv:value>
-          <sv:value>wicket.model</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:node sv:name="root">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="title">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="field" sv:type="String">
-            <sv:value>title</sv:value>
-          </sv:property>
-          <sv:property sv:name="caption" sv:type="String">
-            <sv:value>Title</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.css" sv:type="String">
-            <sv:value>hippo-template-default-title</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="child">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="field" sv:type="String">
-            <sv:value>child</sv:value>
-          </sv:property>
-          <sv:property sv:name="caption" sv:type="String">
-            <sv:value>Child</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.css" sv:type="String">
-            <sv:value>hippo-template-default-title</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>test:edited</sv:value>
-        </sv:property>
-        <sv:property sv:name="test:title" sv:type="String">
-          <sv:value>title</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- end "test:edited"-->
-
-  <!-- "test:document"-->
-  <sv:node sv:name="document">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-      <sv:value>editor:editable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
-          <sv:value>hippo:document</sv:value>
-          <sv:value>hippostd:relaxed</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="editor:templates">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>editor:templateset</sv:value>
-      </sv:property>
-      <sv:node sv:name="_default_">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:properties" sv:type="String">
-          <sv:value>mode</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>engine</sv:value>
-          <sv:value>wicket.model</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:node sv:name="root">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>test:document</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- end "test:document"-->
-
-  <!-- "test:inheritingfromedited"-->
-  <sv:node sv:name="inheritingfromedited">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>test:edited</sv:value>
-        </sv:property>
-        <sv:node sv:name="extra">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:extra</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- end "test:inheriting"-->
-
-  <!-- "test:mandatorybase"-->
-  <sv:node sv:name="mandatorybase">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
-        </sv:property>
-        <sv:node sv:name="base">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:base</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- end "test:mandatorybase"-->
-
-  <!-- "test:mandatory"-->
-  <sv:node sv:name="mandatory">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>test:mandatorybase</sv:value>
-        </sv:property>
-        <sv:node sv:name="mandatory">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:mandatory</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="withdefaults">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:withdefaults</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="autocreated">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>test:autocreated</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:autocreated" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:unstructured</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- end "test:mandatory"-->
-
-  <!-- end "test:comparable"-->
-  <sv:node sv:name="comparable">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-      <sv:value>editor:editable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="editor:templates">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>editor:templateset</sv:value>
-      </sv:property>
-      <sv:node sv:name="_default_">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:plugincluster</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:properties" sv:type="String">
-          <sv:value>mode</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:references" sv:type="String">
-          <sv:value>engine</sv:value>
-          <sv:value>wicket.model</sv:value>
-          <sv:value>model.compareTo</sv:value>
-        </sv:property>
-        <sv:property sv:name="frontend:services" sv:type="String">
-          <sv:value>wicket.id</sv:value>
-        </sv:property>
-        <sv:node sv:name="root">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:unstructured</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <!-- test:comparable -->
-
-</sv:node>
-
+definitions:
+  config:
+    /hippo:namespaces/test:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      /test:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype[1]:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.0
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:title
+              hipposysedit:type: String
+          /hipposysedit:nodetype[2]:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:title
+              hipposysedit:type: String
+            /child:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:child
+              hipposysedit:type: nt:unstructured
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [engine, wicket.model]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+            /title:
+              jcr:primaryType: frontend:plugin
+              caption: Title
+              field: title
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              wicket.css: hippo-template-default-title
+              wicket.id: ${cluster.id}.field
+            /child:
+              jcr:primaryType: frontend:plugin
+              caption: Child
+              field: child
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              wicket.css: hippo-template-default-title
+              wicket.id: ${cluster.id}.field
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: test:test
+            test:title: title
+      /pseudo:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            hipposysedit:type: test:test
+      /inheriting:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype[1]:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['test:test']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /extra:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:extra
+              hipposysedit:type: String
+          /hipposysedit:nodetype[2]:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['test:test']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.0
+            /extra:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:extra
+              hipposysedit:type: String
+      /mixinTest:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: test:mixinTest
+            jcr:mixinTypes: ['test:mixin']
+      /superMixinTest:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['test:mixinTest', 'test:mixin']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: test:superMixinTest
+      /validator:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /optional:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:optional
+              hipposysedit:type: String
+            /nonempty:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:nonempty
+              hipposysedit:type: String
+              hipposysedit:validators: [nonempty]
+            /escaped:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:escaped
+              hipposysedit:type: String
+              hipposysedit:validators: [escaped]
+            /email:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:email
+              hipposysedit:type: String
+              hipposysedit:validators: [email]
+            /mandatory:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:mandatory
+              hipposysedit:type: String
+              hipposysedit:validators: [required]
+            /multiple:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:multiple: true
+              hipposysedit:path: test:multiple
+              hipposysedit:type: String
+              hipposysedit:validators: [required]
+            /autocreated:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:autocreated: true
+              hipposysedit:path: test:autocreated
+              hipposysedit:type: String
+              hipposysedit:validators: [required]
+            /protected:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:protected
+              hipposysedit:protected: true
+              hipposysedit:type: String
+              hipposysedit:validators: [required]
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+      /container:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /base:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:base
+              hipposysedit:type: test:validator
+            /single:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:single
+              hipposysedit:type: test:validator
+              hipposysedit:validators: [required]
+            /multiple:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:multiple: true
+              hipposysedit:path: test:multiple
+              hipposysedit:type: test:validator
+              hipposysedit:validators: [required]
+            /any-validator:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: '*'
+              hipposysedit:type: test:validator
+              hipposysedit:validators: [required]
+            /uncascaded:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:uncascaded
+              hipposysedit:type: test:uncascaded
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+      /uncascaded:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:cascadevalidation: false
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /property:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:property
+              hipposysedit:type: String
+              hipposysedit:validators: [required, non-empty]
+      /legacy:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /a:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:a
+              hipposysedit:type: String
+            /b:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:b
+              hipposysedit:type: String
+      /new:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+      /edited:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:title
+              hipposysedit:type: String
+            /child:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:child
+              hipposysedit:type: nt:unstructured
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [engine, wicket.model]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+            /title:
+              jcr:primaryType: frontend:plugin
+              caption: Title
+              field: title
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              wicket.css: hippo-template-default-title
+              wicket.id: ${cluster.id}.field
+            /child:
+              jcr:primaryType: frontend:plugin
+              caption: Child
+              field: child
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              wicket.css: hippo-template-default-title
+              wicket.id: ${cluster.id}.field
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: test:edited
+            test:title: title
+      /document:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['hippo:document', 'hippostd:relaxed']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [engine, wicket.model]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: test:document
+            jcr:mixinTypes: ['mix:referenceable']
+      /inheritingfromedited:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['test:edited']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /extra:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:extra
+              hipposysedit:type: String
+      /mandatorybase:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /base:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: test:base
+              hipposysedit:type: String
+      /mandatory:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['test:mandatorybase']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /mandatory:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: test:mandatory
+              hipposysedit:type: String
+            /withdefaults:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: test:withdefaults
+              hipposysedit:type: String
+            /autocreated:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:autocreated: true
+              hipposysedit:mandatory: true
+              hipposysedit:path: test:autocreated
+              hipposysedit:type: String
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: nt:unstructured
+      /comparable:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [engine, wicket.model, model.compareTo]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: nt:unstructured

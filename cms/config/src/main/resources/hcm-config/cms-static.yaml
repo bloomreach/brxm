@@ -1,381 +1,129 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="cms-static">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:plugincluster</sv:value>
-  </sv:property>
-  <!-- Load services that can be invoked from plugins that are loaded dynamically -->
-  <sv:node sv:name="servicesLoader">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugin.loader.PluginClusterLoader</sv:value>
-    </sv:property>
-    <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>cms-services</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="root">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.root.RootPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.root</sv:value>
-    </sv:property>
-    <sv:property sv:name="browsers" sv:type="String">
-      <sv:value>browser.ie</sv:value>
-    </sv:property>
-    <sv:property sv:name="tabs" sv:type="String">
-      <sv:value>service.tab</sv:value>
-    </sv:property>
-    <sv:property sv:name="item" sv:type="String">
-      <sv:value>header.bar.right</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.tabs.documents" sv:type="String">
-      <sv:value>service.browse.tabscontainer</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.tabs.documents</sv:value>
-    </sv:property>
-    <sv:node sv:name="browser.ie">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="stylesheets" sv:type="String">
-        <sv:value>skin/screen_ie.css</sv:value>
-      </sv:property>
-      <sv:property sv:name="user.agent" sv:type="String">
-        <sv:value>ie</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="layout.wireframe">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=tabbed-panel-layout-center,height=1000</sv:value>
-      </sv:property>
-      <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=tabbed-panel-layout-left,width=64</sv:value>
-      </sv:property>
-      <sv:property sv:name="linked.with.parent" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="root.id" sv:type="String">
-        <sv:value>tabbed-panel-layout</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="layout.page">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="footer.height" sv:type="Long">
-        <sv:value>40</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <!-- Needs to load first to make the DashboardPerspective correspond with the first button -->
-  <sv:node sv:name="dashboardPerspective">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>cms-dashboard</sv:value>
-    </sv:property>
-    <sv:property sv:name="edition" sv:type="String">
-      <sv:value>community</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.currentActivity" sv:type="String">
-      <sv:value>service.dashboard.current</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.shortcuts" sv:type="String">
-      <sv:value>service.dashboard.shortcuts</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.todo" sv:type="String">
-      <sv:value>service.dashboard.todo</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.dashboard.DashboardPerspective</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="wicket.behavior" sv:type="String">
-      <sv:value>service.behavior.tabs</sv:value>
-      <sv:value>service.behavior.dashboard</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.shortcuts</sv:value>
-      <sv:value>extension.currentActivity</sv:value>
-      <sv:value>extension.todo</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.tab</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <!-- Browser perspective is second tab -->
-  <sv:node sv:name="browserPerspective">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="center" sv:type="String">
-      <sv:value>service.browse.editor</sv:value>
-    </sv:property>
-    <sv:property sv:name="left" sv:type="String">
-      <sv:value>service.browse.navigator</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.document" sv:type="String">
-      <sv:value>model.browse.document</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.browse.BrowserPerspective</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.tab</sv:value>
-    </sv:property>
-    <sv:node sv:name="layout.wireframe">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=browse-perspective-center,body=browse-perspective-center-body,min.width=400,scroll=false,gutter=0px 0px 0px 0px</sv:value>
-      </sv:property>
-      <sv:property sv:name="default.expanded.unit" sv:type="String">
-        <sv:value>left</sv:value>
-      </sv:property>
-      <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=browse-perspective-left,body=browse-perspective-left-body,scroll=false,width=400,gutter=0px 0px 0px 0px,expand.collapse.enabled=true,resize=true</sv:value>
-      </sv:property>
-      <sv:property sv:name="linked.with.parent" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="root.id" sv:type="String">
-        <sv:value>browse-perspective-wrapper</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="navigator">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.navigator</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.browse.Navigator</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.behavior" sv:type="String">
-      <sv:value>service.behavior.navigator</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.variant" sv:type="String">
-      <sv:value>yui</sv:value>
-    </sv:property>
-    <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>cms-browser</sv:value>
-    </sv:property>
-    <sv:property sv:name="sections" sv:type="String">
-      <sv:value>section.content</sv:value>
-      <sv:value>section.images</sv:value>
-      <sv:value>section.files</sv:value>
-      <sv:value>section.configuration</sv:value>
-    </sv:property>
-    <sv:property sv:name="section.configuration" sv:type="String">
-      <sv:value>service.browse.tree.configuration</sv:value>
-    </sv:property>
-    <sv:property sv:name="section.content" sv:type="String">
-      <sv:value>service.browse.tree.content</sv:value>
-    </sv:property>
-    <sv:property sv:name="section.files" sv:type="String">
-      <sv:value>service.browse.tree.files</sv:value>
-    </sv:property>
-    <sv:property sv:name="section.images" sv:type="String">
-      <sv:value>service.browse.tree.images</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.list" sv:type="String">
-      <sv:value>service.browse.list</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.document" sv:type="String">
-      <sv:value>model.browse.document</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.folder" sv:type="String">
-      <sv:value>model.browse.folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.default.path" sv:type="String">
-      <sv:value>/content/documents</sv:value>
-    </sv:property>
-    <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>service.browse</sv:value>
-    </sv:property>
-    <sv:property sv:name="browser.viewers" sv:type="String">
-      <sv:value>cms-folder-views</sv:value>
-    </sv:property>
-    <sv:property sv:name="search.viewers" sv:type="String">
-      <sv:value>cms-search-views</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="navigatorLayout">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="behavior.id" sv:type="String">
-      <sv:value>service.behavior.navigator</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.WireframePlugin</sv:value>
-    </sv:property>
-    <sv:node sv:name="yui.config">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=navigator-left,body=navigator-left-body,width=200,zindex=2,min.width=100,resize=true</sv:value>
-      </sv:property>
-      <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=navigator-center,body=navigator-center-body,width=250,min.width=100</sv:value>
-      </sv:property>
-      <sv:property sv:name="linked.with.parent" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="root.id" sv:type="String">
-        <sv:value>navigator-wrapper</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="tabbedEditorTabs">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.edit.EditorTabsPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="tabbedpanel.openleft" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="tabs" sv:type="String">
-      <sv:value>service.editor.tab</sv:value>
-    </sv:property>
-    <sv:property sv:name="tabs.container.id" sv:type="String">
-      <sv:value>service.browse.tabscontainer</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.css" sv:type="String">
-      <sv:value>document</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.editor</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="editorManagerPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>service.edit</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.edit.EditorManagerPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.document</sv:value>
-    </sv:property>
-    <sv:node sv:name="cluster.options">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>service.browse</sv:value>
-      </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>service.edit</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.behavior" sv:type="String">
-        <sv:value>service.behavior.editor.tabs.center</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>service.editor.tab</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="autoEditPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>service.edit</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.edit.AutoEditPlugin</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="controllerPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.root.ControllerPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>service.browse</sv:value>
-    </sv:property>
-    <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>service.edit</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <!-- Admin perspective -->
-  <sv:node sv:name="adminLoader">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.admin.AdminPerspective</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.tab</sv:value>
-    </sv:property>
-    <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>cms-admin</sv:value>
-    </sv:property>
-    <sv:node sv:name="layout.wireframe">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true</sv:value>
-      </sv:property>
-      <sv:property sv:name="root.id" sv:type="String">
-        <sv:value>hippo-panel-plugin-wrapper</sv:value>
-      </sv:property>
-      <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=60</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="headerbarLoader">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>cms-header-bar</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugin.loader.PluginClusterLoader</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-static:
+      jcr:primaryType: frontend:plugincluster
+      /servicesLoader:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-services
+        plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
+      /root:
+        jcr:primaryType: frontend:plugin
+        browsers: browser.ie
+        extension.tabs.documents: service.browse.tabscontainer
+        item: header.bar.right
+        max.inactive.interval.minutes: '30'
+        plugin.class: org.hippoecm.frontend.plugins.cms.root.RootPlugin
+        tabs: service.tab
+        wicket.extensions: [extension.tabs.documents]
+        wicket.id: service.root
+        /browser.ie:
+          jcr:primaryType: frontend:pluginconfig
+          stylesheets: skin/screen_ie.css
+          user.agent: ie
+        /layout.wireframe:
+          jcr:primaryType: frontend:pluginconfig
+          center: id=tabbed-panel-layout-center,height=1000
+          left: id=tabbed-panel-layout-left,width=64
+          linked.with.parent: true
+          root.id: tabbed-panel-layout
+        /layout.page:
+          jcr:primaryType: frontend:pluginconfig
+          footer.height: 40
+      /dashboardPerspective:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-dashboard
+        edition: community
+        extension.currentActivity: service.dashboard.current
+        extension.shortcuts: service.dashboard.shortcuts
+        extension.todo: service.dashboard.todo
+        plugin.class: org.hippoecm.frontend.plugins.cms.dashboard.DashboardPerspective
+        wicket.behavior: [service.behavior.tabs, service.behavior.dashboard]
+        wicket.extensions: [extension.shortcuts, extension.currentActivity, extension.todo]
+        wicket.id: service.tab
+      /browserPerspective:
+        jcr:primaryType: frontend:plugin
+        center: service.browse.editor
+        left: service.browse.navigator
+        model.document: model.browse.document
+        plugin.class: org.hippoecm.frontend.plugins.cms.browse.BrowserPerspective
+        wicket.id: service.tab
+        /layout.wireframe:
+          jcr:primaryType: frontend:pluginconfig
+          center: id=browse-perspective-center,body=browse-perspective-center-body,min.width=400,scroll=false,gutter=0px
+            0px 0px 0px
+          default.expanded.unit: left
+          left: id=browse-perspective-left,body=browse-perspective-left-body,scroll=false,width=400,gutter=0px
+            0px 0px 0px,expand.collapse.enabled=true,resize=true
+          linked.with.parent: true
+          root.id: browse-perspective-wrapper
+      /navigator:
+        jcr:primaryType: frontend:plugin
+        browser.id: service.browse
+        browser.viewers: cms-folder-views
+        cluster.name: cms-browser
+        extension.list: service.browse.list
+        model.default.path: /content/documents
+        model.document: model.browse.document
+        model.folder: model.browse.folder
+        plugin.class: org.hippoecm.frontend.plugins.cms.browse.Navigator
+        search.viewers: cms-search-views
+        section.configuration: service.browse.tree.configuration
+        section.content: service.browse.tree.content
+        section.files: service.browse.tree.files
+        section.images: service.browse.tree.images
+        sections: [section.content, section.images, section.files, section.configuration]
+        wicket.behavior: service.behavior.navigator
+        wicket.id: service.browse.navigator
+        wicket.variant: yui
+      /navigatorLayout:
+        jcr:primaryType: frontend:plugin
+        behavior.id: service.behavior.navigator
+        plugin.class: org.hippoecm.frontend.plugins.yui.layout.WireframePlugin
+        /yui.config:
+          jcr:primaryType: frontend:pluginconfig
+          center: id=navigator-center,body=navigator-center-body,width=250,min.width=100
+          left: id=navigator-left,body=navigator-left-body,width=200,zindex=2,min.width=100,resize=true
+          linked.with.parent: true
+          root.id: navigator-wrapper
+      /tabbedEditorTabs:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.edit.EditorTabsPlugin
+        tabbedpanel.openleft: true
+        tabs: service.editor.tab
+        tabs.container.id: service.browse.tabscontainer
+        wicket.css: document
+        wicket.id: service.browse.editor
+      /editorManagerPlugin:
+        jcr:primaryType: frontend:plugin
+        editor.id: service.edit
+        plugin.class: org.hippoecm.frontend.plugins.cms.edit.EditorManagerPlugin
+        wicket.model: model.browse.document
+        /cluster.options:
+          jcr:primaryType: frontend:pluginconfig
+          browser.id: service.browse
+          editor.id: service.edit
+          wicket.behavior: service.behavior.editor.tabs.center
+          wicket.id: service.editor.tab
+      /autoEditPlugin:
+        jcr:primaryType: frontend:plugin
+        editor.id: service.edit
+        plugin.class: org.hippoecm.frontend.plugins.cms.edit.AutoEditPlugin
+      /controllerPlugin:
+        jcr:primaryType: frontend:plugin
+        browser.id: service.browse
+        editor.id: service.edit
+        plugin.class: org.hippoecm.frontend.plugins.cms.root.ControllerPlugin
+      /adminLoader:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-admin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.AdminPerspective
+        wicket.id: service.tab
+        /layout.wireframe:
+          jcr:primaryType: frontend:pluginconfig
+          center: id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true
+          root.id: hippo-panel-plugin-wrapper
+          top: id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=41
+      /headerbarLoader:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-header-bar
+        plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader

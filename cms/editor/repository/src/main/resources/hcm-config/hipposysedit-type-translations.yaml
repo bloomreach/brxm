@@ -1,9 +1,7 @@
-{
-  "hippo:types": {
-    "hipposysedit:templatetype": {
-      "en": {
-        "jcr:name": "Template"
-      }
-    }
-  }
-}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposysedit:templatetype:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Template
