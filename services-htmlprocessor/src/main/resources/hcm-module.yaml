@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-services-htmlprocessor
+    after: hippo-repository
+module: hippo-services-htmlprocessor
