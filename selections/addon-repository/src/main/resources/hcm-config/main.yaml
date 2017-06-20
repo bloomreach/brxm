@@ -3,7 +3,3 @@ definitions:
     selection:
       uri: http://forge.onehippo.org/selection/nt/1.0
       cnd: selection-types.cnd
-  config:
-    /hippo:configuration/hippo:translations:
-      /hippo:types:
-        jcr:primaryType: hipposys:resourcebundles
