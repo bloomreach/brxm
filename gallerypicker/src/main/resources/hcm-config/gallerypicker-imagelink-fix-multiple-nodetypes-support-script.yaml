@@ -1,70 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="GalleryPickerFixMultipleNodetypesSupport">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:updaterinfo</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:batchsize" sv:type="Long">
-    <sv:value>10</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:description" sv:type="String">
-    <sv:value/>
-  </sv:property>
-  <sv:property sv:name="hipposys:dryrun" sv:type="Boolean">
-    <sv:value>false</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:parameters" sv:type="String">
-    <sv:value/>
-  </sv:property>
-  <sv:property sv:name="hipposys:query" sv:type="String">
-    <sv:value>//element(*, hipposysedit:field)[@hipposysedit:type='hippogallerypicker:imagelink']</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:script" sv:type="String">
-    <sv:value>package org.hippoecm.frontend.plugins.cms.admin.updater&#xd;
-&#xd;
-import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
-import javax.jcr.Node&#xd;
-&#xd;
-class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
-&#xd;
-  boolean doUpdate(Node node) {&#xd;
-    String fieldName = node.getName()&#xd;
-    log.debug "Checking node ${node.path}"&#xd;
-    Node typeNode = node.getParent().getParent().getParent()&#xd;
-    if (typeNode.hasNode("editor:templates/_default_/${fieldName}/cluster.options")) {&#xd;
-      Node fieldConfig = typeNode.getNode("editor:templates/_default_/"+fieldName+"/cluster.options")&#xd;
-      if (fieldConfig.hasProperty("nodetypes") &amp;&amp; !fieldConfig.getProperty("nodetypes").isMultiple()) {&#xd;
-        log.debug "Updating property ${fieldConfig.path}/nodetypes to multivalue"&#xd;
-        String[] values = [fieldConfig.getProperty("nodetypes").getString()]&#xd;
-        fieldConfig.getProperty("nodetypes").remove()&#xd;
-        fieldConfig.setProperty("nodetypes", values)&#xd;
-        return true;
-      }&#xd;
-    }&#xd;
-    return false&#xd;
-  }&#xd;
-&#xd;
-  boolean undoUpdate(Node node) {&#xd;
-    throw new UnsupportedOperationException('Updater does not implement undoUpdate method')&#xd;
-  }&#xd;
-&#xd;
-}</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:throttle" sv:type="Long">
-    <sv:value>1000</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:update/hippo:queue/GalleryPickerFixMultipleNodetypesSupport:
+      jcr:primaryType: hipposys:updaterinfo
+      hipposys:batchsize: 10
+      hipposys:description: ''
+      hipposys:dryrun: false
+      hipposys:parameters: ''
+      hipposys:query: //element(*, hipposysedit:field)[@hipposysedit:type='hippogallerypicker:imagelink']
+      hipposys:script: "package org.hippoecm.frontend.plugins.cms.admin.updater\r\n\
+        \r\nimport org.onehippo.repository.update.BaseNodeUpdateVisitor\r\nimport\
+        \ javax.jcr.Node\r\n\r\nclass UpdaterTemplate extends BaseNodeUpdateVisitor\
+        \ {\r\n\r\n  boolean doUpdate(Node node) {\r\n    String fieldName = node.getName()\r\
+        \n    log.debug \"Checking node ${node.path}\"\r\n    Node typeNode = node.getParent().getParent().getParent()\r\
+        \n    if (typeNode.hasNode(\"editor:templates/_default_/${fieldName}/cluster.options\"\
+        )) {\r\n      Node fieldConfig = typeNode.getNode(\"editor:templates/_default_/\"\
+        +fieldName+\"/cluster.options\")\r\n      if (fieldConfig.hasProperty(\"nodetypes\"\
+        ) && !fieldConfig.getProperty(\"nodetypes\").isMultiple()) {\r\n        log.debug\
+        \ \"Updating property ${fieldConfig.path}/nodetypes to multivalue\"\r\n  \
+        \      String[] values = [fieldConfig.getProperty(\"nodetypes\").getString()]\r\
+        \n        fieldConfig.getProperty(\"nodetypes\").remove()\r\n        fieldConfig.setProperty(\"\
+        nodetypes\", values)\r\n        return true;\n      }\r\n    }\r\n    return\
+        \ false\r\n  }\r\n\r\n  boolean undoUpdate(Node node) {\r\n    throw new UnsupportedOperationException('Updater\
+        \ does not implement undoUpdate method')\r\n  }\r\n\r\n}"
+      hipposys:throttle: 1000

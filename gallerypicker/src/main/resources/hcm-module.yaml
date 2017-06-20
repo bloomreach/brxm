@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-plugin-gallerypicker
+    after: hippo-cms
+module: hippo-plugin-gallerypicker

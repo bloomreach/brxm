@@ -1,13 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="hideHippoGalleryPickerNamespace" h:merge="insert" h:location="showOtherNamespaces"
-  xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:pluginconfig</sv:value>
-  </sv:property>
-  <sv:property sv:name="display" sv:type="Boolean">
-    <sv:value>false</sv:value>
-  </sv:property>
-  <sv:property sv:name="path" sv:type="String">
-    <sv:value>/hippo:namespaces/hippogallerypicker</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-folder-views/hipposysedit:namespacefolder/root/filters:
+      /hideHippoGalleryPickerNamespace:
+        .meta:order-before: showOtherNamespaces
+        jcr:primaryType: frontend:pluginconfig
+        display: false
+        path: /hippo:namespaces/hippogallerypicker
+    /hippo:configuration/hippo:frontend/cms/cms-tree-views/configuration/configurationBrowser/filters:
+      /hideHippoGalleryPickerNamespace:
+        .meta:order-before: showOtherNamespaces
+        jcr:primaryType: frontend:pluginconfig
+        display: false
+        path: /hippo:namespaces/hippogallerypicker
