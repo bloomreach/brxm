@@ -52,6 +52,7 @@ import org.onehippo.cm.model.MigrationConfigWriter;
 import org.onehippo.cm.model.MigrationMode;
 import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.SourceType;
 import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
@@ -67,6 +68,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.migration.ResourceProcessor.deleteEmptyDirectory;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
+import static org.onehippo.cm.model.Constants.HCM_CONTENT_FOLDER;
 
 public class Esv2Yaml {
 
@@ -286,7 +288,8 @@ public class Esv2Yaml {
                             Files.deleteIfExists(sourceFilePath);
                         }
                     } else {
-                        handleFsResource(sourceFilePath, Paths.get(src.toString(), HCM_CONFIG_FOLDER, destination));
+                        String hcmFolder = source.getType() == SourceType.CONFIG ? HCM_CONFIG_FOLDER : HCM_CONTENT_FOLDER;
+                        handleFsResource(sourceFilePath, Paths.get(src.toString(), hcmFolder, destination));
                     }
                 }
 
