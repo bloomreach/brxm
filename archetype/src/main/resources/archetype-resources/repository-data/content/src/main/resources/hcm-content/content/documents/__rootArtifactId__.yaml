@@ -3,29 +3,10 @@
 #set( $symbol_escape = '\' )
 #set($hyphen = '-')
 #set($empty = '')
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node
-  xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-  sv:name="${rootArtifactId.replace($hyphen,$empty)}">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippostd:folder</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>mix:referenceable</sv:value>
-    <sv:value>hippotranslation:translated</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippotranslation:locale" sv:type="String">
-    <sv:value>en</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippotranslation:id" sv:type="String">
-    <!-- same for all 'root' language nodes: do not change -->
-    <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippostd:foldertype" sv:type="String">
-    <sv:value>new-translated-folder</sv:value>
-    <sv:value>new-document</sv:value>
-  </sv:property>
-</sv:node>
+/content/documents/${rootArtifactId.replace($hyphen,$empty)}:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+  jcr:uuid: 996bcac5-86cf-49b5-a7a3-16a74863e814
+  hippostd:foldertype: [new-translated-folder, new-document]
+  hippotranslation:id: 996bcac5-86cf-49b5-a7a3-16a74863e814
+  hippotranslation:locale: en

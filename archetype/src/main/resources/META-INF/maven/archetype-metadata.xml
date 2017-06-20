@@ -102,7 +102,7 @@
       </includes>
     </fileSet>
     <fileSet filtered="false" encoding="UTF-8">
-      <directory>repository-data/webfiles/src/main/resources/site</directory>
+      <directory>repository-data/webfiles/src/main/resources/hcm-config/site</directory>
       <includes>
         <include>**/**</include>
       </includes>

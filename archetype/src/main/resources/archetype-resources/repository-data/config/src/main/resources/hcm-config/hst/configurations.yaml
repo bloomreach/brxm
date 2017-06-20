@@ -3,60 +3,27 @@
 #set( $symbol_escape = '\' )
 #set($hyphen = '-')
 #set($empty = '')
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="hst:configurations" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         esv:merge="combine" xmlns:esv="http://www.onehippo.org/jcr/xmlimport">
-  <sv:node sv:name="common">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:configuration</sv:value>
-    </sv:property>
-    <sv:node sv:name="hst:sitemap">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemap</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hst:abstractpages">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:pages</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hst:pages">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:pages</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hst:components">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:components</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hst:templates">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:templates</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hst:sitemenus">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenus</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hst:sitemapitemhandlers">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemapitemhandlers</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hst:catalog">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:catalog</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:configuration</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="hst:inheritsfrom" sv:type="String">
-      <sv:value>../common</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations:
+      /common:
+        jcr:primaryType: hst:configuration
+        /hst:sitemap:
+          jcr:primaryType: hst:sitemap
+        /hst:abstractpages:
+          jcr:primaryType: hst:pages
+        /hst:pages:
+          jcr:primaryType: hst:pages
+        /hst:components:
+          jcr:primaryType: hst:components
+        /hst:templates:
+          jcr:primaryType: hst:templates
+        /hst:sitemenus:
+          jcr:primaryType: hst:sitemenus
+        /hst:sitemapitemhandlers:
+          jcr:primaryType: hst:sitemapitemhandlers
+        /hst:catalog:
+          jcr:primaryType: hst:catalog
+      /${rootArtifactId.replace($hyphen,$empty)}:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../common]
