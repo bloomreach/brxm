@@ -21,10 +21,15 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.commons.collections4.trie.PatriciaTrie;
+
+import com.google.common.collect.Maps;
+
 public class PathsMap implements Iterable<String> {
 
-    private TreeSet<String> paths = new TreeSet<>();
-    private SortedSet<String> unmodifiablePaths = Collections.unmodifiableSortedSet(paths);
+    // use a PATRICIA Trie, which stores strings efficiently when there are common prefixes
+    private Set<String> paths = Collections.newSetFromMap(new PatriciaTrie<>());
+    private Set<String> unmodifiablePaths = Collections.unmodifiableSet(paths);
 
     /**
      * Makes a path start with a / and not end with a /. unless its / itself
@@ -57,7 +62,7 @@ public class PathsMap implements Iterable<String> {
         }
     }
 
-    public SortedSet<String> getPaths() {
+    public Set<String> getPaths() {
         return unmodifiablePaths;
     }
 

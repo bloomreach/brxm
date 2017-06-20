@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.engine.ExportContentProcessor;
@@ -1046,11 +1047,13 @@ public class DefinitionMergeService {
                                            final HashMap<String, ModuleImpl> toExport, final Session jcrSession) {
 
         // set of content change paths in lexical order, so that shorter common sub-paths come first
-        final TreeSet<String> contentChangesByPath = new TreeSet<>();
+        // use a PATRICIA Trie, which stores strings efficiently when there are common prefixes
+        final Set<String> contentChangesByPath = Collections.newSetFromMap(new PatriciaTrie<>());
         contentChangesByPath.addAll(contentChanges.getAddedContent().getPaths());
         contentChangesByPath.addAll(contentChanges.getChangedContent().getPaths());
 
         // set of existing sources in reverse lexical order, so that longer paths come first
+        // note: we can use an ordinary TreeMap here, because we don't expect as many sources as raw paths
         final SortedMap<String, ContentDefinitionImpl> existingSourcesByPath = collectContentSourcesByPath(toExport);
 
         // process deletes, including resource removal
