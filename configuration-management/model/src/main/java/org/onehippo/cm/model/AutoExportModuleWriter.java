@@ -66,7 +66,7 @@ public class AutoExportModuleWriter extends ModuleWriter {
 
     InputStream getValueInputProvider(final ValueImpl value) throws IOException {
         final String internalResourcePath = value.getInternalResourcePath();
-        if (internalResourcePath != null && value.isNewResource()) {
+        if (internalResourcePath != null) {
             return inputProvider.getResourceInputStream(null, internalResourcePath);
         }
         else {

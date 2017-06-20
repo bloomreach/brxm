@@ -135,7 +135,7 @@ public class ModuleWriter {
         final ValueImpl value = (ValueImpl) copyItem.getValue();
         if (rip instanceof FileResourceInputProvider && outputProvider instanceof FileResourceOutputProvider
                 // don't try to do a basePath comparison if this is actually backed by the JCR
-                && !value.isNewResource()) {
+                && value.getInternalResourcePath() == null) {
             final FileResourceInputProvider frip = (FileResourceInputProvider) rip;
             final FileResourceOutputProvider fout = (FileResourceOutputProvider) outputProvider;
 
