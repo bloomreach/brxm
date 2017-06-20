@@ -17,15 +17,16 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('ProjectService', () => {
-  let $q;
+fdescribe('ProjectService', () => {
   let $httpBackend;
-  let ProjectService;
+  let $q;
+  let ConfigService;
   let HstService;
+  let ProjectService;
 
   const mountId = '12';
-
-  const branches = [
+  const channel = { mountId };
+  const projects = [
     {
       id: 'test1',
       name: 'test1',
@@ -33,42 +34,49 @@ describe('ProjectService', () => {
     {
       id: 'test2',
       name: 'test2',
-    }];
+    },
+  ];
+  const currentProject = projects[0];
 
   beforeEach(() => {
     angular.mock.module('hippo-cm', ($provide) => {
       $provide.decorator('$window', ($delegate) => {
         Object.assign($delegate.parent, {
-          Hippo: {},
+          Hippo: {
+            Projects: {
+              events: jasmine.createSpyObj('events', ['subscribe', 'unsubscribeAll']),
+            },
+          },
         });
 
         return $delegate;
       });
     });
 
-    const configServiceMock = jasmine.createSpyObj('ConfigService', ['getCmsContextPath']);
-    configServiceMock.getCmsContextPath.and.returnValue('/test/');
-
-    angular.mock.module(($provide) => {
-      $provide.value('ConfigService', configServiceMock);
-    });
-
-    const channelServiceMock = jasmine.createSpyObj('ChannelService', ['getChannel', 'initialize']);
-    channelServiceMock.getChannel.and.returnValue({ mountId });
-
-    angular.mock.module(($provide) => {
-      $provide.value('ChannelService', channelServiceMock);
-    });
-
-    inject((_$q_, _$httpBackend_, _ProjectService_, _HstService_) => {
-      $q = _$q_;
+    inject((
+      _$httpBackend_,
+      _$q_,
+      _ConfigService_,
+      _HstService_,
+      _ProjectService_,
+    ) => {
       $httpBackend = _$httpBackend_;
-      ProjectService = _ProjectService_;
+      $q = _$q_;
+      ConfigService = _ConfigService_;
       HstService = _HstService_;
+      ProjectService = _ProjectService_;
     });
 
-    spyOn(HstService, 'doGet');
+    spyOn(ConfigService, 'getCmsContextPath').and.returnValue('/test/');
     spyOn(HstService, 'doPut');
+    spyOn(HstService, 'doGet');
+
+    $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, projects);
+    HstService.doGet.and.returnValue($q.resolve({ data: currentProject.id }));
+    HstService.doPut.and.returnValue($q.resolve());
+
+    ProjectService.load(channel);
+    $httpBackend.flush();
   });
 
   afterEach(() => {
@@ -76,42 +84,23 @@ describe('ProjectService', () => {
     $httpBackend.verifyNoOutstandingExpectation();
   });
 
-  it('loads projects and sets the current branch', () => {
-    const currentBranch = branches[0];
-    $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, branches);
-    HstService.doGet.and.returnValue($q.when({ data: currentBranch.id }));
-
-    ProjectService.load({ mountId });
-    $httpBackend.flush();
-
-    expect(ProjectService.projects).toEqual(branches);
-    expect(ProjectService.selectedProject).toEqual(currentBranch);
+  it('loads projects and sets the current project', () => {
+    expect(ProjectService.projects).toEqual(projects);
+    expect(ProjectService.selectedProject).toEqual(currentProject);
     expect(HstService.doGet).toHaveBeenCalledWith(mountId, 'currentbranch');
   });
 
-  it('calls setmaster if the selectedProject is not a branch', () => {
-    const currentBranch = branches[0];
-    $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, branches);
-    HstService.doGet.and.returnValue($q.when({ data: currentBranch.id }));
-    HstService.doPut.and.returnValue($q.when({ data: 'master' }));
-
-    ProjectService.load({ mountId });
-    $httpBackend.flush();
-    ProjectService.selectProject('master');
+  it('selects the core if the selectedProject is not a project', () => {
+    HstService.doPut.calls.reset();
+    ProjectService.updateSelectedProject('something');
 
     expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectmaster');
   });
 
-  it('calls setbranch if the selectedProject is a branch', () => {
-    const currentBranch = branches[0];
-    $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, branches);
-    HstService.doGet.and.returnValue($q.when({ data: currentBranch.id }));
-    HstService.doPut.and.returnValue($q.when({ data: currentBranch.id }));
+  it('calls setproject if the selectedProject is a project', () => {
+    HstService.doPut.calls.reset();
+    ProjectService.updateSelectedProject(projects[1].id);
 
-    ProjectService.load({ mountId });
-    $httpBackend.flush();
-    ProjectService.selectProject(branches[1].id);
-
-    expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectbranch', branches[1].id);
+    expect(HstService.doPut).toHaveBeenCalledWith(null, mountId, 'selectbranch', projects[1].id);
   });
 });

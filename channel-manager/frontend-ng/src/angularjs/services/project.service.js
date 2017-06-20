@@ -50,21 +50,35 @@ class ProjectService {
       this.events.unsubscribeAll();
 
       this.events.subscribe('projects-changed', () => {
-        this.getProjects();
+        this._getProjects();
       });
     }
 
     return this._setupProjects();
   }
 
+  registerChangeListener(cb) {
+    this.listeners.push(cb);
+  }
+
+  updateSelectedProject(projectId) {
+    this.listeners.forEach(listener => listener());
+    const selectedProject = this.projects.find(project => project.id === projectId);
+    const selectionPromise = selectedProject ? this._selectProject(projectId) : this._selectCore();
+
+    return selectionPromise.then(() => {
+      this.selectedProject = selectedProject;
+    });
+  }
+
   _setupProjects() {
     return this
-      .getProjects()
-      .then(() => this.branchId || this.getCurrentProject())
+      ._getProjects()
+      .then(() => this.branchId || this._getCurrentProject())
       .then(projectId => this.updateSelectedProject(projectId));
   }
 
-  getProjects() {
+  _getProjects() {
     const url = `${this.urlPrefix}${this.mountId}/associated-with-channel`;
     return this.$http
       .get(url)
@@ -74,35 +88,22 @@ class ProjectService {
       });
   }
 
-  updateSelectedProject(projectId) {
-    this.listeners.forEach(listener => listener());
-    const selectedProject = this.projects.find(project => project.id === projectId);
-    const selectionPromise = projectId ? this.selectProject(projectId) : this.selectCore();
-
-    return selectionPromise.then(() => {
-      this.selectedProject = selectedProject;
-    });
-  }
-
-  selectProject(projectId) {
+  _selectProject(projectId) {
     return this.HstService
       .doPut(null, this.mountId, 'selectbranch', projectId);
   }
 
-  selectCore() {
+  _selectCore() {
     return this.HstService
       .doPut(null, this.mountId, 'selectmaster');
   }
 
-  getCurrentProject() {
+  _getCurrentProject() {
     return this.HstService
       .doGet(this.mountId, 'currentbranch')
       .then(result => result.data);
   }
 
-  registerChangeListener(cb) {
-    this.listeners.push(cb);
-  }
 }
 
 export default ProjectService;
