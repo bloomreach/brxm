@@ -15,4 +15,3 @@ definitions:
         maxFileLengthKb: 256
         useWatchServiceOnOsNames: [Linux]
         watchDelayMillis: 500
-        watchedModules: [repository-data/webfiles]
