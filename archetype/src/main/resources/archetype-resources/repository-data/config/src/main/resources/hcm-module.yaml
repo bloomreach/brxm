@@ -1,0 +1,5 @@
+group: 
+  name: ${artifactId}
+  after: hippo-cms
+project: ${artifactId}
+module: ${artifactId}-repository-data-config
