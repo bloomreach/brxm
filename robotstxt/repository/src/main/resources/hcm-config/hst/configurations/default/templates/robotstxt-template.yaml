@@ -1,47 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
- http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.  -->
-
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="robotstxt.ftl">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:template</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>a0e01646-dbb0-475f-bc81-5f2d551f7fad</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:script" sv:type="String">
-    <sv:value>&lt;#ftl encoding="UTF-8" strip_whitespace=true attributes={"content_type": "text/plain"}&gt;&#xd;
-&lt;#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"] &gt;&#xd;
-&lt;#if document??&gt;&#xd;
-&lt;#if document.sections??&gt;&#xd;
-&lt;#list document.sections as section&gt;&#xd;
-&lt;#if section.userAgent?? &amp;&amp; (section.disallows?? || disallowedFacNavLinks??)&gt;&#xd;
-User-agent: ${section.userAgent}&#xd;
-&lt;#list section.disallows as path&gt;Disallow: ${path}&#xd;
-&lt;/#list&gt;&#xd;
-&lt;#list disallowedFacNavLinks as facnav&gt;Disallow: &lt;@hst.link link=facnav/&gt;/&#xd;
-&lt;/#list&gt;&#xd;
-&#xd;
-&lt;/#if&gt;&#xd;
-&lt;/#list&gt;&#xd;
-&lt;/#if&gt;&#xd;
-&lt;#if document.sitemaps??&gt;&#xd;
-&lt;#list document.sitemaps as sitemap&gt;&#xd;
-Sitemap: ${sitemap}&#xd;
-&lt;/#list&gt;&#xd;
-&lt;/#if&gt;&#xd;
-&lt;/#if&gt;</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:templates/robotstxt.ftl:
+      jcr:primaryType: hst:template
+      jcr:uuid: a0e01646-dbb0-475f-bc81-5f2d551f7fad
+      hst:script: "<#ftl encoding=\"UTF-8\" strip_whitespace=true attributes={\"content_type\"\
+        : \"text/plain\"}>\r\n<#assign hst=JspTaglibs[\"http://www.hippoecm.org/jsp/hst/core\"\
+        ] >\r\n<#if document??>\r\n<#if document.sections??>\r\n<#list document.sections\
+        \ as section>\r\n<#if section.userAgent?? && (section.disallows?? || disallowedFacNavLinks??)>\r\
+        \nUser-agent: ${section.userAgent}\r\n<#list section.disallows as path>Disallow:\
+        \ ${path}\r\n</#list>\r\n<#list disallowedFacNavLinks as facnav>Disallow:\
+        \ <@hst.link link=facnav/>/\r\n</#list>\r\n\r\n</#if>\r\n</#list>\r\n</#if>\r\
+        \n<#if document.sitemaps??>\r\n<#list document.sitemaps as sitemap>\r\nSitemap:\
+        \ ${sitemap}\r\n</#list>\r\n</#if>\r\n</#if>"
