@@ -4,4 +4,4 @@ project:
     after: hippo-repository
 module:
     name: hippo-cms-workflow-repository
-    after: hippo-cms-editor-repository
+    after: [hippo-cms-config, hippo-cms-editor-repository]

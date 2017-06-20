@@ -1,7 +1,6 @@
 definitions:
   config:
     /hippo:configuration/hippo:frontend/console/console:
-      jcr:primaryType: frontend:plugincluster
       /autoexport:
         .meta:order-before: check
         jcr:primaryType: frontend:plugin

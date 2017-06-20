@@ -1,7 +1,6 @@
 definitions:
   config:
     /hippo:configuration/hippo:workflows/threepane:
-      jcr:primaryType: hipposys:workflowcategory
       /image-gallery:
         .meta:order-before: generic-gallery
         jcr:primaryType: frontend:workflow

@@ -1,10 +1,7 @@
 definitions:
   config:
-    /hippo:configuration/hippo:translations/hippo:workflows:
-      jcr:primaryType: hipposys:resourcebundles
-      /en:
-        jcr:primaryType: hipposys:resourcebundle
-        document: Document
-        miscellaneous: Miscellaneous
-        publication: Publication
-        request: Requests
+    /hippo:configuration/hippo:translations/hippo:workflows/en:
+      document: Document
+      miscellaneous: Miscellaneous
+      publication: Publication
+      request: Requests

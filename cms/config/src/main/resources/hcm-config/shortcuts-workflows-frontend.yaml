@@ -1,7 +1,6 @@
 definitions:
   config:
     /hippo:configuration/hippo:workflows/shortcuts:
-      jcr:primaryType: hipposys:workflowcategory
       /folder:
         jcr:primaryType:
           operation: override

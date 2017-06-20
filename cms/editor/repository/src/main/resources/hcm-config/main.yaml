@@ -7,5 +7,3 @@ definitions:
     /hippo:configuration/hippo:translations:
       /hippo:types:
         jcr:primaryType: hipposys:resourcebundles
-      /hippo:cms:
-        jcr:primaryType: hipposys:resourcebundles
