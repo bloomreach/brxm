@@ -22,6 +22,7 @@
 
   <md-select aria-label="{{ ::'TOOLBAR_PROJECT_LABEL' | translate }}"
              class="md-no-underline"
+             ng-model-options="{ trackBy: '$value.id' }"
              ng-model="$ctrl.selectedProject">
     <md-option ng-value="$ctrl.core">
       {{ $ctrl.core.name }}
