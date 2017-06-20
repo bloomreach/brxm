@@ -1,7 +1,7 @@
-{
-  "hippo:workflows": {
-    "en": {
-      "socialsharing": "Share"
-    }
-  }
-}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:workflows:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        socialsharing: Share

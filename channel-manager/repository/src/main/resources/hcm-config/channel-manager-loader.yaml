@@ -1,13 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="channelManagerLoader" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="insert" h:location="browserPerspective">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:plugin</sv:value>
-  </sv:property>
-  <sv:property sv:name="cluster.name" sv:type="String">
-    <sv:value>hippo-channel-manager</sv:value>
-  </sv:property>
-  <sv:property sv:name="plugin.class" sv:type="String">
-    <sv:value>org.hippoecm.frontend.plugin.loader.PluginClusterLoader</sv:value>
-  </sv:property>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-static:
+      /channelManagerLoader:
+        .meta:order-before: browserPerspective
+        jcr:primaryType: frontend:plugin
+        cluster.name: hippo-channel-manager
+        plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
