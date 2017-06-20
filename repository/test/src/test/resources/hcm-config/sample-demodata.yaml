@@ -1,78 +1,28 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-    Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
-
-    Licensed under the Apache License, Version 2.0 (the  "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS"
-    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="template-demo">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippostd:folder</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>mix:versionable</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:paths" sv:type="String"/>
-  <sv:node sv:name="myarticle">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>efea9983-4801-861b-a297-db7d4ca20985</sv:value>
-    </sv:property>
-    <sv:node sv:name="myarticle">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>sample:simpledocument</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:versionable</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:paths" sv:type="String"/>
-      <sv:property sv:name="sample:title" sv:type="String">
-        <sv:value>&lt;html&gt;&lt;body&gt;demo
-          titel&lt;/body&gt;&lt;/html&gt;</sv:value>
-      </sv:property>
-      <sv:property sv:name="sample:body" sv:type="String">
-        <sv:value>&lt;html&gt;&lt;body&gt;o what a
-          night&lt;/body&gt;&lt;/html&gt;</sv:value>
-      </sv:property>
-      <sv:property sv:name="sample:subject" sv:type="String" sv:multiple="true">
-        <sv:value>onderwerp</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:state" sv:type="String">
-        <sv:value>unpublished</sv:value>
-      </sv:property>
-
-      <!-- sample image prototype -->
-      <sv:node sv:name="sample:image">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>sample:image</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>86775ce3-34ff-4e29-8401-8ada5d0368a4</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mimeType" sv:type="String">
-          <sv:value>image/gif</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:data" sv:type="Binary">
-          <sv:value>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</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:lastModified" sv:type="Date">
-          <sv:value>2008-02-04T16:43:01.618+01:00</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /template-demo:
+      jcr:primaryType: hippostd:folder
+      jcr:mixinTypes: ['mix:versionable']
+      /myarticle:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: efea9983-4801-861b-a297-db7d4ca20985
+        /myarticle:
+          jcr:primaryType: sample:simpledocument
+          jcr:mixinTypes: ['mix:versionable']
+          hippostd:state: unpublished
+          sample:body: |-
+            <html><body>o what a
+                      night</body></html>
+          sample:subject: [onderwerp]
+          sample:title: |-
+            <html><body>demo
+                      titel</body></html>
+          /sample:image:
+            jcr:primaryType: sample:image
+            jcr:uuid: 86775ce3-34ff-4e29-8401-8ada5d0368a4
+            jcr:data:
+              type: binary
+              resource: /template-demo/myarticle/myarticle/image/data.gif
+            jcr:lastModified: 2008-02-04T16:43:01.618+01:00
+            jcr:mimeType: image/gif

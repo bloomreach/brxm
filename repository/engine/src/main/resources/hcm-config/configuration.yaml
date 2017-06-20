@@ -20,7 +20,7 @@ definitions:
               jcr:primaryType: hipposys:relativepropertyreference
               hipposys:relPath: hippo:paths
       /hippo:temporary:
-        jcr:primaryType: hipposys:temporaryfolder
+        .meta:category: runtime
       /hippo:queries:
         jcr:primaryType: hipposys:queryfolder
       /hippo:workflows:
@@ -95,3 +95,9 @@ definitions:
           jcr:primaryType: hippo:lock
       /hippo:modules:
         jcr:primaryType: hipposys:modulefolder
+        hippo:lockExpirationTime:
+          .meta:category: runtime
+        jcr:lockOwner:
+          .meta:category: runtime
+        jcr:lockIsDeep:
+          .meta:category: runtime

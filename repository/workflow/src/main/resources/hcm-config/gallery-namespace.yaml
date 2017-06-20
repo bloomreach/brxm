@@ -1,466 +1,173 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hippogallery">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposysedit:namespace</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:node sv:name="image">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.onehippo.org/jcr/hippo/nt/2.0</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>hippo:resource</sv:value>
-        </sv:property>
-        <sv:node sv:name="width">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>hippogallery:width</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>Long</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="height">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>hippogallery:height</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>Long</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippogallery:image</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:data" sv:type="Binary">
-          <sv:value>
-            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
-          </sv:value>
-        </sv:property>
-        <sv:property sv:name="hippogallery:height" sv:type="Long">
-          <sv:value>94</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippogallery:width" sv:type="Long">
-          <sv:value>94</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:encoding" sv:type="String">
-          <sv:value>UTF-8</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:lastModified" sv:type="Date">
-          <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mimeType" sv:type="String">
-          <sv:value>image/jpeg</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="imageset">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.onehippo.org/jcr/hippogallery/nt/2.0</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>hippo:document</sv:value>
-        </sv:property>
-        <sv:node sv:name="filename">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>hippogallery:filename</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="description">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>hippogallery:description</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="thumbnail">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>hippogallery:thumbnail</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>hippogallery:image</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:autocreated" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="original">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>hippogallery:original</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>hippogallery:image</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippogallery:imageset</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:versionable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>451ab3d0-ad1a-49de-94f0-b5216dacf384</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String"></sv:property>
-        <sv:node sv:name="hippogallery:thumbnail">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippogallery:image</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:data" sv:type="Binary">
-            <sv:value>R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:lastModified" sv:type="Date">
-            <sv:value>1970-01-01T00:00:00.000+00:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:mimeType" sv:type="String">
-            <sv:value>image/gif</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hippogallery:original">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippogallery:image</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:data" sv:type="Binary">
-            <sv:value>R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:lastModified" sv:type="Date">
-            <sv:value>1970-01-01T00:00:00.000+00:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:mimeType" sv:type="String">
-            <sv:value>image/gif</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="exampleImageSet">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.onehippo.org/jcr/hippogallery/nt/2.0</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>hippo:document</sv:value>
-        </sv:property>
-        <sv:node sv:name="thumbnail">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>hippogallery:thumbnail</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>hippo:resource</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:autocreated" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="picture">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>hippogallery:picture</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>hippo:resource</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="hipposysedit:prototypes">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippogallery:exampleImageSet</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:versionable</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>551ab3d0-ad1a-49de-94f0-b5216dacf389</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String"></sv:property>
-        <sv:node sv:name="hippogallery:thumbnail">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:resource</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:data" sv:type="Binary">
-            <sv:value>R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:lastModified" sv:type="Date">
-            <sv:value>2008-09-11T20:14:37.511+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:mimeType" sv:type="String">
-            <sv:value>image/gif</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hippogallery:picture">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:resource</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:data" sv:type="Binary">
-            <sv:value>R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:lastModified" sv:type="Date">
-            <sv:value>2008-09-11T20:15:22.026+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:mimeType" sv:type="String">
-            <sv:value>image/gif</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="exampleAssetSet">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.onehippo.org/jcr/hippogallery/nt/2.0</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>hippo:document</sv:value>
-        </sv:property>
-        <sv:node sv:name="asset">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hipposysedit:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:path" sv:type="String">
-            <sv:value>hippogallery:asset</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:type" sv:type="String">
-            <sv:value>hippo:resource</sv:value>
-          </sv:property>
-          <sv:property sv:name="hipposysedit:autocreated" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="container">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:mixin" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.onehippo.org/jcr/hippogallery/nt/2.0</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="relaxed">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposysedit:templatetype</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposysedit:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:node sv:name="hipposysedit:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposysedit:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hipposysedit:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:mixin" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-          <sv:value>hippogallery:container</sv:value>
-          <sv:value>hippostd:relaxed</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposysedit:uri" sv:type="String">
-          <sv:value>http://www.onehippo.org/jcr/hippogallery/nt/2.0</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
-
+definitions:
+  config:
+    /hippo:namespaces/hippogallery:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      /image:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:resource']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippo/nt/2.0
+            /width:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippogallery:width
+              hipposysedit:type: Long
+            /height:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippogallery:height
+              hipposysedit:type: Long
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 94
+            hippogallery:width: 94
+            jcr:data:
+              type: binary
+              resource: /namespaces/hippogallery/image/prototypes/prototype/prototype.jpg
+            jcr:encoding: UTF-8
+            jcr:lastModified: 2008-03-26T12:03:00+01:00
+            jcr:mimeType: image/jpeg
+      /imageset:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:document']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippogallery/nt/2.0
+            /filename:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippogallery:filename
+              hipposysedit:type: String
+            /description:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippogallery:description
+              hipposysedit:type: String
+            /thumbnail:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:autocreated: true
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippogallery:thumbnail
+              hipposysedit:primary: true
+              hipposysedit:type: hippogallery:image
+            /original:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippogallery:original
+              hipposysedit:type: hippogallery:image
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippogallery:imageset
+            jcr:mixinTypes: ['mix:versionable']
+            jcr:uuid: 451ab3d0-ad1a-49de-94f0-b5216dacf384
+            /hippogallery:thumbnail:
+              jcr:primaryType: hippogallery:image
+              jcr:data:
+                type: binary
+                resource: /namespaces/hippogallery/imageset/prototypes/prototype_thumbnail.gif
+              jcr:lastModified: 1970-01-01T00:00:00Z
+              jcr:mimeType: image/gif
+            /hippogallery:original:
+              jcr:primaryType: hippogallery:image
+              jcr:data:
+                type: binary
+                resource: /namespaces/hippogallery/imageset/prototypes/prototype_original.gif
+              jcr:lastModified: 1970-01-01T00:00:00Z
+              jcr:mimeType: image/gif
+      /exampleImageSet:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:document']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippogallery/nt/2.0
+            /thumbnail:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:autocreated: true
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippogallery:thumbnail
+              hipposysedit:primary: true
+              hipposysedit:type: hippo:resource
+            /picture:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippogallery:picture
+              hipposysedit:type: hippo:resource
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippogallery:exampleImageSet
+            jcr:mixinTypes: ['mix:versionable']
+            jcr:uuid: 551ab3d0-ad1a-49de-94f0-b5216dacf389
+            /hippogallery:thumbnail:
+              jcr:primaryType: hippo:resource
+              jcr:data:
+                type: binary
+                resource: /namespaces/hippogallery/exampleimageset/prototypes/prototype/thumbnail/data.gif
+              jcr:lastModified: 2008-09-11T20:14:37.511+02:00
+              jcr:mimeType: image/gif
+            /hippogallery:picture:
+              jcr:primaryType: hippo:resource
+              jcr:data:
+                type: binary
+                resource: /namespaces/hippogallery/exampleimageset/prototypes/prototype/picture/data.gif
+              jcr:lastModified: 2008-09-11T20:15:22.026+02:00
+              jcr:mimeType: image/gif
+      /exampleAssetSet:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:document']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippogallery/nt/2.0
+            /asset:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:autocreated: true
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippogallery:asset
+              hipposysedit:primary: true
+              hipposysedit:type: hippo:resource
+      /container:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:mixin: true
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippogallery/nt/2.0
+      /relaxed:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:mixin: true
+            hipposysedit:supertype: ['hippogallery:container', 'hippostd:relaxed']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippogallery/nt/2.0

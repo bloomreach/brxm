@@ -1,233 +1,80 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="templates">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:domain</sv:value>
-  </sv:property>
-  <sv:node sv:name="hippo-namespacefolder">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:domainrule</sv:value>
-    </sv:property>
-    <sv:node sv:name="type-hippo-namespacefolder">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:facetrule</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:equals" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:facet" sv:type="String">
-        <sv:value>jcr:primaryType</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:filter" sv:type="Boolean">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:type" sv:type="String">
-        <sv:value>Name</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hipposysedit:namespacefolder</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="hippo-namespace">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:domainrule</sv:value>
-    </sv:property>
-    <sv:node sv:name="type-hippo-namespace">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:facetrule</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:equals" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:facet" sv:type="String">
-        <sv:value>jcr:primaryType</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:filter" sv:type="Boolean">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:type" sv:type="String">
-        <sv:value>Name</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hipposysedit:namespace</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="hippo-template">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:domainrule</sv:value>
-    </sv:property>
-    <sv:node sv:name="type-hippo-template">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:facetrule</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:equals" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:facet" sv:type="String">
-        <sv:value>jcr:primaryType</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:filter" sv:type="Boolean">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:type" sv:type="String">
-        <sv:value>Name</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hipposysedit:templatetype</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="hippostd-templatequery">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:domainrule</sv:value>
-    </sv:property>
-    <sv:node sv:name="type-hippostd-templatequery">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:facetrule</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:equals" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:facet" sv:type="String">
-        <sv:value>jcr:primaryType</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:filter" sv:type="Boolean">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:type" sv:type="String">
-        <sv:value>Name</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hippostd:templatequery</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="hippo-nodetype">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:domainrule</sv:value>
-    </sv:property>
-    <sv:node sv:name="type-hippo-nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:facetrule</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:equals" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:facet" sv:type="String">
-        <sv:value>jcr:primaryType</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:filter" sv:type="Boolean">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:type" sv:type="String">
-        <sv:value>Name</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hipposysedit:nodetype</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="type-hippo-prototypes">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:domainrule</sv:value>
-    </sv:property>
-    <sv:node sv:name="nodetype-hippo-prototypeset">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:facetrule</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:equals" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:facet" sv:type="String">
-        <sv:value>jcr:primaryType</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:filter" sv:type="Boolean">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:type" sv:type="String">
-        <sv:value>Name</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hipposysedit:prototypeset</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="type-hippo-prototype">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:domainrule</sv:value>
-    </sv:property>
-    <sv:node sv:name="nodetype-hippo-prototype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:facetrule</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:equals" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:facet" sv:type="String">
-        <sv:value>nodename</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:filter" sv:type="Boolean">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:type" sv:type="String">
-        <sv:value>Name</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hipposysedit:prototype</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="hippo-field">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:domainrule</sv:value>
-    </sv:property>
-    <sv:node sv:name="type-hippo-field">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:facetrule</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:equals" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:facet" sv:type="String">
-        <sv:value>jcr:primaryType</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:filter" sv:type="Boolean">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:type" sv:type="String">
-        <sv:value>Name</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hipposysedit:field</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="hippo:authrole">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:authrole</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:groups" sv:type="String">
-      <sv:value>everybody</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:role" sv:type="String">
-      <sv:value>readonly</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
-
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/templates:
+      jcr:primaryType: hipposys:domain
+      /hippo-namespacefolder:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-namespacefolder:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:namespacefolder
+      /hippo-namespace:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-namespace:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:namespace
+      /hippo-template:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-template:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:templatetype
+      /hippostd-templatequery:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippostd-templatequery:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippostd:templatequery
+      /hippo-nodetype:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-nodetype:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:nodetype
+      /type-hippo-prototypes:
+        jcr:primaryType: hipposys:domainrule
+        /nodetype-hippo-prototypeset:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:prototypeset
+      /type-hippo-prototype:
+        jcr:primaryType: hipposys:domainrule
+        /nodetype-hippo-prototype:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodename
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:prototype
+      /hippo-field:
+        jcr:primaryType: hipposys:domainrule
+        /type-hippo-field:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposysedit:field
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [everybody]
+        hipposys:role: readonly

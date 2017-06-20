@@ -1,0 +1,5 @@
+group: hippo-cms
+project: hippo-repository
+module:
+    name: hippo-repository-scripts
+    after: hippo-repository-config

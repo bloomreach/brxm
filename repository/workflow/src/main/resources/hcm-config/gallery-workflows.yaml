@@ -1,79 +1,28 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="gallery">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:workflowcategory</sv:value>
-  </sv:property>
-  <sv:node sv:name="image-gallery">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.gallery.impl.GalleryWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Workflow on gallery image folders</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hippogallery:stdImageGallery</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposys:config">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
-      </sv:property>
-      <sv:property sv:name="attic" sv:type="Path">
-        <sv:value>/content/attic</sv:value>
-      </sv:property>
-      <sv:property sv:name="modify-on-copy" sv:type="String">
-        <sv:value>./hippotranslation:id</sv:value>
-        <sv:value>$uuid</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="asset-gallery">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.gallery.impl.GalleryWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Workflow on asset gallery folders</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hippogallery:stdAssetGallery</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposys:config">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
-      </sv:property>
-      <sv:property sv:name="attic" sv:type="Path">
-        <sv:value>/content/attic</sv:value>
-      </sv:property>
-      <sv:property sv:name="modify-on-copy" sv:type="String">
-        <sv:value>./hippotranslation:id</sv:value>
-        <sv:value>$uuid</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/gallery:
+      jcr:primaryType: hipposys:workflowcategory
+      /image-gallery:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.gallery.impl.GalleryWorkflowImpl
+        hipposys:display: Workflow on gallery image folders
+        hipposys:nodetype: hippogallery:stdImageGallery
+        hipposys:privileges: ['hippo:author']
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          attic:
+            type: path
+            value: /content/attic
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+      /asset-gallery:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.gallery.impl.GalleryWorkflowImpl
+        hipposys:display: Workflow on asset gallery folders
+        hipposys:nodetype: hippogallery:stdAssetGallery
+        hipposys:privileges: ['hippo:author']
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          attic:
+            type: path
+            value: /content/attic
+          modify-on-copy: ['./hippotranslation:id', $uuid]

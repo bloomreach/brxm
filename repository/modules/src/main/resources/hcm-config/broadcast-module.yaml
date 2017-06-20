@@ -1,38 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<sv:node sv:name="broadcast" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:module</sv:value>
-  </sv:property>
-  <sv:property sv:name="hipposys:className" sv:type="String">
-    <sv:value>org.hippoecm.repository.events.BroadcastModule</sv:value>
-  </sv:property>
-  <sv:node sv:name="hippo:moduleconfig">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippobroadcast:cluster</sv:value>
-    </sv:property>
-    <sv:property sv:name="maxEventAge" sv:type="Long">
-      <sv:value>24</sv:value>
-    </sv:property>
-    <sv:property sv:name="pollingTime" sv:type="Long">
-      <sv:value>5000</sv:value>
-    </sv:property>
-    <sv:property sv:name="queryLimit" sv:type="Long">
-      <sv:value>500</sv:value>
-    </sv:property>
-  </sv:node>
-</sv:node>
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/broadcast:
+      .meta:residual-child-node-category: runtime
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.hippoecm.repository.events.BroadcastModule
+      /hippo:moduleconfig:
+        jcr:primaryType: hippobroadcast:cluster
+        maxEventAge: 24
+        pollingTime: 5000
+        queryLimit: 500
