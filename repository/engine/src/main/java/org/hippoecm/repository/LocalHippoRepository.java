@@ -283,7 +283,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
             final StartRepositoryServicesTask startRepositoryServicesTask = () -> start(rootSession);
 
-            if (Boolean.getBoolean("repo.yaml")) {
+            if (true) {
                 configurationService = new ConfigurationServiceImpl()
                         .start(DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials),
                                 startRepositoryServicesTask);
