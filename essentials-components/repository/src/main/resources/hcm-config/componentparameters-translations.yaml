@@ -1,152 +1,137 @@
-{
-  "hippo:hst": {
-    "componentparameters": {
-      "org": {
-        "onehippo": {
-          "cms7": {
-            "essentials": {
-              "components": {
-                "info": {
-                  "EssentialsBlogAuthorPostsComponentInfo": {
-                    "en": {
-                      "postScope": "Blog posts location",
-                      "pageSize": "Nr. of posts to show",
-                      "sortField": "Sort field"
-                    }
-                  },
-                  "EssentialsCarouselComponentInfo": {
-                    "en": {
-                      "pause": "Pause carousel on mouse enter",
-                      "cycle": "Cycle carousel continuously",
-                      "carouselHeight": "Carousel height",
-                      "carouselWidth": "Carousel width",
-                      "interval": "Carousel interval (milli seconds)",
-                      "carouselBackgroundColor": "Carousel background color",
-                      "showNavigation": "Show carousel navigation",
-                      "document1": "Carousel item 1",
-                      "document2": "Carousel item 2",
-                      "document3": "Carousel item 3",
-                      "document4": "Carousel item 4",
-                      "document5": "Carousel item 5",
-                      "document6": "Carousel item 6",
-                      "group.settings": "Carousel settings",
-                      "group.documents": "Carousel documents"
-                    }
-                  },
-                  "EssentialsDocumentComponentInfo": {
-                    "en": {
-                      "document": "Document"
-                    }
-                  },
-                  "EssentialsEventsComponentInfo": {
-                    "en": {
-                      "hidePastEvents": "Hide past events",
-                      "documentDateField": "Field that contains document date (for hiding)",
-                      "documentTypes": "Events document types (comma separated)"
-                    }
-                  },
-                  "EssentialsFacetsComponentInfo": {
-                    "en": {
-                      "facetPath": "Facet path (optional: content path can be used also)"
-                    }
-                  },
-                  "EssentialsGoogleMapsComponentInfo": {
-                    "en": {
-                      "latitude": "Latitude",
-                      "longitude": "Longitude",
-                      "zoomFactor": "Zoom factor",
-                      "mapType": "Map type",
-                      "width": "Width (in pixels)",
-                      "height": "Height (in pixels)",
-                      "address": "Location / Address",
-                      "apiKey": "Google Maps API Key",
-                      "location.help": "For the location you can either provide an address or use the longitude and latitude",
-                      "location": "Location information",
-                      "mapType.help": "The type of map to show",
-                      "mapType#TERRAIN": "Terrain information",
-                      "mapType#SATELLITE": "Google Earth satellite",
-                      "mapType#ROADMAP": "Road map",
-                      "mapType#HYBRID": "Mixture of normal and satellite",
-                      "map.options": "Map options"
-                    }
-                  },
-                  "EssentialsImageComponentInfo": {
-                    "en": {
-                      "document": "Image"
-                    }
-                  },
-                  "EssentialsListComponentInfo": {
-                    "en": {
-                      "path": "Documents path",
-                      "includeSubtypes": "Include document subtypes",
-                      "documentTypes": "Document types (comma separated)"
-                    }
-                  },
-                  "EssentialsListPickerComponentInfo": {
-                    "en": {
-                      "document1": "Document item 1",
-                      "document2": "Document item 2",
-                      "document3": "Document item 3",
-                      "document4": "Document item 4",
-                      "document5": "Document item 5",
-                      "document6": "Document item 6",
-                      "document7": "Document item 7",
-                      "document8": "Document item 8",
-                      "document9": "Document item 9",
-                      "document10": "Document item 10"
-                    }
-                  },
-                  "EssentialsMenuComponentInfo": {
-                    "en": {
-                      "menu": "Menu name"
-                    }
-                  },
-                  "EssentialsNewsComponentInfo": {
-                    "en": {
-                      "hideFutureItems": "Hide future documents",
-                      "documentDateField": "Field that contains document date (for hiding)",
-                      "documentTypes": "News Document types (comma separated)"
-                    }
-                  },
-                  "EssentialsPageable": {
-                    "en": {
-                      "pageSize": "Page size",
-                      "showPagination": "Show pagination"
-                    }
-                  },
-                  "EssentialsRepositoryMenuComponentInfo": {
-                    "en": {
-                      "root": "Root Folder",
-                      "folderLinks": "Folders are also links",
-                      "depth": "Depth"
-                    }
-                  },
-                  "EssentialsSearchComponentInfo": {
-                    "en": {
-                      "showPagination": "Show pagination",
-                      "documentTypes": "Document types (comma separated)"
-                    }
-                  },
-                  "EssentialsSortable": {
-                    "en": {
-                      "sortField": "Sort field",
-                      "sortOrder": "Sort order",
-                      "sortOrder#asc": "Ascending",
-                      "sortOrder#desc": "Descending"
-                    }
-                  },
-                  "EssentialsVideoComponentInfo": {
-                    "en": {
-                      "width": "Video width",
-                      "height": "Video height"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsMenuComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        menu: Menu name
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        pageSize: Nr. of posts to show
+        postScope: Blog posts location
+        sortField: Sort field
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        documentTypes: Document types (comma separated)
+        includeSubtypes: Include document subtypes
+        path: Documents path
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListPickerComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        document1: Document item 1
+        document10: Document item 10
+        document2: Document item 2
+        document3: Document item 3
+        document4: Document item 4
+        document5: Document item 5
+        document6: Document item 6
+        document7: Document item 7
+        document8: Document item 8
+        document9: Document item 9
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        documentDateField: Field that contains document date (for hiding)
+        documentTypes: Events document types (comma separated)
+        hidePastEvents: Hide past events
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsImageComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        document: Image
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        facetPath: 'Facet path (optional: content path can be used also)'
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        carouselBackgroundColor: Carousel background color
+        carouselHeight: Carousel height
+        carouselWidth: Carousel width
+        cycle: Cycle carousel continuously
+        document1: Carousel item 1
+        document2: Carousel item 2
+        document3: Carousel item 3
+        document4: Carousel item 4
+        document5: Carousel item 5
+        document6: Carousel item 6
+        group.documents: Carousel documents
+        group.settings: Carousel settings
+        interval: Carousel interval (milli seconds)
+        pause: Pause carousel on mouse enter
+        showNavigation: Show carousel navigation
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsPageable
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        pageSize: Page size
+        showPagination: Show pagination
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSortable
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        sortField: Sort field
+        sortOrder: Sort order
+        sortOrder#asc: Ascending
+        sortOrder#desc: Descending
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsGoogleMapsComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        address: Location / Address
+        apiKey: Google Maps API Key
+        height: Height (in pixels)
+        latitude: Latitude
+        location: Location information
+        location.help: For the location you can either provide an address or use the
+          longitude and latitude
+        longitude: Longitude
+        map.options: Map options
+        mapType: Map type
+        mapType#HYBRID: Mixture of normal and satellite
+        mapType#ROADMAP: Road map
+        mapType#SATELLITE: Google Earth satellite
+        mapType#TERRAIN: Terrain information
+        mapType.help: The type of map to show
+        width: Width (in pixels)
+        zoomFactor: Zoom factor
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSearchComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        documentTypes: Document types (comma separated)
+        showPagination: Show pagination
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsNewsComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        documentDateField: Field that contains document date (for hiding)
+        documentTypes: News Document types (comma separated)
+        hideFutureItems: Hide future documents
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsRepositoryMenuComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        depth: Depth
+        folderLinks: Folders are also links
+        root: Root Folder
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsVideoComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        height: Video height
+        width: Video width
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsDocumentComponentInfo
+    : jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        document: Document

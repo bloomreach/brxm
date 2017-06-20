@@ -1,228 +1,91 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+/content/documents/myhippoproject/content:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+  jcr:uuid: 72177437-7f57-45dc-a149-5e77701b04f4
+  hippostd:foldertype: [new-content-document, new-content-folder]
+  hippotranslation:id: 2d4e71ef-134f-4256-a994-d3b969175653
+  hippotranslation:locale: en
+  /sample-document:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: 64ab4648-0c20-40d2-9f18-d7a394f0334b
+    hippo:name: Sample document
+    /sample-document:
+      jcr:primaryType: myhippoproject:contentdocument
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 8b30d2af-f960-4aaf-8036-64d8d787cef2
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2014-03-25T16:52:00+01:00
+      hippostdpubwf:lastModificationDate: 2014-03-25T16:52:00+01:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2014-03-25T16:52:00+01:00
+      hippotranslation:id: a67ceaa1-2179-42d4-be6f-cd97ffa4dbe1
+      hippotranslation:locale: en
+      myhippoproject:introduction: Lorem Ipsum is simply dummy text of the printing
+        and typesetting industry.
+      myhippoproject:publicationdate: 2014-03-25T16:52:00+01:00
+      myhippoproject:title: Lorem
+      /myhippoproject:content:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          <html>
+                      <body>
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+                      <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+                      roots in a piece of classical Latin literature from 45 BC, making it over 2000
+                      years old. Richard McClintock, a Latin professor at Hampden-Sydney College in
+                      Virginia, looked up one of the more obscure Latin words, consectetur, from a
+                      Lorem Ipsum passage, and going through the cites of the word in classical
+                      literature, discovered the undoubtable source. Lorem Ipsum comes from sections
+                      1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and
+                      Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of
+                      ethics, very popular during the Renaissance. The first line of Lorem Ipsum,
+                      "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.</p>
 
-   http://www.apache.org/licenses/LICENSE-2.0
+                      </body>
+                      </html>
+  /another-sample-document:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: 9caea793-42b1-4f3e-a8e5-d58f810ce2ef
+    hippo:name: Another sample document
+    /another-sample-document:
+      jcr:primaryType: myhippoproject:contentdocument
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 3e29d50a-f971-44a3-9c5d-727a69a83e12
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2014-03-25T16:52:00+01:00
+      hippostdpubwf:lastModificationDate: 2014-03-25T16:57:00+01:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2014-03-25T16:57:00+01:00
+      hippotranslation:id: cdd4854b-1fc3-459b-861c-9284df28a0c9
+      hippotranslation:locale: en
+      myhippoproject:introduction: Lorem Ipsum is simply dummy text of the printing
+        and typesetting industry.
+      myhippoproject:publicationdate: 2014-03-25T16:52:00+01:00
+      myhippoproject:title: Another Lorem
+      /myhippoproject:content:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          <html>
+                      <body>
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="content">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippostd:folder</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>hippotranslation:translated</sv:value>
-    <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>72177437-7f57-45dc-a149-5e77701b04f4</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
-    <sv:value>new-content-document</sv:value>
-    <sv:value>new-content-folder</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippotranslation:id" sv:type="String">
-    <sv:value>2d4e71ef-134f-4256-a994-d3b969175653</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippotranslation:locale" sv:type="String">
-    <sv:value>en</sv:value>
-  </sv:property>
-  <sv:node sv:name="sample-document">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>hippo:named</sv:value>
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>64ab4648-0c20-40d2-9f18-d7a394f0334b</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:name" sv:type="String">
-      <sv:value>Sample document</sv:value>
-    </sv:property>
-    <sv:node sv:name="sample-document">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>myhippoproject:contentdocument</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>8b30d2af-f960-4aaf-8036-64d8d787cef2</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-        <sv:value>live</sv:value>
-        <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>content/sample-document</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:holder" sv:type="String">
-        <sv:value>admin</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:state" sv:type="String">
-        <sv:value>published</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-        <sv:value>live</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-        <sv:value>admin</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-        <sv:value>admin</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>a67ceaa1-2179-42d4-be6f-cd97ffa4dbe1</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippotranslation:locale" sv:type="String">
-        <sv:value>en</sv:value>
-      </sv:property>
-      <sv:property sv:name="myhippoproject:introduction" sv:type="String">
-        <sv:value>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</sv:value>
-      </sv:property>
-      <sv:property sv:name="myhippoproject:publicationdate" sv:type="Date">
-        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
-      </sv:property>
-      <sv:property sv:name="myhippoproject:title" sv:type="String">
-        <sv:value>Lorem</sv:value>
-      </sv:property>
-      <sv:node sv:name="myhippoproject:content">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippostd:html</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:content" sv:type="String">
-          <sv:value>&lt;html&gt;
-            &lt;body&gt;
+                      <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has
+                      roots in a piece of classical Latin literature from 45 BC, making it over 2000
+                      years old. Richard McClintock, a Latin professor at Hampden-Sydney College in
+                      Virginia, looked up one of the more obscure Latin words, consectetur, from a
+                      Lorem Ipsum passage, and going through the cites of the word in classical
+                      literature, discovered the undoubtable source. Lorem Ipsum comes from sections
+                      1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and
+                      Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of
+                      ethics, very popular during the Renaissance. The first line of Lorem Ipsum,
+                      "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.</p>
 
-            &lt;p&gt;Contrary to popular belief, Lorem Ipsum is not simply random text. It has
-            roots in a piece of classical Latin literature from 45 BC, making it over 2000
-            years old. Richard McClintock, a Latin professor at Hampden-Sydney College in
-            Virginia, looked up one of the more obscure Latin words, consectetur, from a
-            Lorem Ipsum passage, and going through the cites of the word in classical
-            literature, discovered the undoubtable source. Lorem Ipsum comes from sections
-            1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and
-            Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of
-            ethics, very popular during the Renaissance. The first line of Lorem Ipsum,
-            "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.&lt;/p&gt;
-
-            &lt;/body&gt;
-            &lt;/html&gt;</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="another-sample-document">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:handle</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>hippo:named</sv:value>
-      <sv:value>mix:referenceable</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>9caea793-42b1-4f3e-a8e5-d58f810ce2ef</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:name" sv:type="String">
-      <sv:value>Another sample document</sv:value>
-    </sv:property>
-    <sv:node sv:name="another-sample-document">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>myhippoproject:contentdocument</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>mix:referenceable</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>3e29d50a-f971-44a3-9c5d-727a69a83e12</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
-        <sv:value>live</sv:value>
-        <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>content/another-sample-document</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:holder" sv:type="String">
-        <sv:value>admin</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:state" sv:type="String">
-        <sv:value>published</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-        <sv:value>live</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-        <sv:value>admin</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-        <sv:value>2014-03-25T16:57:00.000+01:00</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-        <sv:value>admin</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-        <sv:value>2014-03-25T16:57:00.000+01:00</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippotranslation:id" sv:type="String">
-        <sv:value>cdd4854b-1fc3-459b-861c-9284df28a0c9</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippotranslation:locale" sv:type="String">
-        <sv:value>en</sv:value>
-      </sv:property>
-      <sv:property sv:name="myhippoproject:introduction" sv:type="String">
-        <sv:value>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</sv:value>
-      </sv:property>
-      <sv:property sv:name="myhippoproject:publicationdate" sv:type="Date">
-        <sv:value>2014-03-25T16:52:00.000+01:00</sv:value>
-      </sv:property>
-      <sv:property sv:name="myhippoproject:title" sv:type="String">
-        <sv:value>Another Lorem</sv:value>
-      </sv:property>
-      <sv:node sv:name="myhippoproject:content">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippostd:html</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippostd:content" sv:type="String">
-          <sv:value>&lt;html&gt;
-            &lt;body&gt;
-
-            &lt;p&gt;Contrary to popular belief, Lorem Ipsum is not simply random text. It has
-            roots in a piece of classical Latin literature from 45 BC, making it over 2000
-            years old. Richard McClintock, a Latin professor at Hampden-Sydney College in
-            Virginia, looked up one of the more obscure Latin words, consectetur, from a
-            Lorem Ipsum passage, and going through the cites of the word in classical
-            literature, discovered the undoubtable source. Lorem Ipsum comes from sections
-            1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and
-            Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of
-            ethics, very popular during the Renaissance. The first line of Lorem Ipsum,
-            "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.&lt;/p&gt;
-
-            &lt;/body&gt;
-            &lt;/html&gt;</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-</sv:node>
+                      </body>
+                      </html>

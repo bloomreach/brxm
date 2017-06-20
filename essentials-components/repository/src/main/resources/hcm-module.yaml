@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-essentials-components
+    after: hippo-site-toolkit
+module: hippo-essentials-components-repository
