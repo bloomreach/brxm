@@ -43,6 +43,7 @@ import javax.jcr.observation.ObservationManager;
 import javax.jcr.util.TraversingItemVisitor;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.RevisionEvent;
 import org.hippoecm.repository.api.RevisionEventJournal;
 import org.onehippo.cm.engine.AutoExportContentProcessor;
@@ -72,7 +73,7 @@ public class EventJournalProcessor {
 
     static final Logger log = LoggerFactory.getLogger(EventJournalProcessor.class);
 
-    private static final String[] builtinIgnoredEventPaths = new String[] {
+    private static final String[] builtinIgnoredEventPaths = new String[]{
             "/hippo:log",
             "/content/attic",
             "/formdata",
@@ -231,8 +232,7 @@ public class EventJournalProcessor {
         for (int i = 0; i < MAX_REPEAT_PROCESS_EVENTS; i++) {
             if (processEvents()) {
                 break;
-            }
-            else {
+            } else {
                 // processEvents unsuccessful: new events arrived before it could export already collected changes
                 log.debug("Incoming events during processEvents() -- retrying!");
             }
@@ -267,7 +267,7 @@ public class EventJournalProcessor {
 
         if (eventJournal == null) {
             final ObservationManager observationManager = eventProcessorSession.getWorkspace().getObservationManager();
-            eventJournal = (RevisionEventJournal)observationManager.getEventJournal();
+            eventJournal = (RevisionEventJournal) observationManager.getEventJournal();
             lastRevision = configuration.getLastRevision();
             if (lastRevision == -1) {
                 lastRevision = skipToHeadRevision(eventJournal);
@@ -364,7 +364,7 @@ public class EventJournalProcessor {
                     checkAddEventPath(event, event.getPath(), false, true, false);
                     break;
                 case Event.NODE_MOVED:
-                    final String srcAbsPath = (String)event.getInfo().get("srcAbsPath");
+                    final String srcAbsPath = (String) event.getInfo().get("srcAbsPath");
                     if (srcAbsPath != null) {
                         // not an order-before
                         checkAddEventPath(event, event.getPath(), true, false, false);
@@ -421,12 +421,21 @@ public class EventJournalProcessor {
                     // TODO: if add, then move, this could try to find children for a non-existing node
                     // TODO: -- catch this case and continue processing
                     if (eventProcessorSession.nodeExists(eventPath)) {
-                        eventProcessorSession.getNode(eventPath).accept(new TraversingItemVisitor.Default() {
+                        final Node node = eventProcessorSession.getNode(eventPath);
+                        node.accept(new TraversingItemVisitor.Default() {
                             @Override
                             protected void entering(final Node node, final int level) throws RepositoryException {
                                 final String path = node.getPath();
                                 if (!configuration.isExcludedPath(path)) {
                                     currentChanges.getAddedContent().add(path);
+                                }
+                            }
+
+                            @Override
+                            public void visit(final Node node) throws RepositoryException {
+                                final HippoNode hippoNode = (HippoNode) node;
+                                if (!hippoNode.isVirtual()) {
+                                    super.visit(node);
                                 }
                             }
                         });
@@ -492,7 +501,7 @@ public class EventJournalProcessor {
                 cndPath.setDefinition(configSource.addNamespaceDefinition(nsDef.getPrefix(), nsDef.getURI(), cndPath));
             }
             for (String newNsPrefix : nsPrefixes) {
-                ValueImpl cndPath = new ValueImpl(newNsPrefix+".cnd", ValueType.STRING, true, false);
+                ValueImpl cndPath = new ValueImpl(newNsPrefix + ".cnd", ValueType.STRING, true, false);
                 cndPath.setNewResource(true);
                 cndPath.setInternalResourcePath(jcrResourceInputProvider.createCndResourcePath(newNsPrefix));
                 try {
@@ -516,7 +525,7 @@ public class EventJournalProcessor {
         if (log.isInfoEnabled()) {
             final SourceSerializer sourceSerializer = new SourceSerializer(null, configSource, false);
             final StringWriter writer = new StringWriter();
-            sourceSerializer.serializeNode(writer,sourceSerializer.representSource(new ArrayList<>()::add));
+            sourceSerializer.serializeNode(writer, sourceSerializer.representSource(new ArrayList<>()::add));
             log.info("Computed diff: \n{}", writer.toString());
             log.info("added content: \n\t{}", String.join("\n\t", pendingChanges.getAddedContent()));
             log.info("changed content: \n\t{}", String.join("\n\t", pendingChanges.getChangedContent()));
@@ -546,8 +555,7 @@ public class EventJournalProcessor {
 
             stopWatch.stop();
             log.info("Diff export (revision update only) in {}", stopWatch.toString());
-        }
-        else {
+        } else {
             final DefinitionMergeService mergeService = new DefinitionMergeService(configuration);
             final Collection<ModuleImpl> mergedModules =
                     mergeService.mergeChangesToModules(changesModule, pendingChanges, currentModel, eventProcessorSession);
@@ -583,11 +591,19 @@ public class EventJournalProcessor {
                 module.getRemovedContentResources().forEach(loadedModule::addContentResourceToRemove);
                 module.getConfigSources().forEach(source -> {
                     loadedModule.getConfigSource(source.getPath())
-                            .ifPresent(s -> { if (source.hasChangedSinceLoad()) { s.markChanged(); }});
+                            .ifPresent(s -> {
+                                if (source.hasChangedSinceLoad()) {
+                                    s.markChanged();
+                                }
+                            });
                 });
                 module.getContentSources().forEach(source -> {
                     loadedModule.getContentSource(source.getPath())
-                            .ifPresent(s -> { if (source.hasChangedSinceLoad()) { s.markChanged(); }});
+                            .ifPresent(s -> {
+                                if (source.hasChangedSinceLoad()) {
+                                    s.markChanged();
+                                }
+                            });
                 });
 
                 reloadedModules.add(loadedModule);
