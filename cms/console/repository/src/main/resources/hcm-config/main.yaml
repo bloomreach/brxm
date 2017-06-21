@@ -1,6 +1,0 @@
-definitions:
-  config:
-    /hippo:configuration/hippo:frontend/console/console/applypatch:
-      .meta:delete: true
-    /hippo:configuration/hippo:frontend/console/console/createpatch:
-      .meta:delete: true

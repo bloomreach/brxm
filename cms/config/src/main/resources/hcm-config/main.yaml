@@ -3,5 +3,3 @@ definitions:
     /hippo:configuration/hippo:translations:
       /hippo:cms:
         jcr:primaryType: hipposys:resourcebundles
-    /hippo:configuration/hippo:frontend/cms/cms-dev:
-      .meta:delete: true
