@@ -18,6 +18,7 @@ package org.onehippo.cm;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -57,4 +58,11 @@ public interface ConfigurationService {
      * @param parentNode parent {@link Node}
      */
     void importZippedContent(File zipFile, Node parentNode) throws RepositoryException, IOException;
+
+    /**
+     * Import single content definition
+     * @param inputStream {@link InputStream} representation of yaml
+     * @param parentNode parent {@link Node}
+     */
+    void importPlainYaml(final InputStream inputStream, final Node parentNode) throws RepositoryException;
 }
