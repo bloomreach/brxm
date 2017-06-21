@@ -10,6 +10,7 @@
         <include>org.onehippo.cms7:hippo-services</include>
         <include>org.onehippo.cms7:hippo-repository-api</include>
         <include>org.onehippo.cms7:hippo-repository-builtin</include>
+        <include>org.onehippo.cms:hippo-configuration-management-api</include>
         <include>org.slf4j:slf4j-api</include>
         <include>org.slf4j:jcl-over-slf4j</include>
         <include>org.apache.logging.log4j:log4j-slf4j-impl</include>
