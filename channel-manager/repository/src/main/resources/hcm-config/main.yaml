@@ -1,13 +1,4 @@
 definitions:
   config:
-    /hippo:configuration/hippo:translations:
-      /hippo:channelmanager:
-        jcr:primaryType: hipposys:resourcebundles
-    /hippo:configuration/hippo:workflows/channelactions:
-      .meta:delete: true
-    /hippo:configuration/hippo:workflows/socialsharing:
-      .meta:delete: true
-    /hippo:configuration/hippo:frontend/cms/hippo-channel-manager/templatecomposer-device-combo:
-      .meta:delete: true
-    /hippo:configuration/hippo:frontend/cms/cms-services/defaultDeviceService:
-      .meta:delete: true
+    /hippo:configuration/hippo:translations/hippo:channelmanager:
+      jcr:primaryType: hipposys:resourcebundles
