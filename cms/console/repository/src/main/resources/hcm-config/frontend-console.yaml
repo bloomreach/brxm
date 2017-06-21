@@ -82,11 +82,11 @@ definitions:
           wicket.id: service.menu.xml.item
         /yamlexport:
           jcr:primaryType: frontend:plugin
-          wicket.id: service.menu.xml.item
+          wicket.id: service.menu.yaml.item
           plugin.class: org.hippoecm.frontend.plugins.console.menu.content.YamlExportPlugin
         /yamlimport:
           jcr:primaryType: frontend:plugin
-          wicket.id: service.menu.xml.item
+          wicket.id: service.menu.yaml.item
           plugin.class: org.hippoecm.frontend.plugins.console.menu.content.YamlImportPlugin
         /addnamespace:
           jcr:primaryType: frontend:plugin
@@ -153,10 +153,11 @@ definitions:
           extension.node.menu: service.menu.node
           extension.system.menu: service.menu.system
           extension.xml.menu: service.menu.xml
+          extension.yaml.menu: service.menu.yaml
           item: service.menu.item
           plugin.class: org.hippoecm.frontend.plugins.console.menu.AdvancedMenuPlugin
           wicket.extensions: [extension.system.menu, extension.node.menu, extension.cnd.menu,
-            extension.xml.menu, extension.logout]
+            extension.xml.menu, extension.yaml.menu, extension.logout]
           wicket.id: service.advancedmenu
         /cnddropdown:
           jcr:primaryType: frontend:plugin
@@ -173,6 +174,11 @@ definitions:
           item: service.menu.xml.item
           plugin.class: org.hippoecm.frontend.plugins.console.menu.Submenu
           wicket.id: service.menu.xml
+        /yamldropdown:
+          jcr:primaryType: frontend:plugin
+          item: service.menu.yaml.item
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.Submenu
+          wicket.id: service.menu.yaml
         /systemdropdown:
           jcr:primaryType: frontend:plugin
           item: service.menu.system.item

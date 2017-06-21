@@ -94,14 +94,14 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
     private String derefBehavior = "Throw error when not found";
 
     private void InitMaps() {
-        uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING, "Remove existing node with same uuid");
-        uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING, "Replace existing node with same uuid");
-        uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW, "Throw error on uuid collision");
+//        uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING, "Remove existing node with same uuid");
+//        uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING, "Replace existing node with same uuid");
+//        uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW, "Throw error on uuid collision");
         uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, "Create new uuids on import");
 
-        derefOpts.put(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, "Remove reference when not found");
+//        derefOpts.put(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, "Remove reference when not found");
         derefOpts.put(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, "Throw error when not found");
-        derefOpts.put(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT, "Add reference to root node when not found");
+//        derefOpts.put(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT, "Add reference to root node when not found");
 
     }
 
@@ -122,6 +122,7 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
         LabelledBooleanFieldWidget generate = new LabelledBooleanFieldWidget("generate",
                 new PropertyModel<Boolean>(this, "generate"),
                 Model.of("Generate new translation ids (only when adding a node)"));
+        generate.setEnabled(false);
         add(generate);
 
         // file upload
@@ -160,7 +161,7 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
         try {
 
             if (upload == null && StringUtils.isEmpty(xmlInput)) {
-                warn("No file was uploaded and no xml input provided. Nothing to import");
+                warn("No file was uploaded and no yaml input provided. Nothing to import");
                 return;
             }
 
@@ -190,6 +191,8 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
                     }
                 }
 
+                final ConfigurationService configurationService = HippoServiceRegistry.getService(ConfigurationService.class);
+
                 if (upload != null) {
                     final String fileName = upload.getClientFileName();
                     if (fileName.endsWith(".zip")) {
@@ -201,25 +204,21 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
                         out = null;
                         zipFile = new ZipFile(tempFile);
 
-                        final ConfigurationService service = HippoServiceRegistry.getService(ConfigurationService.class);
-                        service.importZippedContent(tempFile, nodeModel.getNode());
+                        configurationService.importZippedContent(tempFile, nodeModel.getNode());
 
-//                        ContentResourceLoader contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
-//                        esvIn = contentResourceLoader.getResourceAsStream("esv.xml");
-//                        session.importEnhancedSystemViewXML(absPath, esvIn, uuidOpt, derefOpt, contentResourceLoader);
                     }
-                    else if (fileName.endsWith(".xml")) {
+                    else if (fileName.endsWith(".yaml")) {
                         in = new BufferedInputStream(upload.getInputStream());
-                        session.importEnhancedSystemViewXML(absPath, in, uuidOpt, derefOpt, null);
+                        configurationService.importPlainYaml(in, nodeModel.getNode());
                     }
                     else {
-                        warn("Unrecognized file: only .xml and .zip can be processed");
+                        warn("Unrecognized file: only .yaml and .zip can be processed");
                         return;
                     }
                 }
                 else {
                     in = new ByteArrayInputStream(xmlInput.getBytes("UTF-8"));
-                    session.importEnhancedSystemViewXML(absPath, in, uuidOpt, derefOpt, null);
+                    configurationService.importPlainYaml(in, nodeModel.getNode());
                 }
 
                 if (generate) {
@@ -254,6 +253,8 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
             error("Import failed: " + ex.getMessage());
         } catch (IOException ex) {
             log.error("IOException initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+            error("Import failed: " + ex.getMessage());
+        } catch (Exception ex) {
             error("Import failed: " + ex.getMessage());
         }
     }
