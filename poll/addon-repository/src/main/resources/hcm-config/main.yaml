@@ -3,21 +3,3 @@ definitions:
     poll:
       uri: http://forge.onehippo.org/poll/nt/1.2
       cnd: poll.cnd
-  config:
-    /hippo:configuration/hippo:translations:
-      /hippo:types:
-        jcr:primaryType: hipposys:resourcebundles
-      /hippo:hst:
-        jcr:primaryType: hipposys:resourcebundles
-        /componentparameters:
-          jcr:primaryType: hipposys:resourcebundles
-          /org:
-            jcr:primaryType: hipposys:resourcebundles
-            /onehippo:
-              jcr:primaryType: hipposys:resourcebundles
-              /forge:
-                jcr:primaryType: hipposys:resourcebundles
-                /poll:
-                  jcr:primaryType: hipposys:resourcebundles
-                  /component:
-                    jcr:primaryType: hipposys:resourcebundles

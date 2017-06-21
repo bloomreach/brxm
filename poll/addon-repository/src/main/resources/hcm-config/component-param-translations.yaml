@@ -1,15 +1,21 @@
 definitions:
   config:
-    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/poll/component/PollDocumentComponentInfo
-    : jcr:primaryType: hipposys:resourcebundles
-      /en:
-        jcr:primaryType: hipposys:resourcebundle
-        poll-docsPath: Poll document
-    /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/poll/component/PollComponentInfo:
+    /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge:
       jcr:primaryType: hipposys:resourcebundles
-      /en:
-        jcr:primaryType: hipposys:resourcebundle
-        poll-dataPath: Path to store poll data
-        poll-docsClass: Poll documents class
-        poll-docsPath: Path to poll documents relative to site content root
-        poll-pollCompoundName: Name of poll compound
+      /poll:
+        jcr:primaryType: hipposys:resourcebundles
+        /component:
+          jcr:primaryType: hipposys:resourcebundles
+          /PollDocumentComponentInfo:
+            jcr:primaryType: hipposys:resourcebundles
+            /en:
+              jcr:primaryType: hipposys:resourcebundle
+              poll-docsPath: Poll document
+          /PollComponentInfo:
+            jcr:primaryType: hipposys:resourcebundles
+            /en:
+              jcr:primaryType: hipposys:resourcebundle
+              poll-dataPath: Path to store poll data
+              poll-docsClass: Poll documents class
+              poll-docsPath: Path to poll documents relative to site content root
+              poll-pollCompoundName: Name of poll compound
