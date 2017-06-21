@@ -1867,7 +1867,7 @@ public class ConfigurationTreeBuilderTest {
         try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(ConfigurationTreeBuilder.class).build()) {
             builder.push((ContentDefinitionImpl)definitions2.get(0));
             assertTrue(interceptor.messages()
-                    .anyMatch(m->m.equals("Trying to modify non-configuration property '/a/property', skipping.")));
+                    .anyMatch(m->m.equals("Trying to modify non-configuration property '/a/property', defined in 'test-group/test-project/test-module [string]'. Skipping.")));
         }
 
         final ConfigurationNodeImpl root = builder.finishModule().build();

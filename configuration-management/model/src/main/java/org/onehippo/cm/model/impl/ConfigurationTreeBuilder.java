@@ -464,7 +464,8 @@ public class ConfigurationTreeBuilder {
         } else {
             final ConfigurationItemCategory category = definitionProperty.getCategory();
             if (isAndRemainsNonConfigurationProperty(parent, definitionProperty.getName(), category)) {
-                logger.warn("Trying to modify non-configuration property '{}', skipping.", definitionProperty.getPath());
+                logger.warn("Trying to modify non-configuration property '{}', defined in '{}'. Skipping.",
+                        definitionProperty.getPath(), definitionProperty.getOrigin());
                 return this;
             }
             if (category != null) {
