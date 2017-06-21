@@ -146,8 +146,6 @@ public class HstConfigurationUtils {
         String liveConfigName = StringUtils.substringAfterLast(liveConfigurationPath, "/");
         Node previewConfigNode = session.getNode(liveConfigurationPath).getParent().addNode(liveConfigName + "-preview", NODETYPE_HST_CONFIGURATION);
         previewConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
-        // TODO if 'liveconfig node' has inheritance(s) that point to hst:workspace, then most likely that should be copied
-        // TODO as well to the preview config, see HSTTWO-3965
         JcrUtils.copy(session, liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE, previewConfigNode.getPath() + "/" + NODENAME_HST_WORKSPACE);
     }
 
