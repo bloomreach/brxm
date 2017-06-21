@@ -3,6 +3,3 @@ definitions:
     hippogallerypicker:
       uri: http://www.hippoecm.org/hippogallerypicker/nt/2.0
       cnd: gallerypicker-types.cnd
-  config:
-    /hippo:configuration/hippo:frontend/cms/cms-pickers/images/dialog-translator:
-      .meta:delete: true
