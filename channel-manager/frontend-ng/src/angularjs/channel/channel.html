@@ -41,7 +41,8 @@
                         icon-src="images/toggle_components_overlay.svg"
                         tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
                         class="qa-toggle-components"
-                        ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded() && !channelCtrl.isConfigurationLocked()">
+                        is-configuration-locked="channelCtrl.isConfigurationLocked()"
+                        ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded()">
         </overlay-toggle>
 
         <overlay-toggle state="channelCtrl.isContentOverlayDisplayed"

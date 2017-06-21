@@ -14,26 +14,13 @@
 
 @import 'variables';
 
-.btn-overlay-toggle {
-  margin: 0;
-  min-width: 1%;
+overlay-toggle {
+  margin-left: 6px !important;
+  margin-right: 6px !important;
 
   md-icon {
-    color: $grey-700 !important;
-    user-select: none;
-
     &.active {
-      color: $blue-400 !important;
-    }
-
-    &:focus {
-      border: 0 !important;
-      box-shadow: 0 !important;
-      outline: none !important;
-    }
-
-    &:hover {
-      cursor: pointer;
+      color: $blue-400;
     }
   }
 }
