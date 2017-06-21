@@ -4,7 +4,7 @@ definitions:
       jcr:primaryType: hipposysedit:templatetype
       jcr:mixinTypes: ['editor:editable', 'mix:referenceable', 'hippo:named']
       jcr:uuid: 1e2b9fcb-2715-435b-8a0b-63067f8341df
-      jcr:name: News Item
+      hippo:name: News Item
       /hipposysedit:nodetype:
         jcr:primaryType: hippo:handle
         jcr:mixinTypes: ['mix:referenceable']
