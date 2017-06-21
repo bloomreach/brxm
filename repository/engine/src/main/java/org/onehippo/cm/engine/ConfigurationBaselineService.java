@@ -152,7 +152,7 @@ public class ConfigurationBaselineService {
                         Node moduleNode = createNodeIfNecessary(projectNode, module.getName(), NT_HCM_MODULE, true);
 
                         // process each module in detail
-                        storeBaselineModule(module, moduleNode, false);
+                        storeBaselineModule(module, moduleNode, session, false);
                     }
                 }
             }
@@ -203,7 +203,7 @@ public class ConfigurationBaselineService {
                 Node moduleNode = projectNode.getNode(NodeNameCodec.encode(module.getName()));
 
                 // do incremental update
-                storeBaselineModule(module, moduleNode, true);
+                storeBaselineModule(module, moduleNode, session, true);
 
                 final List<GroupImpl> groups = new ArrayList<>();
                 loadModuleDescriptor(moduleNode, groups);
@@ -237,7 +237,7 @@ public class ConfigurationBaselineService {
      * @param moduleNode the JCR node destination for the module
      * @see #storeBaseline(ConfigurationModelImpl, Session)
      */
-    protected void storeBaselineModule(final ModuleImpl module, final Node moduleNode, final boolean incremental)
+    protected void storeBaselineModule(final ModuleImpl module, final Node moduleNode, final Session session, final boolean incremental)
             throws RepositoryException, IOException {
 
         // get the resource input provider, which provides access to raw data for module content
@@ -329,6 +329,15 @@ public class ConfigurationBaselineService {
 
             // set content path property
             sourceNode.setProperty(HCM_CONTENT_PATH, firstDef.getNode().getPath());
+
+            if (incremental) {
+                final String contentNodePath = firstDef.getNode().getPath();
+                final boolean nodeAlreadyProcessed = getAppliedContentPaths(session).contains(contentNodePath);
+                if (!nodeAlreadyProcessed) {
+                    addAppliedContentPath(contentNodePath, session);
+                }
+
+            }
         }
 
         // foreach config source
