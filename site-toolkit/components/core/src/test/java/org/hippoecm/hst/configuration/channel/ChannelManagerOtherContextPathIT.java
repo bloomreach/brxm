@@ -21,7 +21,6 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.hst.Channel;
@@ -42,12 +41,6 @@ public class ChannelManagerOtherContextPathIT extends AbstractTestConfigurations
         requestContext.setAttribute("HOST_GROUP_NAME_FOR_CMS_HOST", "dev-localhost");
         //ModifiableRequestContextProvider.set(requestContext);
         hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Test

@@ -107,9 +107,12 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
     @Override
     @After
     public void tearDown() throws Exception {
-        restoreHstConfigBackup(session);
-        session.logout();
-        super.tearDown();
+        try {
+            restoreHstConfigBackup(session);
+            session.logout();
+        } finally {
+            super.tearDown();
+        }
     }
 
     @Test
