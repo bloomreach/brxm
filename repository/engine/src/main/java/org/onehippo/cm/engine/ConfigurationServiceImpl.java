@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,20 +33,24 @@ import javax.jcr.Session;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
 import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.ExportModuleContext;
 import org.onehippo.cm.model.ImportModuleContext;
 import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.ModuleWriter;
 import org.onehippo.cm.model.PathConfigurationReader;
+import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.parser.ContentSourceParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
@@ -297,6 +302,34 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             throw new RuntimeException("Import failed", e);
         }
 
+    }
+
+    public void importPlainYaml(final InputStream inputStream, final Node parentNode) throws RepositoryException {
+
+        try {
+            final ResourceInputProvider resourceInputProvider = new ResourceInputProvider() {
+                @Override
+                public boolean hasResource(final Source source, final String resourcePath) {
+                    return !resourcePath.contains("not");
+                }
+                @Override
+                public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
+                    throw new IOException("Plain YAML import does not support links to binary resources");
+                }
+                @Override
+                public URL getBaseURL() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+
+            final ModuleImpl module = new ModuleImpl("import-module", new ProjectImpl("import-project", new GroupImpl("import-group")));
+            final ContentSourceParser sourceParser = new ContentSourceParser(resourceInputProvider);
+            sourceParser.parse(inputStream, "/import", "console.yaml", module);
+            final ContentDefinition contentDefinition = (ContentDefinition) module.getContentSources().iterator().next().getDefinitions().get(0);
+            contentService.importNode(((ContentDefinitionImpl)contentDefinition).getNode(), parentNode, ActionType.RELOAD);
+        } catch (Exception e) {
+            throw new RuntimeException("Import failed", e);
+        }
     }
 
     public String exportContent(final Node nodeToExport) throws RepositoryException, IOException {
