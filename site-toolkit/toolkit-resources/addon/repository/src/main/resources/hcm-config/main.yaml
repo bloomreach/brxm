@@ -1,8 +1,4 @@
 definitions:
   config:
-    /hippo:configuration/hippo:modules/formdatacleanup:
-      .meta:delete: true
-    /hippo:configuration/hippo:domains/hst-security:
-      .meta:delete: true
     /hippo:configuration/hippo:update/hippo:registry/MoveContainersToWorkspace:
       .meta:delete: true
