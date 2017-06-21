@@ -64,6 +64,7 @@ definitions:
               hst:namedpipeline: JaxrsRestContentPipeline
               hst:roles: [everybody]
               hst:subjectbasedsession: true
+              hst:nochannelinfo: true
               hst:types: rest
               /gallery:
                 jcr:primaryType: hst:mount
@@ -73,19 +74,22 @@ definitions:
                 hst:mountpoint: /content/gallery
                 hst:mountrest: restapi
                 hst:mountsite: site
+                hst:nochannelinfo: true
                 hst:types: rest
               /assets:
                 jcr:primaryType: hst:mount
                 hst:alias: restapi-assets
                 hst:ismapped: false
                 hst:mountpoint: /content/assets
+                hst:nochannelinfo: true
                 hst:types: rest
             /restservices:
               jcr:primaryType: hst:mount
               hst:alias: restservices
               hst:ismapped: true
+              hst:nochannelinfo: true
               hst:namedpipeline: JaxrsRestPlainPipeline
-              hst:types: [rest]
+              hst:types: rest
             /preview:
               jcr:primaryType: hst:mount
               hst:alias: site
@@ -111,6 +115,7 @@ definitions:
                 hst:namedpipeline: JaxrsRestContentPipeline
                 hst:roles: [everybody]
                 hst:subjectbasedsession: true
+                hst:nochannelinfo: true
                 hst:types: preview-rest
                 /gallery:
                   jcr:primaryType: hst:mount
@@ -120,19 +125,22 @@ definitions:
                   hst:mountpoint: /content/gallery
                   hst:mountrest: restapi
                   hst:mountsite: site
+                  hst:nochannelinfo: true
                   hst:types: preview-rest
                 /assets:
                   jcr:primaryType: hst:mount
                   hst:alias: restapi-assets
                   hst:ismapped: false
                   hst:mountpoint: /content/assets
+                  hst:nochannelinfo: true
                   hst:types: preview-rest
               /restservices:
                 jcr:primaryType: hst:mount
                 hst:alias: restservices
                 hst:ismapped: true
                 hst:namedpipeline: JaxrsRestPlainPipeline
-                hst:types: [preview-rest]
+                hst:nochannelinfo: true
+                hst:types: preview-rest
       /dev-internal:
         jcr:primaryType: hst:virtualhostgroup
         hst:cmslocation: http://127.0.0.1:8080/cms
