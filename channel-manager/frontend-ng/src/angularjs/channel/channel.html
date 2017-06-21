@@ -19,7 +19,8 @@
      ng-hide="channelCtrl.isSubpageOpen()">
   <md-toolbar class="hippo-toolbar qa-toolbar"
               ng-show="channelCtrl.isToolbarDisplayed()">
-    <div class="md-toolbar-tools">
+    <div class="md-toolbar-tools"
+         ng-if="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded()">
       <div flex="30"
            layout
            layout-align="start center">
@@ -35,8 +36,7 @@
       <div flex="40"
            layout
            layout-align="center center">
-        <relevance-view-as ng-show="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded()"
-                           render-variant="channelCtrl.getRenderVariant()">
+        <relevance-view-as render-variant="channelCtrl.getRenderVariant()">
         </relevance-view-as>
 
         <viewport-toggle disabled="channelCtrl.isControlsDisabled()"></viewport-toggle>
@@ -55,14 +55,13 @@
                         tooltip="{{ channelCtrl.isComponentsOverlayDisplayed ? 'HIDE_COMPONENTS' : 'SHOW_COMPONENTS' | translate }}"
                         class="qa-toggle-components"
                         is-configuration-locked="channelCtrl.isConfigurationLocked()"
-                        ng-if="channelCtrl.isEditable() && channelCtrl.isPageLoaded()">
+                        ng-if="channelCtrl.isEditable()">
         </overlay-toggle>
 
         <overlay-toggle state="channelCtrl.isContentOverlayDisplayed"
                         icon-src="images/document.svg"
                         class="qa-toggle-content"
-                        tooltip="{{ channelCtrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}"
-                        ng-if="channelCtrl.isPageLoaded()">
+                        tooltip="{{ channelCtrl.isContentOverlayDisplayed ? 'HIDE_CONTENT' : 'SHOW_CONTENT' | translate }}">
         </overlay-toggle>
       </div>
     </div>
