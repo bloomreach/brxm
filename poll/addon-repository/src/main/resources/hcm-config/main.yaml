@@ -21,5 +21,3 @@ definitions:
                   jcr:primaryType: hipposys:resourcebundles
                   /component:
                     jcr:primaryType: hipposys:resourcebundles
-    /hippo:configuration/hippo:frontend/cms/cms-services/pollTranslator:
-      .meta:delete: true
