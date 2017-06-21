@@ -3,8 +3,6 @@ definitions:
     /hippo:configuration/hippo:modules/webfiles:
       jcr:primaryType: hipposys:module
       hipposys:className: org.onehippo.cms7.services.webfiles.WebFilesServiceModule
-      hipposys:cmsonly:
-        operation: delete
       /hippo:moduleconfig:
         jcr:primaryType: hipposys:moduleconfig
         excludedDirectories: [.arch-ids, BitKeeper, .bzr, CVS, _darcs, .darcsrepo,
