@@ -23,6 +23,7 @@ import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes;
 import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes.CompositeConfigurationNode;
 import org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelLazyLoadingChangedBySet;
@@ -130,11 +131,43 @@ public class HstSiteService implements HstSite {
 
         log.debug("Loading channel configuration for '{}'", configurationPath);
 
+        loadChannel(site, mount, isPreviewSite, hstNodeLoadingCache, master);
+
+        HstComponentsConfiguration ccs = configLoadingCache.getComponentsConfiguration(configurationPath, false);
+        if (ccs != null) {
+            log.debug("Reusing cached HstComponentsConfiguration for '{}'", configurationPath);
+            componentsConfiguration = Optional.of(ccs);
+        } else {
+            log.debug("No cached HstComponentsConfiguration for '{}' present. On first access it will " +
+                    "be loaded lazily", configurationPath);
+        }
+
+        HstSiteMapItemHandlersConfiguration hsihcs = configLoadingCache.getSiteMapItemHandlersConfiguration(configurationPath, false);
+        if (hsihcs != null) {
+            log.debug("Reusing cached HstSiteMapItemHandlersConfigurationService for '{}'", configurationPath);
+            siteMapItemHandlersConfigurationService = Optional.of(hsihcs);
+        } else {
+            log.debug("No cached HstSiteMapItemHandlersConfigurationService for '{}' present. On first access it will " +
+                    "be loaded lazily", configurationPath);
+        }
+
+        // because sitemap and sitemenus have a reference to this HstSiteService, we can never reuse
+        // them from cache. Instead, they will be created lazily the first time on access
+
+    }
+
+    private void loadChannel(final HstNode site, final Mount mount, final boolean isPreviewSite, final HstNodeLoadingCache hstNodeLoadingCache, final Channel master) {
+        HstManager mngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        if (mount.getContextPath() != null && !mount.getContextPath().equals(mngr.getContextPath())) {
+            log.info("channel for different context path can't be loaded because of channel info class");
+            channel = Optional.absent();
+            return;
+        }
         final Channel ch;
         if (mount.hasNoChannelInfo()) {
             ch = null;
         } else {
-            ch = configLoadingCache.loadChannel(configurationPath, isPreviewSite,  mount.getIdentifier());
+            ch = configLoadingCache.loadChannel(configurationPath, isPreviewSite,  mount.getIdentifier(), mount.getContextPath());
         }
         if (ch != null) {
             final HstNode rootConfigNode = hstNodeLoadingCache.getNode(configurationPath);
@@ -210,28 +243,6 @@ public class HstSiteService implements HstSite {
         }
 
         channel = Optional.fromNullable(ch);
-
-        HstComponentsConfiguration ccs = configLoadingCache.getComponentsConfiguration(configurationPath, false);
-        if (ccs != null) {
-            log.debug("Reusing cached HstComponentsConfiguration for '{}'", configurationPath);
-            componentsConfiguration = Optional.of(ccs);
-        } else {
-            log.debug("No cached HstComponentsConfiguration for '{}' present. On first access it will " +
-                    "be loaded lazily", configurationPath);
-        }
-
-        HstSiteMapItemHandlersConfiguration hsihcs = configLoadingCache.getSiteMapItemHandlersConfiguration(configurationPath, false);
-        if (hsihcs != null) {
-            log.debug("Reusing cached HstSiteMapItemHandlersConfigurationService for '{}'", configurationPath);
-            siteMapItemHandlersConfigurationService = Optional.of(hsihcs);
-        } else {
-            log.debug("No cached HstSiteMapItemHandlersConfigurationService for '{}' present. On first access it will " +
-                    "be loaded lazily", configurationPath);
-        }
-
-        // because sitemap and sitemenus have a reference to this HstSiteService, we can never reuse
-        // them from cache. Instead, they will be created lazily the first time on access
-
     }
 
     private CompositeConfigurationNode findSiteMapNode() {

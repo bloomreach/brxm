@@ -44,6 +44,7 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.BLUEPRINT_PROPERTY_CONTEXTPATH;
 import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON;
@@ -60,10 +61,10 @@ public class ChannelPropertyMapper {
     }
 
     public static Channel readBlueprintChannel(final HstNode channelNode) {
-        return readChannel(channelNode, null, false);
+        return readChannel(channelNode, null, false, null, true);
     }
 
-    public static Channel readChannel(final HstNode channelNode, final HstNode configurationNode) {
+    public static Channel readChannel(final HstNode channelNode, final HstNode configurationNode, final String contextPath) {
         final String configurationPath;
         if (configurationNode == null) {
             configurationPath = null;
@@ -86,10 +87,11 @@ public class ChannelPropertyMapper {
             // channel not in workspace, hence not channelSettingsEditable
             channelSettingsEditable = false;
         }
-        return readChannel(channelNode, configurationNode, channelSettingsEditable);
+        return readChannel(channelNode, configurationNode, channelSettingsEditable, contextPath, false);
     }
 
-    static Channel readChannel(final HstNode channelNode, final HstNode configurationNode, final boolean channelSettingsEditable) {
+    static Channel readChannel(final HstNode channelNode, final HstNode configurationNode,
+                               final boolean channelSettingsEditable, final String contextPath, final boolean isBlueprint) {
 
         // the hst:configuration node name is unique
         final String channelId;
@@ -166,10 +168,33 @@ public class ChannelPropertyMapper {
                     channel.setProperties(properties);
                 }
             } catch (ClassNotFoundException e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Could not load channel info class '{}' for channel '{}'", className, channel.getId(), e);
+                if (isBlueprint) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Could not load channel info class '{}' for channel '{}' for contextPath '{}'. The " +
+                                "channel info class needs to be added to that webapp as well or set the property '{}' with " +
+                                "the correct contextPath on the blueprint node.",
+                                className, channel.getId(), contextPath, BLUEPRINT_PROPERTY_CONTEXTPATH, e);
+                    } else {
+                        log.warn("Could not load channel info class '{}' for channel '{}' for contextPath '{}'. The " +
+                                "channel info class needs to be added to that webapp as well or set the property '{}' with " +
+                                "the correct contextPath on the blueprint node: {}",
+                                className, channel.getId(), contextPath, BLUEPRINT_PROPERTY_CONTEXTPATH, e.toString());
+                    }
+                }
+                else if (contextPath == null) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Could not load channel info class '{}' for channel '{}' for contextPath that is null. For " +
+                                "contextPath agnostic mounts, the channel info needs to be in every HST webapp. ", className, channel.getId(), e);
+                    } else {
+                        log.warn("Could not load channel info class '{}' for channel '{}' for contextPath that is null. For " +
+                                "contextPath agnostic mounts, the channel info needs to be in every HST webapp : {}", className, channel.getId(), e.toString());
+                    }
                 } else {
-                    log.warn("Could not load channel info class '{}' for channel '{}' : {}", className, channel.getId(), e.toString());
+                    if (log.isDebugEnabled()) {
+                        log.warn("Could not load channel info class '{}' for channel '{}'", className, channel.getId(), e);
+                    } else {
+                        log.warn("Could not load channel info class '{}' for channel '{}' : {}", className, channel.getId(), e.toString());
+                    }
                 }
             }
         }

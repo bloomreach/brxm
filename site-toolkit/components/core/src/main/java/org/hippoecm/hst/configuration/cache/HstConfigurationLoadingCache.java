@@ -131,7 +131,8 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
     }
 
 
-    public Channel loadChannel(final String configurationPath, final boolean isPreviewSite, final String mountIdentifier) {
+    public Channel loadChannel(final String configurationPath, final boolean isPreviewSite, final String mountIdentifier,
+                               final String contextPath) {
         final CompositeConfigurationNodes ccn = getCompositeConfigurationNodes(configurationPath, NODENAME_HST_CHANNEL);
         List<UUID> cachekey = ccn.getCacheKey();
         // mount needs to be part of the cache key for channel objects
@@ -163,7 +164,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
             log.debug("No channel node present for '{}'. Return null", configurationPath);
             return null;
         }
-        channel = ChannelPropertyMapper.readChannel(channelNode, rootConfigNode);
+        channel = ChannelPropertyMapper.readChannel(channelNode, rootConfigNode, contextPath);
         channel.setChannelPath(channelNode.getValueProvider().getPath());
         List<String> events = ccn.getCompositeConfigurationDependencyPaths();
         if (isPreviewSite && !configurationPath.endsWith("-preview")) {
