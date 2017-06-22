@@ -31,12 +31,12 @@ public class EmptyValueListProvider implements ValueListProvider {
     }
 
     @Override
-    public String getDisplayValue(String value) {
+    public String getDisplayValue(final String value) {
         return getDisplayValue(value, null);
     }
 
     @Override
-    public String getDisplayValue(String value, Locale locale) {
+    public String getDisplayValue(final String value, final Locale locale) {
         return value;
     }
 

@@ -26,24 +26,27 @@ public interface ValueListProvider {
 
     /**
      * Return picker value list. The return value must be a non-null list object.
+     *
      * @return non-null picker value list
      */
-    public List<String> getValues();
+    List<String> getValues();
 
     /**
      * Return display string value for the picker {@code value}.
+     *
      * @param value picker value
      * @return display string value for the {@code value}
      */
-    public String getDisplayValue(String value);
+    String getDisplayValue(String value);
 
     /**
      * Return display string value for the picker {@code value} and the specified {@code locale}.
      * The {@code locale} can be null, in which case, it is supposed to use the default locale in implementations.
-     * @param value picker value
+     *
+     * @param value  picker value
      * @param locale locale
      * @return display string value for the {@code value} and the specified {@code locale}
      */
-    public String getDisplayValue(String value, Locale locale);
+    String getDisplayValue(String value, Locale locale);
 
 }
