@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-import template from './channelActions.html';
+import MenuItem from './menuItem.model';
 
-function channelActionsDirective() {
-  'ngInject';
-
-  return {
-    restrict: 'E',
-    bindToController: {
-      onActionSelected: '&',
-    },
-    template,
-    controller: 'ChannelActionsCtrl',
-    controllerAs: '$ctrl',
-  };
+class MenuAction extends MenuItem {
+  constructor(name, config) {
+    super(name, config);
+    this.type = 'action';
+  }
 }
 
-export default channelActionsDirective;
+export default MenuAction;

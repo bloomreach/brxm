@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-import menuEditorDirective from './editor.directive';
-import selectAllOnFocusDirective from './selectAllOnFocus.directive';
-import MenuEditorCtrl from './editor.controller';
-import uiTreeModule from './tree/tree';
-import pickerModule from './picker/picker';
+import ngMessages from 'angular-messages';
+
+import MenuComponent from './menu.component';
 
 const channelMenuModule = angular
   .module('hippo-cm.channel.menu', [
-    uiTreeModule.name,
-    pickerModule.name,
-    'focus-if',
+    ngMessages,
   ])
-  .directive('menuEditor', menuEditorDirective)
-  .directive('selectAllOnFocus', selectAllOnFocusDirective)
-  .controller('MenuEditorCtrl', MenuEditorCtrl);
+  .component('dropdownMenu', MenuComponent);
 
 export default channelMenuModule;

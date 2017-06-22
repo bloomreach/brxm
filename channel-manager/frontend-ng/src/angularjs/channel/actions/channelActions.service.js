@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import './channelActions.scss';
+import MenuService from '../menu/menu.service';
 import deleteProgressTemplate from './delete/delete-channel-progress.html';
 
-class ChannelActionsCtrl {
+class ChannelActionsService extends MenuService {
   constructor(
     $log,
     $translate,
@@ -28,10 +28,12 @@ class ChannelActionsCtrl {
     FeedbackService,
     HippoIframeService,
     SessionService,
-    SiteMapService,
     SidePanelService,
+    SiteMapService,
   ) {
     'ngInject';
+
+    super();
 
     this.$log = $log;
     this.$translate = $translate;
@@ -42,65 +44,109 @@ class ChannelActionsCtrl {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.SessionService = SessionService;
-    this.SiteMapService = SiteMapService;
     this.SidePanelService = SidePanelService;
+    this.SiteMapService = SiteMapService;
+
+    this.defineMenu('channel', {
+      translationKey: 'TOOLBAR_BUTTON_CHANNEL',
+      isIconVisible: () => this._hasAnyChanges(),
+      iconSrc: 'images/attention.svg',
+    })
+    .addAction('settings', {
+      translationKey: 'TOOLBAR_MENU_CHANNEL_SETTINGS',
+      iconName: 'settings',
+      isVisible: () => this._isChannelSettingsAvailable(),
+      onClick: () => this._showChannelSettings(),
+    })
+    .addDivider({
+      isVisible: () => this._isChannelSettingsAvailable() && this._hasAnyChanges(),
+    })
+    .addAction('publish', {
+      translationKey: 'TOOLBAR_MENU_CHANNEL_PUBLISH',
+      iconName: 'publish',
+      isVisible: () => this._hasOwnChanges(),
+      onClick: () => this._publish(),
+    })
+    .addAction('discard-changes', {
+      translationKey: 'TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES',
+      isVisible: () => this._hasOwnChanges(),
+      onClick: () => this._discardChanges(),
+    })
+    .addAction('manage-changes', {
+      translationKey: 'TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES',
+      isVisible: () => this._hasChangesToManage(),
+      isEnabled: () => this._hasChangesToManage() && !this._hasOnlyOwnChanges(),
+      onClick: () => this._showManageChanges(),
+    })
+    .addDivider({
+      isVisible: () => this._isChannelSettingsAvailable() || this._hasAnyChanges(),
+    })
+    .addAction('delete', {
+      translationKey: 'TOOLBAR_MENU_CHANNEL_DELETE',
+      iconName: 'delete',
+      isVisible: () => this._isChannelDeletionAvailable(),
+      onClick: () => this._deleteChannel(),
+    })
+    .addAction('close', {
+      translationKey: 'TOOLBAR_MENU_CHANNEL_CLOSE',
+      onClick: () => this._closeChannel(),
+    });
   }
 
   // Settings
-
-  isChannelSettingsAvailable() {
-    return this.ChannelService.isEditable() && this.ChannelService.getChannel().hasCustomProperties;
+  _showChannelSettings() {
+    this.showSubPage('channel-settings');
   }
 
-  openSettings() {
-    this.onActionSelected({ subpage: 'channel-settings' });
+  _isChannelSettingsAvailable() {
+    return this.ChannelService.isEditable() &&
+           this.ChannelService.getChannel().hasCustomProperties;
   }
 
   // Changes
-
-  isChangesAvailable() {
-    return this.hasOwnChanges() || this.hasChangesToManage();
+  _showManageChanges() {
+    this.showSubPage('manage-changes');
   }
 
-  hasOwnChanges() {
+  _hasAnyChanges() {
+    return this._hasOwnChanges() || this._hasChangesToManage();
+  }
+
+  _hasOwnChanges() {
     return this._getChangedBySet().indexOf(this.ConfigService.cmsUser) !== -1;
+  }
+
+  _hasOnlyOwnChanges() {
+    return this._hasOwnChanges() && this._getChangedBySet().length === 1;
+  }
+
+  _canManageChanges() {
+    return this.SessionService.canManageChanges();
+  }
+
+  _hasChangesToManage() {
+    return this._canManageChanges() && this._getChangedBySet().length > 0;
   }
 
   _getChangedBySet() {
     return this.ChannelService.getChannel().changedBySet || [];
   }
 
-  canManageChanges() {
-    return this.SessionService.canManageChanges();
-  }
-
-  hasChangesToManage() {
-    return this.canManageChanges() && this._getChangedBySet().length > 0;
-  }
-
-  isManageChangesEnabled() {
-    return this.hasChangesToManage() && !this._hasOnlyOwnChanges();
-  }
-
-  _hasOnlyOwnChanges() {
-    return this.hasOwnChanges() && this._getChangedBySet().length === 1;
-  }
-
-  publish() {
+  _publish() {
     this.ChannelService.publishOwnChanges()
       .then(() => {
         this.CmsService.publish('channel-changed-in-angular');
         this.HippoIframeService.reload();
       })
       .catch((response) => {
-        response = response || { };
+        response = response || {};
 
         this.$log.info(response.message);
         this.FeedbackService.showError('ERROR_CHANGE_PUBLICATION_FAILED', response.data);
       });
   }
 
-  discardChanges() {
+  _discardChanges() {
     this._confirmDiscard().then(() => {
       this.ChannelService.discardOwnChanges()
         .then(() => {
@@ -109,7 +155,7 @@ class ChannelActionsCtrl {
           this.SiteMapService.load(this.ChannelService.getSiteMapId());
         })
         .catch((response) => {
-          response = response || { };
+          response = response || {};
 
           this.$log.info(response.message);
           this.FeedbackService.showError('ERROR_CHANGE_DISCARD_FAILED', response.data);
@@ -126,17 +172,12 @@ class ChannelActionsCtrl {
     return this.DialogService.show(confirm);
   }
 
-  manageChanges() {
-    this.onActionSelected({ subpage: 'manage-changes' });
-  }
-
   // Delete
-
-  isChannelDeletionAvailable() {
+  _isChannelDeletionAvailable() {
     return this.SessionService.canDeleteChannel();
   }
 
-  deleteChannel() {
+  _deleteChannel() {
     this._confirmDelete()
       .then(() => {
         this._showDeleteProgress();
@@ -158,7 +199,9 @@ class ChannelActionsCtrl {
 
   _confirmDelete() {
     const confirm = this.DialogService.confirm()
-      .title(this.$translate.instant('CONFIRM_DELETE_CHANNEL_TITLE', { channel: this.ChannelService.getName() }))
+      .title(this.$translate.instant('CONFIRM_DELETE_CHANNEL_TITLE', {
+        channel: this.ChannelService.getName(),
+      }))
       .textContent(this.$translate.instant('CONFIRM_DELETE_CHANNEL_MESSAGE'))
       .ok(this.$translate.instant('DELETE'))
       .cancel(this.$translate.instant('CANCEL'));
@@ -195,11 +238,12 @@ class ChannelActionsCtrl {
     this.DialogService.show(alert);
   }
 
-  closeChannel() {
+  // Channel
+  _closeChannel() {
     this.SidePanelService.panels.right.onCloseCallback().then(() => {
       this.CmsService.publish('close-channel');
     });
   }
 }
 
-export default ChannelActionsCtrl;
+export default ChannelActionsService;

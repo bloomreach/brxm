@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-import template from './pageActions.html';
+import MenuAction from './menuAction.model';
 
-function pageActionsDirective() {
-  'ngInject';
-
-  return {
-    restrict: 'E',
-    bindToController: {
-      onActionSelected: '&',
-    },
-    template,
-    controller: 'PageActionsCtrl',
-    controllerAs: '$ctrl',
-  };
-}
-
-export default pageActionsDirective;
+describe('MenuAction model', () => {
+  it('is of type "action"', () => {
+    const action = new MenuAction('test-menu-action');
+    expect(action.type).toBe('action');
+  });
+});

@@ -17,8 +17,7 @@
 import ngMessages from 'angular-messages';
 import focusIf from 'ng-focus-if';
 
-import pageActionsDirective from './pageActions.directive';
-import PageActionsCtrl from './pageActions.controller';
+import PageActionsService from './pageActions.service';
 import pageNewDirective from './new/new.directive';
 import PageNewCtrl from './new/new.controller';
 import pagePropertiesDirective from './properties/properties.directive';
@@ -33,8 +32,7 @@ const channelPageActionsModule = angular
     ngMessages,
     focusIf,
   ])
-  .controller('PageActionsCtrl', PageActionsCtrl)
-  .directive('pageActions', pageActionsDirective)
+  .service('PageActionsService', PageActionsService)
   .controller('PageNewCtrl', PageNewCtrl)
   .directive('pageNew', pageNewDirective)
   .controller('PagePropertiesCtrl', PagePropertiesCtrl)

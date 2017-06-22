@@ -16,8 +16,7 @@
 
 import ngMessages from 'angular-messages';
 
-import channelActionsDirective from './channelActions.directive';
-import ChannelActionsCtrl from './channelActions.controller';
+import channelActionsService from './channelActions.service';
 import channelSettingsDirective from './settings/settings.directive';
 import ChannelSettingsCtrl from './settings/settings.controller';
 import propertyField from './settings/propertyField/propertyField.component';
@@ -31,8 +30,6 @@ const channelActionsModule = angular
   .module('hippo-cm.channel.actions', [
     ngMessages,
   ])
-  .controller('ChannelActionsCtrl', ChannelActionsCtrl)
-  .directive('channelActions', channelActionsDirective)
   .controller('ChannelSettingsCtrl', ChannelSettingsCtrl)
   .directive('channelSettings', channelSettingsDirective)
   .component('propertyField', propertyField)
@@ -40,6 +37,7 @@ const channelActionsModule = angular
   .directive('channelProperty', channelPropertyDirective)
   .directive('helpIcon', helpIconDirective)
   .controller('ChangeManagementCtrl', ChangeManagementCtrl)
-  .directive('changeManagement', changeManagementDirective);
+  .directive('changeManagement', changeManagementDirective)
+  .service('ChannelActionsService', channelActionsService);
 
 export default channelActionsModule;
