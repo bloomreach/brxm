@@ -3,21 +3,3 @@ definitions:
     seosupport:
       uri: http://forge.onehippo.org/seosupport/nt/1.0
       cnd: seosupport.cnd
-  config:
-    /hippo:configuration/hippo:translations:
-      /hippo:types:
-        jcr:primaryType: hipposys:resourcebundles
-      /hippo:hst:
-        jcr:primaryType: hipposys:resourcebundles
-        /componentparameters:
-          jcr:primaryType: hipposys:resourcebundles
-          /org:
-            jcr:primaryType: hipposys:resourcebundles
-            /onehippo:
-              jcr:primaryType: hipposys:resourcebundles
-              /forge:
-                jcr:primaryType: hipposys:resourcebundles
-                /seo:
-                  jcr:primaryType: hipposys:resourcebundles
-                  /support:
-                    jcr:primaryType: hipposys:resourcebundles
