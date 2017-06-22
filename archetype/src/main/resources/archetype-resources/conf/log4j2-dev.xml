@@ -121,11 +121,6 @@
       <AppenderRef ref="messages"/>
     </Logger>
 
-    <!-- Additional auto export logging -->
-    <Logger name="org.onehippo.cm.engine.JcrContentProcessor" level="info"/>
-    <Logger name="org.onehippo.cm.engine.autoexport.EventJournalProcessor" level="info"/>
-    <Logger name="org.onehippo.cm.engine.autoexport.DefinitionMergeService" level="info"/>    
-
     <!-- project logging -->
     <Logger name="${package}" level="debug"/>
 
