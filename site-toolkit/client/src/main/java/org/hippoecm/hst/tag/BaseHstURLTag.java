@@ -15,14 +15,11 @@
  */
 package org.hippoecm.hst.tag;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
@@ -31,6 +28,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.utils.TagUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +50,8 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
 
     protected boolean fullyQualified;
 
+    protected String scope;
+
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
      */
@@ -59,7 +59,7 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
     public int doStartTag() throws JspException{
         
         if (var != null) {
-            pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
+            TagUtils.removeVar(var, pageContext, scope);
         }
         
         return EVAL_BODY_INCLUDE;
@@ -97,18 +97,7 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
                 urlString = HstRequestUtils.getFullyQualifiedHstURL(requestContext, url, true);
             }
 
-            if (var == null) {
-                try {
-                    JspWriter writer = pageContext.getOut();
-                    writer.print(urlString);
-                } catch (IOException ioe) {
-                    cleanup();
-                    throw new JspException("HstURL-Tag Exception: cannot write to the output writer.");
-                }
-            }
-            else {
-                pageContext.setAttribute(var, urlString, PageContext.PAGE_SCOPE);
-            }
+            TagUtils.writeOrSetVar(urlString, var, pageContext, scope);
 
             return EVAL_PAGE;
         } finally {
@@ -132,6 +121,7 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
         escapeXml = true;
         var = null;
         fullyQualified = false;
+        scope = null;
         super.cleanup();
     }
 
@@ -177,7 +167,11 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
     public boolean isFullyQualified() {
         return this.fullyQualified;
     }
-    
+
+    public String getScope() {
+        return scope;
+    }
+
     /**
      * Sets the var property.
      * @param var The var to set
@@ -210,6 +204,10 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
      */
     public void setFullyQualified(boolean fullyQualified) {
         this.fullyQualified = fullyQualified;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 
     /**

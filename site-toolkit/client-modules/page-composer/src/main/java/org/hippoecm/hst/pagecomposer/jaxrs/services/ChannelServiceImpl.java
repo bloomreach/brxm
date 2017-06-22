@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
@@ -60,6 +60,8 @@ import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl.PREVIEW_SUFFIX;
 
 public class ChannelServiceImpl implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
@@ -94,7 +96,8 @@ public class ChannelServiceImpl implements ChannelService {
             final Map<String, String> localizedResources = getLocalizedResources(channelId, locale);
 
             final String lockedBy = getChannelLockedBy(channelId);
-            return new ChannelInfoDescription(validFieldGroups, visiblePropertyDefinitions, localizedResources, lockedBy);
+            final boolean editable = isChannelSettingsEditable(channelId);
+            return new ChannelInfoDescription(validFieldGroups, visiblePropertyDefinitions, localizedResources, lockedBy, editable);
         } catch (ChannelException e) {
             if (log.isDebugEnabled()) {
                 log.info("Failed to retrieve channel info class for channel with id '{}'", channelId, e);
@@ -155,6 +158,12 @@ public class ChannelServiceImpl implements ChannelService {
         return getAllVirtualHosts().getPropertyDefinitions(currentHostGroupName, channelId);
     }
 
+    private boolean isChannelSettingsEditable(final String channelId) {
+        final String hostGroupName = getCurrentVirtualHost().getHostGroupName();
+        Channel channel = getAllVirtualHosts().getChannelById(hostGroupName, channelId);
+        return channel.isChannelSettingsEditable();
+    }
+
     private String getChannelLockedBy(final String channelId) {
         final String hostGroupName = getCurrentVirtualHost().getHostGroupName();
         final String channelPath = getAllVirtualHosts().getChannelById(hostGroupName, channelId).getChannelPath();
@@ -198,6 +207,12 @@ public class ChannelServiceImpl implements ChannelService {
         if (!StringUtils.equals(channel.getId(), channelId)) {
             throw new ChannelException("Channel object does not contain the correct id, that should be " + channelId);
         }
+
+        if (!channel.isChannelSettingsEditable()) {
+            throw new ChannelException("Channel object is not editable because not part of preview configuration or " +
+                    "not part of the HST workspace");
+        }
+
         final String currentHostGroupName = getCurrentVirtualHost().getHostGroupName();
 
         this.channelManager.save(currentHostGroupName, channel);
@@ -230,12 +245,22 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public boolean canChannelBeDeleted(final String channelId) throws ChannelException {
-        return getChannel(channelId).isDeletable();
+        return canChannelBeDeleted(getChannel(channelId));
+    }
+
+    @Override
+    public boolean canChannelBeDeleted(final Channel channel) {
+        return channel.isDeletable();
+    }
+
+    @Override
+    public boolean isMaster(final Channel channel) {
+        return channel.getBranchOf() == null;
     }
 
     @Override
     public void preDeleteChannel(final Session session, final Channel channel, List<Mount> mountsOfChannel) throws ChannelException, RepositoryException {
-        if (!channel.isDeletable()) {
+        if (!channel.isDeletable() || !isMaster(channel)) {
             throw new ChannelException("Requested channel cannot be deleted");
         }
 
@@ -245,9 +270,8 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void deleteChannel(Session session, Channel channel, List<Mount> mountsOfChannel) throws RepositoryException, ChannelException {
-        removeConfigurationNodes(session, channel);
+        removeConfigurationNodes(channel);
         removeSiteNode(session, channel);
-        removeChannelNodes(session, channel.getChannelPath());
         removeMountNodes(session, mountsOfChannel);
     }
 
@@ -255,12 +279,12 @@ public class ChannelServiceImpl implements ChannelService {
         return RequestContextProvider.get();
     }
 
-    private void removeConfigurationNodes(final Session session, final Channel channel) throws RepositoryException {
+    private void removeConfigurationNodes(final Channel channel) throws RepositoryException {
         final String hstConfigPath = channel.getHstConfigPath();
         try {
-            hstConfigurationService.delete(session, hstConfigPath);
+            hstConfigurationService.delete(getRequestContext(), channel);
         } catch (HstConfigurationException e) {
-            log.warn("Cannot delete configuration node '{}': {}", hstConfigPath, e.getMessage());
+            log.info("configuration node '{}' won't be deleted because : {}", hstConfigPath, e.getMessage());
         }
     }
 
@@ -308,17 +332,6 @@ public class ChannelServiceImpl implements ChannelService {
             }
         }
         return allMounts;
-    }
-
-    /**
-     * Remove both the hst config node and its '-preview' node if it exists
-     */
-    private void removeChannelNodes(final Session session, final String nodePath) throws RepositoryException {
-        session.removeItem(nodePath);
-        final String previewNodePath = nodePath + HstConfigurationServiceImpl.PREVIEW_SUFFIX;
-        if (session.nodeExists(previewNodePath)) {
-            session.removeItem(previewNodePath);
-        }
     }
 
     /**

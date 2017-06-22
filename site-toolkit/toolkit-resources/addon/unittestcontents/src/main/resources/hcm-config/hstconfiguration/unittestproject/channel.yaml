@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestproject/hst:channel:
+      jcr:primaryType: hst:channel
+      hst:name: Test Channel
+      /hst:channelinfo:
+        jcr:primaryType: hst:channelinfo

@@ -19,6 +19,8 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -27,9 +29,13 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,11 +60,35 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
     public void delete(final Session session, final String configurationPath) throws RepositoryException, HstConfigurationException {
         final Node configNode = getConfiguration(session, configurationPath);
         deletePreviewConfiguration(session, configurationPath);
-
         if (hasDescendant(session, configNode.getName())) {
             throw new HstConfigurationException("The configuration node is inherited by others");
         }
         configNode.remove();
+    }
+
+    @Override
+    public void delete(final HstRequestContext requestContext, final Channel channel) throws RepositoryException, HstConfigurationException {
+        try {
+            delete(requestContext.getSession(), channel.getHstConfigPath());
+            deleteBranches(requestContext, channel);
+        } catch (HstConfigurationException e) {
+            deleteBranches(requestContext, channel);
+            throw e;
+        }
+    }
+
+    private void deleteBranches(final HstRequestContext requestContext, final Channel master) throws RepositoryException, HstConfigurationException {
+        VirtualHost virtualHost = requestContext.getResolvedMount().getMount().getVirtualHost();
+        String hostGroupName = virtualHost.getHostGroupName();
+        Map<String, Channel> channels = virtualHost.getVirtualHosts().getChannels(hostGroupName);
+        List<Channel> branches = channels.values().stream()
+                // only the live channels since #delete(session, channel) will also delete the preview
+                .filter(channel -> !channel.isPreview() && master.getId().equals(channel.getBranchOf()))
+                .collect(Collectors.toList());
+        // remove the branches as well
+        for (Channel branch : branches) {
+            delete(requestContext.getSession(), branch.getHstConfigPath());
+        }
     }
 
     @Override
@@ -94,6 +124,9 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
             session.removeItem(previewConfigurationPath);
         }
     }
+
+
+
 
     private Node getConfiguration(final Session session, final String configurationPath) throws RepositoryException, HstConfigurationException {
         validateConfigurationPathArg(configurationPath);
@@ -166,4 +199,5 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
             throw new IllegalArgumentException("configurationPath must not end with '" + PREVIEW_SUFFIX + "'");
         }
     }
+
 }

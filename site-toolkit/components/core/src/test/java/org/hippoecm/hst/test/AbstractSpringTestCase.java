@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.test;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -39,14 +40,18 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.onehippo.cms7.services.ServletContextRegistry;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.context.ServletContextAware;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -69,6 +74,25 @@ public abstract class AbstractSpringTestCase
     protected ComponentManager componentManager;
 
     protected final MockServletContext servletContext = new MockServletContext();
+
+    @BeforeClass
+    public static void clearRepository() {
+        // when run together with other RepositoryTestCase based tests *and*
+        // -Dorg.onehippo.repository.test.keepserver=true
+        // then an existing RepositoryImpl may already be (kept) running, which can interfere with this test
+        RepositoryTestCase.clearRepository();
+    }
+
+    @AfterClass
+    public static void shutDownRepository() throws RepositoryException {
+        // after all methods of the class have finished we need to close the repository to unregister all services in the
+        // HippoServiceRegistry. Otherwise we get issues with IT tests that extend from RepositoryTestCase vs the IT tests
+        // that use spring wiring
+        HippoRepository hippoRepository = HippoRepositoryFactory.getHippoRepository();
+        if (hippoRepository != null) {
+            hippoRepository.close();
+        }
+    }
 
     @Before
     public void setUp() throws Exception {

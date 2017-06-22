@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,10 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.hippoecm.hst.content.beans.BasePage;
-import org.hippoecm.hst.content.beans.NewsPage;
-import org.hippoecm.hst.content.beans.PersistableTextPage;
-import org.hippoecm.hst.content.beans.PersistableTextPageCopy;
+import org.hippoecm.hst.content.beans.*;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.util.ObjectConverterUtils;
@@ -40,6 +37,13 @@ public abstract class AbstractBeanTestCase extends RepositoryTestCase {
         annotatedClasses.add(NewsPage.class);
         annotatedClasses.add(BasePage.class);
         annotatedClasses.add(PersistableTextPageCopy.class);
+        annotatedClasses.add(ContentDocument.class);
+        annotatedClasses.add(BaseDocument.class);
+        annotatedClasses.add(LinkDepthTestDocument.class);
+        annotatedClasses.add(DeepLink.class);
+        annotatedClasses.add(DeeperLink.class);
+        annotatedClasses.add(DeepestLink.class);
+        annotatedClasses.add(TooDeepLink.class);
         return annotatedClasses;
     }
     

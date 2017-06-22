@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    myhippoproject:
+      uri: http://www.onehippo.org/myhippoproject/nt/1.0
+      cnd: namespaces/myhippoproject.cnd

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
-import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -134,15 +133,14 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                 final VirtualHosts hostsBefore = hstManager.getVirtualHosts();
                 {
                     ContextualizableMount mount = (ContextualizableMount)hostsBefore.matchMount("localhost", "/site", "/").getMount();
-                    assertEquals("/hst:hst/hst:channels/testchannel", mount.getChannelPath());
+                    assertEquals("/hst:hst/hst:configurations/unittestproject/hst:channel", mount.getChannel().getChannelPath());
 
                     validateMount(mount, false);
 
                     validatePreviewConfiguration(mount, false);
 
-                    // copy live config to preview and also for channel node
+                    // copy live config to preview
                     JcrUtils.copy(remoteSession, mount.getHstSite().getConfigurationPath(), mount.getHstSite().getConfigurationPath() + "-preview");
-                    JcrUtils.copy(remoteSession, mount.getChannelPath(), mount.getChannelPath() + "-preview");
                     remoteSession.save();
                 }
 
@@ -164,7 +162,6 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                     validatePreviewConfiguration(mount, true);
                     // clean up preview again
                     remoteSession.getNode(mount.getPreviewHstSite().getConfigurationPath()).remove();
-                    remoteSession.getNode(mount.getChannelPath() + "-preview").remove();
                     remoteSession.save();
 
                     localSession.refresh(false);
@@ -275,7 +272,8 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
         } else {
             assertFalse(mount.getPreviewHstSite().hasPreviewConfiguration());
             assertTrue(mount.getHstSite().getConfigurationPath().equals(mount.getPreviewHstSite().getConfigurationPath()));
-            assertTrue(mount.getChannel() == mount.getPreviewChannel());
+            // channel objects for preview and live are never the same
+            assertFalse(mount.getChannel() == mount.getPreviewChannel());
         }
 
     }
@@ -303,16 +301,15 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
             VirtualHosts currentHosts = hstManager.getVirtualHosts();
             {
                 ContextualizableMount mount = (ContextualizableMount)currentHosts.matchMount("localhost", "/site", "/").getMount();
-                assertEquals("/hst:hst/hst:channels/testchannel", mount.getChannelPath());
+                assertEquals("/hst:hst/hst:configurations/unittestproject/hst:channel", mount.getChannel().getChannelPath());
 
                 validateMount(mount, false);
 
                 validatePreviewConfiguration(mount, false);
 
                 rootPreviewConfigurationPath = mount.getHstSite().getConfigurationPath() + "-preview";
-                // copy live config to preview and also for channel node
+                // copy live config to preview
                 JcrUtils.copy(remoteSession, mount.getHstSite().getConfigurationPath(), rootPreviewConfigurationPath);
-                JcrUtils.copy(remoteSession, mount.getChannelPath(), mount.getChannelPath() + "-preview");
                 remoteSession.save();
             }
 

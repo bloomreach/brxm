@@ -54,68 +54,36 @@ public class TestDefaultHstSiteConfigurer {
         "</configuration>";
 
     private MockServletContext servletContext = null;
-    private MockServletConfig servletConfig = null;
 
     @Before
     public void setUp() throws Exception {
-        FileUtils.writeStringToFile(new File("target/test-hst-config-1.properties"), SIMPLE_PROPS_1);
-        FileUtils.writeStringToFile(new File("target/test-hst-config-2.properties"), SIMPLE_PROPS_2);
-        FileUtils.writeStringToFile(new File("target/conf/hst.properties"), SIMPLE_PROPS_ENV_CONF);
-        FileUtils.writeStringToFile(new File("target/test-hst-config-1.xml"), SIMPLE_XMLCONF_1);
+        FileUtils.writeStringToFile(new File("target/test-hst-config-1.properties"), SIMPLE_PROPS_1, "utf-8");
+        FileUtils.writeStringToFile(new File("target/test-hst-config-2.properties"), SIMPLE_PROPS_2, "utf-8");
+        FileUtils.writeStringToFile(new File("target/conf/hst.properties"), SIMPLE_PROPS_ENV_CONF, "utf-8");
+        FileUtils.writeStringToFile(new File("target/test-hst-config-1.xml"), SIMPLE_XMLCONF_1, "utf-8");
         System.setProperty("currentWorkingDirectory", new File(".").getCanonicalPath());
         System.setProperty("test.xml.config.foo", "bar");
         servletContext = new MockServletContext("target", new FileSystemResourceLoader());
-        servletConfig = new MockServletConfig(servletContext);
     }
 
     @After
     public void tearDown() throws Exception {
-        FileUtils.deleteQuietly(new File("target/test-hst-config-1.properties"));
-        FileUtils.deleteQuietly(new File("target/test-hst-config-2.properties"));
-        FileUtils.deleteQuietly(new File("target/test-hst-config-3.properties"));
-        FileUtils.deleteQuietly(new File("target/conf/hst.properties"));
-        FileUtils.deleteQuietly(new File("target/test-hst-config-1.xml"));
-        System.clearProperty("currentWorkingDirectory");
-        System.clearProperty("test.xml.config.foo");
-    }
-
-    @Test
-    public void testGetConfigurationWithFileURI() throws Exception {
-        File confFile = new File("target/test-hst-config-1.properties");
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, confFile.toURI().toString());
-        DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
-        Configuration configuration = hstSiteConfigurer.getConfiguration();
-        assertEquals("test-hst-config-project-1", configuration.getString("default.site.name"));
-    }
-
-    @Test
-    public void testGetConfigurationWithRelativePath1() throws Exception {
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "target/test-hst-config-1.properties");
-        DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
-        Configuration configuration = hstSiteConfigurer.getConfiguration();
-        assertEquals("test-hst-config-project-1", configuration.getString("default.site.name"));
-    }
-
-    @Test
-    public void testGetConfigurationWithRelativePath2() throws Exception {
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "./target/test-hst-config-1.properties");
-        DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
-        Configuration configuration = hstSiteConfigurer.getConfiguration();
-        assertEquals("test-hst-config-project-1", configuration.getString("default.site.name"));
+        try {
+            FileUtils.deleteQuietly(new File("target/test-hst-config-1.properties"));
+            FileUtils.deleteQuietly(new File("target/test-hst-config-2.properties"));
+            FileUtils.deleteQuietly(new File("target/test-hst-config-3.properties"));
+            FileUtils.deleteQuietly(new File("target/conf/hst.properties"));
+            FileUtils.deleteQuietly(new File("target/test-hst-config-1.xml"));
+        } finally {
+            System.clearProperty("currentWorkingDirectory");
+            System.clearProperty("test.xml.config.foo");
+        }
     }
 
     @Test
     public void testGetConfigurationWithFileURIAndContextParam() throws Exception {
         File confFile = new File("target/test-hst-config-1.properties");
-        servletContext.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, confFile.toURI().toString());
-        DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
-        Configuration configuration = hstSiteConfigurer.getConfiguration();
-        assertEquals("test-hst-config-project-1", configuration.getString("default.site.name"));
-    }
-
-    @Test
-    public void testGetConfigurationWithContextRelativePath() throws Exception {
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-1.properties");
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIG_PROPERTIES_PARAM, confFile.toURI().toString());
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
         assertEquals("test-hst-config-project-1", configuration.getString("default.site.name"));
@@ -123,7 +91,7 @@ public class TestDefaultHstSiteConfigurer {
 
     @Test
     public void testGetConfigurationWithContextRelativePathAndContextParam() throws Exception {
-        servletContext.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-1.properties");
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-1.properties");
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
         assertEquals("test-hst-config-project-1", configuration.getString("default.site.name"));
@@ -132,7 +100,7 @@ public class TestDefaultHstSiteConfigurer {
     @Test
     public void testGetConfigurationWithXmlFileURI() throws Exception {
         File confFile = new File("target/test-hst-config-1.xml");
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIGURATION_PARAM, confFile.toURI().toString());
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIGURATION_PARAM, confFile.toURI().toString());
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
         assertEquals("test-hst-config-project-1", configuration.getString("default.site.name"));
@@ -141,7 +109,7 @@ public class TestDefaultHstSiteConfigurer {
 
     @Test
     public void testGetConfigurationWithXmlRelativePath1() throws Exception {
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIGURATION_PARAM, "target/test-hst-config-1.xml");
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIGURATION_PARAM, "target/test-hst-config-1.xml");
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
         assertEquals("test-hst-config-project-1", configuration.getString("default.site.name"));
@@ -150,7 +118,7 @@ public class TestDefaultHstSiteConfigurer {
 
     @Test
     public void testGetConfigurationWithXmlRelativePath2() throws Exception {
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIGURATION_PARAM, "./target/test-hst-config-1.xml");
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIGURATION_PARAM, "./target/test-hst-config-1.xml");
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
         assertEquals("test-hst-config-project-1", configuration.getString("default.site.name"));
@@ -160,7 +128,7 @@ public class TestDefaultHstSiteConfigurer {
     @Test
     public void testGetConfigurationWithXmlFileURIAndContextParam() throws Exception {
         File confFile = new File("target/test-hst-config-1.xml");
-        servletContext.addInitParameter(HstSiteConfigServlet.HST_CONFIGURATION_PARAM, confFile.toURI().toString());
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIGURATION_PARAM, confFile.toURI().toString());
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
         assertEquals("test-hst-config-project-1", configuration.getString("default.site.name"));
@@ -169,7 +137,7 @@ public class TestDefaultHstSiteConfigurer {
 
     @Test
     public void testGetConfigurationWithXmlContextRelativePath() throws Exception {
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIGURATION_PARAM, "/test-hst-config-1.xml");
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIGURATION_PARAM, "/test-hst-config-1.xml");
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
         assertEquals("test-hst-config-project-1", configuration.getString("default.site.name"));
@@ -178,7 +146,7 @@ public class TestDefaultHstSiteConfigurer {
 
     @Test
     public void testGetConfigurationWithXmlContextRelativePathAndContextParam() throws Exception {
-        servletContext.addInitParameter(HstSiteConfigServlet.HST_CONFIGURATION_PARAM, "/test-hst-config-1.xml");
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIGURATION_PARAM, "/test-hst-config-1.xml");
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
         assertEquals("test-hst-config-project-1", configuration.getString("default.site.name"));
@@ -187,7 +155,7 @@ public class TestDefaultHstSiteConfigurer {
 
     @Test
     public void testCheckCompositeConfiguration() throws Exception {
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-1.properties");
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-1.properties");
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
         assertTrue(configuration instanceof CompositeConfiguration);
@@ -195,64 +163,65 @@ public class TestDefaultHstSiteConfigurer {
 
     @Test
     public void testCheckCompositeConfigurationOverridenByEnvProperties() throws Exception {
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-1.properties");
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-1.properties");
         System.setProperty("catalina.base", new File("target").getCanonicalPath());
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
-        System.setProperty("catalina.base", "");
-        assertEquals("test-hst-config-project-env", configuration.getString("default.site.name"));
-        assertEquals("test-hst-env", configuration.getString("default.site.env.alias"));
-        assertEquals("test-hst-1", configuration.getString("default.site1.alias"));
-        System.clearProperty("catalina.base");
+        try {
+            System.setProperty("catalina.base", "");
+            assertEquals("test-hst-env", configuration.getString("default.site.env.alias"));
+        } finally {
+            System.clearProperty("catalina.base");
+        }
     }
 
     @Test
     public void testCheckCompositeConfigurationOverridenByContextProperties() throws Exception {
-        servletContext.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-2.properties");
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-1.properties");
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-2.properties");
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
         assertEquals("test-hst-config-project-2", configuration.getString("default.site.name"));
         assertEquals("test-hst-2", configuration.getString("default.site2.alias"));
-        assertEquals("test-hst-1", configuration.getString("default.site1.alias"));
     }
 
     @Test
     public void testCheckCompositeConfigurationOverridenByEnvAndContextProperties() throws Exception {
-        servletContext.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-2.properties");
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-1.properties");
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-2.properties");
         System.setProperty("catalina.base", new File("target").getCanonicalPath());
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
-        System.setProperty("catalina.base", "");
-        assertEquals("test-hst-config-project-2", configuration.getString("default.site.name"));
-        assertEquals("test-hst-2", configuration.getString("default.site2.alias"));
-        assertEquals("test-hst-env", configuration.getString("default.site.env.alias"));
-        assertEquals("test-hst-1", configuration.getString("default.site1.alias"));
-        System.clearProperty("catalina.base");
+        try {
+            System.setProperty("catalina.base", "");
+            assertEquals("test-hst-config-project-2", configuration.getString("default.site.name"));
+            assertEquals("test-hst-2", configuration.getString("default.site2.alias"));
+            assertEquals("test-hst-env", configuration.getString("default.site.env.alias"));
+        } finally {
+            System.clearProperty("catalina.base");
+        }
     }
 
     @Test
     public void testCheckCompositeConfigurationOverridenBySystemAndEnvAndContextProperties() throws Exception {
-        servletContext.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-2.properties");
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-1.properties");
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-2.properties");
         System.setProperty("catalina.base", new File("target").getCanonicalPath());
         System.setProperty("default.site.name", "test-hst-system");
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
-        System.setProperty("catalina.base", "");
-        assertEquals("test-hst-system", configuration.getString("default.site.name"));
-        assertEquals("test-hst-2", configuration.getString("default.site2.alias"));
-        assertEquals("test-hst-env", configuration.getString("default.site.env.alias"));
-        assertEquals("test-hst-1", configuration.getString("default.site1.alias"));
-        System.clearProperty("catalina.base");
-        System.clearProperty("default.site.name");
+        try {
+            System.setProperty("catalina.base", "");
+            assertEquals("test-hst-system", configuration.getString("default.site.name"));
+            assertEquals("test-hst-2", configuration.getString("default.site2.alias"));
+            assertEquals("test-hst-env", configuration.getString("default.site.env.alias"));
+        }finally {
+            System.clearProperty("catalina.base");
+            System.clearProperty("default.site.name");
+        }
     }
 
     @Test
     public void testDefaultHstConfForMissingProperties() throws Exception {
         File confFile = new File("target/test-hst-config-1.properties");
-        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, confFile.toURI().toString());
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIG_PROPERTIES_PARAM, confFile.toURI().toString());
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
         Configuration configuration = hstSiteConfigurer.getConfiguration();
         assertNotNull(configuration.getString("default.site.name"));
@@ -262,7 +231,6 @@ public class TestDefaultHstSiteConfigurer {
     private DefaultHstSiteConfigurer createHstSiteConfigurer() {
         DefaultHstSiteConfigurer hstSiteConfigurer = new DefaultHstSiteConfigurer();
         hstSiteConfigurer.setServletContext(servletContext);
-        hstSiteConfigurer.setServletConfig(servletConfig);
         return hstSiteConfigurer;
     }
 }

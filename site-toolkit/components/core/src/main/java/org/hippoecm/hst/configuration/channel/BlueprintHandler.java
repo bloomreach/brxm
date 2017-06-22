@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,8 +19,12 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 
 public class BlueprintHandler {
 
@@ -56,10 +60,13 @@ public class BlueprintHandler {
             }
         }
 
-        HstNode channelNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CHANNEL);
+        HstNode channelNode = blueprintNode.getNode("hst:configuration/" + NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_CHANNEL);
+        if (channelNode == null) {
+            channelNode = blueprintNode.getNode("hst:configuration/" + NODENAME_HST_CHANNEL);
+        }
         final Channel channel;
         if (channelNode != null) {
-            channel = ChannelPropertyMapper.readChannel(channelNode, null);
+            channel = ChannelPropertyMapper.readBlueprintChannel(channelNode);
         } else {
             channel = new Channel();
         }

@@ -1,0 +1,41 @@
+definitions:
+  config:
+    /hippo:namespaces/contentbeanstest/subcontentdocument:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: f728826f-90c3-472a-86f6-9f75725221a1
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 541bb57d-92be-4f0e-a3be-38c20be3161f
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          jcr:uuid: c1657102-17cb-428f-97d2-1073eedb86c2
+          hipposysedit:node: true
+          hipposysedit:supertype: ['contentbeanstest:contentdocument', 'hippostd:relaxed',
+            'hippotranslation:translated']
+          hipposysedit:uri: http://www.onehippo.org/contentbeanstest/nt/1.0
+          /actuallystilladocbase:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:actuallystilladocbase
+            hipposysedit:primary: false
+            hipposysedit:type: Docbase
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: contentbeanstest:subcontentdocument
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 821f501f-999e-4820-89e8-d6adf58c5cd5
+          contentbeanstest:actuallystilladocbase: ''
+          hippostd:holder: holder
+          hippostd:state: draft
+          hippostdpubwf:createdBy: ''
+          hippostdpubwf:creationDate: 2016-11-29T14:27:02.097+01:00
+          hippostdpubwf:lastModificationDate: 2016-11-29T14:27:02.096+01:00
+          hippostdpubwf:lastModifiedBy: ''
+          hippotranslation:id: document-type-locale-id
+          hippotranslation:locale: document-type-locale

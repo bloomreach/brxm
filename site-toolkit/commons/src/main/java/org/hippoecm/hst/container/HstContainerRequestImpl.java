@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -139,14 +139,11 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
     }
     
     private void setDecodedPathInfo(String pathTranslated) {
-        String characterEncoding = getCharacterEncoding();
-        if (characterEncoding == null) {
-            characterEncoding = "ISO-8859-1";
-        }
+        String encoding = HstRequestUtils.getURIEncoding(this);
         try {
-            pathInfo = URLDecoder.decode(pathTranslated, characterEncoding);
+            pathInfo = URLDecoder.decode(pathTranslated, encoding);
         } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("Invalid character encoding: " + characterEncoding, e);
+            throw new IllegalArgumentException("Invalid character encoding: " + encoding, e);
         }
     }
 

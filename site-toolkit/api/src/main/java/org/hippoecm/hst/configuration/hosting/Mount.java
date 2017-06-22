@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,17 +21,15 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.core.container.HstRequestProcessor;
-import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.onehippo.cms7.services.hst.Channel;
 
 /**
  * <p>A {@link Mount} object is the mount from a prefix to some (sub)site *or* content location: when the {@link Mount#isMapped()} property returns <code>true</code> or missing,
@@ -145,6 +143,12 @@ public interface Mount {
      * @return the mountPoint for this {@link Mount} and <code>null</code> if there is no mountPoint configured (nor inherited)
      */
     String getMountPoint();
+
+    /**
+     * @return {@code true} when this {@link Mount} has no channel info. When a {@link Mount} doesn't have channel info,
+     * it won't show up in the channel manager.
+     */
+    boolean hasNoChannelInfo();
 
     /**
      * <p>
@@ -449,7 +453,9 @@ public interface Mount {
 
     /**
      * @return the repository path to the channel configuration node and <code>null</code> if not configured
+     * @deprecated since 5.0.0 (CMS 12). Use {@link Channel#getChannelPath() getChannel().getChannelPath()} instead
      */
+    @Deprecated
     String getChannelPath();
 
     /**

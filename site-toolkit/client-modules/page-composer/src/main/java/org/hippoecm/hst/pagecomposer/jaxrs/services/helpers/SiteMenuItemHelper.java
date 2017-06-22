@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.NodeIterable;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMENU;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMENUITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_HST_PROTOTYPEITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
@@ -62,11 +63,16 @@ public class SiteMenuItemHelper extends AbstractHelper {
         throw new UnsupportedOperationException("not supported");
     }
 
+    @Override
+    protected String getNodeType() {
+        return NODETYPE_HST_SITEMENUITEM;
+    }
+
     public Node create(Node parent, SiteMenuItemRepresentation newItem, Position position, String sibling) throws RepositoryException {
         lockHelper.acquireSimpleLock(getMenuAncestor(parent), 0);
         final String newItemName = newItem.getName();
         try {
-            final Node newChild = parent.addNode(encode(newItemName, true), HstNodeTypes.NODETYPE_HST_SITEMENUITEM);
+            final Node newChild = parent.addNode(encode(newItemName, true), NODETYPE_HST_SITEMENUITEM);
             repositionChildIfNecessary(newChild, position, sibling);
             update(newChild, newItem);
             return newChild;
@@ -207,7 +213,7 @@ public class SiteMenuItemHelper extends AbstractHelper {
 
     private Node getMenuAncestor(final Node node) throws RepositoryException {
         Node current = node;
-        while (current.isNodeType(HstNodeTypes.NODETYPE_HST_SITEMENUITEM)) {
+        while (current.isNodeType(NODETYPE_HST_SITEMENUITEM)) {
             current = current.getParent();
         }
         if (current.isNodeType(NODETYPE_HST_SITEMENU)) {

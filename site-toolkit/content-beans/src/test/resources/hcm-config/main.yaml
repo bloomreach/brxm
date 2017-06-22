@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    contentbeanstest:
+      uri: http://www.onehippo.org/contentbeanstest/nt/1.0
+      cnd: namespaces/contentbeanstest.cnd

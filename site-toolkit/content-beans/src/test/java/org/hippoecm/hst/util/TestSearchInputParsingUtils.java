@@ -209,4 +209,20 @@ public class TestSearchInputParsingUtils {
         assertEquals("The quick", SearchInputParsingUtils.parse("The quic‘k", true, false));
     }
 
+    @Test
+    public void testSearchInputParsingUtils_remove_backslash() throws Exception {
+        assertEquals("The quic k", SearchInputParsingUtils.parse("The quic\\k", true, true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quic\\k", true, false));
+        assertEquals("", SearchInputParsingUtils.parse("\\", true, true));
+        assertEquals("", SearchInputParsingUtils.parse("\\", true, false));
+    }
+
+    @Test
+    public void testSearchInputParsingUtils_escape_doublequote() throws Exception {
+        assertEquals("The q\\\"uick", SearchInputParsingUtils.parse("The q\"uick", false, true));
+        assertEquals("The q\\\"uick", SearchInputParsingUtils.parse("The q\"uick", false, false));
+        assertEquals("\\\"", SearchInputParsingUtils.parse("\"", false, true));
+        assertEquals("\\\"", SearchInputParsingUtils.parse("\"", false, false));
+    }
+
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
@@ -191,6 +191,26 @@ public interface VirtualHosts {
     boolean isDiagnosticsEnabled(String ip);
 
     /**
+     * If {@link #isDiagnosticsEnabled(String)} returns {@code true}, only until {@link #getDiagnosticsDepth()} the
+     * call hierarchy timings will be logged. Default value returned is {@code -1} meaning no limit
+     * @return the depth until where to log and -1 if not limit
+     */
+    int getDiagnosticsDepth();
+
+    /**
+     * If {@link #isDiagnosticsEnabled(String)} returns {@code true}, only log if the {@link org.hippoecm.hst.diagnosis.Task}
+     * took longer than or equal to {@link #getDiagnosticsThresholdMillis()}. Default threshold of {@code -1} meaning no threshold
+     * @return the threshold value configured and {@code -1} if not configured meaning no threshold.
+     */
+    long getDiagnosticsThresholdMillis();
+
+    /**
+     * @return the threshold value for a task to get logged separately. If not configured {@code -1} is returned meaning
+     * no threshold for subtask diagnostics
+     */
+    long getDiagnosticsUnitThresholdMillis();
+
+    /**
      * @deprecated Use {@link #getDefaultResourceBundleIds()} instead.
      * @return the first item of default resource bundle IDs or null if not configured or empty.
      */
@@ -211,9 +231,14 @@ public interface VirtualHosts {
     /**
      * @param hostGroup the name of the host group to get the channels for
      * @return all managed channels for the <code></code>hostGroup</code>. Empty List in case the hostGroup does not
-     * exist or has no channel
+     * exist or has no channel. The keys in the map are the {@link Channel#getId()}'s
      */
     Map<String, Channel> getChannels(String hostGroup);
+
+    /**
+     * @return The map of all {@code hostGroup} names to the map of all the channels for that hostgroup
+     */
+    Map<String, Map<String, Channel>> getChannels();
 
     /**
      * @param hostGroup the name of the host group to get channel for

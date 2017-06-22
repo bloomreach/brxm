@@ -1,0 +1,21 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/sub2/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /_default_.html:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/standarddetail
+        hst:refId: wildcardNewsRefId
+        hst:relativecontentpath: ${1}
+      /_default_:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/newsoverview
+        hst:relativecontentpath: ${1}
+      /_any_:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/newsoverview
+        hst:relativecontentpath: ${1}
+      /_any_.html:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/standarddetail
+        hst:relativecontentpath: ${1}

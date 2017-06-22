@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/googleAnalyticsConfiguration:
+      jcr:primaryType: hipposys:module
+      /hippo:moduleconfig:
+        jcr:primaryType: hippogoogleanalytics:configuration
+        hippogoogleanalytics:accountId: UA-XXXXX-X
+        hippogoogleanalytics:password: ga_password
+        hippogoogleanalytics:tableId: ga:XXXXXXXX
+        hippogoogleanalytics:username: ga_username

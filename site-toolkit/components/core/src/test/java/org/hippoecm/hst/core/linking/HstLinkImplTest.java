@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ public class HstLinkImplTest {
         context = createNiceMock(HstRequestContext.class);
         expect(context.getBaseURL()).andReturn(containerURL).anyTimes();
         expect(containerURL.getCharacterEncoding()).andReturn("utf-8").anyTimes();
+        expect(containerURL.getURIEncoding()).andReturn("utf-8").anyTimes();
         replay(containerURL, context);
     }
 

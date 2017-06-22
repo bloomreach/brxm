@@ -1,12 +1,12 @@
 /*
  *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,9 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
-import javax.jcr.SimpleCredentials;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -38,7 +37,6 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -59,7 +57,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
     private EventPathsInvalidator invalidator;
-    private HippoSession session;
+    private Session session;
 
     @Override
     @Before
@@ -77,12 +75,6 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         restoreHstConfigBackup(session);
         session.logout();
         super.tearDown();
-    }
-
-
-    protected HippoSession createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return (HippoSession)repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
     @Test
@@ -182,7 +174,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/unittestproject/hst:sitemenus/main",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus/footer");
         session.save();
-         // unittestproject sitemenu 'footer' should now be loaded from 'hst:workspace' but 'main' not from workspace
+        // unittestproject sitemenu 'footer' should now be loaded from 'hst:workspace' but 'main' not from workspace
         {
             ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
             final HstSite hstSite = mount.getMount().getHstSite();

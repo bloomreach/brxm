@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class HstLinkRewritingCrossSchemeIT extends AbstractHstLinkRewritingIT {
 
     @Test
     public void testHttpRequestToHttpsLinks() throws Exception {
-        List<SiteMapItemReference> siteMapItemsToSetHttpsScheme = new ArrayList<SiteMapItemReference>();
+        List<SiteMapItemReference> siteMapItemsToSetHttpsScheme = new ArrayList<>();
         siteMapItemsToSetHttpsScheme.add(new SiteMapItemReference("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news/_default_.html"));
         siteMapItemsToSetHttpsScheme.add(new SiteMapItemReference("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news/_any_.html"));
         try {
@@ -76,7 +76,7 @@ public class HstLinkRewritingCrossSchemeIT extends AbstractHstLinkRewritingIT {
 
     @Test
     public void testHttpsRequestToHttpsLinks() throws Exception {
-        List<SiteMapItemReference> siteMapItemsToSetHttpsScheme = new ArrayList<SiteMapItemReference>();
+        List<SiteMapItemReference> siteMapItemsToSetHttpsScheme = new ArrayList<>();
         siteMapItemsToSetHttpsScheme.add(new SiteMapItemReference("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news/_default_.html"));
         siteMapItemsToSetHttpsScheme.add(new SiteMapItemReference("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news/_any_.html"));
         try {
@@ -105,7 +105,7 @@ public class HstLinkRewritingCrossSchemeIT extends AbstractHstLinkRewritingIT {
 
     @Test
     public void testHttpsRequestToHttpLinks() throws Exception {
-        List<SiteMapItemReference> siteMapItemsToSetHttpsScheme = new ArrayList<SiteMapItemReference>();
+        List<SiteMapItemReference> siteMapItemsToSetHttpsScheme = new ArrayList<>();
         siteMapItemsToSetHttpsScheme.add(new SiteMapItemReference("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news/_default_.html"));
         siteMapItemsToSetHttpsScheme.add(new SiteMapItemReference("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news/_any_.html"));
         try {
@@ -134,7 +134,7 @@ public class HstLinkRewritingCrossSchemeIT extends AbstractHstLinkRewritingIT {
 
     @Test
     public void testCrossMountHttpToHttpsLinks() throws Exception {
-        List<SiteMapItemReference> siteMapItemsToSetHttpsScheme = new ArrayList<SiteMapItemReference>();
+        List<SiteMapItemReference> siteMapItemsToSetHttpsScheme = new ArrayList<>();
         siteMapItemsToSetHttpsScheme.add(new SiteMapItemReference("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news/_default_.html"));
         siteMapItemsToSetHttpsScheme.add(new SiteMapItemReference("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news/_any_.html"));
         try {

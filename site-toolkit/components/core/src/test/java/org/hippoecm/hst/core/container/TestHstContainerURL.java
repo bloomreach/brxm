@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ public class TestHstContainerURL {
         testUrl1 = new HstContainerURLImpl();
         
         testUrl1.setCharacterEncoding("ISO-8859-1");
+        testUrl1.setURIEncoding("UTF-8");
         testUrl1.setHostName("localhost");
         testUrl1.setPortNumber(8085);
         testUrl1.setContextPath("/site1");
@@ -69,6 +70,9 @@ public class TestHstContainerURL {
         cloned.setCharacterEncoding("UNKNOWN-8");
         assertFalse(cloned.getCharacterEncoding().equals(testUrl1.getCharacterEncoding()));
         
+        cloned.setURIEncoding("UNKNOWN-8");
+        assertFalse(cloned.getURIEncoding().equals(testUrl1.getURIEncoding()));
+
         cloned.setHostName("UnknownHost");
         assertFalse(cloned.getHostName().equals(testUrl1.getHostName()));
         

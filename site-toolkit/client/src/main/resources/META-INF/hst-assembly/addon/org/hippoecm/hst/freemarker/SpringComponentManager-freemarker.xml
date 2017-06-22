@@ -76,7 +76,8 @@
     </property>
   </bean>
 
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.lang.Boolean" />
     <property name="targetObject" ref="jcrObservationEventListenerItems" />
     <property name="targetMethod" value="addAll" />
     <property name="arguments">

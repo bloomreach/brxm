@@ -1,0 +1,25 @@
+definitions:
+  config:
+    /hst:hst/hst:sites:
+      jcr:primaryType: hst:sites
+      /unittestproject:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject
+      /unittestsubproject:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestsubproject
+      /intranettestproject:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject
+      /global:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject
+      /sub1:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject/common
+      /subsub1:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject/common/aboutfolder
+      /sub2:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject/News

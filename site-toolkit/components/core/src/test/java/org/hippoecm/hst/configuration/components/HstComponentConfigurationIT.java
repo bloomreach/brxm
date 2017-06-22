@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,13 @@ package org.hippoecm.hst.configuration.components;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.SimpleCredentials;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 public class HstComponentConfigurationIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
-    private HippoSession session;
+    private Session session;
 
     @Override
     @Before
@@ -57,12 +53,6 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         restoreHstConfigBackup(session);
         session.logout();
         super.tearDown();
-    }
-
-
-    protected HippoSession createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return (HippoSession) repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -37,9 +40,16 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.parameters.HstValueType;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.BLUEPRINT_PROPERTY_CONTEXTPATH;
+import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.channel.ChannelException.Type.CHANNEL_LOCKED;
 import static org.hippoecm.hst.configuration.channel.ChannelException.Type.CHANNEL_OUT_OF_SYNC;
 
@@ -50,13 +60,54 @@ public class ChannelPropertyMapper {
     private ChannelPropertyMapper() {
     }
 
-    public static Channel readChannel(HstNode channelNode) {
-        return readChannel(channelNode, channelNode.getName());
+    public static Channel readBlueprintChannel(final HstNode channelNode) {
+        return readChannel(channelNode, null, false, null, true);
     }
 
-    static Channel readChannel(HstNode channelNode, String channelId) {
+    public static Channel readChannel(final HstNode channelNode, final HstNode configurationNode, final String contextPath) {
+        final String configurationPath;
+        if (configurationNode == null) {
+            configurationPath = null;
+        } else {
+            configurationPath = configurationNode.getValueProvider().getPath();
+        }
+
+        final boolean channelSettingsEditable;
+        if (NODENAME_HST_WORKSPACE.equals(channelNode.getParent().getNodeTypeName())) {
+            // channel node can be inherited from other configuration node
+            HstNode configurationNodeOfChannelNode = channelNode.getParent().getParent();
+            if (configurationNodeOfChannelNode.getValueProvider().getPath().equals(configurationPath)) {
+                log.debug("'{}' node is a child node of '{}' and is not inherited but directly below '{}' hence " +
+                        "the channel settings are editable.", NODENAME_HST_CHANNEL, NODENAME_HST_WORKSPACE, configurationPath);
+                channelSettingsEditable = true;
+            } else {
+                channelSettingsEditable = false;
+            }
+        } else {
+            // channel not in workspace, hence not channelSettingsEditable
+            channelSettingsEditable = false;
+        }
+        return readChannel(channelNode, configurationNode, channelSettingsEditable, contextPath, false);
+    }
+
+    static Channel readChannel(final HstNode channelNode, final HstNode configurationNode,
+                               final boolean channelSettingsEditable, final String contextPath, final boolean isBlueprint) {
+
+        // the hst:configuration node name is unique
+        final String channelId;
+        if (configurationNode == null) {
+            channelId = null;
+        } else {
+            channelId = configurationNode.getName();
+        }
         Channel channel = new Channel(channelId);
-        channel.setName(channelNode.getName());
+        channel.setName(channelId);
+        channel.setChannelSettingsEditable(channelSettingsEditable);
+
+        if (configurationNode != null && configurationNode.getValueProvider().hasProperty(CONFIGURATION_PROPERTY_LOCKED)) {
+            channel.setConfigurationLocked(configurationNode.getValueProvider().getBoolean(CONFIGURATION_PROPERTY_LOCKED));
+        }
+
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME)) {
             channel.setName(channelNode.getValueProvider().getString(HstNodeTypes.CHANNEL_PROPERTY_NAME));
         }
@@ -78,8 +129,8 @@ public class ChannelPropertyMapper {
             channel.setDeletable(channelNode.getValueProvider().getBoolean(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE));
         }
 
-        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-            channel.setChannelNodeLockedBy(channelNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        if (channelNode.getValueProvider().hasProperty(GENERAL_PROPERTY_LOCKED_BY)) {
+            channel.setChannelNodeLockedBy(channelNode.getValueProvider().getString(GENERAL_PROPERTY_LOCKED_BY));
         }
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY)) {
             channel.setLastModifiedBy(channelNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY));
@@ -89,8 +140,8 @@ public class ChannelPropertyMapper {
             channel.setLastModified(channelNode.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
         }
 
-        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-            channel.setLockedOn(channelNode.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON));
+        if (channelNode.getValueProvider().hasProperty(GENERAL_PROPERTY_LOCKED_ON)) {
+            channel.setLockedOn(channelNode.getValueProvider().getDate(GENERAL_PROPERTY_LOCKED_ON));
         }
 
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS)) {
@@ -117,13 +168,37 @@ public class ChannelPropertyMapper {
                     channel.setProperties(properties);
                 }
             } catch (ClassNotFoundException e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Could not load channel info class '{}' for channel '{}'", className, channel.getId(), e);
+                if (isBlueprint) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Could not load channel info class '{}' for channel '{}' for contextPath '{}'. The " +
+                                "channel info class needs to be added to that webapp as well or set the property '{}' with " +
+                                "the correct contextPath on the blueprint node.",
+                                className, channel.getId(), contextPath, BLUEPRINT_PROPERTY_CONTEXTPATH, e);
+                    } else {
+                        log.warn("Could not load channel info class '{}' for channel '{}' for contextPath '{}'. The " +
+                                "channel info class needs to be added to that webapp as well or set the property '{}' with " +
+                                "the correct contextPath on the blueprint node: {}",
+                                className, channel.getId(), contextPath, BLUEPRINT_PROPERTY_CONTEXTPATH, e.toString());
+                    }
+                }
+                else if (contextPath == null) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Could not load channel info class '{}' for channel '{}' for contextPath that is null. For " +
+                                "contextPath agnostic mounts, the channel info needs to be in every HST webapp. ", className, channel.getId(), e);
+                    } else {
+                        log.warn("Could not load channel info class '{}' for channel '{}' for contextPath that is null. For " +
+                                "contextPath agnostic mounts, the channel info needs to be in every HST webapp : {}", className, channel.getId(), e.toString());
+                    }
                 } else {
-                    log.warn("Could not load channel info class '{}' for channel '{}' : {}", className, channel.getId(), e.toString());
+                    if (log.isDebugEnabled()) {
+                        log.warn("Could not load channel info class '{}' for channel '{}'", className, channel.getId(), e);
+                    } else {
+                        log.warn("Could not load channel info class '{}' for channel '{}' : {}", className, channel.getId(), e.toString());
+                    }
                 }
             }
         }
+
         return channel;
     }
 
@@ -179,6 +254,7 @@ public class ChannelPropertyMapper {
                 channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO).remove();
             }
         }
+        // TODO (meggermont): save channel.branches somewhere
     }
 
     static Map<HstPropertyDefinition, Object> loadProperties(HstNode channelInfoNode, List<HstPropertyDefinition> propertyDefinitions) {
@@ -194,7 +270,8 @@ public class ChannelPropertyMapper {
             }
         } else {
             for (Map.Entry<String, Object> property : channelInfoNode.getValueProvider().getProperties().entrySet()) {
-                AbstractHstPropertyDefinition hpd = new AbstractHstPropertyDefinition(property.getKey()) {};
+                AbstractHstPropertyDefinition hpd = new AbstractHstPropertyDefinition(property.getKey()) {
+                };
                 properties.put(hpd, getHstValueFromObject(hpd, property));
             }
         }
@@ -219,8 +296,8 @@ public class ChannelPropertyMapper {
     private static Object getHstValueFromObject(final HstPropertyDefinition pd, final Object property) {
         Object value;
         if (property.getClass().isArray()) {
-            List<Object> valueList = (List<Object>)(value =  new LinkedList());
-            for (Object propVal : (Object[])property) {
+            List<Object> valueList = (List<Object>) (value = new LinkedList());
+            for (Object propVal : (Object[]) property) {
                 if (correctType(propVal, pd.getValueType())) {
                     valueList.add(propVal);
                 } else {
@@ -250,7 +327,7 @@ public class ChannelPropertyMapper {
                 return property instanceof Double;
             case INTEGER:
                 // fall through: JCR does not support int but long, so return a long
-                 return property instanceof Long;
+                return property instanceof Long;
             case LONG:
                 return property instanceof Long;
             default:
@@ -292,7 +369,7 @@ public class ChannelPropertyMapper {
                 log.warn("Cannot store a Integer (Long in jcr) '{}' for '{}'. Store default value instead", value, propDef.getName());
                 return defaultValueToJcr(vf, propDef);
             } else {
-                return vf.createValue(((Integer)value).longValue());
+                return vf.createValue(((Integer) value).longValue());
             }
         } else if (value instanceof Long) {
             if (propDef.getValueType() != HstValueType.LONG) {
@@ -351,19 +428,19 @@ public class ChannelPropertyMapper {
                     log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
                     return vf.createValue(0L);
                 }
-                return vf.createValue(((Integer)propDef.getDefaultValue()).longValue());
+                return vf.createValue(((Integer) propDef.getDefaultValue()).longValue());
             case LONG:
                 if (!(propDef.getDefaultValue() instanceof Long)) {
                     log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
                     return vf.createValue(0L);
                 }
-                return vf.createValue((Long)propDef.getDefaultValue());
+                return vf.createValue((Long) propDef.getDefaultValue());
             default:
                 throw new RuntimeException("Unexpected HstValueType " + propDef.getDefaultValue().getClass().getName());
         }
     }
 
-    public static  boolean isLockedBySomeoneElse(Node configurationNode) throws RepositoryException {
+    public static boolean isLockedBySomeoneElse(Node configurationNode) throws RepositoryException {
         final String holder = getLockedBy(configurationNode);
         if (StringUtils.isEmpty(holder)) {
             return false;
@@ -371,7 +448,7 @@ public class ChannelPropertyMapper {
         return !configurationNode.getSession().getUserID().equals(holder);
     }
 
-    public static  boolean isLockedBySession(Node configurationNode) throws RepositoryException {
+    public static boolean isLockedBySession(Node configurationNode) throws RepositoryException {
         final String holder = getLockedBy(configurationNode);
         if (StringUtils.isEmpty(holder)) {
             return false;
@@ -379,24 +456,23 @@ public class ChannelPropertyMapper {
         return configurationNode.getSession().getUserID().equals(holder);
     }
 
-    public static  String getLockedBy(Node configurationNode) throws RepositoryException {
-        if (!configurationNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+    public static String getLockedBy(Node configurationNode) throws RepositoryException {
+        if (!configurationNode.hasProperty(GENERAL_PROPERTY_LOCKED_BY)) {
             return null;
         }
-        return configurationNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
+        return configurationNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).getString();
     }
 
     /**
      * tries to set a lock. If there is not yet a lock, then also
      * a timestamp validation is done whether the configuration node that needs to be locked has not been modified
      * by someone else
-     *
      */
     public static void tryLockOnNodeIfNeeded(final Node nodeToLock, final long validateLastModifiedTimestamp) throws RepositoryException, ChannelException {
         Session session = nodeToLock.getSession();
         if (isLockedBySomeoneElse(nodeToLock)) {
             log.info("Node '{}' is already locked by someone else.", nodeToLock.getPath());
-            throw new ChannelException("Node '"+nodeToLock.getPath()+"' is already locked by someone else.", CHANNEL_LOCKED);
+            throw new ChannelException("Node '" + nodeToLock.getPath() + "' is already locked by someone else.", CHANNEL_LOCKED);
         }
         if (isLockedBySession(nodeToLock)) {
             log.debug("Container '{}' already has a lock for user '{}'.", nodeToLock.getPath(), session.getUserID());
@@ -413,15 +489,15 @@ public class ChannelPropertyMapper {
                 DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS zzz", Locale.US);
                 log.info("Node '{}' has been modified at '{}' but validation timestamp was '{}'. Cannot acquire lock now for user '{}'.",
                         new String[]{nodeToLock.getPath(), dateFormat.format(existing.getTime()),
-                                dateFormat.format(validate.getTime()) , session.getUserID()});
-                throw new ChannelException("Node '"+nodeToLock.getPath()+"' cannot be changed because timestamp validation did not pass.", CHANNEL_OUT_OF_SYNC);
+                                dateFormat.format(validate.getTime()), session.getUserID()});
+                throw new ChannelException("Node '" + nodeToLock.getPath() + "' cannot be changed because timestamp validation did not pass.", CHANNEL_OUT_OF_SYNC);
             }
         }
         log.info("Node '{}' gets a lock for user '{}'.", nodeToLock.getPath(), session.getUserID());
-        nodeToLock.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, session.getUserID());
+        nodeToLock.setProperty(GENERAL_PROPERTY_LOCKED_BY, session.getUserID());
         Calendar now = Calendar.getInstance();
-        if (!nodeToLock.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-            nodeToLock.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, now);
+        if (!nodeToLock.hasProperty(GENERAL_PROPERTY_LOCKED_ON)) {
+            nodeToLock.setProperty(GENERAL_PROPERTY_LOCKED_ON, now);
         }
         nodeToLock.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
         nodeToLock.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, Calendar.getInstance());

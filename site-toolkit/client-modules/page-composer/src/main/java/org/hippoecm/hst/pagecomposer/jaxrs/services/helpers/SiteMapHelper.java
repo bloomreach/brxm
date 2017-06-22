@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,10 +28,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
-import com.google.common.base.Optional;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -45,6 +41,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
@@ -97,6 +94,11 @@ public class SiteMapHelper extends AbstractHelper {
     public HstSiteMapItem getConfigObject(final String itemId, final Mount mount) {
         final HstSite site = mount.getHstSite();
         return getSiteMapItem(site.getSiteMap(), itemId);
+    }
+
+    @Override
+    protected String getNodeType() {
+        return NODETYPE_HST_SITEMAPITEM;
     }
 
     public void update(final SiteMapItemRepresentation siteMapItem, final boolean reApplyPrototype) throws RepositoryException {
@@ -186,7 +188,8 @@ public class SiteMapHelper extends AbstractHelper {
         Node parent = session.getNodeByIdentifier(finalParentId);
 
         final String encodedName = getURLDecodedJcrEncodedName(siteMapItem.getName());
-        validateTarget(session, parent.getPath() + "/" + encodedName, pageComposerContextService.getEditingPreviewSite().getSiteMap());
+        validateTarget(session, parent.getPath() + "/" + encodedName,
+                pageComposerContextService.getEditingPreviewSite().getSiteMap());
 
         final Node newSitemapNode = parent.addNode(encodedName, NODETYPE_HST_SITEMAPITEM);
         lockHelper.acquireLock(newSitemapNode, 0);
@@ -416,7 +419,8 @@ public class SiteMapHelper extends AbstractHelper {
             throw new ClientException(message, ClientError.ITEM_ALREADY_LOCKED);
         }
         lockHelper.acquireLock(sourceNode, 0);
-        validateTarget(session, targetParent.getPath() + "/" + finalName, pageComposerContextService.getEditingPreviewSite().getSiteMap());
+        validateTarget(session, targetParent.getPath() + "/" + finalName,
+                pageComposerContextService.getEditingPreviewSite().getSiteMap());
         String oldLocation = sourceNode.getPath();
         session.move(currentParent.getPath() + "/" + sourceNode.getName(), targetParent.getPath() + "/" + finalName);
         createMarkedDeletedIfLiveExists(session, oldLocation);
@@ -498,78 +502,85 @@ public class SiteMapHelper extends AbstractHelper {
             String msg = String.format("Target '%s' does not contain '%s'.", target, WORKSPACE_PATH_ELEMENT);
             throw new ClientException(msg, ClientError.ITEM_NOT_CORRECT_LOCATION);
         }
+        if (!session.nodeExists(StringUtils.substringBeforeLast(target, "/"))) {
+            final String message = String.format("Parent of target node '%s' does not exist", target);
+            throw new ClientException(message, ClientError.INVALID_URL);
+        }
+
         if (session.nodeExists(target)) {
             Node targetNode = session.getNode(target);
             if (isMarkedDeleted(targetNode)) {
                 // see if we own the lock
                 lockHelper.acquireLock(targetNode, 0);
                 targetNode.remove();
+                // target is valid to be created
+                return;
             } else {
-                final String message = String.format("Target node '%s' already exists", targetNode.getPath());
+                final String message = String.format("Target node '%s' already exists", target);
                 throw new ClientException(message, ClientError.ITEM_NAME_NOT_UNIQUE);
             }
         }
 
+        // check whether there is an explicit sitemap item match in the siteMap : If there is, the
+        // target is only valid if the found sitemap item is part of *a* (inherited) workspace and it is not allowed if it is a
+        // non-workspace item. Also if the item cannot be found or is not an explicit (non wildcard) sitemap item *or* is not a
+        // workspace item, the target is not valid
+
         final CanonicalInfo canonical = (CanonicalInfo)siteMap;
-        if (canonical.isWorkspaceConfiguration()) {
-            // the hst:sitemap node is from workspace so there is no non workspace sitemap for current site (inherited one
-            // does not have precendence)
+
+        final Node siteMapNode = session.getNodeByIdentifier(canonical.getCanonicalIdentifier());
+        String siteMapPath = siteMapNode.getPath();
+
+        final String targetConfig = StringUtils.substringBefore(target, "/hst:workspace");
+
+        if (!siteMapPath.startsWith(targetConfig)) {
+            // in an exceptional cae, it can occur that the sitemap in workspace has just been created and hence the
+            // currently loaded model contains a reference to the old sitemap node. If this is the case, the target is
+            // still valid
+            if (!target.startsWith(StringUtils.substringBefore(siteMapPath, "/hst:sitemap") + "-preview/hst:workspace/hst:sitemap")) {
+                String msg = String.format("Target '%s' is not valid for sitemap '%s'.",
+                        target, siteMapPath);
+                throw new ClientException(msg, ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE);
+            }
+
+        }
+
+        final String siteMapRelPath = target.substring(siteMapNode.getPath().length() + 1);
+
+        String[] elements = siteMapRelPath.split("/");
+
+        HstSiteMapItem siteMapItem = siteMap.getSiteMapItem(elements[0]);
+        for (int i = 1; i < elements.length ; i++ ) {
+            if (siteMapItem == null) {
+                break;
+            }
+            siteMapItem = siteMapItem.getChild(elements[i]);
+        }
+        if (siteMapItem == null) {
+            log.debug("Target path '{}' can be created because it does not yet exist.", target);
             return;
-        } else {
-            // non workspace sitemap
-            final Node siteMapNode = session.getNodeByIdentifier(canonical.getCanonicalIdentifier());
-            final Node siteNode = siteMapNode.getParent();
-            if (!siteNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
-                String msg = String.format("Expected node type '%s' for '%s' but was '%s'.",
-                        HstNodeTypes.NODETYPE_HST_CONFIGURATION, siteNode.getPath(), siteNode.getPrimaryNodeType().getName());
-                throw new ClientException(msg, ClientError.UNKNOWN);
-            }
-            if (!target.startsWith(siteNode.getPath() + "/")) {
-                String msg = String.format("Target '%s' does not start with the path of the targeted hst site '%s'.",
-                        target, siteMapNode.getPath());
-                throw new ClientException(msg, ClientError.UNKNOWN);
-            }
-            // check whether non workspace sitemap does not already contain the target without /hst:workspace/ part
-            String nonWorkspaceTarget = target.replace(WORKSPACE_PATH_ELEMENT, "/");
-            // now we have a path like /hst:hst/hst:configurations/myproject/hst:sitemap/foo/bar/lux
-            // we need to make sure 'foo' does not already exist
-            String siteMapRelPath = nonWorkspaceTarget.substring(siteMapNode.getPath().length() + 1);
-            String[] segments = siteMapRelPath.split("/");
-            if (siteMapNode.hasNode(segments[0])) {
-                final String message = String.format("Target '%s' not allowed since the *non-workspace* sitemap already contains '%s'", target, siteMapNode.getPath() + "/" + segments[0]);
-                throw new ClientException(message, ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE);
-            }
-            // valid!
-            return;
-        }
-    }
-
-    @Override
-    protected String buildXPathQueryLockedNodesForUsers(final String previewConfigurationPath,
-                                                        final List<String> userIds) {
-        if (userIds.isEmpty()) {
-            throw new IllegalArgumentException("List of user IDs cannot be empty");
         }
 
-        StringBuilder xpath = new StringBuilder("/jcr:root");
-        xpath.append(ISO9075.encodePath(previewConfigurationPath));
-        xpath.append("//element(*,");
-        xpath.append(NODETYPE_HST_SITEMAPITEM);
-        xpath.append(")[");
+        log.debug("Target '{}' can be matched in current sitemap. Now check whether the sitemap item that is matched " +
+                "belongs to the current hst:workspace/hst:sitemap, otherwise, it still can't be used");
 
-        String concat = "";
-        for (String userId : userIds) {
-            xpath.append(concat);
-            xpath.append('@');
-            xpath.append(GENERAL_PROPERTY_LOCKED_BY);
-            xpath.append(" = '");
-            xpath.append(userId);
-            xpath.append("'");
-            concat = " or ";
+        CanonicalInfo item = (CanonicalInfo) siteMapItem;
+        Node siteMapItemNode = session.getNodeByIdentifier(item.getCanonicalIdentifier());
+
+        String existingItem = siteMapItemNode.getPath();
+        if (existingItem.startsWith(siteMapPath)) {
+            String msg = String.format("Target path '%s' already exists in current sitemap.",
+                    target, siteMapPath);
+            throw new ClientException(msg, ClientError.ITEM_EXISTS);
         }
-        xpath.append("]");
+        if (!existingItem.contains("/hst:workspace/hst:sitemap")) {
+            String msg = String.format("Target path '%s' already exists in inherited configuration but is there not " +
+                    "below hst:workspace/hst:sitemap and thus cannot be added in subproject.",
+                    target);
+            throw new ClientException(msg, ClientError.ITEM_EXISTS_OUTSIDE_WORKSPACE);
+        }
 
-        return xpath.toString();
+
     }
 
     private String getSiteMapPathPrefixPart(final Node siteMapNode) throws RepositoryException {
@@ -615,7 +626,7 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
     private String getEncoding(final HstRequestContext requestContext) {
-        return Optional.fromNullable(requestContext.getServletRequest().getCharacterEncoding()).or("UTF-8");
+        return HstRequestUtils.getURIEncoding(requestContext.getServletRequest());
     }
 
 }

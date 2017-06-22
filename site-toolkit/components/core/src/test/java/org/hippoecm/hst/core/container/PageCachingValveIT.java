@@ -555,6 +555,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
 
         headerComponent.setProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, HeaderComponentWithResponseHeaders.class.getName());
         getSession().save();
+        Thread.sleep(100);
     }
 
 

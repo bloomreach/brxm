@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:hst:
+      jcr:primaryType: hipposys:resourcebundles
+      /componentparameters:
+        jcr:primaryType: hipposys:resourcebundles
+        /org:
+          jcr:primaryType: hipposys:resourcebundles
+          /onehippo:
+            jcr:primaryType: hipposys:resourcebundles

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.hst.Channel;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.ServletContextAware;
 
@@ -43,12 +43,6 @@ public class ChannelManagerOtherContextPathIT extends AbstractTestConfigurations
         hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
     }
 
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     @Test
     public void channels_for_current_contextpath_slashsite2_only_are_loaded() throws Exception {
         // now change the contextpath to site2: Now only 'intranettestchannel' is expected to be part of the channels
@@ -58,9 +52,9 @@ public class ChannelManagerOtherContextPathIT extends AbstractTestConfigurations
         ((ServletContextAware)componentManager.getComponent(HstManager.class.getName()))
                 .setServletContext(servletContext);
         Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
-        assertFalse("testchannel should not be part of channels since has wrong contextpath",
-                channels.containsKey("testchannel"));
-        assertTrue("intranettestchannel should be part of channels since has wrong contextpath",
-                channels.containsKey("intranettestchannel"));
+        assertFalse("unittestproject should not be part of channels since has wrong contextpath",
+                channels.containsKey("unittestproject"));
+        assertTrue("intranettestproject should be part of channels since has wrong contextpath",
+                channels.containsKey("intranettestproject"));
     }
 }

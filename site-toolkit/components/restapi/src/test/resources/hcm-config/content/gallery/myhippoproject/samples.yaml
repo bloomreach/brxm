@@ -1,0 +1,95 @@
+definitions:
+  config:
+    /unittestcontent/gallery/myhippoproject/samples:
+      jcr:primaryType: hippogallery:stdImageGallery
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 080119d2-722f-4112-8d2a-0c187beee4cc
+      hippostd:foldertype: [new-image-folder]
+      hippostd:gallerytype: ['hippogallery:imageset']
+      /viognier-grapes-188185_640.jpg:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: beff458e-e07a-4065-8cad-8d96b67d13ec
+        /viognier-grapes-188185_640.jpg:
+          jcr:primaryType: hippogallery:imageset
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 11847aab-a33f-4965-bc2f-cd338a4a1ab3
+          hippo:availability: [live, preview]
+          hippogallery:description: Description for viognier-grapes-188185_640.jpg
+          hippogallery:filename: viognier-grapes-188185_640.jpg
+          /hippogallery:thumbnail:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 60
+            hippogallery:width: 58
+            jcr:data:
+              type: binary
+              resource: /unittestcontent/gallery/myhippoproject/samples/viognier-grapes-188185_640.jpg/viognier-grapes-188185_640_thumbnail.jpg
+            jcr:lastModified: 2013-11-12T12:15:00+01:00
+            jcr:mimeType: image/jpeg
+          /hippogallery:original:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 640
+            hippogallery:width: 625
+            jcr:data:
+              type: binary
+              resource: /unittestcontent/gallery/myhippoproject/samples/viognier-grapes-188185_640.jpg/viognier-grapes-188185_640_original.jpg
+            jcr:lastModified: 2013-11-12T12:15:00+01:00
+            jcr:mimeType: image/jpeg
+      /animal-2883_640.jpg:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 4709f797-61ae-4c36-93d4-63b5d50fc200
+        /animal-2883_640.jpg:
+          jcr:primaryType: hippogallery:imageset
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 94e91ff6-8690-497c-8c54-850843d2c9aa
+          hippo:availability: [live, preview]
+          hippogallery:description: Description for animal-2883_640.jpg
+          hippogallery:filename: animal-2883_640.jpg
+          /hippogallery:thumbnail:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 39
+            hippogallery:width: 60
+            jcr:data:
+              type: binary
+              resource: /unittestcontent/gallery/myhippoproject/samples/animal-2883_640.jpg/animal-2883_640_thumbnail.jpg
+            jcr:lastModified: 2013-11-12T12:15:00+01:00
+            jcr:mimeType: image/jpeg
+          /hippogallery:original:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 426
+            hippogallery:width: 640
+            jcr:data:
+              type: binary
+              resource: /unittestcontent/gallery/myhippoproject/samples/animal-2883_640.jpg/animal-2883_640_original.jpg
+            jcr:lastModified: 2013-11-12T12:15:00+01:00
+            jcr:mimeType: image/jpeg
+      /snail-193611_640.jpg:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 3c740fcf-8ec5-4f00-a713-ff96caa645c8
+        /snail-193611_640.jpg:
+          jcr:primaryType: hippogallery:imageset
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: b0572467-095e-4c26-95a2-cff626173074
+          hippo:availability: [live, preview]
+          hippogallery:description: Description for snail-193611_640.jpg
+          hippogallery:filename: snail-193611_640.jpg
+          /hippogallery:thumbnail:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 45
+            hippogallery:width: 60
+            jcr:data:
+              type: binary
+              resource: /unittestcontent/gallery/myhippoproject/samples/snail-193611_640.jpg/snail-193611_640_thumbnail.jpg
+            jcr:lastModified: 2013-11-12T12:13:00+01:00
+            jcr:mimeType: image/jpeg
+          /hippogallery:original:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 480
+            hippogallery:width: 640
+            jcr:data:
+              type: binary
+              resource: /unittestcontent/gallery/myhippoproject/samples/snail-193611_640.jpg/snail-193611_640_original.jpg
+            jcr:lastModified: 2013-11-12T12:13:00+01:00
+            jcr:mimeType: image/jpeg

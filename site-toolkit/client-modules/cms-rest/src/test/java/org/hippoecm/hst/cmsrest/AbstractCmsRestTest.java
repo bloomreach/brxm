@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 package org.hippoecm.hst.cmsrest;
 
 
+import java.util.List;
+
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -27,6 +29,8 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
+import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
@@ -36,7 +40,7 @@ import org.springframework.web.context.ServletContextAware;
 
 public abstract class AbstractCmsRestTest {
 
-    protected ComponentManager componentManager;
+    protected SpringComponentManager componentManager;
     protected HstManager hstManager;
 
     private MockServletContext servletContext;
@@ -54,6 +58,12 @@ public abstract class AbstractCmsRestTest {
         servletContext2.setContextPath("/site2");
         ServletContextRegistry.register(servletContext2, ServletContextRegistry.WebAppType.HST);
         componentManager.setServletContext(servletContext2);
+
+        final List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
+        if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
+            componentManager.setAddonModuleDefinitions(addonModuleDefinitions);
+        }
+
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());

@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/hippofolders/readonly:
+      jcr:primaryType: hipposys:authrole
+      hipposys:groups: []
+      hipposys:role: readonly

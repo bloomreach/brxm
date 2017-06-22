@@ -1,0 +1,48 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestcommon/hst:templates:
+      jcr:primaryType: hst:templates
+      /webpage:
+        jcr:primaryType: hst:template
+        hst:containers: [header]
+        hst:renderpath: jsp/webpage.jsp
+      /header:
+        jcr:primaryType: hst:template
+        hst:containers: [title]
+        hst:renderpath: jsp/components/header.jsp
+      /title:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/title.jsp
+      /overview:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/overview.jsp
+      /twopaneoverview:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/twopaneoverview.jsp
+      /detail:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/detail.jsp
+      /contact:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/contact.jsp
+      /simplesearch:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/simplesearch.jsp
+      /uniquelinks:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/uniquelinks.jsp
+      /contactspring:
+        jcr:primaryType: hst:template
+        hst:renderpath: spring/contactspring.do
+      /contactspringmvc:
+        jcr:primaryType: hst:template
+        hst:renderpath: spring/contactspringmvc.do
+      /thankyou:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/thankyou.jsp
+      /leftmenu:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/leftmenu.jsp
+      /prototype:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/prototype.jsp

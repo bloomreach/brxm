@@ -1,0 +1,29 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestproject/hst:sitemenus:
+      jcr:primaryType: hst:sitemenus
+      /main:
+        jcr:primaryType: hst:sitemenu
+        /News:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 3
+          hst:referencesitemapitem: news
+          hst:repobased: true
+        /Contact:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: contact
+        /Contact-Spring:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: contact-spring
+        /Contact-Dispatch:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: contact-dispatch
+        /Contact-SpringMVC:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: contact-springmvc
+        /Search:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: search
+        /UniqueLinks:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: uniquelinks

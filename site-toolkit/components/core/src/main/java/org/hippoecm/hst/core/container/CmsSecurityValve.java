@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,15 +35,13 @@ import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 
+import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_USER_ID_ATTR;
-import static org.hippoecm.hst.core.container.ContainerConstants.CMS_SSO_AUTHENTICATED;
-import static org.hippoecm.hst.core.container.ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME;
-import static org.hippoecm.hst.core.container.ContainerConstants.CMS_USER_ID_ATTR;
 
 /**
  * <p>
@@ -65,9 +62,9 @@ import static org.hippoecm.hst.core.container.ContainerConstants.CMS_USER_ID_ATT
  */
 public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
-    private static final String HSTSESSIONID_COOKIE_NAME = "HSTSESSIONID";
-
     private SessionSecurityDelegation sessionSecurityDelegation;
+
+    private final String[] CMS_INTERACTION_ATTRIBUTES = new String[]{HST_SITE_PROVIDER_HTTP_SESSION_KEY};
 
     public void setSessionSecurityDelegation(SessionSecurityDelegation sessionSecurityDelegation) {
         this.sessionSecurityDelegation = sessionSecurityDelegation;
@@ -130,6 +127,10 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             if (httpSession == null) {
                 httpSession = servletRequest.getSession(true);
             }
+            // since the HST http session could still exist from a previous login, clean up attributes that might have
+            // been set during earlier cms interaction
+            cleanupCmsInteractionAttributes(httpSession);
+
             cmsSessionContext = cmsContextService.attachSessionContext(cmsSessionContextId, httpSession);
             if (cmsSessionContext == null) {
                 httpSession.invalidate();
@@ -139,20 +140,13 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             }
         }
 
-        updateHstSessionCookie(servletRequest, servletResponse, httpSession);
-
         servletRequest.setAttribute(CMS_REQUEST_USER_ID_ATTR, cmsSessionContext.getRepositoryCredentials().getUserID());
         servletRequest.setAttribute(CMS_REQUEST_REPO_CREDS_ATTR, cmsSessionContext.getRepositoryCredentials());
 
-        // TODO: remove this with 5.0 / CMS 12.0
-        {
-            httpSession.setAttribute(CMS_USER_ID_ATTR, cmsSessionContext.getRepositoryCredentials().getUserID());
-            httpSession.setAttribute(CMS_SSO_REPO_CREDS_ATTR_NAME, cmsSessionContext.getRepositoryCredentials());
-            httpSession.setAttribute(CMS_SSO_AUTHENTICATED, Boolean.TRUE);
-        }
-
-        // we need to synchronize on a http session as a jcr session which is tied to it is not thread safe. Also, virtual states will be lost
-        // if another thread flushes this session.
+        // We synchronize on http session to disallow concurrent requests for the Channel manager. Note it is questionable
+        // whether this is still needed : The synchronization originates from the time we did not use a (fresh) new jcr
+        // session for every CM request, which we now do....so perhaps removing this synchronization completely makes
+        // most sense. For now we keep it because we can't oversee the impact and thus need extensive testing
         synchronized (httpSession) {
             Session jcrSession = null;
             try {
@@ -194,6 +188,12 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         }
     }
 
+    private void cleanupCmsInteractionAttributes(final HttpSession httpSession) {
+        for (String s : CMS_INTERACTION_ATTRIBUTES) {
+            httpSession.removeAttribute(s);
+        }
+    }
+
     private static void sendError(final HttpServletResponse servletResponse, final int errorCode) throws ContainerException {
         try {
             servletResponse.sendError(errorCode);
@@ -227,13 +227,13 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
     private static String createCmsAuthenticationUrl(final HttpServletRequest servletRequest, final HstRequestContext requestContext, final String cmsContextServiceId) throws ContainerException {
         final String farthestRequestUrlPrefix = getFarthestUrlPrefix(servletRequest);
         final String cmsLocation = getCmsLocationByPrefix(requestContext, farthestRequestUrlPrefix);
-        final String destinationURL = createDestinationUrl(servletRequest, requestContext, farthestRequestUrlPrefix);
+        final String destinationPath = createDestinationPath(servletRequest, requestContext);
 
         final StringBuilder authUrl = new StringBuilder(cmsLocation);
         if (!cmsLocation.endsWith("/")) {
             authUrl.append("/");
         }
-        authUrl.append("auth?destinationUrl=").append(destinationURL);
+        authUrl.append("auth?destinationPath=").append(destinationPath);
         if (cmsContextServiceId != null) {
             authUrl.append("&cmsCSID=").append(cmsContextServiceId);
         }
@@ -257,40 +257,23 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         throw new ContainerException("Could not establish a SSO between CMS & site application because no CMS location could be found that starts with '" + prefix + "'");
     }
 
-    private static String createDestinationUrl(final HttpServletRequest servletRequest, final HstRequestContext requestContext, final String prefix) {
-        final StringBuilder destinationURL = new StringBuilder(prefix);
+    private static String createDestinationPath(final HttpServletRequest servletRequest, final HstRequestContext requestContext) {
+        final StringBuilder destinationPath = new StringBuilder();
 
-        // we append the request uri including the context path (normally this is /site/...)
-        destinationURL.append(servletRequest.getRequestURI());
+        // we start with the request uri including the context path (normally this is /site/...)
+        destinationPath.append(servletRequest.getRequestURI());
 
         if (requestContext.getPathSuffix() != null) {
             final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
             final String subPathDelimiter = hstManager.getPathSuffixDelimiter();
-            destinationURL.append(subPathDelimiter).append(requestContext.getPathSuffix());
+            destinationPath.append(subPathDelimiter).append(requestContext.getPathSuffix());
         }
 
         final String queryString = servletRequest.getQueryString();
         if (queryString != null) {
-            destinationURL.append("?").append(queryString);
+            destinationPath.append("?").append(queryString);
         }
-        return destinationURL.toString();
-    }
-
-    private static void updateHstSessionCookie(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse, final HttpSession session) {
-        final Cookie[] cookies = servletRequest.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (HSTSESSIONID_COOKIE_NAME.equals(cookie.getName()) && session.getId().equals(cookie.getValue())) {
-                    // HSTSESSIONID_COOKIE_NAME cookie already present and correct
-                    return;
-                }
-            }
-        }
-        // (java) session cookie may not be available to the client-side javascript code,
-        // as the cookie may be secured by the container (useHttpOnly=true).
-        Cookie sessionIdCookie = new Cookie(HSTSESSIONID_COOKIE_NAME, session.getId());
-        sessionIdCookie.setMaxAge(-1);
-        servletResponse.addCookie(sessionIdCookie);
+        return destinationPath.toString();
     }
 
     private static boolean isCmsRestOrPageComposerRequest(final HttpServletRequest servletRequest) {

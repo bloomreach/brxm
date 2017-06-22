@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,10 +37,12 @@ import org.hippoecm.hst.core.container.ComponentsException;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConfigurationImpl;
 import org.hippoecm.hst.core.container.ModuleNotFoundException;
+import org.hippoecm.hst.core.order.ObjectOrderer;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.addon.module.runtime.ModuleInstanceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
@@ -149,17 +151,34 @@ public class SpringComponentManager implements ComponentManager {
         applicationContext.refresh();
 
         if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
+
+            // sort the addon module to makes sure the ones that rely on a 'parent' are loaded after the parent is loaded
+            orderAddonModuleDefinitions();
+
             addonModuleInstancesMap = Collections.synchronizedMap(new HashMap<String, ModuleInstance>());
             
             for (ModuleDefinition addonModuleDefinition : addonModuleDefinitions) {
                 ModuleInstance addonModuleInstance = new ModuleInstanceImpl(addonModuleDefinition);
-                
+
+                ApplicationContext parentApplicationContext;
+                if (addonModuleDefinition.getParent() != null) {
+                    ModuleInstanceImpl parentModuleInstance = (ModuleInstanceImpl)addonModuleInstancesMap.get(addonModuleDefinition.getParent());
+                    if (parentModuleInstance == null) {
+                        log.error(String.format("Failed to initialize invalid module instance, %s, because the parent " +
+                                "'%s' does not exist. Module instance will be ignored.", addonModuleInstance.getFullName(), addonModuleDefinition.getParent()));
+                        continue;
+                    }
+                    parentApplicationContext = parentModuleInstance.getApplicationContext();
+                } else {
+                    parentApplicationContext = applicationContext;
+                }
+
                 if (addonModuleInstance instanceof ComponentManagerAware) {
                     ((ComponentManagerAware) addonModuleInstance).setComponentManager(this);
                 }
                 
                 if (addonModuleInstance instanceof ApplicationContextAware) {
-                    ((ApplicationContextAware) addonModuleInstance).setApplicationContext(applicationContext);
+                    ((ApplicationContextAware) addonModuleInstance).setApplicationContext(parentApplicationContext);
                 }
                 
                 try {
@@ -167,7 +186,7 @@ public class SpringComponentManager implements ComponentManager {
                     addonModuleInstance.initialize();
                     addonModuleInstancesMap.put(addonModuleInstance.getName(), addonModuleInstance);
                 } catch (Exception e) {
-                    log.warn("Failed to initialize invalid module instance, " + addonModuleInstance.getFullName() + ", which will be just closed and ignored.", e);
+                    log.error("Failed to initialize invalid module instance, " + addonModuleInstance.getFullName() + ", which will be just closed and ignored.", e);
                     
                     try {
                         addonModuleInstance.close();
@@ -178,9 +197,17 @@ public class SpringComponentManager implements ComponentManager {
             }
 
             synchronized (addonModuleInstancesMap) {
-                addonModuleInstancesList = Collections.synchronizedList(new ArrayList<ModuleInstance>(addonModuleInstancesMap.values()));
+                addonModuleInstancesList = Collections.synchronizedList(new ArrayList<>(addonModuleInstancesMap.values()));
             }
         }
+    }
+
+    private void orderAddonModuleDefinitions() {
+        ObjectOrderer<ModuleDefinition> objectOrderer = new ObjectOrderer<>("Addon Module Definition Orderer");
+        for (ModuleDefinition addonModuleDefinition : addonModuleDefinitions) {
+            objectOrderer.add(addonModuleDefinition, addonModuleDefinition.getName(), addonModuleDefinition.getParent(), null);
+        }
+        addonModuleDefinitions = objectOrderer.getOrderedObjects();
     }
 
     public void start() {

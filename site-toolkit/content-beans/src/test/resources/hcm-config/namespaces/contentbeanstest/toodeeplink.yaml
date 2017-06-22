@@ -1,0 +1,38 @@
+definitions:
+  config:
+    /hippo:namespaces/contentbeanstest/toodeeplink:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 93da6e27-a083-46ce-aafa-3081b78b450d
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 454ef7e1-a2c7-4a29-bda4-2bfb789fa085
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          jcr:uuid: 55e83aa2-153e-48f9-9309-3084ad9cf40b
+          hipposysedit:node: true
+          hipposysedit:supertype: ['hippo:compound', 'hippostd:relaxed']
+          hipposysedit:uri: http://www.onehippo.org/contentbeanstest/nt/1.0
+          /contentbeanstest_deepestlink:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:contentbeanstest_deepestlink
+            hipposysedit:primary: false
+            hipposysedit:type: contentbeanstest:deepestlink
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: contentbeanstest:toodeeplink
+          /contentbeanstest:contentbeanstest_deepestlink:
+            jcr:primaryType: contentbeanstest:deepestlink
+            /contentbeanstest:contentbeanstest_deeperlink:
+              jcr:primaryType: contentbeanstest:deeperlink
+              /contentbeanstest:contentbeanstest_deeplink:
+                jcr:primaryType: contentbeanstest:deeplink
+                /contentbeanstest:hippo_mirror:
+                  jcr:primaryType: hippo:mirror
+                  hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe

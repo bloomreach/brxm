@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,7 @@ import javax.jcr.query.QueryResult;
 import com.google.common.collect.Iterables;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
@@ -40,6 +42,7 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
@@ -48,6 +51,8 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_
 public abstract class AbstractHelper {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractHelper.class);
+    public static final String SEEMS_TO_INDICATE_LIVE_AND_PREVIEW_CONFIGURATIONS_ARE_OUT_OF_SYNC_WHICH_INDICATES_AN_ERROR =
+            "seems to indicate live and preview configurations are out of sync which indicates an error";
 
     protected LockHelper lockHelper = new LockHelper();
     protected PageComposerContextService pageComposerContextService;
@@ -66,6 +71,8 @@ public abstract class AbstractHelper {
     public abstract <T> T getConfigObject(String id);
 
     public abstract <T> T getConfigObject(final String itemId, final Mount mount);
+
+    protected abstract String getNodeType();
 
     protected void removeProperty(Node node, String name) throws RepositoryException {
         if (node.hasProperty(name)) {
@@ -128,6 +135,7 @@ public abstract class AbstractHelper {
         String liveConfigurationPath = pageComposerContextService.getEditingLiveConfigurationPath();
         String previewConfigurationPath = pageComposerContextService.getEditingPreviewConfigurationPath();
         final Session session = pageComposerContextService.getRequestContext().getSession();
+        final Map<Node, Node> checkReorderMap = new IdentityHashMap<>();
         for (Node lockedNode : lockedNodes) {
             String relPath = lockedNode.getPath().substring(previewConfigurationPath.length());
 
@@ -147,50 +155,53 @@ public abstract class AbstractHelper {
                 } else {
                     log.info("Publishing '{}'", lockedNode.getPath());
                     Node copy = JcrUtils.copy(session, lockedNode.getPath(), liveConfigurationPath + relPath);
-                    reorderCopyIfNeeded(lockedNode, copy);
+                    checkReorderMap.put(lockedNode, copy);
                 }
             }
-
+        }
+        for (Map.Entry<Node, Node> entry : checkReorderMap.entrySet()) {
+            reorderCopyIfNeeded(entry.getKey(), entry.getValue());
         }
     }
 
     /**
-     * Reorder the {@code copy} ot be in the same location as {@code source} with respect to their parents in case the
+     * Reorder the {@code copied} to be in the same position as {@code source} with respect to their parents in case the
      * parents are orderable.
      * @param source
-     * @param copy
+     * @param copied
      * @throws RepositoryException
      */
-    private void reorderCopyIfNeeded(final Node source, final Node copy) throws RepositoryException {
+    private void reorderCopyIfNeeded(final Node source, final Node copied) throws RepositoryException {
 
         if (!source.getParent().getPrimaryNodeType().hasOrderableChildNodes()) {
             return;
         }
 
-        Node parentOfCopy = copy.getParent();
+        Node parentOfCopy = copied.getParent();
 
         if (!parentOfCopy.getPrimaryNodeType().hasOrderableChildNodes()) {
             return;
         }
 
-        // reorder the copied source if needed and if the parent is orderable
-        // find the next sibling of 'source' : We need to try to order the 'copy' before the
-        // same node as the source in preview. In case for some reason the next sibling does not
+        // reorder the copied source if needed and find the next sibling of 'source' :
+        // We need to try to order the 'copied' before the
+        // same node as the source in 'source'. In case for some reason the next sibling does not
         // exist in live, we need to catch the exception and log an error (because it indicates a
         // live and preview that is out of sync)
         Node nextSibling = JcrUtils.getNextSiblingIfExists(source);
 
         if (nextSibling != null) {
+            String copyName = copied.getName();
+            String nextSiblingName = nextSibling.getName();
             try {
                 // HST nodes do not allow same name siblings so we do not take into account the index
-                // if nextSibling is null, the copy will just be at the end of the list which is fine
-                parentOfCopy.orderBefore(copy.getName(), nextSibling.getName());
+                // if nextSibling is null, the copied will just be at the end of the list which is fine
+                parentOfCopy.orderBefore(copyName, nextSiblingName);
+                log.debug("Successfully ordered '{}' before '{}'", copyName, nextSiblingName);
             } catch (ItemNotFoundException e) {
-                log.error("Cannot reorder '{}' before '{}' because a node with the name '{}' does " +
-                        "not exist in the live configuration which should not be the case because preview " +
-                        "and live configuration are out of sync. The preview configuration node that misses " +
-                        "in live is '{}'." +
-                        "", copy.getPath(), nextSibling.getName(), nextSibling.getPath());
+                log.error("Cannot reorder '{}' before '{}' because the node '{}' does not have the sibling '{}'. This " +
+                        SEEMS_TO_INDICATE_LIVE_AND_PREVIEW_CONFIGURATIONS_ARE_OUT_OF_SYNC_WHICH_INDICATES_AN_ERROR + "." +
+                        "", copied.getPath(), nextSiblingName, copyName, nextSiblingName);
             }
         }
     }
@@ -205,6 +216,7 @@ public abstract class AbstractHelper {
         String previewConfigurationPath = pageComposerContextService.getEditingPreviewConfigurationPath();
         final Session session = pageComposerContextService.getRequestContext().getSession();
 
+        final Map<Node, Node> checkReorderMap = new IdentityHashMap<>();
         for (Node lockedNodeRoot : lockedNodeRoots) {
             final String lockedNodePath = lockedNodeRoot.getPath();
             String relPath = lockedNodePath.substring(previewConfigurationPath.length());
@@ -216,7 +228,10 @@ public abstract class AbstractHelper {
             }
             lockedNodeRoot.remove();
             JcrUtils.copy(session, liveConfigurationPath + relPath, lockedNodePath);
-            reorderCopyIfNeeded(session.getNode(liveConfigurationPath + relPath), session.getNode(lockedNodePath));
+            checkReorderMap.put(session.getNode(liveConfigurationPath + relPath), session.getNode(lockedNodePath));
+        }
+        for (Map.Entry<Node, Node> entry : checkReorderMap.entrySet()) {
+            reorderCopyIfNeeded(entry.getKey(), entry.getValue());
         }
     }
 
@@ -309,12 +324,33 @@ public abstract class AbstractHelper {
         return lockedNodesForUsers;
     }
 
-    // to override for helpers that need to be able to publish/discard
     protected String buildXPathQueryLockedNodesForUsers(final String previewConfigurationPath,
                                                         final List<String> userIds) {
-        throw new UnsupportedOperationException("buildXPathQueryLockedNodesForUsers not supported for: " +
-                this.getClass().getName());
+        if (userIds.isEmpty()) {
+            throw new IllegalArgumentException("List of user IDs cannot be empty");
+        }
+
+        StringBuilder xpath = new StringBuilder("/jcr:root");
+        xpath.append(ISO9075.encodePath(previewConfigurationPath));
+        xpath.append("//element(*,");
+        xpath.append(getNodeType());
+        xpath.append(")[");
+
+        String concat = "";
+        for (String userId : userIds) {
+            xpath.append(concat);
+            xpath.append('@');
+            xpath.append(GENERAL_PROPERTY_LOCKED_BY);
+            xpath.append(" = '");
+            xpath.append(userId);
+            xpath.append("'");
+            concat = " or ";
+        }
+        xpath.append("]");
+
+        return xpath.toString();
     }
+
 
     protected void markDeleted(final Node deleted) throws RepositoryException {
         lockHelper.acquireLock(deleted, 0);

@@ -1,0 +1,13 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/sub1/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /home:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/homepage
+        hst:refId: homeRefId
+        hst:relativecontentpath: homepage
+      /about-us:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/standarddetail
+        hst:relativecontentpath: aboutfolder/about-us

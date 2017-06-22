@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,8 +23,14 @@ import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_BLUEPRINT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNEL;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNELINFO;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_MOUNT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -53,10 +59,10 @@ public class BlueprintHandlerIT extends RepositoryTestCase {
     @Test
     public void getters() throws RepositoryException {
         RepositoryTestCase.build(new String[]{
-                "/test/hst:blueprints/test", HstNodeTypes.NODETYPE_HST_BLUEPRINT,
+                "/test/hst:blueprints/test", NODETYPE_HST_BLUEPRINT,
                 HstNodeTypes.BLUEPRINT_PROPERTY_NAME, "Test Blueprint",
                 HstNodeTypes.BLUEPRINT_PROPERTY_DESCRIPTION, "Description of Test Blueprint",
-                "/test/hst:blueprints/test/hst:configuration", HstNodeTypes.NODETYPE_HST_CONFIGURATION
+                "/test/hst:blueprints/test/hst:configuration", NODETYPE_HST_CONFIGURATION
         }, session);
         session.save();
 
@@ -76,11 +82,11 @@ public class BlueprintHandlerIT extends RepositoryTestCase {
     public void createChannelWithFixedMountPoint() throws RepositoryException {
 
         RepositoryTestCase.build(new String[]{
-                "/test/hst:blueprints/test", HstNodeTypes.NODETYPE_HST_BLUEPRINT,
-                "/test/hst:blueprints/test/hst:configuration", HstNodeTypes.NODETYPE_HST_CONFIGURATION,
-                "/test/hst:blueprints/test/hst:channel", HstNodeTypes.NODETYPE_HST_CHANNEL,
-                "/test/hst:blueprints/test/hst:channel/hst:channelinfo", HstNodeTypes.NODETYPE_HST_CHANNELINFO,
-                "/test/hst:blueprints/test/hst:mount", HstNodeTypes.NODETYPE_HST_MOUNT,
+                "/test/hst:blueprints/test", NODETYPE_HST_BLUEPRINT,
+                "/test/hst:blueprints/test/hst:configuration", NODETYPE_HST_CONFIGURATION,
+                "/test/hst:blueprints/test/hst:configuration/hst:channel", NODETYPE_HST_CHANNEL,
+                "/test/hst:blueprints/test/hst:configuration/hst:channel/hst:channelinfo", NODETYPE_HST_CHANNELINFO,
+                "/test/hst:blueprints/test/hst:mount", NODETYPE_HST_MOUNT,
                 "hst:mountpoint", "/hst:hst/hst:sites/blueprint-site"
         }, session);
         session.save();

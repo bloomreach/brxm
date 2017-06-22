@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 package org.hippoecm.hst.pagecomposer.jaxrs;
+
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.Repository;
@@ -48,6 +50,8 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
+import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -84,6 +88,12 @@ public class AbstractPageComposerTest {
         ServletContextRegistry.register(servletContext, ServletContextRegistry.WebAppType.HST);
 
         componentManager.setServletContext(servletContext);
+
+        final List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
+        if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
+            componentManager.setAddonModuleDefinitions(addonModuleDefinitions);
+        }
+
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
@@ -261,6 +271,15 @@ public class AbstractPageComposerTest {
         }
     }
 
+
+    protected void moveChannelToWorkspace() throws RepositoryException {
+        final Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject");
+        if (!unitTestConfigNode.hasNode("hst:workspace")) {
+            unitTestConfigNode.addNode("hst:workspace", "hst:workspace");
+        }
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:channel",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:channel");
+    }
 
     protected void createWorkspaceWithTestContainer() throws RepositoryException {
         final Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject");

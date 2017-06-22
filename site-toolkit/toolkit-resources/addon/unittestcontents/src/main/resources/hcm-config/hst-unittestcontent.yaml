@@ -1,0 +1,387 @@
+definitions:
+  config:
+    /unittestcontent:
+      jcr:primaryType: hippostd:directory
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: abababab-511b-49e0-92b5-126970694fa8
+      hippostd:foldertype: [new-document, new-folder]
+      /gallery:
+        jcr:primaryType: hippogallery:stdImageGallery
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: abababab-98ff-4673-a2a9-5cdbb2822eed
+        hippostd:foldertype: [new-image-folder]
+        hippostd:gallerytype: ['hippogallery:exampleImageSet']
+      /assets:
+        jcr:primaryType: hippogallery:stdAssetGallery
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: abababab-bbbb-4673-a2a9-5cdbb2822eed
+        hippostd:foldertype: [new-file-folder]
+        hippostd:gallerytype: ['hippogallery:exampleAssetSet']
+      /documents:
+        jcr:primaryType: hippostd:folder
+        jcr:mixinTypes: ['mix:referenceable']
+        hippostd:foldertype: [new-folder, new-document]
+        /unittestproject:
+          jcr:primaryType: hippostd:folder
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: abababab-5fa8-48a8-b03b-4524373d992a
+          hippostd:foldertype: [new-folder, new-document]
+          /common:
+            jcr:primaryType: hippostd:folder
+            jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+            jcr:uuid: cbcbcbcb-5fa8-48a8-b03b-4524373d992a
+            hippostd:foldertype: [new-translated-folder, new-document]
+            hippotranslation:id: unittestproject-common-folder-id
+            hippotranslation:locale: en_US
+            /homepage:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable', 'hippo:named']
+              hippo:name: Home Page
+              /homepage:
+                jcr:primaryType: unittestproject:textpage
+                jcr:mixinTypes: ['mix:versionable', 'hippotranslation:translated']
+                hippo:availability: [live, preview]
+                hippostd:holder: admin
+                hippostd:state: published
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                hippotranslation:id: unittestproject-common-folder-homepage-id
+                hippotranslation:locale: en_US
+                unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                unittestproject:summary: Summary of the homepage
+                unittestproject:title: This is the homepage
+                /unittestproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: This is the content of the homepage
+            /aboutfolder:
+              jcr:primaryType: hippostd:folder
+              jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+              jcr:uuid: ebebebeb-5fa8-48a8-b03b-4524373d992a
+              hippostd:foldertype: [new-translated-folder, new-document]
+              hippotranslation:id: unittestproject-aboutus-folder-id
+              hippotranslation:locale: en_US
+              /about-us:
+                jcr:primaryType: hippo:handle
+                jcr:mixinTypes: ['mix:referenceable', 'hippo:named']
+                jcr:uuid: 30092f4e-2ef7-4c72-86a5-8ce895908937
+                hippo:name: About Us
+                /about-us:
+                  jcr:primaryType: unittestproject:textpage
+                  jcr:mixinTypes: ['mix:versionable', 'hippotranslation:translated']
+                  hippo:availability: [live, preview]
+                  hippostd:holder: admin
+                  hippostd:state: published
+                  hippostdpubwf:createdBy: admin
+                  hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                  hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                  hippostdpubwf:lastModifiedBy: admin
+                  hippotranslation:id: unittestproject-aboutus-folder-about-us-id
+                  hippotranslation:locale: en_US
+                  unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                  unittestproject:summary: Summary of the about us
+                  unittestproject:title: This is the about us
+                  /unittestproject:body:
+                    jcr:primaryType: hippostd:html
+                    hippostd:content: This is the content of the about us
+              /contact:
+                jcr:primaryType: hippo:handle
+                jcr:mixinTypes: ['mix:referenceable', 'hippo:named']
+                jcr:uuid: 30092f4e-2ef7-4c72-86a5-8ce895908938
+                hippo:name: Contact Us
+                /contact:
+                  jcr:primaryType: unittestproject:textpage
+                  jcr:mixinTypes: ['mix:versionable', 'hippotranslation:translated']
+                  hippo:availability: [live, preview]
+                  hippostd:holder: admin
+                  hippostd:state: published
+                  hippostdpubwf:createdBy: admin
+                  hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                  hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                  hippostdpubwf:lastModifiedBy: admin
+                  hippotranslation:id: unittestproject-aboutus-folder-contact-id
+                  hippotranslation:locale: en_US
+                  unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                  unittestproject:summary: Summary of the Contact page
+                  unittestproject:title: This is the Contact page
+                  /unittestproject:body:
+                    jcr:primaryType: hippostd:html
+                    hippostd:content: This is the content of the Contact page
+              /aboutfolder:
+                jcr:primaryType: hippo:handle
+                jcr:mixinTypes: ['mix:referenceable', 'hippo:named']
+                jcr:uuid: 30092f4e-2ef7-4c72-86b5-8ce895908938
+                hippo:name: AboutFolder document
+                /aboutfolder:
+                  jcr:primaryType: unittestproject:textpage
+                  jcr:mixinTypes: ['mix:versionable', 'hippotranslation:translated']
+                  hippo:availability: [live, preview]
+                  hippostd:holder: admin
+                  hippostd:state: published
+                  hippostdpubwf:createdBy: admin
+                  hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                  hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                  hippostdpubwf:lastModifiedBy: admin
+                  hippotranslation:id: unittestproject-aboutus-folder-aboutfolder-document-id
+                  hippotranslation:locale: en_US
+                  unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                  unittestproject:summary: Summary of the AboutFolder page
+                  unittestproject:title: This is the AboutFolder page
+                  /unittestproject:body:
+                    jcr:primaryType: hippostd:html
+                    hippostd:content: This is the content of the AboutFolder page
+              /aboutsubfolder:
+                jcr:primaryType: hippostd:folder
+                jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+                jcr:uuid: ebebebeb-5fa9-48a8-b03b-4524373d992a
+                hippostd:foldertype: [new-translated-folder, new-document]
+                hippotranslation:id: unittestproject-aboutus-sub-folder-id
+                hippotranslation:locale: en_US
+                /address:
+                  jcr:primaryType: hippo:handle
+                  jcr:mixinTypes: ['mix:referenceable', 'hippo:named']
+                  jcr:uuid: 30092f4e-2ef7-4c72-86a5-8ce895908038
+                  hippo:name: Address
+                  /address:
+                    jcr:primaryType: unittestproject:textpage
+                    jcr:mixinTypes: ['mix:versionable', 'hippotranslation:translated']
+                    hippo:availability: [live, preview]
+                    hippostd:holder: admin
+                    hippostd:state: published
+                    hippostdpubwf:createdBy: admin
+                    hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                    hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                    hippostdpubwf:lastModifiedBy: admin
+                    hippotranslation:id: unittestproject-aboutus-sub-folder-address-id
+                    hippotranslation:locale: en_US
+                    unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                    unittestproject:summary: Summary of the Address page
+                    unittestproject:title: This is the Address page
+                    /unittestproject:body:
+                      jcr:primaryType: hippostd:html
+                      hippostd:content: This is the content of the Address page
+                /aboutsubfolder:
+                  jcr:primaryType: hippo:handle
+                  jcr:mixinTypes: ['mix:referenceable', 'hippo:named']
+                  jcr:uuid: 30092f4e-2ea7-4c72-86a5-8ce895908038
+                  hippo:name: aboutsubfolder document
+                  /aboutsubfolder:
+                    jcr:primaryType: unittestproject:textpage
+                    jcr:mixinTypes: ['mix:versionable', 'hippotranslation:translated']
+                    hippo:availability: [live, preview]
+                    hippostd:holder: admin
+                    hippostd:state: published
+                    hippostdpubwf:createdBy: admin
+                    hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                    hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                    hippostdpubwf:lastModifiedBy: admin
+                    hippotranslation:id: unittestproject-aboutus-sub-folder-aboutsubfolder-doc-id
+                    hippotranslation:locale: en_US
+                    unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                    unittestproject:summary: Summary of the aboutsubfolder page
+                    unittestproject:title: This is the aboutsubfolder page
+                    /unittestproject:body:
+                      jcr:primaryType: hippostd:html
+                      hippostd:content: This is the content of the aboutsubfolder
+                        page
+          /News:
+            jcr:primaryType: hippostd:folder
+            jcr:mixinTypes: ['mix:referenceable']
+            jcr:uuid: dbdbdbdb-5fa8-48a8-b03b-4524373d992a
+            hippostd:foldertype: [new-folder, new-document]
+            /2009:
+              jcr:primaryType: hippostd:folder
+              jcr:mixinTypes: ['mix:referenceable']
+              hippostd:foldertype: [new-folder, new-document]
+              /April:
+                jcr:primaryType: hippostd:folder
+                jcr:mixinTypes: ['mix:referenceable']
+                hippostd:foldertype: [new-folder, new-document]
+                /Day5:
+                  jcr:primaryType: hippostd:folder
+                  jcr:mixinTypes: ['mix:referenceable']
+                  hippostd:foldertype: [new-folder, new-document]
+                  /Day5Article:
+                    jcr:primaryType: hippo:handle
+                    jcr:mixinTypes: ['mix:referenceable']
+                    /Day5Article:
+                      jcr:primaryType: unittestproject:newspage
+                      jcr:mixinTypes: ['mix:versionable']
+                      hippo:availability: [live, preview]
+                      hippostd:holder: admin
+                      hippostd:state: published
+                      hippostdpubwf:createdBy: admin
+                      hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                      hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                      hippostdpubwf:lastModifiedBy: admin
+                      unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                      unittestproject:summary: Summary about Day5Article
+                      unittestproject:title: Day5Article
+                      /unittestproject:body:
+                        jcr:primaryType: hippostd:html
+                        hippostd:content: My Day5Article content
+                /AprilNewsArticle:
+                  jcr:primaryType: hippo:handle
+                  jcr:mixinTypes: ['mix:referenceable']
+                  /AprilNewsArticle:
+                    jcr:primaryType: unittestproject:newspage
+                    jcr:mixinTypes: ['mix:versionable']
+                    hippo:availability: [live, preview]
+                    hippostd:holder: admin
+                    hippostd:state: published
+                    hippostdpubwf:createdBy: admin
+                    hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                    hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                    hippostdpubwf:lastModifiedBy: admin
+                    unittestproject:date: 2009-08-09T10:05:07.580+02:00
+                    unittestproject:summary: Summary about AprilNewsArticle
+                    unittestproject:title: AprilNewsArticle
+                    /unittestproject:body:
+                      jcr:primaryType: hippostd:html
+                      hippostd:content: My AprilNewsArticle content
+                /April News Article 2:
+                  jcr:primaryType: hippo:handle
+                  jcr:mixinTypes: ['mix:referenceable']
+                  /April News Article 2:
+                    jcr:primaryType: unittestproject:newspage
+                    jcr:mixinTypes: ['mix:versionable']
+                    hippo:availability: [live, preview]
+                    hippostd:holder: admin
+                    hippostd:state: published
+                    hippostdpubwf:createdBy: admin
+                    hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                    hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                    hippostdpubwf:lastModifiedBy: admin
+                    unittestproject:date: 2009-08-09T10:05:07.580+02:00
+                    unittestproject:summary: Summary about April News Article 2
+                    unittestproject:title: April News Article 2
+                    /unittestproject:body:
+                      jcr:primaryType: hippostd:html
+                      hippostd:content: My second April News Article content
+              /May:
+                jcr:primaryType: hippostd:folder
+                jcr:mixinTypes: ['mix:referenceable']
+                hippostd:foldertype: [new-folder, new-document]
+            /2008:
+              jcr:primaryType: hippostd:folder
+              jcr:mixinTypes: ['mix:referenceable']
+              hippostd:foldertype: [new-folder, new-document]
+            /News1:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /News1:
+                jcr:primaryType: unittestproject:newspage
+                jcr:mixinTypes: ['mix:versionable']
+                hippo:availability: [live, preview]
+                hippostd:holder: admin
+                hippostd:state: published
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                unittestproject:date: 2009-04-15T10:05:07.580+02:00
+                unittestproject:summary: Summary about news item 1
+                unittestproject:title: News Item 1
+                /unittestproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: My news item 1 content
+            /News2:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /News2:
+                jcr:primaryType: unittestproject:newspage
+                jcr:mixinTypes: ['mix:versionable']
+                hippo:availability: [live, preview]
+                hippostd:holder: admin
+                hippostd:state: published
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                unittestproject:date: 2009-03-15T10:05:07.580+02:00
+                unittestproject:summary: Summary about news item 2
+                unittestproject:title: News Item 2
+                /unittestproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: My news item 2 content
+            /News3:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /News3:
+                jcr:primaryType: unittestproject:newspage
+                jcr:mixinTypes: ['mix:versionable']
+                hippo:availability: [live, preview]
+                hippostd:holder: admin
+                hippostd:state: published
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                unittestproject:date: 2009-02-15T10:05:07.580+02:00
+                unittestproject:summary: Summary about news item 3
+                unittestproject:title: News Item 3
+                /unittestproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: My news item 3 content
+        /unittestsubproject:
+          jcr:primaryType: hippostd:folder
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: cbababab-5fa8-48a8-b03b-4524373d992a
+          hippostd:foldertype: [new-folder, new-document]
+          /common:
+            jcr:primaryType: hippostd:folder
+            jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+            hippostd:foldertype: [new-translated-folder, new-document]
+            hippotranslation:id: unittestproject-common-folder-id
+            hippotranslation:locale: en_US
+            /homepage:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable', 'hippo:named']
+              hippo:name: Home Page Sub project
+              /homepage:
+                jcr:primaryType: unittestproject:textpage
+                jcr:mixinTypes: ['mix:versionable', 'hippotranslation:translated']
+                jcr:uuid: a62a34ae-5f42-4482-a27a-7f39459ec8ee
+                hippo:availability: [live, preview]
+                hippostd:holder: admin
+                hippostd:state: published
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                hippotranslation:id: unittestsubproject-common-folder-homepage-id
+                hippotranslation:locale: en_US
+                unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                unittestproject:summary: Summary of the homepage
+                unittestproject:title: This is the homepage
+                /unittestproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: This is the content of the homepage
+          /News:
+            jcr:primaryType: hippostd:folder
+            jcr:mixinTypes: ['mix:referenceable']
+            hippostd:foldertype: [new-folder, new-document]
+            /2008:
+              jcr:primaryType: hippostd:folder
+              jcr:mixinTypes: ['mix:referenceable']
+              hippostd:foldertype: [new-folder, new-document]
+              /SubNews1:
+                jcr:primaryType: hippo:handle
+                jcr:mixinTypes: ['mix:referenceable']
+                /SubNews1:
+                  jcr:primaryType: unittestproject:newspage
+                  jcr:mixinTypes: ['mix:versionable']
+                  hippo:availability: [live, preview]
+                  hippostd:holder: admin
+                  hippostd:state: published
+                  hippostdpubwf:createdBy: admin
+                  hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                  hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                  hippostdpubwf:lastModifiedBy: admin
+                  unittestproject:date: 2009-04-15T10:05:07.580+02:00
+                  unittestproject:summary: Summary about news item 1
+                  unittestproject:title: News Item 1
+                  /unittestproject:body:
+                    jcr:primaryType: hippostd:html
+                    hippostd:content: My news item 1 content

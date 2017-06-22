@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,12 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
-import javax.jcr.SimpleCredentials;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
@@ -36,7 +34,6 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -54,7 +51,7 @@ import static org.junit.Assert.assertTrue;
 public class SiteMapModelsIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
-    private HippoSession session;
+    private Session session;
 
     @Override
     @Before
@@ -71,12 +68,6 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         restoreHstConfigBackup(session);
         session.logout();
         super.tearDown();
-    }
-
-
-    protected HippoSession createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return (HippoSession)repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
     @Test
@@ -465,5 +456,48 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         final HstSiteMap siteMap = hstSite.getSiteMap();
         assertTrue(siteMap.getSiteMapItem("news").isMarkedDeleted());
         assertTrue(siteMap.getSiteMapItem("news").getChild("_default_").isMarkedDeleted());
+    }
+
+    @Test
+    public void parameternames_values_from_mount_are_resolved_on_sitemap_items() throws Exception {
+        final Node testprojectMount = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        testprojectMount.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo"});
+        testprojectMount.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"bar"});
+        final Node anyGIF = session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap/_any_.GIF");
+        anyGIF.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"lux"});
+        // ${foo} is a property lookup from the mount
+        anyGIF.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"${foo}"});
+        session.save();
+
+        HstSiteMapItem siteMapItem = hstManager.getVirtualHosts().getMountByIdentifier(testprojectMount.getIdentifier()).getHstSite()
+                .getSiteMap().getSiteMapItem("_any_.GIF");
+
+        assertEquals("bar", siteMapItem.getParameter("lux"));
+    }
+
+    @Test
+    public void parameternames_values_from_multiple_mounts_are_resolved_per_mount_for_shared_sitemap_items() throws Exception {
+        final Node testprojectMount = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        testprojectMount.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo"});
+        testprojectMount.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"bar"});
+        final Node testsubprojectMount = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite");
+        testsubprojectMount.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"foo"});
+        testsubprojectMount.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"sub_bar"});
+
+        final Node anyGIF = session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap/_any_.GIF");
+        anyGIF.setProperty(GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"lux"});
+        // ${foo} is a property lookup from the mount
+        anyGIF.setProperty(GENERAL_PROPERTY_PARAMETER_VALUES, new String[]{"${foo}"});
+        session.save();
+
+        HstSiteMapItem siteMapItem = hstManager.getVirtualHosts().getMountByIdentifier(testprojectMount.getIdentifier()).getHstSite()
+                .getSiteMap().getSiteMapItem("_any_.GIF");
+
+        assertEquals("bar", siteMapItem.getParameter("lux"));
+
+        HstSiteMapItem siteMapItemSub = hstManager.getVirtualHosts().getMountByIdentifier(testsubprojectMount.getIdentifier()).getHstSite()
+                .getSiteMap().getSiteMapItem("_any_.GIF");
+
+        assertEquals("sub_bar", siteMapItemSub.getParameter("lux"));
     }
 }

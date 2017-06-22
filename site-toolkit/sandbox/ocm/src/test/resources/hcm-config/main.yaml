@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    testproject:
+      uri: http://www.hippoecm.org/hst/nt/testproject/1.0
+      cnd: testproject-types.cnd

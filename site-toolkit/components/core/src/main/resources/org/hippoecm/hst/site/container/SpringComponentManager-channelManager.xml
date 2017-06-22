@@ -42,7 +42,8 @@
     </constructor-arg>
   </bean> 
 
-  <bean id="allChannelManagerEventListeners" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="allChannelManagerEventListeners" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
     <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
     <property name="targetMethod" value="union" />
     <property name="arguments">
@@ -70,5 +71,19 @@
   </bean>
 
   <bean id="org.hippoecm.hst.util.JsonSerializer" class="org.hippoecm.hst.core.util.JsonSerializerImpl"/>
+
+
+  <bean id="org.hippoecm.hst.channelmanager.security.SecurityModel" class="org.hippoecm.hst.channelmanager.security.SecurityModelImpl">
+    <!-- Use the delegating repository here, because we want a non pooled session: When loading the configuration
+        we do not need a session from the pool, but rather a fresh session that is logged out at the end -->
+    <property name="repository" ref="javax.jcr.Repository.delegating"/>
+    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
+    <property name="rootPath" value="${hst.configuration.rootPath}"/>
+    <property name="jcrPathTemplateComposer" ref="jcrPathTemplateComposer"/>
+  </bean>
+
+  <bean id="jcrPathTemplateComposer" class="java.lang.String">
+    <constructor-arg value="/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer"/>
+  </bean>
 
 </beans>

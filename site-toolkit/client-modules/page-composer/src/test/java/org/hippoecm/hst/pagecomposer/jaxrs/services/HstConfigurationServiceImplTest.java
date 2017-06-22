@@ -88,7 +88,7 @@ public class HstConfigurationServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void cannot_delete_null_config_path() throws HstConfigurationException, RepositoryException {
-        hstConfigurationService.delete(session, null);
+        hstConfigurationService.delete(session, (String)null);
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -1,5 +1,5 @@
 /*
-*  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
@@ -568,6 +568,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
+        public boolean hasNoChannelInfo() {
+            return true;
+        }
+
+        @Override
         public String getContentPath() {
             return fakeNonExistingPath;
         }
@@ -691,6 +696,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
+        @Deprecated
         public String getChannelPath() {
             return null;
         }
@@ -719,16 +725,6 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         @Override
         public String [] getDefaultResourceBundleIds() {
             return EMPTY_ARRAY;
-        }
-
-        @Override
-        public void setChannelInfo(final ChannelInfo info, final ChannelInfo previewInfo) {
-            // nothing
-        }
-
-        @Override
-        public void setChannel(final Channel channel, final Channel previewChannel) throws UnsupportedOperationException {
-            throw new UnsupportedOperationException(this.getClass().getName() + " does not support setChannel");
         }
 
         @Override

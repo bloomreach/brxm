@@ -17,33 +17,25 @@ package org.hippoecm.hst.content.beans.query.builderdiffpackage;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.Session;
 
 import com.google.common.collect.Lists;
 
-import org.hippoecm.hst.AbstractBeanTestCase;
+import org.hippoecm.hst.AbstractHstQueryTest;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.BasePage;
 import org.hippoecm.hst.content.beans.NewsPage;
 import org.hippoecm.hst.content.beans.PersistableTextPage;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQuery;
-import org.hippoecm.hst.content.beans.query.HstQueryManager;
-import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
 import org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.exceptions.RuntimeQueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.repository.util.DateTools;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.and;
@@ -56,48 +48,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
-public class TestHstQueryBuilder extends AbstractBeanTestCase {
-
-    private HstQueryManager queryManager;
-    private MockHstRequestContext requestContext;
-    private Node baseContentNode;
-    private Node galleryContentNode;
-    private Node assetsContentNode;
-    private HippoBean baseContentBean;
-    private HippoBean galleryContentBean;
-    private HippoBean assetsContentBean;
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        ObjectConverter objectConverter = getObjectConverter();
-        queryManager = new HstQueryManagerImpl(session, objectConverter, null);
-        requestContext = new MockHstRequestContext() {
-            @Override
-            public boolean isPreview() {
-                return false;
-            }
-        };
-        requestContext.setDefaultHstQueryManager(queryManager);
-        Map<Session, HstQueryManager> nonDefaultHstQueryManagers = new HashMap<>();
-        nonDefaultHstQueryManagers.put(session, queryManager);
-        requestContext.setNonDefaultHstQueryManagers(nonDefaultHstQueryManagers);
-        requestContext.setSession(session);
-        baseContentNode = session.getNode("/unittestcontent");
-        galleryContentNode = session.getNode("/unittestcontent/gallery");
-        assetsContentNode = session.getNode("/unittestcontent/assets");
-        baseContentBean = (HippoBean)objectConverter.getObject(baseContentNode);
-        galleryContentBean = (HippoBean)objectConverter.getObject(galleryContentNode);
-        assetsContentBean = (HippoBean)objectConverter.getObject(assetsContentNode);
-        requestContext.setSiteContentBaseBean(baseContentBean);
-        ModifiableRequestContextProvider.set(requestContext);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        ModifiableRequestContextProvider.clear();
-    }
+public class TestHstQueryBuilder extends AbstractHstQueryTest {
 
     @Test
     public void basic_query_without_constraints() throws Exception {

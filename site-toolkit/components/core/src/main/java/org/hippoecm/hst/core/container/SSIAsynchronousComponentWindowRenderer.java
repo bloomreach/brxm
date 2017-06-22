@@ -1,5 +1,5 @@
 /**
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.util.XmlUtils;
 import org.w3c.dom.Comment;
 
 /**
@@ -29,7 +30,7 @@ public class SSIAsynchronousComponentWindowRenderer extends AbstractAsynchronous
     @Override
     public void processWindowBeforeRender(HstComponentWindow window, HstRequest request, HstResponse response) {
         HstURL compUrl = createAsyncComponentRenderingURL(request, response);
-        final Comment ssiComment = response.createComment("#include virtual=\"" + HstRequestUtils.escapeXml(compUrl.toString()) + "\" ");
+        final Comment ssiComment = response.createComment("#include virtual=\"" + compUrl.toString() + "\" ");
         response.addPreamble(ssiComment);
     }
 }

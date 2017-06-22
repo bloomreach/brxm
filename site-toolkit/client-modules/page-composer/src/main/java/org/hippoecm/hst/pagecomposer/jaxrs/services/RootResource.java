@@ -1,5 +1,5 @@
 /*
-*  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 import javax.annotation.security.RolesAllowed;
 import javax.jcr.RepositoryException;
@@ -38,7 +37,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.channelmanager.security.SecurityModel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -50,19 +49,20 @@ import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
-import org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
+import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
+import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_WEBMASTER_ROLE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl.PREVIEW_SUFFIX;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
 
     private static final Logger log = LoggerFactory.getLogger(RootResource.class);
-    private String rootPath;
     private boolean isCrossChannelPageCopySupported;
 
     private ChannelService channelService;
@@ -74,10 +74,6 @@ public class RootResource extends AbstractConfigResource {
 
     public void setSecurityModel(final SecurityModel securityModel) {
         this.securityModel = securityModel;
-    }
-
-    public void setRootPath(final String rootPath) {
-        this.rootPath = rootPath;
     }
 
     @Override
@@ -106,7 +102,7 @@ public class RootResource extends AbstractConfigResource {
     public Response getChannels(@QueryParam("previewConfigRequired") final boolean previewConfigRequired,
                                 @QueryParam("workspaceRequired") final boolean workspaceRequired) {
         try {
-          final List<Channel> channels = this.channelService.getChannels(previewConfigRequired, workspaceRequired);
+            final List<Channel> channels = this.channelService.getChannels(previewConfigRequired, workspaceRequired);
             return ok("Fetched channels successful", channels);
         } catch (RuntimeRepositoryException e) {
             log.warn("Could not determine authorization", e);
@@ -175,9 +171,9 @@ public class RootResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(CHANNEL_MANAGER_ADMIN_ROLE)
     public Response deleteChannel(@PathParam("id") String channelId) {
-        if (StringUtils.endsWith(channelId, HstConfigurationServiceImpl.PREVIEW_SUFFIX)) {
+        if (StringUtils.endsWith(channelId, PREVIEW_SUFFIX)) {
             // strip the preview suffix
-            channelId = StringUtils.removeEnd(channelId, HstConfigurationServiceImpl.PREVIEW_SUFFIX);
+            channelId = StringUtils.removeEnd(channelId, PREVIEW_SUFFIX);
         }
 
         try {
@@ -191,6 +187,7 @@ public class RootResource extends AbstractConfigResource {
             publishSynchronousEvent(new BeforeChannelDeleteEvent(channel, mountsOfChannel, hstRequestContext));
 
             channelService.deleteChannel(session, channel, mountsOfChannel);
+            removeRenderingMountId();
             HstConfigurationUtils.persistChanges(session);
 
             return Response.ok().build();
@@ -208,6 +205,10 @@ public class RootResource extends AbstractConfigResource {
         }
     }
 
+    protected void removeRenderingMountId() {
+        getPageComposerContextService().removeRenderingMountId();
+    }
+
     @GET
     @Path("/composermode/{renderingHost}/{mountId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -220,41 +221,32 @@ public class RootResource extends AbstractConfigResource {
         session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
 
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
-        boolean canWrite;
-        try {
-            canWrite = requestContext.getSession().hasPermission(rootPath + "/accesstest", Session.ACTION_SET_PROPERTY);
-        } catch (RepositoryException e) {
-            log.warn("Could not determine authorization", e);
-            return error("Could not determine authorization", e);
-        }
+
 
         final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId);
-        final boolean hasAdminRole = securityModel.isUserInRule(requestContext, CHANNEL_MANAGER_ADMIN_ROLE);
+        try {
+            final boolean hasAdminRole = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_MANAGER_ADMIN_ROLE);
+            final boolean isWebmaster = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_WEBMASTER_ROLE);
+            final boolean canDeleteChannel = isChannelDeletionSupported && hasAdminRole;
+            final boolean canManageChanges = hasAdminRole;
 
-        final boolean canDeleteChannel = isChannelDeletionSupported && hasAdminRole;
-        final boolean canManageChanges = hasAdminRole;
-
-        HandshakeResponse response = new HandshakeResponse();
-        response.setCanWrite(canWrite);
-        response.setCanManageChanges(canManageChanges);
-        response.setCanDeleteChannel(canDeleteChannel);
-        response.setCrossChannelPageCopySupported(isCrossChannelPageCopySupported);
-        response.setSessionId(session.getId());
-        log.info("Composer-Mode successful");
-        return ok("Composer-Mode successful", response);
+            HandshakeResponse response = new HandshakeResponse();
+            response.setCanWrite(isWebmaster);
+            response.setCanManageChanges(canManageChanges);
+            response.setCanDeleteChannel(canDeleteChannel);
+            response.setCrossChannelPageCopySupported(isCrossChannelPageCopySupported);
+            response.setSessionId(session.getId());
+            log.info("Composer-Mode successful");
+            return ok("Composer-Mode successful", response);
+        } catch (IllegalStateException | RepositoryException e) {
+            return error("Could not determine authorization or role", e);
+        }
     }
 
     private boolean isChannelDeletionSupported(final String mountId) {
-        try {
-            final Optional<Channel> channel = channelService.getChannelByMountId(mountId);
-            if (channel.isPresent()) {
-                return channelService.canChannelBeDeleted(channel.get().getId());
-            }
-        } catch (ChannelException e) {
-            log.debug("Cannot check channel deletion support", e);
-            // ignore, consider unsupported.
-        }
-        return false;
+        return channelService.getChannelByMountId(mountId)
+                .map(channel -> channelService.canChannelBeDeleted(channel) && channelService.isMaster(channel))
+                .orElse(false);
     }
 
     @GET
@@ -296,8 +288,8 @@ public class RootResource extends AbstractConfigResource {
     }
 
     /**
-     * Note: Override the AbstractConfigResource#logAndReturnClientError() to remove ExtResponseRepresentation wrapper in the
-     * body response.
+     * Note: Override the AbstractConfigResource#logAndReturnClientError() to remove ExtResponseRepresentation wrapper
+     * in the body response.
      */
     @Override
     protected Response logAndReturnClientError(final ClientException e) {

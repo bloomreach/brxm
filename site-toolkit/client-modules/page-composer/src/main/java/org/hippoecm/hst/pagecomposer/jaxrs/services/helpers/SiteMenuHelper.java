@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
-import java.util.List;
 import java.util.Map;
 
-import org.apache.jackrabbit.util.ISO9075;
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -27,6 +24,8 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMENU;
 
 public class SiteMenuHelper extends AbstractHelper {
 
@@ -41,6 +40,11 @@ public class SiteMenuHelper extends AbstractHelper {
     @Override
     public HstSiteMenuConfiguration getConfigObject(final String itemId, final Mount mount) {
         return getMenu(mount.getHstSite(), itemId);
+    }
+
+    @Override
+    protected String getNodeType() {
+        return NODETYPE_HST_SITEMENU;
     }
 
     public HstSiteMenuConfiguration getMenu(HstSite site, String menuId) {
@@ -82,34 +86,6 @@ public class SiteMenuHelper extends AbstractHelper {
             }
         }
         return null;
-    }
-
-    @Override
-    protected String buildXPathQueryLockedNodesForUsers(final String previewConfigurationPath,
-                                                        final List<String> userIds) {
-        if (userIds.isEmpty()) {
-            throw new IllegalArgumentException("List of user IDs cannot be empty");
-        }
-
-        StringBuilder xpath = new StringBuilder("/jcr:root");
-        xpath.append(ISO9075.encodePath(previewConfigurationPath));
-        xpath.append("//element(*,");
-        xpath.append(HstNodeTypes.NODETYPE_HST_SITEMENU);
-        xpath.append(")[");
-
-        String concat = "";
-        for (String userId : userIds) {
-            xpath.append(concat);
-            xpath.append('@');
-            xpath.append(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
-            xpath.append(" = '");
-            xpath.append(userId);
-            xpath.append("'");
-            concat = " or ";
-        }
-        xpath.append("]");
-
-        return xpath.toString();
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.internal.StringPool;
@@ -37,6 +38,8 @@ import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_UPSTREAM;
 
 /**
  * A {@link HstNodeImpl} is a node that during initialization fetches everything it needs, after which, it detaches its backing
@@ -85,6 +88,9 @@ public class HstNodeImpl implements HstNode {
         long iteratorSizeBeforeLoop = nodes.getSize();
         while (nodes.hasNext()) {
             Node child = nodes.nextNode();
+            if (skipNode(child)) {
+                continue;
+            }
             HstNode childRepositoryNode = new HstNodeImpl(child, this);
             if(children == null) {
                 children = new LinkedHashMap<>((int)iteratorSizeBeforeLoop * 4 / 3);
@@ -103,6 +109,14 @@ public class HstNodeImpl implements HstNode {
         if (iteratorSizeBeforeLoop != iteratorSizeAfterLoop) {
             throw new ModelLoadingException("During building the in memory HST model, the hst configuration jcr nodes have changed.");
         }
+    }
+
+    private boolean skipNode(final Node child) throws RepositoryException {
+        if (NODENAME_HST_UPSTREAM.equals(child.getName())) {
+            log.debug("Skip hst:upstream node (and descendants)");
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -296,6 +310,9 @@ public class HstNodeImpl implements HstNode {
     private void childrenReload(final Node jcrNode) throws RepositoryException {
         LinkedHashMap<String, HstNode> newChildren = new LinkedHashMap<>();
         for (Node jcrChildNode : new NodeIterable(jcrNode.getNodes())) {
+            if (skipNode(jcrChildNode)) {
+                continue;
+            }
             String childName = jcrChildNode.getName();
             final HstNode existing = getChild(childName);
             if (existing == null) {

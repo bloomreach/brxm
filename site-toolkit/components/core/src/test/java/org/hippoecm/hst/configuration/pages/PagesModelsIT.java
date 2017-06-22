@@ -19,9 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
-import javax.jcr.SimpleCredentials;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -34,7 +33,6 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -53,7 +51,7 @@ import static org.junit.Assert.assertTrue;
 public class PagesModelsIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
-    private HippoSession session;
+    private Session session;
 
     @Override
     @Before
@@ -70,12 +68,6 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         restoreHstConfigBackup(session);
         session.logout();
         super.tearDown();
-    }
-
-
-    protected HippoSession createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return (HippoSession)repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
     @Test

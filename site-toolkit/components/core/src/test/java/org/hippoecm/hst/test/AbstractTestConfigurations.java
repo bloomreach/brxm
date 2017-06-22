@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
  */
 package org.hippoecm.hst.test;
 
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
 
 public class AbstractTestConfigurations extends AbstractSpringTestCase {
@@ -47,4 +50,10 @@ public class AbstractTestConfigurations extends AbstractSpringTestCase {
             session.save();
         }
     }
+
+    protected Session createSession() throws RepositoryException {
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
+        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+    }
+
 }

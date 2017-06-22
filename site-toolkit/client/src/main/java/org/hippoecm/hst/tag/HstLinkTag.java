@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.hippoecm.hst.tag;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,6 +41,7 @@ import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.HstSiteMapUtils;
+import org.hippoecm.hst.util.QueryStringBuilder;
 import org.hippoecm.hst.utils.TagUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,7 +129,7 @@ public class HstLinkTag extends ParamContainerTag {
     public int doStartTag() throws JspException{
     
         if (var != null) {
-            pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
+            TagUtils.removeVar(var, pageContext, scope);
         }
         
         return EVAL_BODY_INCLUDE;
@@ -273,8 +273,7 @@ public class HstLinkTag extends ParamContainerTag {
                     Map<String, String[]> parameterMapForLink = combineParametersMap(parametersMap,
                             currentRequestParameterMap);
                     if (parameterMapForLink != null && !parameterMapForLink.isEmpty()) {
-                        StringBuilder queryString = new StringBuilder();
-                        boolean firstParamDone = false;
+                        QueryStringBuilder queryStringBuilder = new QueryStringBuilder(reqContext.getBaseURL().getURIEncoding());
                         for (Entry<String, String[]> entry : parameterMapForLink.entrySet()) {
                             if(removedParametersList.contains(entry.getKey())) {
                                 // set to null by hst:param tag, thus skip
@@ -283,18 +282,16 @@ public class HstLinkTag extends ParamContainerTag {
                             String name = entry.getKey();
                             if (entry.getValue() != null) {
                                 for (String value : entry.getValue()) {
-                                    if(value != null) {
-                                        queryString.append(firstParamDone ? "&" : "?").append(name).append("=").append(URLEncoder.encode(value, reqContext.getBaseURL().getCharacterEncoding()));
-                                        firstParamDone = true;
+                                    if (value != null) {
+                                        queryStringBuilder.append(name, value);
                                     }
                                 }
                             }
-
                         }
-                        urlString += queryString.toString();
+                        urlString += queryStringBuilder.toString();
                     }
                 } else if (!parametersMap.isEmpty()) {
-                    String queryString = getQueryString(reqContext.getBaseURL().getCharacterEncoding(), parametersMap, removedParametersList);
+                    String queryString = getQueryString(reqContext.getBaseURL().getURIEncoding(), parametersMap, removedParametersList);
                     urlString += queryString;
                 }
             } catch (UnsupportedEncodingException e) {

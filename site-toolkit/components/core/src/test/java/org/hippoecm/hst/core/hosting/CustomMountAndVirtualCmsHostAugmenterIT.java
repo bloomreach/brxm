@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,16 +17,12 @@ package org.hippoecm.hst.core.hosting;
 
 import java.util.List;
 
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.MutableVirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.Test;
 
@@ -118,10 +114,9 @@ public class CustomMountAndVirtualCmsHostAugmenterIT extends AbstractTestConfigu
             session.getNode("/hst:hst/hst:hosts/dev-localhost")
                     .setProperty(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION, "http://www.unit.test");
             session.save();
-            Thread.sleep(100);
+            HstManager hstManager = getComponent(HstManager.class.getName());
 
-            HstManager hstSitesManager = getComponent(HstManager.class.getName());
-            final List<String> hostGroupNames = hstSitesManager.getVirtualHosts().getHostGroupNames();
+            final List<String> hostGroupNames = hstManager.getVirtualHosts().getHostGroupNames();
 
             assertTrue(hostGroupNames.size() == 3);
 
@@ -130,9 +125,9 @@ public class CustomMountAndVirtualCmsHostAugmenterIT extends AbstractTestConfigu
             augmenter.setMountType("composer");
             augmenter.setMountNamedPipeline("ComposerPipeline");
 
-            augmenter.augment((MutableVirtualHosts)hstSitesManager.getVirtualHosts());
+            augmenter.augment((MutableVirtualHosts)hstManager.getVirtualHosts());
 
-            final ResolvedMount justTheWwwUnitTestRootMount = hstSitesManager.getVirtualHosts().matchMount("www.unit.test", "/site", "_rp");
+            final ResolvedMount justTheWwwUnitTestRootMount = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "_rp");
             assertNotNull(justTheWwwUnitTestRootMount);
             assertEquals("",justTheWwwUnitTestRootMount.getResolvedMountPath());
             assertEquals("hst:root",justTheWwwUnitTestRootMount.getMount().getName());
@@ -141,13 +136,6 @@ public class CustomMountAndVirtualCmsHostAugmenterIT extends AbstractTestConfigu
             restoreHstConfigBackup(session);
             session.logout();
         }
-    }
-
-
-
-    protected Session createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
 }

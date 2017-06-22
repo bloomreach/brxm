@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,12 +17,22 @@ package org.hippoecm.hst.configuration.site;
 
 import com.google.common.base.Optional;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes;
+import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes.CompositeConfigurationNode;
 import org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.configuration.model.HstManager;
+import org.onehippo.cms7.services.hst.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
+import org.hippoecm.hst.configuration.channel.ChannelLazyLoadingChangedBySet;
+import org.hippoecm.hst.configuration.channel.ChannelPropertyMapper;
+import org.hippoecm.hst.configuration.channel.ChannelUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.sitemap.HstNoopSiteMap;
@@ -39,6 +49,11 @@ import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONFIGURATIONS;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITE_CONFIGURATIONPATH;
+
 public class HstSiteService implements HstSite {
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
@@ -46,6 +61,7 @@ public class HstSiteService implements HstSite {
     volatile LocationMapTree locationMapTree;
     volatile LocationMapTree locationMapTreeComponentDocuments;
     volatile Optional<HstSiteMapItemHandlersConfiguration> siteMapItemHandlersConfigurationService;
+    volatile Optional<Channel> channel;
     volatile Optional<HstComponentsConfiguration> componentsConfiguration;
     volatile Optional<HstSiteMenusConfiguration> siteMenusConfigurations;
     private String name;
@@ -56,52 +72,66 @@ public class HstSiteService implements HstSite {
     private HstConfigurationLoadingCache configLoadingCache;
     private final Object hstModelMutex;
 
-    public static HstSiteService createLiveSiteService(final HstNode site,
-                                                       final MountSiteMapConfiguration mountSiteMapConfiguration,
-                                                       final HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
-        return new HstSiteService(site, mountSiteMapConfiguration, hstNodeLoadingCache, false);
-    }
-
-    public static HstSiteService createPreviewSiteService(final HstNode site,
-                                                       final MountSiteMapConfiguration mountSiteMapConfiguration,
-                                                       final HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
-        return new HstSiteService(site, mountSiteMapConfiguration, hstNodeLoadingCache, true);
-    }
-
-    private HstSiteService(final HstNode site,
-                           final MountSiteMapConfiguration mountSiteMapConfiguration,
-                           final HstNodeLoadingCache hstNodeLoadingCache,
-                           final boolean isPreviewSite) throws ModelLoadingException {
+    HstSiteService(final HstNode site,
+                   final Mount mount,
+                   final MountSiteMapConfiguration mountSiteMapConfiguration,
+                   final HstNodeLoadingCache hstNodeLoadingCache,
+                   final boolean isPreviewSite) throws ModelLoadingException {
         hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
         configLoadingCache = HstServices.getComponentManager().getComponent(HstConfigurationLoadingCache.class.getName());
         name = site.getValueProvider().getName();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         this.mountSiteMapConfiguration = mountSiteMapConfiguration;
         findAndSetConfigurationPath(site, hstNodeLoadingCache, isPreviewSite);
-        init();
+        init(site, mount, isPreviewSite, hstNodeLoadingCache, null);
+    }
+
+    public HstSiteService(final HstNode site, final Mount mount, final MountSiteMapConfiguration mountSiteMapConfiguration,
+                          final HstNodeLoadingCache hstNodeLoadingCache,
+                          final String configurationPath,
+                          final boolean isPreviewSite,
+                          final Channel master) {
+        hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
+        configLoadingCache = HstServices.getComponentManager().getComponent(HstConfigurationLoadingCache.class.getName());
+        name = site.getValueProvider().getName();
+        canonicalIdentifier = site.getValueProvider().getIdentifier();
+        this.mountSiteMapConfiguration = mountSiteMapConfiguration;
+        this.configurationPath = configurationPath;
+        if (configurationPath.endsWith("-preview")) {
+            hasPreviewConfiguration = true;
+        } else {
+            hasPreviewConfiguration = hstNodeLoadingCache.getNode(configurationPath + "-preview") != null;
+        }
+
+        init(site, mount, isPreviewSite, hstNodeLoadingCache, master);
     }
 
     private void findAndSetConfigurationPath(final HstNode site,
                                              final HstNodeLoadingCache hstNodeLoadingCache,
                                              final boolean isPreviewSite
                                              ) {
-        if (site.getValueProvider().hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-            configurationPath = site.getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH);
+        if (site.getValueProvider().hasProperty(SITE_CONFIGURATIONPATH)) {
+            configurationPath = site.getValueProvider().getString(SITE_CONFIGURATIONPATH);
         } else {
             configurationPath = hstNodeLoadingCache.getRootPath() + "/" +
-                    HstNodeTypes.NODENAME_HST_CONFIGURATIONS + "/" +site.getValueProvider().getName();
+                    NODENAME_HST_CONFIGURATIONS + "/" +site.getValueProvider().getName();
         }
-        if (isPreviewSite) {
-            String previewConfigurationPath = configurationPath + "-preview";
-            HstNode previewConfig = hstNodeLoadingCache.getNode(previewConfigurationPath);
-            if (previewConfig != null) {
-                hasPreviewConfiguration = true;
+        String previewConfigurationPath = configurationPath + "-preview";
+        HstNode previewConfig = hstNodeLoadingCache.getNode(previewConfigurationPath);
+        if (previewConfig != null) {
+            hasPreviewConfiguration = true;
+            if (isPreviewSite) {
                 configurationPath = previewConfigurationPath;
             }
         }
     }
 
-    private void init() {
+    private void init(final HstNode site, final Mount mount, final boolean isPreviewSite,
+                      final HstNodeLoadingCache hstNodeLoadingCache, final Channel master) {
+
+        log.debug("Loading channel configuration for '{}'", configurationPath);
+
+        loadChannel(site, mount, isPreviewSite, hstNodeLoadingCache, master);
 
         HstComponentsConfiguration ccs = configLoadingCache.getComponentsConfiguration(configurationPath, false);
         if (ccs != null) {
@@ -126,6 +156,141 @@ public class HstSiteService implements HstSite {
 
     }
 
+    private void loadChannel(final HstNode site, final Mount mount, final boolean isPreviewSite, final HstNodeLoadingCache hstNodeLoadingCache, final Channel master) {
+        HstManager mngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        if (mount.getContextPath() != null && !mount.getContextPath().equals(mngr.getContextPath())) {
+            log.info("channel for different context path can't be loaded because of channel info class");
+            channel = Optional.absent();
+            return;
+        }
+        final Channel ch;
+        if (mount.hasNoChannelInfo()) {
+            ch = null;
+        } else {
+            ch = configLoadingCache.loadChannel(configurationPath, isPreviewSite,  mount.getIdentifier(), mount.getContextPath());
+        }
+        if (ch != null) {
+            final HstNode rootConfigNode = hstNodeLoadingCache.getNode(configurationPath);
+            if (master != null) {
+                if (!rootConfigNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_OF) || !rootConfigNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_ID)) {
+                    throw new ModelLoadingException(String.format("Cannot load branch '%s' since misses mandatory property '%s' or '%s'",
+                            configLoadingCache, BRANCH_PROPERTY_BRANCH_OF, BRANCH_PROPERTY_BRANCH_ID));
+                }
+                ch.setBranchOf(rootConfigNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_OF));
+                ch.setBranchId(rootConfigNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_ID));
+            }
+
+            if (rootConfigNode == null) {
+                throw new ModelLoadingException("No configuration node found at '"+configurationPath+"'. Cannot load model for it.");
+            }
+
+            ch.setHstMountPoint(mount.getMountPoint());
+            ch.setContentRoot(mountSiteMapConfiguration.getMountContentPath());
+            ch.setHstConfigPath(configurationPath);
+
+            ch.setPreviewHstConfigExists(hasPreviewConfiguration);
+
+            if (rootConfigNode.getNode(HstNodeTypes.NODENAME_HST_WORKSPACE) != null) {
+                ch.setWorkspaceExists(true);
+            }
+
+            ch.setHasCustomProperties(hasChannelCustomProperties(ch));
+
+            String mountPath = mount.getMountPath();
+            ch.setLocale(mountSiteMapConfiguration.getLocale());
+            ch.setMountId(mount.getIdentifier());
+            ch.setMountPath(mountPath);
+            ch.setContextPath(mountSiteMapConfiguration.getMountContextPath());
+
+            // do not fetch the sitemap id via #getSiteMap() because that part should be invoked lazily
+            CompositeConfigurationNode siteMapNode = findSiteMapNode();
+            if (siteMapNode == null) {
+                log.warn("Missing sitemap below '{}' and also no sitemap is inherited.", configurationPath);
+            } else {
+                ch.setSiteMapId(siteMapNode.getMainConfigNode().getValueProvider().getIdentifier());
+            }
+
+            VirtualHost virtualHost = mount.getVirtualHost();
+            ch.setCmsPreviewPrefix(virtualHost.getVirtualHosts().getCmsPreviewPrefix());
+            ch.setHostname(virtualHost.getHostName());
+
+            StringBuilder url = new StringBuilder();
+            url.append(mount.getScheme());
+            url.append("://");
+            url.append(virtualHost.getHostName());
+            if (mount.isPortInUrl()) {
+                int port = mount.getPort();
+                if (port != 0 && port != 80 && port != 443) {
+                    url.append(':');
+                    url.append(mount.getPort());
+                }
+            }
+            if (virtualHost.isContextPathInUrl() && mount.getContextPath() != null) {
+                url.append(mount.getContextPath());
+            }
+            if (StringUtils.isNotEmpty(mountPath)) {
+                if (!mountPath.startsWith("/")) {
+                    url.append('/');
+                }
+                url.append(mountPath);
+            }
+            ch.setUrl(url.toString());
+
+            if (isPreviewSite) {
+                ch.setPreview(true);
+                ch.setChangedBySet(new ChannelLazyLoadingChangedBySet(site, this, ch, hstNodeLoadingCache));
+            }
+        }
+
+        channel = Optional.fromNullable(ch);
+    }
+
+    private CompositeConfigurationNode findSiteMapNode() {
+        final CompositeConfigurationNodes ccn = configLoadingCache.getCompositeConfigurationNodes(configurationPath, HstNodeTypes.NODENAME_HST_SITEMAP);
+        return ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_SITEMAP);
+    }
+
+
+    private boolean hasChannelCustomProperties(final Channel channel) {
+        Class<? extends ChannelInfo> channelInfoClass = getChannelInfoClass(channel);
+        if (channelInfoClass == null) {
+            return false;
+        }
+        return channelInfoClass != ChannelInfo.class;
+    }
+
+    private Class<? extends ChannelInfo> getChannelInfoClass(final Channel channel) {
+        String channelInfoClassName = channel.getChannelInfoClassName();
+        if (channelInfoClassName == null) {
+            log.debug("No channelInfoClassName defined. Return just the ChannelInfo interface class");
+            return ChannelInfo.class;
+        }
+        try {
+            return (Class<? extends ChannelInfo>) ChannelPropertyMapper.class.getClassLoader().loadClass(channelInfoClassName);
+        } catch (ClassNotFoundException cnfe) {
+            log.warn("Configured class '{}' was not found", channelInfoClassName, cnfe);
+        } catch (ClassCastException cce) {
+            log.warn("Configured class '{}' does not extend ChannelInfo",
+                    channelInfoClassName, cce);
+        }
+        return null;
+    }
+
+    public <T extends ChannelInfo> T getChannelInfo() {
+        Channel channel = getChannel();
+        if (channel == null) {
+            return null;
+        }
+        Class<? extends ChannelInfo> channelInfoClass = getChannelInfoClass(channel);
+        if (channelInfoClass == null) {
+            return null;
+        }
+        return (T) ChannelUtils.getChannelInfo(channel.getProperties(), channelInfoClass);
+    }
+
+    public Channel getChannel() {
+        return channel.orNull();
+    }
 
     public HstComponentsConfiguration getComponentsConfiguration() {
         if (componentsConfiguration != null) {
@@ -156,6 +321,7 @@ public class HstSiteService implements HstSite {
         }
     }
 
+    // TODO why doesn't the getSiteMap use configLoadingCache?? See HSTTWO-3966
     public HstSiteMap getSiteMap() {
         if (siteMap != null) {
             return siteMap.get();
@@ -166,8 +332,7 @@ public class HstSiteService implements HstSite {
             }
             try {
                 long start = System.currentTimeMillis();
-                final CompositeConfigurationNodes ccn = configLoadingCache.getCompositeConfigurationNodes(configurationPath, HstNodeTypes.NODENAME_HST_SITEMAP);
-                final CompositeConfigurationNodes.CompositeConfigurationNode siteMapNode = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_SITEMAP);
+                final CompositeConfigurationNode siteMapNode = findSiteMapNode();
                 if (siteMapNode == null) {
                     HstSiteMap sm = new HstNoopSiteMap(this);
                     siteMap = Optional.of(sm);
@@ -277,7 +442,7 @@ public class HstSiteService implements HstSite {
                 return siteMenusConfigurations.orNull();
             }
             final CompositeConfigurationNodes ccn = configLoadingCache.getCompositeConfigurationNodes(configurationPath, HstNodeTypes.NODENAME_HST_SITEMENUS);
-            final CompositeConfigurationNodes.CompositeConfigurationNode siteMenusNode = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_SITEMENUS);
+            final CompositeConfigurationNode siteMenusNode = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_SITEMENUS);
             if (siteMenusNode == null) {
                 log.info("There is no sitemenu configuration for '{}'. Return null", configurationPath);
                 siteMenusConfigurations = Optional.absent();

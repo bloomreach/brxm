@@ -1,0 +1,16 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestproject/hst:prototypepages:
+      jcr:primaryType: hst:pages
+      /prototype-page:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:abstractpages/basepage
+        /main:
+          jcr:primaryType: hst:component
+          hst:template: prototype
+          /container1:
+            jcr:primaryType: hst:containercomponent
+            hst:xtype: HST.vBox
+          /container2:
+            jcr:primaryType: hst:containercomponent
+            hst:xtype: HST.vBox

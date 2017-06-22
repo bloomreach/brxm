@@ -47,9 +47,10 @@
   </bean>
 
   <bean id="hstJaasLoginModuleConfigPropertySetter"
-        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
           value="empty(sys.getProperty('java.security.auth.login.config')) and config.containsKey('java.security.auth.login.config')" /> 
+    <constructor-arg value="java.lang.String" />
     <property name="targetClass"><value>java.lang.System</value></property>
     <property name="targetMethod"><value>setProperty</value></property>
     <property name="arguments">
@@ -57,7 +58,8 @@
         <value>java.security.auth.login.config</value>
         <bean class="org.hippoecm.hst.site.container.ResourceFactoryBean">
           <constructor-arg>
-            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+              <constructor-arg value="java.lang.String" />
               <property name="targetObject" ref="containerConfiguration" />
               <property name="targetMethod" value="getString" />
               <property name="arguments">

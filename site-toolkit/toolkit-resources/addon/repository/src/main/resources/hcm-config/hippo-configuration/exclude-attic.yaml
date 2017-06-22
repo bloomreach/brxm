@@ -1,0 +1,16 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/live-documents/hippo-document/exclude-attic:
+      jcr:primaryType: hipposys:facetrule
+      hipposys:equals: false
+      hipposys:facet: jcr:path
+      hipposys:filter: false
+      hipposys:type: Reference
+      hipposys:value: /content/attic
+    /hippo:configuration/hippo:domains/preview-documents/hippo-document/exclude-attic:
+      jcr:primaryType: hipposys:facetrule
+      hipposys:equals: false
+      hipposys:facet: jcr:path
+      hipposys:filter: false
+      hipposys:type: Reference
+      hipposys:value: /content/attic

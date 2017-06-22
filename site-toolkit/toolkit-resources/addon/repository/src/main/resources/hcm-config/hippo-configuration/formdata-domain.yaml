@@ -1,0 +1,35 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/formdata:
+      jcr:primaryType: hipposys:domain
+      /readwrite:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [sitewriters]
+        hipposys:role: readwrite
+      /formdata-nodes:
+        jcr:primaryType: hipposys:domainrule
+        /hst-formdata:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hst:formdata
+      /formdatacontainer-nodes:
+        jcr:primaryType: hipposys:domainrule
+        /hst-formdatacontainer:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hst:formdatacontainer
+      /formfieldvalue-nodes:
+        jcr:primaryType: hipposys:domainrule
+        /hst-formfieldvalue:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hst:formfieldvalue

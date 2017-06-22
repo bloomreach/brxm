@@ -1,0 +1,42 @@
+definitions:
+  config:
+    /hst:hst/hst:blueprints/testblueprint:
+      jcr:primaryType: hst:blueprint
+      hst:contentRoot: /unittestcontent/documents
+      hst:description: Blueprint for unit tests
+      hst:name: Test Blueprint
+      /hst:configuration:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../unittestcommon]
+        /hst:pages:
+          jcr:primaryType: hst:pages
+          /defaultpage:
+            jcr:primaryType: hst:component
+            hst:componentclassname: com.onehippo.gogreen.components.BaseComponent
+            hst:parameternames: [org.hippoecm.hst.core.container.custom.errorhandler]
+            hst:parametervalues: [com.onehippo.gogreen.exceptions.CustomPageErrorHandler]
+            hst:template: layout.webpage.ftl
+        /hst:sitemap:
+          jcr:primaryType: hst:sitemap
+          /news:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/news-overview
+            hst:refId: news
+            hst:relativecontentpath: news
+        /hst:sitemenus:
+          jcr:primaryType: hst:sitemenus
+          /mainnavigation:
+            jcr:primaryType: hst:sitemenu
+            /Home:
+              jcr:primaryType: hst:sitemenuitem
+              hst:referencesitemapitem: home
+      /hst:site:
+        jcr:primaryType: hst:site
+        hst:content: /unittestcontent/documents/unittestproject
+      /hst:mount:
+        jcr:primaryType: hst:mount
+        hst:alias: site
+      /hst:channel:
+        jcr:primaryType: hst:channel
+        /hst:channelinfo:
+          jcr:primaryType: hst:channelinfo

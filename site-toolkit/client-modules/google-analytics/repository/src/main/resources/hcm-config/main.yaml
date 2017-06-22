@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    hippogoogleanalytics:
+      uri: http://www.onehippo.org/jcr/hippogoogleanalytics/nt/1.0
+      cnd: hippogoogleanalytics.cnd

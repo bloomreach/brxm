@@ -1,0 +1,16 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/live-documents/hippo-document/state-not-draft:
+      jcr:primaryType: hipposys:facetrule
+      hipposys:equals: false
+      hipposys:facet: hippostd:state
+      hipposys:filter: true
+      hipposys:type: String
+      hipposys:value: draft
+    /hippo:configuration/hippo:domains/preview-documents/hippo-document/state-not-draft:
+      jcr:primaryType: hipposys:facetrule
+      hipposys:equals: false
+      hipposys:facet: hippostd:state
+      hipposys:filter: true
+      hipposys:type: String
+      hipposys:value: draft

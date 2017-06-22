@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
@@ -86,6 +86,11 @@ public class MountDecoratorImpl implements MountDecorator {
         @Override
         public String getMountPoint() {
             return delegatee.getMountPoint();
+        }
+
+        @Override
+        public boolean hasNoChannelInfo() {
+            return delegatee.hasNoChannelInfo();
         }
 
         @Override
@@ -180,6 +185,7 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        @Deprecated
         public String getChannelPath() {
             if(delegatee instanceof ContextualizableMount) {
                 return  ((ContextualizableMount)delegatee).getPreviewChannelPath();
@@ -691,6 +697,10 @@ public class MountDecoratorImpl implements MountDecorator {
         @Override
         public Mount getMountByIdentifier(final String uuid) {
             final Mount mountByIdentifier = delegatee.getMountByIdentifier(uuid);
+            if (mountByIdentifier == null) {
+                log.info("Cannot find a mount for uuid '{}'. Most likely just removed.", uuid);
+                return null;
+            }
             return decorateMountAsPreview(mountByIdentifier);
         }
 
@@ -707,6 +717,21 @@ public class MountDecoratorImpl implements MountDecorator {
         @Override
         public boolean isDiagnosticsEnabled(final String ip) {
             return delegatee.isDiagnosticsEnabled(ip);
+        }
+
+        @Override
+        public int getDiagnosticsDepth() {
+            return delegatee.getDiagnosticsDepth();
+        }
+
+        @Override
+        public long getDiagnosticsThresholdMillis() {
+            return delegatee.getDiagnosticsThresholdMillis();
+        }
+
+        @Override
+        public long getDiagnosticsUnitThresholdMillis() {
+            return delegatee.getDiagnosticsUnitThresholdMillis();
         }
 
         @Override
@@ -727,6 +752,11 @@ public class MountDecoratorImpl implements MountDecorator {
         @Override
         public Map<String, Channel> getChannels(final String hostGroup) {
             return delegatee.getChannels(hostGroup);
+        }
+
+        @Override
+        public Map<String, Map<String, Channel>> getChannels() {
+            return delegatee.getChannels();
         }
 
         @Override

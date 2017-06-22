@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,20 +112,23 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     @After
     @Override
     public void tearDown() throws Exception {
-        session.refresh(false);
-        final Node users = session.getNode("/hippo:configuration/hippo:users");
-        users.getNode("bob").remove();
-        users.getNode("alice").remove();
+        try {
+            session.refresh(false);
+            final Node users = session.getNode("/hippo:configuration/hippo:users");
+            users.getNode("bob").remove();
+            users.getNode("alice").remove();
 
-        final Node adminGroup = session.getNode("/hippo:configuration/hippo:groups/admin");
-        Value[] adminMembers = adminGroup.getProperty("hipposys:members").getValues();
+            final Node adminGroup = session.getNode("/hippo:configuration/hippo:groups/admin");
+            Value[] adminMembers = adminGroup.getProperty("hipposys:members").getValues();
 
-        // remove bob and alice again
-        Value[] original = (Value[]) ArrayUtils.subarray(adminMembers, 0, adminMembers.length - 2);
+            // remove bob and alice again
+            Value[] original = (Value[])ArrayUtils.subarray(adminMembers, 0, adminMembers.length - 2);
 
-        adminGroup.setProperty("hipposys:members", original);
-        session.save();
-        super.tearDown();
+            adminGroup.setProperty("hipposys:members", original);
+            session.save();
+        } finally {
+            super.tearDown();
+        }
     }
 
     protected Session createSession(final String userName, final String password) throws RepositoryException {
@@ -240,8 +243,10 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
     }
 
     protected String getPrototypePageUUID() throws RepositoryException {
-        String previewConfigurationPath = mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
-        return session.getNode(previewConfigurationPath).getNode("hst:prototypepages/prototype-page").getIdentifier();
+        final String previewConfigurationPath = mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath();
+        // Since HSTTWO-3959 prototype pages are not copied to preview any more
+        final String liveConfigurationPath = StringUtils.substringBefore(previewConfigurationPath, "-preview");
+        return session.getNode(liveConfigurationPath).getNode("hst:prototypepages/prototype-page").getIdentifier();
     }
 
 

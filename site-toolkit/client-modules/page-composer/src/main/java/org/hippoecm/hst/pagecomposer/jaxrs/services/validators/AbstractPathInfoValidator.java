@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import com.google.common.base.Optional;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.XSSUrlFilter;
@@ -28,6 +26,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +50,7 @@ abstract class AbstractPathInfoValidator implements Validator {
             return;
         }
 
-        final String encoding = Optional.fromNullable(requestContext.getServletRequest().getCharacterEncoding()).or("UTF-8");
+        final String encoding = HstRequestUtils.getURIEncoding(requestContext.getServletRequest());
         if (containsInvalidChars(info, encoding)) {
             String msg = String.format("Invalid pathInfo '%s' because contains invalid (encoded) chars like " +
                     " ':', ';', '?', '#' or '\' or the pathInfo cannot be URL decoded.", info);

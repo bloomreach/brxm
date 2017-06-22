@@ -17,10 +17,8 @@
 package org.hippoecm.hst.configuration;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.nodetype.ConstraintViolationException;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -692,12 +690,6 @@ public class ContainerComponentConfigurationsIT extends AbstractTestConfiguratio
         //hstSitesManager.invalidate();
         return highestAncestorPath;
     }
-
-    protected Session createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-    }
-
 
     public String getLocalhostRootMountId() throws RepositoryException {
         return session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();

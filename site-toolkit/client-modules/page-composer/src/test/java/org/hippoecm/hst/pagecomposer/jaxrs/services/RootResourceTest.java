@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import javax.ws.rs.Path;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -70,7 +70,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.net.ssl.*")
+@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
 @PrepareForTest(HstConfigurationUtils.class)
 public class RootResourceTest extends AbstractResourceTest {
     private static final String MOCK_REST_PATH = "test-rootresource/";
@@ -87,6 +87,11 @@ public class RootResourceTest extends AbstractResourceTest {
         protected void resetSession() {
             // override to mock this method
         }
+
+        @Override
+        protected void removeRenderingMountId() {
+            // nothing
+        }
     }
 
     @Before
@@ -101,7 +106,6 @@ public class RootResourceTest extends AbstractResourceTest {
                 .createMock();
 
         rootResource.setChannelService(channelService);
-        rootResource.setRootPath("/hst:hst");
 
         Config config = createDefaultConfig(JsonPojoMapperProvider.class)
                 .addServerSingleton(rootResource)
@@ -120,7 +124,7 @@ public class RootResourceTest extends AbstractResourceTest {
         fieldGroups.add(new FieldGroupInfo(fieldNames, "fieldGroup2"));
 
         final ChannelInfoDescription channelInfoDescription
-                = new ChannelInfoDescription(fieldGroups, createPropertyDefinitions(), i18nResources, "tester");
+                = new ChannelInfoDescription(fieldGroups, createPropertyDefinitions(), i18nResources, "tester", true);
 
         expect(channelService.getChannelInfoDescription("channel-foo", "nl"))
                 .andReturn(channelInfoDescription);
@@ -139,7 +143,8 @@ public class RootResourceTest extends AbstractResourceTest {
                     "propertyDefinitions['field2'].annotations[0].value", containsInAnyOrder("value-3", "value-4"),
                     "i18nResources['field1']", equalTo("Field 1"),
                     "i18nResources['field2']", equalTo("Field 2"),
-                    "lockedBy", equalTo("tester"));
+                    "lockedBy", equalTo("tester"),
+                    "editable", equalTo(Boolean.TRUE));
 
         verify(channelService);
     }
@@ -175,7 +180,7 @@ public class RootResourceTest extends AbstractResourceTest {
         fieldGroups.add(new FieldGroupInfo(null, "fieldGroup1"));
 
         final ChannelInfoDescription channelInfoDescription
-                = new ChannelInfoDescription(fieldGroups, createPropertyDefinitions(), i18nResources, null);
+                = new ChannelInfoDescription(fieldGroups, createPropertyDefinitions(), i18nResources, null, true);
 
         expect(channelService.getChannelInfoDescription("channel-foo", "en"))
                 .andReturn(channelInfoDescription);

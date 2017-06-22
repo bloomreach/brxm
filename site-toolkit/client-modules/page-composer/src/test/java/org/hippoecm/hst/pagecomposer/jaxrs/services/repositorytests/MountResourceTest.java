@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.eventbus.Subscribe;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
@@ -39,14 +39,20 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResourceAccessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.DISCARD;
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PREVIEW_CREATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PUBLISH;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper.SEEMS_TO_INDICATE_LIVE_AND_PREVIEW_CONFIGURATIONS_ARE_OUT_OF_SYNC_WHICH_INDICATES_AN_ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -55,18 +61,28 @@ import static org.junit.Assert.assertTrue;
 public class MountResourceTest extends AbstractMountResourceTest {
 
     @Test
-    public void testEditAndPublishMount() throws Exception {
-
+    public void testEditAndPublishMount_with_non_workspace_channel() throws Exception {
         movePagesFromCommonToUnitTestProject();
         createWorkspaceWithTestContainer();
+        edit_and_publish_assertions(false);
+    }
+
+    @Test
+    public void testEditAndPublishMount_with_workspace_channel() throws Exception {
+        movePagesFromCommonToUnitTestProject();
+        createWorkspaceWithTestContainer();
+        moveChannelToWorkspace();
+        edit_and_publish_assertions(true);
+    }
+
+    private void edit_and_publish_assertions(final boolean channelNodeInWorkspace) throws Exception {
+
         addReferencedContainerForHomePage();
         String catalogItemUUID = addCatalogItem();
         session.save();
         // give time for jcr events to evict model
         Thread.sleep(200);
-
         mockNewRequest(session, "localhost", "");
-
         final PageComposerContextService pccs = mountResource.getPageComposerContextService();
         final HstRequestContext ctx = pccs.getRequestContext();
 
@@ -74,19 +90,12 @@ public class MountResourceTest extends AbstractMountResourceTest {
         assertFalse("Preview config node should not exist yet.",
                 session.nodeExists(previewConfigurationPath));
 
-
         mountResource.startEdit();
 
         assertTrue("Live config node should exist",
                 session.nodeExists(ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath()));
         assertTrue("Preview config node should exist",
                 session.nodeExists(previewConfigurationPath));
-
-
-        assertTrue("Live channel path node should exist",
-                session.nodeExists(ctx.getResolvedMount().getMount().getChannelPath()));
-        assertTrue("Preview channel path node should exist",
-                session.nodeExists(ctx.getResolvedMount().getMount().getChannelPath() + "-preview"));
 
         // reload model through new request, and then modify a container
         // give time for jcr events to evict model
@@ -96,11 +105,27 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         assertTrue(pccs.getEditingPreviewSite().getConfigurationPath().equals(pccs.getEditingLiveConfigurationPath() + "-preview"));
         assertTrue(pccs.getEditingPreviewConfigurationPath().equals(pccs.getEditingLiveConfigurationPath() + "-preview"));
-        assertTrue(pccs.getEditingPreviewChannel().getHstConfigPath().equals(pccs.getEditingPreviewSite().getConfigurationPath()));
-        assertEquals(0, pccs.getEditingPreviewChannel().getChangedBySet().size());
 
-        assertTrue(pccs.getEditingPreviewChannel().getId().endsWith("-preview"));
-        assertTrue(pccs.getEditingPreviewChannel().getId().equals(pccs.getEditingMount().getChannel().getId()));
+
+        Channel previewChannel = pccs.getEditingPreviewChannel();
+        assertTrue(previewChannel.getHstConfigPath().equals(pccs.getEditingPreviewSite().getConfigurationPath()));
+        assertEquals(0, previewChannel.getChangedBySet().size());
+
+        assertTrue("Although the channel node might not be stored below the preview configuration if it " +
+                "is not in the hst:workspace (and then still in live), the id should still end with '-preview'",
+                previewChannel.getId().endsWith("-preview"));
+
+        if (channelNodeInWorkspace) {
+            assertEquals("Because hst:channel *is* below hst:workspace, it should be copied to the preview config.",
+                    "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:channel", previewChannel.getChannelPath());
+
+            assertTrue("Because hst:channel below hst:workspace, it should be editable.", previewChannel.isChannelSettingsEditable());
+        } else {
+            assertEquals("Because hst:channel not below hst:workspace, it should not be copied to the preview config.",
+                    "/hst:hst/hst:configurations/unittestproject/hst:channel", previewChannel.getChannelPath());
+
+            assertFalse("Because hst:channel not below hst:workspace, it should not be editable.", previewChannel.isChannelSettingsEditable());
+        }
 
         final String previewContainerNodeUUID = session.getNode(previewConfigurationPath)
                 .getNode("hst:workspace/hst:containers/testcontainer").getIdentifier();
@@ -119,8 +144,11 @@ public class MountResourceTest extends AbstractMountResourceTest {
         Thread.sleep(200);
 
         mockNewRequest(session, "localhost", "/home");
+        // reload the preview channel : After changes, it *must* be a different object
+        assertTrue("Since there are changes, pccs.getEditingPreviewChannel should return a new object.", previewChannel != pccs.getEditingPreviewChannel());
 
-        changedBySet = pccs.getEditingPreviewChannel().getChangedBySet();
+        previewChannel = pccs.getEditingPreviewChannel();
+        changedBySet = previewChannel.getChangedBySet();
         assertTrue(changedBySet.contains("admin"));
 
         mountResource.publish();
@@ -132,9 +160,9 @@ public class MountResourceTest extends AbstractMountResourceTest {
         mockNewRequest(session, "localhost", "/home");
 
         // there should be no locks
-        changedBySet = pccs.getEditingPreviewChannel().getChangedBySet();
+        previewChannel = pccs.getEditingPreviewChannel();
+        changedBySet = previewChannel.getChangedBySet();
         assertTrue(changedBySet.isEmpty());
-
     }
 
     protected ContainerComponentResource createContainerResource() {
@@ -160,11 +188,64 @@ public class MountResourceTest extends AbstractMountResourceTest {
                 MountResourceAccessor.buildXPathQueryToFindContainersForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin", "editor"})));
 
         assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview/*[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
-                MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/myproject-preview", Arrays.asList(new String[]{"admin", "editor"})));
+                MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/myproject-preview", Arrays.asList(new String[]{"admin", "editor"}), false));
         assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview/*[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
-                MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin", "editor"})));
+                MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin", "editor"}), false));
+        assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview/hst:workspace/*[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
+                MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/myproject-preview", Arrays.asList(new String[]{"admin", "editor"}), true));
+        assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview/hst:workspace/*[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
+                MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin", "editor"}), true));
     }
 
+
+    @Test
+    public void publication_of_mode_than_1_new_page_does_not_result_in_reordering_warnings() throws Exception {
+        movePagesFromCommonToUnitTestProject();
+
+        final Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject");
+        unitTestConfigNode.addNode("hst:workspace", "hst:workspace");
+        // only sitemap in workspace is copied over to preview
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap");
+
+        session.save();
+
+        mockNewRequest(session, "localhost", "");
+
+        final PageComposerContextService pccs = mountResource.getPageComposerContextService();
+        final HstRequestContext ctx = pccs.getRequestContext();
+
+        String liveConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath();
+        final String previewConfigurationPath = liveConfigurationPath + "-preview";
+
+        mountResource.startEdit();
+
+        // add manually two new pages to the preview
+        Node previewConfigurationNode = session.getNode(previewConfigurationPath);
+        Node aboutUsSiteMapItemNode = previewConfigurationNode.getNode("hst:workspace/hst:sitemap/about-us");
+
+        Node about2 = JcrUtils.copy(aboutUsSiteMapItemNode, "about-us-2", previewConfigurationNode.getNode("hst:workspace/hst:sitemap"));
+        Node about3 = JcrUtils.copy(aboutUsSiteMapItemNode, "about-us-3", previewConfigurationNode.getNode("hst:workspace/hst:sitemap"));
+
+        about2.addMixin(MIXINTYPE_HST_EDITABLE);
+        about2.setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
+
+        about3.addMixin(MIXINTYPE_HST_EDITABLE);
+        about3.setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
+
+        session.save();
+
+        mockNewRequest(session, "localhost", "/home");
+
+        try ( Log4jInterceptor listener = Log4jInterceptor.onDebug().trap(AbstractHelper.class).build()) {
+            mountResource.publish();
+            assertTrue(listener.messages().anyMatch(m -> m.contains("Successfully ordered 'about-us-2' before 'about-us-3'")));
+            assertFalse(listener.messages().anyMatch(m -> m.contains(SEEMS_TO_INDICATE_LIVE_AND_PREVIEW_CONFIGURATIONS_ARE_OUT_OF_SYNC_WHICH_INDICATES_AN_ERROR)));
+        };
+
+        assertTrue(session.nodeExists(liveConfigurationPath + "/hst:workspace/hst:sitemap/about-us-2"));
+        assertTrue(session.nodeExists(liveConfigurationPath + "/hst:workspace/hst:sitemap/about-us-3"));
+    }
 
     @Test
     public void publication_of_containers_keep_order_containers_in_live_same_as_order_in_preview() throws Exception {
@@ -406,6 +487,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
         private List<ChannelEvent> processed = new ArrayList<>();
         private boolean previewCreatedEventProcessed;
         private boolean locksOnConfigurationPresentDuringEventDispatching;
+
         @Subscribe
         public void onChannelEvent(ChannelEvent event) throws RepositoryException {
             final Session session = event.getRequestContext().getSession();
@@ -440,7 +522,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
     }
 
     private static boolean checkRecursiveForLock(final Node current) throws RepositoryException {
-        if (current.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+        if (current.hasProperty(GENERAL_PROPERTY_LOCKED_BY)) {
             return true;
         }
         for (Node child : new NodeIterable(current.getNodes())) {
@@ -495,7 +577,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
     }
 
     @Test
-     public void discard_mount_with_ChannelEventListener() throws Exception {
+    public void discard_mount_with_ChannelEventListener() throws Exception {
         final ChannelEventListener listener = new ChannelEventListener();
         try {
             HstServices.getComponentManager().registerEventSubscriber(listener);
@@ -515,6 +597,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
     public static class ChannelEventListenerSettingClientException {
         private ChannelEvent handledEvent;
+
         @Subscribe
         public void onChannelEvent(ChannelEvent event) throws RepositoryException {
             if (event.getChannelEventType() == PUBLISH || event.getChannelEventType() == DISCARD) {
@@ -537,7 +620,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
             assertNotNull(listener.handledEvent.getException());
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-            assertEquals(listener.handledEvent.getException().toString(), ((ExtResponseRepresentation) response.getEntity()).getMessage());
+            assertEquals(listener.handledEvent.getException().toString(), ((ExtResponseRepresentation)response.getEntity()).getMessage());
 
             // session contains not more changes as should be reset
             assertFalse(session.hasPendingChanges());
@@ -564,7 +647,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
             assertNotNull(listener.handledEvent.getException());
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-            assertEquals(listener.handledEvent.getException().toString(), ((ExtResponseRepresentation) response.getEntity()).getMessage());
+            assertEquals(listener.handledEvent.getException().toString(), ((ExtResponseRepresentation)response.getEntity()).getMessage());
 
             // session contains not more changes as should be reset
             assertFalse(session.hasPendingChanges());
@@ -624,7 +707,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
             Response response = mountResource.discardChanges();
 
             assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-            assertEquals("IllegalStateException message", ((ExtResponseRepresentation) response.getEntity()).getMessage());
+            assertEquals("IllegalStateException message", ((ExtResponseRepresentation)response.getEntity()).getMessage());
 
             // session contains not more changes as should be reset
             assertFalse(session.hasPendingChanges());

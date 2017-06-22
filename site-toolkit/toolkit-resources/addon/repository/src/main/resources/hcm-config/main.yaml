@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:update/hippo:registry/MoveContainersToWorkspace:
+      .meta:delete: true

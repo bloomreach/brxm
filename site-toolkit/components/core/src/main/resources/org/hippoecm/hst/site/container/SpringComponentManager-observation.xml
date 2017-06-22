@@ -80,11 +80,13 @@
     </property>
   </bean>
 
-  <bean id="jcrObservationEventListenerItems" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="jcrObservationEventListenerItems" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
     <property name="targetClass" value="java.util.Collections" />
     <property name="targetMethod" value="synchronizedList" />
     <property name="arguments">
-      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+      <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+        <constructor-arg value="java.util.List" />
         <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
         <property name="targetMethod" value="union" />
         <property name="arguments">
@@ -200,7 +202,8 @@
             <bean parent="baseEventListener" class="org.hippoecm.hst.core.jcr.pool.PoolingRepositorySessionsRefreshEventListener">
               <property name="poolingRepositories">
                 <list>
-                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -209,7 +212,8 @@
                       </list>
                     </property>
                   </bean>
-                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -218,7 +222,8 @@
                       </list>
                     </property>
                   </bean>
-                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -227,7 +232,8 @@
                       </list>
                     </property>
                   </bean>
-                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -278,7 +284,8 @@
             <bean parent="baseEventListener" class="org.hippoecm.hst.core.jcr.pool.PoolingRepositorySessionMustBeLoggedOutListener">
               <property name="poolingRepositories">
                 <list>
-                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -287,7 +294,8 @@
                       </list>
                     </property>
                   </bean>
-                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -296,7 +304,8 @@
                       </list>
                     </property>
                   </bean>
-                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -305,7 +314,8 @@
                       </list>
                     </property>
                   </bean>
-                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+                    <constructor-arg value="javax.jcr.Repository" />
                     <property name="targetObject" ref="javax.jcr.Repository"/>
                     <property name="targetMethod" value="getRepositoryByCredentials"/>
                     <property name="arguments">
@@ -350,6 +360,29 @@
           </property>
         </bean>
 
+        <!-- Changes in the resource bundle documents invoke an invalidation in the resourceBundleRegistry. -->
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <property name="absolutePath" value="${resource.bundles.rootPath}"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="nodeTypeNames">
+            <list>
+              <value>resourcebundle:resourcebundle</value>
+            </list>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.resourcebundle.internal.ResourceBundleEventListener">
+              <constructor-arg ref="org.hippoecm.hst.resourcebundle.ResourceBundleRegistry" />
+            </bean>
+          </property>
+        </bean>
+
         <!-- Listens to changes in the host configuration. -->
         <bean class="org.hippoecm.hst.configuration.environment.OptionalEnvironmentEventListenerItemImpl">
           <property name="nodeAddedEnabled" value="true"/>
@@ -375,12 +408,32 @@
           </property>
         </bean>
 
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <property name="absolutePath" ref="jcrPathTemplateComposer"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean class="org.hippoecm.hst.channelmanager.security.SecurityModelImpl$SecurityModelEventListener">
+              <property name="securityModel" ref="org.hippoecm.hst.channelmanager.security.SecurityModel"/>
+            </bean>
+          </property>
+        </bean>
+
       </list>
     </property> 
   </bean>
 
   <!-- Default empty list of custom jcr observation event listener items to be overriden by projects. (e.g., classpath:META-INF/hst-assembly/overrides/*.xml) -->
-  <bean id="customJcrObservationEventListenerItems" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="customJcrObservationEventListenerItems" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="java.util.List" />
     <property name="targetClass" value="java.util.Collections" />
     <property name="targetMethod" value="synchronizedList" />
     <property name="arguments">

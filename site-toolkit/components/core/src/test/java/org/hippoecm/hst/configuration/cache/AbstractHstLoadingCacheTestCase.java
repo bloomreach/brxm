@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,13 +15,7 @@
  */
 package org.hippoecm.hst.configuration.cache;
 
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 
 public abstract class AbstractHstLoadingCacheTestCase extends AbstractTestConfigurations {
@@ -42,11 +36,6 @@ public abstract class AbstractHstLoadingCacheTestCase extends AbstractTestConfig
         this.hstEventsDispatcher =  getComponent("hstEventsDispatcher");
         this.hstManager = getComponent(HstManager.class.getName());
         this.hstModelMutex = getComponent("hstModelMutex");
-    }
-
-    protected Session createSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
 }

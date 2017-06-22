@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hst:hst/hst:sites:
+      /testproject-live:
+        jcr:primaryType: hst:site
+        hst:configurationpath: /hst:unittestconfiguration/hst:configuration
+        hst:configurationpath: /hst:unittestconfiguration/hst:configuration

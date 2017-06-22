@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,13 +19,14 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.jcr.Credentials;
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.ForbiddenException;
 
+import org.apache.jackrabbit.util.Locked;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
@@ -35,15 +36,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 
 import static java.util.Collections.singletonList;
+import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class MountResourceTest extends AbstractFullRequestCycleTest {
 
-    private static final SimpleCredentials ADMIN_CREDENTIALS = new SimpleCredentials("admin", "admin".toCharArray());
+    protected static final SimpleCredentials ADMIN_CREDENTIALS = new SimpleCredentials("admin", "admin".toCharArray());
     private final SimpleCredentials EDITOR_CREDENTIALS = new SimpleCredentials("editor", "editor".toCharArray());
 
     @Before
@@ -51,6 +56,14 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         super.setUp();
         final Session session = createSession("admin", "admin");
         AbstractPageComposerTest.createHstConfigBackup(session);
+        // move the hst:sitemap and hst:pages below the 'workspace' because since HSTTWO-3959 only the workspace
+        // gets copied to preview configuration
+        if (!session.nodeExists("/hst:hst/hst:configurations/unittestproject/hst:workspace")) {
+            session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace", "hst:workspace");
+        }
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap");
+        session.save();
         session.logout();
     }
 
@@ -78,7 +91,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         startEditAssertions(liveUserCreds, false);
     }
 
-    private Map<String, Object> startEdit(final Credentials creds) throws RepositoryException, IOException, ServletException {
+    protected Map<String, Object> startEdit(final Credentials creds) throws RepositoryException, IOException, ServletException {
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/"+ mountId + "./edit", null, "POST");
@@ -88,7 +101,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         return mapper.reader(Map.class).readValue(restResponse);
     }
 
-    private void startEditAssertions(final Credentials creds, final boolean shouldSucceed) throws RepositoryException, IOException, ServletException {
+    protected void startEditAssertions(final Credentials creds, final boolean shouldSucceed) throws RepositoryException, IOException, ServletException {
         final Map<String, Object> responseMap = startEdit(creds);
         if (shouldSucceed) {
             assertEquals(Boolean.TRUE, responseMap.get("success"));
@@ -98,7 +111,6 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
             assertTrue(responseMap.get("message").toString().contains("Could not create a preview configuration"));
         }
     }
-
 
     @Test
     public void copy_a_page_as_admin() throws Exception {
@@ -116,12 +128,13 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         copyPageAssertions(liveUserCreds, false);
     }
 
-    private Map<String, Object> copyPage(final Credentials creds) throws RepositoryException, IOException, ServletException {
+    protected Map<String, Object> copyPage(final Credentials creds) throws RepositoryException, IOException, ServletException {
         startEdit(ADMIN_CREDENTIALS);
 
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
-        final String siteMapId = getNodeId("/hst:hst/hst:configurations/unittestproject-preview/hst:sitemap");
-        final String siteMapItemToCopyId = getNodeId("/hst:hst/hst:configurations/unittestproject-preview/hst:sitemap/home");
+        final String siteMapId = getNodeId("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap");
+        final String siteMapItemToCopyId = getNodeId("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home");
+
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/"+ siteMapId + "./copy", null, "POST");
 
@@ -134,7 +147,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         return mapper.reader(Map.class).readValue(restResponse);
     }
 
-    private void copyPageAssertions(final Credentials creds, final boolean shouldSucceed) throws Exception {
+    protected void copyPageAssertions(final Credentials creds, final boolean shouldSucceed) throws Exception {
         // first create preview config with admin creds
         final Map<String, Object> responseMap = copyPage(creds);
         if (shouldSucceed) {
@@ -161,7 +174,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         publishAssertions(EDITOR_CREDENTIALS, true);
     }
 
-    private Map<String, Object> publish(final Credentials creds) throws Exception {
+    protected Map<String, Object> publish(final Credentials creds) throws Exception {
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/"+ mountId + "./publish", null, "POST");
@@ -171,7 +184,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         return mapper.reader(Map.class).readValue(restResponse);
     }
 
-    private void publishAssertions(final Credentials creds, final boolean shouldSucceed) throws Exception {
+    protected void publishAssertions(final Credentials creds, final boolean shouldSucceed) throws Exception {
         // first force a change
         copyPage(creds);
         final Map<String, Object> responseMap = publish(creds);
@@ -193,7 +206,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         discardAssertions(EDITOR_CREDENTIALS, true);
     }
 
-    private Map<String, Object> discard(final Credentials creds) throws Exception {
+    protected Map<String, Object> discard(final Credentials creds) throws Exception {
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/"+ mountId + "./discard", null, "POST");
@@ -203,7 +216,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         return mapper.reader(Map.class).readValue(restResponse);
     }
 
-    private void discardAssertions(final Credentials creds, final boolean shouldSucceed) throws Exception {
+    protected void discardAssertions(final Credentials creds, final boolean shouldSucceed) throws Exception {
         // first force a change
         copyPage(creds);
         final Map<String, Object> responseMap = discard(creds);
@@ -248,7 +261,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         publishAssertions(EDITOR_CREDENTIALS, EDITOR_CREDENTIALS, false);
     }
 
-    private MockHttpServletResponse publish(final Credentials publishCreds, final SimpleCredentials changesCreds) throws Exception {
+    protected MockHttpServletResponse publish(final Credentials publishCreds, final SimpleCredentials changesCreds) throws Exception {
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/"+ mountId + "./userswithchanges/publish", null, "POST");
@@ -262,7 +275,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         return render(mountId, requestResponse, publishCreds);
     }
 
-    private void publishAssertions(final Credentials publishCreds, final SimpleCredentials changesCreds, final boolean shouldSucceed) throws Exception {
+    protected void publishAssertions(final Credentials publishCreds, final SimpleCredentials changesCreds, final boolean shouldSucceed) throws Exception {
         // first force a change *by* changesCreds
         copyPage(changesCreds);
         final MockHttpServletResponse response = publish(publishCreds, changesCreds);
@@ -274,18 +287,8 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
             assertEquals(Boolean.TRUE, responseMap.get("success"));
             assertEquals("Site is published", responseMap.get("message"));
         } else {
-            assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
+            assertEquals(SC_FORBIDDEN, response.getStatus());
         }
-    }
-
-    private void setPrivilegePropsForSecurityModel() throws RepositoryException {
-        final Session admin = createSession("admin", "admin");
-        final Node mount = admin.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
-        // make sure that users that have 'hippo:admin' role on /hst:hst/hst:channels can publish other ones their changes
-        mount.setProperty("manage.changes.privileges","hippo:admin");
-        mount.setProperty("manage.changes.privileges.path","/hst:hst/hst:channels");
-        admin.save();
-        admin.logout();
     }
 
     @Test
@@ -310,7 +313,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         discardAssertions(EDITOR_CREDENTIALS, EDITOR_CREDENTIALS, false);
     }
 
-    private MockHttpServletResponse discard(final Credentials publishCreds, final SimpleCredentials changesCreds) throws Exception {
+    protected MockHttpServletResponse discard(final Credentials publishCreds, final SimpleCredentials changesCreds) throws Exception {
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/"+ mountId + "./userswithchanges/discard", null, "POST");
@@ -324,7 +327,7 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         return render(mountId, requestResponse, publishCreds);
     }
 
-    private void discardAssertions(final Credentials publishCreds, final SimpleCredentials changesCreds, final boolean shouldSucceed) throws Exception {
+    protected void discardAssertions(final Credentials publishCreds, final SimpleCredentials changesCreds, final boolean shouldSucceed) throws Exception {
         // first force a change *by* changesCreds
         copyPage(changesCreds);
         final MockHttpServletResponse response = discard(publishCreds, changesCreds);
@@ -336,9 +339,46 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
             assertEquals(Boolean.TRUE, responseMap.get("success"));
             assertTrue(responseMap.get("message").toString().contains("discarded"));
         } else {
-            assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
+            assertEquals(SC_FORBIDDEN, response.getStatus());
         }
     }
 
+    @Test
+    public void select_branch_and_select_master_again() throws Exception {
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/"+ mountId + "./selectbranch/foo", null, "PUT");
+        MockHttpServletResponse response = render(mountId, requestResponse, ADMIN_CREDENTIALS);
+        final String restResponse = response.getContentAsString();
+        final Map<String, Object> responseMap = mapper.reader(Map.class).readValue(restResponse);
+        assertEquals(Boolean.TRUE, responseMap.get("success"));
+        final Map<String, String> mountToBranchMap = (Map<String, String>)requestResponse.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        assertTrue(mountToBranchMap.containsKey(mountId));
+        assertEquals("foo", mountToBranchMap.get(mountId));
+        final RequestResponseMock requestResponse2 = mockGetRequestResponse(
+                "http", "localhost", "/_rp/"+ mountId + "./selectmaster", null, "PUT");
+        final MockHttpSession session = new MockHttpSession();
+        session.setAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY, mountToBranchMap);
+        requestResponse2.getRequest().setSession(session);
+        MockHttpServletResponse response2 = render(mountId, requestResponse2, ADMIN_CREDENTIALS);
+        final String restResponse2 = response2.getContentAsString();
+        final Map<String, Object> responseMap2 = mapper.reader(Map.class).readValue(restResponse2);
+
+        assertEquals(Boolean.TRUE, responseMap2.get("success"));
+        final Map<String, String> mountToBranchMap2 = (Map<String, String>)requestResponse2.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY);
+        assertFalse(mountToBranchMap2.containsKey(mountId));
+    }
+
+    @Test
+    public void select_non_existing_branch_does_not_return_error() throws Exception {
+        final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/_rp/"+ mountId + "./selectbranch/foo", null, "PUT");
+        MockHttpServletResponse response = render(mountId, requestResponse, ADMIN_CREDENTIALS);
+        final String restResponse = response.getContentAsString();
+        final Map<String, Object> responseMap = mapper.reader(Map.class).readValue(restResponse);
+        assertEquals(Boolean.TRUE, responseMap.get("success"));
+        assertFalse(((Map)requestResponse.getRequest().getSession().getAttribute(HST_SITE_PROVIDER_HTTP_SESSION_KEY)).isEmpty());
+    }
 
 }

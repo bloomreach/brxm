@@ -1,0 +1,147 @@
+definitions:
+  config:
+    /unittestcontent/documents/myhippoproject/testdocs:
+      jcr:primaryType: hippostd:folder
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:versionable']
+      jcr:uuid: 30d6b96c-0fbd-41c0-9811-64805e16df02
+      hippostd:foldertype: [new-translated-folder, new-document]
+      hippotranslation:id: bc32e6ed-d723-4ca6-bf49-a805580febf9
+      hippotranslation:locale: en
+      /test_document_unpublished:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: a62a34ae-5f42-4482-a27a-7f39459ec8ee
+        /test_document_unpublished[1]:
+          jcr:primaryType: myhippoproject:TestDocumentType
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 700d840e-a8d0-4f24-beeb-30572b888321
+          hippo:availability: []
+          hippostd:state: draft
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2016-01-13T16:11:14.627+01:00
+          hippostdpubwf:lastModificationDate: 2016-01-13T16:11:15.128+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippotranslation:id: bb5fa8d8-959a-46c2-8e36-77a7a60a2c30
+          hippotranslation:locale: en
+          myhippoproject:boolean: true
+          myhippoproject:boolean_multiple:
+            type: boolean
+            value: []
+          myhippoproject:boolean_optional_missing: false
+          myhippoproject:boolean_optional_present: false
+          myhippoproject:date: 0001-01-01T13:00:00+01:00
+          myhippoproject:docbase: ''
+          myhippoproject:double: 0.0
+          myhippoproject:html: ''
+          myhippoproject:long: 0
+          myhippoproject:string: ''
+          myhippoproject:text: ''
+        /test_document_unpublished[2]:
+          jcr:primaryType: myhippoproject:TestDocumentType
+          jcr:mixinTypes: ['mix:versionable']
+          jcr:uuid: ecf7ff4a-f47d-4ea2-9275-0cd54c98aa3d
+          hippo:availability: [preview]
+          hippostd:state: unpublished
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2016-01-13T16:11:14.627+01:00
+          hippostdpubwf:lastModificationDate: 2016-01-13T16:11:29.089+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippotranslation:id: bb5fa8d8-959a-46c2-8e36-77a7a60a2c30
+          hippotranslation:locale: en
+          myhippoproject:boolean: true
+          myhippoproject:boolean_multiple:
+            type: boolean
+            value: []
+          myhippoproject:boolean_optional_missing: false
+          myhippoproject:boolean_optional_present: false
+          myhippoproject:date: 0001-01-01T13:00:00+01:00
+          myhippoproject:docbase: ''
+          myhippoproject:double: 0.0
+          myhippoproject:html: ''
+          myhippoproject:long: 0
+          myhippoproject:string: ''
+          myhippoproject:text: ''
+      /test_document_published:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: aa566f0d-1cd3-4cfa-bb39-4e3e1e027512
+        /test_document_published:
+          jcr:primaryType: myhippoproject:TestDocumentType
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 98d6c8b8-36b6-4cb0-ae07-5335e18eb6d5
+          hippo:availability: [live]
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2016-01-13T16:11:45.873+01:00
+          hippostdpubwf:lastModificationDate: 2016-01-14T18:43:50.025+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2016-01-14T18:43:52.391+01:00
+          hippotranslation:id: 187f3cbf-e75f-4567-aa9a-c12d2637ec04
+          hippotranslation:locale: en
+          myhippoproject:boolean: true
+          myhippoproject:boolean_multiple: [true, false]
+          myhippoproject:boolean_optional_present: true
+          myhippoproject:date: 2016-01-13T16:11:00+01:00
+          myhippoproject:docbase: c580ac64-3874-4717-a6d9-e5ad72080abe
+          myhippoproject:double: 3.14159
+          myhippoproject:html: <p><strong>html</strong>&nbsp;with nasty chars é 人</p>
+          myhippoproject:long: 42
+          myhippoproject:string: string
+          myhippoproject:text: text
+          myhippoproject:unknown-property: secret
+          /myhippoproject:unknown-node:
+            jcr:primaryType: hippostd:html
+            hippostd:content: secret
+          /myhippoproject:not_multiple_node[1]:
+            jcr:primaryType: hippostd:html
+            hippostd:content: <p>one-and-a-half</p>
+          /myhippoproject:not_multiple_node[2]:
+            jcr:primaryType: hippostd:html
+            hippostd:content: <p>one-and-a-half</p>
+          /myhippoproject:myhippoproject_testcompound[1]:
+            jcr:primaryType: myhippoproject:TestCompound
+            myhippoproject:optional_boolean_property: true
+          /myhippoproject:myhippoproject_testcompound[2]:
+            jcr:primaryType: myhippoproject:TestCompound
+            /myhippoproject:optional_html_node:
+              jcr:primaryType: hippostd:html
+              hippostd:content: <p>there</p>
+          /myhippoproject:myhippoproject_testcompound[3]:
+            jcr:primaryType: myhippoproject:TestCompound
+            myhippoproject:optional_boolean_property: true
+            /myhippoproject:optional_boolean_property:
+              jcr:primaryType: hippostd:html
+              hippostd:content: illegal
+          /myhippoproject:myhippoproject_testcompound[4]:
+            jcr:primaryType: myhippoproject:TestCompound
+            myhippoproject:optional_html_node: illegal
+            /myhippoproject:optional_html_node:
+              jcr:primaryType: hippostd:html
+              hippostd:content: <p>there</p>
+          /myhippoproject:contentblocks[1]:
+            jcr:primaryType: hippo:mirror
+            hippo:docbase: aeda2bcd-b21d-4ead-a2e6-c64a2ca051c8
+          /myhippoproject:contentblocks[2]:
+            jcr:primaryType: hippo:resource
+            hippo:filename: ok.svg
+            jcr:data:
+              type: binary
+              resource: /unittestcontent/documents/myhippoproject/testdocs/test_document_published/test_document_published/contentblocks[2]/data.bin
+            jcr:encoding: UTF-8
+            jcr:lastModified: 2016-01-14T18:43:11.803+01:00
+            jcr:mimeType: image/svg+xml
+          /myhippoproject:contentblocks[3]:
+            jcr:primaryType: hippostd:html
+            hippostd:content: <p>text with <a href="the-gastropoda-news">link</a></p>
+            /the-gastropoda-news:
+              jcr:primaryType: hippo:facetselect
+              hippo:docbase: aeda2bcd-b21d-4ead-a2e6-c64a2ca051c8
+              hippo:facets: []
+              hippo:modes: []
+              hippo:values: []
+          /myhippoproject:contentblocks[4]:
+            jcr:primaryType: myhippoproject:TestCompound
+            myhippoproject:optional_boolean_property: true
+            /myhippoproject:optional_html_node:
+              jcr:primaryType: hippostd:html
+              hippostd:content: <p>compound</p>

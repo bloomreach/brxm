@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -59,9 +59,9 @@ import static org.junit.Assert.fail;
 public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestConfigurations {
 
 
-    private final static String TEST_PROP =  "ConcurrentChannelManagerAndHstManagerLoadTest.testProp";
+	private final static String TEST_PROP =  "ConcurrentChannelManagerAndHstManagerLoadTest.testProp";
 
-    private HstManager hstManager;
+	private HstManager hstManager;
 	private ChannelManager channelManager;
 	private List<Session> sessionList = null;
 
@@ -75,7 +75,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 	final Job[] enumJobs = Job.values();
 
 	@Override
-    @Before
+	@Before
 	public void setUp() throws Exception {
 		super.setUp();
 		this.hstManager = getComponent(HstManager.class.getName());
@@ -183,19 +183,19 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 		mountNode.getSession().save();
 		// load the model first ones to make sure async model is really async
 		hstManager.getVirtualHosts();
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+		EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
 
 		try {
 			final int synchronousJobCount = 1000;
 			for (int i = 0; i < synchronousJobCount; i++) {
-                String prevVal = "testVal"+counter;
+				String prevVal = "testVal"+counter;
 				counter++;
 				String nextVal = "testVal"+counter;
 				mountNode.setProperty(TEST_PROP, nextVal);
 				// Make sure to directly invalidate and do not wait for jcr event which is async and might arrive too late
-                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(mountNode.getSession(), mountNode.getSession().getNode("/hst:hst"), false);
-                mountNode.getSession().save();
-                invalidator.eventPaths(pathsToBeChanged);
+				String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(mountNode.getSession(), mountNode.getSession().getNode("/hst:hst"), false);
+				mountNode.getSession().save();
+				invalidator.eventPaths(pathsToBeChanged);
 
 				// ASYNC load
 				final VirtualHosts asyncHosts = hstManager.getVirtualHosts(true);
@@ -205,7 +205,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 				String testPropOfSyncLoadedHosts = syncHosts.matchMount("localhost", "/site", "").getMount().getProperty(TEST_PROP);
 
 				assertTrue("Expectation failed in run '"+i+"' : Expected value was '"+nextVal+"' but found" +
-                        " value was '"+testPropOfSyncLoadedHosts+"'. ",testPropOfSyncLoadedHosts.equals(nextVal));
+						" value was '"+testPropOfSyncLoadedHosts+"'. ",testPropOfSyncLoadedHosts.equals(nextVal));
 
 				// because the jobs above are done in a synchronous loop (single threaded) and AFTER every ASYNC
 				// there is a SYNC load, we expect that the ASYNC model in this case is always one instance behind :
@@ -218,11 +218,11 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 
 				if (asyncHosts == syncHosts) {
 					// can happen in race condition explained above
-                    assertTrue("Expectation failed in run '"+i+"'", testPropOfAsyncLoadedHosts.equals(nextVal));
+					assertTrue("Expectation failed in run '"+i+"'", testPropOfAsyncLoadedHosts.equals(nextVal));
 				} else {
-					  assertTrue("The async model should be one version behind but this was not the case. the async model has a version with " +
-						"value '"+testPropOfAsyncLoadedHosts+"' and the expected value was '"+prevVal+"'",
-						testPropOfAsyncLoadedHosts.equals(prevVal));
+					assertTrue("The async model should be one version behind but this was not the case. the async model has a version with " +
+									"value '"+testPropOfAsyncLoadedHosts+"' and the expected value was '"+prevVal+"'",
+							testPropOfAsyncLoadedHosts.equals(prevVal));
 				}
 			}
 
@@ -244,8 +244,8 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 		final Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels("dev-localhost");
 		assertTrue(channels.size() == 2);
 		final Channel existingChannel = channels.values().iterator().next();
-        final EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        try {
+		final EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+		try {
 			final int jobCount = 1000;
 			Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(jobCount);
 			final Random random = new Random();
@@ -284,14 +284,14 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 									existingChannel.setChannelInfoClassName(ConcurrentChannelManagerAndHstManagerLoadIT.class.getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
 									existingChannel.getProperties().put(TEST_PROP, newTestValue);
 
-                                    MockHstRequestContext ctx = new MockHstRequestContext();
-                                    ctx.setAttribute("HOST_GROUP_NAME_FOR_CMS_HOST", "dev-localhost");
-                                    ctx.setSession(getSession2());
-                                    final VirtualHost dummyHost = hstManager.getVirtualHosts().getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
-                                    ctx.setVirtualHost(dummyHost);
-                                    ModifiableRequestContextProvider.set(ctx);
-                                    channelManager.save(existingChannel);
-                                    ModifiableRequestContextProvider.clear();
+									MockHstRequestContext ctx = new MockHstRequestContext();
+									ctx.setAttribute("HOST_GROUP_NAME_FOR_CMS_HOST", "dev-localhost");
+									ctx.setSession(getSession2());
+									final VirtualHost dummyHost = hstManager.getVirtualHosts().getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
+									ctx.setVirtualHost(dummyHost);
+									ModifiableRequestContextProvider.set(ctx);
+									channelManager.save(existingChannel);
+									ModifiableRequestContextProvider.clear();
 									// get channel must always reflect LATEST version. Since this MODIFY_CHANNEL is
 									// called concurrently, we can only guarantee that the loaded value for TEST_PROP
 									// is AT LEAST AS big as newTestValue
@@ -315,9 +315,9 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 									Node node = getSession1().getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 									node.setProperty(TEST_PROP, nextVal);
 									// Make sure to directly invalidate and do not wait for jcr event which is async and might arrive too late
-                                    String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(node.getSession(), node.getSession().getNode("/hst:hst"), false);
-                                    node.getSession().save();
-                                    invalidator.eventPaths(pathsToBeChanged);
+									String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(node.getSession(), node.getSession().getNode("/hst:hst"), false);
+									node.getSession().save();
+									invalidator.eventPaths(pathsToBeChanged);
 
 									JobResultWrapperModifyMount result = new JobResultWrapperModifyMount();
 									result.testPropAfterChange = nextVal;
@@ -370,14 +370,14 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 			fail(e.toString());
 		} finally {
 			existingChannel.getProperties().remove(TEST_PROP);
-            MockHstRequestContext ctx = new MockHstRequestContext();
-            ctx.setAttribute("HOST_GROUP_NAME_FOR_CMS_HOST", "dev-localhost");
-            ctx.setSession(getSession1());
-            final VirtualHost dummyHost = hstManager.getVirtualHosts().getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
-            ctx.setVirtualHost(dummyHost);
-            ModifiableRequestContextProvider.set(ctx);
-            channelManager.save(existingChannel);
-            ModifiableRequestContextProvider.clear();
+			MockHstRequestContext ctx = new MockHstRequestContext();
+			ctx.setAttribute("HOST_GROUP_NAME_FOR_CMS_HOST", "dev-localhost");
+			ctx.setSession(getSession1());
+			final VirtualHost dummyHost = hstManager.getVirtualHosts().getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
+			ctx.setVirtualHost(dummyHost);
+			ModifiableRequestContextProvider.set(ctx);
+			channelManager.save(existingChannel);
+			ModifiableRequestContextProvider.clear();
 			mountNode.getProperty(TEST_PROP).remove();
 			mountNode.getSession().save();
 			logoutSessions(sessionList);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,7 +52,13 @@ public interface HstNodeTypes {
     String NODETYPE_HST_TEMPLATES = "hst:templates";
     String NODETYPE_HST_CHANNELINFO = "hst:channelinfo";
     String NODETYPE_HST_CHANNEL = "hst:channel";
+
+    /**
+     * @deprecated since 5.0.0 (CMS 12.0)
+     */
+    @Deprecated
     String NODETYPE_HST_CHANNELS = "hst:channels";
+
     String NODETYPE_HST_BLUEPRINT = "hst:blueprint";
     String NODETYPE_HST_BLUEPRINTS = "hst:blueprints";
     String NODETYPE_HST_CONTAINERCOMPONENTSFOLDER = "hst:containercomponentfolder";
@@ -60,10 +66,15 @@ public interface HstNodeTypes {
     String MIXINTYPE_HST_EDITABLE = "hst:editable";
     String EDITABLE_PROPERTY_STATE = "hst:state";
 
+    String MIXINTYPE_HST_BRANCH = "hst:branch";
+    String BRANCH_PROPERTY_BRANCH_OF = "hst:branchof";
+    String BRANCH_PROPERTY_BRANCH_ID = "hst:branchid";
+
     String MIXINTYPE_HST_PROTOTYPE_META = "hst:prototypemeta";
     String PROTOTYPE_META_PROPERTY_DISPLAY_NAME = "hst:displayname";
     String PROTOTYPE_META_PROPERTY_PRIMARY_CONTAINER = "hst:primarycontainer";
 
+    String CONFIGURATION_PROPERTY_LOCKED = "hst:locked";
 
     String GENERAL_PROPERTY_INHERITS_FROM = "hst:inheritsfrom";
     String GENERAL_PROPERTY_LOCKED_BY = "hst:lockedby";
@@ -215,7 +226,12 @@ public interface HstNodeTypes {
     String MOUNT_PROPERTY_SESSIONSTATEFUL = "hst:sessionstateful";
     String MOUNT_PROPERTY_FORMLOGINPAGE = "hst:formloginpage";
     String MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS = "hst:defaultsitemapitemhandlerids";
+    /**
+     * @deprecated Since 5.0.0 (CMS 12.0.0). Not used any more
+     */
+    @Deprecated
     String MOUNT_PROPERTY_CHANNELPATH = "hst:channelpath";
+    String MOUNT_PROPERTY_NOCHANNELINFO = "hst:nochannelinfo";
 
     String CHANNEL_PROPERTY_NAME = "hst:name";
     String CHANNEL_PROPERTY_TYPE = "hst:type";
@@ -257,6 +273,7 @@ public interface HstNodeTypes {
     String NODENAME_HST_CHANNELS = "hst:channels";
     String NODENAME_HST_WORKSPACE = "hst:workspace";
     String NODENAME_HST_CONTAINERS = "hst:containers";
+    String NODENAME_HST_UPSTREAM = "hst:upstream";
 
     String RELPATH_HST_WORKSPACE_CONTAINERS = "hst:workspace/hst:containers";
 

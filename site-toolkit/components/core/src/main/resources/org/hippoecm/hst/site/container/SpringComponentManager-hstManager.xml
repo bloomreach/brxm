@@ -54,7 +54,7 @@
   </bean>
 
 
-  <bean id="org.hippoecm.hst.configuration.model.EventPathsInvalidator" class="org.hippoecm.hst.configuration.model.EventPathsInvalidator">
+  <bean id="org.hippoecm.hst.configuration.model.EventPathsInvalidator" class="org.hippoecm.hst.configuration.model.EventPathsInvalidatorImpl">
     <property name="hstModelMutex" ref="hstModelMutex"/>
     <property name="hstEventsCollector" ref="hstEventsCollector"/>
     <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
@@ -79,7 +79,8 @@
     <property name="clearPageCacheAfterModelLoad" value="${pageCache.clearOnHstConfigChange}"/>
     <property name="staleConfigurationSupported" value="${stale.configuration.supported}"/>
     <property name="hstFilterPrefixExclusions">
-      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+      <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+        <constructor-arg value="java.lang.Object" />
         <property name="targetClass" value="org.apache.commons.lang.StringUtils" />
         <property name="targetMethod" value="split" />
         <property name="arguments">
@@ -91,7 +92,8 @@
       </bean>
     </property>
     <property name="hstFilterSuffixExclusions">
-      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+      <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+        <constructor-arg value="java.lang.Object" />
         <property name="targetClass" value="org.apache.commons.lang.StringUtils" />
         <property name="targetMethod" value="split" />
         <property name="arguments">
@@ -109,5 +111,10 @@
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
   </bean>
 
+  <bean id="org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider" class="org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider">
+    <property name="channelManagerHstSiteProvider" ref="org.hippoecm.hst.configuration.site.ChannelManagerHstSiteProvider"/>
+  </bean>
+
+  <bean id="org.hippoecm.hst.configuration.site.ChannelManagerHstSiteProvider" class="org.hippoecm.hst.configuration.site.ChannelManagerHstSiteProvider"/>
 </beans>
 

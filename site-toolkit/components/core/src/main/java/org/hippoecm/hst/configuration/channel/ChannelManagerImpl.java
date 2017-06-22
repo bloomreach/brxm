@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,8 +53,18 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.CHANNEL_PROPERTY_NAME;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNEL;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITE_CONFIGURATIONPATH;
 
 public class ChannelManagerImpl implements ChannelManager {
 
@@ -77,7 +87,6 @@ public class ChannelManagerImpl implements ChannelManager {
     private EventPathsInvalidator eventPathsInvalidator;
     private Object hstModelMutex;
     private HstNodeLoadingCache hstNodeLoadingCache;
-    private String channelsRoot;
 
     public void setHstModelMutex(Object hstModelMutex) {
         this.hstModelMutex = hstModelMutex;
@@ -85,7 +94,6 @@ public class ChannelManagerImpl implements ChannelManager {
 
     public void setHstNodeLoadingCache(HstNodeLoadingCache hstNodeLoadingCache) {
         this.hstNodeLoadingCache = hstNodeLoadingCache;
-        channelsRoot = hstNodeLoadingCache.getRootPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
     }
 
     public void setEventPathsInvalidator(final EventPathsInvalidator eventPathsInvalidator) {
@@ -124,9 +132,11 @@ public class ChannelManagerImpl implements ChannelManager {
             try {
                 final Session session = getSession();
                 Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
-                String channelId = createUniqueChannelId(channel.getName(), session);
-                channel.setId(channelId);
-                Node createdContentNode = createChannel(configNode, blueprint, session, channelId, channel);
+
+                String channelName = createUniqueHstConfigurationName(channel.getName(), session);
+                channel.setId(channelName);
+
+                Node createdContentNode = createChannel(configNode, blueprint, session, channelName, channel);
                 ChannelManagerEvent event = new ChannelManagerEventImpl(blueprint, channel, configNode);
                 for (ChannelManagerEventListener listener : channelManagerEventListeners) {
                     try {
@@ -155,7 +165,7 @@ public class ChannelManagerImpl implements ChannelManager {
                 String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstNodeLoadingCache.getRootPath()), false);
                 session.save();
                 eventPathsInvalidator.eventPaths(pathsToBeChanged);
-                return channelId;
+                return channelName;
             } catch (RepositoryException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
             }
@@ -163,36 +173,34 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     /**
-     * Creates a unique ID for a channel. The ID can safely be used as a new JCR node name in the hst:channels,
-     * hst:sites, and hst:configurations configuration.
+     * Creates a unique configuration name for a new hst configuration. The name can safely be used as a new JCR node name
+     * in the hst:configurations and hst:sites configuration.
      *
      * @param channelName the name of the channel
      * @param session     JCR session to use for sanity checks of node names
-     * @return a unique channel ID based on the given channel name
+     * @return a unique configuration name based on the given channel name
      * @throws ChannelException
      */
-    protected String createUniqueChannelId(String channelName, Session session) throws ChannelException {
+    protected String createUniqueHstConfigurationName(String channelName, Session session) throws ChannelException {
         if (StringUtils.isBlank(channelName)) {
             throw new ChannelException("Cannot create channel ID: channel name is blank");
         }
         try {
-            String channelId = CHANNEL_ID_CODEC.encode(channelName);
+            String encodedChannelName = CHANNEL_ID_CODEC.encode(channelName);
             int retries = 0;
-            Node channelsNode = session.getNode(channelsRoot);
             Node rootNode = session.getNode(hstNodeLoadingCache.getRootPath());
             Node sitesNode = rootNode.getNode(sites);
             Node configurationsNode = rootNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS);
 
-            while (channelsNode.hasNode(channelId) || sitesNode.hasNode(channelId) || configurationsNode.hasNode(
-                    channelId)) {
+            while (configurationsNode.hasNode(encodedChannelName) || sitesNode.hasNode(encodedChannelName)) {
                 retries += 1;
                 StringBuilder builder = new StringBuilder(channelName);
                 builder.append('-');
                 builder.append(retries);
-                channelId = CHANNEL_ID_CODEC.encode(builder.toString());
+                encodedChannelName = CHANNEL_ID_CODEC.encode(builder.toString());
             }
 
-            return channelId;
+            return encodedChannelName;
         } catch (RepositoryException e) {
             throw new ChannelException("Cannot create channel ID for channelName '" + channelName + "'", e);
         }
@@ -258,26 +266,23 @@ public class ChannelManagerImpl implements ChannelManager {
      * created content, this content also already has been persisted as it is created through workflow. In case of a later
      * {@link ChannelManagerEventListenerException} the created content has to be explicitly removed again.
      */
-    private Node createChannel(Node configRoot, Blueprint blueprint, Session session, final String channelId, final Channel channel) throws ChannelException, RepositoryException {
+    private Node createChannel(Node configRoot, Blueprint blueprint, Session session, final String channelName, final Channel channel) throws ChannelException, RepositoryException {
         Node contentRootNode = null;
         try {
             // Create virtual host
             final URI channelUri = getChannelUri(channel);
             final Node virtualHost = getOrCreateVirtualHost(configRoot, channelUri.getHost());
 
-            // Create channel
-            copyOrCreateChannelNode(configRoot, channelId, channel);
-
             // Create or reuse HST configuration
             final Node blueprintNode =  session.getNode(blueprint.getPath());
-            final String hstConfigPath = reuseOrCopyConfiguration(session, configRoot, blueprintNode, channelId);
+            final String hstConfigPath = reuseOrCopyConfiguration(session, configRoot, blueprintNode, channelName, channel);
             channel.setHstConfigPath(hstConfigPath);
 
             // Create content if the blueprint contains a content prototype. The path of the created content node has to
             // be set on the HST site nodes.
             final String channelContentRootPath;
             if (blueprint.getHasContentPrototype()) {
-                contentRootNode = createContent(blueprint, session, channelId, channel);
+                contentRootNode = createContent(blueprint, session, channelName, channel);
                 channelContentRootPath = contentRootNode.getPath();
                 channel.setContentRoot(channelContentRootPath);
             } else {
@@ -285,15 +290,7 @@ public class ChannelManagerImpl implements ChannelManager {
             }
 
             final Node sitesNode = configRoot.getNode(sites);
-            final Node liveSiteNode = createSiteNode(sitesNode, channelId, channelContentRootPath);
-
-            if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
-                Node blueprintSiteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
-                if (blueprintSiteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-                    String explicitConfigPath = blueprintSiteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
-                    liveSiteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, explicitConfigPath);
-                }
-            }
+            final Node liveSiteNode = createSiteNode(sitesNode, channelName, channelContentRootPath);
 
             final String mountPointPath = liveSiteNode.getPath();
             channel.setHstMountPoint(mountPointPath);
@@ -301,7 +298,6 @@ public class ChannelManagerImpl implements ChannelManager {
             // Create mount
             Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
             mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CONTEXTPATH, channel.getContextPath());
-            mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH, channelsRoot + channelId);
             mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, mountPointPath);
             final String locale = channel.getLocale();
             if (locale != null) {
@@ -318,34 +314,65 @@ public class ChannelManagerImpl implements ChannelManager {
         return contentRootNode;
     }
 
-    private void copyOrCreateChannelNode(final Node configRoot, final String channelId, final Channel channel) throws RepositoryException, ChannelException {
-        if (!configRoot.hasNode(HstNodeTypes.NODENAME_HST_CHANNELS)) {
-            configRoot.addNode(HstNodeTypes.NODENAME_HST_CHANNELS, HstNodeTypes.NODETYPE_HST_CHANNELS);
-        }
-        Node channelNode = configRoot.getNode(HstNodeTypes.NODENAME_HST_CHANNELS).addNode(channelId,
-                HstNodeTypes.NODETYPE_HST_CHANNEL);
-        ChannelPropertyMapper.saveChannel(channelNode, channel);
-    }
 
-    private String reuseOrCopyConfiguration(final Session session, final Node configRoot, final Node blueprintNode, final String channelId) throws ChannelException, RepositoryException {
+    private String reuseOrCopyConfiguration(final Session session, final Node configRoot, final Node blueprintNode, final String channelName, final Channel channel) throws ChannelException, RepositoryException {
+        final Node hstConfigurations = configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS);
         // first try to copy existing blueprint configuration
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
-            Node blueprintConfiguration = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATION);
-            Node hstConfigurations = configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS);
-            Node configuration = copyNodes(blueprintConfiguration, hstConfigurations, channelId);
+            final Node blueprintConfiguration = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATION);
+
+            final Node configuration = copyNodes(blueprintConfiguration, hstConfigurations, channelName);
+            if (!configuration.hasNode(NODENAME_HST_WORKSPACE)) {
+                configuration.addNode(NODENAME_HST_WORKSPACE, NODETYPE_HST_WORKSPACE);
+            }
+            if (configuration.hasNode(NODENAME_HST_CHANNEL)) {
+                // move the channel to workspace so it is editable
+                session.move(configuration.getPath() + "/" + NODENAME_HST_CHANNEL, configuration.getPath() +"/" + NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_CHANNEL);
+            }
+            final Node workspace = configuration.getNode(NODENAME_HST_WORKSPACE);
+            if (!workspace.hasNode(NODENAME_HST_CHANNEL)) {
+                workspace.addNode(NODENAME_HST_CHANNEL, NODETYPE_HST_CHANNEL);
+            }
+            // only reset the name
+            workspace.getNode(NODENAME_HST_CHANNEL).setProperty(CHANNEL_PROPERTY_NAME, channel.getName());
             return configuration.getPath();
         }
 
         // next, try to reuse the configuration path specified in the hst:site node of the blueprint
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
             Node siteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
-            if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-                String configurationPath = siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
+            if (siteNode.hasProperty(SITE_CONFIGURATIONPATH)) {
+                String configurationPath = siteNode.getProperty(SITE_CONFIGURATIONPATH).getString();
                 if (!session.nodeExists(configurationPath)) {
                     throw new ChannelException(
                             "Blueprint '" + blueprintNode.getPath() + "' does not have an hst:configuration node, and its hst:site node points to a non-existing node: '" + configurationPath + "'");
                 }
-                return configurationPath;
+                // the blueprint site node has explicit pointer to configuration. We will create a configuration for
+                // the new site that inherits everything. The new channel *will* however gets its own hst:workspace/hst:channel
+                // node otherwise the channel won't be visible in the channel manager and we'll copy the 'inherited' channel
+                // its channel node if it has one.
+                Node configuration = hstConfigurations.addNode(channelName, NODETYPE_HST_CONFIGURATION);
+                Node workspaceNode = configuration.addNode(NODENAME_HST_WORKSPACE, NODETYPE_HST_WORKSPACE);
+                Node inherited = session.getNode(configurationPath);
+                final Node inheritedChannelNode;
+                if (inherited.hasNode(NODENAME_HST_CHANNEL)) {
+                    inheritedChannelNode = inherited.getNode(NODENAME_HST_CHANNEL);
+                } else if (inherited.hasNode(NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_CHANNEL)) {
+                    inheritedChannelNode = inherited.getNode(NODENAME_HST_WORKSPACE + "/" + NODENAME_HST_CHANNEL);
+                } else {
+                    inheritedChannelNode = null;
+                }
+
+                if (inheritedChannelNode != null) {
+                    Node channelNode = JcrUtils.copy(session, inheritedChannelNode.getPath(), workspaceNode.getPath() + "/" + NODENAME_HST_CHANNEL);
+                    channelNode.setProperty(CHANNEL_PROPERTY_NAME, channel.getName());
+                } else {
+                    Node channelNode = workspaceNode.addNode(NODENAME_HST_CHANNEL, NODETYPE_HST_CHANNEL);
+                    channelNode.setProperty(CHANNEL_PROPERTY_NAME, channel.getName());
+                }
+                configuration.setProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM,
+                        new String[]{"../"+inherited.getName(), "../" + inherited.getName() + "/" + NODENAME_HST_WORKSPACE});
+                return configuration.getPath();
             }
         }
 
@@ -565,7 +592,7 @@ public class ChannelManagerImpl implements ChannelManager {
         }
 
         ChannelPropertyMapper.saveChannel(
-                configRoot.getNode(HstNodeTypes.NODENAME_HST_CHANNELS + "/" + channel.getId()), channel);
+                configRoot.getSession().getNode(channel.getChannelPath()), channel);
     }
 
     /**

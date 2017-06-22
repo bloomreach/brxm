@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>28.3</version>
+    <version>29-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit</name>
@@ -34,7 +34,7 @@
 
   <groupId>org.onehippo.cms7.hst</groupId>
   <artifactId>hst</artifactId>
-  <version>4.2.0-SNAPSHOT</version>
+  <version>5.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
   <issueManagement>
@@ -58,7 +58,7 @@
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
 
-    <junit.version>4.5</junit.version>
+    <junit.version>4.12</junit.version>
     <easymock.version>3.4</easymock.version>
     <!-- Make sure that powermock and easymock are compatible -->
     <powermock.version>1.6.5</powermock.version>
@@ -68,12 +68,12 @@
     <xalan.version>2.4.1</xalan.version>
 
     <commons-lang.version>2.6</commons-lang.version>
-    <commons-collections.version>3.2.1</commons-collections.version>
-    <commons-codec.version>1.4</commons-codec.version>
-    <commons-pool.version>1.5.4</commons-pool.version>
-    <commons-beanutils.version>1.8.0</commons-beanutils.version>
-    <commons-fileupload.version>1.2.1</commons-fileupload.version>
-    <commons-io.version>1.4</commons-io.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
+    <commons-codec.version>1.10</commons-codec.version>
+    <commons-pool.version>1.5.7</commons-pool.version>
+    <commons-beanutils.version>1.9.3</commons-beanutils.version>
+    <commons-fileupload.version>1.3.2</commons-fileupload.version>
+    <commons-io.version>2.5</commons-io.version>
     <commons-jexl.version>1.1</commons-jexl.version>
     <commons-configuration.version>1.7</commons-configuration.version>
     <commons-proxy.version>1.0</commons-proxy.version>
@@ -82,14 +82,16 @@
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippo.commons.version>3.2.0-SNAPSHOT</hippo.commons.version>
-    <hippo.repository.version>4.2.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>4.2.0-SNAPSHOT</hippo.cms.version>
-    <hippo.utilities.version>3.2.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.services.version>3.2.0-SNAPSHOT</hippo.services.version>
-    <hippo.services.eventbus.version>3.2.0-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.services.search.version>3.2.0-SNAPSHOT</hippo.services.search.version>
-    <hippo.services.contenttype.version>3.2.0-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.jackrabbit.version>2.14.0-h1-SNAPSHOT</hippo.jackrabbit.version>
+    <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
+    <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.utilities.version>4.0.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>4.0.0-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.services.search.version>4.0.0-SNAPSHOT</hippo.services.search.version>
+    <hippo.services.contenttype.version>4.0.0-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.testutils.version>1.0.0-SNAPSHOT</hippo.testutils.version>
 
     <sf.htmlcleaner.version>2.12</sf.htmlcleaner.version>
 
@@ -492,7 +494,7 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>${hippo.jackrabbit.version}</version>
       </dependency>
 
       <!-- Jackrabbit ocm -->
@@ -713,6 +715,7 @@
                 <!-- files in which no comments are possible -->
                 <exclude>sandbox/WARNINGS</exclude>
                 <!-- repository content XML -->
+                <exclude>content-beans/src/test/resources/**/*.xml</exclude>
                 <exclude>client-modules/page-composer/src/test/resources/**/*.xml</exclude>
                 <exclude>toolkit-resources/addon/repository/src/main/resources/**/*.xml</exclude>
                 <exclude>toolkit-resources/addon/unittestcontents/src/main/resources/**/*.xml</exclude>
