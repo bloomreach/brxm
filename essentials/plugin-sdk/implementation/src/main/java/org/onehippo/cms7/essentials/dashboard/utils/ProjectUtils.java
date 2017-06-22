@@ -97,7 +97,7 @@ public final class ProjectUtils {
     public static File getWebfiles(final PluginContext context) {
         final File webfilesResources = getWebfilesResources(context);
         // TODO make site part configurable ??
-        final String webfilesPath = webfilesResources.getAbsolutePath() + File.separator + "hcm-config" + File.separator + "site";
+        final String webfilesPath = webfilesResources.getAbsolutePath() + File.separator + "site";
         return new File(webfilesPath);
     }
     /**
@@ -274,7 +274,7 @@ public final class ProjectUtils {
         final File folder = new File(baseDir + File.separatorChar + name);
         if (!folder.exists()) {
             log.warn("Folder does not exist: {}", folder);
-            return null;
+             return null;
         }
         if (folder.isDirectory()) {
             return folder;
