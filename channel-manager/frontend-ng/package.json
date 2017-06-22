@@ -12,7 +12,8 @@
     "start": "gulp start",
     "startDist": "gulp startDist",
     "test": "gulp test",
-    "testOnce": "gulp testOnce"
+    "testOnce": "gulp testOnce",
+    "testDebug": "gulp testDebug"
   },
   "dependencies": {
     "angular": "1.5.11",
