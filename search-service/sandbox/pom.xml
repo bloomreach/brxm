@@ -119,12 +119,6 @@
       <artifactId>spring-aop</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib-nodep</artifactId>
-      <version>${cglib.version}</version>
-    </dependency>
-
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
