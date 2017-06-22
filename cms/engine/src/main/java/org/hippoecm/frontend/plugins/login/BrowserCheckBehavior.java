@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,15 +28,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BrowserCheckBehavior extends Behavior {
-    private static final long serialVersionUID = 1L;
 
     static Logger log = LoggerFactory.getLogger(BrowserCheckBehavior.class);
-
 
     BrowserCheck check;
 
     public static class BrowserCheck implements IClusterable {
-        private static final long serialVersionUID = 1L;
 
         Browser[] browsers;
 
@@ -59,10 +56,9 @@ public class BrowserCheckBehavior extends Behavior {
 
     /**
      * Supported browsers can be configured like:
-     * ie 6 <=, safari 4 <, chrome, firefox 3.5 <=, opera 
+     * ie 6 <=, safari 4 <, chrome, firefox 3.5 <=, opera
      */
     public static class Browser implements IClusterable {
-        private static final long serialVersionUID = 1L;
 
         String agent;
         int majorVersion = -1;
@@ -136,6 +132,8 @@ public class BrowserCheckBehavior extends Behavior {
                 return info.isChrome();
             } else if (agent.equals("opera")) {
                 return info.isOpera();
+            } else if (agent.equals("edge")) {
+                return info.isEdge();
             }
             return false;
         }
@@ -154,6 +152,8 @@ public class BrowserCheckBehavior extends Behavior {
 
         boolean isInternetExplorer();
 
+        boolean isEdge();
+
         int getMajor();
 
         int getMinor();
@@ -165,6 +165,7 @@ public class BrowserCheckBehavior extends Behavior {
         private static final String CHROME = "Chrome";
         private static final String SHIRETOKO = "Shiretoko";
         private static final String FIREFOX = "Firefox";
+        private static final String EDGE = "Edge";
         private WebClientInfo info;
         private int major;
         private int minor;
@@ -191,6 +192,8 @@ public class BrowserCheckBehavior extends Behavior {
                         String v = ua.substring(ua.indexOf(MSIE));
                         parseMajorMinor(v.substring(5, v.indexOf(';')));
                     }
+                } else if(isEdge()) {
+                    setVersions(EDGE);
                 }
             }
         }
@@ -236,6 +239,11 @@ public class BrowserCheckBehavior extends Behavior {
 
         public boolean isSafari() {
             return info.getProperties().isBrowserSafari() && !isChrome();
+        }
+
+        public boolean isEdge() {
+            final String userAgent = info.getUserAgent();
+            return userAgent.contains(EDGE);
         }
 
         public int getMajor() {
