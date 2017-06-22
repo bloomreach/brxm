@@ -20,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -315,10 +314,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 @Override
                 public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
                     throw new IOException("Plain YAML import does not support links to binary resources");
-                }
-                @Override
-                public URL getBaseURL() {
-                    throw new UnsupportedOperationException();
                 }
             };
 

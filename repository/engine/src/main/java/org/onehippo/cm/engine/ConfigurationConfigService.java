@@ -16,11 +16,9 @@
 
 package org.onehippo.cm.engine;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -37,7 +34,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
@@ -49,7 +45,7 @@ import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.ConfigurationProperty;
-import org.onehippo.cm.model.ModelProperty;
+import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.Source;
@@ -70,7 +66,6 @@ import org.slf4j.LoggerFactory;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
-import static org.onehippo.cm.engine.ValueProcessor.collectVerifiedValue;
 import static org.onehippo.cm.engine.ValueProcessor.determineVerifiedValues;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
 import static org.onehippo.cm.engine.ValueProcessor.isReferenceTypeProperty;
@@ -78,7 +73,6 @@ import static org.onehippo.cm.engine.ValueProcessor.isUuidInUse;
 import static org.onehippo.cm.engine.ValueProcessor.propertyIsIdentical;
 import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
 import static org.onehippo.cm.engine.ValueProcessor.valuesFrom;
-import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getBaseZipFileFromURL;
 
 /**
  * ConfigurationConfigService is responsible for reading and writing Configuration from/to the repository.
@@ -114,19 +108,14 @@ public class ConfigurationConfigService {
                 log.debug(String.format("processing web file bundle '%s' defined in %s.", bundleName,
                         webFileBundleDefinition.getOrigin()));
 
-                final ResourceInputProvider resourceInputProvider =
-                        webFileBundleDefinition.getSource().getModule().getConfigResourceInputProvider();
-                final URL baseURL = resourceInputProvider.getBaseURL();
-                if (baseURL.toString().contains("jar!")) {
-                    try {
-                        final PartialZipFile bundleZipFile = new PartialZipFile(getBaseZipFileFromURL(baseURL), bundleName);
-                        service.importJcrWebFileBundle(session, bundleZipFile, true);
-                    } catch (URISyntaxException e) {
-                        throw new ConfigurationRuntimeException(e);
-                    }
-                } else if (baseURL.toString().startsWith("file:")) {
-                    final File bundleDir = new File(FileUtils.toFile(baseURL), bundleName);
-                    service.importJcrWebFileBundle(session, bundleDir, true);
+                final Module module = webFileBundleDefinition.getSource().getModule();
+                if (module.isArchive()) {
+                    final PartialZipFile bundleZipFile = new PartialZipFile(module.getArchiveFile(), bundleName);
+                    service.importJcrWebFileBundle(session, bundleZipFile, true);
+                } else {
+                    final ResourceInputProvider resourceInputProvider = module.getConfigResourceInputProvider();
+                    final Path modulePath = resourceInputProvider.getBasePath().getParent();
+                    service.importJcrWebFileBundle(session, modulePath.resolve(bundleName).toFile(), true);
                 }
             }
         }

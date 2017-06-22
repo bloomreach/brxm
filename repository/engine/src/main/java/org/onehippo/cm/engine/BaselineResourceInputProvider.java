@@ -17,8 +17,6 @@ package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,21 +120,6 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
             pathSegments[i] = NodeNameCodec.encode(pathSegments[i]);
         }
         return String.join("/", pathSegments);
-    }
-
-    /**
-     * This is a stub implementation, as there is no standard way to compose a URL for a JCR Node, and no framework
-     * support for loading an InputStream from such a reference. Callers beware!
-     * @return a stub URL
-     */
-    @Override
-    public URL getBaseURL() {
-        try {
-            return new URL("jcr:/"+baseNode.getPath());
-        }
-        catch (MalformedURLException|RepositoryException e) {
-            throw new RuntimeException("Problem creating baseURL", e);
-        }
     }
 
     /**

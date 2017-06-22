@@ -17,7 +17,6 @@ package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 import javax.jcr.Property;
@@ -88,10 +87,5 @@ public class JcrResourceInputProvider implements ResourceInputProvider {
         } catch (RepositoryException e) {
             throw new IOException("Failed to retrieve property value at: "+propertyPath, e);
         }
-    }
-
-    @Override
-    public URL getBaseURL() {
-        throw new UnsupportedOperationException();
     }
 }
