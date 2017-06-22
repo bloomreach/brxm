@@ -3,7 +3,3 @@ definitions:
     robotstxt:
       uri: http://www.onehippo.org/robotstxt/nt/1.1
       cnd: robotstxt.cnd
-  config:
-    /hippo:configuration/hippo:translations:
-      /hippo:types:
-        jcr:primaryType: hipposys:resourcebundles
