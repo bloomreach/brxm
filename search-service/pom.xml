@@ -41,24 +41,24 @@
 
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
-    <junit.version>4.5</junit.version>
-    <easymock.version>3.0</easymock.version>
+    <junit.version>4.12</junit.version>
+    <easymock.version>3.4</easymock.version>
 
     <commons-lang.version>2.6</commons-lang.version>
     <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-beanutils.version>1.8.0</commons-beanutils.version>
+    <commons-beanutils.version>1.9.3</commons-beanutils.version>
     <commons-io.version>2.5</commons-io.version>
     <commons-configuration.version>1.7</commons-configuration.version>
     <commons-proxy.version>1.0</commons-proxy.version>
 
-    <aspectj.version>1.8.4</aspectj.version>
+    <aspectj.version>1.8.10</aspectj.version>
     <cglib.version>2.2.2</cglib.version>
 
     <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
     <hippo.utilities.version>4.0.0-SNAPSHOT</hippo.utilities.version>
 
-    <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
+    <maven.plugin.site.version>3.6</maven.plugin.site.version>
     <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
 
   </properties>
