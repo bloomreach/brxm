@@ -19,7 +19,7 @@ import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
- * AbstractPropertyFilter
+ * AbstractPropertyFilter (Log4j1)
  *
  * <P>
  * Abstract log4j filter base class which can be extended for specific property based logging event filtering.
@@ -47,7 +47,10 @@ import org.apache.log4j.spi.LoggingEvent;
  * </P>
  *
  * @see org.apache.log4j.spi.Filter
+ *
+ * @deprecated since the switch to Log4j2 in CMS v12. Instead use {@link LookupFilter} which is log4j2 based.
  */
+@Deprecated
 public abstract class AbstractPropertyFilter extends Filter {
 
     /**

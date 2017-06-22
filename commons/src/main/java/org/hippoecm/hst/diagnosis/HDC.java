@@ -84,11 +84,8 @@ public class HDC {
             try {
                 Class<?> clazz = Class.forName(clazzName);
                 singleton = (HDC) clazz.newInstance();
-                System.out.println("INFO  HDC singleton: " + singleton);
                 LoggerFactory.getLogger(HDC.class).info("HDC singleton: {}", singleton);
             } catch (Exception e) {
-                System.err.println("ERROR Invalid custom HDC class: " + clazzName);
-                e.printStackTrace();
                 LoggerFactory.getLogger(HDC.class).info("Invalid custom HDC class: {}", clazzName, e);
             }
         }
