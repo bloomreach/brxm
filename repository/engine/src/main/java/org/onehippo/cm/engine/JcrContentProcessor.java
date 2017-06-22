@@ -30,6 +30,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
@@ -139,8 +140,12 @@ public class JcrContentProcessor {
     }
 
     private Node calculateParentNode(DefinitionNode definitionNode, final Session session) throws RepositoryException {
-        String path = Paths.get(definitionNode.getPath()).getParent().toString();
-        return session.getNode(path);
+        final String parentPath = StringUtils.substringBeforeLast(definitionNode.getPath(), "/");
+        if (parentPath.isEmpty()) {
+            return session.getRootNode();
+        } else {
+            return session.getNode(parentPath);
+        }
     }
 
     private void applyNode(final DefinitionNode definitionNode, final Node parentNode, final ActionType actionType,
