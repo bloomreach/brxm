@@ -499,6 +499,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             // webfiles
             try {
                 configService.writeWebfiles(bootstrapModel, session);
+                session.save();
             } catch (IOException e) {
                 log.error("Error initializing webfiles", e);
             }
