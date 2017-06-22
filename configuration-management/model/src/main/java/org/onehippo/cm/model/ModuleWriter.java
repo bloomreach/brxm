@@ -102,7 +102,7 @@ public class ModuleWriter {
     }
 
     private OutputStream getSourceOutputStream(final ModuleContext moduleContext, final Source source) throws IOException {
-        final Path modulePath = ((FileResourceOutputProvider)moduleContext.getOutputProvider(source)).getModulePath();
+        final Path modulePath = ((FileResourceOutputProvider)moduleContext.getOutputProvider(source)).getBasePath();
         final Path sourceDestPath = modulePath.resolve(source.getPath());
         Files.createDirectories(sourceDestPath.getParent());
         return new FileOutputStream(sourceDestPath.toFile());
@@ -139,7 +139,7 @@ public class ModuleWriter {
             final FileResourceInputProvider frip = (FileResourceInputProvider) rip;
             final FileResourceOutputProvider fout = (FileResourceOutputProvider) outputProvider;
 
-            if (frip.getBasePath().equals(fout.getModulePath())) {
+            if (frip.getBasePath().equals(fout.getBasePath())) {
                 // don't copy when src and dest are the same file
                 return;
             }

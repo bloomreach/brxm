@@ -65,10 +65,6 @@ public abstract class AbstractBaseTest {
         public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
             throw new UnsupportedOperationException();
         }
-        @Override
-        public URL getBaseURL() {
-            throw new UnsupportedOperationException();
-        }
     };
 
     protected PathConfigurationReader.ReadResult readFromResource(final String resourceName) throws IOException, ParserException {

@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.model;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,16 @@ public interface Module extends OrderableByName {
      * @return the full group/project/module name for this module
      */
     String getFullName();
+
+    /**
+     * @return Returns true if this module is loaded from a zip archive (jar), otherwise false
+     */
+    boolean isArchive();
+
+    /**
+     * @return Returns the {@link File} handle to the module zip archive (jar) if {@link #isArchive()}, otherwise null
+     */
+    File getArchiveFile();
 
     /**
      * Modules are composed into Projects and Groups for purposes of expressing dependencies.

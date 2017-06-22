@@ -43,7 +43,7 @@ public class MigrationConfigWriter extends ModuleWriter {
     void processCopyItem(Source source, CopyItem copyItem, ModuleContext moduleContext) throws IOException {
 
         final Path sourceBasePath = moduleContext.getInputProvider(source).getBasePath();
-        final Path destBasePath = ((FileResourceOutputProvider) moduleContext.getOutputProvider(source)).getModulePath();
+        final Path destBasePath = ((FileResourceOutputProvider) moduleContext.getOutputProvider(source)).getBasePath();
 
         String itemRelativePath = copyItem.getValue().getString();
         if (itemRelativePath.startsWith("/")) {

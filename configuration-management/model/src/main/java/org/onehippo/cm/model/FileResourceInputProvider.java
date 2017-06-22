@@ -17,8 +17,6 @@ package org.onehippo.cm.model;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -48,17 +46,7 @@ public class FileResourceInputProvider implements ResourceInputProvider {
 
     @Override
     public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
-        return FileConfigurationUtils.getResourcePath(basePath, source, resourcePath).toRealPath().toUri().toURL().openStream();
-    }
-
-    @Override
-    public URL getBaseURL() {
-        try {
-            return basePath.toUri().toURL();
-        } catch (MalformedURLException e) {
-            logger.error("Cannot create URL from basePath '{}'", basePath, e.getMessage());
-            return null;
-        }
+        return Files.newInputStream(FileConfigurationUtils.getResourcePath(basePath, source, resourcePath).toRealPath());
     }
 
     @Override

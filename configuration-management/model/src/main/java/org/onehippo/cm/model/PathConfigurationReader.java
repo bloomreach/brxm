@@ -77,7 +77,7 @@ public class PathConfigurationReader {
      * @throws ParserException
      */
     public ReadResult read(final Path moduleDescriptorPath, final boolean verifyOnly) throws IOException, ParserException {
-        final InputStream moduleDescriptorInputStream = moduleDescriptorPath.toUri().toURL().openStream();
+        final InputStream moduleDescriptorInputStream = Files.newInputStream(moduleDescriptorPath);
 
         final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
         final ModuleImpl module = moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
@@ -110,7 +110,7 @@ public class PathConfigurationReader {
         final Path actionsDescriptorPath = moduleContext.getActionsDescriptorPath();
         if (Files.exists(actionsDescriptorPath)) {
             final ActionListParser parser = new ActionListParser();
-            parser.parse(actionsDescriptorPath.toUri().toURL().openStream(), actionsDescriptorPath.toString(), module);
+            parser.parse(Files.newInputStream(actionsDescriptorPath), actionsDescriptorPath.toString(), module);
         }
     }
 
@@ -133,7 +133,7 @@ public class PathConfigurationReader {
     private void parseSources(ModuleImpl module, Path rootPath, SourceParser sourceParser) throws IOException, ParserException {
         final List<Pair<Path, String>> contentSourceData = getSourceData(rootPath);
         for (Pair<Path, String> pair : contentSourceData) {
-            sourceParser.parse(pair.getLeft().toUri().toURL().openStream(), pair.getRight(), rootPath.resolve(pair.getRight()).toString(), module);
+            sourceParser.parse(Files.newInputStream(pair.getLeft()), pair.getRight(), rootPath.resolve(pair.getRight()).toString(), module);
         }
     }
 

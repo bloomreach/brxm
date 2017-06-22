@@ -24,14 +24,14 @@ import java.nio.file.Path;
 import org.onehippo.cm.model.util.FileConfigurationUtils;
 
 public class FileResourceOutputProvider implements ResourceOutputProvider {
-    private final Path modulePath;
+    private final Path basePath;
 
-    public FileResourceOutputProvider(final Path modulePath) {
-        this.modulePath = modulePath;
+    public FileResourceOutputProvider(final Path basePath) {
+        this.basePath = basePath;
     }
 
-    public Path getModulePath() {
-        return modulePath;
+    public Path getBasePath() {
+        return basePath;
     }
 
     @Override
@@ -43,6 +43,6 @@ public class FileResourceOutputProvider implements ResourceOutputProvider {
 
     @Override
     public Path getResourceOutputPath(final Source source, final String resourcePath) throws IOException {
-        return FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath);
+        return FileConfigurationUtils.getResourcePath(basePath, source, resourcePath);
     }
 }

@@ -16,6 +16,7 @@
 package org.onehippo.cm.model.impl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -97,6 +98,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     // store marker here to indicate whether this came from a filesystem mvn path at startup
     private String mvnPath;
 
+    private File archiveFile;
+
     // set of resource paths that should be removed during auto-export write step
     private Set<String> removedConfigResources = new HashSet<>();
     private Set<String> removedContentResources = new HashSet<>();
@@ -124,6 +127,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         // update the back-reference, since this new module will now "own" these Sources
         sortedSources.forEach(source -> source.setModule(this));
         mvnPath = module.getMvnPath();
+        archiveFile = module.getArchiveFile();
         build();
     }
 
@@ -145,6 +149,20 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     public ModuleImpl addAfter(final Set<String> after) {
         modifiableAfter.addAll(after);
         return this;
+    }
+
+    @Override
+    public boolean isArchive() {
+        return archiveFile != null;
+    }
+
+    @Override
+    public File getArchiveFile() {
+        return archiveFile;
+    }
+
+    public void setArchiveFile(File archiveFile) {
+        this.archiveFile = archiveFile;
     }
 
     @Override
@@ -661,6 +679,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             newModule.setMvnPath(mvnPath);
             newModule.setConfigResourceInputProvider(configResourceInputProvider);
             newModule.setContentResourceInputProvider(contentResourceInputProvider);
+            // probably not needed as archive module aren't supposed to (need to) be cloned
+            newModule.setArchiveFile(archiveFile);
 
             // reload sources from raw YAML instead of attempting to copy the full parsed structure
             // TODO is this good enough? for auto-export, it should be, since baseline will not change during export
@@ -670,11 +690,11 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             for (ConfigSourceImpl source : getConfigSources()) {
                 // TODO adding the slash here is a silly hack to load a source path without needing the source first
                 configSourceParser.parse(configResourceInputProvider.getResourceInputStream(null, "/" + source.getPath()),
-                        source.getPath(), configResourceInputProvider.getBaseURL() + source.getPath(), newModule);
+                        source.getPath(), configResourceInputProvider.getBasePath().resolve(source.getPath()).toString(), newModule);
             }
             for (ContentSourceImpl source : getContentSources()) {
                 contentSourceParser.parse(contentResourceInputProvider.getResourceInputStream(null, "/" + source.getPath()),
-                        source.getPath(), configResourceInputProvider.getBaseURL() + source.getPath(), newModule);
+                        source.getPath(), configResourceInputProvider.getBasePath().resolve(source.getPath()).toString(), newModule);
             }
 
             return newModule;

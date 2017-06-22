@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.model;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -157,14 +158,23 @@ public class ClasspathConfigurationModelReader {
         final Enumeration<URL> resources = classLoader.getResources(Constants.HCM_MODULE_YAML);
         while (resources.hasMoreElements()) {
             final URL resource = resources.nextElement();
+            final String resourcePath = resource.getPath();
 
             // look for the marker that indicates this is a path within a jar file
             // this is the normal case when we load modules that were packaged and deployed in a Tomcat container
-            final int jarContentMarkerIdx = resource.getFile().lastIndexOf("!/");
+            final int jarContentMarkerIdx = resourcePath.lastIndexOf("!/");
             if (jarContentMarkerIdx > 0) {
                 // note: the below mapping of resource url to path assumes the jar physically exists on the filesystem,
                 // using a non-exploded war based classloader might fail here, but that is (currently) not supported anyway
-                final Path jarPath = Paths.get(resource.getFile().substring("file:".length(), jarContentMarkerIdx));
+
+                // First convert the resourcePath to a platform native one, e.g. on Windows this 'fixes' /C:/ to C:\
+                // Furthermore, it also properly decodes encoded special characters like spaces (%20) as well as for example '+' characters.
+                // without needing to use URLDecoder.decode() (as often times is suggested).
+                // URLDecoder.decode() typically will incorrectly replace '+' with ' '!
+                // (it also could throw UnsupportedException, but most/all implementations handle this example 'silently')
+                final File archiveFile = new File(new URL(resourcePath.substring(0, jarContentMarkerIdx)).toURI());
+                final String nativePath = archiveFile.getPath();
+                final Path jarPath = Paths.get(nativePath);
 
                 // Jar-based FileSystems must remain open for the life of a ConfigurationModel, and must be closed when
                 //  processing is complete via ConfigurationModel.close()!
@@ -174,11 +184,13 @@ public class ClasspathConfigurationModelReader {
                 final Path moduleDescriptorPath = fs.getPath(Constants.HCM_MODULE_YAML);
                 final PathConfigurationReader.ReadResult result =
                         new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
+                final ModuleImpl moduleImpl = result.getModuleContext().getModule();
+                moduleImpl.setArchiveFile(archiveFile);
 
                 // Hang onto a reference to this FS, so we can close it later with ConfigurationModel.close()
                 groups.getLeft().add(fs);
 
-                groups.getRight().add(result.getModuleContext().getModule().getProject().getGroup());
+                groups.getRight().add(moduleImpl.getProject().getGroup());
             }
             else {
                 // if part of the classpath is a raw dir on the native filesystem, just use the default FileSystem

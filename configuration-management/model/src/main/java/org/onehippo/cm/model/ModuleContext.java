@@ -175,7 +175,7 @@ public class ModuleContext {
                 final FileResourceOutputProvider outputProvider = (FileResourceOutputProvider) getOutputProvider(source);
                 final Path resourceFilePath = outputProvider.getResourceOutputPath(source, resourceFileName);
                 final String filePath = generateUniqueName(source, resourceFilePath.toString());
-                final String resourcePath = filePath.substring(outputProvider.getModulePath().toString().length());
+                final String resourcePath = filePath.substring(outputProvider.getBasePath().toString().length());
                 pair.getLeft().setResourceValue(resourcePath);
             }
         }
