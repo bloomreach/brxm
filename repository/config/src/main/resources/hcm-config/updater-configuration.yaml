@@ -13,7 +13,7 @@ definitions:
         .meta:residual-child-node-category: content
         jcr:primaryType: hipposys:updaterfolder
       /hippo:queue:
-        .meta:residual-child-node-category: runtime
+        .meta:residual-child-node-category: content
         jcr:primaryType: hipposys:updaterfolder
       /hippo:history:
         .meta:residual-child-node-category: runtime
