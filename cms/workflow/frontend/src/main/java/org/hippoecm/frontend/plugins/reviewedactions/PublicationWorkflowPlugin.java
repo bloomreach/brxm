@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
@@ -194,8 +195,9 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 try {
                     final Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                     final Node unpublished = getVariant(handle, UNPUBLISHED);
+                    final Session jcrSession = UserSession.get().getJcrSession();
                     final Map<String, Node> referenced = WorkflowUtils.getReferencesToUnpublishedDocuments(unpublished,
-                            UserSession.get().getJcrSession());
+                                                                                                           jcrSession);
 
                     if (!referenced.isEmpty()) {
                         return new UnpublishedReferencesDialog(publishAction,
@@ -223,10 +225,12 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 try {
                     final Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                     final Node unpublished = getVariant(handle, UNPUBLISHED);
-                    final Map<String, Node> referringDocuments = WorkflowUtils.getReferringDocuments(unpublished, true);
-                    if (!referringDocuments.isEmpty()) {
-                        final UnpublishedReferenceNodeProvider provider = new UnpublishedReferenceNodeProvider(
-                                referringDocuments);
+                    final Session jcrSession = UserSession.get().getJcrSession();
+                    final Map<String, Node> referenced = WorkflowUtils.getReferencesToUnpublishedDocuments(unpublished,
+                                                                                                           jcrSession);
+
+                    if (!referenced.isEmpty()) {
+                        final UnpublishedReferenceNodeProvider provider = new UnpublishedReferenceNodeProvider(referenced);
                         return new UnpublishedReferencesDialog(this, provider, getEditorManager());
                     }
                 } catch (final RepositoryException e) {
