@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.document;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import javax.jcr.Node;
@@ -33,12 +34,14 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
-import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -121,6 +124,34 @@ class DocumentsServiceImpl implements DocumentsService {
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
 
         return document;
+    }
+
+    @Override
+    public void updateDraftField(final String uuid, final FieldPath fieldPath, final List<FieldValue> fieldValues, final Session session, final Locale locale) throws ErrorWithPayloadException {
+        final Node handle = getHandle(uuid, session);
+        final EditableWorkflow workflow = getWorkflow(handle);
+        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
+                .orElseThrow(NotFoundException::new);
+
+        if (!EditingUtils.canUpdateDraft(workflow)) {
+            throw new ForbiddenException(errorInfoFromHintsOrNoHolder(workflow, session));
+        }
+
+        final DocumentType docType = getDocumentType(handle, locale);
+        if (docType.isReadOnlyDueToUnknownValidator()) {
+            throw new ForbiddenException();
+        }
+
+        // Write field value to draft node
+        if (FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, docType.getFields(), draft)) {
+            // Persist changes to repository
+            try {
+                session.save();
+            } catch (RepositoryException e) {
+                log.warn("Failed to save changes to field '{}' in draft node of document {}", fieldPath, uuid, e);
+                throw new InternalServerErrorException();
+            }
+        }
     }
 
     @Override

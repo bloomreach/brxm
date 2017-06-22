@@ -40,6 +40,7 @@ class ChannelCtrl {
     this.$translate = $translate;
     this.ChannelActionsService = ChannelActionsService;
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
@@ -72,6 +73,10 @@ class ChannelCtrl {
     return !this.isChannelLoaded() || !this.isPageLoaded();
   }
 
+  isConfigurationLocked() {
+    return this.ChannelService.isConfigurationLocked();
+  }
+
   isChannelLoaded() {
     return this.ChannelService.hasChannel();
   }
@@ -95,6 +100,7 @@ class ChannelCtrl {
 
   editContent(contentUuid) {
     this.SidePanelService.open('right', contentUuid);
+    this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
   }
 
   getRenderVariant() {

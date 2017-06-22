@@ -16,6 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.jcr.Session;
@@ -33,6 +34,8 @@ import javax.ws.rs.core.Response;
 
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.repository.jaxrs.api.SessionDataProvider;
@@ -65,6 +68,18 @@ public class ContentResource {
                                         @Context HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Response.Status.OK,
                 (session, locale) -> DocumentsService.get().updateDraft(id, document, session, locale));
+    }
+
+    @PUT
+    @Path("documents/{documentId}/draft/{fieldPath:.*}")
+    public Response updateDraftField(@PathParam("documentId") String documentId,
+                                     @PathParam("fieldPath") String fieldPath,
+                                     List<FieldValue> fieldValues,
+                                     @Context HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Response.Status.OK, (session, locale) -> {
+            DocumentsService.get().updateDraftField(documentId, new FieldPath(fieldPath), fieldValues, session, locale);
+            return null; // no response data
+        });
     }
 
     @DELETE

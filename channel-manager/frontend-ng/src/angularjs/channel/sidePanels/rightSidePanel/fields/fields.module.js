@@ -19,6 +19,7 @@ import choiceFieldComponent from './choiceField/choiceField.component';
 import compoundFieldComponent from './compoundField/compoundField.component';
 import ckeditorModule from './ckeditor/ckeditor.module';
 import collapse from './collapse/collapse.directive';
+import fieldService from './field.service';
 
 const fieldsModule = angular
   .module('hippo-cm.channel.fieldsModule', [
@@ -28,6 +29,7 @@ const fieldsModule = angular
   .component('primitiveField', primitiveFieldComponent)
   .component('choiceField', choiceFieldComponent)
   .component('compoundField', compoundFieldComponent)
-  .directive('collapse', collapse);
+  .directive('collapse', collapse)
+  .service('FieldService', fieldService);
 
 export default fieldsModule.name;

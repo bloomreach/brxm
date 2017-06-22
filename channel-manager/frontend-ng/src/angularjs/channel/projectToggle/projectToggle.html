@@ -22,6 +22,7 @@
 
   <md-select aria-label="{{ ::'TOOLBAR_PROJECT_LABEL' | translate }}"
              class="md-no-underline"
+             ng-model-options="{ trackBy: '$value.id' }"
              ng-model="$ctrl.selectedProject">
     <md-option ng-value="$ctrl.core">
       {{ $ctrl.core.name }}
@@ -29,10 +30,10 @@
 
     <md-divider ng-if="$ctrl.getProjects()"></md-divider>
 
-    <md-option ng-repeat="project in $ctrl.getProjects() | orderBy: 'name'"
+    <md-option ng-repeat="project in $ctrl.getProjects() | orderBy: 'name' track by project.id"
                ng-value="project"
                md-truncate>
-      {{ ::project.name }}
+      {{ project.name }}
     </md-option>
   </md-select>
 </div>

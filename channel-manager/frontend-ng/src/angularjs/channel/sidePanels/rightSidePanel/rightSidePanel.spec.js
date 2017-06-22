@@ -95,7 +95,7 @@ describe('RightSidePanel', () => {
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
 
-    CmsService = jasmine.createSpyObj('CmsService', ['closeDocumentWhenValid', 'publish', 'subscribe']);
+    CmsService = jasmine.createSpyObj('CmsService', ['closeDocumentWhenValid', 'publish', 'reportUsageStatistic', 'subscribe']);
     DialogService = jasmine.createSpyObj('DialogService', ['confirm', 'show']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
@@ -128,10 +128,14 @@ describe('RightSidePanel', () => {
     $ctrl.setFullWidth(true);
     expect($ctrl.$element.hasClass('fullwidth')).toBe(true);
     expect($ctrl.isFullWidth).toBe(true);
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsFullScreen');
+
+    CmsService.reportUsageStatistic.calls.reset();
 
     $ctrl.setFullWidth(false);
     expect($ctrl.$element.hasClass('fullwidth')).toBe(false);
     expect($ctrl.isFullWidth).toBe(false);
+    expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
   });
 
   it('should update local storage on resize', () => {
@@ -430,6 +434,7 @@ describe('RightSidePanel', () => {
       expect(DialogService.show).toHaveBeenCalled();
       expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
       expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsSaveDocument');
       expectNewDocument();
     });
 
@@ -445,6 +450,7 @@ describe('RightSidePanel', () => {
       expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
       expect(ContentService.deleteDraft).not.toHaveBeenCalled();
       expect(ContentService.createDraft).not.toHaveBeenCalled();
+      expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
 
       expect($ctrl.doc).toEqual(testDocument);
       expect($ctrl.docType).toEqual(testDocumentType);
@@ -459,6 +465,7 @@ describe('RightSidePanel', () => {
 
       expect(DialogService.show).toHaveBeenCalled();
       expect(ContentService.saveDraft).not.toHaveBeenCalled();
+      expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
       expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
       expectNewDocument();
     });
@@ -484,6 +491,7 @@ describe('RightSidePanel', () => {
 
       expect(DialogService.show).not.toHaveBeenCalled();
       expect(ContentService.saveDraft).not.toHaveBeenCalled();
+      expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
       expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
       expectNewDocument();
     });
@@ -698,6 +706,7 @@ describe('RightSidePanel', () => {
     expect($ctrl.doc).toEqual(savedDoc);
     expect($ctrl.form.$setPristine).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsSaveDocument');
   });
 
   it('does not save a document when there are no changes', () => {
@@ -724,6 +733,7 @@ describe('RightSidePanel', () => {
     $rootScope.$digest();
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {});
+    expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
   });
 
   it('shows an error when document save fails due to other user now being the holder', () => {
@@ -831,7 +841,7 @@ describe('RightSidePanel', () => {
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UNABLE_TO_SAVE', {});
   });
 
-  it('directly opens the full content in a certain mode if the form is not dirty', () => {
+  it('directly opens the content editor in a certain mode if the form is not dirty', () => {
     $ctrl.documentId = 'test';
     SidePanelService.close.and.returnValue($q.resolve());
 
@@ -843,9 +853,10 @@ describe('RightSidePanel', () => {
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'test', mode);
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsContentPublish');
   });
 
-  it('can discard pending changes before opening the full content', () => {
+  it('can discard pending changes before opening the content editor', () => {
     DialogService.show.and.returnValue($q.resolve('DISCARD'));
     SidePanelService.close.and.returnValue($q.resolve());
     $ctrl.documentId = 'test';
@@ -860,9 +871,10 @@ describe('RightSidePanel', () => {
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'test', 'edit');
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsContentEditor');
   });
 
-  it('saves pending changes before opening the full content', () => {
+  it('saves pending changes before opening the content editor', () => {
     DialogService.show.and.returnValue($q.resolve('SAVE'));
     $ctrl.documentId = 'test';
     $ctrl.doc = testDocument;
@@ -878,6 +890,10 @@ describe('RightSidePanel', () => {
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'test', 'edit');
+    expect(CmsService.reportUsageStatistic.calls.allArgs()).toEqual([
+      ['CMSChannelsSaveDocument'],
+      ['CMSChannelsContentEditor'],
+    ]);
   });
 
   it('releases holdership of the document when publishing it', () => {
@@ -900,7 +916,7 @@ describe('RightSidePanel', () => {
     expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'documentId', 'view');
   });
 
-  it('does not open the full content if saving changes failed', () => {
+  it('does not open the content editor if saving changes failed', () => {
     DialogService.show.and.returnValue($q.resolve('SAVE'));
     $ctrl.documentId = 'documentId';
     $ctrl.doc = testDocument;

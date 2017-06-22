@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
@@ -105,11 +106,16 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
     }
 
     @Override
-    public void writeTo(final Node node, Optional<List<FieldValue>> optionalValues) throws ErrorWithPayloadException {
-        final String nodeName = getId();
+    protected void writeValues(final Node node,
+                               final Optional<List<FieldValue>> optionalValues,
+                               final boolean validateValues) throws ErrorWithPayloadException {
         final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
-        checkCardinality(values);
 
+        if (validateValues) {
+            checkCardinality(values);
+        }
+
+        final String nodeName = getId();
         try {
             NodeIterator children = node.getNodes(nodeName);
             FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
@@ -117,6 +123,16 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
             log.warn("Failed to write compound value to node {}", nodeName, e);
             throw new InternalServerErrorException();
         }
+    }
+
+    @Override
+    public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
+        return FieldTypeUtils.writeFieldNodeValue(node, fieldPath, values, this);
+    }
+
+    @Override
+    public boolean writeFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException {
+        return FieldTypeUtils.writeFieldValue(fieldPath, values, fields, node);
     }
 
     @Override

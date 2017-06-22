@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:channelmanager:
+      jcr:primaryType: hipposys:resourcebundles

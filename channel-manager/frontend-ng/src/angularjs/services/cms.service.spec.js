@@ -185,4 +185,10 @@ describe('CmsService', () => {
     expect(errorCount1).toBe(0);
     expect(errorCount2).toBe(0);
   });
+
+  it('reports a usage statistic', () => {
+    spyOn($window.parent.Hippo.Events, 'publish');
+    CmsService.reportUsageStatistic('something');
+    expect($window.parent.Hippo.Events.publish).toHaveBeenCalledWith('something');
+  });
 });

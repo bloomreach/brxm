@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/channelDocumentUrlService:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.onehippo.cms7.channelmanager.service.ChannelDocumentUrlService
+      rest.proxy.service.id: hst.rest.proxy.service
+      service.id: live.site.document.url.service
+      type: live

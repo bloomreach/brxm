@@ -70,6 +70,7 @@ class RightSidePanelCtrl {
     HippoIframeService,
     FeedbackService,
     localStorageService,
+    FieldService,
     ) {
     'ngInject';
 
@@ -87,6 +88,7 @@ class RightSidePanelCtrl {
     this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
     this.localStorageService = localStorageService;
+    this.FieldService = FieldService;
 
     this.defaultTitle = $translate.instant('EDIT_CONTENT');
     this.closeLabel = $translate.instant('CLOSE');
@@ -150,6 +152,7 @@ class RightSidePanelCtrl {
 
   _loadDocument(id) {
     this.documentId = id;
+    this.FieldService.setDocumentId(this.documentId);
     this.loading = true;
     this.CmsService.closeDocumentWhenValid(id)
       .then(() => this.ContentService.createDraft(id)
@@ -258,6 +261,7 @@ class RightSidePanelCtrl {
         this.doc = savedDoc;
         this._resetForm();
         this.HippoIframeService.reload();
+        this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
       })
       .catch((response) => {
         let params = {};
@@ -349,6 +353,12 @@ class RightSidePanelCtrl {
 
     // mode can be 'view' or 'edit', so the event names can be 'view-content' and 'edit-content'
     this.CmsService.publish('open-content', this.documentId, mode);
+
+    if (mode === 'view') {
+      this.CmsService.reportUsageStatistic('CMSChannelsContentPublish');
+    } else if (mode === 'edit') {
+      this.CmsService.reportUsageStatistic('CMSChannelsContentEditor');
+    }
   }
 
   _saveDraft() {
@@ -424,6 +434,7 @@ class RightSidePanelCtrl {
     if (state === true) {
       this.$element.addClass('fullwidth');
       this.ChannelService.setToolbarDisplayed(false);
+      this.CmsService.reportUsageStatistic('CMSChannelsFullScreen');
     } else {
       this.$element.removeClass('fullwidth');
       this.ChannelService.setToolbarDisplayed(true);

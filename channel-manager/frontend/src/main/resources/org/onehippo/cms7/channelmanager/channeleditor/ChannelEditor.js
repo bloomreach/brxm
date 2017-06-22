@@ -166,9 +166,8 @@
 
     _getChannelRecord: function(channelStore, channelId) {
       var channelRecord = channelStore.getById(channelId);
-      if (!channelRecord && channelId.endsWith('-preview')) {
-        // try to use the live channel instead.
-        channelRecord = channelStore.getById(channelId.replace(/-preview$/, ''));
+      if (!channelRecord && !channelId.endsWith('-preview')) {
+        channelRecord = channelStore.getById(channelId+'-preview');
       }
       return channelRecord;
     },

@@ -1,0 +1,41 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/hippo-channel-manager:
+      jcr:primaryType: frontend:plugincluster
+      /channel-manager-perspective:
+        jcr:primaryType: frontend:plugin
+        hst.config.editor.disabled: false
+        hst.config.editor.lock.inherited.nodes: true
+        plugin.class: org.onehippo.cms7.channelmanager.ChannelManagerPerspective
+        rest.proxy.service.id: hst.rest.proxy.service
+        wicket.id: service.tab
+        /channel-list:
+          jcr:primaryType: frontend:pluginconfig
+          channelRegionIconPath: /content/gallery/channels/${region}.png/${region}.png/hippogallery:original
+          channelStore: org.onehippo.cms7.channelmanager.channels.CountryGroupingChannelStore
+          channelTypeIconPath: /content/gallery/channels/${type}.png/${type}.png/hippogallery:original
+          columns: [name, url, locale, hstConfigEditor]
+          sort.column: name
+          sort.order: ascending
+        /templatecomposer:
+          jcr:primaryType: frontend:pluginconfig
+          composerRestMountPath: /_rp
+          extAjaxTimeoutMillis: 30000
+          initialHstConnectionTimeout: 60000
+          manage.changes.privileges: hippo:admin
+          manage.changes.privileges.path: /hst:hst
+          previewMode: true
+          projectsPath: ''
+          variantsPath: ''
+        /layout.wireframe:
+          jcr:primaryType: frontend:pluginconfig
+          center: id=template-composer-perspective-center,body=template-composer-perspective-center-body,scroll=false
+          linked.with.parent: true
+          root.id: template-composer-plugin-wrapper
+          units: center
+      /templatecomposer-properties-editor:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.onehippo.cms7.channelmanager.channeleditor.PlainComponentPropertiesEditor
+      /templatecomposer-variant-adder:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.onehippo.cms7.channelmanager.channeleditor.PlainComponentVariantAdder

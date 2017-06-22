@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-addon-channel-manager
+    after: hippo-cms
+module: hippo-addon-channel-manager-repository

@@ -24,7 +24,6 @@ class HippoIframeCtrl {
     $scope,
     $translate,
     ChannelService,
-    SidePanelService,
     CmsService,
     ConfigService,
     DialogService,
@@ -34,7 +33,9 @@ class HippoIframeCtrl {
     OverlayService,
     PageMetaDataService,
     PageStructureService,
+    ProjectService,
     ScrollService,
+    SidePanelService,
     ViewportService,
     hstCommentsProcessorService,
     linkProcessorService,
@@ -46,7 +47,6 @@ class HippoIframeCtrl {
     this.$scope = $scope;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
-    this.SidePanelService = SidePanelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.DialogService = DialogService;
@@ -56,6 +56,8 @@ class HippoIframeCtrl {
     this.OverlayService = OverlayService;
     this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
+    this.ProjectService = ProjectService;
+    this.SidePanelService = SidePanelService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
     this.linkProcessorService = linkProcessorService;
 
@@ -86,6 +88,8 @@ class HippoIframeCtrl {
   }
 
   $onInit() {
+    this.ProjectService.registerChangeListener(() => this._resetOverlayToggles());
+
     this.$scope.$watch('iframe.showComponentsOverlay', (value) => {
       this.OverlayService.showComponentsOverlay(value);
       this._updateDragDrop();
@@ -223,6 +227,11 @@ class HippoIframeCtrl {
 
   isIframeLifted() {
     return this.HippoIframeService.isIframeLifted;
+  }
+
+  _resetOverlayToggles() {
+    this.showComponentsOverlay = false;
+    this.showContentOverlay = true;
   }
 }
 

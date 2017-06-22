@@ -103,12 +103,25 @@ describe('LeftSidePanel', () => {
     expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(false);
   });
 
-  it('retrieves the sitemap items from the channel siteMap service', () => {
+  it('retrieves the site map items from the channel siteMap service', () => {
     const siteMapItems = ['dummy'];
     const ChannelLeftSidePanelCtrl = instantiateController(false);
     SiteMapService.get.and.returnValue(siteMapItems);
 
     expect(ChannelLeftSidePanelCtrl.getSiteMap()).toBe(siteMapItems);
+  });
+
+  it('calculates the track-by hash of a site map item', () => {
+    const $ctrl = instantiateController(false);
+    expect($ctrl.getSiteMapItemHash({
+      pageTitle: 'Title',
+      pathInfo: '/title',
+      name: 'not used',
+    })).toEqual('/title\0Title');
+    expect($ctrl.getSiteMapItemHash({
+      pathInfo: '/title',
+      name: 'title',
+    })).toEqual('/title\0title');
   });
 
   it('asks the HippoIframeService to load the requested siteMap item', () => {
@@ -122,7 +135,7 @@ describe('LeftSidePanel', () => {
     expect(HippoIframeService.load).toHaveBeenCalledWith('dummy');
   });
 
-  it('compares the siteMap item\'s renderPathInfo to the current one', () => {
+  it('compares the site map item\'s renderPathInfo to the current one', () => {
     HippoIframeService.getCurrentRenderPathInfo.and.returnValue('/current/path');
     const siteMapItem = {
       renderPathInfo: '/current/path',

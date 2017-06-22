@@ -16,47 +16,51 @@
 
 class ChannelService {
   constructor(
+    $http,
     $log,
     $q,
     $rootScope,
-    $http,
     $state,
-    SessionService,
     CatalogService,
+    CmsService,
+    ConfigService,
     FeedbackService,
     HstService,
-    ConfigService,
-    ProjectService,
-    CmsService,
-    SiteMapService,
     PathService,
+    ProjectService,
+    SessionService,
+    SiteMapService,
     ) {
     'ngInject';
 
+    this.$http = $http;
     this.$log = $log;
     this.$q = $q;
-    this.$http = $http;
+    this.$rootScope = $rootScope;
     this.$state = $state;
-    this.SessionService = SessionService;
     this.CatalogService = CatalogService;
+    this.CmsService = CmsService;
+    this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HstService = HstService;
-    this.ConfigService = ConfigService;
-    this.CmsService = CmsService;
-    this.SiteMapService = SiteMapService;
     this.PathService = PathService;
     this.ProjectService = ProjectService;
+    this.SessionService = SessionService;
+    this.SiteMapService = SiteMapService;
+  }
 
+  initialize() {
     this.isToolbarDisplayed = true;
     this.channel = {};
 
     this.CmsService.subscribe('channel-changed-in-extjs', () => {
-      $rootScope.$apply(() => this.reload());
+      this.$rootScope.$apply(() => this.reload());
     });
-  }
 
-  initialize() {
-    this.CmsService.subscribe('load-channel', (channel, initialPath, branchId) => this._onLoadChannel(channel, initialPath, branchId));
+    this.CmsService.subscribe('load-channel', (channel, initialPath, branchId) => {
+      this.branchId = branchId;
+      this._onLoadChannel(channel, initialPath);
+    });
 
     // Handle reloading of iframe by BrowserSync during development
     this.CmsService.publish('reload-channel');
@@ -82,47 +86,44 @@ class ChannelService {
     return this._load(channelId, this.channel.contextPath);
   }
 
-  _onLoadChannel(channel, initialPath, branchId) {
-    this._load(channel.id, channel.contextPath, branchId)
+  _onLoadChannel(channel, initialPath) {
+    this._load(channel.id, channel.contextPath)
       .then((channelId) => {
         const initialRenderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
-        this.$state.go('hippo-cm.channel', { channelId, initialRenderPath, branchId }, { reload: true });
+        this.$state.go('hippo-cm.channel', { channelId, initialRenderPath }, { reload: true });
       });
   }
 
   switchToChannel(contextPath, id) {
-    return this._load(id, contextPath, this.branchId)
+    return this._load(id, contextPath)
       .then((channelId) => {
         this.CmsService.publish('switch-channel', channelId); // update breadcrumb.
       });
   }
 
-  _load(channelId, contextPath, branchId) {
+  _load(channelId, contextPath) {
     this.ConfigService.setContextPathForChannel(contextPath);
 
-    return this._initChannel(channelId, branchId)
+    return this._initChannel(channelId)
       .then(channel => this._setChannel(channel));
   }
 
-  _initChannel(channelId, branchId) {
+  _initChannel(channelId) {
     return this.HstService.getChannel(channelId)
-      .then(channel => this._initProject(channel, branchId)
-          .then(() => this.SessionService.initialize(channel.hostname, channel.mountId)
-            .then(() => this._ensurePreviewHstConfigExists(channel))),
+      .then(channel =>
+        this._initProject(channel)
+          .then(() => this.SessionService.initialize(channel.hostname, channel.mountId))
+          .then(() => this._ensurePreviewHstConfigExists(channel)),
       )
       .catch((error) => {
-        // TODO: improve error handling.
-        // If this goes wrong, the CM won't work. display a toast explaining so
-        // and switch back to the channel overview.
         this.$log.error(`Failed to load channel '${channelId}'.`, error);
         return this.$q.reject();
       });
   }
 
-  _initProject(channel, branchId) {
+  _initProject(channel) {
     if (this.ConfigService.projectsEnabled) {
-      return this.ProjectService.load(channel, branchId)
-        .then(id => id);
+      return this.ProjectService.load(channel, this.branchId).then(id => id);
     }
     return this.$q.resolve();
   }
@@ -215,6 +216,10 @@ class ChannelService {
 
   isEditable() {
     return this.SessionService.hasWriteAccess() && this.hasChannel() && this.channel.previewHstConfigExists;
+  }
+
+  isConfigurationLocked() {
+    return this.getChannel().configurationLocked;
   }
 
   recordOwnChange() {

@@ -52,6 +52,10 @@ class LeftSidePanelCtrl {
     return this.SiteMapService.get();
   }
 
+  getSiteMapItemHash(item) {
+    return `${item.pathInfo}\0${item.pageTitle || item.name}`;
+  }
+
   showPage(siteMapItem) {
     this.HippoIframeService.load(siteMapItem.renderPathInfo);
   }

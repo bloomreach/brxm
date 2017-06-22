@@ -14,12 +14,11 @@
   ~ limitations under the License.
   -->
 
-<md-button class="btn-overlay-toggle"
+<md-button class="btn-overlay-toggle md-icon-button"
+           ng-disabled="$ctrl.isConfigurationLocked"
            ng-click="$ctrl.toggleState()"
            title="{{ $ctrl.tooltip }}">
-  <md-icon ng-class="{
-            'active': $ctrl.state
-           }"
+  <md-icon ng-class="{ 'active': $ctrl.state }"
            md-svg-src="{{ $ctrl.iconSrc }}">
     {{ $ctrl.iconName }}
   </md-icon>

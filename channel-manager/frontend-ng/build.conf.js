@@ -44,6 +44,7 @@ const customConfig = {
   hmr: true,
   serverPort: 9090,
   karma: {
+    port: 10002,
     files: [
       'node_modules/dragula/dist/dragula.min.js',
       'node_modules/dragula/dist/dragula.min.css',

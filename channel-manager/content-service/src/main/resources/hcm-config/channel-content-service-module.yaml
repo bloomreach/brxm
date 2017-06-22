@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/channel-content-service:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.cms.channelmanager.content.ChannelContentServiceModule
+      /hippo:moduleconfig:
+        jcr:primaryType: hipposys:moduleconfig
+        jaxrs.endpoint.address: /content

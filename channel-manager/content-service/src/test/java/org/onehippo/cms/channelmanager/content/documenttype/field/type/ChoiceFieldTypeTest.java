@@ -28,12 +28,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.repository.mock.MockNode;
@@ -380,6 +382,113 @@ public class ChoiceFieldTypeTest {
         verifyAll();
     }
 
+    @Test
+    public void writeFieldOtherId() throws ErrorWithPayloadException {
+        final Node node = createMock(Node.class);
+        final FieldPath fieldPath = new FieldPath("other:id");
+        replay(node);
+
+        assertFalse(choice.writeField(node, fieldPath, Collections.emptyList()));
+        verify(node);
+    }
+
+    @Test
+    public void writeFieldUnknownChildNode() throws ErrorWithPayloadException {
+        final Node node = MockNode.root();
+        final FieldPath fieldPath = new FieldPath("choice/unknown:child");
+        final List<FieldValue> fieldValues = Collections.emptyList();
+
+        try {
+            choice.writeField(node, fieldPath, fieldValues);
+            fail("Exception not thrown");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+    }
+
+    @Test
+    public void writeFieldGetChildFails() throws ErrorWithPayloadException, RepositoryException {
+        final Node node = createMock(Node.class);
+        final FieldPath fieldPath = new FieldPath("choice/child");
+
+        expect(node.hasNode("choice")).andReturn(true);
+        expect(node.getNode("choice")).andThrow(new RepositoryException());
+        expect(node.getPath()).andReturn("/test");
+        replay(node);
+
+        try {
+            choice.writeField(node, fieldPath, Collections.emptyList());
+            fail("Exception not thrown");
+        } catch (InternalServerErrorException e) {
+            verify(node);
+        }
+    }
+
+    @Test
+    public void writeFieldOnlyChoice() throws ErrorWithPayloadException, RepositoryException {
+        final Node node = MockNode.root();
+        final Node choiceNode = node.addNode("choice", "compound1");
+
+        final FieldPath fieldPath = new FieldPath("choice/somefield");
+        final List<FieldValue> fieldValues = Collections.emptyList();
+
+        expect(compound1.writeFieldValue(choiceNode, new FieldPath("somefield"), fieldValues)).andReturn(true);
+        replay(compound1);
+
+        assertTrue(choice.writeField(node, fieldPath, fieldValues));
+
+        verify(compound1);
+    }
+
+    @Test
+    public void writeFieldFirstChoice() throws ErrorWithPayloadException, RepositoryException {
+        final Node node = MockNode.root();
+        final Node choiceNode1 = node.addNode("choice", "compound1");
+        node.addNode("choice", "compound2");
+
+        final FieldPath fieldPath = new FieldPath("choice/somefield");
+        final List<FieldValue> fieldValues = Collections.emptyList();
+
+        expect(compound1.writeFieldValue(choiceNode1, new FieldPath("somefield"), fieldValues)).andReturn(true);
+        replay(compound1);
+
+        assertTrue(choice.writeField(node, fieldPath, fieldValues));
+
+        verify(compound1);
+    }
+
+    @Test
+    public void writeFieldSecondChoice() throws ErrorWithPayloadException, RepositoryException {
+        final Node node = MockNode.root();
+        node.addNode("choice", "compound1");
+        final Node choiceNode2 = node.addNode("choice", "compound2");
+
+        final FieldPath fieldPath = new FieldPath("choice[2]/somefield");
+        final List<FieldValue> fieldValues = Collections.emptyList();
+
+        expect(compound2.writeFieldValue(choiceNode2, new FieldPath("somefield"), fieldValues)).andReturn(true);
+        replay(compound2);
+
+        assertTrue(choice.writeField(node, fieldPath, fieldValues));
+
+        verify(compound2);
+    }
+
+    @Test
+    public void writeFieldUnknownChoice() throws ErrorWithPayloadException, RepositoryException {
+        final Node node = MockNode.root();
+        node.addNode("choice", "unknown:compound");
+
+        final FieldPath fieldPath = new FieldPath("choice/somefield");
+        final List<FieldValue> fieldValues = Collections.emptyList();
+
+        try {
+            choice.writeField(node, fieldPath, fieldValues);
+            fail("Exception not thrown");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+    }
 
     @Test
     public void validateNone() {

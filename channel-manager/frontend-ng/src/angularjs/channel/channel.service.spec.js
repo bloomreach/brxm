@@ -125,7 +125,6 @@ describe('ChannelService', () => {
       {
         channelId: testChannel.id,
         initialRenderPath: '/testMount/testPath',
-        branchId: undefined,
       },
       {
         reload: true,
@@ -175,7 +174,6 @@ describe('ChannelService', () => {
       {
         channelId: editableTestChannel.id,
         initialRenderPath: '/testMount/testPath',
-        branchId: undefined,
       },
       {
         reload: true,
@@ -218,7 +216,6 @@ describe('ChannelService', () => {
       {
         channelId: testChannel.id,
         initialRenderPath: '/testMount/testPath',
-        branchId: undefined,
       },
       {
         reload: true,

@@ -15,9 +15,15 @@
  */
 
 class PrimitiveFieldCtrl {
+  constructor(FieldService) {
+    'ngInject';
+
+    this.FieldService = FieldService;
+  }
+
   getFieldName(index) {
     const fieldName = this.name ? `${this.name}/${this.fieldType.id}` : this.fieldType.id;
-    return index > 0 ? `${fieldName}[${index}]` : fieldName;
+    return index > 0 ? `${fieldName}[${index + 1}]` : fieldName;
   }
 
   getFieldError() {
@@ -43,11 +49,21 @@ class PrimitiveFieldCtrl {
   focusPrimitive() {
     this.hasFocus = true;
     this.onFieldFocus();
+
+    this.oldValues = angular.copy(this.fieldValues);
   }
 
   blurPrimitive() {
     delete this.hasFocus;
     this.onFieldBlur();
+
+    if (!angular.equals(this.oldValues, this.fieldValues)) {
+      this.FieldService.draftField(this.getFieldName(), this.fieldValues);
+    }
+  }
+
+  valueChanged() {
+    this.FieldService.startDraftTimer(this.getFieldName(), this.fieldValues);
   }
 }
 
