@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export default class MenuItem {
+class MenuItem {
 
   constructor(name, config = {}) {
     this.name = name;
@@ -51,3 +51,6 @@ export default class MenuItem {
     return this.hasIconName() || this.hasIconSrc();
   }
 }
+
+export default MenuItem;
+

@@ -23,7 +23,8 @@
       <md-icon ng-if="menu.hasIconName() && menu.isIconVisible()">{{::menu.iconName}}</md-icon>
       <md-icon ng-if="menu.hasIconSrc() && menu.isIconVisible()" md-svg-src="{{ ::menu.iconSrc}}"></md-icon>
     </md-button>
-    <md-menu-content class="qa-{{ ::menu.name }}-menu {{ ::menu.name }}-menu dropdown-menu-content" width="{{ ::menu.width}}">
+    <md-menu-content class="qa-{{ ::menu.name }}-menu {{ ::menu.name }}-menu dropdown-menu-content"
+                     width="{{ ::menu.width}}">
       <md-menu-item ng-class="{'md-indent': menu.hasIcons()}"
                     ng-repeat-start="item in menu.items track by item.name"
                     ng-if="item.type === 'action' && item.isVisible()">
