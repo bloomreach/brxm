@@ -32,7 +32,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -89,59 +89,62 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 context, getModel(), Icon.MINUS_CIRCLE) {
 
             @Override
-            protected IDialogService.Dialog createRequestDialog() {
+            protected Dialog createRequestDialog() {
                 final IModel docName = getDocumentName();
-                IModel<String> title = new StringResourceModel("depublish-title", PublicationWorkflowPlugin.this, null, docName);
-                IModel<String> message = new StringResourceModel("depublish-message", PublicationWorkflowPlugin.this, null, docName);
+                final IModel<String> title = new StringResourceModel("depublish-title", PublicationWorkflowPlugin.this, null, docName);
+                final IModel<String> message = new StringResourceModel("depublish-message", PublicationWorkflowPlugin.this, null, docName);
                 return new DepublishDialog(this, getModel(), title, message, getEditorManager());
             }
 
             @Override
-            protected String execute(DocumentWorkflow workflow) throws Exception {
+            protected String execute(final DocumentWorkflow workflow) throws Exception {
                 workflow.depublish();
                 return null;
             }
         });
 
-        workflows.add(new StdDocumentWorkflow(REQUEST_DEPUBLICATION_ID, new StringResourceModel("request-depublication-label", this, null),
+        workflows.add(new StdDocumentWorkflow(REQUEST_DEPUBLICATION_ID,
+                new StringResourceModel("request-depublication-label", this, null),
                 context, getModel(), Icon.MINUS_CIRCLE) {
 
             @Override
-            protected IDialogService.Dialog createRequestDialog() {
+            protected Dialog createRequestDialog() {
                 final IModel docName = getDocumentName();
-                IModel<String> title = new StringResourceModel("depublish-title", PublicationWorkflowPlugin.this, null, docName);
-                IModel<String> message = new StringResourceModel("depublish-message", PublicationWorkflowPlugin.this, null, docName);
+                final IModel<String> title = new StringResourceModel("depublish-title", PublicationWorkflowPlugin.this, null, docName);
+                final IModel<String> message = new StringResourceModel("depublish-message", PublicationWorkflowPlugin.this, null, docName);
                 return new DepublishDialog(this, getModel(), title, message, getEditorManager());
             }
 
             @Override
-            protected String execute(DocumentWorkflow workflow) throws Exception {
+            protected String execute(final DocumentWorkflow workflow) throws Exception {
                 workflow.requestDepublication();
                 return null;
             }
         });
 
-        workflows.add(new StdDocumentWorkflow(SCHEDULE_DEPUBLICATION_ID, new StringResourceModel("schedule-depublish-label", this, null),
+        workflows.add(new StdDocumentWorkflow(SCHEDULE_DEPUBLICATION_ID,
+                new StringResourceModel("schedule-depublish-label", this, null),
                 context, getModel(), Icon.MINUS_CIRCLE_CLOCK) {
+
             public Date date = new Date();
 
             @Override
-            protected IDialogService.Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+            protected Dialog createRequestDialog() {
+                final WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 try {
                     final IModel<String> titleModel = new StringResourceModel("schedule-depublish-title",
                             PublicationWorkflowPlugin.this, null, getDocumentName());
 
                     return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()),
                             PropertyModel.of(this, "date"), titleModel, getEditorManager());
-                } catch (RepositoryException e) {
+                } catch (final RepositoryException e) {
                     log.warn("could not retrieve node for scheduling depublish", e);
                 }
                 return null;
             }
 
             @Override
-            protected String execute(DocumentWorkflow workflow) throws Exception {
+            protected String execute(final DocumentWorkflow workflow) throws Exception {
                 if (date != null) {
                     workflow.depublish(date);
                 } else {
@@ -151,27 +154,28 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        workflows.add(new StdDocumentWorkflow(REQUEST_SCHEDULE_DEPUBLICATION_ID, new StringResourceModel("schedule-request-depublish-label", this, null),
+        workflows.add(new StdDocumentWorkflow(REQUEST_SCHEDULE_DEPUBLICATION_ID,
+                new StringResourceModel("schedule-request-depublish-label", this, null),
                 context, getModel(), Icon.MINUS_CIRCLE_CLOCK) {
 
             public Date date = new Date();
 
             @Override
-            protected IDialogService.Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+            protected Dialog createRequestDialog() {
+                final WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 try {
                     final IModel<String> titleModel = new StringResourceModel("schedule-depublish-title",
                             PublicationWorkflowPlugin.this, null, getDocumentName());
                     return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()),
                             PropertyModel.of(this, "date"), titleModel, getEditorManager());
-                } catch (RepositoryException e) {
+                } catch (final RepositoryException e) {
                     log.warn("could not retrieve node for scheduling depublish", e);
                 }
                 return null;
             }
 
             @Override
-            protected String execute(DocumentWorkflow workflow) throws Exception {
+            protected String execute(final DocumentWorkflow workflow) throws Exception {
                 if (date != null) {
                     workflow.requestDepublication(date);
                 } else {
@@ -181,65 +185,72 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        workflows.add(publishAction = new StdDocumentWorkflow(PUBLICATION_ID, new StringResourceModel("publish-label", this, null),
+        workflows.add(publishAction = new StdDocumentWorkflow(PUBLICATION_ID,
+                new StringResourceModel("publish-label", this, null),
                 context, getModel(), Icon.CHECK_CIRCLE) {
 
             @Override
-            protected IDialogService.Dialog createRequestDialog() {
+            protected Dialog createRequestDialog() {
                 try {
-                    Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                    Node unpublished = getVariant(handle, UNPUBLISHED);
-                    final Map<String, Node> referenced = WorkflowUtils.getReferencesToUnpublishedDocuments(unpublished, UserSession.get().getJcrSession());
-                    if (referenced.size() > 0) {
+                    final Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    final Node unpublished = getVariant(handle, UNPUBLISHED);
+                    final Map<String, Node> referenced = WorkflowUtils.getReferencesToUnpublishedDocuments(unpublished,
+                            UserSession.get().getJcrSession());
+
+                    if (!referenced.isEmpty()) {
                         return new UnpublishedReferencesDialog(publishAction,
                                 new UnpublishedReferenceNodeProvider(referenced),
                                 getEditorManager());
                     }
-                } catch (RepositoryException e) {
+                } catch (final RepositoryException e) {
                     log.error(e.getMessage());
                 }
                 return null;
             }
 
             @Override
-            protected String execute(DocumentWorkflow workflow) throws Exception {
+            protected String execute(final DocumentWorkflow workflow) throws Exception {
                 workflow.publish();
                 return null;
             }
         });
-        workflows.add(new StdDocumentWorkflow(REQUEST_PUBLICATION_ID, new StringResourceModel("request-publication-label", this, null),
+        workflows.add(new StdDocumentWorkflow(REQUEST_PUBLICATION_ID,
+                new StringResourceModel("request-publication-label", this, null),
                 context, getModel(), Icon.CHECK_CIRCLE) {
 
             @Override
-            protected IDialogService.Dialog createRequestDialog() {
+            protected Dialog createRequestDialog() {
                 try {
-                    Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                    Node unpublished = getVariant(handle, UNPUBLISHED);
+                    final Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    final Node unpublished = getVariant(handle, UNPUBLISHED);
                     final Map<String, Node> referringDocuments = WorkflowUtils.getReferringDocuments(unpublished, true);
-                    if (referringDocuments.size() > 0) {
-                        return new UnpublishedReferencesDialog(this, new UnpublishedReferenceNodeProvider(referringDocuments), getEditorManager());
+                    if (!referringDocuments.isEmpty()) {
+                        final UnpublishedReferenceNodeProvider provider = new UnpublishedReferenceNodeProvider(
+                                referringDocuments);
+                        return new UnpublishedReferencesDialog(this, provider, getEditorManager());
                     }
-                } catch (RepositoryException e) {
+                } catch (final RepositoryException e) {
                     log.error(e.getMessage());
                 }
                 return null;
             }
 
             @Override
-            protected String execute(DocumentWorkflow workflow) throws Exception {
+            protected String execute(final DocumentWorkflow workflow) throws Exception {
                 workflow.requestPublication();
                 return null;
             }
         });
 
-        workflows.add(new StdDocumentWorkflow(SCHEDULE_PUBLICATION_ID, new StringResourceModel("schedule-publish-label", this, null),
+        workflows.add(new StdDocumentWorkflow(SCHEDULE_PUBLICATION_ID,
+                new StringResourceModel("schedule-publish-label", this, null),
                 context, getModel(), Icon.CHECK_CIRCLE_CLOCK) {
 
             public Date date = new Date();
 
             @Override
-            protected IDialogService.Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+            protected Dialog createRequestDialog() {
+                final WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 try {
                     final Node unpublished = getVariant(wdm.getNode(), UNPUBLISHED);
                     final IModel<String> titleModel = new StringResourceModel("schedule-publish-title",
@@ -247,14 +258,14 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
                     return new SchedulePublishDialog(this, new JcrNodeModel(unpublished),
                             PropertyModel.of(this, "date"), titleModel, getEditorManager());
-                } catch (RepositoryException ex) {
+                } catch (final RepositoryException ex) {
                     log.warn("could not retrieve node for scheduling publish", ex);
                 }
                 return null;
             }
 
             @Override
-            protected String execute(DocumentWorkflow workflow) throws Exception {
+            protected String execute(final DocumentWorkflow workflow) throws Exception {
                 if (date != null) {
                     workflow.publish(date);
                 } else {
@@ -264,29 +275,30 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        workflows.add(new StdDocumentWorkflow(REQUEST_SCHEDULE_PUBLICATION_ID, new StringResourceModel("schedule-request-publish-label", this, null),
+        workflows.add(new StdDocumentWorkflow(REQUEST_SCHEDULE_PUBLICATION_ID,
+                new StringResourceModel("schedule-request-publish-label", this, null),
                 context, getModel(), Icon.CHECK_CIRCLE_CLOCK) {
 
             public Date date = new Date();
 
             @Override
-            protected IDialogService.Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = getModel();
+            protected Dialog createRequestDialog() {
+                final WorkflowDescriptorModel wdm = getModel();
                 try {
-                    Node unpublished = getVariant(wdm.getNode(), UNPUBLISHED);
+                    final Node unpublished = getVariant(wdm.getNode(), UNPUBLISHED);
                     final IModel<String> titleModel = new StringResourceModel("schedule-publish-title",
                             PublicationWorkflowPlugin.this, null, getDocumentName());
 
                     return new SchedulePublishDialog(this, new JcrNodeModel(unpublished),
                             PropertyModel.of(this, "date"), titleModel, getEditorManager());
-                } catch (RepositoryException ex) {
+                } catch (final RepositoryException ex) {
                     log.warn("could not retrieve node for scheduling publish", ex);
                 }
                 return null;
             }
 
             @Override
-            protected String execute(DocumentWorkflow workflow) throws Exception {
+            protected String execute(final DocumentWorkflow workflow) throws Exception {
                 if (date != null) {
                     workflow.requestPublication(date);
                 } else {
@@ -323,7 +335,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         return idHideMap;
     }
 
-    private void setVisibility(Map<String, StdWorkflow> workflowMap) {
+    private void setVisibility(final Map<String, StdWorkflow> workflowMap) {
 
         if (getActionKeys().anyMatch(key -> isActionAllowed(getHints(), key))) {
 
@@ -332,7 +344,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             final Map<String, String> requestKeyMap = getActionToRequestActionMap();
 
             final Map<String, Serializable> info = getHints();
-            for (String action : requestKeyMap.keySet()) {
+            for (final String action : requestKeyMap.keySet()) {
                 hiddenComponentIdMap.get(action)
                         .forEach(id -> hideOrDisable(info, action, workflowMap.get(id)));
                 if (!info.containsKey(action)) {
