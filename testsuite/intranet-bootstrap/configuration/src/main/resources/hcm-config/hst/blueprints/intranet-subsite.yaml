@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hst:hst/hst:blueprints/intranet-subsite:
+      jcr:primaryType: hst:blueprint
+      hst:contextpath: /intranet
+      hst:description: Create a new intranet subsite
+      hst:name: Intranet Subsite
+      /hst:configuration:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../intranet-subsite-common]

@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:components/notfound:
+      jcr:primaryType: hst:component
+      hst:componentclassname: org.hippoecm.hst.intranet.components.NotFound
+      hst:template: notfound.main.content

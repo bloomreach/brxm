@@ -1,0 +1,113 @@
+definitions:
+  config:
+    /hippo:namespaces/intranet/textdocument:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+      jcr:uuid: 79417b0b-14de-4fa6-a70a-146da4e55931
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 6aae13ec-6e71-4e54-83a1-d00c27a690ab
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['hipposysedit:remodel', 'mix:referenceable']
+          jcr:uuid: 3211d91d-f57e-4312-a177-8cb8ad18963e
+          hipposysedit:node: true
+          hipposysedit:supertype: ['intranet:basedocument', 'hippostd:relaxed']
+          hipposysedit:uri: http://www.onehippo.org/intranet/nt/1.0
+          /title:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: intranet:title
+            hipposysedit:primary: false
+            hipposysedit:type: String
+          /summary:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: intranet:summary
+            hipposysedit:primary: false
+            hipposysedit:type: String
+          /body:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: intranet:body
+            hipposysedit:primary: false
+            hipposysedit:type: hippostd:html
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: intranet:textdocument
+          jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+          jcr:uuid: 2500e5f2-f473-431d-9b67-0d9c15d40abf
+          hippo:availability: []
+          hippostd:holder: holder
+          hippostd:state: draft
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+          hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippotranslation:id: intranet-textdocument-prototype-id
+          hippotranslation:locale: en
+          intranet:summary: ''
+          intranet:title: ''
+          /intranet:body:
+            jcr:primaryType: hippostd:html
+            hippostd:content: <html><body/></html>
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          frontend:properties: [mode]
+          frontend:references: [wicket.model, engine, model.compareTo, validator.id]
+          frontend:services: [wicket.id, validator.id]
+          type: intranet:textdocument
+          /root:
+            jcr:primaryType: frontend:plugin
+            item: ${cluster.id}.field
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+            wicket.id: ${wicket.id}
+          /title:
+            jcr:primaryType: frontend:plugin
+            caption: Title
+            engine: ${engine}
+            field: title
+            mode: ${mode}
+            model.compareTo: ${model.compareTo}
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+            validator.id: ${validator.id}
+            wicket.id: ${cluster.id}.field
+            wicket.model: ${wicket.model}
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+          /summary:
+            jcr:primaryType: frontend:plugin
+            caption: Summary
+            engine: ${engine}
+            field: summary
+            mode: ${mode}
+            model.compareTo: ${model.compareTo}
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+            validator.id: ${validator.id}
+            wicket.id: ${cluster.id}.field
+            wicket.model: ${wicket.model}
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+          /body:
+            jcr:primaryType: frontend:plugin
+            caption: Body
+            engine: ${engine}
+            field: body
+            mode: ${mode}
+            model.compareTo: ${model.compareTo}
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+            validator.id: ${validator.id}
+            wicket.id: ${cluster.id}.field
+            wicket.model: ${wicket.model}
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig

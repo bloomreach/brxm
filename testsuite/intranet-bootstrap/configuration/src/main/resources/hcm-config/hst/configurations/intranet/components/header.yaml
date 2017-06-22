@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:components/header:
+      jcr:primaryType: hst:component
+      hst:componentclassname: org.hippoecm.hst.intranet.components.Header
+      hst:template: base.header

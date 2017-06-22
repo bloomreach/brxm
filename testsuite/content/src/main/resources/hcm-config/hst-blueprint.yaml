@@ -1,0 +1,77 @@
+definitions:
+  config:
+    /hst:hst/hst:blueprints/demo-subsite:
+      jcr:primaryType: hst:blueprint
+      hst:description: Blueprint for demo suite
+      hst:name: Demo Blueprint
+      /hst:configuration:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../democommon]
+        /hst:components:
+          jcr:primaryType: hst:components
+          /bodyhome:
+            jcr:primaryType: hst:component
+            hst:referencecomponent: hst:components/general_threecolumnlayout
+            /leftmenu:
+              jcr:primaryType: hst:component
+              hst:componentclassname: org.hippoecm.hst.demo.components.LeftMenu
+              hst:template: leftmenu
+            /content:
+              jcr:primaryType: hst:component
+              hst:componentclassname: org.hippoecm.hst.demo.components.Home
+              hst:template: homepage.ftl
+              /container-2:
+                jcr:primaryType: hst:containercomponentreference
+                hst:referencecomponent: bodyhome/container-2
+              /container-1:
+                jcr:primaryType: hst:containercomponentreference
+                hst:referencecomponent: bodyhome/container-1
+        /hst:sitemap:
+          jcr:primaryType: hst:sitemap
+          /home:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/home
+            hst:refId: homeId
+            hst:relativecontentpath: general/home
+          /about:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/detailpage
+            hst:refId: aboutId
+            hst:relativecontentpath: general/about
+          /error:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/errorpage
+          /_any_:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/errorpage
+        /hst:workspace:
+          jcr:primaryType: hst:workspace
+          /hst:containers:
+            jcr:primaryType: hst:containercomponentfolder
+            /bodyhome:
+              jcr:primaryType: hst:containercomponentfolder
+              /container-2:
+                jcr:primaryType: hst:containercomponent
+                hst:xtype: HST.vBox
+              /container-1:
+                jcr:primaryType: hst:containercomponent
+                hst:xtype: HST.vBox
+          /hst:sitemenus:
+            jcr:primaryType: hst:sitemenus
+            /main:
+              jcr:primaryType: hst:sitemenu
+              /Home:
+                jcr:primaryType: hst:sitemenuitem
+                hst:referencesitemapitem: home
+              /About:
+                jcr:primaryType: hst:sitemenuitem
+                hst:referencesitemapitem: about
+          /hst:channel:
+            jcr:primaryType: hst:channel
+            hst:channelinfoclass: org.hippoecm.hst.demo.channel.DemoChannelInfo
+            /hst:channelinfo:
+              jcr:primaryType: hst:channelinfo
+      /hst:site:
+        jcr:primaryType: hst:site
+      /hst:mount:
+        jcr:primaryType: hst:mount

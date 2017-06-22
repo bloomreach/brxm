@@ -1,0 +1,90 @@
+/content/documents/demosite/common:
+  jcr:primaryType: hippostd:directory
+  jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+  jcr:uuid: 101cc297-3d17-43b5-aa70-d443f87b00d2
+  hippostd:foldertype: [new-translated-folder-demosite, new-document-demosite]
+  hippotranslation:id: demosite-common-folder-id
+  hippotranslation:locale: en
+  /about-us:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: c30cab27-5317-44f0-a9eb-977f87e0d904
+    hippo:name: About Us
+    /about-us:
+      jcr:primaryType: demosite:textdocument
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: 1da5db02-3a51-41ca-a4da-d9f13d19a6d2
+      demosite:summary: Who we are.
+      demosite:title: About us
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+      hippostdpubwf:lastModificationDate: 2010-06-25T12:58:16.638+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2010-06-25T13:03:22.225+02:00
+      hippotranslation:id: demosite-common-folder-about-us-id
+      hippotranslation:locale: en
+      /demosite:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          <html>
+          <body>
+
+          <p>We are Hippo! Come and visit us at
+          <a title="Hippo website" target="_blank" href="http://www.onehippo.com">www.onehippo.com</a>!
+          </p>
+
+          <p>Test Broken Internal Link to <a href="home-page">Homepage</a>.</p>
+
+          </body>
+          </html>
+        /home-page:
+          jcr:primaryType: hippo:facetselect
+          hippo:docbase: 00000000-0000-0000-0000-000000000000
+          hippo:facets: []
+          hippo:modes: []
+          hippo:values: []
+  /home-page:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: 120c9e06-2bac-4997-9ba2-ba90d8280cac
+    hippo:name: Home Page
+    /home-page:
+      jcr:primaryType: demosite:textdocument
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: 8450fa0d-28ff-47f8-bef7-ad33c34d8b5b
+      demosite:summary: This is the home page of the generated <HST> website.
+      demosite:title: Home Page <NEW>
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+      hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2010-06-25T13:04:58.702+02:00
+      hippotranslation:id: demosite-common-folder-home-page-id
+      hippotranslation:locale: en
+      /demosite:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          <html>
+                      <body>
+
+                      <p>Now go ahead and build your own website!</p>
+
+                      <p>This is a <strong>cross-domain</strong> link to the <strong><a href="home-page">demo French</a></strong>.  If
+                      you change the virtual hosts such that the demo French is located at a
+                      different host, you'll see that there is an automatic cross-domain link to the
+                      different host name</p>
+
+                      </body>
+                      </html>
+        /home-page:
+          jcr:primaryType: hippo:facetselect
+          hippo:docbase: 5fcb8231-2afb-403a-aa5c-881179fc74cb
+          hippo:facets: []
+          hippo:modes: []
+          hippo:values: []

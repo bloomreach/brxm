@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hst:hst/hst:blueprints/intranet-subsite/hst:configuration/hst:workspace/hst:sitemenus:
+      jcr:primaryType: hst:sitemenus
+      /main:
+        jcr:primaryType: hst:sitemenu
+        /home:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: root

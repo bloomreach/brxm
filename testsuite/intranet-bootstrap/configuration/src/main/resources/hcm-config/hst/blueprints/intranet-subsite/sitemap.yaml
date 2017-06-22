@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hst:hst/hst:blueprints/intranet-subsite/hst:configuration/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /root:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/home
+        hst:relativecontentpath: homepage

@@ -1,0 +1,31 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite-test-many/hst:sitemenus:
+      jcr:primaryType: hst:sitemenus
+      /main:
+        jcr:primaryType: hst:sitemenu
+        /Home:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: home
+        /About:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: about
+        /News:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: news
+          hst:repobased: true
+        /Products:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: products
+        /Search:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: search
+        /Faceted:
+          jcr:primaryType: hst:sitemenuitem
+          hst:depth: 1
+          hst:referencesitemapitem: faceted
+          hst:repobased: true
+        /Sites:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: sites

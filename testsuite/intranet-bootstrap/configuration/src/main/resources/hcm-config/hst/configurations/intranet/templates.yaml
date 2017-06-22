@@ -1,0 +1,46 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:templates:
+      jcr:primaryType: hst:templates
+      /base.header:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/base/header.jsp
+      /base.main:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/base/main.jsp
+      /base.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/base/main/content.jsp
+      /base.main.leftmenu:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/base/main/leftmenu.jsp
+      /base.main.list:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/base/main/list.jsp
+      /base.main.right:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/base/main/right.jsp
+      /home.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/home/main/content.jsp
+      /layout.webpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: webfile:/ftl/layout/webpage.ftl
+      /news.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/news/main/content.jsp
+      /notfound.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/notfound/main/content.jsp
+      /one-column.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/one-column/main/content.jsp
+      /overview.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/overview/main/content.jsp
+      /search.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/search/main/content.jsp
+      /two-columns.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/two-columns/main/content.jsp

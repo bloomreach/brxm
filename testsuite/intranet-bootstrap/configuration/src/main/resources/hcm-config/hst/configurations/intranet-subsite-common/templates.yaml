@@ -1,0 +1,25 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet-subsite-common/hst:templates:
+      jcr:primaryType: hst:templates
+      /subsite.home.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/subsite/home/main/content.jsp
+      /subsite.layout.webpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/subsite/layout/webpage.jsp
+      /subsite.standard.header:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/subsite/standard/header.jsp
+      /subsite.standard.main:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/subsite/standard/main.jsp
+      /subsite.standard.main.content:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/subsite/standard/main/content.jsp
+      /subsite.standard.main.leftmenu:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/subsite/standard/main/leftmenu.jsp
+      /subsite.standard.main.right:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/subsite/standard/main/right.jsp

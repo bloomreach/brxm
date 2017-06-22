@@ -30,6 +30,7 @@ public class Algebra extends BaseHstComponent {
 
     public static final String RANDOM_NUMBERS_MODULE_NAME = "org.hippoecm.hst.demo.addonmodules.randomnumbers";
     public static final String LINEAR_ALGEBRA_MODULE_NAME = "org.hippoecm.hst.demo.addonmodules.linearalgebra";
+    public static final String SUB_LINEAR_ALGEBRA_MODULE_NAME = "org.hippoecm.hst.demo.addonmodules.sublinearalgebra";
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) throws HstComponentException {
@@ -42,7 +43,13 @@ public class Algebra extends BaseHstComponent {
 
         InverseOperator inverseOperator = HstServices.getComponentManager().getComponent("inverseOperator", LINEAR_ALGEBRA_MODULE_NAME);
 
+
         if (!(inverseOperator.getMatrixOperator() instanceof MyMatrixOperator)) {
+            throw new AssertionError("matrixOperator is expected to be an instanceof MyMatrixOperator");
+        }
+
+        InverseOperator inverseOperatorDelegatee = HstServices.getComponentManager().getComponent("inverseOperatorDelegatee", SUB_LINEAR_ALGEBRA_MODULE_NAME);
+        if (!(inverseOperatorDelegatee.getMatrixOperator() instanceof MyMatrixOperator)) {
             throw new AssertionError("matrixOperator is expected to be an instanceof MyMatrixOperator");
         }
 

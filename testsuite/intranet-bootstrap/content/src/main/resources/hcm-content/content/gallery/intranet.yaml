@@ -1,0 +1,130 @@
+/content/gallery/intranet:
+  jcr:primaryType: hippogallery:stdImageGallery
+  jcr:mixinTypes: ['mix:referenceable']
+  jcr:uuid: a62d5ba7-424f-4b8e-870e-4493aa74f619
+  hippostd:foldertype: [new-image-folder]
+  hippostd:gallerytype: ['demosite:qaimageset']
+  /news:
+    jcr:primaryType: hippogallery:stdImageGallery
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: 40a0eb98-cf9e-4173-a3e6-f401813a9960
+    hippo:name: News
+    hippostd:foldertype: [new-image-folder]
+    hippostd:gallerytype: ['demosite:qaimageset']
+    /2011:
+      jcr:primaryType: hippogallery:stdImageGallery
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 1b0ea9cc-7a85-4ecd-a80d-348a7cdbc094
+      hippostd:foldertype: [new-image-folder]
+      hippostd:gallerytype: ['demosite:qaimageset']
+      /toyota-a-glass-of-water-image.jpg:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 28dc4940-7562-48da-9c91-34711124462f
+        hippo:discriminator: []
+        /toyota-a-glass-of-water-image.jpg:
+          jcr:primaryType: demosite:qaimageset
+          hippo:availability: [live, preview]
+          hippogallery:filename: toyota.jpg
+          /hippogallery:thumbnail:
+            jcr:primaryType: hippogallery:image
+            hippo:filename: toyota.jpg
+            hippogallery:height: 43
+            hippogallery:width: 60
+            jcr:data:
+              type: binary
+              resource: /content/gallery/intranet/news/2011/toyota-a-glass-of-water-image.jpg/toyota-a-glass-of-water-image.jpg/thumbnail/thumbnail.jpg
+            jcr:lastModified: 2014-12-30T11:24:00.021+01:00
+            jcr:mimeType: image/jpeg
+          /hippogallery:original:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 289
+            hippogallery:width: 400
+            jcr:data:
+              type: binary
+              resource: /content/gallery/intranet/news/2011/toyota-a-glass-of-water-image.jpg/toyota-a-glass-of-water-image.jpg/original/original.jpg
+            jcr:lastModified: 2014-12-30T11:24:00.021+01:00
+            jcr:mimeType: image/jpeg
+          /demosite:largethumbnail:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 289
+            hippogallery:width: 400
+            jcr:data:
+              type: binary
+              resource: /content/gallery/intranet/news/2011/toyota-a-glass-of-water-image.jpg/toyota-a-glass-of-water-image.jpg/largethumbnail/largethumbnail.jpg
+            jcr:lastModified: 2014-12-30T11:24:00.021+01:00
+            jcr:mimeType: image/jpeg
+      /solar-panel-house.jpg:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 87e86b9d-c074-46e6-883d-b4a812d81428
+        hippo:discriminator: []
+        /solar-panel-house.jpg:
+          jcr:primaryType: demosite:qaimageset
+          hippo:availability: [live, preview]
+          hippogallery:filename: solar-panles.jpg
+          /hippogallery:thumbnail:
+            jcr:primaryType: hippogallery:image
+            hippo:filename: solar-panles.jpg
+            hippogallery:height: 37
+            hippogallery:width: 60
+            jcr:data:
+              type: binary
+              resource: /content/gallery/intranet/news/2011/solar-panel-house.jpg/solar-panel-house.jpg/thumbnail/thumbnail.jpg
+            jcr:lastModified: 2014-12-30T11:23:59.805+01:00
+            jcr:mimeType: image/jpeg
+          /hippogallery:original:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 251
+            hippogallery:width: 400
+            jcr:data:
+              type: binary
+              resource: /content/gallery/intranet/news/2011/solar-panel-house.jpg/solar-panel-house.jpg/original/original.jpg
+            jcr:lastModified: 2014-12-30T11:23:59.805+01:00
+            jcr:mimeType: image/jpeg
+          /demosite:largethumbnail:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 251
+            hippogallery:width: 400
+            jcr:data:
+              type: binary
+              resource: /content/gallery/intranet/news/2011/solar-panel-house.jpg/solar-panel-house.jpg/largethumbnail/largethumbnail.jpg
+            jcr:lastModified: 2014-12-30T11:23:59.805+01:00
+            jcr:mimeType: image/jpeg
+      /contrail.jpg:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 6974531d-9b1a-4408-b1aa-5da753747df8
+        hippo:discriminator: []
+        /contrail.jpg:
+          jcr:primaryType: demosite:qaimageset
+          hippo:availability: [live, preview]
+          hippogallery:filename: contrail.jpg
+          /hippogallery:thumbnail:
+            jcr:primaryType: hippogallery:image
+            hippo:filename: contrail.jpg
+            hippogallery:height: 45
+            hippogallery:width: 60
+            jcr:data:
+              type: binary
+              resource: /content/gallery/intranet/news/2011/contrail.jpg/contrail.jpg/thumbnail/thumbnail.jpg
+            jcr:lastModified: 2014-12-30T11:23:59.668+01:00
+            jcr:mimeType: image/jpeg
+          /hippogallery:original:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 225
+            hippogallery:width: 300
+            jcr:data:
+              type: binary
+              resource: /content/gallery/intranet/news/2011/contrail.jpg/contrail.jpg/original/original.jpg
+            jcr:lastModified: 2014-12-30T11:23:59.668+01:00
+            jcr:mimeType: image/jpeg
+          /demosite:largethumbnail:
+            jcr:primaryType: hippogallery:image
+            hippogallery:height: 225
+            hippogallery:width: 300
+            jcr:data:
+              type: binary
+              resource: /content/gallery/intranet/news/2011/contrail.jpg/contrail.jpg/largethumbnail/largethumbnail.jpg
+            jcr:lastModified: 2014-12-30T11:23:59.668+01:00
+            jcr:mimeType: image/jpeg

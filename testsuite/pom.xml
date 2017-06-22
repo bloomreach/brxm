@@ -19,14 +19,14 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>11.2.0-SNAPSHOT</version>
+    <version>12.0.0-SNAPSHOT</version>
   </parent>
 
 
   <artifactId>hippo-testsuite</artifactId>
   <name>Hippo Test Suite</name>
   <description>Hippo Test Suite</description>
-  <version>3.2.0-SNAPSHOT</version>
+  <version>4.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -38,14 +38,14 @@
 
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
-    <commons.lang.version>2.6</commons.lang.version>
-    <junit.version>4.10</junit.version>
-    <easymock.version>3.1</easymock.version>
+    <commons-lang.version>2.6</commons-lang.version>
+    <junit.version>4.12</junit.version>
+    <easymock.version>3.4</easymock.version>
 
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
 
-    <commons-math.version>2.2</commons-math.version>
+    <commons-math3.version>3.6.1</commons-math3.version>
 
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
@@ -105,13 +105,13 @@
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
-        <version>${commons.lang.version}</version>
+        <version>${commons-lang.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.commons</groupId>
-        <artifactId>commons-math</artifactId>
-        <version>${commons-math.version}</version>
+        <artifactId>commons-math3</artifactId>
+        <version>${commons-math3.version}</version>
       </dependency>
 
       <dependency>
@@ -192,6 +192,7 @@
     <module>api</module>
     <module>random-numbers</module>
     <module>linear-algebra</module>
+    <module>linear-algebra-sub</module>
     <!-- End Add-on component context -->
     <module>content</module>
     <module>intranet-bootstrap</module>
@@ -242,8 +243,7 @@
               </configuration>
               <container>
                 <systemProperties>
-                  <log4j.configuration>file:${project.basedir}/conf/log4j.xml</log4j.configuration>
-                  <rebel.log4j-plugin>true</rebel.log4j-plugin>
+                  <log4j.configurationFile>file://${project.basedir}/conf/log4j2.xml</log4j.configurationFile>
                   <solr.data.dir>${solr.data.dir}</solr.data.dir>
                   <project.basedir>${project.basedir}</project.basedir>
                 </systemProperties>
@@ -384,8 +384,8 @@
       <id>dist</id>
       <dependencies>
         <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-slf4j-impl</artifactId>
           <scope>provided</scope>
         </dependency>
         <dependency>
@@ -394,8 +394,13 @@
           <scope>provided</scope>
         </dependency>
         <dependency>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-core</artifactId>
           <scope>provided</scope>
         </dependency>
       </dependencies>

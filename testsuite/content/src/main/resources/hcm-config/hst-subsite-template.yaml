@@ -1,0 +1,69 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/demo-subsite:
+      jcr:primaryType: hippostd:folder
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: 899c30a7-e47a-478f-a156-e2383f03af3c
+      hippostd:foldertype: [new-translated-folder-demosite]
+      hippotranslation:id: blueprint-translation-id
+      hippotranslation:locale: en
+      /general:
+        jcr:primaryType: hippostd:folder
+        jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+        jcr:uuid: 7cbfd5cd-8055-4e5b-bfec-dc73c4a7322e
+        hippostd:foldertype: [new-translated-folder-demosite, new-document-demosite]
+        hippotranslation:id: blueprint-general-id
+        hippotranslation:locale: en
+        /about:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+          jcr:uuid: 5c6f5ddf-c332-4575-9815-6121da2c51bb
+          hippo:name: About Us
+          /about:
+            jcr:primaryType: demosite:textdocument
+            jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+            jcr:uuid: 8e4c39ff-f477-457a-a27f-54a75ae5478d
+            demosite:summary: Who we are.
+            demosite:title: About us
+            hippo:availability: [live, preview]
+            hippostd:holder: admin
+            hippostd:state: published
+            hippostdpubwf:createdBy: admin
+            hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+            hippostdpubwf:lastModificationDate: 2010-06-25T12:58:16.638+02:00
+            hippostdpubwf:lastModifiedBy: admin
+            hippostdpubwf:publicationDate: 2010-06-25T13:03:22.225+02:00
+            hippotranslation:id: blueprint-about
+            hippotranslation:locale: en
+            /demosite:body:
+              jcr:primaryType: hippostd:html
+              hippostd:content: Hippo Demo Channel
+        /home:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+          jcr:uuid: c9d953ab-7827-4f25-8fa6-7ee3b0734656
+          hippo:name: Home Page
+          /home:
+            jcr:primaryType: demosite:textdocument
+            jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+            jcr:uuid: 9eec5089-5759-4a98-8d09-ac7e7c2bf393
+            demosite:summary: This is the home page of the generated HST website.
+            demosite:title: Home Page
+            hippo:availability: [live, preview]
+            hippostd:holder: admin
+            hippostd:state: published
+            hippostdpubwf:createdBy: admin
+            hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+            hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+            hippostdpubwf:lastModifiedBy: admin
+            hippostdpubwf:publicationDate: 2010-06-25T13:04:58.702+02:00
+            hippotranslation:id: blueprint-home-page
+            hippotranslation:locale: en
+            /demosite:body:
+              jcr:primaryType: hippostd:html
+              hippostd:content: |-
+                <html>
+                              <body>
+                              Demo Home page of generated Channel.
+                              </body>
+                              </html>

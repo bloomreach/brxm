@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:users/intranetpreviewuser:
+      jcr:primaryType: hipposys:user
+      hipposys:active: true
+      hipposys:password: intranetpreviewuserpass
+      hipposys:securityprovider: internal
+      hipposys:system: true

@@ -1,0 +1,15 @@
+/content/documents/demosite/wikipedia:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+  jcr:uuid: 0d298512-4512-4ba0-b21d-600c20f706d9
+  hippostd:foldertype: [new-translated-folder-demosite, new-document-demosite]
+  hippotranslation:id: demosite-wikipedia-folder-id
+  hippotranslation:locale: en
+  /faceted:
+    jcr:primaryType: hippofacnav:facetnavigation
+    hippo:docbase: 0d298512-4512-4ba0-b21d-600c20f706d9
+    hippofacnav:facetnodenames: [Created by]
+    hippofacnav:facets: ['hippostdpubwf:createdBy']
+    hippofacnav:filters: ['jcr:primaryType=demosite:wikidocument']
+    hippofacnav:limit: 10
+    hippofacnav:skipresultsetfacetsavailable: true

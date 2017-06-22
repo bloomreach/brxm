@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:sitemap/images:
+      jcr:primaryType: hst:sitemapitem
+      hst:containerresource: true
+      /_any_:
+        jcr:primaryType: hst:sitemapitem

@@ -1,0 +1,12 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite_fr/hst:workspace/hst:sitemenus:
+      jcr:primaryType: hst:sitemenus
+      /main:
+        jcr:primaryType: hst:sitemenu
+        /Accueil:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: homeId
+        /A propos:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: a-propos

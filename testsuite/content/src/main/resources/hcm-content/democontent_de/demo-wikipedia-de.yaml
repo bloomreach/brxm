@@ -1,0 +1,6 @@
+/content/documents/demosite_de/wikipedia:
+  jcr:primaryType: hippostd:directory
+  jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+  hippostd:foldertype: [new-translated-folder-demosite, new-document-demosite]
+  hippotranslation:id: demosite-wikipedia-folder-id
+  hippotranslation:locale: de

@@ -1,0 +1,47 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite/hst:pages:
+      jcr:primaryType: hst:pages
+      /home:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodyhome
+      /mashup:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:template: mashup
+          /leftmenu:
+            jcr:primaryType: hst:component
+            hst:componentclassname: org.hippoecm.hst.demo.components.LeftMenu
+            hst:template: leftmenu
+          /ol-content:
+            jcr:primaryType: hst:containercomponentreference
+            hst:referencecomponent: mashup/ol-content
+          /ul-content:
+            jcr:primaryType: hst:containercomponentreference
+            hst:referencecomponent: mashup/ul-content
+          /right:
+            jcr:primaryType: hst:containercomponentreference
+            hst:referencecomponent: mashup/right
+          /span-content:
+            jcr:primaryType: hst:containercomponentreference
+            hst:referencecomponent: mashup/span-content
+          /div-content:
+            jcr:primaryType: hst:containercomponentreference
+            hst:referencecomponent: mashup/div-content
+      /algebra:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodyalgebra
+      /preparecalls:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:pages/standard
+        /body:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/bodypreparecaller

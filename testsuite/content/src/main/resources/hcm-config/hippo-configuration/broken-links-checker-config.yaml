@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/scheduler/hippo:moduleconfig/system/CheckBrokenLinks/hipposched:triggers/nightly:
+      hipposched:cronExpression:
+        operation: override
+        type: string
+        value: 0 0/5 * * * ? *
+      hipposched:enabled:
+        operation: override
+        type: boolean
+        value: false

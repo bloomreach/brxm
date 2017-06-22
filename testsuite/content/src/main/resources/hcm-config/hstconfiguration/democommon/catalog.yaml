@@ -1,0 +1,16 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/democommon/hst:catalog:
+      jcr:primaryType: hst:catalog
+      /demosite-catalog-items:
+        jcr:primaryType: hst:containeritempackage
+        /banner-demosite:
+          jcr:primaryType: hst:containeritemcomponent
+          hst:componentclassname: org.hippoecm.hst.demo.components.Banner
+          hst:template: banner
+          hst:xtype: HST.Item
+        /block:
+          jcr:primaryType: hst:containeritemcomponent
+          hst:componentclassname: org.hippoecm.hst.demo.components.Block
+          hst:template: block
+          hst:xtype: HST.Item

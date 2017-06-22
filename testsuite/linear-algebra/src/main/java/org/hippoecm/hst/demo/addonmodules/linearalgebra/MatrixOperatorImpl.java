@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,16 +15,16 @@
  */
 package org.hippoecm.hst.demo.addonmodules.linearalgebra;
 
-import org.apache.commons.math.linear.Array2DRowRealMatrix;
-import org.apache.commons.math.linear.LUDecompositionImpl;
-import org.apache.commons.math.linear.RealMatrix;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.hippoecm.hst.demo.addonmodules.api.MatrixOperator;
 
 public class MatrixOperatorImpl implements MatrixOperator {
 
     public double[][] inverse(double[][] matrixData) {
         RealMatrix m = new Array2DRowRealMatrix(matrixData);
-        return new LUDecompositionImpl(m).getSolver().getInverse().getData();
+        return new LUDecomposition(m).getSolver().getInverse().getData();
     }
 
     public double[][] multiply(double [][] matrixData1, double [][] matrixData2) {

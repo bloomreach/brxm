@@ -1,0 +1,13 @@
+definitions:
+  config:
+    /hst:hst/hst:blueprints/intranet-subsite/hst:configuration/hst:pages:
+      jcr:primaryType: hst:pages
+      /home:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:abstractpages/base
+        /main:
+          jcr:primaryType: hst:component
+          /content:
+            jcr:primaryType: hst:component
+            hst:referencecomponent: hst:components/content
+            hst:template: subsite.home.main.content

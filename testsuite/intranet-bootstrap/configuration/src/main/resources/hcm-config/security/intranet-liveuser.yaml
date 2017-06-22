@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:users/intranetliveuser:
+      jcr:primaryType: hipposys:user
+      hipposys:active: true
+      hipposys:password: intranetliveuserpass
+      hipposys:securityprovider: internal
+      hipposys:system: true

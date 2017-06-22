@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet-subsite-common/hst:components:
+      jcr:primaryType: hst:components

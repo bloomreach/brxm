@@ -1,0 +1,312 @@
+/content/documents/demosite/products:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+  jcr:uuid: ccd7a056-16e6-4d8c-90a3-edfc64973d34
+  hippostd:foldertype: [new-translated-folder-demosite, new-document-demosite]
+  hippotranslation:id: demosite-products-translation-id
+  hippotranslation:locale: en
+  /newstest:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: 34cb4a9f-f41d-4c6f-af3d-41389a544fad
+    /newstest:
+      jcr:primaryType: demosite:newsdocument
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: b6ae9dea-8310-4d6b-94e8-e75ce9c0e459
+      demosite:date: 2010-06-18T15:46:03.643+02:00
+      demosite:summary: news in Products folder
+      demosite:title: news item between products
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2012-05-04T15:52:35.333+02:00
+      hippostdpubwf:lastModificationDate: 2012-05-04T15:56:42.600+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2012-05-04T15:56:44.991+02:00
+      hippotranslation:id: 1d2126e1-ab6d-4b59-ae0e-133e33be5f59
+      hippotranslation:locale: en
+      /demosite:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          <html>
+          <body>
+
+          <p>This is a newsitem in the products folder, but because of the sitemap mapping
+          for products/**.html it should still be displayed as a detailpage  and not as a
+          productpage. This is because the sitemap item contains:</p>
+
+          <p> </p>
+
+          <pre> &lt;sv:property sv:multiple="true"
+          sv:name="hst:componentconfigurationmappingnames" sv:type="String"&gt;
+          &lt;sv:value&gt;demosite:newsdocument&lt;/sv:value&gt;
+          &lt;/sv:property&gt;
+          &lt;sv:property sv:multiple="true"
+          sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&gt;
+          &lt;sv:value&gt;hst:pages/detailpage&lt;/sv:value&gt;
+          &lt;/sv:property&gt;
+          </pre>
+
+          <p> </p>
+
+
+          <pre/>
+
+          <p> </p>
+
+
+          <pre/>
+
+          </body>
+          </html>
+  /alfa-romeo:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: db72e3c9-3bab-40df-9d28-e466974af710
+    hippo:name: Alfa Romeo
+    /alfa-romeo:
+      jcr:primaryType: demosite:productdocument
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable', 'hippostd:taggable']
+      jcr:uuid: 004e68f5-bd6e-4562-a489-383fa6c3c2e0
+      demosite:brand: Alfa Romeo
+      demosite:color: grey
+      demosite:constructiondate: 2010-01-11T15:00:17.613+01:00
+      demosite:created: 2009-12-18T14:03:48.173+01:00
+      demosite:mileage: 125356
+      demosite:price: 7234.0
+      demosite:product: car
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostd:tags: [Alfa Romeo, italian, car]
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+      hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2010-06-25T13:14:21.821+02:00
+      hippotranslation:id: demosite-products-alfa-romeo-translation-id
+      hippotranslation:locale: en
+      /demosite:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          <html> <body> <p>body
+                      l</p>
+                      </body> </html>
+      /demosite:image:
+        jcr:primaryType: hippogallerypicker:imagelink
+        hippo:docbase: 07464293-3c92-4ebe-8f01-89bd3e92a0bf
+        hippo:facets: []
+        hippo:modes: []
+        hippo:values: []
+  /opel:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: 26b29234-9325-4e75-bf51-775cabe254f8
+    hippo:name: Opel
+    /opel:
+      jcr:primaryType: demosite:productdocument
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable', 'hippostd:taggable']
+      jcr:uuid: af5926d4-0e34-42b5-bd3b-cda90646066c
+      demosite:brand: Opel
+      demosite:color: grey
+      demosite:constructiondate: 2010-01-11T15:01:22.614+01:00
+      demosite:created: 2010-01-08T14:03:48.173+01:00
+      demosite:mileage: 123456
+      demosite:price: 4240.0
+      demosite:product: car
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostd:tags: [Opel, car]
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+      hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2010-06-25T13:14:29.094+02:00
+      hippotranslation:id: demosite-products-opel-translation-id
+      hippotranslation:locale: en
+      /demosite:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          <html> <body>
+
+                      <p>body</p>
+                      </body>
+
+                      </html>
+      /demosite:image:
+        jcr:primaryType: hippogallerypicker:imagelink
+        hippo:docbase: 07464293-3c92-4ebe-8f01-89bd3e92a0bf
+        hippo:facets: []
+        hippo:modes: []
+        hippo:values: []
+  /nissan:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: 7ab888be-308b-4075-b256-c68e117480bc
+    hippo:name: Nissan
+    /nissan:
+      jcr:primaryType: demosite:productdocument
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable', 'hippostd:taggable']
+      jcr:uuid: c4400ed1-d661-4ef2-8e09-868f7627b447
+      demosite:brand: Nissan
+      demosite:color: blue
+      demosite:constructiondate: 2010-01-09T15:00:00+01:00
+      demosite:created: 2010-01-14T14:03:48.173+01:00
+      demosite:mileage: 234555
+      demosite:price: 1240.0
+      demosite:product: car
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostd:tags: [Nissan, car]
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+      hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2010-06-25T13:14:36.675+02:00
+      hippotranslation:id: demosite-products-nissan-translation-id
+      hippotranslation:locale: en
+      /demosite:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          <html> <body>
+
+                      <p>body</p>
+                      </body>
+
+                      </html>
+      /demosite:image:
+        jcr:primaryType: hippogallerypicker:imagelink
+        hippo:docbase: 07464293-3c92-4ebe-8f01-89bd3e92a0bf
+        hippo:facets: []
+        hippo:modes: []
+        hippo:values: []
+  /alfa-romeo2:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: c8f1e54f-b2ed-480b-8bbb-87b148ed3585
+    hippo:name: Alfa Romeo2
+    /alfa-romeo2:
+      jcr:primaryType: demosite:productdocument
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable', 'hippostd:taggable']
+      jcr:uuid: 7b628362-8b10-4219-b3a8-33660f381d3b
+      demosite:brand: Alfa Romeo
+      demosite:color: grey
+      demosite:constructiondate: 2010-01-06T15:00:00+01:00
+      demosite:created: 2010-01-18T14:03:48.173+01:00
+      demosite:mileage: 92354
+      demosite:price: 3245.0
+      demosite:product: car
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostd:tags: [Alfa Romeo, italian, car]
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+      hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2010-06-25T13:14:44.865+02:00
+      hippotranslation:id: "demosite-products-alfa-romeo2-translation-id\n        "
+      hippotranslation:locale: en
+      /demosite:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          <html> <body>
+                      <p>body</p>
+                      </body>
+
+                      </html>
+      /demosite:image:
+        jcr:primaryType: hippogallerypicker:imagelink
+        hippo:docbase: 07464293-3c92-4ebe-8f01-89bd3e92a0bf
+        hippo:facets: []
+        hippo:modes: []
+        hippo:values: []
+  /gazelle:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: 5724e4ac-450b-47c2-99f1-b5dca4598d58
+    hippo:name: Gazelle
+    /gazelle:
+      jcr:primaryType: demosite:productdocument
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: 55b4e99f-9d6d-4cf8-9cf6-615d1eb6c5be
+      demosite:brand: Gazelle
+      demosite:color: Black
+      demosite:constructiondate: 2010-06-18T15:49:01.964+02:00
+      demosite:created: 2010-06-18T15:49:21.945+02:00
+      demosite:mileage: 0
+      demosite:price: 649.0
+      demosite:product: bike
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostd:tags: [gazelle, bicycle]
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2011-09-27T12:16:24.103+02:00
+      hippostdpubwf:lastModificationDate: 2011-09-27T12:19:04.081+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2011-09-27T12:19:14.099+02:00
+      hippotranslation:id: 0f43139e-558b-4611-97d7-e2dcfbe19c88
+      hippotranslation:locale: en
+      /demosite:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          <html>
+                      <body>
+
+                      <p>Body</p>
+
+                      </body>
+                      </html>
+      /demosite:image:
+        jcr:primaryType: hippogallerypicker:imagelink
+        hippo:docbase: 07464293-3c92-4ebe-8f01-89bd3e92a0bf
+        hippo:facets: []
+        hippo:modes: []
+        hippo:values: []
+  /koga:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: 266723f7-ad5b-47c0-b5c0-35cf7705ba24
+    hippo:name: Koga
+    /koga:
+      jcr:primaryType: demosite:productdocument
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: a7f6bac8-d88c-4b87-954d-21f44fa79cfe
+      demosite:brand: Koga
+      demosite:color: Blue
+      demosite:constructiondate: 2010-06-18T15:49:01.964+02:00
+      demosite:created: 2010-06-18T15:49:21.945+02:00
+      demosite:mileage: 0
+      demosite:price: 998.0
+      demosite:product: bike
+      hippo:availability: [live, preview]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostd:tags: [bicycle]
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2011-09-27T12:19:46.331+02:00
+      hippostdpubwf:lastModificationDate: 2011-09-27T12:20:31.599+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2011-09-27T12:29:51.987+02:00
+      hippotranslation:id: 202a7a22-d1e3-474c-b617-df3e6aff767a
+      hippotranslation:locale: en
+      /demosite:body:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          <html>
+                      <body>
+
+                      <p>Body</p>
+
+                      </body>
+                      </html>
+      /demosite:image:
+        jcr:primaryType: hippogallerypicker:imagelink
+        hippo:docbase: 07464293-3c92-4ebe-8f01-89bd3e92a0bf
+        hippo:facets: []
+        hippo:modes: []
+        hippo:values: []

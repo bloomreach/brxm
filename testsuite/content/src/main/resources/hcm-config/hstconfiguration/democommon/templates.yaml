@@ -1,0 +1,139 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/democommon/hst:templates:
+      jcr:primaryType: hst:templates
+      /webpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/templates/webpage.jsp
+      /header:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/header/header.jsp
+      /footer:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/footer/footer.jsp
+      /datetime:
+        jcr:primaryType: hst:template
+        hst:isnamed: true
+        hst:renderpath: DateTimeServlet
+      /threecolumnlayout:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/layout/threecolumnlayout.jsp
+      /leftmenu:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/leftmenu.jsp
+      /right:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/right.jsp
+      /homepage.ftl:
+        jcr:primaryType: hst:template
+        hst:script:
+          type: string
+          resource: /hstconfiguration/democommon/binaries/homepage.ftl
+      /homelayout:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/layout/homelayout.jsp
+      /archive:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/archive.jsp
+      /alllinkforanewsitem:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/alllinkforanewsitem.jsp
+      /detailpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: ftl/components/main/detailpage.ftl
+      /detailimagevariantpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/detailimagevariantpage.jsp
+      /detailwikipage:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/detailwikipage.jsp
+      /rss:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/templates/rss.jsp
+      /searchresults:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/search.jsp
+      /solrsearchresults:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/solrsearch.jsp
+      /solrright:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/solrright.jsp
+      /solrsuggest-ajax:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/solrsuggest-ajaxresult.jsp
+      /solrfaceting:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/solrfaceting.jsp
+      /todolist:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/todolist.jsp
+      /bodyerror:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/error.jsp
+      /wikipedia:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/wikipedia.jsp
+      /solrindexer:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/solrindexer.jsp
+      /gogreenindexer:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/gogreenindexer.jsp
+      /facetedaddproduct:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/facetedaddproduct.jsp
+      /faceted:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/faceted.jsp
+      /facetedright:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/facetedright.jsp
+      /facetedproductpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/facetedproductpage.jsp
+      /productpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/productpage.jsp
+      /formpage:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/formpage.jsp
+      /contactspring:
+        jcr:primaryType: hst:template
+        hst:renderpath: /spring/contactspring.do
+      /contactspringmvc:
+        jcr:primaryType: hst:template
+        hst:renderpath: /spring/contactspringmvc.do
+      /thankyou:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/thankyou.jsp
+      /banner:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/banner.jsp
+      /block:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/block.jsp
+      /mashup:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/layout/mashup.jsp
+      /algebra:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/algebra.jsp
+      /preparecalls:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/preparecalls.jsp
+      /preparecaller:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/preparecaller.jsp
+      /single:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/templates/single.jsp
+      /copyright:
+        jcr:primaryType: hst:template
+        hst:renderpath: /examples/copyright.jsp
+      /esisingle:
+        jcr:primaryType: hst:template
+        hst:renderpath: /examples/esisingle.jsp
+      /wikipediatranslations:
+        jcr:primaryType: hst:template
+        hst:renderpath: jsp/components/main/wikipediatranslations.jsp

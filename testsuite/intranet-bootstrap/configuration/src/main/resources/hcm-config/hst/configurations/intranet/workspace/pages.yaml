@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:workspace/hst:pages:
+      jcr:primaryType: hst:pages

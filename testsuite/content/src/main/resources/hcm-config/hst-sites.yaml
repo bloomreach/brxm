@@ -1,0 +1,22 @@
+definitions:
+  config:
+    /hst:hst/hst:sites:
+      jcr:primaryType: hst:sites
+      /demosite:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents/demosite
+      /demosite_fr:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents/demosite_fr
+      /demosite_it:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents/demosite_it
+      /demosite_de:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents/demosite_de
+      /demosite_nl:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents/demosite_nl
+      /demosite-test-many:
+        jcr:primaryType: hst:site
+        hst:content: /content/documents/demosite

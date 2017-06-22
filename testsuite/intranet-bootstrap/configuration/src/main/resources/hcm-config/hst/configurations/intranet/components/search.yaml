@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:components/search:
+      jcr:primaryType: hst:component
+      hst:componentclassname: org.hippoecm.hst.intranet.components.Search
+      hst:template: search.main.content

@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService/demosite:largethumbnail:
+      jcr:primaryType: frontend:pluginconfig
+      height: 300
+      upscaling: false
+      width: 400

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.demo.addonmodules.randomnumbers;
 
-import org.apache.commons.math.random.JDKRandomGenerator;
-import org.apache.commons.math.random.UniformRandomGenerator;
+import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.UniformRandomGenerator;
 import org.hippoecm.hst.demo.addonmodules.api.RandomGenerator;
 
 public class RandomGeneratorImpl implements RandomGenerator {

@@ -1,0 +1,241 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /home:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/home
+        hst:refId: homeId
+        hst:relativecontentpath: common/home-page
+      /about:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/detailpage
+        hst:refId: aboutId
+        hst:relativecontentpath: common/about-us
+      /mashup:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/mashup
+        hst:refId: mashupId
+      /news:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/newsarchive
+        hst:relativecontentpath: news
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsarchive
+          hst:relativecontentpath: news/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/detailpage
+          hst:parameternames: [go-back-link]
+          hst:parametervalues: [/news]
+          hst:relativecontentpath: news/${1}
+      /news1:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/newsarchive
+        hst:relativecontentpath: news
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsarchive
+          hst:relativecontentpath: news/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/detailpage
+          hst:parameternames: [go-back-link]
+          hst:parametervalues: [/news1]
+          hst:relativecontentpath: news/${1}
+      /news2:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/newsarchive
+        hst:relativecontentpath: news
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsarchive
+          hst:relativecontentpath: news/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/detailpage
+          hst:parameternames: [go-back-link]
+          hst:parametervalues: [/news2]
+          hst:relativecontentpath: news/${1}
+      /newsctxonly:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/newsarchive
+        hst:relativecontentpath: news
+        /_default_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsarchive
+          hst:relativecontentpath: news
+          /_default_:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/newsarchive
+            hst:relativecontentpath: news
+            /_any_:
+              jcr:primaryType: hst:sitemapitem
+              hst:componentconfigurationid: hst:pages/newsarchive
+              hst:relativecontentpath: news/${3}
+            /_any_.html:
+              jcr:primaryType: hst:sitemapitem
+              hst:componentconfigurationid: hst:pages/detailpage
+              hst:parameternames: [go-back-link]
+              hst:parametervalues: [/newsctxonly]
+              hst:relativecontentpath: news/${3}
+      /newsimagevariant:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/newsarchive
+        hst:relativecontentpath: news
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsarchive
+          hst:relativecontentpath: news/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/detailimagevariantpage
+          hst:parameternames: [go-back-link]
+          hst:parametervalues: [/newsimagevariant]
+          hst:relativecontentpath: news/${1}
+      /alllinkforanewsitem:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/alllinkforanewsitem
+      /rss.xml:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:components/rss
+        hst:relativecontentpath: news
+      /algebra:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/algebra
+      /preparecalls:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/preparecalls
+      /search:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/searchpage
+      /faceted:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/facetedaddproduct
+        hst:relativecontentpath: faceted
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/faceted
+          hst:relativecontentpath: faceted/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/faceted_detailpage
+          hst:relativecontentpath: faceted/${1}
+      /solrindexer:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/solrindexer
+      /solrsearch:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/solrsearchpage
+      /solrfaceting:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/solrfacetingpage
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/solrfacetingpage
+          hst:parameternames: [facetpath]
+          hst:parametervalues: ['${1}']
+      /error:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/errorpage
+      /_any_:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/errorpage
+      /todo:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:components/bodyhome/content/todolist
+      /gogreen-rest-product-indexer:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/gogreenindexer
+      /wikipedia:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/wikipedia
+        hst:relativecontentpath: wikipedia
+        /archive:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/wikipediaarchive
+          hst:relativecontentpath: wikipedia/faceted
+          /_any_:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/wikipediaarchive
+            hst:relativecontentpath: wikipedia/archive/${1}
+          /_any_.html:
+            jcr:primaryType: hst:sitemapitem
+            hst:componentconfigurationid: hst:pages/detailwikipage
+            hst:relativecontentpath: wikipedia/archive/${1}
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/wikipediaarchive
+          hst:relativecontentpath: wikipedia/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/detailwikipage
+          hst:relativecontentpath: wikipedia/${1}
+        /translations:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/wikipediatranslations
+          hst:relativecontentpath: wikipedia
+      /products:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/productoverview
+        hst:relativecontentpath: products
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/productpage
+          hst:componentconfigurationmappingnames: ['demosite:newsdocument']
+          hst:componentconfigurationmappingvalues: ['hst:pages/detailpage']
+          hst:relativecontentpath: products/${1}
+      /form:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/formpage
+      /contact-spring:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/contactspringpage
+        /thankyou:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/thankyou
+          hst:refId: contact-spring-thankyou
+      /contact-spring-context:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/contactspringcontextpage
+        /thankyou:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/thankyou
+          hst:refId: contact-spring-context-thankyou
+      /contact-dispatch:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/contactdispatchpage
+        /thankyou:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/thankyou
+          hst:refId: contact-dispatch-thankyou
+      /contact-springmvc:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/contactspringmvcpage
+        /thankyou:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/thankyou
+          hst:refId: contact-springmvc-thankyou
+      /dummy:
+        jcr:primaryType: hst:sitemapitem
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:sitemapitemhandlerids: [dummy]
+      /springapp:
+        jcr:primaryType: hst:sitemapitem
+        hst:namedpipeline: WebApplicationInvokingPipeline
+        /news:
+          jcr:primaryType: hst:sitemapitem
+          hst:relativecontentpath: news
+          /_any_:
+            jcr:primaryType: hst:sitemapitem
+            hst:relativecontentpath: news/${1}
+      /topproducts:
+        jcr:primaryType: hst:sitemapitem
+        hst:namedpipeline: JaxrsRestPlainPipeline
+      /contenttypes:
+        jcr:primaryType: hst:sitemapitem
+        hst:namedpipeline: JaxrsRestPlainPipeline
+        /_any_:
+          jcr:primaryType: hst:sitemapitem

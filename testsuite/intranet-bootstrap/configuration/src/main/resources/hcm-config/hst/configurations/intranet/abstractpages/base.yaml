@@ -1,0 +1,17 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:abstractpages/base:
+      jcr:primaryType: hst:component
+      hst:template: layout.webpage
+      /header:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/header
+      /main:
+        jcr:primaryType: hst:component
+        hst:template: base.main
+        /leftmenu:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/leftmenu
+        /right:
+          jcr:primaryType: hst:component
+          hst:template: base.main.right

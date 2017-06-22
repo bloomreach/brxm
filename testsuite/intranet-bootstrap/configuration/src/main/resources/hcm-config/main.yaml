@@ -1,0 +1,16 @@
+definitions:
+  namespace:
+    intranet:
+      uri: http://www.onehippo.org/intranet/nt/1.0
+      cnd: namespaces/intranet.cnd
+  config:
+    /hippo:configuration/hippo:groups/liveusers:
+      hipposys:members:
+        operation: add
+        type: string
+        value: [intranetliveuser]
+    /hippo:configuration/hippo:groups/previewusers:
+      hipposys:members:
+        operation: add
+        type: string
+        value: [intranetpreviewuser]

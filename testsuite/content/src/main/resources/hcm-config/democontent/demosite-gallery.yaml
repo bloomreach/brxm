@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /content/gallery:
+      hippostd:gallerytype:
+        operation: override
+        type: string
+        value: ['demosite:qaimageset']

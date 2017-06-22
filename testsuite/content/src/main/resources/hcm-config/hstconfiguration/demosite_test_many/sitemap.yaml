@@ -1,0 +1,67 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite-test-many/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /home:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/home
+        hst:refId: homeId
+        hst:relativecontentpath: common/home-page
+      /about:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/detailpage
+        hst:refId: aboutId
+        hst:relativecontentpath: common/about-us
+      /news:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/newsarchive
+        hst:relativecontentpath: news
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/newsarchive
+          hst:relativecontentpath: news/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/detailpage
+          hst:parameternames: [go-back-link]
+          hst:parametervalues: [/news]
+          hst:relativecontentpath: news/${1}
+      /rss.xml:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:components/rss
+        hst:relativecontentpath: news
+      /search:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/searchpage
+      /error:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/errorpage
+      /_any_:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/errorpage
+      /todo:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:components/bodyhome/content/todolist
+      /faceted:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/facetedaddproduct
+        hst:relativecontentpath: faceted
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/faceted
+          hst:relativecontentpath: faceted/${1}
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/faceted_detailpage
+          hst:relativecontentpath: faceted/${1}
+      /products:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/productoverview
+        hst:relativecontentpath: products
+        /_any_.html:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/productpage
+          hst:relativecontentpath: products/${1}
+      /sites:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/sitesoverview

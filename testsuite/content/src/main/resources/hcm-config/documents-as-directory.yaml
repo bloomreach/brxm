@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /content/documents:
+      jcr:primaryType:
+        operation: override
+        type: name
+        value: hippostd:directory

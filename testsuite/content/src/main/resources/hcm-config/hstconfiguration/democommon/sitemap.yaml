@@ -1,0 +1,13 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/democommon/hst:sitemap:
+      jcr:primaryType: hst:sitemap
+      /copyright:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/copyright
+        hst:refId: copyright
+        hst:relativecontentpath: common
+      /esisinglepage:
+        jcr:primaryType: hst:sitemapitem
+        hst:cacheable: true
+        hst:componentconfigurationid: hst:pages/esisinglepage

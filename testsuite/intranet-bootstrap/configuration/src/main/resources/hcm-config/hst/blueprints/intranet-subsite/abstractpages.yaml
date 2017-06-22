@@ -1,0 +1,19 @@
+definitions:
+  config:
+    /hst:hst/hst:blueprints/intranet-subsite/hst:configuration/hst:abstractpages:
+      jcr:primaryType: hst:pages
+      /base:
+        jcr:primaryType: hst:component
+        hst:template: subsite.layout.webpage
+        /header:
+          jcr:primaryType: hst:component
+          hst:referencecomponent: hst:components/header
+        /main:
+          jcr:primaryType: hst:component
+          hst:template: subsite.standard.main
+          /leftmenu:
+            jcr:primaryType: hst:component
+            hst:referencecomponent: hst:components/leftmenu
+          /right:
+            jcr:primaryType: hst:component
+            hst:template: subsite.standard.main.right

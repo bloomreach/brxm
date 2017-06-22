@@ -1,0 +1,39 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite/hst:components:
+      jcr:primaryType: hst:components
+      jcr:uuid: 153163a3-6dd1-4f6b-8b3f-088235b1496b
+      /bodyhome:
+        jcr:primaryType: hst:component
+        jcr:uuid: 3702e5dc-fe8c-455d-8c68-3dbdf7b68276
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /leftmenu:
+          jcr:primaryType: hst:component
+          jcr:uuid: fd3334e4-cf5f-439a-8f63-f10edad5b897
+          hst:componentclassname: org.hippoecm.hst.demo.components.LeftMenu
+          hst:template: leftmenu
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.Home
+          hst:parameternames: [testParamFromMount]
+          hst:parametervalues: ['${exampleMountParam}']
+          hst:template: homepage.ftl
+          /todolist:
+            jcr:primaryType: hst:component
+            hst:componentclassname: org.hippoecm.hst.demo.components.TodoList
+            hst:template: todolist
+          /container-with-skipped-banners:
+            jcr:primaryType: hst:containercomponentreference
+            hst:referencecomponent: bodyhome/container-with-skipped-banners
+          /banners-table:
+            jcr:primaryType: hst:containercomponentreference
+            hst:referencecomponent: bodyhome/banners-table
+          /banners-ul:
+            jcr:primaryType: hst:containercomponentreference
+            hst:referencecomponent: bodyhome/banners-ul
+          /banners-ol:
+            jcr:primaryType: hst:containercomponentreference
+            hst:referencecomponent: bodyhome/banners-ol
+          /banners-div:
+            jcr:primaryType: hst:containercomponentreference
+            hst:referencecomponent: bodyhome/banners-div

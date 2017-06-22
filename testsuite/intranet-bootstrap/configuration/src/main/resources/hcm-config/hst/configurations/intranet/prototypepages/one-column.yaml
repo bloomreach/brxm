@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet/hst:prototypepages/one-column:
+      jcr:primaryType: hst:component
+      jcr:mixinTypes: ['hst:prototypemeta']
+      hst:displayname: One column
+      hst:referencecomponent: hst:abstractpages/base
+      /main:
+        jcr:primaryType: hst:component
+        /content:
+          jcr:primaryType: hst:component
+          hst:template: one-column.main.content
+          /container:
+            jcr:primaryType: hst:containercomponent
+            hst:xtype: HST.vBox

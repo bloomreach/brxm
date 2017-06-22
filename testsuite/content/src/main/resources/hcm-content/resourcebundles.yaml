@@ -1,0 +1,93 @@
+/content/documents/resourcebundles:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['mix:referenceable']
+  jcr:uuid: a0c8d4c0-5e5a-11e2-bcfd-0800200c9a66
+  hippostd:foldertype: [new-translated-folder, new-document]
+  /generalresources:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: b8619050-5e5a-11e2-bcfd-0800200c9a66
+    /generalresources[1]:
+      jcr:primaryType: resourcebundle:resourcebundle
+      jcr:mixinTypes: ['mix:referenceable', 'hippostd:publishableSummary']
+      jcr:uuid: c35b7840-5e5a-11e2-bcfd-0800200c9a66
+      hippo:availability: [live]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2013-01-14T09:32:28.068-05:00
+      hippostdpubwf:lastModificationDate: 2013-01-13T22:27:19.615-04:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2013-01-14T22:27:21.856-04:00
+      resourcebundle:id: org.onehippo.hst.demo.resources.GeneralTranslationsBundle
+      resourcebundle:keys: [key.home, key.aboutus, key.search, key.available.languages,
+        key.page.notfound, key.page.notfound.message, key.download.charge]
+      resourcebundle:messages: [Home, About Us, Search, Available in languages, Page
+          not found, The page you were looking for cannot be found., '0.00']
+      resourcebundle:messages_en: [Home, About Us, Search, Available in languages,
+        Page not found, The page you were looking for cannot be found., '0.00']
+      resourcebundle:messages_fr: [Accueil, '&Agrave; propos', de recherche, Disponible
+          dans les langues, Page introuvable, La page que vous recherchez ne peut
+          pas &ecirc;tre trouv&eacute;., '0,00']
+    /generalresources[2]:
+      jcr:primaryType: resourcebundle:resourcebundle
+      jcr:mixinTypes: ['mix:versionable', 'hippostd:publishableSummary']
+      jcr:uuid: cc62bef0-5e5b-11e2-bcfd-0800200c9a66
+      hippo:availability: [preview]
+      hippostd:holder: admin
+      hippostd:state: unpublished
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2013-01-14T09:32:28.068-05:00
+      hippostdpubwf:lastModificationDate: 2013-01-13T22:27:19.615-04:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2013-01-14T22:27:21.856-04:00
+      resourcebundle:id: org.onehippo.hst.demo.resources.GeneralTranslationsBundle
+      resourcebundle:keys: [key.home, key.aboutus, key.search, key.available.languages,
+        key.page.notfound, key.page.notfound.message, key.download.charge]
+      resourcebundle:messages: [Home, About Us, Search, Available in languages, Page
+          not found, The page you were looking for cannot be found., '0.00']
+      resourcebundle:messages_en: [Home, About Us, Search, Available in languages,
+        Page not found, The page you were looking for cannot be found., '0.00']
+      resourcebundle:messages_fr: [Accueil, '&Agrave; propos', de recherche, Disponible
+          dans les langues, Page introuvable, La page que vous recherchez ne peut
+          pas &ecirc;tre trouv&eacute;., '0,00']
+  /productresources:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: a8619050-5e5a-11e2-bcfd-0800200c9a66
+    /productresources[1]:
+      jcr:primaryType: resourcebundle:resourcebundle
+      jcr:mixinTypes: ['mix:referenceable', 'hippostd:publishableSummary']
+      jcr:uuid: b35b7840-5e5a-11e2-bcfd-0800200c9a66
+      hippo:availability: [live]
+      hippostd:holder: admin
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2013-01-14T09:32:28.068-05:00
+      hippostdpubwf:lastModificationDate: 2013-01-13T22:27:19.615-04:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2013-01-14T22:27:21.856-04:00
+      resourcebundle:id: org.onehippo.hst.demo.resources.ProductResources
+      resourcebundle:keys: [brand, product, type, color, price, tags, image]
+      resourcebundle:messages: [Brand, Product, Type, Color, Price, Tags, Image]
+      resourcebundle:messages_en: [Brand, Product, Type, Color, Price, Tags, Image]
+      resourcebundle:messages_fr: [Marque, Produit, Type, Couleur, Prix, Balises,
+        Image]
+    /productresources[2]:
+      jcr:primaryType: resourcebundle:resourcebundle
+      jcr:mixinTypes: ['mix:versionable', 'hippostd:publishableSummary']
+      jcr:uuid: dc62bef0-5e5b-11e2-bcfd-0800200c9a66
+      hippo:availability: [preview]
+      hippostd:holder: admin
+      hippostd:state: unpublished
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2013-01-14T09:32:28.068-05:00
+      hippostdpubwf:lastModificationDate: 2013-01-13T22:27:19.615-04:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2013-01-14T22:27:21.856-04:00
+      resourcebundle:id: org.onehippo.hst.demo.resources.ProductResources
+      resourcebundle:keys: [brand, product, type, color, price, tags, image]
+      resourcebundle:messages: [Brand, Product, Type, Color, Price, Tags, Image]
+      resourcebundle:messages_en: [Brand, Product, Type, Color, Price, Tags, Image]
+      resourcebundle:messages_fr: [Marque, Produit, Type, Couleur, Prix, Balises,
+        Image]

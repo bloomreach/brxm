@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/intranet-subsite-common/hst:components/content:
+      jcr:primaryType: hst:component
+      hst:componentclassname: org.hippoecm.hst.intranet.components.Detail
+      hst:template: subsite.standard.main.content

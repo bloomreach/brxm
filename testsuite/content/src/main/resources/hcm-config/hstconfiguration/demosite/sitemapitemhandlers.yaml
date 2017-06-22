@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/demosite/hst:sitemapitemhandlers:
+      jcr:primaryType: hst:sitemapitemhandlers
+      /dummy:
+        jcr:primaryType: hst:sitemapitemhandler
+        hst:sitemapitemhandlerclassname: org.hippoecm.hst.demo.sitemapitemhandler.DummySiteMapHandler

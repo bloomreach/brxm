@@ -1,0 +1,286 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/democommon/hst:components:
+      jcr:primaryType: hst:components
+      /header:
+        jcr:primaryType: hst:component
+        hst:template: header
+      /footer:
+        jcr:primaryType: hst:component
+        hst:resourcetemplate: datetime
+        hst:template: footer
+        /datetime:
+          jcr:primaryType: hst:component
+          hst:async: true
+          hst:template: datetime
+      /general_threecolumnlayout:
+        jcr:primaryType: hst:component
+        hst:template: threecolumnlayout
+        /leftmenu:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.LeftMenu
+          hst:template: leftmenu
+        /right:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.Right
+          hst:template: right
+      /bodynewsarchive:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.Archive
+          hst:template: archive
+      /alllinkforanewsitem:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.AllLinksForANewsItem
+          hst:template: alllinkforanewsitem
+      /bodydetailpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.Detail
+          hst:template: detailpage
+      /bodyhome:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /leftmenu:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.LeftMenu
+          hst:template: leftmenu
+        /content:
+          jcr:primaryType: hst:component
+          jcr:uuid: 0f82b12b-8b74-46ba-a9e6-ef8b3c3a23b4
+          hst:componentclassname: org.hippoecm.hst.demo.components.Home
+          hst:template: homepage.ftl
+          /todolist:
+            jcr:primaryType: hst:component
+            jcr:uuid: 12ac3e18-2195-423c-bb3b-df4d7c9b0156
+            hst:componentclassname: org.hippoecm.hst.demo.components.TodoList
+            hst:template: todolist
+          /container-1:
+            jcr:primaryType: hst:containercomponentreference
+            hst:referencecomponent: bodyhome/container-1
+          /container-2:
+            jcr:primaryType: hst:containercomponentreference
+            hst:referencecomponent: bodyhome/container-2
+      /rss:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.demo.components.RSS
+        hst:parameternames: []
+        hst:parametervalues: []
+        hst:template: rss
+      /bodysearch:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.Search
+          hst:template: searchresults
+      /bodysolrsearch:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.SolrSearch
+          hst:template: solrsearchresults
+        /right:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.SolrRight
+          hst:resourcetemplate: solrsuggest-ajax
+          hst:template: solrright
+      /bodysolrfaceting:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.SolrSearch
+          hst:template: solrsearchresults
+        /right:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.SolrFaceting
+          hst:template: solrfaceting
+      /bodyfacetedaddproduct:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.FacetedAddProduct
+          hst:template: facetedaddproduct
+      /bodywikipedia:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.NonWorkflowWikiImporterComponent
+          hst:template: wikipedia
+      /bodysolrindexer:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.SolrIndexer
+          hst:template: solrindexer
+      /bodygogreenindexer:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.GoGreenExternalProductIndexer
+          hst:template: gogreenindexer
+      /bodyfaceted:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.Faceted
+          hst:template: faceted
+        /right:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.FacetedRight
+          hst:template: facetedright
+      /bodyfaceted_detailpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.FacetedDetail
+          hst:template: facetedproductpage
+        /right:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.FacetedRight
+          hst:template: facetedright
+      /bodyproductoverview:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.Archive
+          hst:template: archive
+      /bodyproductpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.Detail
+          hst:template: productpage
+      /bodyformpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.HstForm
+          hst:template: formpage
+      /bodyerror:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.ErrorSearchComponent
+          hst:template: searchresults
+      /bodycontactspringformpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.component.support.spring.SpringBridgeHstComponent
+          hst:parameternames: [spring-delegated-bean]
+          hst:parametervalues: [contactBean]
+          hst:template: contactspring
+      /bodycontactspringcontextformpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.component.support.spring.SpringBridgeHstComponent
+          hst:parameternames: [spring-delegated-bean]
+          hst:parametervalues: ['org.springframework.web.servlet.FrameworkServlet.CONTEXT.springapp::contextContactBean']
+          hst:template: contactspring
+      /bodycontactdispatchformpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.component.support.SimpleDispatcherHstComponent
+          hst:parameternames: [dispatch-path]
+          hst:parametervalues: [/WEB-INF/jsp/components/main/contactdispatch.jsp]
+      /bodycontactspringmvcformpage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.component.support.SimpleDispatcherHstComponent
+          hst:parameternames: [action-path]
+          hst:parametervalues: [/spring/contactspringmvc.do]
+          hst:template: contactspringmvc
+      /bodythankyoupage:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:template: thankyou
+      /bodywikipediaarchive:
+        jcr:primaryType: hst:component
+        jcr:uuid: 605c89ec-20cd-440a-a7a4-d65defb741ce
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          jcr:uuid: 99a2d103-9121-42c6-89dc-22a751785057
+          hst:componentclassname: org.hippoecm.hst.demo.components.Faceted
+          hst:parameternames: [navigationStatefulLinks]
+          hst:parametervalues: ['false']
+          hst:template: faceted
+        /right:
+          jcr:primaryType: hst:component
+          jcr:uuid: adffae10-f8a6-49f4-badd-336a771b9157
+          hst:componentclassname: org.hippoecm.hst.demo.components.FacetedRight
+          hst:template: facetedright
+      /bodyalgebra:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.Algebra
+          hst:template: algebra
+      /bodypreparecaller:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.PrepareCallersParent
+          hst:template: preparecalls
+          /preparechild1:
+            jcr:primaryType: hst:component
+            hst:referencecomponent: hst:components/preparecaller
+          /preparechild2:
+            jcr:primaryType: hst:component
+            hst:referencecomponent: hst:components/preparecaller
+          /preparechild3:
+            jcr:primaryType: hst:component
+            hst:referencecomponent: hst:components/preparecaller
+          /preparechild4:
+            jcr:primaryType: hst:component
+            hst:referencecomponent: hst:components/preparecaller
+      /preparecaller:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.demo.components.PrepareCaller
+        hst:template: preparecaller
+      /copyright:
+        jcr:primaryType: hst:component
+        hst:template: copyright
+      /esisinglecomponent:
+        jcr:primaryType: hst:component
+        hst:template: esisingle
+      /bodywikipediatranslations:
+        jcr:primaryType: hst:component
+        hst:referencecomponent: hst:components/general_threecolumnlayout
+        /content:
+          jcr:primaryType: hst:component
+          hst:componentclassname: org.hippoecm.hst.demo.components.WikipediaTranslations
+          hst:parameternames: []
+          hst:parametervalues: []
+          hst:template: wikipediatranslations

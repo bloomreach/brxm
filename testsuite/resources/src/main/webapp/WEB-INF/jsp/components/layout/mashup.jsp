@@ -30,9 +30,6 @@
           VERTICAL DIV
           <hst:include ref="div-content" />
           <br/>
-          TABLE 
-          <hst:include ref="table-content" />
-          <br/>
           UL
           <hst:include ref="ul-content" />
           <br/>

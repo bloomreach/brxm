@@ -1,0 +1,42 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/intranet-subsite:
+      jcr:primaryType: hippostd:folder
+      jcr:mixinTypes: ['mix:referenceable']
+      hippostd:foldertype: [new-document, new-folder]
+      /homepage:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable', 'hippo:named']
+        hippo:name: Home Page
+        /homepage:
+          jcr:primaryType: intranet:textdocument
+          jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']
+          hippo:availability: [live, preview]
+          hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2011-11-29T11:18:14.995+01:00
+          hippostdpubwf:lastModificationDate: 2011-11-29T11:44:17.556+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2011-11-29T11:54:54.419+01:00
+          hippotranslation:id: a4240db8-3b5d-45ce-96f0-a28ca3ba4003
+          hippotranslation:locale: en
+          intranet:summary: This is an example subsite.
+          intranet:title: Example subsite
+          /intranet:body:
+            jcr:primaryType: hippostd:html
+            hippostd:content: |-
+              <html>
+              <body>
+
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempor, risus ac
+              ullamcorper consectetur, lectus quam pharetra dolor, quis rhoncus tortor magna
+              ac turpis. Nullam nunc diam, ornare vel pretium ac, lacinia sed dui. Nulla
+              vehicula hendrerit turpis, sed rutrum erat pretium at. Pellentesque habitant
+              morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent
+              vitae ultrices magna. Quisque feugiat, tortor eget vulputate blandit, neque est
+              vestibulum risus, a venenatis dolor quam at eros. Phasellus ut massa mi, non
+              tempus lorem.</p>
+
+              </body>
+              </html>
