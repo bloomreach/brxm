@@ -9,24 +9,7 @@ definitions:
       hipposys:parameters: "{\r\n  \"translationLocales\": [\r\n    \"de\", \"fr\"\
         , \"it\", \"nl\"\r\n  ]\r\n}"
       hipposys:query: /jcr:root/content/documents/demosite//element(*,hippotranslation:translated)
-      hipposys:script: "package org.hippoecm.frontend.plugins.cms.admin.updater\r\n\
-        \r\nimport org.onehippo.repository.update.BaseNodeUpdateVisitor\r\nimport\
-        \ javax.jcr.Node\r\n\r\nclass UpdaterTemplate extends BaseNodeUpdateVisitor\
-        \ {\r\n\r\n  def session\r\n\r\n  void initialize(Session session) {\r\n \
-        \   this.session = session\r\n  }\r\n  \r\n  boolean doUpdate(Node node) {\r\
-        \n    log.debug \"Visiting translated node ${node.path}\"\r\n\r\n    def updated\
-        \ = false\r\n    def relPath = node.path.substring(\"/content/documents/demosite/\"\
-        .length())\r\n    def translationId = node.getProperty(\"hippotranslation:id\"\
-        ).getString()\r\n\r\n    if (translationId?.trim()) {\r\n      [ \"de\", \"\
-        fr\", \"it\", \"nl\" ].each { locale ->\r\n        def translatedNodePath\
-        \ = \"/content/documents/demosite_\" + locale + \"/\" + relPath\r\n      \
-        \  log.debug \"TranslatedNodePath: ${translatedNodePath}\"\r\n\r\n       \
-        \ if (this.session.nodeExists(translatedNodePath)) {\r\n          def translatedNode\
-        \ = this.session.getNode(translatedNodePath)\r\n          translatedNode.setProperty(\"\
-        hippotranslation:id\", translationId)\r\n          translatedNode.setProperty(\"\
-        hippotranslation:locale\", locale)\r\n          log.debug \"Updated translated\
-        \ node ${translatedNode.path}\"\r\n          updated = true\r\n        }\r\
-        \n      }\r\n    }\r\n    \r\n    return updated\r\n  }\r\n\r\n  boolean undoUpdate(Node\
-        \ node) {\r\n    throw new UnsupportedOperationException('Updater does not\
-        \ implement undoUpdate method')\r\n  }\r\n\r\n}"
+      hipposys:script:
+        type: string
+        resource: example-fix-translation-id-and-locales.groovy
       hipposys:throttle: 1000

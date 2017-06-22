@@ -7,24 +7,7 @@ definitions:
       hipposys:dryrun: false
       hipposys:parameters: ''
       hipposys:query: /jcr:root
-      hipposys:script: "/**\r\n * ExampleNewsDocumentDateFieldUpdateDemoVisitor is\
-        \ a script that does manual node iteration\r\n * in an original iteration\
-        \ cycle and reports updated node manually in order to be aligned\r\n * with\
-        \ the built-in batch commit/revert feature of the groovy updater engine\r\n\
-        \ * for demonstration purpose.\r\n */\r\npackage org.hippoecm.frontend.plugins.cms.admin.updater\r\
-        \n\r\nimport org.onehippo.repository.update.BaseNodeUpdateVisitor\r\nimport\
-        \ java.util.*\r\nimport javax.jcr.*\r\nimport javax.jcr.query.*\r\n\r\nclass\
-        \ ExampleNewsDocumentDateFieldUpdateDemoVisitor extends BaseNodeUpdateVisitor\
-        \ {\r\n\r\n  boolean doUpdate(Node node) {\r\n    log.debug \"Visiting node\
-        \ at ${node.path} just as an entry point in this demo.\"\r\n    \r\n    //\
-        \ new date field value from the current time\r\n    def now = Calendar.getInstance()\r\
-        \n    \r\n    // do manual query and node iteration\r\n    def query = node.session.workspace.queryManager.createQuery(\"\
-        //element(*,demosite:newsdocument)\", \"xpath\")\r\n    def result = query.execute()\r\
-        \n    \r\n    for (NodeIterator nodeIt = result.getNodes(); nodeIt.hasNext();\
-        \ ) {\r\n      def newsNode = nodeIt.nextNode()\r\n      newsNode.setProperty(\"\
-        demosite:date\", now)\r\n      // report updated to the engine manually here.\r\
-        \n      visitorContext.reportUpdated(newsNode.path)\r\n    }\r\n    \r\n \
-        \   return false\r\n  }\r\n\r\n  boolean undoUpdate(Node node) {\r\n    throw\
-        \ new UnsupportedOperationException('Updater does not implement undoUpdate\
-        \ method')\r\n  }\r\n\r\n}"
+      hipposys:script:
+        type: string
+        resource: example-news-date-field-update-demo-with-manual-update-reporting.groovy
       hipposys:throttle: 1000
