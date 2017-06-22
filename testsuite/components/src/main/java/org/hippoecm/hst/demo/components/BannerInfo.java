@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,12 +44,12 @@ public interface BannerInfo {
 
     @Parameter(name = "bannerPath", displayName = "Banner Path")
     @JcrPath(
-            pickerSelectableNodeTypes = { "demosite:qaimageset" },
+            pickerSelectableNodeTypes = {"demosite:qaimageset"},
             pickerInitialPath = "/content/gallery/images")
     String getPath();
 
     @Parameter(name = "cssDisplay", displayName = "CSS Display")
-    @DropDownList(value = { "inline", "block", "flex" })
+    @DropDownList(value = {"inline", "block", "flex"})
     String getCssDisplay();
 
     @Parameter(name = "cssDisplay2", displayName = "CSS Display 2")

@@ -29,48 +29,48 @@ import org.hippoecm.hst.core.parameters.ValueListProvider;
  */
 public class CssDisplayValueListProvider implements ValueListProvider {
 
-    private static final Map<String, String> cssDisplayValuesMap = new LinkedHashMap<>();
-    private static final List<String> cssDisplayValuesList;
+    private static final Map<String, String> CSS_DISPLAY_VALUES_MAP = new LinkedHashMap<>();
+    private static final List<String> CSS_DISPLAY_VALUES_LIST;
 
     static {
-        cssDisplayValuesMap.put("inline", "Displays an element as an inline element (like span)");
-        cssDisplayValuesMap.put("block", "Displays an element as a block element (like p)");
-        cssDisplayValuesMap.put("flex", "Displays an element as an block-level flex container. New in CSS3");
-        cssDisplayValuesMap.put("inline-block",
+        CSS_DISPLAY_VALUES_MAP.put("inline", "Displays an element as an inline element (like span)");
+        CSS_DISPLAY_VALUES_MAP.put("block", "Displays an element as a block element (like p)");
+        CSS_DISPLAY_VALUES_MAP.put("flex", "Displays an element as an block-level flex container. New in CSS3");
+        CSS_DISPLAY_VALUES_MAP.put("inline-block",
                 "Displays an element as an inline-level block container. The inside of this block is formatted as block-level box, and the element itself is formatted as an inline-level box");
-        cssDisplayValuesMap.put("inline-flex", "Displays an element as an inline-level flex container. New in CSS3");
-        cssDisplayValuesMap.put("inline-table", "The element is displayed as an inline-level tablev");
-        cssDisplayValuesMap.put("list-item", "Let the element behave like a li element");
-        cssDisplayValuesMap.put("run-in", "Displays an element as either block or inline, depending on context");
-        cssDisplayValuesMap.put("table", "Let the element behave like a table element");
-        cssDisplayValuesMap.put("table-caption", "Let the element behave like a caption element");
-        cssDisplayValuesMap.put("table-column-group", "Let the element behave like a colgroup element");
-        cssDisplayValuesMap.put("table-header-group", "Let the element behave like a thead element");
-        cssDisplayValuesMap.put("table-footer-group", "Let the element behave like a tfoot element");
-        cssDisplayValuesMap.put("table-row-group", "Let the element behave like a tbody element");
-        cssDisplayValuesMap.put("table-cell", "Let the element behave like a td element");
-        cssDisplayValuesMap.put("table-column", "Let the element behave like a col element");
-        cssDisplayValuesMap.put("table-row", "Let the element behave like a tr element");
-        cssDisplayValuesMap.put("none", "The element will not be displayed at all (has no effect on layout)");
-        cssDisplayValuesMap.put("initial", "Sets this property to its default value. Read about initial");
-        cssDisplayValuesMap.put("inherit", "Inherits this property from its parent element. Read about inherit");
+        CSS_DISPLAY_VALUES_MAP.put("inline-flex", "Displays an element as an inline-level flex container. New in CSS3");
+        CSS_DISPLAY_VALUES_MAP.put("inline-table", "The element is displayed as an inline-level tablev");
+        CSS_DISPLAY_VALUES_MAP.put("list-item", "Let the element behave like a li element");
+        CSS_DISPLAY_VALUES_MAP.put("run-in", "Displays an element as either block or inline, depending on context");
+        CSS_DISPLAY_VALUES_MAP.put("table", "Let the element behave like a table element");
+        CSS_DISPLAY_VALUES_MAP.put("table-caption", "Let the element behave like a caption element");
+        CSS_DISPLAY_VALUES_MAP.put("table-column-group", "Let the element behave like a colgroup element");
+        CSS_DISPLAY_VALUES_MAP.put("table-header-group", "Let the element behave like a thead element");
+        CSS_DISPLAY_VALUES_MAP.put("table-footer-group", "Let the element behave like a tfoot element");
+        CSS_DISPLAY_VALUES_MAP.put("table-row-group", "Let the element behave like a tbody element");
+        CSS_DISPLAY_VALUES_MAP.put("table-cell", "Let the element behave like a td element");
+        CSS_DISPLAY_VALUES_MAP.put("table-column", "Let the element behave like a col element");
+        CSS_DISPLAY_VALUES_MAP.put("table-row", "Let the element behave like a tr element");
+        CSS_DISPLAY_VALUES_MAP.put("none", "The element will not be displayed at all (has no effect on layout)");
+        CSS_DISPLAY_VALUES_MAP.put("initial", "Sets this property to its default value. Read about initial");
+        CSS_DISPLAY_VALUES_MAP.put("inherit", "Inherits this property from its parent element. Read about inherit");
 
-        cssDisplayValuesList = Collections.unmodifiableList(new LinkedList<>(cssDisplayValuesMap.keySet()));
+        CSS_DISPLAY_VALUES_LIST = Collections.unmodifiableList(new LinkedList<>(CSS_DISPLAY_VALUES_MAP.keySet()));
     }
 
     @Override
     public List<String> getValues() {
-        return cssDisplayValuesList;
+        return CSS_DISPLAY_VALUES_LIST;
     }
 
     @Override
-    public String getDisplayValue(String value) {
+    public String getDisplayValue(final String value) {
         return getDisplayValue(value, null);
     }
 
     @Override
-    public String getDisplayValue(String value, Locale locale) {
-        String displayValue = cssDisplayValuesMap.get(value);
+    public String getDisplayValue(final String value, final Locale locale) {
+        final String displayValue = CSS_DISPLAY_VALUES_MAP.get(value);
         return (displayValue != null) ? displayValue : value;
     }
 
