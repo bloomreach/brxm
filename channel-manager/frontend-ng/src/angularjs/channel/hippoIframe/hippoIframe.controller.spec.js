@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import angular from 'angular';
-import 'angular-mocks';
-
 describe('hippoIframeCtrl', () => {
   let $q;
   let $rootScope;
@@ -29,6 +26,7 @@ describe('hippoIframeCtrl', () => {
   let OverlayService;
   let PageMetaDataService;
   let PageStructureService;
+  let ProjectService;
   let hippoIframeCtrl;
   let hstCommentsProcessorService;
   let scope;
@@ -44,21 +42,24 @@ describe('hippoIframeCtrl', () => {
     let $compile;
     angular.mock.module('hippo-cm');
 
-    inject(($controller,
-            _$compile_,
-            _$q_,
-            _$rootScope_,
-            _ChannelService_,
-            _SidePanelService_,
-            _CmsService_,
-            _DialogService_,
-            _DomService_,
-            _DragDropService_,
-            _HippoIframeService_,
-            _OverlayService_,
-            _PageMetaDataService_,
-            _PageStructureService_,
-            _hstCommentsProcessorService_) => {
+    inject((
+      $controller,
+      _$compile_,
+      _$q_,
+      _$rootScope_,
+      _ChannelService_,
+      _SidePanelService_,
+      _CmsService_,
+      _DialogService_,
+      _DomService_,
+      _DragDropService_,
+      _HippoIframeService_,
+      _OverlayService_,
+      _PageMetaDataService_,
+      _PageStructureService_,
+      _ProjectService_,
+      _hstCommentsProcessorService_,
+    ) => {
       $compile = _$compile_;
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -71,6 +72,7 @@ describe('hippoIframeCtrl', () => {
       OverlayService = _OverlayService_;
       PageMetaDataService = _PageMetaDataService_;
       PageStructureService = _PageStructureService_;
+      ProjectService = _ProjectService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       scope = $rootScope.$new();
     });
@@ -145,12 +147,14 @@ describe('hippoIframeCtrl', () => {
 
     spyOn(PageStructureService, 'clearParsedElements');
     spyOn(hstCommentsProcessorService, 'run');
-    spyOn(PageMetaDataService, 'getChannelId').and.returnValue('channelX');
-    spyOn(ChannelService, 'getId').and.returnValue('channelY');
-    spyOn(ChannelService, 'switchToChannel').and.returnValue(deferred.promise);
+    spyOn(ChannelService, 'loadChannel').and.returnValue(deferred.promise);
     spyOn(hippoIframeCtrl, '_parseLinks');
     spyOn(hippoIframeCtrl, '_updateDragDrop');
     spyOn(HippoIframeService, 'signalPageLoadCompleted');
+    spyOn(ProjectService, 'getBaseChannelId').and.callFake(channelId => channelId);
+
+    spyOn(PageMetaDataService, 'getChannelId').and.returnValue('channelX');
+    spyOn(ChannelService, 'getId').and.returnValue('channelY');
 
     hippoIframeCtrl.onLoad();
     $rootScope.$digest();
@@ -163,8 +167,6 @@ describe('hippoIframeCtrl', () => {
     expect(hippoIframeCtrl._updateDragDrop).toHaveBeenCalled();
     expect(PageMetaDataService.getChannelId).toHaveBeenCalled();
     expect(ChannelService.getId).toHaveBeenCalled();
-    expect(hippoIframeCtrl._parseLinks).not.toHaveBeenCalled();
-    expect(HippoIframeService.signalPageLoadCompleted).not.toHaveBeenCalled();
 
     deferred.resolve();
     $rootScope.$digest();

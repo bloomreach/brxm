@@ -45,9 +45,7 @@ class ProjectToggleController {
   }
 
   set selectedProject(selectedProject) {
-    this.ProjectService
-      .updateSelectedProject(selectedProject.id)
-      .then(() => this.HippoIframeService.reload());
+    this.ProjectService.updateSelectedProject(selectedProject.id);
   }
 }
 

@@ -14,8 +14,6 @@
  * limitations under the License.
  *
  */
-import angular from 'angular';
-import 'angular-mocks';
 
 describe('ProjectService', () => {
   let $httpBackend;
@@ -25,7 +23,6 @@ describe('ProjectService', () => {
   let ProjectService;
 
   const mountId = '12';
-  const channel = { mountId };
   const projects = [
     {
       id: 'test1',
@@ -37,6 +34,17 @@ describe('ProjectService', () => {
     },
   ];
   const currentProject = projects[0];
+
+  const channels = [
+    {
+      mountId: 'mountId1',
+      id: 'channelId1',
+    },
+    {
+      mountId: 'mountId2',
+      id: 'channelId2',
+    },
+  ];
 
   beforeEach(() => {
     angular.mock.module('hippo-cm', ($provide) => {
@@ -72,10 +80,12 @@ describe('ProjectService', () => {
     spyOn(HstService, 'doGet');
 
     $httpBackend.expectGET(`/test/ws/projects/${mountId}/associated-with-channel`).respond(200, projects);
+    $httpBackend.expectGET('/test/ws/channels/').respond(200, channels);
+
     HstService.doGet.and.returnValue($q.resolve({ data: currentProject.id }));
     HstService.doPut.and.returnValue($q.resolve());
 
-    ProjectService.load(channel);
+    ProjectService.load(mountId, currentProject.id);
     $httpBackend.flush();
   });
 
@@ -87,7 +97,6 @@ describe('ProjectService', () => {
   it('loads projects and sets the current project', () => {
     expect(ProjectService.projects).toEqual(projects);
     expect(ProjectService.selectedProject).toEqual(currentProject);
-    expect(HstService.doGet).toHaveBeenCalledWith(mountId, 'currentbranch');
   });
 
   it('selects the core if the selectedProject is not a project', () => {

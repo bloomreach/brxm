@@ -59,14 +59,13 @@ class ChannelCtrl {
 
     this.menus = [
       ChannelActionsService.getMenu(subPage => this.showSubpage(subPage)),
-      PageActionsService.getMenu(subPage => this.showSubpage(subPage))];
+      PageActionsService.getMenu(subPage => this.showSubpage(subPage)),
+    ];
   }
 
   _clear() {
-    this.$rootScope.$apply(() => {
-      this.hideSubpage();
-      this.ChannelService.clearChannel();
-    });
+    this.hideSubpage();
+    this.ChannelService.clearChannel();
   }
 
   isControlsDisabled() {

@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-import angular from 'angular';
-import 'angular-mocks';
-
 describe('ChannelService', () => {
-  let $q;
   let $log;
+  let $q;
   let $rootScope;
-  let ChannelService;
-  let FeedbackService;
-  let SiteMapService;
+  let $state;
   let CatalogService;
-  let SessionService;
-  let HstService;
-  let channelMock;
+  let ChannelService;
   let CmsService;
   let ConfigServiceMock;
-  let $state;
+  let FeedbackService;
+  let HstService;
+  // let PathService;
+  let SessionService;
+  let SiteMapService;
+  let channelMock;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -51,26 +49,39 @@ describe('ChannelService', () => {
       cmsUser: 'testUser',
       contextPaths: ['/testContextPath1', '/'],
       locale: 'en',
+      projectsEnabled: false,
     };
+
     ConfigServiceMock.setContextPathForChannel = jasmine.createSpy('setContextPathForChannel');
 
     angular.mock.module(($provide) => {
       $provide.value('ConfigService', ConfigServiceMock);
     });
 
-    inject((_$q_, _$log_, _$rootScope_, _$state_, _ChannelService_, _CatalogService_, _CmsService_, _FeedbackService_,
-            _HstService_, _SessionService_, _SiteMapService_) => {
-      $q = _$q_;
+    inject((
+      _$log_,
+      _$q_,
+      _$rootScope_,
+      _$state_,
+      _CatalogService_,
+      _ChannelService_,
+      _CmsService_,
+      _FeedbackService_,
+      _HstService_,
+      _SessionService_,
+      _SiteMapService_,
+    ) => {
       $log = _$log_;
+      $q = _$q_;
       $rootScope = _$rootScope_;
       $state = _$state_;
       CatalogService = _CatalogService_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
+      FeedbackService = _FeedbackService_;
       HstService = _HstService_;
       SessionService = _SessionService_;
       SiteMapService = _SiteMapService_;
-      FeedbackService = _FeedbackService_;
     });
 
     spyOn(CatalogService, 'load');
@@ -162,12 +173,10 @@ describe('ChannelService', () => {
 
     window.CMS_TO_APP.publish('load-channel', testChannel, '/testPath');
 
-    $rootScope.$digest();
-
+    $rootScope.$apply();
     expect(ConfigServiceMock.setContextPathForChannel).toHaveBeenCalledWith('testContextPath');
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
     expect(SessionService.initialize).toHaveBeenCalledWith(testChannel.hostname, testChannel.mountId);
-    $rootScope.$digest();
 
     expect($state.go).toHaveBeenCalledWith(
       'hippo-cm.channel',
@@ -372,14 +381,13 @@ describe('ChannelService', () => {
     expect(ConfigServiceMock.setContextPathForChannel).not.toHaveBeenCalledWith('/b');
 
     HstService.getChannel.and.callFake(() => $q.resolve(channelB));
-    ChannelService.switchToChannel('/b', channelB.id);
+    ChannelService.loadChannel(channelB.id);
     $rootScope.$digest();
 
     expect(ChannelService.getId()).toEqual(channelB.id);
     expect(ChannelService.getChannel()).toEqual(channelB);
     expect(SessionService.initialize).toHaveBeenCalledWith(channelB.hostname, channelB.mountId);
     expect(ConfigServiceMock.setContextPathForChannel).toHaveBeenCalledWith('/b');
-    expect(CmsService.publish).toHaveBeenCalledWith('switch-channel', channelB.id);
   });
 
   // TODO: add a test where the server returns an error upon the ChannelService's request for channel details.

@@ -19,9 +19,7 @@ class ProjectService {
   constructor(
     $http,
     $q,
-    $window,
     ConfigService,
-    PathService,
     HstService,
     HippoGlobal,
   ) {
@@ -29,63 +27,88 @@ class ProjectService {
 
     this.$http = $http;
     this.$q = $q;
-    this.$window = $window;
 
     this.ConfigService = ConfigService;
-    this.PathService = PathService;
     this.HstService = HstService;
     this.HippoGlobal = HippoGlobal;
-
-    this.listeners = [];
   }
 
-  load(channel, branchId = '') {
-    this.urlPrefix = `${this.ConfigService.getCmsContextPath()}ws/projects/`;
-    this.mountId = channel.mountId;
-    this.branchId = branchId;
+  load(mountId, projectId) {
+    this.selectListeners = [];
+    this.mountId = mountId;
+    this.projectId = projectId;
 
-    if (this.HippoGlobal.Projects && this.HippoGlobal.Projects.events) {
-      this.events = this.HippoGlobal.Projects.events;
-
-      this.events.unsubscribeAll();
-
-      this.events.subscribe('projects-changed', () => {
-        this._getProjects();
-      });
-    }
+    this._setupProjectSync();
 
     return this._setupProjects();
   }
 
-  registerChangeListener(cb) {
-    this.listeners.push(cb);
+  getBaseChannelId(channelId) {
+    const channel = this.channels.find(ch => ch.id === channelId);
+    return channel && channel.branchOf ? channel.branchOf : channelId;
+  }
+
+  registerSelectListener(cb) {
+    this.selectListeners.push(cb);
+  }
+
+  getCurrentProject(mountId = this.mountId) {
+    return this.HstService
+      .doGet(mountId, 'currentbranch')
+      .then(result => result.data);
   }
 
   updateSelectedProject(projectId) {
-    this.listeners.forEach(listener => listener());
     const selectedProject = this.projects.find(project => project.id === projectId);
     const selectionPromise = selectedProject ? this._selectProject(projectId) : this._selectCore();
 
     return selectionPromise.then(() => {
-      this.selectedProject = selectedProject;
+      this.selectListeners.forEach(listener => listener());
     });
   }
 
   _setupProjects() {
     return this
       ._getProjects()
-      .then(() => this.branchId || this._getCurrentProject())
-      .then(projectId => this.updateSelectedProject(projectId));
+      .then(() => this._getChannels())
+      .then(() => {
+        const selectedProject = this.projects.find(project => project.id === this.projectId);
+        this.selectedProject = selectedProject;
+        return this.selectedProject ? this._selectProject(this.selectedProject.id) : this._selectCore();
+      });
   }
 
   _getProjects() {
-    const url = `${this.urlPrefix}${this.mountId}/associated-with-channel`;
+    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.mountId}/associated-with-channel`;
+
     return this.$http
       .get(url)
       .then(result => result.data)
       .then((projects) => {
         this.projects = projects;
       });
+  }
+
+  _getChannels() {
+    const url = `${this.ConfigService.getCmsContextPath()}ws/channels/`;
+
+    return this.$http
+      .get(url)
+      .then(response => response.data)
+      .then((channels) => {
+        this.channels = channels;
+        return channels;
+      });
+  }
+
+  _setupProjectSync() {
+    if (this.HippoGlobal.Projects && this.HippoGlobal.Projects.events) {
+      this.events = this.HippoGlobal.Projects.events;
+
+      this.events.unsubscribeAll();
+
+      this.events.subscribe('project-updated', () => this._getProjects());
+    }
   }
 
   _selectProject(projectId) {
@@ -97,13 +120,6 @@ class ProjectService {
     return this.HstService
       .doPut(null, this.mountId, 'selectmaster');
   }
-
-  _getCurrentProject() {
-    return this.HstService
-      .doGet(this.mountId, 'currentbranch')
-      .then(result => result.data);
-  }
-
 }
 
 export default ProjectService;

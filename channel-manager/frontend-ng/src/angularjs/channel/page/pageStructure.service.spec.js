@@ -331,14 +331,14 @@ describe('PageStructureService', () => {
 
   it('switches channels when the channel id in the page meta-data is the same as the current channel id', () => {
     spyOn(ChannelService, 'getId').and.returnValue('testChannelId');
-    spyOn(ChannelService, 'switchToChannel');
+    spyOn(ChannelService, 'loadChannel');
 
     PageStructureService.registerParsedElement(null, {
       'HST-Type': 'PAGE-META-DATA',
       'HST-Channel-Id': 'testChannelId',
     });
 
-    expect(ChannelService.switchToChannel).not.toHaveBeenCalled();
+    expect(ChannelService.loadChannel).not.toHaveBeenCalled();
   });
 
   it('ignores unknown HST types', () => {

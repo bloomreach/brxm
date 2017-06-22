@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import angular from 'angular';
-import 'angular-mocks';
-
 describe('HippoIframeService', () => {
   let $log;
   let $rootScope;

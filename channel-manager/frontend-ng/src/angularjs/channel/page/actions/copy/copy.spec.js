@@ -98,7 +98,7 @@ describe('PageActionCopy', () => {
     spyOn($log, 'info');
     spyOn(SessionService, 'isCrossChannelPageCopySupported').and.returnValue(true);
     spyOn(ChannelService, 'getPageModifiableChannels').and.returnValue(channels);
-    spyOn(ChannelService, 'switchToChannel').and.returnValue($q.when());
+    spyOn(ChannelService, 'loadChannel').and.returnValue($q.when());
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(ChannelService, 'recordOwnChange');
@@ -305,7 +305,7 @@ describe('PageActionCopy', () => {
     };
     expect(SiteMapService.copy).toHaveBeenCalledWith('siteMapId', headers);
     $rootScope.$digest();
-    expect(ChannelService.switchToChannel).toHaveBeenCalled();
+    expect(ChannelService.loadChannel).toHaveBeenCalled();
     $rootScope.$digest();
     expect(HippoIframeService.load).toHaveBeenCalledWith('/render/path');
     expect(SiteMapService.load).not.toHaveBeenCalled();
@@ -317,7 +317,7 @@ describe('PageActionCopy', () => {
     const PageCopyCtrl = compileDirectiveAndGetController();
 
     SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
-    ChannelService.switchToChannel.and.returnValue($q.reject());
+    ChannelService.loadChannel.and.returnValue($q.reject());
     PageCopyCtrl.channel = channels[2];
     PageCopyCtrl.copy();
     $rootScope.$digest(); // copy-success

@@ -46,6 +46,7 @@
 
       this.iframeToHost.subscribe('channel-changed-in-angular', this._reloadChannels, this);
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
+      this.iframeToHost.subscribe('load-channel', this.loadChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
       this.iframeToHost.subscribe('destroy-component-properties-window', this._destroyComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-path-picker', this._showPathPicker, this);
@@ -64,15 +65,15 @@
 
     loadChannel: function(channelId, initialPath, branchId) {
       this._clearChannel();
+      console.log('joeri: extjs loading channel', channelId);
+      console.log('joeri: extjs loading channel with branch', branchId);
       this._setChannel(channelId).when(function(channelRecord) {
         this.hostToIFrame.publish('load-channel', channelRecord.json, initialPath, branchId);
       }.bind(this));
     },
 
     /**
-     * Called by ChannelEditor.java
-     */
-    killEditor: function(documentId) {
+     * Called by ChannelEditor.java */ killEditor: function(documentId) {
       this.hostToIFrame.publish('kill-editor', documentId);
     },
 

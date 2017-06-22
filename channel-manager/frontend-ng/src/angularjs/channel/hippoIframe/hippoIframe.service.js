@@ -16,20 +16,38 @@
 
 class HippoIframeService {
 
-  constructor($q, $log, ChannelService, CmsService, ScrollService) {
+  constructor(
+    $log,
+    $q,
+    ChannelService,
+    CmsService,
+    ConfigService,
+    ProjectService,
+    ScrollService,
+  ) {
     'ngInject';
 
-    this.$q = $q;
     this.$log = $log;
+    this.$q = $q;
+
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.ConfigService = ConfigService;
+    this.ProjectService = ProjectService;
     this.ScrollService = ScrollService;
+
     CmsService.subscribe('reload-page', () => this.reload());
   }
 
   initialize(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
     this.pageLoaded = false;
+
+    if (this.ConfigService.projectsEnabled) {
+      this.ProjectService.registerSelectListener(() => {
+        this.reload();
+      });
+    }
   }
 
   isPageLoaded() {
