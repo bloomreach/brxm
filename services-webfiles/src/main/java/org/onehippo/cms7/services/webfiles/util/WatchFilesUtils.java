@@ -31,7 +31,7 @@ public class WatchFilesUtils {
     private static final Logger log = LoggerFactory.getLogger(WatchFilesUtils.class);
 
     public static final String PROJECT_BASEDIR_PROPERTY = "project.basedir";
-    public static final String WEB_FILES_LOCATION_IN_MODULE = "src/main/resources/hcm-config";
+    public static final String WEB_FILES_LOCATION_IN_MODULE = "src/main/resources";
 
     public static Path getProjectBaseDir() {
         final String projectBaseDir = System.getProperty(PROJECT_BASEDIR_PROPERTY);
