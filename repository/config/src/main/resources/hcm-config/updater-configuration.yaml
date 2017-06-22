@@ -10,6 +10,7 @@ definitions:
       jcr:lockIsDeep:
         .meta:category: runtime
       /hippo:registry:
+        .meta:residual-child-node-category: content
         jcr:primaryType: hipposys:updaterfolder
       /hippo:queue:
         .meta:residual-child-node-category: runtime

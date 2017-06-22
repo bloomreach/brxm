@@ -11,47 +11,7 @@ definitions:
       hipposys:dryrun: false
       hipposys:parameters: '{ "retainCount": 2, "daysToKeep": 30 }'
       hipposys:query: //element(*, mix:versionable)
-      hipposys:script: "\n/**\r\n * VersionsCleaner is a script that visits document\
-        \ nodes and cleans up the version history.\r\n * It can retain retainCount\
-        \ number and daysToKeep days of latest versions.\r\n * For each node, it checks\
-        \ all its versions: if the age of the version is older\r\n * than the daysToKeep\
-        \ and there are more versions than retainCount, then it deletes the version.\r\
-        \n */\r\n\r\npackage org.hippoecm.frontend.plugins.cms.dev.updater\r\n\r\n\
-        import org.onehippo.repository.update.BaseNodeUpdateVisitor\r\n\r\nimport\
-        \ javax.jcr.Node\r\nimport javax.jcr.version.Version\r\nimport javax.jcr.version.VersionManager\r\
-        \nimport javax.jcr.version.VersionHistory\r\n\r\nimport java.util.ArrayList\r\
-        \nimport java.util.Collections\r\nimport java.util.List\r\n\r\n/**\r\n * Truncates\
-        \ the version history, retaining only the latest\r\n * ${retainCount} versions.\r\
-        \n */\r\nclass VersionsCleaner extends BaseNodeUpdateVisitor {\r\n\r\n  /**\
-        \ The default number of versions to retain.*/\r\n  int defaultRetainCount\
-        \ = 2;\r\n  /** The default number of days to keep versions.*/\r\n  int defaultDaysToKeep\
-        \ = 30;\r\n  \r\n  /** The number of versions to retain. Must be at least\
-        \ 1. */\r\n  int retainCount;\r\n  /** The number of days to keep versions.\
-        \ Must be at least 1 to keep history or 0 in which case only retainCount is\
-        \ used. */\r\n  int daysToKeep;\r\n  \r\n  void initialize(Session session)\
-        \ {\r\n    retainCount = parametersMap.get(\"retainCount\", defaultRetainCount)\r\
-        \n    daysToKeep = parametersMap.get(\"daysToKeep\", defaultDaysToKeep)\r\n\
-        \    if (retainCount < 1) {\r\n      retainCount = 1\r\n    }\r\n    if (daysToKeep\
-        \ < 0) {\r\n      daysToKeep = 0\r\n    }\r\n    log.info \"VersionsCleaner\
-        \ initialized with parameters: { retainCount: ${retainCount}, daysToKeep:\
-        \ ${daysToKeep} }\"\r\n    \r\n  }\r\n  \r\n  boolean doUpdate(Node node)\
-        \ {\r\n    log.debug \"Updating node ${node.path}\"\r\n    \r\n    // gather\
-        \ versions\r\n    List versions = new ArrayList()\r\n    VersionManager versionManager\
-        \ = node.getSession().getWorkspace().getVersionManager()\r\n    Version baseVersion\
-        \ = versionManager.getBaseVersion(node.getPath())\r\n    VersionHistory versionHistory\
-        \ = versionManager.getVersionHistory(node.getPath())\r\n    VersionIterator\
-        \ allVersions = versionHistory.getAllVersions()\r\n    while (allVersions.hasNext())\
-        \ {\r\n      Version version = allVersions.nextVersion()\r\n      Calendar\
-        \ created = version.getCreated();\r\n      Calendar daysOld = Calendar.getInstance();\r\
-        \n      daysOld.add(Calendar.DAY_OF_MONTH, -daysToKeep);\r\n      if (created.before(daysOld))\
-        \ {\r\n        if (!version.getName().equals(\"jcr:rootVersion\")) {\r\n \
-        \         versions.add(version);\r\n        }\r\n      }\r\n    }\r\n    //\
-        \ remove versions\r\n    int removeCount = versions.size() - retainCount\r\
-        \n    boolean remove = removeCount > 0\r\n    if (remove) {\r\n      log.info\
-        \ \"Removing ${removeCount} versions of node ${node.path}\"\r\n    }\r\n \
-        \   while (removeCount > 0) {\r\n      Version version = versions.remove(0);\r\
-        \n      versionHistory.removeVersion(version.getName())\r\n      removeCount--;\r\
-        \n    }\r\n    return remove\r\n  }\r\n  \r\n  boolean undoUpdate(Node node)\
-        \ {\r\n    throw new UnsupportedOperationException('Updater does not implement\
-        \ undoUpdate method')\r\n  }\r\n\r\n}"
+      hipposys:script:
+        type: string
+        resource: /versions-cleaner.groovy
       hipposys:throttle: 1000
