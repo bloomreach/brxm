@@ -98,11 +98,10 @@
       <directory>repository-data/webfiles/src/main/resources</directory>
       <includes>
         <include>**/*.yaml</include>
-        <include>**/*.xml</include>
       </includes>
     </fileSet>
     <fileSet filtered="false" encoding="UTF-8">
-      <directory>repository-data/webfiles/src/main/resources/hcm-config/site</directory>
+      <directory>repository-data/webfiles/src/main/resources/site</directory>
       <includes>
         <include>**/**</include>
       </includes>
