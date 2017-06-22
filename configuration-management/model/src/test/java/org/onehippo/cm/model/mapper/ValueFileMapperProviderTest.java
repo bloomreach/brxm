@@ -18,13 +18,18 @@ package org.onehippo.cm.model.mapper;
 import java.util.List;
 
 import org.junit.Test;
+import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.JcrBinaryValueImpl;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModelTestUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
@@ -33,7 +38,7 @@ import org.onehippo.cm.model.impl.ValueImpl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ValueFileMapperProviderTest {
+public class ValueFileMapperProviderTest extends AbstractBaseTest {
 
 
     private static final String DUMMY_VALUE = "Dummy value";
@@ -42,7 +47,8 @@ public class ValueFileMapperProviderTest {
     public void testLoadPlugins() {
         ValueFileMapperProvider provider = ValueFileMapperProvider.getInstance();
         List<ValueFileMapper> list = provider.valueFileMappers;
-        assertEquals(3, list.size());
+        assertEquals(4, list.size());
+        assertTrue(list.stream().anyMatch(x -> x.getClass().equals(NtFileMapper.class)));
         assertTrue(list.stream().anyMatch(x -> x.getClass().equals(DummyValueFileMapper.class)));
         assertTrue(list.stream().anyMatch(x -> x.getClass().equals(OtherValueFileMapper.class)));
 
@@ -59,13 +65,35 @@ public class ValueFileMapperProviderTest {
         String smartName = provider.generateName(value);
         assertEquals(DUMMY_VALUE, smartName);
     }
+
+    @Test
+    public void testNtFile() throws Exception {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /css:\n" +
+                    "      jcr:primaryType: nt:folder\n" +
+                    "      /bootstrap.css:\n" +
+                    "        jcr:primaryType: nt:file\n" +
+                    "        /jcr:content:\n" +
+                    "          jcr:primaryType: nt:resource\n" +
+                    "          jcr:data:\n" +
+                    "            type: binary\n" +
+                    "            value: !!binary xxxx\n" +
+                    "          jcr:mimeType: text/css";
+        final List<AbstractDefinitionImpl> defs = ModelTestUtils.parseNoSort(yaml);
+        final DefinitionNodeImpl node = ((ContentDefinitionImpl) defs.get(0)).getNode()
+                .resolveNode("bootstrap.css/jcr:content");
+        final DefinitionPropertyImpl property = node.getProperty("jcr:data");
+        assertEquals("/css/bootstrap.css",
+                ValueFileMapperProvider.getInstance().generateName(property.getValue()));
+    }
 }
 
 class DummyValueFileMapper implements ValueFileMapper{
 
     @Override
     public String apply(Value value) {
-        return value.getType() == ValueType.BINARY && value instanceof JcrBinaryValueImpl ? null : value.getString();
+        return (value.getType() != ValueType.STRING)? null : value.getString();
     }
 }
 

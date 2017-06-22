@@ -23,8 +23,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.ModelItem;
@@ -77,6 +79,25 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     @Override
     public DefinitionNodeImpl getNode(final String name) {
         return modifiableNodes.get(name);
+    }
+
+    /**
+     * Get a descendant node by its path relative to this node.
+     * This is conceptually equivalent to JCR's {@link Node#getNode(String)} method.
+     * @param relativePath a slash-separated relative path to a descendant node
+     * @return the node at the given relative path
+     */
+    public DefinitionNodeImpl resolveNode(final String relativePath) {
+        final String[] segments = StringUtils.stripStart(relativePath, "/").split("/");
+
+        DefinitionNodeImpl currentNode = this;
+        for (String segment : segments) {
+            currentNode = currentNode.getNode(segment);
+            if (currentNode == null) {
+                return null;
+            }
+        }
+        return currentNode;
     }
 
     public LinkedHashMap<String, DefinitionNodeImpl> getModifiableNodes() {

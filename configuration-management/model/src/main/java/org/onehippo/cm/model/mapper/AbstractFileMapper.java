@@ -35,6 +35,7 @@ public abstract class AbstractFileMapper implements ValueFileMapper {
     public static final String DOT_SEPARATOR = ".";
 
 
+    // TODO: use a larger mapping from e.g. Apache Tika
     public static Map<String, String> mimeTypesToExtMap = Collections.unmodifiableMap(Stream.of(
             entry("image/jpg", "jpg"),
             entry("image/jpeg", "jpg"),
