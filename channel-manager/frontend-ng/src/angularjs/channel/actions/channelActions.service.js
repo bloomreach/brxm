@@ -50,7 +50,7 @@ class ChannelActionsService extends MenuService {
     this.defineMenu('channel', {
       translationKey: 'TOOLBAR_BUTTON_CHANNEL',
       isIconVisible: () => this._hasAnyChanges(),
-      iconSrc: 'images/attention.svg',
+      iconSvg: 'attention',
     })
     .addAction('settings', {
       translationKey: 'TOOLBAR_MENU_CHANNEL_SETTINGS',

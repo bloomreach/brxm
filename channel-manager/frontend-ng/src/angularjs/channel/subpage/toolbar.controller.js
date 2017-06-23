@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ class SubpageToolbarCtrl {
     'ngInject';
 
     this.ariaLabel = $translate.instant(this.mode === 'cancel' ? 'TOOLBAR_BUTTON_CLOSE' : 'TOOLBAR_BUTTON_BACK');
-    this.icon = (this.mode === 'cancel') ? 'images/close.svg' : 'images/back.svg';
+    this.icon = (this.mode === 'cancel') ? 'close' : 'back';
   }
 }
 

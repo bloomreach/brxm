@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,35 +21,27 @@ class ListingCtrl {
 
   _getDocumentStatusIcon(item) {
     const docState = item.state;
-    let iconPath;
+    let icon;
 
     switch (docState) {
       case 'new':
-        iconPath = 'images/document-status-new.svg';
+        icon = 'document-status-new';
         break;
       case 'changed':
-        iconPath = 'images/document-status-changed.svg';
+        icon = 'document-status-changed';
         break;
       case 'live':
-        iconPath = 'images/document-status-live.svg';
+        icon = 'document-status-live';
         break;
       default:
-        iconPath = 'images/document.svg';
+        icon = 'document';
     }
 
-    return iconPath;
+    return icon;
   }
 
   getItemIcon(item) {
-    let iconPath;
-
-    if (item.type === 'folder') {
-      iconPath = 'images/folder-closed.svg';
-    } else {
-      iconPath = this._getDocumentStatusIcon(item);
-    }
-
-    return iconPath;
+    return item.type === 'folder' ? 'folder-closed' : this._getDocumentStatusIcon(item);
   }
 }
 

@@ -24,7 +24,7 @@ class MenuItem {
     this.isEnabled = config.isEnabled || this.isEnabled;
     this.onClick = config.onClick || this.onClick;
 
-    this.iconSrc = config.iconSrc || undefined;
+    this.iconSvg = config.iconSvg || undefined;
     this.iconName = config.iconName || undefined;
     this.isIconVisible = config.isIconVisible || this.isIconVisible;
   }
@@ -43,12 +43,12 @@ class MenuItem {
     return this.iconName !== undefined && this.iconName !== null;
   }
 
-  hasIconSrc() {
-    return this.iconSrc !== undefined && this.iconSrc !== null;
+  hasIconSvg() {
+    return this.iconSvg !== undefined && this.iconSvg !== null;
   }
 
   isIconVisible() {
-    return this.hasIconName() || this.hasIconSrc();
+    return this.hasIconName() || this.hasIconSvg();
   }
 }
 

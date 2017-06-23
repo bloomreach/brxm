@@ -21,7 +21,7 @@
                ng-click="menu.onClick(); $mdMenu.open()">
       {{ ::menu.translationKey | translate }}
       <md-icon ng-if="menu.hasIconName() && menu.isIconVisible()">{{::menu.iconName}}</md-icon>
-      <md-icon ng-if="menu.hasIconSrc() && menu.isIconVisible()" md-svg-src="{{ ::menu.iconSrc}}"></md-icon>
+      <md-icon ng-if="menu.hasIconSvg() && menu.isIconVisible()" md-svg-icon="{{ ::menu.iconSvg}}"></md-icon>
     </md-button>
     <md-menu-content class="qa-{{ ::menu.name }}-menu {{ ::menu.name }}-menu dropdown-menu-content"
                      width="{{ ::menu.width}}">
@@ -29,7 +29,7 @@
                     ng-repeat-start="item in menu.items track by item.name"
                     ng-if="item.type === 'action' && item.isVisible()">
         <md-icon ng-if="item.hasIconName() && item.isIconVisible()">{{::item.iconName}}</md-icon>
-        <md-icon ng-if="item.hasIconSrc() && item.isIconVisible()" md-svg-src="{{ ::item.iconSrc}}"></md-icon>
+        <md-icon ng-if="item.hasIconSvg() && item.isIconVisible()" md-svg-icon="{{ ::item.iconSvg}}"></md-icon>
         <md-button class="qa-{{ ::menu.name }}-menu-{{ ::item.name }}-action"
                    aria-label="{{ ::item.translationKey | translate }}"
                    ng-disabled="!item.isEnabled()"
