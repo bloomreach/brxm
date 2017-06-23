@@ -90,6 +90,7 @@
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
     <hippo.services.htmlprocessor.version>1.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.configuration.management.version>1.0.0-SNAPSHOT</hippo.configuration.management.version>
 
     <!-- Test dependencies  -->
     <easymock.version>3.4</easymock.version>
@@ -209,6 +210,12 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms7-utilities</artifactId>
         <version>${hippo.utilities.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms</groupId>
+        <artifactId>hippo-configuration-management-api</artifactId>
+        <version>${hippo.configuration.management.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
