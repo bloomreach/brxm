@@ -19,10 +19,6 @@
 
     <!-- console -->
     <Console name="console" target="SYSTEM_OUT">
-      <Filters>
-        <ThresholdFilter level="debug"/>
-        <StringMatchFilter/>
-      </Filters>
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
     </Console>
 

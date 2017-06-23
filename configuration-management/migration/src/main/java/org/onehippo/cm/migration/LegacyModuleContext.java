@@ -37,10 +37,10 @@ public class LegacyModuleContext extends ModuleContext {
 
     @Override
     public void createOutputProviders(Path destinationPath) {
-        Path configModuleBasePath = FileConfigurationUtils.getModuleBasePath(destinationPath, module, multiModule);
+        Path configModuleBasePath = FileConfigurationUtils.getModuleConfigBasePath(destinationPath);
         configOutputProvider = new FileResourceOutputProvider(configModuleBasePath);
 
-        Path contentModuleBasePath = FileConfigurationUtils.getModuleContentBasePath(destinationPath, module, multiModule);
+        Path contentModuleBasePath = FileConfigurationUtils.getModuleContentBasePath(destinationPath);
         contentOutputProvider = new FileResourceOutputProvider(contentModuleBasePath);
     }
 }

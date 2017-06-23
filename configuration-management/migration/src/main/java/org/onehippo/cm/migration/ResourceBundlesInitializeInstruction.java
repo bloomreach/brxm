@@ -18,6 +18,7 @@ package org.onehippo.cm.migration;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 
@@ -40,6 +41,7 @@ public class ResourceBundlesInitializeInstruction extends InitializeInstruction 
 
     public static final String RESOURCEBUNDLES_NT = "hipposys:resourcebundles";
     public static final String RESOURCEBUNDLE_NT = "hipposys:resourcebundle";
+    public static final String ALLOW_DUPLICATE_TRANSLATION_BUNDLES = "allow.duplicate.translation.bundles";
 
     public ResourceBundlesInitializeInstruction(final EsvNode instructionNode, final Type type,
                                                 final InitializeInstruction combinedWith)
@@ -66,10 +68,7 @@ public class ResourceBundlesInitializeInstruction extends InitializeInstruction 
             if (isBundle(localesMap)) {
                 final String bundleName = buildName(path);
                 final String bundlePath = TRANSLATIONS_ROOT + bundleName;
-                if (bundles.contains(bundleName)) {
-                    throw new EsvParseException("Translation bundle name " + bundleName + " in resourcebundle: "
-                            + getResourcePath() + " already defined.");
-                }
+                validateBundleName(bundleName, bundles);
                 final ConfigDefinitionImpl def = ((ConfigSourceImpl)source).addConfigDefinition();
                 final DefinitionNodeImpl bundleNode = new DefinitionNodeImpl(bundlePath, path.peek(), def);
                 def.setNode(bundleNode);
@@ -97,6 +96,14 @@ public class ResourceBundlesInitializeInstruction extends InitializeInstruction 
                 parse(localesMap, path, source, resourceBundleParents, bundles);
             }
             path.pop();
+        }
+    }
+
+    private void validateBundleName(final String bundleName, final Set<String> bundles) throws EsvParseException {
+
+        if (bundles.contains(bundleName) && !Objects.equals(System.getProperty(ALLOW_DUPLICATE_TRANSLATION_BUNDLES), "true") ) {
+                    throw new EsvParseException("Translation bundle name " + bundleName + " in resourcebundle: "
+                            + getResourcePath() + " already defined.");
         }
     }
 

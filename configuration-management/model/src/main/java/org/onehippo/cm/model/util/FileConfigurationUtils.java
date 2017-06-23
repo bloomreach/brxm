@@ -33,38 +33,29 @@ import static org.onehippo.cm.model.Constants.FILE_NAME_SEQ_PREFIX;
 
 public class FileConfigurationUtils {
 
-    public static Path getModuleBasePath(final Path moduleDescriptorPath, final Module module, final boolean configHasMultipleModules) {
-        final Project project = module.getProject();
-        final Group group = project.getGroup();
-        //TODO SS: review this if it still needed for initial esv conversion
-        if (Files.isDirectory(moduleDescriptorPath)) {
-            if (configHasMultipleModules) {
-                return moduleDescriptorPath.resolve(Constants.HCM_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
-            } else {
-                return moduleDescriptorPath.resolve(Constants.HCM_CONFIG_FOLDER);
-            }
-        }
-        if (configHasMultipleModules) {
-            return moduleDescriptorPath.resolveSibling(Constants.HCM_CONFIG_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
-        } else {
+    /**
+     * Resolves the location of module's hcm-config folder
+     * @param moduleDescriptorPath
+     * @return
+     */
+    public static Path getModuleConfigBasePath(final Path moduleDescriptorPath) {
+        if (Files.isRegularFile(moduleDescriptorPath)) {
             return moduleDescriptorPath.resolveSibling(Constants.HCM_CONFIG_FOLDER);
+        } else {
+            return moduleDescriptorPath.resolve(Constants.HCM_CONFIG_FOLDER);
         }
     }
 
-    public static Path getModuleContentBasePath(final Path moduleDescriptorPath, final Module module, final boolean configHasMultipleModules) {
-        final Project project = module.getProject();
-        final Group group = project.getGroup();
-        if (Files.isDirectory(moduleDescriptorPath)) {
-            if (configHasMultipleModules) {
-                return moduleDescriptorPath.resolve(Constants.HCM_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
-            } else {
-                return moduleDescriptorPath.resolve(Constants.HCM_CONTENT_FOLDER);
-            }
-        }
-        if (configHasMultipleModules) {
-            return moduleDescriptorPath.resolveSibling(Constants.HCM_CONTENT_FOLDER).resolve(group.getName()).resolve(project.getName()).resolve(module.getName());
-        } else {
+    /**
+     * Resolves the location of module's hcm-content folder
+     * @param moduleDescriptorPath
+     * @return
+     */
+    public static Path getModuleContentBasePath(final Path moduleDescriptorPath) {
+        if (Files.isRegularFile(moduleDescriptorPath)) {
             return moduleDescriptorPath.resolveSibling(Constants.HCM_CONTENT_FOLDER);
+        } else {
+            return moduleDescriptorPath.resolve(Constants.HCM_CONTENT_FOLDER);
         }
     }
 
@@ -82,9 +73,11 @@ public class FileConfigurationUtils {
 
     /**
      * Use a simple numbering convention to generate a unique path given a candidate path and a test of uniqueness.
-     * @param candidate a path that might be used directly, if it is already unique, or modified to create a unique path
+     *
+     * @param candidate   a path that might be used directly, if it is already unique, or modified to create a unique
+     *                    path
      * @param isNotUnique a test of uniqueness for a proposed path
-     * @param sequence the number of the current attempt, used for loop control -- callers typically pass 0
+     * @param sequence    the number of the current attempt, used for loop control -- callers typically pass 0
      * @return a path, based on candidate, that is unique according to isNotUnique
      */
     public static String generateUniquePath(String candidate, Predicate<String> isNotUnique, int sequence) {

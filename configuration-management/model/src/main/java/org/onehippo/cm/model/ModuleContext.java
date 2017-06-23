@@ -85,7 +85,7 @@ public class ModuleContext {
      */
     public Path getConfigRoot() {
         if (configRootPath == null) {
-            configRootPath = FileConfigurationUtils.getModuleBasePath(moduleDescriptorPath, module, multiModule);
+            configRootPath = FileConfigurationUtils.getModuleConfigBasePath(moduleDescriptorPath);
         }
         return configRootPath;
     }
@@ -95,7 +95,7 @@ public class ModuleContext {
      */
     public Path getContentRoot() {
         if (contentRootPath == null) {
-            contentRootPath = FileConfigurationUtils.getModuleContentBasePath(moduleDescriptorPath, module, multiModule);
+            contentRootPath = FileConfigurationUtils.getModuleContentBasePath(moduleDescriptorPath);
         }
         return contentRootPath;
     }
@@ -126,10 +126,10 @@ public class ModuleContext {
      * @param destinationPath the path to the module descriptor file
      */
     public void createOutputProviders(Path destinationPath) {
-        Path configModuleBasePath = FileConfigurationUtils.getModuleBasePath(destinationPath, module, multiModule);
+        Path configModuleBasePath = FileConfigurationUtils.getModuleConfigBasePath(destinationPath);
         configOutputProvider = new FileResourceOutputProvider(configModuleBasePath);
 
-        Path contentModuleBasePath = FileConfigurationUtils.getModuleContentBasePath(destinationPath, module, multiModule);
+        Path contentModuleBasePath = FileConfigurationUtils.getModuleContentBasePath(destinationPath);
         contentOutputProvider = new FileResourceOutputProvider(contentModuleBasePath);
     }
 
