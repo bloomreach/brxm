@@ -100,7 +100,7 @@ class RightSidePanelCtrl {
     SidePanelService.initialize('right', $element.find('.right-side-panel'), (documentId) => {
       this.openDocument(documentId);
       this._onOpen();
-    }, () => this._confirmSaveOrDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE'));
+    });
 
     // Prevent the default closing action bound to the escape key by Angular Material.
     // We should show the "unsaved changes" dialog first.
@@ -123,12 +123,8 @@ class RightSidePanelCtrl {
   }
 
   openDocument(documentId) {
-    this._dealWithPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE', () => {
-      this._deleteDraft().finally(() => {
-        this._resetState();
-        this._loadDocument(documentId);
-      });
-    });
+    this._resetState();
+    this._loadDocument(documentId);
   }
 
   _resetState() {
@@ -299,7 +295,11 @@ class RightSidePanelCtrl {
       });
   }
 
-  openContentEditor(mode) {
+  openContentEditor(mode, isPromptUnsavedChanges = true) {
+    if (!isPromptUnsavedChanges) {
+      this._closePanelAndOpenContent(mode);
+      return;
+    }
     const messageKey = mode === 'view'
       ? 'SAVE_CHANGES_ON_PUBLISH_MESSAGE'
       : 'SAVE_CHANGES_ON_SWITCH_TO_CONTENT_EDITOR_MESSAGE';

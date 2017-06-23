@@ -240,9 +240,7 @@ class ChannelActionsService extends MenuService {
 
   // Channel
   _closeChannel() {
-    this.SidePanelService.panels.right.onCloseCallback().then(() => {
-      this.CmsService.publish('close-channel');
-    });
+    this.CmsService.publish('close-channel');
   }
 }
 

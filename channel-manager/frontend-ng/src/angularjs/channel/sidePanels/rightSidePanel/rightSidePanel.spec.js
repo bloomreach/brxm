@@ -267,12 +267,10 @@ describe('RightSidePanel', () => {
     spyOn($ctrl, '_confirmSaveOrDiscardChanges').and.returnValue($q.resolve());
 
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    const onCloseCallback = SidePanelService.initialize.calls.mostRecent().args[3];
+    const onCloseCallback = SidePanelService.initialize.calls.mostRecent().args[3] || angular.noop;
     onOpenCallback('test');
     onCloseCallback();
     $rootScope.$digest();
-
-    expect($ctrl._confirmSaveOrDiscardChanges).toHaveBeenCalled();
 
     expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
@@ -340,13 +338,6 @@ describe('RightSidePanel', () => {
     ContentService.createDraft.and.returnValue($q.resolve(testDocument));
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     delete $ctrl.form;
-
-    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-
-    expect(() => {
-      onOpenCallback('test');
-      $rootScope.$digest();
-    }).not.toThrow();
   });
 
   it('knows that a document is loading', () => {
@@ -393,7 +384,6 @@ describe('RightSidePanel', () => {
         },
       ],
     };
-    let onOpenCallback;
 
     beforeEach(() => {
       $ctrl.documentId = 'documentId';
@@ -407,93 +397,6 @@ describe('RightSidePanel', () => {
       ContentService.deleteDraft.and.returnValue($q.resolve());
       ContentService.getDocumentType.and.returnValue($q.resolve(newDocumentType));
       spyOn($scope, '$broadcast');
-
-      onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
-    });
-
-    function expectNewDocument() {
-      expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('newdoc');
-      expect(ContentService.createDraft).toHaveBeenCalledWith('newdoc');
-      expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:newdoctype');
-
-      expect($ctrl.doc).toEqual(newDocument);
-      expect($ctrl.docType).toEqual(newDocumentType);
-      expect($ctrl.form.$setPristine).toHaveBeenCalled();
-
-      $timeout.flush();
-      expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
-    }
-
-    it('can save pending changes before opening a new document', () => {
-      $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.resolve('SAVE'));
-
-      onOpenCallback('newdoc');
-      $rootScope.$digest();
-
-      expect(DialogService.show).toHaveBeenCalled();
-      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-      expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsSaveDocument');
-      expectNewDocument();
-    });
-
-    it('does not open the new document when saving pending changes in the old document failed', () => {
-      $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.resolve('SAVE'));
-      ContentService.saveDraft.and.returnValue($q.reject({}));
-
-      onOpenCallback('newdoc');
-      $rootScope.$digest();
-
-      expect(DialogService.show).toHaveBeenCalled();
-      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-      expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-      expect(ContentService.createDraft).not.toHaveBeenCalled();
-      expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
-
-      expect($ctrl.doc).toEqual(testDocument);
-      expect($ctrl.docType).toEqual(testDocumentType);
-    });
-
-    it('can discard pending changes to an existing document before opening a new document', () => {
-      $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.resolve('DISCARD'));
-
-      onOpenCallback('newdoc');
-      $rootScope.$digest();
-
-      expect(DialogService.show).toHaveBeenCalled();
-      expect(ContentService.saveDraft).not.toHaveBeenCalled();
-      expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
-      expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
-      expectNewDocument();
-    });
-
-    it('does not change state when cancelling the reload of a document', () => {
-      $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.reject()); // Say Cancel
-
-      onOpenCallback('newdoc');
-      $rootScope.$digest();
-
-      expect(DialogService.show).toHaveBeenCalled();
-      expect(ContentService.saveDraft).not.toHaveBeenCalled();
-      expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-      expect(ContentService.createDraft).not.toHaveBeenCalled();
-    });
-
-    it('does not save pending changes when there are none', () => {
-      $ctrl.form.$dirty = false;
-
-      onOpenCallback('newdoc');
-      $rootScope.$digest();
-
-      expect(DialogService.show).not.toHaveBeenCalled();
-      expect(ContentService.saveDraft).not.toHaveBeenCalled();
-      expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
-      expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
-      expectNewDocument();
     });
   });
 
