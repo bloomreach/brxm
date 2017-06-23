@@ -196,12 +196,12 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     final Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                     final Node unpublished = getVariant(handle, UNPUBLISHED);
                     final Session jcrSession = UserSession.get().getJcrSession();
-                    final Map<String, Node> referenced = WorkflowUtils.getReferencesToUnpublishedDocuments(unpublished,
-                                                                                                           jcrSession);
+                    final Map<String, Node> referencesToUnpublishedDocuments = WorkflowUtils.getReferencesToUnpublishedDocuments(
+                            unpublished, jcrSession);
 
-                    if (!referenced.isEmpty()) {
+                    if (!referencesToUnpublishedDocuments.isEmpty()) {
                         return new UnpublishedReferencesDialog(publishAction,
-                                new UnpublishedReferenceNodeProvider(referenced),
+                                new UnpublishedReferenceNodeProvider(referencesToUnpublishedDocuments),
                                 getEditorManager());
                     }
                 } catch (final RepositoryException e) {
@@ -226,11 +226,11 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     final Node handle = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                     final Node unpublished = getVariant(handle, UNPUBLISHED);
                     final Session jcrSession = UserSession.get().getJcrSession();
-                    final Map<String, Node> referenced = WorkflowUtils.getReferencesToUnpublishedDocuments(unpublished,
-                                                                                                           jcrSession);
+                    final Map<String, Node> referencesToUnpublishedDocuments = WorkflowUtils.getReferencesToUnpublishedDocuments(
+                            unpublished, jcrSession);
 
-                    if (!referenced.isEmpty()) {
-                        final UnpublishedReferenceNodeProvider provider = new UnpublishedReferenceNodeProvider(referenced);
+                    if (!referencesToUnpublishedDocuments.isEmpty()) {
+                        final UnpublishedReferenceNodeProvider provider = new UnpublishedReferenceNodeProvider(referencesToUnpublishedDocuments);
                         return new UnpublishedReferencesDialog(this, provider, getEditorManager());
                     }
                 } catch (final RepositoryException e) {
