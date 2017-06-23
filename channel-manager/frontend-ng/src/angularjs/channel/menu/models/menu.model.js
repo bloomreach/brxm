@@ -32,7 +32,7 @@ class Menu extends MenuItem {
   hasIcons() {
     return this.items
         .filter(item => item.type === 'action')
-        .some(item => item.hasIconSrc() || item.hasIconName());
+        .some(item => item.hasIconSvg() || item.hasIconName());
   }
 }
 

@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@
                   }"
                   scroll-to-if="listing.selectedDocument === item"
                   ng-click="listing.selectDocument(item)">
-      <md-icon md-svg-src="{{ listing.getItemIcon(item) }}"></md-icon>
+      <md-icon md-svg-icon="{{ listing.getItemIcon(item) }}"></md-icon>
       <p>{{item.displayName}}</p>
     </md-list-item>
   </md-list>

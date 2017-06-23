@@ -60,7 +60,7 @@ describe('Menu model', () => {
     delete action.iconName;
     expect(menu.hasIcons()).toBe(false);
 
-    action.iconSrc = 'iconSrc';
+    action.iconSvg = 'iconSvg';
     expect(menu.hasIcons()).toBe(true);
   });
 });

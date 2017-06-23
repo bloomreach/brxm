@@ -35,22 +35,22 @@ class ViewportToggleCtrl {
     this.viewports = [
       {
         id: 'ANY_DEVICE',
-        icon: 'images/any-device.svg',
+        icon: 'any-device',
         width: 0,
       },
       {
         id: 'DESKTOP',
-        icon: 'images/desktop.svg',
+        icon: 'desktop',
         width: viewportMap.desktop ? viewportMap.desktop : 1280,
       },
       {
         id: 'TABLET',
-        icon: 'images/tablet.svg',
+        icon: 'tablet',
         width: viewportMap.tablet ? viewportMap.tablet : 720,
       },
       {
         id: 'PHONE',
-        icon: 'images/phone.svg',
+        icon: 'phone',
         width: viewportMap.phone ? viewportMap.phone : 320,
       },
     ];

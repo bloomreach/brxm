@@ -24,7 +24,7 @@ const modeToggleComponent = {
   bindings: {
     state: '=',
     iconName: '@?',
-    iconSrc: '@?',
+    iconSvg: '@?',
     tooltip: '@?',
     isConfigurationLocked: '<',
   },

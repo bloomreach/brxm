@@ -71,7 +71,7 @@ describe('MenuItem model', () => {
   it('has no icons by default', () => {
     const item = new MenuItem('test-menu-item');
     expect(item.hasIconName()).toBe(false);
-    expect(item.hasIconSrc()).toBe(false);
+    expect(item.hasIconSvg()).toBe(false);
     expect(item.isIconVisible()).toBe(false);
   });
 
@@ -81,10 +81,10 @@ describe('MenuItem model', () => {
     expect(item.iconName).toBe('icon1');
   });
 
-  it('can have an icon src', () => {
-    const item = new MenuItem('test-menu-item', { iconSrc: 'icon1' });
-    expect(item.hasIconSrc()).toBe(true);
-    expect(item.iconSrc).toBe('icon1');
+  it('can have an SVG icon', () => {
+    const item = new MenuItem('test-menu-item', { iconSvg: 'icon1' });
+    expect(item.hasIconSvg()).toBe(true);
+    expect(item.iconSvg).toBe('icon1');
   });
 
   it('icons are visible by default', () => {
@@ -94,7 +94,7 @@ describe('MenuItem model', () => {
     const item1 = new MenuItem('test-menu-item', { iconName: 'icon1' });
     expect(item1.isIconVisible()).toBe(true);
 
-    const item2 = new MenuItem('test-menu-item', { iconSrc: 'icon1' });
+    const item2 = new MenuItem('test-menu-item', { iconSvg: 'icon1' });
     expect(item2.isIconVisible()).toBe(true);
   });
 });

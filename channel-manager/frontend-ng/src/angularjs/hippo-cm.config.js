@@ -16,7 +16,14 @@
 
 import template from './hippo-cm.html';
 
-function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $translateProvider, $compileProvider) {
+function config(
+  $compileProvider,
+  $mdIconProvider,
+  $mdThemingProvider,
+  $stateProvider,
+  $translateProvider,
+  $urlRouterProvider,
+) {
   'ngInject';
 
   $urlRouterProvider.otherwise('/');
@@ -130,6 +137,33 @@ function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $transla
     .accentPalette('hippo-orange')
     .warnPalette('hippo-red')
     .backgroundPalette('hippo-grey');
+
+  const HippoGlobal = window.parent.Hippo || {};
+  const antiCache = HippoGlobal.antiCache ?
+        `?antiCache=${window.top.Hippo.antiCache}` : '';
+
+  $mdIconProvider
+    .icon('any-device', `images/any-device.svg${antiCache}`)
+    .icon('attention', `images/attention.svg${antiCache}`)
+    .icon('back', `images/back.svg${antiCache}`)
+    .icon('close', `images/close.svg${antiCache}`)
+    .icon('desktop', `images/desktop.svg${antiCache}`)
+    .icon('document-status-changed', `images/document-status-changed.svg${antiCache}`)
+    .icon('document-status-live', `images/document-status-live.svg${antiCache}`)
+    .icon('document-status-new', `images/document-status-new.svg${antiCache}`)
+    .icon('document', `images/document.svg${antiCache}`)
+    .icon('folder-closed', `images/folder-closed.svg${antiCache}`)
+    .icon('folder-open', `images/folder-open.svg${antiCache}`)
+    .icon('left-side-panel-arrow-left', `images/left-side-panel-arrow-left.svg${antiCache}`)
+    .icon('left-side-panel-arrow-right', `images/left-side-panel-arrow-right.svg${antiCache}`)
+    .icon('maximize-sidepanel', `images/maximize-sidepanel.svg${antiCache}`)
+    .icon('phone', `images/phone.svg${antiCache}`)
+    .icon('publish', `images/publish.svg${antiCache}`)
+    .icon('resize-handle', `images/resize-handle.svg${antiCache}`)
+    .icon('switch-to-content-editor', `images/switch-to-content-editor.svg${antiCache}`)
+    .icon('tablet', `images/tablet.svg${antiCache}`)
+    .icon('toggle_components_overlay', `images/toggle_components_overlay.svg${antiCache}`)
+    .icon('un-maximize-sidepanel', `images/un-maximize-sidepanel.svg${antiCache}`);
 
   // only enable Angular debug information when the CMS runs in 'Wicket development mode'
   const devMode = angular.element(window.parent.document.documentElement).hasClass('wicket-development-mode');
