@@ -158,9 +158,19 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
     @Test(expected = ItemExistsException.class)
     public void append_existing_content() throws Exception {
         applyAndSaveDefinitions(new String[]{source1});
+
         try (Log4jInterceptor ignored = Log4jInterceptor.onWarn().deny(JcrContentProcessor.class).build()) {
             JcrContentProcessorTest.this.applyAndSaveDefinitions(new String[]{source1_reload}, ActionType.APPEND);
         };
+    }
+
+    @Test
+    public void ignore_append_existing_content() throws Exception {
+        applyAndSaveDefinitions(new String[]{source1});
+
+        System.setProperty(Constants.SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_CONFLICT, "true");
+        JcrContentProcessorTest.this.applyAndSaveDefinitions(new String[]{source1_reload}, ActionType.APPEND);
+        System.setProperty(Constants.SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_CONFLICT, "false");
     }
 
     @Test(expected = PathNotFoundException.class)

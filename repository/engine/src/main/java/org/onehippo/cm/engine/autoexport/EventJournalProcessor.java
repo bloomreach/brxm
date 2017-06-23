@@ -68,6 +68,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
+import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_LAST_REVISION_PROPERTY_NAME;
 
 public class EventJournalProcessor {
 
@@ -77,6 +78,7 @@ public class EventJournalProcessor {
             "/hippo:log",
             "/content/attic",
             "/formdata",
+            "/webfiles",
             "/hippo:configuration/hippo:update/hippo:queue",
             "/hippo:configuration/hippo:update/hippo:history",
             "/hippo:configuration/hippo:update/jcr:",
@@ -177,17 +179,19 @@ public class EventJournalProcessor {
             throws RepositoryException {
         this.configurationService = configurationService;
         this.configuration = configuration;
+        nodeTypeRegistryLastModifiedPropertyPath = configuration.getModuleConfigPath()
+                + "/" + Constants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME;
+        lastRevisionPropertyPath = configuration.getModuleConfigPath()
+                + "/" + CONFIG_LAST_REVISION_PROPERTY_NAME;
         PathsMap ignoredEventPaths = new PathsMap(builtinIgnoredEventPaths);
         ignoredEventPaths.addAll(extraIgnoredEventPaths);
+        ignoredEventPaths.add(nodeTypeRegistryLastModifiedPropertyPath);
+        ignoredEventPaths.add(lastRevisionPropertyPath);
         configuration.addIgnoredPaths(ignoredEventPaths);
 
         final Session moduleSession = configuration.getModuleSession();
         eventProcessorSession =
                 moduleSession.impersonate(new SimpleCredentials(moduleSession.getUserID(), "".toCharArray()));
-        nodeTypeRegistryLastModifiedPropertyPath = configuration.getModuleConfigPath()
-                + "/" + Constants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME;
-        lastRevisionPropertyPath = configuration.getModuleConfigPath()
-                + "/" + Constants.CONFIG_LAST_REVISION_PROPERTY_NAME;
     }
 
     public void start() {

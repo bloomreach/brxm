@@ -60,4 +60,7 @@ public final class Constants {
     public static final String HCM_CONTENT_NODE_PATH = HCM_ROOT_PATH + "/" + NT_HCM_CONTENT;
 
     public static final String PRODUCT_GROUP_NAME = "hippo-cms";
+
+    public static final String SYSTEM_PARAMETER_REPO_BOOTSTRAP = "repo.bootstrap";
+    public static final String SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_CONFLICT = "repo.bootstrap.ignore.content.conflict";
 }

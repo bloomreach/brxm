@@ -28,8 +28,8 @@ public final class Constants {
     private Constants() {
     }
 
-    public static final String SYSTEM_ALLOWED_PROPERTY_NAME = "repo.autoexport.allowed";
-    public static final String SYSTEM_ENABLED_PROPERTY_NAME = "repo.autoexport.enabled";
+    public static final String SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED = "repo.autoexport.allowed";
+    public static final String SYSTEM_PROPERTy_AUTOEXPORT_ENABLED = "repo.autoexport.enabled";
     public static final String SERVICE_CONFIG_PATH = "/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig";
     public static final String CONFIG_ENABLED_PROPERTY_NAME = "autoexport:enabled";
     public static final String CONFIG_MODULES_PROPERTY_NAME = "autoexport:modules";
@@ -40,7 +40,7 @@ public final class Constants {
 
     public static final String DEFAULT_MAIN_CONFIG_FILE = "main.yaml";
 
-    public static final String LOGGER_NAME = "org.onehippo.cms.autoexport";
+    public static final String LOGGER_NAME = "org.onehippo.cms7.autoexport";
 
     private static final Map<Integer, String> eventTypeMap =
             Collections.unmodifiableMap(

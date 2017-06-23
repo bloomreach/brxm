@@ -186,7 +186,7 @@ public class Configuration {
 
     public synchronized boolean isEnabled() {
         if (enabled == null) {
-            if ("false".equals(System.getProperty(Constants.SYSTEM_ENABLED_PROPERTY_NAME))) {
+            if ("false".equals(System.getProperty(Constants.SYSTEM_PROPERTy_AUTOEXPORT_ENABLED))) {
                 enabled = false;
             } else {
                 try {

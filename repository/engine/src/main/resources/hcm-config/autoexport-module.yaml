@@ -7,7 +7,10 @@ definitions:
         autoexport:enabled: true
         autoexport:modules: ['content:/']
         autoexport:excluded: ['/hst:hst/hst:configurations/*-preview', '/hst:hst/hst:configurations/*-preview/**',
-          '/hst:hst/hst:configurations/*-v*', '/hst:hst/hst:configurations/*-v*/**',
-          '/hst:hst/hst:sites/*/hst:version',
-          /webfiles/**, '/**/hippo:lockExpirationTime', '/hippo:configuration/hippo:modules/broadcast/**']
+          '/hst:hst/hst:configurations/*-v*', '/hst:hst/hst:configurations/*-v*/**', '/hst:hst/hst:sites/*/hst:version',
+          '/**/hippo:lockExpirationTime', '/**/jcr:lockOwner', '/**/jcr:lockIsDeep']
         autoexport:filteruuidpaths: ['/hst:hst']
+        autoexport:lastrevision:
+          .meta:category: runtime
+        autoexport:ntrlastmodified:
+          .meta:category: runtime

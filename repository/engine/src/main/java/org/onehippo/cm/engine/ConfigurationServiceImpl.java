@@ -31,6 +31,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
@@ -67,7 +68,10 @@ import static org.onehippo.cm.engine.Constants.HCM_ROOT_PATH;
 import static org.onehippo.cm.engine.Constants.HIPPO_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HIPPO_PREFIX;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
+import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_BOOTSTRAP;
+import static org.onehippo.cm.engine.autoexport.Constants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
+import static org.onehippo.cm.model.Constants.PROJECT_BASEDIR_PROPERTY;
 import static org.onehippo.cm.model.impl.ConfigurationModelImpl.mergeWithSourceModules;
 
 public class ConfigurationServiceImpl implements InternalConfigurationService {
@@ -108,12 +112,14 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         ensureInitialized();
         lockManager.lock();
         try {
-            final boolean fullConfigure = "full".equalsIgnoreCase(System.getProperty("repo.bootstrap", "false"));
-            final boolean configure = fullConfigure || Boolean.getBoolean("repo.bootstrap");
             final boolean first = isNew();
+            final boolean fullConfigure =
+                    first || "full".equalsIgnoreCase(System.getProperty(SYSTEM_PARAMETER_REPO_BOOTSTRAP, "false"));
+            final boolean configure = fullConfigure || Boolean.getBoolean(SYSTEM_PARAMETER_REPO_BOOTSTRAP);
             final boolean mustConfigure = first || configure;
             final boolean verify = Boolean.getBoolean("repo.bootstrap.verify");
-            final boolean autoExportAllowed = Boolean.getBoolean(org.onehippo.cm.engine.autoexport.Constants.SYSTEM_ALLOWED_PROPERTY_NAME);
+            final boolean isPojectBaseDirSet = !StringUtils.isBlank(System.getProperty(PROJECT_BASEDIR_PROPERTY));
+            final boolean autoExportAllowed = isPojectBaseDirSet && Boolean.getBoolean(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED);
 
             baselineModel = loadBaselineModel();
             ConfigurationModelImpl bootstrapModel = null;
@@ -233,6 +239,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     @Override
     public ConfigurationModelImpl getRuntimeConfigurationModel() {
         return runtimeConfigurationModel;
+    }
+
+    @Override
+    public boolean isAutoExportAvailable() {
+        return autoExportService != null;
     }
 
     /** INTERNAL USAGE ONLY **/
