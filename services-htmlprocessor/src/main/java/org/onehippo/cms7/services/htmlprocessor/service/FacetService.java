@@ -23,7 +23,9 @@ import java.util.Objects;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.htmlprocessor.util.FacetUtil;
+import org.onehippo.cms7.services.htmlprocessor.util.JcrUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,8 +70,8 @@ public class FacetService {
 
         try {
             return FacetUtil.createFacet(node, uuid);
-        } catch (final RepositoryException e) {
-            log.error("Failed to create facet for node with id {}", uuid, e);
+        } catch (final RepositoryException ignore) {
+            log.warn("Failed to create facet for node with id {} for node {}.", uuid, JcrUtils.getNodePathQuietly(node));
         }
         return null;
     }
