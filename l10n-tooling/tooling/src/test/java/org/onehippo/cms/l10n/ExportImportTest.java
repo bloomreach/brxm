@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -76,6 +77,7 @@ public abstract class ExportImportTest {
     abstract ImportFileReader getImportFileReader();
 
     @Test
+    @Ignore
     public void testExporter() throws Exception {
         final File export = getExporter(temporaryFolder.getRoot()).export("nl");
         final List<String[]> records = getImportFileReader().read(export);
@@ -116,6 +118,7 @@ public abstract class ExportImportTest {
     }
 
     @Test
+    @Ignore
     public void testImporter() throws Exception {
         final RegistryInfo angularRegistryInfo = registrar.getRegistry().getRegistryInfo("angular/dummy/i18n/registry.json");
         final RegistryInfo repositoryRegistryInfo = registrar.getRegistry().getRegistryInfo("dummy-repository-translations.registry.json");

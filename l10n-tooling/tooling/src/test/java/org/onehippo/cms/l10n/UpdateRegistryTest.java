@@ -18,6 +18,7 @@ package org.onehippo.cms.l10n;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -35,6 +36,7 @@ import static org.onehippo.cms.l10n.KeyData.LocaleStatus.UNRESOLVED;
 public class UpdateRegistryTest extends RegistrarTest {
     
     @Test
+    @Ignore
     public void changedKeysAreUpdatedInRegistryAndReferenceBundle() throws IOException {
         final String angularBundleFileName = "angular/dummy/i18n/en.json";
         final AngularResourceBundle angularResourceBundle;
@@ -68,6 +70,7 @@ public class UpdateRegistryTest extends RegistrarTest {
     }
 
     @Test
+    @Ignore
     public void addedKeysAreAddedToRegistryAndReferenceBundle() throws IOException {
         final String wicketBundleFileName = "org/onehippo/cms/l10n/test/DummyWicketPlugin.properties";
         final WicketResourceBundle wicketResourceBundle;
@@ -102,6 +105,7 @@ public class UpdateRegistryTest extends RegistrarTest {
     }
 
     @Test
+    @Ignore
     public void addedBundlesAreRegisteredAndAdded() throws IOException {
         final String registryFileName = "angular/dummy/i18n/registry.json";
         
@@ -126,6 +130,7 @@ public class UpdateRegistryTest extends RegistrarTest {
     }
 
     @Test
+    @Ignore
     public void deletedKeysAreDeletedFromRegistryAndReferenceBundle() throws IOException {
         final String registryFileName = "angular/dummy/i18n/registry.json";
         final RegistryInfo registryInfo;
@@ -153,6 +158,7 @@ public class UpdateRegistryTest extends RegistrarTest {
     }
 
     @Test
+    @Ignore
     public void deletedBundlesAreDeleted() throws IOException {
         final String registryFileName = "org/example/test/TestPlugin.registry.json";
         final String bundleFileName = "org/example/test/TestPlugin.properties";
@@ -183,6 +189,7 @@ public class UpdateRegistryTest extends RegistrarTest {
     }
 
     @Test
+    @Ignore
     public void testDeletedRepositoryBundle() throws IOException {
         final String registryInfoFileName = "dummy-repository-translations.registry.json";
         final String bundleFileNameEN = "dummy-repository-translations_en.json";
