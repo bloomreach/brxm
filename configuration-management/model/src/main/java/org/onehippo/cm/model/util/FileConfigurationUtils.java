@@ -18,7 +18,6 @@ package org.onehippo.cm.model.util;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +27,9 @@ import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.Project;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.impl.GroupImpl;
-import org.onehippo.cm.model.serializer.ResourceNameResolverImpl;
+
+import static org.onehippo.cm.model.Constants.FILE_NAME_EXT_SEPARATOR;
+import static org.onehippo.cm.model.Constants.FILE_NAME_SEQ_PREFIX;
 
 public class FileConfigurationUtils {
 
@@ -88,10 +89,10 @@ public class FileConfigurationUtils {
      */
     public static String generateUniquePath(String candidate, Predicate<String> isNotUnique, int sequence) {
 
-        String name = StringUtils.substringBeforeLast(candidate, ResourceNameResolverImpl.SEPARATOR);
-        String extension = StringUtils.substringAfterLast(candidate, ResourceNameResolverImpl.SEPARATOR);
+        String name = StringUtils.substringBeforeLast(candidate, FILE_NAME_EXT_SEPARATOR);
+        String extension = StringUtils.substringAfterLast(candidate, FILE_NAME_EXT_SEPARATOR);
 
-        final String newName = name + calculateNameSuffix(sequence) + (!StringUtils.isEmpty(extension) ? ResourceNameResolverImpl.SEPARATOR + extension : StringUtils.EMPTY);
+        final String newName = name + calculateNameSuffix(sequence) + (!StringUtils.isEmpty(extension) ? FILE_NAME_EXT_SEPARATOR + extension : StringUtils.EMPTY);
         return isNotUnique.test(newName) ? generateUniquePath(candidate, isNotUnique, sequence + 1) : newName;
     }
 
@@ -99,6 +100,6 @@ public class FileConfigurationUtils {
      * Helper for {@link #generateUniquePath(String, Predicate, int)}.
      */
     private static String calculateNameSuffix(int sequence) {
-        return sequence == 0 ? StringUtils.EMPTY : ResourceNameResolverImpl.SEQ_PREFIX + Integer.toString(sequence);
+        return sequence == 0 ? StringUtils.EMPTY : FILE_NAME_SEQ_PREFIX + Integer.toString(sequence);
     }
 }

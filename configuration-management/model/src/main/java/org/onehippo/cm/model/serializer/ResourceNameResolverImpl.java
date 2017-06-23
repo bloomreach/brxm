@@ -25,6 +25,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.util.FileConfigurationUtils;
 
+import static org.onehippo.cm.model.Constants.FILE_NAME_EXT_SEPARATOR;
+import static org.onehippo.cm.model.Constants.FILE_PATH_DELIMITER;
+
 /**
  * Unique file name generator
  */
@@ -40,8 +43,8 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
             Path filePath = Paths.get(finalPath);
             path = filePath.getParent().toString();
             String filename = filePath.getFileName().toString();
-            basename = StringUtils.substringBeforeLast(filename, SEPARATOR);
-            extension = StringUtils.substringAfterLast(filename, SEPARATOR);
+            basename = StringUtils.substringBeforeLast(filename, FILE_NAME_EXT_SEPARATOR);
+            extension = StringUtils.substringAfterLast(filename, FILE_NAME_EXT_SEPARATOR);
         }
 
         public String getPath() {
@@ -53,7 +56,7 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
         }
 
         public String getFileName() {
-            return basename + (!StringUtils.isEmpty(extension) ? SEPARATOR + extension : StringUtils.EMPTY);
+            return basename + (!StringUtils.isEmpty(extension) ? FILE_NAME_EXT_SEPARATOR + extension : StringUtils.EMPTY);
         }
 
         @Override
@@ -73,10 +76,6 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
     }
 
 
-    public static final String SEPARATOR = ".";
-    public static final String PATH_DELIMITER = "/";
-    public static final String SEQ_PREFIX = "-";
-
     private Set<FileEntry> knownFileEntries = new HashSet<>();
 
     /**
@@ -87,8 +86,8 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
     @Override
     public String generateName(String filePath) {
 
-        final String folderPath = filePath.toLowerCase().substring(0, filePath.lastIndexOf(PATH_DELIMITER));
-        final String filename = StringUtils.substringAfterLast(filePath, PATH_DELIMITER);
+        final String folderPath = filePath.toLowerCase().substring(0, filePath.lastIndexOf(FILE_PATH_DELIMITER));
+        final String filename = StringUtils.substringAfterLast(filePath, FILE_PATH_DELIMITER);
 
         final Set<String> knownFiles = knownFileEntries.stream().filter(p -> p.getPath().toLowerCase().equals(folderPath.toLowerCase()))
                 .map(FileEntry::getFileName).collect(Collectors.toSet());

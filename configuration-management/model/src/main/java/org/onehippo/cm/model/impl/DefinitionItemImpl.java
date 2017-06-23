@@ -16,10 +16,7 @@
 package org.onehippo.cm.model.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.DefinitionItem;
-
-import static org.onehippo.cm.model.serializer.ResourceNameResolverImpl.PATH_DELIMITER;
 
 public abstract class DefinitionItemImpl extends ModelItemImpl implements DefinitionItem {
 
@@ -46,7 +43,7 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
     }
 
     public DefinitionItemImpl(final String path, final ContentDefinitionImpl definition) {
-        this(path, StringUtils.substringAfterLast(path, PATH_DELIMITER), definition);
+        this(path, StringUtils.substringAfterLast(path, "/"), definition);
     }
 
     public DefinitionItemImpl(final String name, final DefinitionNodeImpl parent) {

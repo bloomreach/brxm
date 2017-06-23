@@ -16,11 +16,13 @@
 
 package org.onehippo.cm.model;
 
+import java.io.File;
+
 public final class Constants {
 
     public static final boolean DEFAULT_EXPLICIT_SEQUENCING = false;
 
-    // Constants used by engine to locate config files
+    // Constants used to locate configuration files
 
     public static final String PROJECT_BASEDIR_PROPERTY = "project.basedir";
     public static final String BOOTSTRAP_MODULES_PROPERTY = "repo.bootstrap.modules";
@@ -31,6 +33,11 @@ public final class Constants {
     public static final String HCM_MODULE_YAML = "hcm-module" + YAML_EXT;
     public static final String ACTIONS_YAML = "hcm-actions" + YAML_EXT;
     public static final String ACTION_LISTS_NODE = "action-lists";
+
+    // Constants used for generating new (resource) files
+    public static final String FILE_PATH_DELIMITER = File.separator;
+    public static final String FILE_NAME_EXT_SEPARATOR = ".";
+    public static final String FILE_NAME_SEQ_PREFIX = "-";
 
     // Following keys used in hcm-module.yaml
     public static final String GROUPS_KEY = "groups";
