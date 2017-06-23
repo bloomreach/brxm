@@ -137,12 +137,12 @@ class Registrar {
 
     void update() throws IOException {
         final UpdateRegistryUpdateListener listener = new UpdateRegistryUpdateListener(registry, locales);
-        scan(listener);
+//        scan(listener);
     }
     
     Report report() throws IOException {
         final ReportUpdateListener listener = new ReportUpdateListener(registry);
-        scan(listener);
+//        scan(listener);
         listener.writeReport();
         return listener.writer.report;
     }
