@@ -39,6 +39,11 @@ public interface ConfigurationService {
     ConfigurationModel getRuntimeConfigurationModel();
 
     /**
+     * @return Returns true if AutoExport is allowed (might be disable though)
+     */
+    boolean isAutoExportAvailable();
+
+    /**
      * Export node and it's binaries to zip file.
      * @param nodeToExport {@link Node}
      * @return Zip {@link File} containing content wit binaries. File must be deleted by caller
