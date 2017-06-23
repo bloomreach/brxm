@@ -21,11 +21,13 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.htmlcleaner.TagNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.cms7.services.htmlprocessor.richtext.TestUtil;
 import org.onehippo.cms7.services.htmlprocessor.service.FacetService;
+import org.onehippo.cms7.services.htmlprocessor.visit.HtmlTag;
 import org.onehippo.repository.mock.MockNode;
 
 import static org.easymock.EasyMock.createMock;
@@ -189,7 +191,7 @@ public class RichTextLinkTagProcessorTest {
         final Node linkTarget = root.addNode("linked-node", "nt:unstructured");
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
-        write(TestUtil.createTag("div"));
+        write(HtmlTag.from("div"));
         assertEquals("all child facet nodes should have been removed", 0, document.getNodes().getSize());
     }
 
@@ -198,7 +200,7 @@ public class RichTextLinkTagProcessorTest {
         final Node linkTarget = root.addNode("linked-node", "nt:unstructured");
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
-        write(TestUtil.createTag(""));
+        write(HtmlTag.from(""));
         assertEquals("all child facet nodes should have been removed", 0, document.getNodes().getSize());
     }
 
@@ -207,7 +209,7 @@ public class RichTextLinkTagProcessorTest {
         final Node linkTarget = root.addNode("linked-node", HippoNodeType.NT_FACETSELECT);
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
-        write(TestUtil.createTag(null));
+        write(HtmlTag.from((TagNode) null));
         assertEquals("all child facet nodes should have been removed", 0, document.getNodes().getSize());
     }
 
@@ -257,7 +259,7 @@ public class RichTextLinkTagProcessorTest {
 
         assertEquals("Child facet node should have been added", 1, document.getNodes().getSize());
 
-        final Tag empty = TestUtil.createTag("");
+        final Tag empty = HtmlTag.from("");
         write(empty);
         assertEquals("Child facet node should have been removed", 0, document.getNodes().getSize());
     }
@@ -299,7 +301,7 @@ public class RichTextLinkTagProcessorTest {
 
     // Helper methods
     private Tag createLink(final String href, final String uuid) {
-        final Tag link = TestUtil.createTag("a");
+        final Tag link = HtmlTag.from("a");
         link.addAttribute("href", href);
         link.addAttribute("data-uuid", uuid);
         return link;
@@ -362,7 +364,7 @@ public class RichTextLinkTagProcessorTest {
     }
 
     private Tag createLink(final String href) {
-        final Tag link = TestUtil.createTag("a");
+        final Tag link = HtmlTag.from("a");
         link.addAttribute("href", href);
         return link;
     }

@@ -25,6 +25,7 @@ import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.onehippo.cms7.services.htmlprocessor.richtext.TestUtil;
 import org.onehippo.cms7.services.htmlprocessor.richtext.jcr.JcrNodeFactory;
 import org.onehippo.cms7.services.htmlprocessor.util.FacetUtil;
+import org.onehippo.cms7.services.htmlprocessor.visit.HtmlTag;
 import org.onehippo.repository.mock.MockNode;
 
 import static org.junit.Assert.assertEquals;
@@ -53,10 +54,10 @@ public class ImageAndLinkVisitorTest {
     public void readNonInternalLinkAndImage() throws Exception {
         final ImageAndLinkVisitor visitor = new ImageAndLinkVisitor(documentModel, src -> src);
 
-        final Tag link = TestUtil.createTag("a");
+        final Tag link = HtmlTag.from("a");
         link.addAttribute("href", "page.html");
 
-        final Tag image = TestUtil.createTag("img");
+        final Tag image = HtmlTag.from("img");
         image.addAttribute("src", "img.gif");
 
         read(visitor, link, image);
@@ -73,10 +74,10 @@ public class ImageAndLinkVisitorTest {
     public void writeNonInternalLinkAndImage() throws Exception {
         final ImageAndLinkVisitor visitor = new ImageAndLinkVisitor(documentModel, src -> src);
 
-        final Tag link = TestUtil.createTag("a");
+        final Tag link = HtmlTag.from("a");
         link.addAttribute("href", "page.html");
 
-        final Tag image = TestUtil.createTag("img");
+        final Tag image = HtmlTag.from("img");
         image.addAttribute("src", "img.gif");
 
         write(visitor, link, image);
@@ -95,11 +96,11 @@ public class ImageAndLinkVisitorTest {
         final Node img1 = images.addNode("node1", "nt:unstructured");
         final ImageAndLinkVisitor visitor = new ImageAndLinkVisitor(documentModel, src -> src);
 
-        final Tag link = TestUtil.createTag("a");
+        final Tag link = HtmlTag.from("a");
         link.addAttribute("href", "new-link");
         link.addAttribute("data-uuid", doc1.getIdentifier());
 
-        final Tag image = TestUtil.createTag("img");
+        final Tag image = HtmlTag.from("img");
         image.addAttribute("src", "new-image");
         image.addAttribute("data-uuid", img1.getIdentifier());
 
@@ -119,11 +120,11 @@ public class ImageAndLinkVisitorTest {
 
         final ImageAndLinkVisitor visitor = new ImageAndLinkVisitor(documentModel, src -> src);
 
-        final Tag link = TestUtil.createTag("a");
+        final Tag link = HtmlTag.from("a");
         link.addAttribute("href", "existing-link");
         link.addAttribute("data-uuid", doc1.getIdentifier());
 
-        final Tag image = TestUtil.createTag("img");
+        final Tag image = HtmlTag.from("img");
         image.addAttribute("src", "new-img");
         image.addAttribute("data-uuid", img1.getIdentifier());
 
@@ -142,11 +143,11 @@ public class ImageAndLinkVisitorTest {
 
         final ImageAndLinkVisitor visitor = new ImageAndLinkVisitor(documentModel, src -> src);
 
-        final Tag link = TestUtil.createTag("a");
+        final Tag link = HtmlTag.from("a");
         link.addAttribute("href", "existing-link");
         link.addAttribute("data-uuid", doc1.getIdentifier());
 
-        final Tag image = TestUtil.createTag("img");
+        final Tag image = HtmlTag.from("img");
         image.addAttribute("src", "new-img");
         image.addAttribute("data-uuid", img1.getIdentifier());
 
@@ -159,7 +160,7 @@ public class ImageAndLinkVisitorTest {
         assertEquals("node1_1", image.getAttribute("src"));
         assertEquals(FacetUtil.getChildDocBaseOrNull(document, "node1_1"), image.getAttribute("data-uuid"));
 
-        final Tag link2 = TestUtil.createTag("a");
+        final Tag link2 = HtmlTag.from("a");
         link2.addAttribute("href", "new-link");
         link2.addAttribute("data-uuid", doc1.getIdentifier());
 

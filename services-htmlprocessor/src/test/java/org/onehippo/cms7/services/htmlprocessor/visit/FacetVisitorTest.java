@@ -21,7 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.cms7.services.htmlprocessor.model.Model;
-import org.onehippo.cms7.services.htmlprocessor.richtext.TestUtil;
 import org.onehippo.cms7.services.htmlprocessor.service.FacetService;
 import org.onehippo.repository.mock.MockNode;
 
@@ -63,7 +62,7 @@ public class FacetVisitorTest {
 
     @Test
     public void callsTagProcessors() throws Exception {
-        final Tag image = TestUtil.createTag("img");
+        final Tag image = HtmlTag.from("img");
         final FacetTagProcessor processor = createMock(FacetTagProcessor.class);
 
         processor.onRead(eq(image), anyObject(FacetService.class));
@@ -81,7 +80,7 @@ public class FacetVisitorTest {
 
     @Test(expected=NullPointerException.class)
     public void facetServiceIsNullifiedAfterRead() throws Exception {
-        final Tag image = TestUtil.createTag("img");
+        final Tag image = HtmlTag.from("img");
         final FacetTagProcessor processor = createMock(FacetTagProcessor.class);
 
         final FacetVisitor visitor = new FacetVisitor(documentModel, processor);
@@ -93,7 +92,7 @@ public class FacetVisitorTest {
 
     @Test(expected=NullPointerException.class)
     public void facetServiceIsNullifiedOnWrite() throws Exception {
-        final Tag image = TestUtil.createTag("img");
+        final Tag image = HtmlTag.from("img");
         final FacetTagProcessor processor = createMock(FacetTagProcessor.class);
 
         final FacetVisitor visitor = new FacetVisitor(documentModel, processor);

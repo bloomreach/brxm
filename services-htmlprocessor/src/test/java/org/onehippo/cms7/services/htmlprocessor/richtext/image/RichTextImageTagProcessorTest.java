@@ -33,6 +33,7 @@ import org.onehippo.cms7.services.htmlprocessor.richtext.URLProvider;
 import org.onehippo.cms7.services.htmlprocessor.richtext.jcr.JcrNodeFactory;
 import org.onehippo.cms7.services.htmlprocessor.richtext.link.RichTextLinkFactory;
 import org.onehippo.cms7.services.htmlprocessor.service.FacetService;
+import org.onehippo.cms7.services.htmlprocessor.visit.HtmlTag;
 import org.onehippo.repository.mock.MockNode;
 
 import static org.easymock.EasyMock.createMock;
@@ -315,7 +316,7 @@ public class RichTextImageTagProcessorTest {
     }
 
     private static Tag createImage(final String imageSrc) {
-        final Tag image = TestUtil.createTag("img");
+        final Tag image = HtmlTag.from("img");
         image.addAttribute("src", imageSrc);
         return image;
     }

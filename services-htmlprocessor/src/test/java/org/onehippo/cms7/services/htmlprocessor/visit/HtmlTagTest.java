@@ -21,52 +21,73 @@ import org.junit.Test;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
 
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class HtmlTagTest {
 
     @Test
     public void testCreateTagFromTagNode() throws Exception {
-        final TagNode tagNode = mockTagNode();
-
-        final Tag tag = HtmlTag.from(tagNode);
-        tag.getName();
-        tag.addAttribute("attr", "attrValue");
-        tag.hasAttribute("attr");
-        tag.getAttribute("attr");
-        tag.removeAttribute("attr");
-
-        verify(tagNode);
+        final TagNode tagNode = createMock(TagNode.class);
+        assertNotNull(HtmlTag.from(tagNode));
     }
 
     @Test
-    public void testCreateTagFromHtmlNode() throws Exception {
-        final HtmlNode htmlNode =  mockTagNode();
+    public void testCreateTagFromHtmlNodeIfInstanceOfTagNode() throws Exception {
+        final HtmlNode htmlNode = createMock(HtmlNode.class);
+        assertNull(HtmlTag.from(htmlNode));
 
-        final Tag tag = HtmlTag.from(htmlNode);
-        tag.getName();
-        tag.addAttribute("attr", "attrValue");
-        tag.hasAttribute("attr");
-        tag.getAttribute("attr");
-        tag.removeAttribute("attr");
-
-        verify(htmlNode);
+        final TagNode tagNode = createMock(TagNode.class);
+        assertNotNull(HtmlTag.from(tagNode));
     }
 
-    private static TagNode mockTagNode() {
-        final TagNode tagNode = createMock(TagNode.class);
-        expect(tagNode.getName()).andReturn("a");
-        expect(tagNode.getAttributeByName(eq("attr"))).andReturn("attrValue");
-        expect(tagNode.hasAttribute(eq("attr"))).andReturn(true);
-        tagNode.removeAttribute("attr");
-        expectLastCall();
-        tagNode.addAttribute(eq("attr"), eq("attrValue"));
-        expectLastCall();
-        replay(tagNode);
-        return tagNode;
+    @Test
+    public void testTagName() throws Exception {
+        assertEquals("img", HtmlTag.from("img").getName());
+        assertEquals("img", HtmlTag.from("IMG").getName());
+        assertEquals("img", HtmlTag.from("ImG").getName());
+    }
+
+    @Test
+    public void testAddGetAttribute() throws Exception {
+        final Tag tag = HtmlTag.from("img");
+        assertNull(tag.getAttribute("attr"));
+
+        tag.addAttribute("attr", "value");
+        assertEquals("value", tag.getAttribute("attr"));
+    }
+
+    @Test
+    public void testChangeAttribute() throws Exception {
+        final Tag tag = HtmlTag.from("img");
+        tag.addAttribute("attr", "value");
+        tag.addAttribute("attr", "newValue");
+        assertEquals("newValue", tag.getAttribute("attr"));
+    }
+
+    @Test
+    public void testRemoveAttribute() throws Exception {
+        final Tag tag = HtmlTag.from("img");
+        // lenient
+        tag.removeAttribute("attr");
+
+        tag.addAttribute("attr", "value");
+        tag.removeAttribute("attr");
+        assertFalse(tag.hasAttribute("attr"));
+    }
+
+    @Test
+    public void testTagHasAttribute() throws Exception {
+        final Tag tag = HtmlTag.from("img");
+        assertFalse(tag.hasAttribute("attr"));
+
+        tag.addAttribute("attr", "value");
+        assertTrue(tag.hasAttribute("attr"));
+
+        tag.removeAttribute("attr");
+        assertFalse(tag.hasAttribute("attr"));
     }
 }

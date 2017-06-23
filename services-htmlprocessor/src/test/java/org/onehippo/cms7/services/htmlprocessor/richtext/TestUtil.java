@@ -15,16 +15,12 @@
  */
 package org.onehippo.cms7.services.htmlprocessor.richtext;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
@@ -33,10 +29,6 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
 public class TestUtil {
-
-    public static Tag createTag(final String name) {
-        return new TestTag(name);
-    }
 
     public static void addChildFacetNode(final MockNode node, final String name, final String uuid) throws RepositoryException {
         final Node child = node.addNode(name, HippoNodeType.NT_FACETSELECT);
@@ -48,41 +40,5 @@ public class TestUtil {
         final LogEvent logEntry = interceptor.getEvents().get(0);
         assertThat(logEntry.getLevel(), is(level));
         assertThat(logEntry.getMessage().getFormattedMessage(), is(message));
-    }
-
-    private static class TestTag implements Tag {
-
-        private final String name;
-        private final Map<String, String> attributes;
-
-        TestTag(final String name) {
-            this.name = name;
-            attributes = new HashMap<>();
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String getAttribute(final String name) {
-            return attributes.get(name);
-        }
-
-        @Override
-        public void addAttribute(final String name, final String value) {
-            attributes.put(name, value);
-        }
-
-        @Override
-        public boolean hasAttribute(final String name) {
-            return attributes.containsKey(name);
-        }
-
-        @Override
-        public void removeAttribute(final String name) {
-            attributes.remove(name);
-        }
     }
 }

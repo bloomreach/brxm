@@ -23,7 +23,7 @@ public class HtmlTag implements Tag {
 
     private final TagNode tagNode;
 
-    HtmlTag(final TagNode tagNode) {
+    private HtmlTag(final TagNode tagNode) {
         this.tagNode = tagNode;
     }
 
@@ -39,6 +39,9 @@ public class HtmlTag implements Tag {
 
     @Override
     public void addAttribute(final String name, final String value) {
+        if (tagNode.hasAttribute(name)) {
+            tagNode.removeAttribute(name);
+        }
         tagNode.addAttribute(name, value);
     }
 
@@ -60,4 +63,7 @@ public class HtmlTag implements Tag {
         return htmlNode instanceof TagNode ? from((TagNode) htmlNode) : null;
     }
 
+    public static Tag from(final String name) {
+        return from(new TagNode(name));
+    }
 }
