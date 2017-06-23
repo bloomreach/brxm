@@ -18,6 +18,8 @@
 @import '~open-sans-fontface/sass/mixins';
 @import '~open-sans-fontface/sass/Regular';
 
+@import '~dragula/dist/dragula.css';
+
 .hst-cmseditlink {
   display: block;
   height: $embedded-link-height;
