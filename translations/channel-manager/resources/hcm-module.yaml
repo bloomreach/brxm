@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-cms-translations
+    after: hippo-cms
+module: hippo-addon-channel-manager-l10n-${locale}

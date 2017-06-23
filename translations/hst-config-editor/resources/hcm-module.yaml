@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-cms-translations
+    after: hippo-cms
+module: hst-config-editor-l10n-${locale}
