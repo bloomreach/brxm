@@ -432,11 +432,11 @@ public class RichTextFieldTypeTest {
         final HtmlProcessor processor = new HtmlProcessorImpl(new HtmlProcessorConfig());
         final RichTextFieldType field = initField(processor);
 
-        addValue("<img src=\"path/to/image.gif\" data-uuid=\"cafebabe\"/>");
+        addValue("<img data-uuid=\"cafebabe\" src=\"path/to/image.gif\"/>");
         assertNoWarningsLogged(() -> {
             final List<FieldValue> fieldValues = field.readFrom(document)
                     .orElseThrow(() -> new Exception("Failed to read from document"));
-            assertThat(fieldValues.get(0).getValue(), equalTo("<img src=\"../../path/to/image.gif\" data-uuid=\"cafebabe\" />"));
+            assertThat(fieldValues.get(0).getValue(), equalTo("<img data-uuid=\"cafebabe\" src=\"../../path/to/image.gif\" />"));
         });
     }
 
