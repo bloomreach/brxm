@@ -48,7 +48,7 @@ import static java.lang.String.format;
 public class IncludeLocalesMojo extends AbstractMojo {
 
     @SuppressWarnings("unused")
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true )
     private MavenProject project;
 
     /**

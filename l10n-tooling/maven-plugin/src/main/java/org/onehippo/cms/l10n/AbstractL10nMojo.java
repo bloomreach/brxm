@@ -51,8 +51,8 @@ public abstract class AbstractL10nMojo extends AbstractMojo {
     
     @Parameter
     private String[] excludes;
-    
-    @Component
+
+    @Parameter( defaultValue = "${project}", readonly = true )
     protected MavenProject project;
 
     protected enum FileFormat {

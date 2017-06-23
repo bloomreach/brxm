@@ -29,7 +29,8 @@
   <name>Hippo CMS L10N Maven Plugin</name>
 
   <properties>
-    <maven.version>3.2.1</maven.version>
+    <maven.version>3.5.0</maven.version>
+    <maven.plugin.plugin.version>3.5</maven.plugin.plugin.version>
     <maven.shared.dependency.tree.version>3.0</maven.shared.dependency.tree.version>
     <commons-lang.version>2.6</commons-lang.version>
     <maven.plugin-annotations.version>3.4</maven.plugin-annotations.version>
@@ -42,6 +43,19 @@
       <groupId>org.onehippo.cms.l10n</groupId>
       <artifactId>hippo-cms-l10n-tooling</artifactId>
       <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms.l10n</groupId>
+      <artifactId>translations-yaml-converter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+      <version>${javax.jcr.version}</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
@@ -96,6 +110,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
+          <version>${maven.plugin.plugin.version}</version>
           <configuration>
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
           </configuration>
