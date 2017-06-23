@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,8 +41,8 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
 
     /**
      * {@link AnnotationJsonSerializer} constructor
-     * 
-     * @param type - The type to which this serializer will be mapped to be used 
+     *
+     * @param type - The type to which this serializer will be mapped to be used
      */
     public AnnotationJsonSerializer(Class<Annotation> type) {
         super(type);
@@ -84,7 +84,7 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
     /**
      * Check whether the given {@link Method} is of interest to be serialized. For the time being we are not interested
      * in methods which have parameters
-     * 
+     *
      * @param method - The method to be checked
      * @return <code>true</code> if it is a valid method, <code>false</code> otherwise
      */
@@ -94,7 +94,7 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
 
     /**
      * Serialize an {@link Annotation} attribute
-     * 
+     *
      * @param method - Method which represents
      * @param value
      * @param jgen
@@ -132,7 +132,7 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
             serializeByteArray(method, value, jgen);
         } else if (method.getReturnType() == short[].class) {
             serializeShortPrimitiveArray(method, value, jgen);
-        } else if( method.getReturnType() == Short[].class) {
+        } else if (method.getReturnType() == Short[].class) {
             serializeShortArray(method, value, jgen);
         } else if (method.getReturnType() == int[].class) {
             serializeIntegerPrimitiveArray(method, value, jgen);
@@ -144,7 +144,7 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
             serializeLongArray(method, value, jgen);
         } else if (method.getReturnType() == float[].class) {
             serializeFloatPrimitiveArray(method, value, jgen);
-        } else if (method.getReturnType() == Float[].class) { 
+        } else if (method.getReturnType() == Float[].class) {
             serializeFloatArray(method, value, jgen);
         } else if (method.getReturnType() == double[].class) {
             serializeDoublePrimitiveArray(method, value, jgen);
@@ -156,7 +156,7 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
             serializeBooleanArray(method, value, jgen);
         } else if (method.getReturnType() == char[].class) {
             serializeCharPrimitiveArray(method, value, jgen);
-        } else if (method.getReturnType() == Character[].class) { 
+        } else if (method.getReturnType() == Character[].class) {
             serializeCharArray(method, value, jgen);
         } else if (method.getReturnType() == String[].class) {
             serializeStringArray(method, value, jgen);
@@ -382,7 +382,7 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
     protected void serializeCharArray(Method method, Annotation value, JsonGenerator jgen)
             throws JsonGenerationException, IOException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException {
-        
+
         jgen.writeArrayFieldStart(method.getName());
         Character[] chars = (Character[]) method.invoke(value);
         if (chars != null) {

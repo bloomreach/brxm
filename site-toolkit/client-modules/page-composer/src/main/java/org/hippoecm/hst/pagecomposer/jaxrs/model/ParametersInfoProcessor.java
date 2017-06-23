@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,11 +60,11 @@ public class ParametersInfoProcessor {
 
     static final Logger log = LoggerFactory.getLogger(ParametersInfoProcessor.class);
 
-    private final static String COMPONENT_PARAMETERS_TRANSLATION_LOCATION = "hippo:hst.componentparameters";
+    private static final String COMPONENT_PARAMETERS_TRANSLATION_LOCATION = "hippo:hst.componentparameters";
 
-    private final static Set<CacheKey> failedBundlesToLoad = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private static final Set<CacheKey> FAILED_BUNDLES_TO_LOAD = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    public static List<ContainerItemComponentPropertyRepresentation> getProperties(ParametersInfo parameterInfo, Locale locale, String contentPath) {
+    public static List<ContainerItemComponentPropertyRepresentation> getProperties(final ParametersInfo parameterInfo, final Locale locale, final String contentPath) {
         final ResourceBundle[] resourceBundles = getResourceBundles(parameterInfo, locale);
         final Class<?> classType = parameterInfo.type();
         if (classType == null) {
@@ -84,15 +84,15 @@ public class ParametersInfoProcessor {
             final ContainerItemHelper containerItemHelper,
             final List<PropertyRepresentationFactory> propertyPresentationFactories) throws RepositoryException {
 
-        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parametersInfo, locale, contentPath);
+        final List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parametersInfo, locale, contentPath);
 
-        HstComponentParameters componentParameters = new HstComponentParameters(containerItemNode, containerItemHelper);
+        final HstComponentParameters componentParameters = new HstComponentParameters(containerItemNode, containerItemHelper);
 
         setValueForProperties(properties, prefix, componentParameters, contentPath);
 
         if (propertyPresentationFactories != null) {
             int index = 0;
-            for (PropertyRepresentationFactory factory : propertyPresentationFactories) {
+            for (final PropertyRepresentationFactory factory : propertyPresentationFactories) {
                 try {
                     final ContainerItemComponentPropertyRepresentation property = factory.createProperty(parametersInfo, locale,
                             contentPath, prefix, containerItemNode, containerItemHelper, componentParameters, properties);
@@ -100,7 +100,7 @@ public class ParametersInfoProcessor {
                         properties.add(index, property);
                         index++;
                     }
-                } catch (RuntimeException e) {
+                } catch (final RuntimeException e) {
                     if (log.isDebugEnabled()) {
                         log.warn("PropertyRepresentationFactory '{}' threw exception.", factory.getClass().getName(), e);
                     } else {
@@ -126,7 +126,7 @@ public class ParametersInfoProcessor {
     public static void setValueForProperties(final List<ContainerItemComponentPropertyRepresentation> properties,
                                              final String prefix,
                                              final HstComponentParameters componentParameters, final String contentPath) {
-        for (ContainerItemComponentPropertyRepresentation prop : properties) {
+        for (final ContainerItemComponentPropertyRepresentation prop : properties) {
             setValueForProperty(prop, prefix, componentParameters, contentPath);
         }
     }
@@ -172,7 +172,7 @@ public class ParametersInfoProcessor {
         // we still create a LinkedHashMap because for jdk6 this works. For jdk 7, developers must (can only) use FieldGroup annotation
         // to specify the order of the component properties
         final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap = new LinkedHashMap<>();
-        for (Method method : classType.getMethods()) {
+        for (final Method method : classType.getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {
                 final Parameter propAnnotation = method.getAnnotation(Parameter.class);
                 final ContainerItemComponentPropertyRepresentation prop = new ContainerItemComponentPropertyRepresentation();
@@ -222,13 +222,13 @@ public class ParametersInfoProcessor {
                             && !EmptyValueListProvider.class.equals(valueListProviderClass)) {
                         try {
                             valueListProvider = (ValueListProvider) valueListProviderClass.newInstance();
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             log.error("Failed to create or invoke the custom valueListProvider: '{}'.",
                                     valueListProviderClass, e);
                         }
                     }
 
-                    String[] displayValues;
+                    final String[] displayValues;
 
                     if (valueListProvider == null) {
                         displayValues = new String[values.length];
@@ -269,14 +269,14 @@ public class ParametersInfoProcessor {
 
 
         // LinkedHashMultimap is a insertion ordered map that does not allow duplicate key-value entries
-        Multimap<String, ContainerItemComponentPropertyRepresentation> fieldGroupProperties = LinkedHashMultimap.create();
+        final Multimap<String, ContainerItemComponentPropertyRepresentation> fieldGroupProperties = LinkedHashMultimap.create();
 
-        for (Class<?> interfaceClass : getBreadthFirstInterfaceHierarchy(classType)) {
+        for (final Class<?> interfaceClass : getBreadthFirstInterfaceHierarchy(classType)) {
             final FieldGroupList fieldGroupList = interfaceClass.getAnnotation(FieldGroupList.class);
             if (fieldGroupList != null) {
-                FieldGroup[] fieldGroups = fieldGroupList.value();
+                final FieldGroup[] fieldGroups = fieldGroupList.value();
                 if (fieldGroups != null && fieldGroups.length > 0) {
-                    for (FieldGroup fieldGroup : fieldGroups) {
+                    for (final FieldGroup fieldGroup : fieldGroups) {
                         final String titleKey = fieldGroup.titleKey();
                         final String groupLabel = getResourceValue(resourceBundles, titleKey, titleKey);
                         if (fieldGroup.value().length == 0) {
@@ -301,10 +301,10 @@ public class ParametersInfoProcessor {
             }
         }
 
-        List<ContainerItemComponentPropertyRepresentation> orderedByFieldGroupProperties = new ArrayList<>();
+        final List<ContainerItemComponentPropertyRepresentation> orderedByFieldGroupProperties = new ArrayList<>();
 
-        for (String titleKey : fieldGroupProperties.keySet()) {
-            for (ContainerItemComponentPropertyRepresentation property : fieldGroupProperties.get(titleKey)) {
+        for (final String titleKey : fieldGroupProperties.keySet()) {
+            for (final ContainerItemComponentPropertyRepresentation property : fieldGroupProperties.get(titleKey)) {
                 if (property == null) {
                     // can happen due to place holder for group
                     continue;
@@ -313,7 +313,7 @@ public class ParametersInfoProcessor {
             }
         }
 
-        for (ContainerItemComponentPropertyRepresentation property : propertyMap.values()) {
+        for (final ContainerItemComponentPropertyRepresentation property : propertyMap.values()) {
             if (orderedByFieldGroupProperties.contains(property)) {
                 continue;
             }
@@ -323,8 +323,8 @@ public class ParametersInfoProcessor {
         return orderedByFieldGroupProperties;
     }
 
-    private static String getResourceValue(ResourceBundle[] bundles, String key, String defaultValue) {
-        for (ResourceBundle bundle : bundles) {
+    private static String getResourceValue(final ResourceBundle[] bundles, final String key, final String defaultValue) {
+        for (final ResourceBundle bundle : bundles) {
             if (bundle.containsKey(key)) {
                 return bundle.getString(key);
             }
@@ -332,9 +332,9 @@ public class ParametersInfoProcessor {
         return defaultValue;
     }
 
-    private static String getResourceSubValue(ResourceBundle[] bundles, String key, String subValue) {
+    private static String getResourceSubValue(final ResourceBundle[] bundles, final String key, final String subValue) {
         String resourceKey = key + "#" + subValue;
-        for (ResourceBundle bundle : bundles) {
+        for (final ResourceBundle bundle : bundles) {
             if (bundle.containsKey(resourceKey)) {
                 final String value = bundle.getString(resourceKey);
                 log.trace("Found translation in repository resource bundle: {} --> {}", resourceKey, value);
@@ -343,7 +343,7 @@ public class ParametersInfoProcessor {
         }
 
         resourceKey = key + "/" + subValue;
-        for (ResourceBundle bundle : bundles) {
+        for (final ResourceBundle bundle : bundles) {
             if (bundle.containsKey(resourceKey)) {
                 final String value = bundle.getString(resourceKey);
                 log.trace("Found translation in Java resource bundle: {} --> {}", resourceKey, value);
@@ -362,11 +362,11 @@ public class ParametersInfoProcessor {
      * hierarchy BREADTH FIRST traversal. Empty array if there are no resource bundles at all
      */
     protected static final ResourceBundle[] getResourceBundles(final ParametersInfo parameterInfo, final Locale locale) {
-        List<ResourceBundle> resourceBundles = new ArrayList<ResourceBundle>();
+        final List<ResourceBundle> resourceBundles = new ArrayList<ResourceBundle>();
 
         final List<Class<?>> breadthFirstInterfaceHierarchy = getBreadthFirstInterfaceHierarchy(parameterInfo.type());
-        for (Class<?> clazz : breadthFirstInterfaceHierarchy) {
-            ResourceBundle bundle = getResourceBundle(clazz, locale);
+        for (final Class<?> clazz : breadthFirstInterfaceHierarchy) {
+            final ResourceBundle bundle = getResourceBundle(clazz, locale);
             if (bundle != null) {
                 resourceBundles.add(bundle);
             }
@@ -382,11 +382,11 @@ public class ParametersInfoProcessor {
     }
 
     private static void populateBreadthFirstSuperInterfaces(final Class<?>[] interfaces, final List<Class<?>> populatedSuperInterfaces) {
-        for (Class<?> clazz : interfaces) {
+        for (final Class<?> clazz : interfaces) {
             populatedSuperInterfaces.add(clazz);
         }
-        List<Class<?>> superInterfaces = new ArrayList<>();
-        for (Class<?> clazz : interfaces) {
+        final List<Class<?>> superInterfaces = new ArrayList<>();
+        for (final Class<?> clazz : interfaces) {
             superInterfaces.addAll(Arrays.asList(clazz.getInterfaces()));
         }
         if (superInterfaces.size() == 0) {
@@ -411,8 +411,8 @@ public class ParametersInfoProcessor {
             localeOrDefault = locale;
         }
         final String typeName = clazz.getName();
-        CacheKey bundleKey = new CacheKey(typeName, localeOrDefault);
-        if (failedBundlesToLoad.contains(bundleKey)) {
+        final CacheKey bundleKey = new CacheKey(typeName, localeOrDefault);
+        if (FAILED_BUNDLES_TO_LOAD.contains(bundleKey)) {
             return null;
         }
 
@@ -428,10 +428,10 @@ public class ParametersInfoProcessor {
 
         try {
             return ResourceBundle.getBundle(typeName, localeOrDefault);
-        } catch (MissingResourceException e) {
+        } catch (final MissingResourceException e) {
             log.info("Could not find a resource bundle for class '{}', locale '{}'. The template composer " +
                     "properties panel will show displayName values instead of internationalized labels.", typeName, locale);
-            failedBundlesToLoad.add(bundleKey);
+            FAILED_BUNDLES_TO_LOAD.add(bundleKey);
             return null;
         }
     }
@@ -456,7 +456,7 @@ public class ParametersInfoProcessor {
         @Override
         public boolean equals(final Object obj) {
             if (obj instanceof CacheKey) {
-                CacheKey other = (CacheKey) obj;
+                final CacheKey other = (CacheKey) obj;
                 return other.type.equals(type) && other.locale.equals(locale);
             }
             return false;

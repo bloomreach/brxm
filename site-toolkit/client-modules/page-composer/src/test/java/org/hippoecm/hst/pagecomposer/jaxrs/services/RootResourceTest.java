@@ -17,21 +17,6 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import static com.jayway.restassured.http.ContentType.JSON;
-import static org.easymock.EasyMock.and;
-import static org.easymock.EasyMock.capture;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.notNull;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
-
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +29,6 @@ import javax.ws.rs.Path;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -63,11 +47,27 @@ import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.jaxrs.cxf.hst.HstCXFTestFixtureHelper;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import static com.jayway.restassured.http.ContentType.JSON;
+import static org.easymock.EasyMock.and;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.notNull;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
@@ -107,7 +107,7 @@ public class RootResourceTest extends AbstractResourceTest {
 
         rootResource.setChannelService(channelService);
 
-        Config config = createDefaultConfig(JsonPojoMapperProvider.class)
+        final Config config = createDefaultConfig(JsonPojoMapperProvider.class)
                 .addServerSingleton(rootResource)
                 .addServerSingleton(helper);
         setup(config);
@@ -131,20 +131,20 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService);
 
         when()
-            .get(MOCK_REST_PATH + "channels/channel-foo/info?locale=nl")
-        .then()
-            .statusCode(200)
-            .body("fieldGroups[0].titleKey", equalTo("fieldGroup1"),
-                    "fieldGroups[1].titleKey", equalTo("fieldGroup2"),
-                    "propertyDefinitions['field1'].name", equalTo("field1"),
-                    "propertyDefinitions['field2'].name", equalTo("field2"),
-                    "propertyDefinitions['field1'].annotations[0].type", equalTo("DropDownList"),
-                    "propertyDefinitions['field1'].annotations[0].value", containsInAnyOrder("value-1", "value-2"),
-                    "propertyDefinitions['field2'].annotations[0].value", containsInAnyOrder("value-3", "value-4"),
-                    "i18nResources['field1']", equalTo("Field 1"),
-                    "i18nResources['field2']", equalTo("Field 2"),
-                    "lockedBy", equalTo("tester"),
-                    "editable", equalTo(Boolean.TRUE));
+                .get(MOCK_REST_PATH + "channels/channel-foo/info?locale=nl")
+                .then()
+                .statusCode(200)
+                .body("fieldGroups[0].titleKey", equalTo("fieldGroup1"),
+                        "fieldGroups[1].titleKey", equalTo("fieldGroup2"),
+                        "propertyDefinitions['field1'].name", equalTo("field1"),
+                        "propertyDefinitions['field2'].name", equalTo("field2"),
+                        "propertyDefinitions['field1'].annotations[0].type", equalTo("DropDownList"),
+                        "propertyDefinitions['field1'].annotations[0].value", containsInAnyOrder("value-1", "value-2"),
+                        "propertyDefinitions['field2'].annotations[0].value", containsInAnyOrder("value-3", "value-4"),
+                        "i18nResources['field1']", equalTo("Field 1"),
+                        "i18nResources['field2']", equalTo("Field 2"),
+                        "lockedBy", equalTo("tester"),
+                        "editable", equalTo(Boolean.TRUE));
 
         verify(channelService);
     }
@@ -187,11 +187,11 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService);
 
         when()
-            .get(MOCK_REST_PATH + "channels/channel-foo/info")
-        .then()
-            .statusCode(200)
-            .body("fieldGroups[0].titleKey", equalTo("fieldGroup1"),
-                    "i18nResources", hasEntry("field1", "Field 1"));
+                .get(MOCK_REST_PATH + "channels/channel-foo/info")
+                .then()
+                .statusCode(200)
+                .body("fieldGroups[0].titleKey", equalTo("fieldGroup1"),
+                        "i18nResources", hasEntry("field1", "Field 1"));
 
         verify(channelService);
     }
@@ -203,10 +203,10 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService);
 
         when()
-            .get(MOCK_REST_PATH + "channels/channel-foo/info?locale=en")
-        .then()
-            .statusCode(500)
-            .body(equalTo("Could not get channel setting information"));
+                .get(MOCK_REST_PATH + "channels/channel-foo/info?locale=en")
+                .then()
+                .statusCode(500)
+                .body(equalTo("Could not get channel setting information"));
 
         verify(channelService);
     }
@@ -223,13 +223,13 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService);
 
         given()
-            .contentType(JSON)
-            .body(channelFoo)
-        .when()
-            .put(MOCK_REST_PATH + "channels/channel-foo")
-        .then()
-            .statusCode(200)
-            .body("properties.foo", equalTo("bah"));
+                .contentType(JSON)
+                .body(channelFoo)
+                .when()
+                .put(MOCK_REST_PATH + "channels/channel-foo")
+                .then()
+                .statusCode(200)
+                .body("properties.foo", equalTo("bah"));
 
         verify(channelService);
     }
@@ -248,12 +248,12 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService);
 
         given()
-            .contentType(JSON)
-            .body(channelFoo)
-        .when()
-            .put(MOCK_REST_PATH + "channels/channel-foo")
-        .then()
-            .statusCode(500);
+                .contentType(JSON)
+                .body(channelFoo)
+                .when()
+                .put(MOCK_REST_PATH + "channels/channel-foo")
+                .then()
+                .statusCode(500);
 
         verify(channelService);
         assertThat(capturedArgument.getValue().getProperties().get("foo"), equalTo("bah"));
@@ -265,9 +265,9 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService);
 
         when()
-            .get(MOCK_REST_PATH + "channels/channel-foo")
-        .then()
-            .statusCode(404);
+                .get(MOCK_REST_PATH + "channels/channel-foo")
+                .then()
+                .statusCode(404);
 
         verify(channelService);
     }
@@ -278,11 +278,11 @@ public class RootResourceTest extends AbstractResourceTest {
         EasyMock.replay(channelService);
 
         given()
-            .contentType(JSON)
-        .when()
-            .delete(MOCK_REST_PATH + "channels/channel-foi-preview")
-        .then()
-            .statusCode(404);
+                .contentType(JSON)
+                .when()
+                .delete(MOCK_REST_PATH + "channels/channel-foi-preview")
+                .then()
+                .statusCode(404);
 
         EasyMock.verify(channelService);
     }
@@ -311,11 +311,11 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService, rootResource);
 
         given()
-            .contentType(JSON)
-        .when()
-            .delete(MOCK_REST_PATH + "channels/channel-foo")
-        .then()
-            .statusCode(200);
+                .contentType(JSON)
+                .when()
+                .delete(MOCK_REST_PATH + "channels/channel-foo")
+                .then()
+                .statusCode(200);
 
         verify(channelService, rootResource);
         PowerMock.verify(HstConfigurationUtils.class);
@@ -353,14 +353,14 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService);
 
         given()
-            .contentType(JSON)
-        .when()
-            .delete(MOCK_REST_PATH + "channels/channel-foo")
-        .then()
-            .statusCode(400)
-            .body("error", equalTo("UNKNOWN"),
-                    "parameterMap.userMessage", equalTo("Channel {{channel}} cannot be deleted"),
-                    "parameterMap.channel", equalTo("Foo"));
+                .contentType(JSON)
+                .when()
+                .delete(MOCK_REST_PATH + "channels/channel-foo")
+                .then()
+                .statusCode(400)
+                .body("error", equalTo("UNKNOWN"),
+                        "parameterMap.userMessage", equalTo("Channel {{channel}} cannot be deleted"),
+                        "parameterMap.channel", equalTo("Foo"));
 
 
         verify(channelService, rootResource);
@@ -379,11 +379,11 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService);
 
         given()
-            .contentType(JSON)
-        .when()
-            .delete(MOCK_REST_PATH + "channels/channel-foo")
-        .then()
-            .statusCode(404);
+                .contentType(JSON)
+                .when()
+                .delete(MOCK_REST_PATH + "channels/channel-foo")
+                .then()
+                .statusCode(404);
         verify(channelService);
     }
 
@@ -396,7 +396,7 @@ public class RootResourceTest extends AbstractResourceTest {
         PowerMock.replay(HstConfigurationUtils.class);
     }
 
-    private static Annotation createDropDownListAnnotation(String... values) {
+    private static Annotation createDropDownListAnnotation(final String... values) {
         return new DropDownList() {
             @Override
             public Class<? extends Annotation> annotationType() {
