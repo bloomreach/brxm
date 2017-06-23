@@ -2,17 +2,7 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
-<sv:node sv:name="hippo-plugins-componentparameters-translations_nl">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippo:initializeitem</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:sequence" sv:type="Double">
-    <sv:value>1000.0</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:resourcebundles" sv:type="String">
-    <sv:value>componentparameters-translations_nl.json</sv:value>
-  </sv:property>
-</sv:node><sv:node sv:name="hippo-essentials-components-componentparameters-translations_nl">
+<sv:node sv:name="hippo-essentials-components-componentparameters-translations_nl">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializeitem</sv:value>
   </sv:property>
