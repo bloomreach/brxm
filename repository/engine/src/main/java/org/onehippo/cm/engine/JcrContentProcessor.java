@@ -16,7 +16,6 @@
 package org.onehippo.cm.engine;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,7 +47,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
-import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_CONFLICT;
+import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_APPEND_CONFLICT;
 import static org.onehippo.cm.engine.ValueProcessor.collectVerifiedValue;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
 import static org.onehippo.cm.engine.ValueProcessor.isReferenceTypeProperty;
@@ -96,7 +95,7 @@ public class JcrContentProcessor {
      * @param actionType current action type
      * @param session current session
      * @param allowIgnoreConflict if true and node exists with action type APPEND <em>may</em> be ignored, iff system
-     *                            parameter {@link Constants#SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_CONFLICT}=true
+     *                            parameter {@link Constants#SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_APPEND_CONFLICT}=true
      * @return true if there is no conflict, false if there was a conflict but the above system parameter is true
      * @throws RepositoryException if node exists and action type is APPEND and !allowIgnoreConflict
      */
@@ -104,7 +103,7 @@ public class JcrContentProcessor {
                                          final boolean allowIgnoreConflict) throws RepositoryException {
         final boolean nodeExists = session.nodeExists(nodePath);
         if (nodeExists && actionType == APPEND) {
-            if (allowIgnoreConflict && Boolean.getBoolean(SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_CONFLICT)) {
+            if (allowIgnoreConflict && Boolean.getBoolean(SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_APPEND_CONFLICT)) {
                 return false;
             }
             throw new ItemExistsException(String.format("Node already exists at path %s", nodePath));

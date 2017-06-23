@@ -62,5 +62,6 @@ public final class Constants {
     public static final String PRODUCT_GROUP_NAME = "hippo-cms";
 
     public static final String SYSTEM_PARAMETER_REPO_BOOTSTRAP = "repo.bootstrap";
-    public static final String SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_CONFLICT = "repo.bootstrap.ignore.content.conflict";
+    public static final String SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_APPEND_CONFLICT =
+            "repo.bootstrap.ignore.content.append.conflict";
 }

@@ -168,9 +168,9 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
     public void ignore_append_existing_content() throws Exception {
         applyAndSaveDefinitions(new String[]{source1});
 
-        System.setProperty(Constants.SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_CONFLICT, "true");
+        System.setProperty(Constants.SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_APPEND_CONFLICT, "true");
         JcrContentProcessorTest.this.applyAndSaveDefinitions(new String[]{source1_reload}, ActionType.APPEND);
-        System.setProperty(Constants.SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_CONFLICT, "false");
+        System.setProperty(Constants.SYSTEM_PARAMETER_BOOTSTRAP_IGNORE_CONTENT_APPEND_CONFLICT, "false");
     }
 
     @Test(expected = PathNotFoundException.class)
