@@ -40,7 +40,7 @@ class CKEditorController {
       };
 
       editorConfig.extraPlugins = 'sharedspace,sourcedialog,autogrow';
-      editorConfig.removePlugins += 'sourcearea,resize';
+      editorConfig.removePlugins += 'sourcearea,resize,maximize';
 
       editorConfig.language = this.ConfigService.locale;
 
