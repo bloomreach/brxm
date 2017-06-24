@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
+import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
@@ -143,9 +144,14 @@ public class HstConfigurationUtils {
      */
     public static void createPreviewConfiguration(final String liveConfigurationPath, final Session session) throws RepositoryException, ClientException {
         HstConfigurationUtils.createMandatoryWorkspaceNodesIfMissing(liveConfigurationPath, session);
-        String liveConfigName = StringUtils.substringAfterLast(liveConfigurationPath, "/");
-        Node previewConfigNode = session.getNode(liveConfigurationPath).getParent().addNode(liveConfigName + "-preview", NODETYPE_HST_CONFIGURATION);
+        final String liveConfigName = StringUtils.substringAfterLast(liveConfigurationPath, "/");
+        final Node previewConfigNode = session.getNode(liveConfigurationPath).getParent().addNode(liveConfigName + "-preview", NODETYPE_HST_CONFIGURATION);
         previewConfigNode.setProperty(GENERAL_PROPERTY_INHERITS_FROM, new String[]{"../" + liveConfigName});
+        final  Node liveConfigNode = session.getNode(liveConfigurationPath);
+        if (liveConfigNode.hasProperty(CONFIGURATION_PROPERTY_LOCKED)) {
+            // make sure the preview has same value for locked
+            previewConfigNode.setProperty(CONFIGURATION_PROPERTY_LOCKED, liveConfigNode.getProperty(CONFIGURATION_PROPERTY_LOCKED).getBoolean());
+        }
         JcrUtils.copy(session, liveConfigurationPath + "/" + NODENAME_HST_WORKSPACE, previewConfigNode.getPath() + "/" + NODENAME_HST_WORKSPACE);
     }
 

@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.eventbus.Subscribe;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
@@ -47,6 +48,7 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.DISCARD;
@@ -755,6 +757,23 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         mockNewRequest(session, "localhost", "/home");
 
+    }
+
+    @Test
+    public void preview_creation_of_live_is_locked_results_in_locked_preview() throws Exception {
+        session.getNode("/hst:hst/hst:configurations/unittestproject").setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
+
+        session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(200);
+        mockNewRequest(session, "localhost", "");
+        final PageComposerContextService pccs = mountResource.getPageComposerContextService();
+        final HstRequestContext ctx = pccs.getRequestContext();
+
+        mountResource.startEdit();
+
+        final String previewConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath() + "-preview";
+        assertTrue(session.getNode(previewConfigurationPath).getProperty(CONFIGURATION_PROPERTY_LOCKED).getBoolean());
     }
 
 }
