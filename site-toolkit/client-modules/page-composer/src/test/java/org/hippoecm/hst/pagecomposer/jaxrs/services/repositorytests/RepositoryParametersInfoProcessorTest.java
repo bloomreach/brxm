@@ -37,7 +37,6 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getProperties;
 import static org.junit.Assert.assertEquals;
 
-@Ignore
 public class RepositoryParametersInfoProcessorTest extends AbstractPageComposerTest {
 
     @FieldGroupList({
@@ -67,9 +66,6 @@ public class RepositoryParametersInfoProcessorTest extends AbstractPageComposerT
     private static final String configurationRoot =
             "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/RepositoryParametersInfoProcessorTest$TestParameterInfo";
     private static final String[] contents = {
-            "/hippo:configuration/hippo:translations/hippo:hst", "hipposys:resourcebundles",
-            "/hippo:configuration/hippo:translations/hippo:hst/componentparameters", "hipposys:resourcebundles",
-            "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org", "hipposys:resourcebundles",
             "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm", "hipposys:resourcebundles",
             "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst", "hipposys:resourcebundles",
             "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer", "hipposys:resourcebundles",
