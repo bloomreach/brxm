@@ -69,9 +69,15 @@ public class ConfigurationLockedTest extends MountResourceTest {
         // method should fail because channel has #isConfigurationLocked
         try {
             super.start_edit_creating_preview_config_as_admin();
-            fail("Expected forbidden");
         } catch (ForbiddenException e) {
-            forbiddenAssertions(e);
+            fail("Expected that 'start edit' is allowed *even* when live is locked because start edit only creates the " +
+                    "(locked) preview");
+            Session session = createSession("admin", "admin");
+            try {
+                assertTrue(session.getNode("/hst:hst/hst:configurations/unittestproject-preview").getProperty(CONFIGURATION_PROPERTY_LOCKED).getBoolean());
+            } finally {
+                session.logout();
+            }
         }
     }
 
@@ -90,9 +96,15 @@ public class ConfigurationLockedTest extends MountResourceTest {
     public void start_edit_creating_preview_config_as_webmaster() throws Exception {
         try {
             super.start_edit_creating_preview_config_as_webmaster();
-            fail("Expected forbidden");
         } catch (ForbiddenException e) {
-            forbiddenAssertions(e);
+            fail("Expected that 'start edit' is allowed *even* when live is locked because start edit only creates the " +
+                    "(locked) preview");
+            Session session = createSession("admin", "admin");
+            try {
+                assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview"));
+            } finally {
+                session.logout();
+            }
         }
     }
 
@@ -101,9 +113,15 @@ public class ConfigurationLockedTest extends MountResourceTest {
     public void liveuser_cannot_start_edit() throws Exception {
         try{
             super.liveuser_cannot_start_edit();
-            fail("Expected forbidden");
         } catch (ForbiddenException e) {
-            forbiddenAssertions(e);
+            fail("Expected that 'start edit' is allowed *even* when live is locked because start edit only creates the " +
+                    "(locked) preview");
+            Session session = createSession("admin", "admin");
+            try {
+                assertTrue(session.getNode("/hst:hst/hst:configurations/unittestproject-preview").getProperty(CONFIGURATION_PROPERTY_LOCKED).getBoolean());
+            } finally {
+                session.logout();
+            }
         }
     }
 

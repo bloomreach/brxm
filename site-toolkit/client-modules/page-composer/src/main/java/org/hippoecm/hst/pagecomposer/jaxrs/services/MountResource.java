@@ -275,6 +275,7 @@ public class MountResource extends AbstractConfigResource {
      *
      * @return ok {@link Response} when editing can start, and error {@link Response} otherwise
      */
+    @IgnoreLock // even if the live is locked, a preview needs to be possible to be created (which is then also locked)
     @POST
     @Path("/edit/")
     @Produces(MediaType.APPLICATION_JSON)
