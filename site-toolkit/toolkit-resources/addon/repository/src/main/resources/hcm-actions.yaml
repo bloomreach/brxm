@@ -1,3 +1,0 @@
-action-lists:
-- 1.0:
-    /hippo:configuration/hippo:update/hippo:registry/MoveContainersToWorkspace: delete
