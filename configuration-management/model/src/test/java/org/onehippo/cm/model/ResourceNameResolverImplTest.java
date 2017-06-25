@@ -35,36 +35,47 @@ public class ResourceNameResolverImplTest {
     public void verify_name_clashes() {
 
         String propertyPath = nameResolver.generateName("/a/b/c.txt");
-        Assert.assertEquals("/a/b/c.txt", propertyPath);
+        Assert.assertEquals("/a/b/c.txt", propertyPath
+                // needed on Windows FS
+                .replace('\\','/'));
 
         propertyPath = nameResolver.generateName("/a/b/c.txt");
-        Assert.assertEquals("/a/b/c-1.txt", propertyPath);
+        Assert.assertEquals("/a/b/c-1.txt", propertyPath
+                // needed on Windows FS
+                .replace('\\','/'));
 
         propertyPath = nameResolver.generateName("/a/a/c");
-        Assert.assertEquals("/a/a/c", propertyPath);
+        Assert.assertEquals("/a/a/c", propertyPath
+                // needed on Windows FS
+                .replace('\\','/'));
 
         propertyPath = nameResolver.generateName("/a/a/c");
-        Assert.assertEquals("/a/a/c-1", propertyPath);
+        Assert.assertEquals("/a/a/c-1", propertyPath
+                // needed on Windows FS
+                .replace('\\','/'));
 
         propertyPath = nameResolver.generateName("/a/b/c[0].txt");
-        Assert.assertEquals("/a/b/c[0].txt", propertyPath);
+        Assert.assertEquals("/a/b/c[0].txt", propertyPath
+                // needed on Windows FS
+                .replace('\\','/'));
 
         propertyPath = nameResolver.generateName("/a/b/c[0].txt");
-        Assert.assertEquals("/a/b/c[0]-1.txt", propertyPath);
+        Assert.assertEquals("/a/b/c[0]-1.txt", propertyPath
+                // needed on Windows FS
+                .replace('\\','/'));
     }
 
     @Test
     public void verify_dir_name_clashes() {
 
         String propertyPath2 = nameResolver.generateName("/a/b/c/d");
-        Assert.assertEquals("/a/b/c/d", propertyPath2);
+        Assert.assertEquals("/a/b/c/d", propertyPath2
+                // needed on Windows FS
+                .replace('\\','/'));
 
         String propertyPath = nameResolver.generateName("/a/b/c");
-        Assert.assertEquals("/a/b/c", propertyPath);
-
-
-
+        Assert.assertEquals("/a/b/c", propertyPath
+                // needed on Windows FS
+                .replace('\\', '/'));
     }
-
-
 }

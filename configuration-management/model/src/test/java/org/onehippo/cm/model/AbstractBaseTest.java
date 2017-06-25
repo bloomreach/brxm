@@ -89,7 +89,7 @@ public abstract class AbstractBaseTest {
         if (url == null) {
             fail("cannot find resource " + moduleConfigResourceName);
         }
-        return Paths.get(url.getFile());
+        return Paths.get(new File(url.getFile()).getPath());
     }
 
     protected Path findBase(final String moduleConfigResourceName) throws IOException {

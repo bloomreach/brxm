@@ -86,6 +86,8 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
     @Override
     public String generateName(String filePath) {
 
+        // needed for Windows FS, to ensure provided filePath uses native separators
+        filePath = Paths.get(filePath).toString();
         final String folderPath = filePath.toLowerCase().substring(0, filePath.lastIndexOf(FILE_PATH_DELIMITER));
         final String filename = StringUtils.substringAfterLast(filePath, FILE_PATH_DELIMITER);
 

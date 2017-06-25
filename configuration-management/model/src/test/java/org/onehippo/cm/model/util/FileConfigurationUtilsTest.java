@@ -27,7 +27,10 @@ public class FileConfigurationUtilsTest {
     @Test
     public void test_multiple_starting_slashes_are_removed() {
         final Path base = Paths.get("base");
-        assertEquals("base/resource.txt", FileConfigurationUtils.getResourcePath(base, null, "//resource.txt").toString());
+        assertEquals("base/resource.txt",
+                FileConfigurationUtils.getResourcePath(base, null, "//resource.txt").toString()
+                        // needed on Windows FS
+                        .replace('\\','/'));
     }
 
 }
