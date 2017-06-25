@@ -21,16 +21,18 @@
   </label>
 
   <md-select aria-label="{{ ::'TOOLBAR_PROJECT_LABEL' | translate }}"
-             class="md-no-underline"
+             class="md-no-underline qa-project-toggle-select"
              ng-model-options="{ trackBy: '$value.id' }"
              ng-model="$ctrl.selectedProject">
-    <md-option ng-value="$ctrl.core">
+    <md-option class="qa-project-toggle-core"
+             ng-value="$ctrl.core">
       {{ $ctrl.core.name }}
     </md-option>
 
     <md-divider ng-if="$ctrl.getProjects()"></md-divider>
 
-    <md-option ng-repeat="project in $ctrl.getProjects() | orderBy: 'name' track by project.id"
+    <md-option class="qa-project-toggle-option"
+               ng-repeat="project in $ctrl.getProjects() | orderBy: 'name' track by project.id"
                ng-value="project"
                md-truncate>
       {{ project.name }}
