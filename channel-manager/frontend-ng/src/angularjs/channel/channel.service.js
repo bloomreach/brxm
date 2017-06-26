@@ -59,7 +59,7 @@ class ChannelService {
     });
 
     this.CmsService.subscribe('load-channel', (channel, initialPath, projectId) => {
-      this.initializeChannel(channel, initialPath, projectId);
+      this._initializeChannel(channel, initialPath, projectId);
     });
 
     // Handle reloading of iframe by BrowserSync during development
@@ -68,6 +68,7 @@ class ChannelService {
 
   _initializeChannel(channel, initialPath, passedProjectId) {
     let channelId = channel.id;
+    let setupPromise;
 
     if (this.ConfigService.projectsEnabled) {
       setupPromise = this.$q
@@ -80,7 +81,7 @@ class ChannelService {
         })
         .then(selectedProjectId => this.ProjectService.load(channel.mountId, selectedProjectId));
     } else {
-      this.loadChannel(channelId, initialPath, projectId);
+      setupPromise = this.$q.resolve();
     }
 
     return this.$q
@@ -115,7 +116,7 @@ class ChannelService {
     return this.loadChannel(channelId);
   }
 
-  loadChannel(channelId, initialPath, projectId) {
+  loadChannel(channelId) {
     return this.HstService
       .getChannel(channelId)
       .then((channel) => {
@@ -150,7 +151,7 @@ class ChannelService {
     return this.$q.resolve(channel);
   }
 
-  _setChannel(channel, projectId) {
+  _setChannel(channel) {
     this.channel = channel;
 
     // precompute channel prefix to be more efficient
@@ -158,10 +159,6 @@ class ChannelService {
 
     this.CatalogService.load(this.getMountId());
     this.SiteMapService.load(channel.siteMapId);
-
-    if (this.ConfigService.projectsEnabled) {
-      this.ProjectService.load(channel, projectId);
-    }
 
     if (this.SessionService.hasWriteAccess()) {
       this._augmentChannelWithPrototypeInfo();
