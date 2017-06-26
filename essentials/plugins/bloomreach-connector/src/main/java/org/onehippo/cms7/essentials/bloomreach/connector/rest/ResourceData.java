@@ -21,7 +21,7 @@ public class ResourceData {
     private String resourceName;
     private String realm;
     private String authKey;
-    private String domainKey = "bloomique_com";
+    private String domainKey = "";
     private String accountId;
     private String fl;
     private String baseUrl;
