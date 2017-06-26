@@ -53,7 +53,7 @@
                ng-hide="$ctrl.value"
                ng-click="$ctrl.showPathPicker()"
                ng-disabled="::$ctrl.readOnly">
-        <img ng-class="{ 'readonly': ::$ctrl.readOnly }"
+        <img ng-class="{ 'readonly': $ctrl.readOnly }"
              ng-if="$ctrl.value"
              ng-src="{{ $ctrl.getImageVariantPath() }}"
              ng-click="$ctrl.readOnly || $ctrl.showPathPicker()">
