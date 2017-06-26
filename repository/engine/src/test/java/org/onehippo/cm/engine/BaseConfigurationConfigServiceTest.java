@@ -18,6 +18,7 @@ package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -170,6 +171,16 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
 
         public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
             return this.getClass().getResourceAsStream("/configuration_config_service_test/" + resourcePath);
+        }
+
+        @Override
+        public Path getResourcePath(final Source source, final String resourcePath) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getResourceModulePath(final Source source, final String resourcePath) {
+            throw new UnsupportedOperationException();
         }
     }
 

@@ -320,11 +320,21 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             final ResourceInputProvider resourceInputProvider = new ResourceInputProvider() {
                 @Override
                 public boolean hasResource(final Source source, final String resourcePath) {
-                    return !resourcePath.contains("not");
+                    return false;
                 }
                 @Override
                 public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
-                    throw new IOException("Plain YAML import does not support links to binary resources");
+                    throw new IOException("Plain YAML import does not support links to resources");
+                }
+
+                @Override
+                public Path getResourcePath(final Source source, final String resourcePath) {
+                    throw new ConfigurationRuntimeException("Plain YAML import does not support links to resources");
+                }
+
+                @Override
+                public String getResourceModulePath(final Source source, final String resourcePath) {
+                    throw new ConfigurationRuntimeException("Plain YAML import does not support links to resources");
                 }
             };
 

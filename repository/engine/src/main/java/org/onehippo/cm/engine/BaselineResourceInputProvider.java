@@ -17,6 +17,7 @@ package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,6 +80,16 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
         catch (RepositoryException e) {
             throw new RuntimeException("Problem loading stream for resource in baseline", e);
         }
+    }
+
+    @Override
+    public Path getResourcePath(final Source source, final String resourcePath) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getResourceModulePath(final Source source, final String resourcePath) {
+        throw new UnsupportedOperationException();
     }
 
     /**

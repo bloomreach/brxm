@@ -26,17 +26,17 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 public class ExportModuleContext extends ModuleContext {
 
     public ExportModuleContext(ModuleImpl module) throws IOException {
-        super(module, null, false);
+        super(module, null);
     }
 
     public ExportModuleContext(ModuleImpl module, Path moduleDescriptorPath) throws IOException {
-        super(module, moduleDescriptorPath, false);
+        super(module, moduleDescriptorPath);
         createOutputProviders(moduleDescriptorPath);
     }
 
     @Override
-    public void createOutputProviders(Path destinationPath) {
-        configOutputProvider = new FileResourceOutputProvider(destinationPath);
-        contentOutputProvider = new FileResourceOutputProvider(destinationPath);
+    public void createOutputProviders(Path moduleDescriptorPath) {
+        configOutputProvider = new FileResourceOutputProvider(moduleDescriptorPath, "");
+        contentOutputProvider = new FileResourceOutputProvider(moduleDescriptorPath, "");
     }
 }

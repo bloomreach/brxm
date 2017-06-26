@@ -69,6 +69,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_LAST_REVISION_PROPERTY_NAME;
+import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
 public class EventJournalProcessor {
 
@@ -573,9 +574,8 @@ public class EventJournalProcessor {
             // write each module to the file system
             final AutoExportModuleWriter writer = new AutoExportModuleWriter(new JcrResourceInputProvider(eventProcessorSession));
             for (ModuleImpl module : mergedModules) {
-                final Path moduleDescriptorPath = projectPath.resolve(module.getMvnPath())
-                        .resolve(org.onehippo.cm.model.Constants.MAVEN_MODULE_DESCRIPTOR);
-                final ModuleContext ctx = new ModuleContext(module, moduleDescriptorPath, false);
+                final Path moduleDescriptorPath = projectPath.resolve(nativePath(module.getMvnPath()+org.onehippo.cm.model.Constants.MAVEN_MODULE_DESCRIPTOR));
+                final ModuleContext ctx = new ModuleContext(module, moduleDescriptorPath);
                 ctx.createOutputProviders(moduleDescriptorPath);
 
                 writer.writeModule(module, ctx);

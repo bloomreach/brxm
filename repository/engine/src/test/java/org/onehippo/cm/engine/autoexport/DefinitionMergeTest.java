@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.singletonList;
+import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
 public class DefinitionMergeTest {
 
@@ -165,7 +166,7 @@ public class DefinitionMergeTest {
 
         protected Path out(String testName, ModuleImpl module) throws IOException {
             return findBase(in(testName, module.getName() + "/" + Constants.HCM_MODULE_YAML))
-                    .resolve("../../out/"+module.getName());
+                    .resolve(nativePath("../../out/"+module.getName()));
         }
 
         /**
@@ -184,7 +185,7 @@ public class DefinitionMergeTest {
             // write module to a new temp dir
             Path mOut = output.newFolder(module.getName()).toPath();
             final ModuleContext moduleContext = new ModuleContext(module, in(testName, module));
-            moduleContext.createOutputProviders(mOut);
+            moduleContext.createOutputProviders(mOut.resolve(Constants.HCM_MODULE_YAML));
             writer.writeModule(module, moduleContext);
 
             // in case we expect an empty output for a module, we need to create the empty dir to compare against,

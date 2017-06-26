@@ -73,6 +73,7 @@ import static org.onehippo.cm.engine.ValueProcessor.isUuidInUse;
 import static org.onehippo.cm.engine.ValueProcessor.propertyIsIdentical;
 import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
 import static org.onehippo.cm.engine.ValueProcessor.valuesFrom;
+import static org.onehippo.cm.model.util.FilePathUtils.getParentSafely;
 
 /**
  * ConfigurationConfigService is responsible for reading and writing Configuration from/to the repository.
@@ -114,7 +115,7 @@ public class ConfigurationConfigService {
                     service.importJcrWebFileBundle(session, bundleZipFile, true);
                 } else {
                     final ResourceInputProvider resourceInputProvider = module.getConfigResourceInputProvider();
-                    final Path modulePath = resourceInputProvider.getBasePath().getParent();
+                    final Path modulePath = getParentSafely(resourceInputProvider.getBasePath());
                     service.importJcrWebFileBundle(session, modulePath.resolve(bundleName).toFile(), true);
                 }
             }
