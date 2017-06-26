@@ -30,12 +30,6 @@
   <artifactId>hippo-essentials-plugin-bloomreach-connector</artifactId>
 
   <dependencies>
-
-
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
