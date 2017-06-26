@@ -68,7 +68,10 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
     public void prepareSource(final EsvParser parser) throws IOException, EsvParseException {
         prepareResource(parser.getBaseDir(), true);
         setSourcePath(FilenameUtils.removeExtension(getResourcePath()) + ".yaml");
-        sourceNode = parser.parse(new FileInputStream(getResource()), getResource().getCanonicalPath());
+
+        try (final FileInputStream fileInputStream = new FileInputStream(getResource())) {
+            sourceNode = parser.parse(fileInputStream, getResource().getCanonicalPath());
+        }
         contentRoot = "/" + normalizePath(getPropertyValue("hippo:contentroot", PropertyType.STRING, true));
         setContentPath(contentRoot + "/" + sourceNode.getName());
     }

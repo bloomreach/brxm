@@ -43,6 +43,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.Constants;
@@ -206,7 +207,10 @@ public class Esv2Yaml {
     public void convert() throws IOException, EsvParseException {
         log.info("Converting src: " + src.getCanonicalPath());
 
-        final EsvNode rootNode = esvParser.parse(new FileInputStream(extensionFile), extensionFile.getCanonicalPath());
+        final FileInputStream inputStream = new FileInputStream(extensionFile);
+        final EsvNode rootNode = esvParser.parse(inputStream, extensionFile.getCanonicalPath());
+        IOUtils.closeQuietly(inputStream);
+
         if (rootNode != null) {
 
 
