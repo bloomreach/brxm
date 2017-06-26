@@ -92,8 +92,14 @@ public class Esv2Yaml {
     private final MigrationMode migrationMode;
     private final String[] contentRoots;
     private final ResourceProcessor resourceProcessor = new ResourceProcessor();
+    public static boolean translationMode = false;
 
     public static void main(final String[] args) throws IOException, EsvParseException, ParseException {
+
+        String property = System.getProperty("allow.duplicate.translation.bundles");
+        if ("true".equals(property)) {
+            translationMode = true;
+        }
 
         final Options options = createCmdOptions();
 
@@ -278,17 +284,24 @@ public class Esv2Yaml {
                     definition.setNode(definitionNode);
                 }
 
-                for (final String sourcePath : resourceList.keySet()) {
-                    final String destination = resourceList.get(sourcePath);
-                    final Source source = module.getModifiableSources().stream().filter(s -> s.getPath().equals(destination)).findFirst().get();
-                    final Path sourceFilePath = Paths.get(src.toString(), sourcePath);
-                    if (source.getDefinitions().isEmpty()) {
-                        if (migrationMode == MigrationMode.GIT || migrationMode == MigrationMode.MOVE) {
-                            Files.deleteIfExists(sourceFilePath);
+                if (!translationMode) {
+                    for (final String sourcePath : resourceList.keySet()) {
+                        final String destination = resourceList.get(sourcePath);
+                        final Source source = module.getModifiableSources().stream().filter(s -> s.getPath().equals(destination)).findFirst().get();
+                        final Path sourceFilePath = Paths.get(src.toString(), sourcePath);
+                        if (source.getDefinitions().isEmpty()) {
+                            if (migrationMode == MigrationMode.GIT || migrationMode == MigrationMode.MOVE) {
+                                Files.deleteIfExists(sourceFilePath);
+                            }
+                        } else {
+                            String hcmFolder = source.getType() == SourceType.CONFIG ? HCM_CONFIG_FOLDER : HCM_CONTENT_FOLDER;
+                            handleFsResource(sourceFilePath, Paths.get(src.toString(), hcmFolder, destination));
                         }
-                    } else {
-                        String hcmFolder = source.getType() == SourceType.CONFIG ? HCM_CONFIG_FOLDER : HCM_CONTENT_FOLDER;
-                        handleFsResource(sourceFilePath, Paths.get(src.toString(), hcmFolder, destination));
+                    }
+                } else { //in case of translation, just delete the source file
+                    for (final String sourcePath : resourceList.keySet()) {
+                        final Path sourceFilePath = Paths.get(src.toString(), sourcePath);
+                        Files.deleteIfExists(sourceFilePath);
                     }
                 }
 
@@ -469,7 +482,7 @@ public class Esv2Yaml {
                     ((WebFileBundleInstruction) instruction).processWebFileBundle(mainSource, target);
                     break;
                 case RESOURCEBUNDLES:
-                    ((ResourceBundlesInitializeInstruction) instruction).processResourceBundles(module, resourceBundleParents, resourceBundles);
+                    ((ResourceBundlesInitializeInstruction) instruction).processResourceBundles(translationMode ? mainSource : module.addConfigSource(instruction.getSourcePath()), resourceBundleParents, resourceBundles);
                     break;
             }
         }

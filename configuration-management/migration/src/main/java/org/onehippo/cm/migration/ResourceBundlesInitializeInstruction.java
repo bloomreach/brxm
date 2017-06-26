@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 
@@ -29,8 +30,6 @@ import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
-import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
 
 public class ResourceBundlesInitializeInstruction extends InitializeInstruction {
@@ -50,15 +49,16 @@ public class ResourceBundlesInitializeInstruction extends InitializeInstruction 
         super(instructionNode, type, combinedWith, null, null);
     }
 
-    public void processResourceBundles(final ModuleImpl module, final ConfigDefinitionImpl resourceBundleParents,
+
+    public void processResourceBundles(final ConfigSourceImpl source, final ConfigDefinitionImpl resourceBundleParents,
                                        final Set<String> bundles) throws IOException, EsvParseException {
         try (final FileInputStream fileInputStream = new FileInputStream(getResource())) {
             final JSONObject json = new JSONObject(IOUtils.toString(fileInputStream, "UTF-8"));
-            parse(json, new Stack<>(), module.addConfigSource(getSourcePath()), resourceBundleParents, bundles);
+            parse(json, new Stack<>(), source, resourceBundleParents, bundles);
         }
     }
 
-    private void parse(final JSONObject json, final Stack<String> path, SourceImpl source,
+    private void parse(final JSONObject json, final Stack<String> path, ConfigSourceImpl source,
                        final ConfigDefinitionImpl resourceBundleParents, final Set<String> bundles)
             throws EsvParseException {
         for (String key : json.keySet()) {
@@ -71,7 +71,17 @@ public class ResourceBundlesInitializeInstruction extends InitializeInstruction 
                 final String bundleName = buildName(path);
                 final String bundlePath = TRANSLATIONS_ROOT + bundleName;
                 validateBundleName(bundleName, bundles);
-                final ConfigDefinitionImpl def = ((ConfigSourceImpl)source).addConfigDefinition();
+
+                final ConfigDefinitionImpl def;
+                if (isTranslationMode()) {
+                    Optional<ConfigDefinitionImpl> first = source.getDefinitions().stream()
+                            .filter(d -> ((ConfigDefinitionImpl)d).getNode() != null)
+                            .map(d -> (ConfigDefinitionImpl)d).filter(d -> bundlePath.equals(d.getNode().getPath())).findFirst();
+                    def = first.orElseGet(source::addConfigDefinition);
+                } else {
+                    def = source.addConfigDefinition();
+                }
+
                 final DefinitionNodeImpl bundleNode = new DefinitionNodeImpl(bundlePath, path.peek(), def);
                 def.setNode(bundleNode);
                 bundleNode.addProperty(JcrConstants.JCR_PRIMARYTYPE,
@@ -103,10 +113,14 @@ public class ResourceBundlesInitializeInstruction extends InitializeInstruction 
 
     private void validateBundleName(final String bundleName, final Set<String> bundles) throws EsvParseException {
 
-        if (bundles.contains(bundleName) && !Objects.equals(System.getProperty(ALLOW_DUPLICATE_TRANSLATION_BUNDLES), "true") ) {
+        if (bundles.contains(bundleName) && !isTranslationMode()) {
                     throw new EsvParseException("Translation bundle name " + bundleName + " in resourcebundle: "
                             + getResourcePath() + " already defined.");
         }
+    }
+
+    private boolean isTranslationMode() {
+        return Objects.equals(System.getProperty(ALLOW_DUPLICATE_TRANSLATION_BUNDLES), "true");
     }
 
     private static boolean isBundle(final JSONObject map) {
