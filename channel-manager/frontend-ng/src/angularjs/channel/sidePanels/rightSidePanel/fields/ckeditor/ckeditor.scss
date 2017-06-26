@@ -15,6 +15,13 @@
 // sass-lint:disable class-name-format, no-qualifying-elements
 @import 'variables';
 
+.cke_screen_reader_only {
+  &.cke_copyformatting_notification {
+    height: 0 !important;
+    width: 0 !important;
+  }
+}
+
 .cke {
   .cke_button__source {
     display: none;
