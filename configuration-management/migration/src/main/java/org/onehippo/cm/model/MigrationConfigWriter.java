@@ -19,9 +19,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.migration.ResourceProcessor;
 
 import static org.onehippo.cm.migration.ResourceProcessor.deleteEmptyDirectory;
+import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
+import static org.onehippo.cm.model.Constants.HCM_CONTENT_FOLDER;
+import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
 public class MigrationConfigWriter extends ModuleWriter {
 
@@ -42,16 +46,14 @@ public class MigrationConfigWriter extends ModuleWriter {
      */
     void processCopyItem(Source source, CopyItem copyItem, ModuleContext moduleContext) throws IOException {
 
+        final String hcmFolder = source.getType() == SourceType.CONFIG ? HCM_CONFIG_FOLDER : HCM_CONTENT_FOLDER;
         final Path sourceBasePath = moduleContext.getInputProvider(source).getBasePath();
-        final Path destBasePath = ((FileResourceOutputProvider) moduleContext.getOutputProvider(source)).getBasePath();
+        final Path destBasePath = ((FileResourceOutputProvider) moduleContext.getOutputProvider(source)).getBasePath().resolve(hcmFolder);
 
-        String itemRelativePath = copyItem.getValue().getString();
-        if (itemRelativePath.startsWith("/")) {
-            itemRelativePath = itemRelativePath.substring(1);
-        }
+        String itemRelativePath = StringUtils.stripStart(copyItem.getValue().getString(), "/");
 
-        final Path oldItemPath = sourceBasePath.resolve(itemRelativePath);
-        final Path newItemPath = destBasePath.resolve(itemRelativePath);
+        final Path oldItemPath = sourceBasePath.resolve(nativePath(itemRelativePath));
+        final Path newItemPath = destBasePath.resolve(nativePath(itemRelativePath));
 
         switch (mode) {
             case GIT:

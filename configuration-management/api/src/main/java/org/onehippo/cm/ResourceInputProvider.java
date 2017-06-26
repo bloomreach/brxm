@@ -46,4 +46,8 @@ public interface ResourceInputProvider {
     default Path getBasePath() {
         throw new UnsupportedOperationException();
     }
+
+    public Path getResourcePath(final Source source, final String resourcePath);
+
+    String getResourceModulePath(final Source source, final String resourcePath);
 }

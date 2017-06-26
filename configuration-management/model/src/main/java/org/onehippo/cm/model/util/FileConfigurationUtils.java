@@ -15,61 +15,14 @@
  */
 package org.onehippo.cm.model.util;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.Constants;
-import org.onehippo.cm.model.Group;
-import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.Project;
-import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.impl.GroupImpl;
 
 import static org.onehippo.cm.model.Constants.FILE_NAME_EXT_SEPARATOR;
 import static org.onehippo.cm.model.Constants.FILE_NAME_SEQ_PREFIX;
 
 public class FileConfigurationUtils {
-
-    /**
-     * Resolves the location of module's hcm-config folder
-     * @param moduleDescriptorPath
-     * @return
-     */
-    public static Path getModuleConfigBasePath(final Path moduleDescriptorPath) {
-        if (Files.isRegularFile(moduleDescriptorPath)) {
-            return moduleDescriptorPath.resolveSibling(Constants.HCM_CONFIG_FOLDER);
-        } else {
-            return moduleDescriptorPath.resolve(Constants.HCM_CONFIG_FOLDER);
-        }
-    }
-
-    /**
-     * Resolves the location of module's hcm-content folder
-     * @param moduleDescriptorPath
-     * @return
-     */
-    public static Path getModuleContentBasePath(final Path moduleDescriptorPath) {
-        if (Files.isRegularFile(moduleDescriptorPath)) {
-            return moduleDescriptorPath.resolveSibling(Constants.HCM_CONTENT_FOLDER);
-        } else {
-            return moduleDescriptorPath.resolve(Constants.HCM_CONTENT_FOLDER);
-        }
-    }
-
-    public static Path getResourcePath(final Path basePath, final Source source, final String resourcePath) {
-        if (resourcePath.startsWith("/")) {
-            return basePath.resolve(StringUtils.stripStart(resourcePath, "/"));
-        } else {
-            return basePath.resolve(source.getPath()).getParent().resolve(resourcePath);
-        }
-    }
-
-    public static boolean hasMultipleModules(Collection<GroupImpl> groups) {
-        return groups.stream().flatMap(p -> p.getProjects().stream()).mapToInt(p -> p.getModules().size()).sum() > 1;
-    }
 
     /**
      * Use a simple numbering convention to generate a unique path given a candidate path and a test of uniqueness.
@@ -80,7 +33,7 @@ public class FileConfigurationUtils {
      * @param sequence    the number of the current attempt, used for loop control -- callers typically pass 0
      * @return a path, based on candidate, that is unique according to isNotUnique
      */
-    public static String generateUniquePath(String candidate, Predicate<String> isNotUnique, int sequence) {
+    public static String generateUniquePath(final String candidate, Predicate<String> isNotUnique, int sequence) {
 
         String name = StringUtils.substringBeforeLast(candidate, FILE_NAME_EXT_SEPARATOR);
         String extension = StringUtils.substringAfterLast(candidate, FILE_NAME_EXT_SEPARATOR);

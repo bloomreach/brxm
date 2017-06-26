@@ -15,68 +15,17 @@
  */
 package org.onehippo.cm.model.serializer;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.util.FileConfigurationUtils;
-
-import static org.onehippo.cm.model.Constants.FILE_NAME_EXT_SEPARATOR;
-import static org.onehippo.cm.model.Constants.FILE_PATH_DELIMITER;
 
 /**
  * Unique file name generator
  */
 public class ResourceNameResolverImpl implements ResourceNameResolver {
 
-    private static class FileEntry {
-
-        private final String path;
-        private final String basename;
-        private final String extension;
-
-        FileEntry(String finalPath) {
-            Path filePath = Paths.get(finalPath);
-            path = filePath.getParent().toString();
-            String filename = filePath.getFileName().toString();
-            basename = StringUtils.substringBeforeLast(filename, FILE_NAME_EXT_SEPARATOR);
-            extension = StringUtils.substringAfterLast(filename, FILE_NAME_EXT_SEPARATOR);
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public String getExtension() {
-            return extension;
-        }
-
-        public String getFileName() {
-            return basename + (!StringUtils.isEmpty(extension) ? FILE_NAME_EXT_SEPARATOR + extension : StringUtils.EMPTY);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof FileEntry)) return false;
-            FileEntry fileEntry = (FileEntry) o;
-            return Objects.equals(path, fileEntry.path) &&
-                    Objects.equals(basename, fileEntry.basename) &&
-                    Objects.equals(extension, fileEntry.extension);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(path, basename, extension);
-        }
-    }
-
-
-    private Set<FileEntry> knownFileEntries = new HashSet<>();
+    private Set<String> knownFileEntries = new HashSet<>();
 
     /**
      * Generates file unique name and add it to known list along with its full path.
@@ -86,21 +35,9 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
     @Override
     public String generateName(String filePath) {
 
-        // needed for Windows FS, to ensure provided filePath uses native separators
-        filePath = Paths.get(filePath).toString();
-        final String folderPath = filePath.toLowerCase().substring(0, filePath.lastIndexOf(FILE_PATH_DELIMITER));
-        final String filename = StringUtils.substringAfterLast(filePath, FILE_PATH_DELIMITER);
-
-        final Set<String> knownFiles = knownFileEntries.stream().filter(p -> p.getPath().toLowerCase().equals(folderPath.toLowerCase()))
-                .map(FileEntry::getFileName).collect(Collectors.toSet());
-
-        final String generatedName = FileConfigurationUtils.generateUniquePath(filename, knownFiles::contains, 0);
-
-        final String finalPath = Paths.get(folderPath, generatedName).toString();
-
-        final FileEntry fileEntry = new FileEntry(finalPath);
-        knownFileEntries.add(fileEntry);
-        return finalPath;
+        final String generatedPath = FileConfigurationUtils.generateUniquePath(filePath, knownFileEntries::contains, 0);
+        knownFileEntries.add(generatedPath);
+        return generatedPath;
     }
 
 }

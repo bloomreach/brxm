@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
 public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
 
@@ -62,7 +63,7 @@ public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
         try {
             // set system properties to trigger developer mode that loads config from source files
             System.setProperty("repo.bootstrap.modules", "TestModuleFileSource");
-            System.setProperty("project.basedir", calculateBaseDir() + "/src/test/resources");
+            System.setProperty("project.basedir", calculateBaseDir() + nativePath("/src/test/resources"));
 
             Set<ModuleImpl> classpathModules = loadModules();
 

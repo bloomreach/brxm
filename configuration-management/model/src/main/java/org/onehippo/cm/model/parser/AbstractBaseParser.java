@@ -20,8 +20,6 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -219,14 +217,11 @@ public abstract class AbstractBaseParser {
     }
 
     private boolean containsParentSegment(final String resourceString) {
-        final Path resourcePath = Paths.get(resourceString);
-
-        for (final Path pathElement : resourcePath) {
+        for (final String pathElement : resourceString.split("/")) {
             if (pathElement.toString().equals("..")) {
                 return true;
             }
         }
-
         return false;
     }
 

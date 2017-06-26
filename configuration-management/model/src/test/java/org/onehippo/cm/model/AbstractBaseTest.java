@@ -53,6 +53,7 @@ import static org.junit.Assert.fail;
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.model.impl.ModelTestUtils.findByName;
 import static org.onehippo.cm.model.impl.ModelTestUtils.findByPath;
+import static org.onehippo.cm.model.util.FilePathUtils.getParentSafely;
 
 public abstract class AbstractBaseTest {
 
@@ -63,6 +64,16 @@ public abstract class AbstractBaseTest {
         }
         @Override
         public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Path getResourcePath(final Source source, final String resourcePath) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getResourceModulePath(final Source source, final String resourcePath) {
             throw new UnsupportedOperationException();
         }
     };
@@ -93,7 +104,7 @@ public abstract class AbstractBaseTest {
     }
 
     protected Path findBase(final String moduleConfigResourceName) throws IOException {
-        return find(moduleConfigResourceName).getParent();
+        return getParentSafely(find(moduleConfigResourceName));
     }
 
     protected GroupImpl assertGroup(final Map<String, GroupImpl> parent, final String name, final String[] after, final int projectCount) {

@@ -22,6 +22,14 @@ import java.nio.file.Path;
 public interface ResourceOutputProvider {
 
     /**
+     * Get an OutputStream to write a YAML Source.
+     * Note, caller is responsible for closing the stream when finished with it.
+     * @param source
+     * @throws IOException
+     */
+    OutputStream getSourceOutputStream(final Source source) throws IOException;
+
+    /**
      * Get an OutputStream to write to a resource referenced in a YAML Source.
      * Note, caller is responsible for closing the stream when finished with it.
      * @param source
@@ -35,7 +43,9 @@ public interface ResourceOutputProvider {
      * @param source
      * @param resourcePath
      * @return
-     * @throws IOException
      */
-    Path getResourceOutputPath(final Source source, final String resourcePath) throws IOException;
+    Path getResourcePath(final Source source, final String resourcePath);
+
+    String getSourceBasePath();
+    String getResourceModulePath(final Source source, final String resourcePath);
 }

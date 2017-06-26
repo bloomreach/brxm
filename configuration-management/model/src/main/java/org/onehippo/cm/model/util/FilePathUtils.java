@@ -15,22 +15,27 @@
  */
 package org.onehippo.cm.model.util;
 
+import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
-import org.junit.Test;
+public class FilePathUtils {
 
-import static org.junit.Assert.assertEquals;
+    public static final boolean UNIXFS = File.separator.equals("/");
 
-public class FileConfigurationUtilsTest {
-
-    @Test
-    public void test_multiple_starting_slashes_are_removed() {
-        final Path base = Paths.get("base");
-        assertEquals("base/resource.txt",
-                FileConfigurationUtils.getResourcePath(base, null, "//resource.txt").toString()
-                        // needed on Windows FS
-                        .replace('\\','/'));
+    public static boolean isUnixFs() {
+        return UNIXFS;
     }
 
+    public static String nativePath(final String path) {
+        return UNIXFS ? path : path.replace('/', '\\');
+    }
+
+    public static String unixPath(final String path) {
+        return UNIXFS ? path : path.replace('\\', '/');
+    }
+
+    public static Path getParentSafely(final Path path) {
+        final Path parent = path.getParent();
+        return parent != null ? parent : path.getFileSystem().getPath("/");
+    }
 }

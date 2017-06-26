@@ -78,7 +78,6 @@ public class Esv2Yaml {
     private static final String TRANSLATIONS_ROOT_PATH = "/hippo:configuration/hippo:translations";
     private static final String SOURCE_FOLDER = "s";
     private static final String TARGET_FOLDER = "t";
-    private static final String AGGREGATE = "a";
     private static final String MODE = "m";
     private static final String ECM_LOCATION = "i";
     private static final String CONTENT_ROOTS = "content";
@@ -89,7 +88,6 @@ public class Esv2Yaml {
     private final EsvParser esvParser;
     private final File extensionFile;
     private final ModuleImpl module;
-    private final boolean aggregate;
     private final MigrationMode migrationMode;
     private final String[] contentRoots;
     private final ResourceProcessor resourceProcessor = new ResourceProcessor();
@@ -103,7 +101,6 @@ public class Esv2Yaml {
             final CommandLineParser parser = new DefaultParser();
             final CommandLine cmd = parser.parse(options, args);
             if (cmd.hasOption(SOURCE_FOLDER) && cmd.hasOption(TARGET_FOLDER)) {
-                final boolean aggregate = cmd.hasOption(AGGREGATE);
                 final String src = cmd.getOptionValue(SOURCE_FOLDER);
                 final String target = cmd.getOptionValue(TARGET_FOLDER);
                 final String[] contentRoots = parseContentRoots(cmd.getOptionValue(CONTENT_ROOTS));
@@ -114,9 +111,9 @@ public class Esv2Yaml {
                 }
 
                 if (cmd.hasOption(ECM_LOCATION)) {
-                    new Esv2Yaml(new File(cmd.getOptionValue(ECM_LOCATION)), new File(src), new File(target), aggregate, mode, contentRoots).convert();
+                    new Esv2Yaml(new File(cmd.getOptionValue(ECM_LOCATION)), new File(src), new File(target), mode, contentRoots).convert();
                 } else {
-                    new Esv2Yaml(new File(src), new File(target), aggregate, mode, contentRoots).convert();
+                    new Esv2Yaml(new File(src), new File(target), mode, contentRoots).convert();
                 }
             } else {
                 final HelpFormatter formatter = new HelpFormatter();
@@ -142,7 +139,6 @@ public class Esv2Yaml {
         options.addOption(SOURCE_FOLDER, "src", true, "bootstrap initialization resources folder");
         options.addOption(TARGET_FOLDER, "target", true, "directory for writing the output yaml (will be emptied first)");
         options.addOption(MODE, "mode", true, "(optional) File system mode. git/move/copy. Default is copy");
-        options.addOption(AGGREGATE, "aggregate", false, "(optional) Aggregate module");
         options.addOption(CONTENT_ROOTS, "content", true, "Content root paths. Comma separated.");
         return options;
     }
@@ -168,13 +164,12 @@ public class Esv2Yaml {
         return split;
     }
 
-    public Esv2Yaml(final File src, final File target, final boolean aggregate, MigrationMode mode, final String[] contentRoots) throws IOException, EsvParseException {
-        this(null, src, target, aggregate, mode, contentRoots);
+    public Esv2Yaml(final File src, final File target, MigrationMode mode, final String[] contentRoots) throws IOException, EsvParseException {
+        this(null, src, target, mode, contentRoots);
     }
 
-    public Esv2Yaml(final File init, final File src, final File target, final boolean aggregate, MigrationMode mode, final String[] contentRoots) throws IOException, EsvParseException {
+    public Esv2Yaml(final File init, final File src, final File target, MigrationMode mode, final String[] contentRoots) throws IOException, EsvParseException {
         this.migrationMode = mode;
-        this.aggregate = aggregate;
         this.src = src;
         this.target = target;
         this.contentRoots = contentRoots;
@@ -193,7 +188,7 @@ public class Esv2Yaml {
                 throw new IllegalArgumentException("Target is not a directory");
             } else {
                 final Path configFolder = Paths.get(target.toURI()).resolve(HCM_CONFIG_FOLDER);
-                final Path contentFolder = Paths.get(target.toURI()).resolve(Constants.HCM_CONTENT_FOLDER);
+                final Path contentFolder = Paths.get(target.toURI()).resolve(HCM_CONTENT_FOLDER);
 
                 if (Files.exists(configFolder) && Files.isDirectory(configFolder)) {
                     FileUtils.forceDelete(configFolder.toFile());
@@ -503,9 +498,7 @@ public class Esv2Yaml {
                 .map(ContentDefinitionImpl::getNode)
                 .forEach(DefinitionNodeImpl::recursiveSortProperties);
 
-        boolean multiModule = module.getProject().getGroup().getProjects().stream().mapToInt(p -> p.getModules().size()).sum() > 1;
-        ModuleContext moduleContext = aggregate ? new AggregatedModuleContext(module, src.toPath(), multiModule) :
-                new LegacyModuleContext(module, src.toPath(), multiModule);
+        ModuleContext moduleContext = new LegacyModuleContext(module, src.toPath());
         moduleContext.createOutputProviders(target.toPath());
 
         // patch up references to RIPs, so they can be accessed during processing via back-references

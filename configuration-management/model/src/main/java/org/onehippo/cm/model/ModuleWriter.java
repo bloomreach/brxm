@@ -20,7 +20,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +81,7 @@ public class ModuleWriter {
             final List<PostProcessItem> resources = new ArrayList<>();
             final Node node = sourceSerializer.representSource(resources::add);
 
-            try (final OutputStream sourceOutputStream = getSourceOutputStream(moduleContext, source)) {
+            try (final OutputStream sourceOutputStream = moduleContext.getOutputProvider(source).getSourceOutputStream(source)) {
                 sourceSerializer.serializeNode(sourceOutputStream, node);
             }
 
@@ -99,13 +98,6 @@ public class ModuleWriter {
 
     boolean sourceShouldBeSkipped(final Source source) {
         return false;
-    }
-
-    private OutputStream getSourceOutputStream(final ModuleContext moduleContext, final Source source) throws IOException {
-        final Path modulePath = ((FileResourceOutputProvider)moduleContext.getOutputProvider(source)).getBasePath();
-        final Path sourceDestPath = modulePath.resolve(source.getPath());
-        Files.createDirectories(sourceDestPath.getParent());
-        return new FileOutputStream(sourceDestPath.toFile());
     }
 
     private void processBinaryItem(Source source, BinaryItem binaryItem, ModuleContext moduleContext) throws IOException {

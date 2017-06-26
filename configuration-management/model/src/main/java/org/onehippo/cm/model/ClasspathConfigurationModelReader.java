@@ -40,6 +40,8 @@ import org.onehippo.cm.model.parser.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
+
 public class ClasspathConfigurationModelReader {
 
     private static final Logger log = LoggerFactory.getLogger(ClasspathConfigurationModelReader.class);
@@ -121,7 +123,7 @@ public class ClasspathConfigurationModelReader {
             final String[] mvnModulePaths = sourceModules.split(";");
             for (String mvnModulePath : mvnModulePaths) {
                 // use maven conventions to find a module descriptor, then parse it
-                final Path moduleDescriptorPath = projectPath.resolve(mvnModulePath).resolve(Constants.MAVEN_MODULE_DESCRIPTOR);
+                final Path moduleDescriptorPath = projectPath.resolve(nativePath(mvnModulePath + Constants.MAVEN_MODULE_DESCRIPTOR));
 
                 if (!moduleDescriptorPath.toFile().exists()) {
                     throw new IllegalStateException("Cannot find module descriptor for module in "

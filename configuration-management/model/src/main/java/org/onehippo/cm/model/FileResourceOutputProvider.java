@@ -21,28 +21,60 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.onehippo.cm.model.util.FileConfigurationUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
 public class FileResourceOutputProvider implements ResourceOutputProvider {
     private final Path basePath;
+    private final String sourceBasePath;
 
-    public FileResourceOutputProvider(final Path basePath) {
+    public FileResourceOutputProvider(final Path basePath, final String sourceBasePath)
+    {
         this.basePath = basePath;
+        this.sourceBasePath = sourceBasePath;
     }
 
     public Path getBasePath() {
         return basePath;
     }
 
+    public String getSourceBasePath() {
+        return sourceBasePath;
+    }
+
     @Override
-    public OutputStream getResourceOutputStream(final Source source, final String resourcePath) throws IOException {
-        final Path path = getResourceOutputPath(source, resourcePath);
+    public OutputStream getSourceOutputStream(final Source source) throws IOException {
+        final String sourcePath = StringUtils.stripStart(sourceBasePath + "/" + source.getPath(), "/");
+        final Path path = basePath.resolve(nativePath(sourcePath));
         Files.createDirectories(path.getParent());
         return new FileOutputStream(path.toFile());
     }
 
     @Override
-    public Path getResourceOutputPath(final Source source, final String resourcePath) throws IOException {
-        return FileConfigurationUtils.getResourcePath(basePath, source, resourcePath);
+    public OutputStream getResourceOutputStream(final Source source, final String resourcePath) throws IOException {
+        final Path path = getResourcePath(source, resourcePath);
+        Files.createDirectories(path.getParent());
+        return new FileOutputStream(path.toFile());
+    }
+
+    @Override
+    public Path getResourcePath(final Source source, final String resourcePath) {
+        return basePath.resolve(nativePath(getResourceModulePath(source, resourcePath)));
+    }
+
+    @Override
+    public String getResourceModulePath(final Source source, final String resourcePath) {
+        final String resourceModulePath;
+        if (resourcePath.startsWith("/")) {
+            resourceModulePath = sourceBasePath + resourcePath;
+        } else {
+            resourceModulePath = sourceBasePath + getSourceFolder(source) + "/"+ resourcePath;
+        }
+        return StringUtils.stripStart(resourceModulePath, "/");
+    }
+
+    private String getSourceFolder(final Source source) {
+        return source.getPath().indexOf('/') != -1 ? "/" + StringUtils.substringBeforeLast(source.getPath(), "/") : "";
     }
 }

@@ -33,6 +33,8 @@ import org.onehippo.cm.model.serializer.ResourceNameResolver;
 import org.onehippo.cm.model.serializer.ResourceNameResolverImpl;
 import org.onehippo.cm.model.util.FileConfigurationUtils;
 
+import static org.onehippo.cm.model.util.FilePathUtils.getParentSafely;
+
 /**
  * Incapsulates module's input/output providers and unique name resolver
  */
@@ -44,7 +46,6 @@ public class ModuleContext {
     protected ResourceOutputProvider contentOutputProvider;
 
     protected final ModuleImpl module;
-    protected final boolean multiModule;
     private final Path moduleDescriptorPath;
 
     private Path actionsDescriptorPath;
@@ -54,16 +55,9 @@ public class ModuleContext {
     private ResourceNameResolver configNameResolver = new ResourceNameResolverImpl();
     private ResourceNameResolver contentNameResolver = new ResourceNameResolverImpl();
 
-    public ModuleContext(ModuleImpl module, Path moduleRootPath) {
-        this.module = module;
-        this.multiModule = false;
-        this.moduleDescriptorPath = moduleRootPath.resolve(Constants.HCM_MODULE_YAML);
-    }
-
-    public ModuleContext(ModuleImpl module, Path moduleDescriptorPath, boolean multiModule) throws IOException {
+    public ModuleContext(ModuleImpl module, Path moduleDescriptorPath) {
         this.module = module;
         this.moduleDescriptorPath = moduleDescriptorPath;
-        this.multiModule = multiModule;
     }
 
     public ModuleImpl getModule() {
@@ -85,7 +79,7 @@ public class ModuleContext {
      */
     public Path getConfigRoot() {
         if (configRootPath == null) {
-            configRootPath = FileConfigurationUtils.getModuleConfigBasePath(moduleDescriptorPath);
+            configRootPath = moduleDescriptorPath.resolveSibling(Constants.HCM_CONFIG_FOLDER);
         }
         return configRootPath;
     }
@@ -95,21 +89,21 @@ public class ModuleContext {
      */
     public Path getContentRoot() {
         if (contentRootPath == null) {
-            contentRootPath = FileConfigurationUtils.getModuleContentBasePath(moduleDescriptorPath);
+            contentRootPath = moduleDescriptorPath.resolveSibling(Constants.HCM_CONTENT_FOLDER);
         }
         return contentRootPath;
     }
 
     public ResourceInputProvider getConfigInputProvider() {
         if (configInputProvider == null) {
-            configInputProvider = new FileResourceInputProvider(getConfigRoot());
+            configInputProvider = new FileResourceInputProvider(getParentSafely(moduleDescriptorPath), Constants.HCM_CONFIG_FOLDER);
         }
         return configInputProvider;
     }
 
     public ResourceInputProvider getContentInputProvider() {
         if (contentInputProvider == null) {
-            contentInputProvider = new FileResourceInputProvider(getContentRoot());
+            contentInputProvider = new FileResourceInputProvider(getParentSafely(moduleDescriptorPath), Constants.HCM_CONTENT_FOLDER);
         }
         return contentInputProvider;
     }
@@ -122,15 +116,21 @@ public class ModuleContext {
         return SourceType.CONFIG == source.getType() ? configOutputProvider : contentOutputProvider;
     }
 
-    /**
-     * @param destinationPath the path to the module descriptor file
-     */
-    public void createOutputProviders(Path destinationPath) {
-        Path configModuleBasePath = FileConfigurationUtils.getModuleConfigBasePath(destinationPath);
-        configOutputProvider = new FileResourceOutputProvider(configModuleBasePath);
+    public ResourceOutputProvider getConfigOutputProvider() {
+        return configOutputProvider;
+    }
 
-        Path contentModuleBasePath = FileConfigurationUtils.getModuleContentBasePath(destinationPath);
-        contentOutputProvider = new FileResourceOutputProvider(contentModuleBasePath);
+    public ResourceOutputProvider getContentOutputProvider() {
+        return contentOutputProvider;
+    }
+
+    /**
+     * @param moduleDescriptorPath the path to the module descriptor file
+     */
+    public void createOutputProviders(Path moduleDescriptorPath) {
+        configOutputProvider = new FileResourceOutputProvider(getParentSafely(moduleDescriptorPath), Constants.HCM_CONFIG_FOLDER);
+
+        contentOutputProvider = new FileResourceOutputProvider(getParentSafely(moduleDescriptorPath), Constants.HCM_CONTENT_FOLDER);
     }
 
     public String generateUniqueName(Source source, String filePath) {
@@ -160,8 +160,8 @@ public class ModuleContext {
                     final List<Pair<ValueImpl, String>> newResources = allNewResources.computeIfAbsent(source, k -> new ArrayList<>());
                     newResources.add(pair);
                 } else {
-                    final Path resourcePath = getOutputProvider(source).getResourceOutputPath(source, pair.getRight());
-                    generateUniqueName(source, resourcePath.toString());
+                    final String resourceModulePath = getOutputProvider(source).getResourceModulePath(source, pair.getRight());
+                    generateUniqueName(source, resourceModulePath);
                 }
             }
         }
@@ -171,11 +171,11 @@ public class ModuleContext {
             for (final Pair<ValueImpl, String> pair : sourceEntry.getValue()) {
                 // TODO: tricky cast or always valid? In the latter case the APIs should reflect that
 
-                final String resourceFileName = mapperProvider.generateName(pair.getLeft());
+                final String candidateResourceName = mapperProvider.generateName(pair.getLeft());
                 final FileResourceOutputProvider outputProvider = (FileResourceOutputProvider) getOutputProvider(source);
-                final Path resourceFilePath = outputProvider.getResourceOutputPath(source, resourceFileName);
-                final String filePath = generateUniqueName(source, resourceFilePath.toString());
-                final String resourcePath = filePath.substring(outputProvider.getBasePath().toString().length());
+                final String candidateResourceModulePath = outputProvider.getResourceModulePath(source, candidateResourceName);
+                final String resourceModulePath = generateUniqueName(source, candidateResourceModulePath);
+                final String resourcePath = resourceModulePath.substring(outputProvider.getSourceBasePath().length());
                 pair.getLeft().setResourceValue(resourcePath);
             }
         }

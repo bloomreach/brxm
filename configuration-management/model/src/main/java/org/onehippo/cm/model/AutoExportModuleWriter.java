@@ -22,7 +22,6 @@ import java.nio.file.Path;
 
 import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.impl.ValueImpl;
-import org.onehippo.cm.model.util.FileConfigurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,13 +47,11 @@ public class AutoExportModuleWriter extends ModuleWriter {
         log.debug("removing config resources: \n\t{}", String.join("\n\t", module.getRemovedConfigResources()));
         log.debug("removing content resources: \n\t{}", String.join("\n\t", module.getRemovedContentResources()));
         for (final String removed : module.getRemovedConfigResources()) {
-            final Path removedPath =
-                    FileConfigurationUtils.getResourcePath(moduleContext.getConfigRoot(), null, removed);
+            final Path removedPath = moduleContext.getConfigOutputProvider().getResourcePath(null, removed);
             Files.deleteIfExists(removedPath);
         }
         for (final String removed : module.getRemovedContentResources()) {
-            final Path removedPath =
-                    FileConfigurationUtils.getResourcePath(moduleContext.getContentRoot(), null, removed);
+            final Path removedPath = moduleContext.getContentOutputProvider().getResourcePath(null, removed);
             Files.deleteIfExists(removedPath);
         }
     }

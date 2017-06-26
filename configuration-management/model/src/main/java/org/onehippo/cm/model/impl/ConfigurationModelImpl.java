@@ -19,27 +19,21 @@ package org.onehippo.cm.model.impl;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Group;
 import org.slf4j.Logger;
@@ -377,23 +371,6 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         else {
             return node.getProperty(StringUtils.substringAfterLast(path, "/"));
         }
-    }
-
-    /**
-     * Find the ContentDefinition (not config) that has the longest common substring to the given path
-     * @param path
-     * @return
-     */
-    public Optional<ContentDefinitionImpl> findClosestContentDefinition(final String path) {
-        // Use the Path class to represent the JCR path, since all we need is a simple startsWith() comparison
-        Path p = Paths.get(path);
-
-        // make sure content definitions are sorted by lexical order of root path
-        final TreeSet<ContentDefinitionImpl> reverse = new TreeSet<>(Comparator.reverseOrder());
-        reverse.addAll(getContentDefinitions());
-
-        // check for prefix match on path in reverse lexical order -- first match is longest prefix match
-        return getContentDefinitions().stream().filter(cd -> p.startsWith(Paths.get(cd.getNode().getPath()))).findFirst();
     }
 
     @Override

@@ -35,6 +35,8 @@ import org.onehippo.cm.model.parser.SourceParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cm.model.util.FilePathUtils.unixPath;
+
 public class PathConfigurationReader {
 
     private static final Logger log = LoggerFactory.getLogger(PathConfigurationReader.class);
@@ -77,13 +79,12 @@ public class PathConfigurationReader {
      * @throws ParserException
      */
     public ReadResult read(final Path moduleDescriptorPath, final boolean verifyOnly) throws IOException, ParserException {
-        final InputStream moduleDescriptorInputStream = Files.newInputStream(moduleDescriptorPath);
+        final InputStream moduleDescriptorInputStream = Files.newInputStream(moduleDescriptorPath.toRealPath());
 
         final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
         final ModuleImpl module = moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
 
-        final boolean hasMultipleModules = false;
-        final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath, hasMultipleModules);
+        final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath);
         // Set the input providers on the Module directly, so it doesn't need to be held in a Map on ConfigurationModel
         readModule(module, moduleContext, verifyOnly);
         return new ReadResult(moduleContext);
@@ -133,7 +134,7 @@ public class PathConfigurationReader {
     private void parseSources(ModuleImpl module, Path rootPath, SourceParser sourceParser) throws IOException, ParserException {
         final List<Pair<Path, String>> contentSourceData = getSourceData(rootPath);
         for (Pair<Path, String> pair : contentSourceData) {
-            sourceParser.parse(Files.newInputStream(pair.getLeft()), pair.getRight(), rootPath.resolve(pair.getRight()).toString(), module);
+            sourceParser.parse(Files.newInputStream(pair.getLeft()), pair.getRight(), pair.getLeft().toString(), module);
         }
     }
 
@@ -141,14 +142,14 @@ public class PathConfigurationReader {
     private List<Pair<Path, String>> getSourceData(final Path modulePath) throws IOException {
         final List<Path> paths = new ArrayList<>();
         final BiPredicate<Path, BasicFileAttributes> matcher =
-                (filePath, fileAttr) -> filePath.toString().toLowerCase().endsWith(Constants.YAML_EXT) && fileAttr.isRegularFile();
+                (filePath, fileAttr) -> filePath.getFileName().toString().toLowerCase().endsWith(Constants.YAML_EXT) && fileAttr.isRegularFile();
         Files.find(modulePath, Integer.MAX_VALUE, matcher).forEachOrdered(paths::add);
         final int modulePathSize = modulePath.getNameCount();
 
         final List<Pair<Path, String>> result = new ArrayList<>();
         for (Path path : paths) {
             final Path sourcePath = path.subpath(modulePathSize, path.getNameCount());
-            result.add(Pair.of(path, sourcePath.toString()));
+            result.add(Pair.of(path, unixPath(sourcePath.toString())));
         }
         return result;
     }

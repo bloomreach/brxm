@@ -18,29 +18,26 @@ package org.onehippo.cm.migration;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.FileResourceInputProvider;
 import org.onehippo.cm.model.FileResourceOutputProvider;
 import org.onehippo.cm.model.ModuleContext;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.util.FileConfigurationUtils;
 
 /**
  * Support for esv2yaml tool. Input provider relies onto the root of module instead of module/hcm-config folder
  */
 public class LegacyModuleContext extends ModuleContext {
 
-    LegacyModuleContext(ModuleImpl module, Path moduleDescriptorPath, boolean multiModule) throws IOException {
+    LegacyModuleContext(ModuleImpl module, Path moduleDescriptorPath) throws IOException {
 
-        super(module, moduleDescriptorPath, multiModule);
-        this.configInputProvider = this.contentInputProvider = new FileResourceInputProvider(moduleDescriptorPath);
+        super(module, moduleDescriptorPath);
+        this.configInputProvider = this.contentInputProvider = new FileResourceInputProvider(moduleDescriptorPath.getParent(), "");
     }
 
     @Override
     public void createOutputProviders(Path destinationPath) {
-        Path configModuleBasePath = FileConfigurationUtils.getModuleConfigBasePath(destinationPath);
-        configOutputProvider = new FileResourceOutputProvider(configModuleBasePath);
-
-        Path contentModuleBasePath = FileConfigurationUtils.getModuleContentBasePath(destinationPath);
-        contentOutputProvider = new FileResourceOutputProvider(contentModuleBasePath);
+        configOutputProvider = new FileResourceOutputProvider(destinationPath, Constants.HCM_CONFIG_FOLDER);
+        contentOutputProvider = new FileResourceOutputProvider(destinationPath, Constants.HCM_CONTENT_FOLDER);
     }
 }
