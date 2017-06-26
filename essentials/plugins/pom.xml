@@ -60,6 +60,12 @@
     <module>video</module>
     <module>google-maps</module>
     <module>urlrewriter</module>
+    <module>bloomreach-connector</module>
+    <module>more-like-this</module>
+    <module>products-category</module>
+    <module>products-grid</module>
+    <module>products-grid-category</module>
+    <module>products-grid-query</module>
   </modules>
 
   <dependencyManagement>

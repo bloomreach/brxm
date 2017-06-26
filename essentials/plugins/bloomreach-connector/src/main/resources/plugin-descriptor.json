@@ -1,0 +1,77 @@
+{
+  "@type": "plugin",
+  "id": "bloomreachConnector",
+  "name": "Personalization Connector",
+  "icon": "/essentials/images/bloomreachConnector.png",
+  "introduction": "With the Personalization Connector tool, You can setup and configure the API connection information used by the Personalization components.",
+  "description": "Please note that this component is a BloomReach Experience only component, it does not work in the community edition of Hippo CMS. Adding this component to the community version might result in unexpected and unsupported behaviour of the project. Also, you need a BloomReach Personalization license in order to use this component. ",
+  "restClasses": [
+    "org.onehippo.cms7.essentials.bloomreach.connector.rest.BloomreachConnectorResource"
+  ],
+  "type": "tool",
+  "vendor": {
+    "@type": "vendor",
+    "name": "Hippo (enterprise)",
+    "url": "http://www.onehippo.com"
+  },
+  "categories": {
+    "application": [
+      "integration",
+      "personalization",
+      "ecommerce",
+      "settings",
+      "CRISP"
+    ],
+    "type": [
+      "tool"
+    ],
+    "license": [
+      "enterprise"
+    ]
+  },
+  "libraries": [
+    {
+      "items": [
+        {
+          "component": "bloomreachConnector",
+          "file": "bloomreachConnector.js"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-addon-crisp-api",
+      "scope": "compile",
+      "version": "0.9.4",
+      "targetPom": "cms"
+    },
+    {
+      "@type": "dependency",
+      "groupId": "org.onehippo.cms7",
+      "artifactId": "hippo-addon-crisp-repository",
+      "scope": "compile",
+      "version": "0.9.4",
+      "targetPom": "cms"
+    },
+    {
+      "@type": "dependency",
+      "groupId": "com.onehippo.cms7",
+      "artifactId": "hippo-addon-personalization-components-repository",
+      "scope": "compile",
+      "version": "0.1.0",
+      "targetPom": "cms"
+    },
+    {
+      "@type": "dependency",
+      "groupId": "com.onehippo.cms7",
+      "artifactId": "hippo-addon-personalization-dependencies",
+      "scope": "compile",
+      "type": "pom",
+      "version": "0.1.0",
+      "targetPom": "site"
+    }
+  ]
+}
