@@ -607,8 +607,10 @@ public class ConfigurationTreeBuilder {
             final ValueImpl existingValue = property.getValue();
             if (existingValue != null) {
                 if (definitionProperty.getValue().equals(property.getValue())) {
-                    logger.warn("Property '{}' defined in '{}' specifies value equivalent to existing property, defined in '{}'.",
-                            definitionProperty.getPath(), definitionProperty.getOrigin(), property.getOrigin());
+                    if (!property.getPath().startsWith("/hippo:configuration/hippo:translations/")) {
+                        logger.warn("Property '{}' defined in '{}' specifies value equivalent to existing property, defined in '{}'.",
+                                definitionProperty.getPath(), definitionProperty.getOrigin(), property.getOrigin());
+                    }
                 }
             }
         } else {
