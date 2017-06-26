@@ -63,14 +63,16 @@ class ProjectService {
     const selectionPromise = selectedProject ? this._selectProject(projectId) : this._selectCore();
 
     return selectionPromise.then(() => {
-      this.selectListeners.forEach(listener => listener());
+      this.selectListeners.forEach(listener => listener(projectId));
     });
   }
 
   _setupProjects() {
-    return this
-      ._getProjects()
-      .then(() => this._getChannels())
+    return this.$q
+      .all([
+        this._getProjects(),
+        this._getChannels(),
+      ])
       .then(() => {
         const selectedProject = this.projects.find(project => project.id === this.projectId);
         this.selectedProject = selectedProject;
