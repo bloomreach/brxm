@@ -1,0 +1,138 @@
+<!--
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="panel panel-default" ng-controller="bloomreachConnectorCtrl">
+  <div class="panel-heading"><h3>Configure Bloomreach personalization connector</h3></div>
+  <div class="panel-body" ng-show="!crispDependencyExists">
+    <div class="alert alert-danger">
+      <div>
+        <h3>Dependencies missing</h3>
+        <p>To be able to configure Bloomreach personalization connector, we need to install repository dependencies and restart CMS application</p>
+        <div class="pull-right">
+          <button class="btn btn-primary" ng-click="install()">Install dependencies</button>
+        </div>
+        <p style="clear: both"></p>
+
+      </div>
+
+    </div>
+  </div>
+  <div class="panel-body" ng-show="!crispExists && crispDependencyExists">
+    <div class="alert alert-info">
+      <div>
+        <h3>Rebuild required</h3>
+        <p>To use Bloomreach personalization connector, project rebuild is required</p>
+        <pre>
+        mvn verify
+        mvn -Pcargo.run -Drepo.path=storage
+        </pre>
+        <p style="clear: both"></p>
+
+      </div>
+
+    </div>
+  </div>
+  <div class="panel-body" ng-show="crispExists && crispDependencyExists">
+    <form class="form-horizontal" novalidate name="form">
+      <fieldset>
+        <legend>Account Settings:</legend>
+        <div class="form-group">
+          <label class="col-sm-4 control-label">Resource name</label>
+          <div class="col-sm-8" ng-class="form.resourceName.$invalid?'bg-danger':''">
+            <input class="form-control" required type="text" ng-model="data.resourceName"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label">Account id:</label>
+          <div class="col-sm-8" ng-class="form.accountId.$invalid?'bg-danger':''">
+            <input class="form-control" required type="text" ng-model="data.accountId"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label">Base url:</label>
+          <div class="col-sm-8" ng-class="form.baseUrl.$invalid?'bg-danger':''">
+            <input class="form-control" required type="text" ng-model="data.baseUrl"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label">Ref url:</label>
+          <div class="col-sm-8">
+            <input class="form-control" required type="text" ng-model="data.refUrl"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label">Authentication key:</label>
+          <div class="col-sm-8" ng-class="form.authKey.$invalid?'bg-danger':''">
+            <input class="form-control" required type="text" ng-model="data.authKey"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label">Realm:</label>
+          <div class="col-sm-8" ng-class="form.realm.$invalid?'bg-danger':''">
+            <input class="form-control" required type="text" ng-model="data.realm"/>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Cache Settings:</legend>
+        <div class="form-group">
+          <label class="col-sm-4 control-label">Max entries local heap:</label>
+          <div class="col-sm-8" ng-class="form.realm.$invalid?'bg-danger':''">
+            <input class="form-control" required type="text" ng-model="data.maxEntriesLocalHeap"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label">Max entries disk:</label>
+          <div class="col-sm-8" ng-class="form.realm.$invalid?'bg-danger':''">
+            <input class="form-control" required type="text" ng-model="data.maxEntriesLocalDisk"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label">Time to live seconds:</label>
+          <div class="col-sm-8" ng-class="form.realm.$invalid?'bg-danger':''">
+            <input class="form-control" required type="text" ng-model="data.timeToLiveSeconds"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-4 control-label">Time to idle seconds:</label>
+          <div class="col-sm-8" ng-class="form.realm.$invalid?'bg-danger':''">
+            <input class="form-control" required type="text" ng-model="data.timeToIdleSeconds"/>
+          </div>
+        </div>
+
+      </fieldset>
+      <!--<div class="form-group">
+          <label class="col-sm-4 control-label">Include documents:</label>
+          <div class="col-sm-8">
+              <select  chosen class="form-control" ng-model="data.documentPaths" multiple ng-options="path for path in data.documents"></select>
+          </div>
+      </div>-->
+
+
+      <div class="form-group">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-8">
+          <button ng-disabled="!form.$valid" class="btn btn-primary" ng-click="run()">Add resource</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="panel-footer">
+    <!--<button class="btn btn-primary" ng-click="run()">Generate</button>-->
+  </div>
+</div>
+
+
