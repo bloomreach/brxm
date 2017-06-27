@@ -41,11 +41,11 @@ import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ConfigurationNode;
 import org.onehippo.cm.model.ConfigurationProperty;
+import org.onehippo.cm.model.FileResourceInputProvider;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.PropertyType;
@@ -74,7 +74,7 @@ import static org.onehippo.cm.engine.ValueProcessor.isUuidInUse;
 import static org.onehippo.cm.engine.ValueProcessor.propertyIsIdentical;
 import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
 import static org.onehippo.cm.engine.ValueProcessor.valuesFrom;
-import static org.onehippo.cm.model.util.FilePathUtils.getParentSafely;
+import static org.onehippo.cm.model.util.FilePathUtils.getParentOrFsRoot;
 
 /**
  * ConfigurationConfigService is responsible for reading and writing Configuration from/to the repository.
@@ -115,8 +115,9 @@ public class ConfigurationConfigService {
                     final PartialZipFile bundleZipFile = new PartialZipFile(module.getArchiveFile(), bundleName);
                     service.importJcrWebFileBundle(session, bundleZipFile, true);
                 } else {
-                    final ResourceInputProvider resourceInputProvider = module.getConfigResourceInputProvider();
-                    final Path modulePath = getParentSafely(resourceInputProvider.getBasePath());
+                    final FileResourceInputProvider resourceInputProvider =
+                            (FileResourceInputProvider) module.getConfigResourceInputProvider();
+                    final Path modulePath = getParentOrFsRoot(resourceInputProvider.getBasePath());
                     service.importJcrWebFileBundle(session, modulePath.resolve(bundleName).toFile(), true);
                 }
             }

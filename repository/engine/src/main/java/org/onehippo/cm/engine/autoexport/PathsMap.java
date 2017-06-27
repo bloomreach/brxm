@@ -18,12 +18,8 @@ package org.onehippo.cm.engine.autoexport;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.apache.commons.collections4.trie.PatriciaTrie;
-
-import com.google.common.collect.Maps;
 
 public class PathsMap implements Iterable<String> {
 

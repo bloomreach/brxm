@@ -327,15 +327,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     throw new IOException("Plain YAML import does not support links to resources");
                 }
 
-                @Override
-                public Path getResourcePath(final Source source, final String resourcePath) {
-                    throw new ConfigurationRuntimeException("Plain YAML import does not support links to resources");
-                }
-
-                @Override
-                public String getResourceModulePath(final Source source, final String resourcePath) {
-                    throw new ConfigurationRuntimeException("Plain YAML import does not support links to resources");
-                }
             };
 
             final ModuleImpl module = new ModuleImpl("import-module", new ProjectImpl("import-project", new GroupImpl("import-group")));

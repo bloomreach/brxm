@@ -173,15 +173,6 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
             return this.getClass().getResourceAsStream("/configuration_config_service_test/" + resourcePath);
         }
 
-        @Override
-        public Path getResourcePath(final Source source, final String resourcePath) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String getResourceModulePath(final Source source, final String resourcePath) {
-            throw new UnsupportedOperationException();
-        }
     }
 
     private ConfigurationModelImpl makeMergedModel(final String[] sources) throws Exception {

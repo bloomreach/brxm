@@ -15,7 +15,6 @@
  */
 package org.onehippo.cm.engine.autoexport;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,9 +31,6 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistryListener;
 import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.decorating.RepositoryDecorator;
 import org.onehippo.repository.InternalHippoRepository;
-
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
 
 import static com.google.common.collect.Sets.newHashSet;
 

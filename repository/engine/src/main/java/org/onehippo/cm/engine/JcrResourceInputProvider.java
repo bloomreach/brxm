@@ -18,7 +18,6 @@ package org.onehippo.cm.engine;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -90,13 +89,4 @@ public class JcrResourceInputProvider implements ResourceInputProvider {
         }
     }
 
-    @Override
-    public Path getResourcePath(final Source source, final String resourcePath) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getResourceModulePath(final Source source, final String resourcePath) {
-        throw new UnsupportedOperationException();
-    }
 }

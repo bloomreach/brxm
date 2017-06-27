@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -64,7 +63,7 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
-import org.onehippo.cm.model.util.FileConfigurationUtils;
+import org.onehippo.cm.model.util.FilePathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1221,7 +1220,7 @@ public class DefinitionMergeService {
 
         // if there's already a source with this path, generate a unique name
         final String uniqueSourcePath =
-                FileConfigurationUtils.generateUniquePath(sourcePath, sourceExists, 0);
+                FilePathUtils.generateUniquePath(sourcePath, sourceExists, 0);
 
         // create a new source and content definition with change path
         module.addContentSource(uniqueSourcePath).addContentDefinition(changePath);

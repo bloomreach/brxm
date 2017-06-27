@@ -17,7 +17,6 @@ package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.HCM_ACTIONS;
+import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
 import static org.onehippo.cm.engine.Constants.NT_HCM_CONTENT;
 import static org.onehippo.cm.engine.Constants.NT_HCM_DEFINITIONS;
-import static org.onehippo.cm.engine.Constants.HCM_MODULE_DESCRIPTOR;
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.HCM_MODULE_YAML;
 
@@ -80,16 +79,6 @@ public class BaselineResourceInputProvider implements ResourceInputProvider {
         catch (RepositoryException e) {
             throw new RuntimeException("Problem loading stream for resource in baseline", e);
         }
-    }
-
-    @Override
-    public Path getResourcePath(final Source source, final String resourcePath) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getResourceModulePath(final Source source, final String resourcePath) {
-        throw new UnsupportedOperationException();
     }
 
     /**
