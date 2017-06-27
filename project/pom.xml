@@ -894,7 +894,7 @@
         <repo.base.path>${project.basedir}</repo.base.path>
         <repo.path>${project.build.directory}/storage</repo.path>
         <repo.config />
-        <repo.bootstrap />
+        <repo.bootstrap>true</repo.bootstrap>
         <repo.autoexport.allowed>true</repo.autoexport.allowed>
       </properties>
       <dependencies>
