@@ -737,6 +737,19 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
     }
 
     @Test
+    public void expect_mandatory_autocreated_property_not_to_be_deleted() throws Exception {
+        final String definition
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: hipposys:group\n"
+                + "      hipposys:members: [admin]";
+        final ConfigurationModel baseline = applyDefinitions(definition);
+
+        expectNode("/test", "[]", "[hipposys:members, hipposys:securityprovider, jcr:primaryType]");
+    }
+
+    @Test
     public void expect_property_deletion_to_take_effect() throws Exception {
         final String definition
                 = "definitions:\n"

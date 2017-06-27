@@ -32,6 +32,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.ItemDefinition;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -349,7 +350,7 @@ public class ConfigurationConfigService {
 
         // Remove deleted properties
         if (forceApply) {
-            for (String propertyName : getPropertyNames(targetNode)) {
+            for (String propertyName : getDeletablePropertyNames(targetNode)) {
                 if (!updateProperties.containsKey(propertyName)
                         && updateNode.getChildPropertyCategory(propertyName) == ConfigurationItemCategory.CONFIG) {
                     removeProperty(propertyName, baselineProperties.get(propertyName), targetNode, updateNode);
@@ -366,12 +367,13 @@ public class ConfigurationConfigService {
         }
     }
 
-    private List<String> getPropertyNames(final Node node) throws RepositoryException {
+    private List<String> getDeletablePropertyNames(final Node node) throws RepositoryException {
         final List<String> names = new ArrayList<>();
         for (Property property : new PropertyIterable(node.getProperties())) {
+            final ItemDefinition definition = property.getDefinition();
             final String name = property.getName();
-            if (!property.getDefinition().isProtected() && !isKnownDerivedPropertyName(name)) {
-                names.add(property.getName());
+            if (!definition.isProtected() && !definition.isMandatory() && !isKnownDerivedPropertyName(name)) {
+                names.add(name);
             }
         }
         return names;
