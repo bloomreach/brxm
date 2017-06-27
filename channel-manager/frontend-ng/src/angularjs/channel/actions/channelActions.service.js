@@ -30,6 +30,7 @@ class ChannelActionsService extends MenuService {
     SessionService,
     SidePanelService,
     SiteMapService,
+    ProjectService,
   ) {
     'ngInject';
 
@@ -46,6 +47,7 @@ class ChannelActionsService extends MenuService {
     this.SessionService = SessionService;
     this.SidePanelService = SidePanelService;
     this.SiteMapService = SiteMapService;
+    this.ProjectService = ProjectService;
 
     this.defineMenu('channel', {
       translationKey: 'TOOLBAR_BUTTON_CHANNEL',
@@ -62,7 +64,7 @@ class ChannelActionsService extends MenuService {
       isVisible: () => this._isChannelSettingsAvailable() && this._hasAnyChanges(),
     })
     .addAction('publish', {
-      translationKey: 'TOOLBAR_MENU_CHANNEL_PUBLISH',
+      translationKey: this._getPublicationLabel(),
       iconName: 'publish',
       isVisible: () => this._hasOwnChanges(),
       onClick: () => this._publish(),
@@ -91,6 +93,11 @@ class ChannelActionsService extends MenuService {
       translationKey: 'TOOLBAR_MENU_CHANNEL_CLOSE',
       onClick: () => this._closeChannel(),
     });
+  }
+
+  _getPublicationLabel() {
+    return this.ConfigService.projectsEnabled && this.ProjectService.selectedProject ?
+     'TOOLBAR_MENU_CHANNEL_CONFIRM' : 'TOOLBAR_MENU_CHANNEL_PUBLISH';
   }
 
   // Settings
@@ -242,6 +249,7 @@ class ChannelActionsService extends MenuService {
   _closeChannel() {
     this.CmsService.publish('close-channel');
   }
+
 }
 
 export default ChannelActionsService;
