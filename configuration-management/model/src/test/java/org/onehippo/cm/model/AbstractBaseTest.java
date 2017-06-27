@@ -42,6 +42,7 @@ import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.util.FilePathUtils;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertArrayEquals;
@@ -90,7 +91,7 @@ public abstract class AbstractBaseTest {
         if (url == null) {
             fail("cannot find resource " + moduleConfigResourceName);
         }
-        return Paths.get(url.getFile());
+        return Paths.get(FilePathUtils.getNativeFilePath(url));
     }
 
     protected Path findBase(final String moduleConfigResourceName) throws IOException {

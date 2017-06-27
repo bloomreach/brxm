@@ -16,6 +16,8 @@
 package org.onehippo.cm.model.util;
 
 import java.io.File;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.util.function.Predicate;
 
@@ -55,12 +57,29 @@ public abstract class FilePathUtils {
     }
 
     /**
-     * @param path ???
+     * Returns a Path parent, or in case of root Path entry in a ZipFileSystem the ZipFileSystem 'root' path, as in that
+     * case calling {@link Path#getParent()} will return null.
+     * @param path the Path for which to get or derive the parent Path
      * @return either the parent of the given path or the root of the Path's FileSystem, if path.getParent() == null
      */
     public static Path getParentOrFsRoot(final Path path) {
         final Path parent = path.getParent();
         return parent != null ? parent : path.getFileSystem().getPath("/");
+    }
+
+    /**
+     * Resource or File URLs like for example as returned from {@link Class#getResource(String)} have URL encoded spaces
+     * (%20) which for a native file path needs to be decoded back to a proper space.
+     * This decoding should <em>NOT</em> be done using {@link URLDecoder#decode(String, String)} as that would also
+     * <em>incorrectly</em> decode special characters like '+' into spaces!
+     * Furthermore, Windows file paths will be encoded in a non-native way, like /C/foo.txt instead of C:\foo.txt
+     * To properly convert these File URLs into native File paths (String), the File class can (and should) be used as
+     * an intermediate step, which is exactly what this method does.
+     * @param fileURL a resource URL using the file:/ protocol
+     * @return the platform native File path
+     */
+    public static String getNativeFilePath(final URL fileURL) {
+        return new File(fileURL.getPath()).getPath();
     }
 
     /**
