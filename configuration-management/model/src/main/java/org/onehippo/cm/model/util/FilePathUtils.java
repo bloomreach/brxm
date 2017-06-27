@@ -16,6 +16,8 @@
 package org.onehippo.cm.model.util;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.file.Path;
@@ -73,13 +75,21 @@ public abstract class FilePathUtils {
      * This decoding should <em>NOT</em> be done using {@link URLDecoder#decode(String, String)} as that would also
      * <em>incorrectly</em> decode special characters like '+' into spaces!
      * Furthermore, Windows file paths will be encoded in a non-native way, like /C/foo.txt instead of C:\foo.txt
-     * To properly convert these File URLs into native File paths (String), the File class can (and should) be used as
-     * an intermediate step, which is exactly what this method does.
+     * <p>
+     * To properly convert these File URLs into native File paths (String), the File class should be used as
+     * an intermediate step by first converting the URL to an URI, then using {@link File#File(URI)} to create a platform
+     * native File, and finally return its platform native {@link File#getPath()}.
+     * </p>
      * @param fileURL a resource URL using the file:/ protocol
      * @return the platform native File path
+     * @throws IllegalArgumentException when the URL cannot be converted to an proper/valid URI
      */
     public static String getNativeFilePath(final URL fileURL) {
-        return new File(fileURL.getPath()).getPath();
+        try {
+            return new File(fileURL.toURI()).getPath();
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**
