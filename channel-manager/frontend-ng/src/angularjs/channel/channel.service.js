@@ -79,13 +79,18 @@ class ChannelService {
           }
           return selectedProjectId;
         })
-        .then(selectedProjectId => this.ProjectService.load(channel.mountId, selectedProjectId));
+        .then(selectedProjectId => this.ProjectService.load(channel.mountId, selectedProjectId))
+        .then(() => {
+          this.ProjectService.registerUpdateListener(() => {
+            const baseChannelId = this.ProjectService.getBaseChannelId(channelId);
+            this.CmsService.publish('load-channel', baseChannelId);
+          });
+        });
     } else {
       setupPromise = this.$q.resolve();
     }
 
-    return this.$q
-      .all([setupPromise])
+    return setupPromise
       .then(() => this.loadChannel(channelId))
       .then(() => {
         const initialRenderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
@@ -94,26 +99,6 @@ class ChannelService {
           { reload: true },
         );
       });
-  }
-
-  clearChannel() {
-    this.channel = {};
-
-    if (!this.isToolbarDisplayed) {
-      this.setToolbarDisplayed(true);
-    }
-  }
-
-  hasChannel() {
-    return !!this.channel.id;
-  }
-
-  getChannel() {
-    return this.channel;
-  }
-
-  reload(channelId = this.channel.id) {
-    return this.loadChannel(channelId);
   }
 
   loadChannel(channelId) {
@@ -167,6 +152,26 @@ class ChannelService {
 
   _makeContextPrefix(contextPath) {
     return this.PathService.concatPaths('/', contextPath, this.channel.cmsPreviewPrefix);
+  }
+
+  clearChannel() {
+    this.channel = {};
+
+    if (!this.isToolbarDisplayed) {
+      this.setToolbarDisplayed(true);
+    }
+  }
+
+  hasChannel() {
+    return !!this.channel.id;
+  }
+
+  getChannel() {
+    return this.channel;
+  }
+
+  reload(channelId = this.channel.id) {
+    return this.loadChannel(channelId);
   }
 
   getPreviewPaths() {

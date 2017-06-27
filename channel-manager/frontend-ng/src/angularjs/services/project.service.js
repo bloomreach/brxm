@@ -34,6 +34,7 @@ class ProjectService {
   }
 
   load(mountId, projectId) {
+    this.updateListeners = [];
     this.selectListeners = [];
     this.mountId = mountId;
     this.projectId = projectId;
@@ -48,10 +49,6 @@ class ProjectService {
     return channel && channel.branchOf ? channel.branchOf : channelId;
   }
 
-  registerSelectListener(cb) {
-    this.selectListeners.push(cb);
-  }
-
   getCurrentProject(mountId = this.mountId) {
     return this.HstService
       .doGet(mountId, 'currentbranch')
@@ -63,8 +60,20 @@ class ProjectService {
     const selectionPromise = selectedProject ? this._selectProject(projectId) : this._selectCore();
 
     return selectionPromise.then(() => {
-      this.selectListeners.forEach(listener => listener(projectId));
+      this._callListeners(this.selectListeners, projectId);
     });
+  }
+
+  registerSelectListener(cb) {
+    this.selectListeners.push(cb);
+  }
+
+  registerUpdateListener(cb) {
+    this.updateListeners.push(cb);
+  }
+
+  _callListeners(listeners, ...args) {
+    listeners.forEach(listener => listener(...args));
   }
 
   _setupProjects() {
@@ -105,11 +114,19 @@ class ProjectService {
 
   _setupProjectSync() {
     if (this.HippoGlobal.Projects && this.HippoGlobal.Projects.events) {
-      this.events = this.HippoGlobal.Projects.events;
+      this.projectEvents = this.HippoGlobal.Projects.events;
 
-      this.events.unsubscribeAll();
+      this.projectEvents.unsubscribeAll();
 
-      this.events.subscribe('project-updated', () => this._getProjects());
+      this.projectEvents.subscribe('project-updated', () => this._getProjects());
+      this.projectEvents.subscribe('project-status-updated', () => this._callListeners(this.updateListeners));
+      this.projectEvents.subscribe('project-channel-added', () => this._callListeners(this.updateListeners));
+      this.projectEvents.subscribe('project-deleted', (projectId) => {
+        this._getProjects().then(() => this.updateSelectedProject(projectId));
+      });
+      this.projectEvents.subscribe('project-channel-deleted', (projectId) => {
+        this._getProjects().then(() => this.updateSelectedProject(projectId));
+      });
     }
   }
 
