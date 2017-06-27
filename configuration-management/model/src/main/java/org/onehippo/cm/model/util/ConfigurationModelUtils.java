@@ -22,6 +22,7 @@ import org.onehippo.cm.model.ConfigurationNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO: IMHO, these should be public instance methods on ConfigurationModelImpl
 public class ConfigurationModelUtils {
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationModelUtils.class);
     private static final String SEPARATOR = "/";

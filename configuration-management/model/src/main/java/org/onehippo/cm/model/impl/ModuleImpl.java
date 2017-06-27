@@ -46,6 +46,7 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.ActionItem;
+import org.onehippo.cm.model.FileResourceInputProvider;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.NamespaceDefinition;
 import org.onehippo.cm.model.SourceType;
@@ -549,7 +550,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             // if the RIP cannot provide an InputStream, short-circuit here
             if (!rip.hasResource(null, path)) {
                 return null;
-//                throw new RuntimeException("Cannot digest missing resource: " + path);
             }
             return rip.getResourceInputStream(null, path);
         }
@@ -690,16 +690,25 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             for (ConfigSourceImpl source : getConfigSources()) {
                 // TODO adding the slash here is a silly hack to load a source path without needing the source first
                 configSourceParser.parse(configResourceInputProvider.getResourceInputStream(null, "/" + source.getPath()),
-                        source.getPath(), configResourceInputProvider.getResourcePath(null, "/" + source.getPath()).toString(), newModule);
+                        source.getPath(), getFullSourcePath(source, configResourceInputProvider), newModule);
             }
             for (ContentSourceImpl source : getContentSources()) {
                 contentSourceParser.parse(contentResourceInputProvider.getResourceInputStream(null, "/" + source.getPath()),
-                        source.getPath(), configResourceInputProvider.getResourcePath(null, "/" + source.getPath()).toString(), newModule);
+                        source.getPath(), getFullSourcePath(source, contentResourceInputProvider), newModule);
             }
 
             return newModule;
         } catch (ParserException | IOException e) {
             throw new RuntimeException("Unable to clone Module: "+getFullName(), e);
+        }
+    }
+
+    protected String getFullSourcePath(final SourceImpl source, final ResourceInputProvider rip) {
+        if (rip instanceof FileResourceInputProvider) {
+            return ((FileResourceInputProvider)rip).getFullSourcePath(source);
+        }
+        else {
+            return source.getPath();
         }
     }
 

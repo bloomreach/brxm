@@ -17,25 +17,74 @@ package org.onehippo.cm.model.util;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.function.Predicate;
 
-public class FilePathUtils {
+import org.apache.commons.lang3.StringUtils;
 
-    public static final boolean UNIXFS = File.separator.equals("/");
+import static org.onehippo.cm.model.Constants.FILE_NAME_EXT_SEPARATOR;
+import static org.onehippo.cm.model.Constants.FILE_NAME_SEQ_PREFIX;
 
+/**
+ * Static utility class -- not intended to be instantiated.
+ */
+public abstract class FilePathUtils {
+
+    private static final boolean UNIXFS = File.separator.equals("/");
+
+    /**
+     * @return true iff the local File.separator is a UNIX-style forward-slash
+     */
     public static boolean isUnixFs() {
         return UNIXFS;
     }
 
-    public static String nativePath(final String path) {
-        return UNIXFS ? path : path.replace('/', '\\');
+    /**
+     * @param unixPath a UNIX-style path with forward-slash separators
+     * @return a path that matches native style with either forward- or back-slashes for separators
+     */
+    public static String nativePath(final String unixPath) {
+        return UNIXFS ? unixPath : unixPath.replace('/', '\\');
     }
 
-    public static String unixPath(final String path) {
-        return UNIXFS ? path : path.replace('\\', '/');
+    /**
+     * @param nativePath a path that matches native style with either forward- or back-slashes for separators
+     * @return a UNIX-style path with forward-slash separators
+     */
+    public static String unixPath(final String nativePath) {
+        return UNIXFS ? nativePath : nativePath.replace('\\', '/');
     }
 
-    public static Path getParentSafely(final Path path) {
+    /**
+     * @param path ???
+     * @return either the parent of the given path or the root of the Path's FileSystem, if path.getParent() == null
+     */
+    public static Path getParentOrFsRoot(final Path path) {
         final Path parent = path.getParent();
         return parent != null ? parent : path.getFileSystem().getPath("/");
+    }
+
+    /**
+     * Use a simple numbering convention to generate a unique path given a candidate path and a test of uniqueness.
+     *
+     * @param candidate   a path that might be used directly, if it is already unique, or modified to create a unique
+     *                    path
+     * @param isNotUnique a test of uniqueness for a proposed path
+     * @param sequence    the number of the current attempt, used for loop control -- callers typically pass 0
+     * @return a path, based on candidate, that is unique according to isNotUnique
+     */
+    public static String generateUniquePath(final String candidate, final Predicate<String> isNotUnique, final int sequence) {
+
+        String name = StringUtils.substringBeforeLast(candidate, FILE_NAME_EXT_SEPARATOR);
+        String extension = StringUtils.substringAfterLast(candidate, FILE_NAME_EXT_SEPARATOR);
+
+        final String newName = name + calculateNameSuffix(sequence) + (!StringUtils.isEmpty(extension) ? FILE_NAME_EXT_SEPARATOR + extension : StringUtils.EMPTY);
+        return isNotUnique.test(newName) ? generateUniquePath(candidate, isNotUnique, sequence + 1) : newName;
+    }
+
+    /**
+     * Helper for {@link #generateUniquePath(String, Predicate, int)}.
+     */
+    private static String calculateNameSuffix(final int sequence) {
+        return sequence == 0 ? StringUtils.EMPTY : FILE_NAME_SEQ_PREFIX + Integer.toString(sequence);
     }
 }

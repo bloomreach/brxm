@@ -17,7 +17,6 @@ package org.onehippo.cm;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 
 import org.onehippo.cm.model.Source;
 
@@ -43,11 +42,4 @@ public interface ResourceInputProvider {
      */
     InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException;
 
-    default Path getBasePath() {
-        throw new UnsupportedOperationException();
-    }
-
-    public Path getResourcePath(final Source source, final String resourcePath);
-
-    String getResourceModulePath(final Source source, final String resourcePath);
 }

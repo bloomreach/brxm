@@ -18,7 +18,7 @@ package org.onehippo.cm.model.serializer;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.onehippo.cm.model.util.FileConfigurationUtils;
+import org.onehippo.cm.model.util.FilePathUtils;
 
 /**
  * Unique file name generator
@@ -35,7 +35,7 @@ public class ResourceNameResolverImpl implements ResourceNameResolver {
     @Override
     public String generateName(final String filePath) {
         final String lowerCaseFilePath = filePath.toLowerCase();
-        final String generatedPath = FileConfigurationUtils.generateUniquePath(lowerCaseFilePath, knownFileEntries::contains, 0);
+        final String generatedPath = FilePathUtils.generateUniquePath(lowerCaseFilePath, knownFileEntries::contains, 0);
         knownFileEntries.add(generatedPath);
         return generatedPath;
     }

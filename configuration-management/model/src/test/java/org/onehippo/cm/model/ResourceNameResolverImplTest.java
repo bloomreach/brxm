@@ -37,13 +37,15 @@ public class ResourceNameResolverImplTest {
         String propertyPath = nameResolver.generateName("/a/b/c.txt");
         Assert.assertEquals("/a/b/c.txt", propertyPath);
 
-        propertyPath = nameResolver.generateName("/a/b/c.txt");
+        // generated names should be forced to lower-case
+        propertyPath = nameResolver.generateName("/a/b/C.txt");
         Assert.assertEquals("/a/b/c-1.txt", propertyPath);
 
         propertyPath = nameResolver.generateName("/a/a/c");
         Assert.assertEquals("/a/a/c", propertyPath);
 
-        propertyPath = nameResolver.generateName("/a/a/c");
+        // ... including dir names
+        propertyPath = nameResolver.generateName("/a/A/c");
         Assert.assertEquals("/a/a/c-1", propertyPath);
 
         propertyPath = nameResolver.generateName("/a/b/c[0].txt");

@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.model;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -79,13 +80,12 @@ public class PathConfigurationReader {
      * @throws ParserException
      */
     public ReadResult read(final Path moduleDescriptorPath, final boolean verifyOnly) throws IOException, ParserException {
-        final InputStream moduleDescriptorInputStream = Files.newInputStream(moduleDescriptorPath.toRealPath());
+        final InputStream moduleDescriptorInputStream = new BufferedInputStream(Files.newInputStream(moduleDescriptorPath.toRealPath()));
 
         final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
         final ModuleImpl module = moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString());
 
         final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath);
-        // Set the input providers on the Module directly, so it doesn't need to be held in a Map on ConfigurationModel
         readModule(module, moduleContext, verifyOnly);
         return new ReadResult(moduleContext);
     }
@@ -100,6 +100,7 @@ public class PathConfigurationReader {
      */
     public void readModule(final ModuleImpl module, final ModuleContext moduleContext, final boolean verifyOnly) throws IOException, ParserException {
         log.debug("Reading module: {}", module.getFullName());
+        // Set the input providers on the Module directly, so it doesn't need to be held in a Map on ConfigurationModel
         module.setConfigResourceInputProvider(moduleContext.getConfigInputProvider());
         module.setContentResourceInputProvider(moduleContext.getContentInputProvider());
         processConfigSources(verifyOnly, module, moduleContext);
@@ -116,35 +117,36 @@ public class PathConfigurationReader {
     }
 
     private void processContentSources(final boolean verifyOnly, final ModuleImpl module, final ModuleContext moduleContext) throws IOException, ParserException {
-        final Path contentRootPath = moduleContext.getContentRoot();
-        if (Files.exists(contentRootPath)) {
+        final Path contentBasePath = moduleContext.getContentRoot();
+        if (Files.exists(contentBasePath)) {
             final SourceParser contentSourceParser = new ContentSourceParser(moduleContext.getContentInputProvider(), verifyOnly, explicitSequencing);
-            parseSources(module, contentRootPath, contentSourceParser);
+            parseSources(module, contentBasePath, contentSourceParser);
         }
     }
 
     private void processConfigSources(final boolean verifyOnly, final ModuleImpl module, final ModuleContext moduleContext) throws IOException, ParserException {
-        final Path configRootPath = moduleContext.getConfigRoot();
-        if (Files.exists(configRootPath)) {
+        final Path configBasePath = moduleContext.getConfigRoot();
+        if (Files.exists(configBasePath)) {
             final SourceParser configSourceParser = new ConfigSourceParser(moduleContext.getConfigInputProvider(), verifyOnly, explicitSequencing);
-            parseSources(module, configRootPath, configSourceParser);
+            parseSources(module, configBasePath, configSourceParser);
         }
     }
 
-    private void parseSources(ModuleImpl module, Path rootPath, SourceParser sourceParser) throws IOException, ParserException {
-        final List<Pair<Path, String>> contentSourceData = getSourceData(rootPath);
+    private void parseSources(ModuleImpl module, Path basePath, SourceParser sourceParser) throws IOException, ParserException {
+        final List<Pair<Path, String>> contentSourceData = getSourceData(basePath);
         for (Pair<Path, String> pair : contentSourceData) {
-            sourceParser.parse(Files.newInputStream(pair.getLeft()), pair.getRight(), pair.getLeft().toString(), module);
+            sourceParser.parse(new BufferedInputStream(Files.newInputStream(pair.getLeft())),
+                    pair.getRight(), pair.getLeft().toString(), module);
         }
     }
 
-    //TODO use to collect all content sources and then sort them in processing order appropriately.
-    private List<Pair<Path, String>> getSourceData(final Path modulePath) throws IOException {
+    // used to collect all sources and then sort them in processing order appropriately.
+    private List<Pair<Path, String>> getSourceData(final Path basePath) throws IOException {
         final List<Path> paths = new ArrayList<>();
         final BiPredicate<Path, BasicFileAttributes> matcher =
                 (filePath, fileAttr) -> filePath.getFileName().toString().toLowerCase().endsWith(Constants.YAML_EXT) && fileAttr.isRegularFile();
-        Files.find(modulePath, Integer.MAX_VALUE, matcher).forEachOrdered(paths::add);
-        final int modulePathSize = modulePath.getNameCount();
+        Files.find(basePath, Integer.MAX_VALUE, matcher).forEachOrdered(paths::add);
+        final int modulePathSize = basePath.getNameCount();
 
         final List<Pair<Path, String>> result = new ArrayList<>();
         for (Path path : paths) {

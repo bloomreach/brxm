@@ -19,33 +19,44 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
 
+// TODO: perhaps this interface should be removed, and the FileROP should be used directly
 public interface ResourceOutputProvider {
 
     /**
      * Get an OutputStream to write a YAML Source.
      * Note, caller is responsible for closing the stream when finished with it.
-     * @param source
-     * @throws IOException
+     * @param source a Source that you want to serialize
      */
     OutputStream getSourceOutputStream(final Source source) throws IOException;
 
     /**
      * Get an OutputStream to write to a resource referenced in a YAML Source.
      * Note, caller is responsible for closing the stream when finished with it.
-     * @param source
-     * @param resourcePath
-     * @throws IOException
+     * @param source a Source containing a resource reference
+     * @param resourcePath the path to the referenced resource, using UNIX-style forward-slash separators;
+     *                     may be module-relative (starting with a forward-slash) or source-relative
      */
     OutputStream getResourceOutputStream(final Source source, final String resourcePath) throws IOException;
 
     /**
-     * Gets absolute filesystem path based on combination of source and resource path
-     * @param source
-     * @param resourcePath
-     * @return
+     * Gets an absolute filesystem path based on combination of source and resource path.
+     * @param source a Source containing a resource reference
+     * @param resourcePath the path to the referenced resource, using UNIX-style forward-slash separators;
+     *                     may be module-relative (starting with a forward-slash) or source-relative
+     * @return a native-style Path for an appropriate file to save the referenced resource
      */
     Path getResourcePath(final Source source, final String resourcePath);
 
+    /**
+     * @return ???
+     */
     String getSourceBasePath();
+
+    /**
+     * @param source a Source containing a resource reference
+     * @param resourcePath the path to the referenced resource, using UNIX-style forward-slash separators;
+     *                     may be module-relative (starting with a forward-slash) or source-relative
+     * @return a path string using UNIX-style forward-slash separators from the module root to the given resource
+     */
     String getResourceModulePath(final Source source, final String resourcePath);
 }

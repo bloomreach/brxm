@@ -16,7 +16,6 @@
 package org.onehippo.cm.model;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.List;
 
 /**

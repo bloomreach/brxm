@@ -15,8 +15,6 @@
  */
 package org.onehippo.cm.model;
 
-import org.onehippo.cm.model.impl.ValueImpl;
-
 public final class CopyItem implements PostProcessItem {
 
     private final Value value;

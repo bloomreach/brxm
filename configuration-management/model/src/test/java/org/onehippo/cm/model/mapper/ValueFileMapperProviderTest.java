@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.onehippo.cm.model.AbstractBaseTest;
-import org.onehippo.cm.model.JcrBinaryValueImpl;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.AbstractDefinitionImpl;

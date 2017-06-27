@@ -15,7 +15,6 @@
  */
 package org.onehippo.cm.model;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -53,7 +52,7 @@ import static org.junit.Assert.fail;
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.model.impl.ModelTestUtils.findByName;
 import static org.onehippo.cm.model.impl.ModelTestUtils.findByPath;
-import static org.onehippo.cm.model.util.FilePathUtils.getParentSafely;
+import static org.onehippo.cm.model.util.FilePathUtils.getParentOrFsRoot;
 
 public abstract class AbstractBaseTest {
 
@@ -67,15 +66,6 @@ public abstract class AbstractBaseTest {
             throw new UnsupportedOperationException();
         }
 
-        @Override
-        public Path getResourcePath(final Source source, final String resourcePath) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String getResourceModulePath(final Source source, final String resourcePath) {
-            throw new UnsupportedOperationException();
-        }
     };
 
     protected PathConfigurationReader.ReadResult readFromResource(final String resourceName) throws IOException, ParserException {
@@ -88,7 +78,7 @@ public abstract class AbstractBaseTest {
     }
 
     protected PathConfigurationReader.ReadResult readFromTestJar(final String resourceName) throws IOException, ParserException {
-        final Path jarPath = new File("target/test-classes.jar").toPath();
+        final Path jarPath = Paths.get("target/test-classes.jar");
         try (FileSystem fs = FileSystems.newFileSystem(jarPath, null)) {
             final Path moduleConfig = fs.getPath(resourceName);
             return new PathConfigurationReader(DEFAULT_EXPLICIT_SEQUENCING).read(moduleConfig);
@@ -100,11 +90,11 @@ public abstract class AbstractBaseTest {
         if (url == null) {
             fail("cannot find resource " + moduleConfigResourceName);
         }
-        return Paths.get(new File(url.getFile()).getPath());
+        return Paths.get(url.getFile());
     }
 
     protected Path findBase(final String moduleConfigResourceName) throws IOException {
-        return getParentSafely(find(moduleConfigResourceName));
+        return getParentOrFsRoot(find(moduleConfigResourceName));
     }
 
     protected GroupImpl assertGroup(final Map<String, GroupImpl> parent, final String name, final String[] after, final int projectCount) {

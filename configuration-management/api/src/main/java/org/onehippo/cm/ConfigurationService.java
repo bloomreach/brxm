@@ -27,7 +27,7 @@ import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cms7.services.SingletonService;
 
 /**
- * Service providing access to the current runtime ConfigurationModel
+ * Service providing access to the current runtime ConfigurationModel and some operations related to configuration.
  */
 @SingletonService
 public interface ConfigurationService {
@@ -39,33 +39,37 @@ public interface ConfigurationService {
     ConfigurationModel getRuntimeConfigurationModel();
 
     /**
-     * @return Returns true if AutoExport is allowed (might be disable though)
+     * @return Returns true if AutoExport is allowed (though perhaps still disabled)
      */
     boolean isAutoExportAvailable();
 
     /**
-     * Export node and it's binaries to zip file.
+     * Export a JCR node, all descendants, and binary resources to a zip file.
      * @param nodeToExport {@link Node}
-     * @return Zip {@link File} containing content wit binaries. File must be deleted by caller
+     * @return Zip {@link File} containing content with binaries. File must be deleted by caller as necessary.
      */
     File exportZippedContent(Node nodeToExport) throws RepositoryException, IOException;
 
     /**
-     * Export node text only
+     * Export a JCR node and all descendants as text only. Note that this may be an incomplete representation if any
+     * included nodes have binary properties, which would normally be represented with separate resource files.
      * @param nodeToExport {@link Node}
-     * @return Textual representation of the node
+     * @return Textual representation of the node and its descendants
      */
     String exportContent(Node nodeToExport) throws RepositoryException, IOException;
 
     /**
-     * Import node and it's binaries into parent node
+     * Import a JCR node, all descendants, and binary resources into a given parent node. The input file is expected
+     * to match the format exported by {@link #exportZippedContent(Node)}.
+     * TODO: define input ZIP format
      * @param zipFile zip {@link File}
      * @param parentNode parent {@link Node}
      */
     void importZippedContent(File zipFile, Node parentNode) throws RepositoryException, IOException;
 
     /**
-     * Import single content definition
+     * Import a single content definition into a given parent JCR node. The inputStream should contain a YAML-formatted
+     * content definition as created by {@link #exportContent(Node)}.
      * @param inputStream {@link InputStream} representation of yaml
      * @param parentNode parent {@link Node}
      */

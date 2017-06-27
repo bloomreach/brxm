@@ -15,8 +15,6 @@
  */
 package org.onehippo.cm.model.impl;
 
-import java.util.List;
-
 import org.onehippo.cm.model.ConfigurationProperty;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.ValueFormatException;

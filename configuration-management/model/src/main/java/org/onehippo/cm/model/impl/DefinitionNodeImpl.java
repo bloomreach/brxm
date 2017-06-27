@@ -21,7 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.function.Consumer;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -32,7 +31,6 @@ import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.ModelItem;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.ValueType;
-import org.onehippo.cm.model.util.SnsUtils;
 
 import com.google.common.collect.Maps;
 

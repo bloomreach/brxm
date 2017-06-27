@@ -15,7 +15,7 @@
  */
 package org.onehippo.cm.model;
 
-import java.io.FileOutputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -48,14 +48,14 @@ public class FileResourceOutputProvider implements ResourceOutputProvider {
         final String sourcePath = StringUtils.stripStart(sourceBasePath + "/" + source.getPath(), "/");
         final Path path = basePath.resolve(nativePath(sourcePath));
         Files.createDirectories(path.getParent());
-        return new FileOutputStream(path.toFile());
+        return new BufferedOutputStream(Files.newOutputStream(path));
     }
 
     @Override
     public OutputStream getResourceOutputStream(final Source source, final String resourcePath) throws IOException {
         final Path path = getResourcePath(source, resourcePath);
         Files.createDirectories(path.getParent());
-        return new FileOutputStream(path.toFile());
+        return new BufferedOutputStream(Files.newOutputStream(path));
     }
 
     @Override
@@ -74,6 +74,10 @@ public class FileResourceOutputProvider implements ResourceOutputProvider {
         return StringUtils.stripStart(resourceModulePath, "/");
     }
 
+    /**
+     * @param source a Source with a reasonable getPath()
+     * @return a relative path to the folder containing the given source, using UNIX style forward-slash separators
+     */
     private String getSourceFolder(final Source source) {
         return source.getPath().indexOf('/') != -1 ? "/" + StringUtils.substringBeforeLast(source.getPath(), "/") : "";
     }

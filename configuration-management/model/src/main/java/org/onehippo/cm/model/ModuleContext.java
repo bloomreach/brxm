@@ -31,12 +31,13 @@ import org.onehippo.cm.model.mapper.ValueFileMapperProvider;
 import org.onehippo.cm.model.parser.SourceResourceCrawler;
 import org.onehippo.cm.model.serializer.ResourceNameResolver;
 import org.onehippo.cm.model.serializer.ResourceNameResolverImpl;
-import org.onehippo.cm.model.util.FileConfigurationUtils;
 
-import static org.onehippo.cm.model.util.FilePathUtils.getParentSafely;
+import static org.onehippo.cm.model.util.FilePathUtils.getParentOrFsRoot;
 
 /**
- * Incapsulates module's input/output providers and unique name resolver
+ * Incapsulates module's input/output providers and unique name resolver. This class should only be used with
+ * modules backed by File-based providers.
+ * TODO: this class has a complex code flow -- perhaps this could be refactored
  */
 public class ModuleContext {
 
@@ -96,14 +97,14 @@ public class ModuleContext {
 
     public ResourceInputProvider getConfigInputProvider() {
         if (configInputProvider == null) {
-            configInputProvider = new FileResourceInputProvider(getParentSafely(moduleDescriptorPath), Constants.HCM_CONFIG_FOLDER);
+            configInputProvider = new FileResourceInputProvider(getParentOrFsRoot(moduleDescriptorPath), Constants.HCM_CONFIG_FOLDER);
         }
         return configInputProvider;
     }
 
     public ResourceInputProvider getContentInputProvider() {
         if (contentInputProvider == null) {
-            contentInputProvider = new FileResourceInputProvider(getParentSafely(moduleDescriptorPath), Constants.HCM_CONTENT_FOLDER);
+            contentInputProvider = new FileResourceInputProvider(getParentOrFsRoot(moduleDescriptorPath), Constants.HCM_CONTENT_FOLDER);
         }
         return contentInputProvider;
     }
@@ -128,9 +129,9 @@ public class ModuleContext {
      * @param moduleDescriptorPath the path to the module descriptor file
      */
     public void createOutputProviders(Path moduleDescriptorPath) {
-        configOutputProvider = new FileResourceOutputProvider(getParentSafely(moduleDescriptorPath), Constants.HCM_CONFIG_FOLDER);
+        configOutputProvider = new FileResourceOutputProvider(getParentOrFsRoot(moduleDescriptorPath), Constants.HCM_CONFIG_FOLDER);
 
-        contentOutputProvider = new FileResourceOutputProvider(getParentSafely(moduleDescriptorPath), Constants.HCM_CONTENT_FOLDER);
+        contentOutputProvider = new FileResourceOutputProvider(getParentOrFsRoot(moduleDescriptorPath), Constants.HCM_CONTENT_FOLDER);
     }
 
     public String generateUniqueName(Source source, String filePath) {

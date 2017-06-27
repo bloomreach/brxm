@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableSet;
-
 import org.junit.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

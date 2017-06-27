@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -55,15 +54,6 @@ public class ModelTestUtils {
             return IOUtils.toInputStream(content, StandardCharsets.UTF_8);
         }
 
-        @Override
-        public Path getResourcePath(final Source source, final String resourcePath) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String getResourceModulePath(final Source source, final String resourcePath) {
-            throw new UnsupportedOperationException();
-        }
     };
 
 
