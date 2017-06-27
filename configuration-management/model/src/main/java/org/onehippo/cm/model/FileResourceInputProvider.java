@@ -70,7 +70,7 @@ public class FileResourceInputProvider implements ResourceInputProvider {
      * @return a full native-style path to a given source file, suitable for use in error reporting
      */
     public String getFullSourcePath(final Source source) {
-        return basePath.resolve(nativePath(source.getPath())).toString();
+        return getResourcePath(null, "/"+source.getPath()).toString();
     }
 
     public String getResourceModulePath(final Source source, final String resourcePath) {
