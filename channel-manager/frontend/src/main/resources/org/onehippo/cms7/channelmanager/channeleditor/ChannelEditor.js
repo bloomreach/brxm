@@ -65,8 +65,6 @@
 
     loadChannel: function(channelId, initialPath, branchId) {
       this._clearChannel();
-      console.log('joeri: extjs loading channel', channelId);
-      console.log('joeri: extjs loading channel with branch', branchId);
       this._setChannel(channelId).when(function(channelRecord) {
         this.hostToIFrame.publish('load-channel', channelRecord.json, initialPath, branchId);
       }.bind(this));
