@@ -1,16 +1,3 @@
-package org.onehippo.cm.model.impl;
-
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.junit.Test;
-import org.onehippo.cm.model.Source;
-
-import static java.util.Comparator.comparing;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-
 /*
  *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
@@ -26,6 +13,19 @@ import static org.junit.Assert.assertTrue;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.onehippo.cm.model.impl;
+
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.junit.Test;
+import org.onehippo.cm.model.Source;
+
+import static java.util.Comparator.comparing;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+
 public class SourceImplTest {
 
     @Test
