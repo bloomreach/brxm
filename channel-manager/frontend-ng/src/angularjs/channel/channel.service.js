@@ -309,6 +309,7 @@ class ChannelService {
     const params = {
       previewConfigRequired: true,
       workspaceRequired: true,
+      skipBranches: true,
     };
     this.HstService.doGetWithParams(this.ConfigService.rootUuid, params, 'channels')
       .then((response) => {
