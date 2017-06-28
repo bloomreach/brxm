@@ -1,0 +1,16 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-static:
+      /reportsPerspective:
+        .meta:order-before: adminLoader
+        jcr:primaryType: frontend:plugin
+        cluster.name: hippo-reports
+        plugin.class: org.onehippo.cms7.reports.ReportsPerspective
+        wicket.extension: []
+        wicket.id: service.tab
+        /layout.wireframe:
+          jcr:primaryType: frontend:pluginconfig
+          center: id=reports-perspective-center,body=reports-perspective-center-body,scroll=true
+          linked.with.parent: true
+          root.id: reports-perspective-wrapper
+          top: id=reports-perspective-top,body=reports-perspective-top-body,height=41

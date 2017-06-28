@@ -1,0 +1,129 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-static:
+      jcr:primaryType: frontend:plugincluster
+      /servicesLoader:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-services
+        plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
+      /root:
+        jcr:primaryType: frontend:plugin
+        browsers: browser.ie
+        extension.tabs.documents: service.browse.tabscontainer
+        item: header.bar.right
+        max.inactive.interval.minutes: '30'
+        plugin.class: org.hippoecm.frontend.plugins.cms.root.RootPlugin
+        tabs: service.tab
+        wicket.extensions: [extension.tabs.documents]
+        wicket.id: service.root
+        /browser.ie:
+          jcr:primaryType: frontend:pluginconfig
+          stylesheets: skin/screen_ie.css
+          user.agent: ie
+        /layout.wireframe:
+          jcr:primaryType: frontend:pluginconfig
+          center: id=tabbed-panel-layout-center,height=1000
+          left: id=tabbed-panel-layout-left,width=64
+          linked.with.parent: true
+          root.id: tabbed-panel-layout
+        /layout.page:
+          jcr:primaryType: frontend:pluginconfig
+          footer.height: 40
+      /dashboardPerspective:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-dashboard
+        edition: community
+        extension.currentActivity: service.dashboard.current
+        extension.shortcuts: service.dashboard.shortcuts
+        extension.todo: service.dashboard.todo
+        plugin.class: org.hippoecm.frontend.plugins.cms.dashboard.DashboardPerspective
+        wicket.behavior: [service.behavior.tabs, service.behavior.dashboard]
+        wicket.extensions: [extension.shortcuts, extension.currentActivity, extension.todo]
+        wicket.id: service.tab
+      /browserPerspective:
+        jcr:primaryType: frontend:plugin
+        center: service.browse.editor
+        left: service.browse.navigator
+        model.document: model.browse.document
+        plugin.class: org.hippoecm.frontend.plugins.cms.browse.BrowserPerspective
+        wicket.id: service.tab
+        /layout.wireframe:
+          jcr:primaryType: frontend:pluginconfig
+          center: id=browse-perspective-center,body=browse-perspective-center-body,min.width=400,scroll=false,gutter=0px
+            0px 0px 0px
+          default.expanded.unit: left
+          left: id=browse-perspective-left,body=browse-perspective-left-body,scroll=false,width=400,gutter=0px
+            0px 0px 0px,expand.collapse.enabled=true,resize=true
+          linked.with.parent: true
+          root.id: browse-perspective-wrapper
+      /navigator:
+        jcr:primaryType: frontend:plugin
+        browser.id: service.browse
+        browser.viewers: cms-folder-views
+        cluster.name: cms-browser
+        extension.list: service.browse.list
+        model.default.path: /content/documents
+        model.document: model.browse.document
+        model.folder: model.browse.folder
+        plugin.class: org.hippoecm.frontend.plugins.cms.browse.Navigator
+        search.viewers: cms-search-views
+        section.configuration: service.browse.tree.configuration
+        section.content: service.browse.tree.content
+        section.files: service.browse.tree.files
+        section.images: service.browse.tree.images
+        sections: [section.content, section.images, section.files, section.configuration]
+        wicket.behavior: service.behavior.navigator
+        wicket.id: service.browse.navigator
+        wicket.variant: yui
+      /navigatorLayout:
+        jcr:primaryType: frontend:plugin
+        behavior.id: service.behavior.navigator
+        plugin.class: org.hippoecm.frontend.plugins.yui.layout.WireframePlugin
+        /yui.config:
+          jcr:primaryType: frontend:pluginconfig
+          center: id=navigator-center,body=navigator-center-body,width=250,min.width=100
+          left: id=navigator-left,body=navigator-left-body,width=200,zindex=2,min.width=100,resize=true
+          linked.with.parent: true
+          root.id: navigator-wrapper
+      /tabbedEditorTabs:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.edit.EditorTabsPlugin
+        tabbedpanel.openleft: true
+        tabs: service.editor.tab
+        tabs.container.id: service.browse.tabscontainer
+        wicket.css: document
+        wicket.id: service.browse.editor
+      /editorManagerPlugin:
+        jcr:primaryType: frontend:plugin
+        editor.id: service.edit
+        plugin.class: org.hippoecm.frontend.plugins.cms.edit.EditorManagerPlugin
+        wicket.model: model.browse.document
+        /cluster.options:
+          jcr:primaryType: frontend:pluginconfig
+          browser.id: service.browse
+          editor.id: service.edit
+          wicket.behavior: service.behavior.editor.tabs.center
+          wicket.id: service.editor.tab
+      /autoEditPlugin:
+        jcr:primaryType: frontend:plugin
+        editor.id: service.edit
+        plugin.class: org.hippoecm.frontend.plugins.cms.edit.AutoEditPlugin
+      /controllerPlugin:
+        jcr:primaryType: frontend:plugin
+        browser.id: service.browse
+        editor.id: service.edit
+        plugin.class: org.hippoecm.frontend.plugins.cms.root.ControllerPlugin
+      /adminLoader:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-admin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.AdminPerspective
+        wicket.id: service.tab
+        /layout.wireframe:
+          jcr:primaryType: frontend:pluginconfig
+          center: id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true
+          root.id: hippo-panel-plugin-wrapper
+          top: id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=41
+      /headerbarLoader:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-header-bar
+        plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader

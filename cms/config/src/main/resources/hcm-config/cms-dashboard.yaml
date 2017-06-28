@@ -1,0 +1,38 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-dashboard:
+      jcr:primaryType: frontend:plugincluster
+      /dashboardLayout:
+        jcr:primaryType: frontend:plugin
+        behavior.id: service.behavior.dashboard
+        plugin.class: org.hippoecm.frontend.plugins.yui.layout.WireframePlugin
+        /yui.config:
+          jcr:primaryType: frontend:pluginconfig
+          center: id=center,width=33%,body=center-body,gutter=0px 0px 0px 0px
+          client.class.name: YAHOO.hippo.RelativeWireframe
+          left: id=left,width=33%,body=left-body,gutter=0px 0px 0px 0px
+          linked.with.parent: true
+          right: id=right,width=33%,body=right-body,gutter=0px 0px 0px 0px
+          root.id: dashboard-perspective-wrapper
+      /shortcutsListPlugin:
+        jcr:primaryType: frontend:plugin
+        item: service.dashboard.shortcuts.shortcut
+        plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+        wicket.id: service.dashboard.shortcuts
+      /shortcutsPlugin:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugin.workflow.ShortcutsPlugin
+        shortcuts.id: shortcuts.id
+        shortcuts.query: /jcr:root/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts/*/@workaround
+          order by @workaround
+        wicket.id: service.dashboard.shortcuts.shortcut
+      /currentActivityPlugin:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.reporting.ReportPlugin
+        report.input.node: 426c67c6-4591-4cdf-92c8-19b7dd0b1c39
+        report.resultset.model: model.report.current
+      /todoPlugin:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.reporting.ReportPlugin
+        report.input.node: f2e7cb32-081a-4679-8bed-0fec3ef9a132
+        report.resultset.model: model.report.todo

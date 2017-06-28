@@ -1,0 +1,12 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/versioning:
+      /handle:
+        jcr:primaryType:
+          operation: override
+          type: name
+          value: frontend:workflow
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          editor.id: ${editor.id}
+          plugin.class: org.hippoecm.frontend.plugins.reviewedactions.VersionWorkflowPlugin

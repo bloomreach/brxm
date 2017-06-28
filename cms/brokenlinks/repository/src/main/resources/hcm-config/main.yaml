@@ -1,0 +1,8 @@
+definitions:
+  namespace:
+    brokenlinks:
+      uri: http://www.onehippo.org/jcr/brokenlinks/nt/1.0
+      cnd: brokenlinks.cnd
+  config:
+    /hippo:configuration/hippo:modules/brokenlinks:
+      .meta:category: runtime

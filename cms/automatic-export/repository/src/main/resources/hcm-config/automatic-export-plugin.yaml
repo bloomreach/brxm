@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/console/console:
+      /autoexport:
+        .meta:order-before: check
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.onehippo.cms7.autoexport.plugin.AutoExportPlugin
+        wicket.id: service.menu.item
+        wicket.model: service.model

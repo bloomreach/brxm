@@ -1,0 +1,69 @@
+definitions:
+  config:
+    /hippo:namespaces/hipposysedit:
+      jcr:primaryType: hipposysedit:namespace
+      /templatetype:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hipposysedit/nt/1.2
+            /nodetype:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: hipposysedit:nodetype
+              hipposysedit:type: hippo:handle
+            /prototypes:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hipposysedit:prototypes
+              hipposysedit:type: hipposysedit:prototypeset
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [wicket.model, engine]
+            frontend:services: [wicket.id]
+            model.builder: ${cluster.id}.model.builder
+            model.cluster: ${cluster.id}.model.cluster
+            model.selected_extension_point: ${cluster.id}.model.extensionpoint
+            model.selected_plugin: ${cluster.id}.model.selected_plugin
+            model.type: ${cluster.id}.model.type
+            /root:
+              jcr:primaryType: frontend:plugin
+              extension.form: ${cluster.id}.form
+              extension.helpers: ${cluster.id}.helpers
+              plugin.class: org.hippoecm.frontend.editor.builder.TemplateTypeLayout
+              wicket.behavior: ${cluster.id}.behavior.root
+              wicket.extensions: [extension.form, extension.helpers]
+            /rootLayout:
+              jcr:primaryType: frontend:plugin
+              behavior.id: ${cluster.id}.behavior.root
+              plugin.class: org.hippoecm.frontend.plugins.yui.layout.WireframePlugin
+              /yui.config:
+                jcr:primaryType: frontend:pluginconfig
+                center: id=template-type-center,body=template-type-center-body,scroll=true
+                linked.with.parent: true
+                right: id=template-type-right,width=250,body=template-type-right-body,resize=true,scroll=true
+                root.id: template-type-wrapper
+            /preview:
+              jcr:primaryType: frontend:plugin
+              plugin.class: org.hippoecm.frontend.editor.builder.TemplateTypeEditorPlugin
+              template: ${cluster.id}.template
+              wicket.helper.id: ${cluster.id}.helpers.helper
+              wicket.id: ${cluster.id}.form
+            /helpers:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.helpers.helper
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+              wicket.id: ${cluster.id}.helpers
+            /list:
+              jcr:primaryType: frontend:plugin
+              css: [templateactions, actionspanel]
+              plugin.class: org.hippoecm.frontend.editor.builder.TemplateListPlugin
+              wicket.id: ${cluster.id}.helpers.helper
+              wicket.model: ${model.type}

@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/treeNodeIconService:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.hippoecm.frontend.translation.TreeNodeIconPlugin

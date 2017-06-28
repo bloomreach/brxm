@@ -1,0 +1,52 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/test:
+      jcr:primaryType: hipposys:workflowcategory
+      /root:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.RepositoryWorkflowImpl
+        hipposys:display: Workflow on root folder (RepositoryWorkflow)
+        hipposys:nodetype: rep:root
+        hipposys:privileges: ['hippo:admin']
+        /hipposys:types:
+          jcr:primaryType: hipposys:types
+      /template-editor-types:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.editor.repository.impl.EditmodelWorkflowImpl
+        hipposys:display: Template engine workflow to edit a type
+        hipposys:nodetype: hipposysedit:templatetype
+        /hipposys:types:
+          jcr:primaryType: hipposys:types
+      /template-editor-namespace:
+        jcr:primaryType: frontend:workflow
+        hipposys:classname: org.hippoecm.editor.repository.impl.NamespaceWorkflowImpl
+        hipposys:display: Template engine workflow to create a type
+        hipposys:nodetype: hipposysedit:namespace
+        /hipposys:types:
+          jcr:primaryType: hipposys:types
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.editor.workflow.RemodelWorkflowPlugin
+      /template-editor-namespaces:
+        jcr:primaryType: frontend:workflow
+        hipposys:classname: org.hippoecm.editor.repository.impl.TemplateEditorWorkflowImpl
+        hipposys:display: Template engine workflow to create a namespace
+        hipposys:nodetype: hipposysedit:namespacefolder
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin
+        /hipposys:types:
+          jcr:primaryType: hipposys:types
+      /default:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.DefaultWorkflowImpl
+        hipposys:display: Default workflow
+        hipposys:nodetype: hippo:document
+        hipposys:privileges: ['hippo:author']
+        /hipposys:types:
+          jcr:primaryType: hipposys:types
+          /org.hippoecm.repository.api.Document:
+            jcr:primaryType: hipposys:type
+            hipposys:classname: org.hippoecm.repository.api.Document
+            hipposys:display: Document
+            hipposys:nodetype: hippo:document

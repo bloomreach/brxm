@@ -1,0 +1,186 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/console:
+      jcr:primaryType: frontend:application
+      frontend:defaultcluster: console
+      frontend:privileges: hippo:admin
+      frontend:privileges.path: /content/documents
+      frontend:saveonexit: false
+      /console:
+        jcr:primaryType: frontend:plugincluster
+        wicket.model: service.model
+        /logoutService:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.logout.ConsoleLogoutService
+        /root:
+          jcr:primaryType: frontend:plugin
+          extension.center: service.center
+          extension.left: service.left
+          extension.top: service.top
+          max.inactive.interval.minutes: '30'
+          plugin.class: org.hippoecm.frontend.plugins.console.RootPlugin
+          wicket.dialog: service.dialog
+          wicket.extensions: [extension.top, extension.left, extension.center]
+          wicket.id: service.root
+          /yui.config:
+            jcr:primaryType: frontend:pluginconfig
+            body.gutter: 0px 10px 5px 0px
+            body.scroll: true
+            header.gutter: 0px 10px 0px 10px
+            header.height: '75'
+            left.gutter: 0px 0px 5px 10px
+            left.resize: true
+            left.width: '460'
+        /top:
+          jcr:primaryType: frontend:plugin
+          extension.advancedmenu: service.advancedmenu
+          extension.menu: service.menu
+          plugin.class: org.hippoecm.frontend.plugins.console.TopPlugin
+          wicket.extensions: [extension.advancedmenu, extension.menu]
+          wicket.id: service.top
+        /left:
+          jcr:primaryType: frontend:plugin
+          extension.tree: service.tree
+          plugin.class: org.hippoecm.frontend.plugins.console.LeftPlugin
+          wicket.behavior: service.layout.left
+          wicket.extensions: extension.tree
+          wicket.id: service.left
+          wicket.model: ''
+        /tree:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.browser.BrowserPlugin
+          wicket.id: service.tree
+        /center:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.editor.EditorPlugin
+          wicket.id: service.center
+        /menu:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.MenuPlugin
+          wicket.dialog: service.dialog
+          wicket.id: service.menu
+        /workflow:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowPlugin
+          wicket.id: service.menu.node.item
+        /permissions:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.permissions.PermissionsPlugin
+          wicket.id: service.menu.node.item
+        /references:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.refs.ReferencesPlugin
+          wicket.id: service.menu.node.item
+        /xmlimport:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.content.ContentImportPlugin
+          wicket.id: service.menu.xml.item
+        /xmlexport:
+          jcr:primaryType: frontend:plugin
+          label: XML Export
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.content.ContentExportPlugin
+          wicket.id: service.menu.xml.item
+        /yamlexport:
+          jcr:primaryType: frontend:plugin
+          wicket.id: service.menu.yaml.item
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.content.YamlExportPlugin
+        /yamlimport:
+          jcr:primaryType: frontend:plugin
+          wicket.id: service.menu.yaml.item
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.content.YamlImportPlugin
+        /addnamespace:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.namespace.NamespacePlugin
+          wicket.id: service.menu.cnd.item
+        /cndimport:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.cnd.CndImportPlugin
+          wicket.id: service.menu.cnd.item
+        /cndexport:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.cnd.CndExportPlugin
+          wicket.id: service.menu.cnd.item
+        /systeminfo:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.systeminfo.SystemInfoPlugin
+          wicket.id: service.menu.system.item
+        /check:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.CheckPlugin
+          wicket.id: service.menu.system.item
+        /nodereset:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.nodereset.NodeResetPlugin
+          wicket.id: service.menu.node.item
+        /checkinout:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.check.CheckInOutPlugin
+          wicket.id: service.menu.node.item
+        /unlock:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.lock.UnlockPlugin
+          wicket.id: service.menu.node.item
+        /logout:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.logout.LogoutPlugin
+          wicket.dialog: service.logout.dialog
+          wicket.id: service.logout
+        /referenceplugin:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.editor.ReferenceEditorPlugin
+        /hstreferenceplugin:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugins.console.editor.HstReferenceEditorPlugin
+        /passwordhashplugin:
+          jcr:primaryType: frontend:plugin
+          passwordLength: '12'
+          plugin.class: org.hippoecm.frontend.plugins.console.editor.PasswordHashEditorPlugin
+        /browserBehavior:
+          jcr:primaryType: frontend:plugin
+          behavior.id: service.layout.left
+          plugin.class: org.hippoecm.frontend.plugins.yui.layout.WireframePlugin
+          wicket.model: ''
+          /yui.config:
+            jcr:primaryType: frontend:pluginconfig
+            center: id=navigator-center,body=navigator-center-body,scroll=true
+            linked.with.parent: true
+            root.id: navigator-wrapper
+            units: center
+        /advancedmenu:
+          jcr:primaryType: frontend:plugin
+          extension.cnd.menu: service.menu.cnd
+          extension.logout: service.logout
+          extension.node.menu: service.menu.node
+          extension.system.menu: service.menu.system
+          extension.xml.menu: service.menu.xml
+          extension.yaml.menu: service.menu.yaml
+          item: service.menu.item
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.AdvancedMenuPlugin
+          wicket.extensions: [extension.system.menu, extension.node.menu, extension.cnd.menu,
+            extension.xml.menu, extension.yaml.menu, extension.logout]
+          wicket.id: service.advancedmenu
+        /cnddropdown:
+          jcr:primaryType: frontend:plugin
+          item: service.menu.cnd.item
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.Submenu
+          wicket.id: service.menu.cnd
+        /nodedropdown:
+          jcr:primaryType: frontend:plugin
+          item: service.menu.node.item
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.Submenu
+          wicket.id: service.menu.node
+        /xmldropdown:
+          jcr:primaryType: frontend:plugin
+          item: service.menu.xml.item
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.Submenu
+          wicket.id: service.menu.xml
+        /yamldropdown:
+          jcr:primaryType: frontend:plugin
+          item: service.menu.yaml.item
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.Submenu
+          wicket.id: service.menu.yaml
+        /systemdropdown:
+          jcr:primaryType: frontend:plugin
+          item: service.menu.system.item
+          plugin.class: org.hippoecm.frontend.plugins.console.menu.Submenu
+          wicket.id: service.menu.system

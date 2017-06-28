@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms:
+      jcr:primaryType: frontend:application
+      frontend:defaultcluster: cms-static
+      frontend:privileges: hippo:author
+      frontend:privileges.path: /content/documents

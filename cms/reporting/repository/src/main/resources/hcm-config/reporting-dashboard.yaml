@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/hippo-reports:
+      jcr:primaryType: frontend:plugincluster

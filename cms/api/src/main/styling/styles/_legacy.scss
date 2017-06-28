@@ -16,7 +16,7 @@
 ol, ul {
   margin: 0;
   padding: 0;
-} 
+}
 
 // Removes list-style from lists, lists are more often used without a list style
 // TODO: Probably better to do this when needed
@@ -32,4 +32,15 @@ fieldset {
 // Left-aligns text in caption and th
 caption, th {
   text-align: left;
+}
+
+// Since we upgraded to normalize.css v6 we need to specify the following rule:
+// - inherit font and color for button, input, optgroup, select and textarea's
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit;
+  font: inherit;
 }

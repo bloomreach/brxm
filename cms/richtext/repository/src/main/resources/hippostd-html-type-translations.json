@@ -1,9 +1,0 @@
-{
-  "hippo:types": {
-    "hippostd:html": {
-      "en": {
-        "jcr:name": "Rich Text Editor"
-      }
-    }
-  }
-}

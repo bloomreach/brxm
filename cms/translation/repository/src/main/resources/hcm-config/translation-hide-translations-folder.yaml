@@ -1,0 +1,18 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-tree-views/documents/documentsBrowser/filters/hideTranslationsType:
+      jcr:primaryType: frontend:pluginconfig
+      child: hippotranslation:translations
+      display: false
+    /hippo:configuration/hippo:frontend/cms/cms-folder-views/hippostd:folder/root/filters/hideTranslationsType:
+      jcr:primaryType: frontend:pluginconfig
+      child: hippotranslation:translations
+      display: false
+    /hippo:configuration/hippo:frontend/cms/cms-folder-views/hippostd:directory/root/filters/hideTranslationsType:
+      jcr:primaryType: frontend:pluginconfig
+      child: hippotranslation:translations
+      display: false
+    /hippo:configuration/hippo:frontend/cms/cms-folder-views/hippo:facetselect/root/filters/hideTranslationsType:
+      jcr:primaryType: frontend:pluginconfig
+      child: hippotranslation:translations
+      display: false

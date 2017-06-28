@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/console/console/hstrenderpathplugin:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.hippoecm.frontend.plugins.console.editor.HstRenderPathEditorPlugin

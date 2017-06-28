@@ -1,0 +1,285 @@
+definitions:
+  config:
+    /hippo:namespaces/hippo:
+      jcr:primaryType: hipposysedit:namespace
+      /query:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['nt:query']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippo/nt/2.0
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippo:query
+            jcr:language: xpath
+            jcr:statement: ''
+      /resource:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippo/nt/2.0
+            /data:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: jcr:data
+              hipposysedit:primary: true
+              hipposysedit:type: Binary
+            /lastmodified:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: jcr:lastModified
+              hipposysedit:type: Date
+            /mimetype:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: jcr:mimeType
+              hipposysedit:type: String
+            /filename:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: false
+              hipposysedit:path: hippo:filename
+              hipposysedit:type: String
+            /encoding:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: jcr:encoding
+              hipposysedit:type: String
+            /text:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippo:text
+              hipposysedit:type: Binary
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [wicket.model, model.compareTo]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+            /display:
+              jcr:primaryType: frontend:plugin
+              plugin.class: org.hippoecm.frontend.editor.plugins.resource.ImageDisplayPlugin
+              wicket.id: ${cluster.id}.field
+            /upload:
+              jcr:primaryType: frontend:plugin
+              plugin.class: org.hippoecm.frontend.editor.plugins.resource.ResourceUploadPlugin
+              validator.id: service.gallery.asset.validation
+              wicket.id: ${cluster.id}.field
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippo:resource
+            hippo:filename: hippo:resource
+            jcr:data:
+              type: binary
+              resource: /namespaces/hippo/resource/prototypes/prototype/data.bin
+            jcr:encoding: UTF-8
+            jcr:lastModified: 2008-03-26T12:03:00+01:00
+            jcr:mimeType: application/vnd.hippo.blank
+      /facetselect:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: true
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippo/nt/2.0
+            /docbase:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippo:docbase
+              hipposysedit:type: Docbase
+            /tree:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:multiple: true
+              hipposysedit:path: '*'
+              hipposysedit:type: nt:base
+            /facets:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:multiple: true
+              hipposysedit:path: hippo:facets
+              hipposysedit:type: String
+            /values:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:multiple: true
+              hipposysedit:path: hippo:values
+              hipposysedit:type: String
+            /modes:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:multiple: true
+              hipposysedit:path: hippo:modes
+              hipposysedit:type: String
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippo:facetselect
+            hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []
+      /mirror:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:cascadevalidation: false
+            hipposysedit:node: true
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippo/nt/2.0
+            /docbase:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippo:docbase
+              hipposysedit:type: Docbase
+              hipposysedit:validators: [references]
+            /tree:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:multiple: true
+              hipposysedit:path: '*'
+              hipposysedit:type: nt:base
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode, cluster.name, nodetypes, base.uuid, last.visited.key,
+              last.visited.enabled, last.visited.nodetypes, language.context.aware,
+              base.path]
+            frontend:references: [wicket.model, engine]
+            frontend:services: [wicket.id]
+            last.visited.nodetypes: []
+            nodetypes: []
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.editor.plugins.linkpicker.MirrorTemplatePlugin
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippo:mirror
+            hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+      /facetbasesearch:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: true
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippo/nt/2.0
+            /queryname:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippo:queryname
+              hipposysedit:type: String
+            /count:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippo:count
+              hipposysedit:type: Long
+            /subsearch:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:multiple: true
+              hipposysedit:path: '*'
+              hipposysedit:type: hippo:facetbasesearch
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippo:facetbasesearch
+            hippo:queryname: query name
+      /facetsearch:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:node: true
+            hipposysedit:supertype: ['hippo:facetbasesearch']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippo/nt/2.0
+            /docbase:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippo:docbase
+              hipposysedit:type: Docbase
+            /facets:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:multiple: true
+              hipposysedit:path: hippo:facets
+              hipposysedit:type: String
+            /resultset:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippo:resultset
+              hipposysedit:type: hippo:facetresult
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: hippo:facetsearch
+            hippo:docbase: cafebabe-cafe-babe-cafe-babecafebabe
+            hippo:facets: []
+            hippo:queryname: query name
+      /document:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippo/nt/2.0
+            /availability:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:multiple: true
+              hipposysedit:path: hippo:availability
+              hipposysedit:type: String
+      /compound:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 611f21c2-ab79-405c-88e7-8309168712b6
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: bffb5433-b36c-4f19-8e76-c97080a81ebb
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippo/nt/2.0
+      /container:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: e31b340f-0c42-4e2d-84f0-0bb27533d2f2
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: f3813893-edee-4824-9a3e-035f151f683c
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:mixin: true
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippo/nt/2.0

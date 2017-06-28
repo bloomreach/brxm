@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    frontendtest:
+      uri: http://www.hippoecm.org/test/nt/1.0
+      cnd: frontendtest.cnd

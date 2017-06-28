@@ -1,0 +1,5 @@
+group: hippo-cms
+project:
+    name: hippo-cms
+    after: hippo-repository
+module: hippo-cms-types

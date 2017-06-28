@@ -1,0 +1,12 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/defaultread:
+      /reporting-report:
+        jcr:primaryType: hipposys:domainrule
+        /type-reporting-report:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: reporting:report
