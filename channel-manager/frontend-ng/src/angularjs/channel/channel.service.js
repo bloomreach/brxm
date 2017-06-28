@@ -74,8 +74,9 @@ class ChannelService {
       setupPromise = this.$q
         .when(passedProjectId || this.ProjectService.getCurrentProject(channel.mountId))
         .then((selectedProjectId) => {
-          if (selectedProjectId) {
+          if (selectedProjectId && selectedProjectId !== 'master') {
             channelId = channelId.replace('-preview', `-${selectedProjectId}-preview`);
+            console.log('channelid', channelId);
           }
           return selectedProjectId;
         })
