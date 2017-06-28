@@ -63,6 +63,7 @@ definitions:
           hipposys:permissioncachesize: 20000
       /hippo:users:
         jcr:primaryType: hipposys:userfolder
+        .meta:residual-child-node-category: runtime
         /admin:
           jcr:primaryType: hipposys:user
           hipposys:active: true
@@ -76,12 +77,14 @@ definitions:
           hipposys:securityprovider: internal
       /hippo:groups:
         jcr:primaryType: hipposys:groupfolder
+        .meta:residual-child-node-category: runtime
         /admin:
           jcr:primaryType: hipposys:group
           hipposys:members: [admin, workflowuser]
           hipposys:securityprovider: internal
       /hippo:roles:
         jcr:primaryType: hipposys:rolefolder
+        .meta:residual-child-node-category: runtime
         /admin:
           jcr:primaryType: hipposys:role
           hipposys:privileges: ['jcr:all', 'hippo:admin']
