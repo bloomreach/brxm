@@ -36,7 +36,7 @@ public interface ChannelService {
 
     void saveChannel(Session session, String channelId, Channel channel) throws RepositoryException, ChannelException;
 
-    List<Channel> getChannels(boolean previewConfigRequired, boolean workspaceRequired);
+    List<Channel> getChannels(boolean previewConfigRequired, boolean workspaceRequired, boolean skipBranches);
 
     Optional<Channel> getChannelByMountId(final String mountId);
 

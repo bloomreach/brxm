@@ -100,9 +100,10 @@ public class RootResource extends AbstractConfigResource {
     @GET
     @Path("/channels")
     public Response getChannels(@QueryParam("previewConfigRequired") final boolean previewConfigRequired,
-                                @QueryParam("workspaceRequired") final boolean workspaceRequired) {
+                                @QueryParam("workspaceRequired") final boolean workspaceRequired,
+                                @QueryParam("skipBranches") final boolean skipBranches) {
         try {
-            final List<Channel> channels = this.channelService.getChannels(previewConfigRequired, workspaceRequired);
+            final List<Channel> channels = this.channelService.getChannels(previewConfigRequired, workspaceRequired, skipBranches);
             return ok("Fetched channels successful", channels);
         } catch (RuntimeRepositoryException e) {
             log.warn("Could not determine authorization", e);

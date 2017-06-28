@@ -217,13 +217,14 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public List<Channel> getChannels(final boolean previewConfigRequired, final boolean workspaceRequired) {
+    public List<Channel> getChannels(final boolean previewConfigRequired, final boolean workspaceRequired, final boolean skipBranches) {
         final VirtualHost virtualHost = getCurrentVirtualHost();
         return virtualHost.getVirtualHosts().getChannels(virtualHost.getHostGroupName())
                 .values()
                 .stream()
                 .filter(channel -> previewConfigRequiredFiltered(channel, previewConfigRequired))
                 .filter(channel -> workspaceFiltered(channel, workspaceRequired))
+                .filter(channel -> !skipBranches || channel.getBranchOf() == null)
                 .collect(Collectors.toList());
     }
 
