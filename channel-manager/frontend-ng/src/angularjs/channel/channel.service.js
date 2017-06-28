@@ -76,7 +76,6 @@ class ChannelService {
         .then((selectedProjectId) => {
           if (selectedProjectId && selectedProjectId !== 'master') {
             channelId = channelId.replace('-preview', `-${selectedProjectId}-preview`);
-            console.log('channelid', channelId);
           }
           return selectedProjectId;
         })
