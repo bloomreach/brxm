@@ -21,15 +21,17 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
+import javax.jcr.Session;
+import javax.jcr.lock.LockManager;
 import javax.jcr.nodetype.NodeType;
 
 import org.junit.Test;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.testutils.jcr.event.ExpectedEvents;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
-import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -1767,5 +1769,79 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
 
         expectNode("/test", "[sns]", "[jcr:primaryType]");
         expectNode("/test/sns", "[foo]", "[jcr:primaryType]");
+
+    }
+
+    @Test
+    public void test_locked_node_update() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /lockableNode:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:mixinTypes: ['mix:lockable']\n"
+                + "        property1: value1\n"
+                + "        property2: value2\n"
+                + "        /lockableChild:\n"
+                + "          jcr:primaryType: nt:unstructured\n"
+                + "          jcr:mixinTypes: ['mix:lockable']\n"
+                + "          property1: childValue1\n"
+                + "          property2: childValue2\n";
+
+        final String updatedSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /lockableNode:\n"
+                + "        jcr:primaryType: nt:unstructured\n"
+                + "        jcr:mixinTypes: ['mix:lockable']\n"
+                + "        property1: valueX\n"
+                + "        property2: valueY\n"
+                + "        /lockableChild:\n"
+                + "          jcr:primaryType: nt:unstructured\n"
+                + "          jcr:mixinTypes: ['mix:lockable']\n"
+                + "          property1: childValueXX\n"
+                + "          property2: childValueYY\n";
+
+
+        Session lockSession = session.impersonate(RepositoryTestCase.CREDENTIALS);
+
+        try {
+            applyDefinitions(baselineSource);
+
+            final LockManager lockManager = lockSession.getWorkspace().getLockManager();
+
+            final Node lockableNode = lockSession.getNode("/test/lockableNode");
+
+            lockManager.lock(lockableNode.getPath(), true, false, 0, "");
+
+            applyDefinitions(updatedSource);
+
+            assertEquals("value1", lockableNode.getProperty("property1").getValue().getString());
+            assertEquals("value2", lockableNode.getProperty("property2").getValue().getString());
+
+            Node lockableChildNode = lockSession.getNode("/test/lockableNode/lockableChild");
+
+            assertEquals("childValue1", lockableChildNode.getProperty("property1").getValue().getString());
+            assertEquals("childValue2", lockableChildNode.getProperty("property2").getValue().getString());
+
+            lockManager.unlock(lockableNode.getPath());
+
+            lockManager.lock(lockableNode.getPath(), false, false, 0, "");
+
+            applyDefinitions(updatedSource);
+
+            lockableChildNode = lockSession.getNode(lockableChildNode.getPath());
+
+            assertEquals("childValueXX", lockableChildNode.getProperty("property1").getValue().getString());
+            assertEquals("childValueYY", lockableChildNode.getProperty("property2").getValue().getString());
+        } finally {
+            if (lockSession.isLive()) {
+                lockSession.logout();
+            }
+        }
     }
 }

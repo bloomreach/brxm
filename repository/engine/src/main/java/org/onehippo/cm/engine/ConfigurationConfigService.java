@@ -32,6 +32,9 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.lock.Lock;
+import javax.jcr.lock.LockException;
+import javax.jcr.lock.LockManager;
 import javax.jcr.nodetype.ItemDefinition;
 import javax.jcr.nodetype.NodeType;
 
@@ -205,9 +208,22 @@ public class ConfigurationConfigService {
                                   final List<UnprocessedReference> unprocessedReferences)
             throws RepositoryException, IOException {
 
-        computeAndWritePrimaryTypeDelta(baselineNode, updateNode, targetNode, forceApply);
-        computeAndWriteMixinTypesDelta(baselineNode, updateNode, targetNode, forceApply);
-        computeAndWritePropertiesDelta(baselineNode, updateNode, targetNode, forceApply, unprocessedReferences);
+        if (targetNode.isLocked()) {
+            log.warn("Target node {} is locked, skipping it's processing", targetNode.getPath());
+            final LockManager lockManager = targetNode.getSession().getWorkspace().getLockManager();
+            try {
+                final Lock lock = lockManager.getLock(targetNode.getPath());
+                if (lock.isDeep()) {
+                    return;
+                }
+            } catch (LockException ignored) {
+            }
+        } else {
+            computeAndWritePrimaryTypeDelta(baselineNode, updateNode, targetNode, forceApply);
+            computeAndWriteMixinTypesDelta(baselineNode, updateNode, targetNode, forceApply);
+            computeAndWritePropertiesDelta(baselineNode, updateNode, targetNode, forceApply, unprocessedReferences);
+        }
+
         computeAndWriteChildNodesDelta(baselineNode, updateNode, targetNode, forceApply, unprocessedReferences);
     }
 
