@@ -45,6 +45,7 @@ class PageActionsService extends MenuService {
     this.defineMenu('page', {
       translationKey: 'TOOLBAR_BUTTON_PAGE',
       isVisible: () => this._canEditChannel(),
+      isEnabled: () => !this.ChannelService.isConfigurationLocked(),
       onClick: () => this.onOpenMenu(),
     })
     .addAction('properties', {

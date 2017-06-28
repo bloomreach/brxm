@@ -32,7 +32,7 @@
         <md-icon ng-if="item.hasIconSvg() && item.isIconVisible()" md-svg-icon="{{ ::item.iconSvg}}"></md-icon>
         <md-button class="qa-{{ ::menu.name }}-menu-{{ ::item.name }}-action"
                    aria-label="{{ ::item.translationKey | translate }}"
-                   ng-disabled="!item.isEnabled()"
+                   ng-disabled="!item.isEnabled() || !menu.isEnabled()"
                    ng-click="item.onClick()">
           {{ ::item.translationKey | translate }}
         </md-button>
