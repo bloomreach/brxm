@@ -41,6 +41,7 @@ import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.CHANNEL_PROPERTY_DELETABLE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.CHILD_MOUNT_EXISTS;
@@ -235,4 +236,38 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         }
     }
 
+    @Test
+    public void remove_channel_with_right_role_and_channel_deletable_but_configuration_locked_wont_succeed_even_if_rendering_mount_is_not_yet_set() throws Exception {
+
+        // org.hippoecm.hst.pagecomposer.jaxrs.cxf.HstConfigLockedCheckInvokerPreprocessor.preprocoess() will directly
+        // return null because pageComposerContextService.isRenderingMountSet() returns false. But still a locked config
+        // should not be possible to be removed
+
+        setPrivilegePropsForSecurityModel();
+
+        Session session = createSession("admin", "admin");
+        Node configuration = session.getNode("/hst:hst/hst:configurations/unittestsubproject");
+        configuration.getNode("hst:channel").setProperty(CHANNEL_PROPERTY_DELETABLE, true);
+        configuration.setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
+        session.save();
+
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestsubproject", null, "DELETE");
+
+            SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+
+            // pre assertions
+            assertTrue(session.nodeExists("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite"));
+            assertTrue(session.nodeExists("/hst:hst/hst:hosts/testgroup/test/unit/sub/hst:root"));
+            assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject"));
+            assertTrue(session.nodeExists("/hst:hst/hst:sites/unittestsubproject"));
+
+            final MockHttpServletResponse response = render(requestResponse, admin);
+            assertEquals(SC_INTERNAL_SERVER_ERROR, response.getStatus());
+
+        } finally {
+            session.logout();
+        }
+    }
 }

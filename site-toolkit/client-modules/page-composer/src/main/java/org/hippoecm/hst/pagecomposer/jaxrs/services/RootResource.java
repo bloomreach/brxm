@@ -224,11 +224,12 @@ public class RootResource extends AbstractConfigResource {
 
 
         final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId);
+        final boolean isConfigurationLocked = isConfigurationLocked(mountId);
         try {
             final boolean hasAdminRole = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_MANAGER_ADMIN_ROLE);
             final boolean isWebmaster = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_WEBMASTER_ROLE);
-            final boolean canDeleteChannel = isChannelDeletionSupported && hasAdminRole;
-            final boolean canManageChanges = hasAdminRole;
+            final boolean canDeleteChannel = isChannelDeletionSupported && hasAdminRole && !isConfigurationLocked;
+            final boolean canManageChanges = hasAdminRole && !isConfigurationLocked;
 
             HandshakeResponse response = new HandshakeResponse();
             response.setCanWrite(isWebmaster);
@@ -246,6 +247,12 @@ public class RootResource extends AbstractConfigResource {
     private boolean isChannelDeletionSupported(final String mountId) {
         return channelService.getChannelByMountId(mountId)
                 .map(channel -> channelService.canChannelBeDeleted(channel) && channelService.isMaster(channel))
+                .orElse(false);
+    }
+
+    private boolean isConfigurationLocked(final String mountId) {
+        return channelService.getChannelByMountId(mountId)
+                .map(channel -> channel.isConfigurationLocked())
                 .orElse(false);
     }
 
