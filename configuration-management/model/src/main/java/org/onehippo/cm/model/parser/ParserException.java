@@ -20,6 +20,7 @@ import org.yaml.snakeyaml.nodes.Node;
 public class ParserException extends Exception {
 
     private final Node node;
+    private String source;
 
     ParserException(final String message) {
         this(message, null, null);
@@ -42,12 +43,18 @@ public class ParserException extends Exception {
         return node;
     }
 
+    public void setSource(final String source) {
+        this.source = source;
+    }
+
     @Override
     public String toString() {
+        final String sourceInfix = source != null ? source + " " : "";
+
         if (node == null) {
-            return getClass().getName() + ": " + getMessage();
+            return getClass().getName() + ": " + sourceInfix + getMessage();
         } else {
-            return getClass().getName() + ": " + getMessage() + node.getStartMark().toString();
+            return getClass().getName() + ": " + sourceInfix + getMessage() + node.getStartMark().toString();
         }
     }
 

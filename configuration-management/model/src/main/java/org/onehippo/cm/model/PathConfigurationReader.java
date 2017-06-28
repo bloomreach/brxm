@@ -135,8 +135,14 @@ public class PathConfigurationReader {
     private void parseSources(ModuleImpl module, Path basePath, SourceParser sourceParser) throws IOException, ParserException {
         final List<Pair<Path, String>> contentSourceData = getSourceData(basePath);
         for (Pair<Path, String> pair : contentSourceData) {
-            sourceParser.parse(new BufferedInputStream(Files.newInputStream(pair.getLeft())),
-                    pair.getRight(), pair.getLeft().toString(), module);
+            try {
+                sourceParser.parse(new BufferedInputStream(Files.newInputStream(pair.getLeft())),
+                        pair.getRight(), pair.getLeft().toString(), module);
+            } catch (ParserException e) {
+                // add information about the module and source to the parser exception
+                e.setSource("[" + module.getFullName() + ": " + pair.getRight() + "]");
+                throw(e);
+            }
         }
     }
 
