@@ -19,17 +19,18 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
-import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -46,7 +47,7 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelLazyLoadingChangedBySet.class);
 
-    private transient Set<String> delegatee;
+    private Set<String> delegatee;
     private transient Set<String> usersWithMainConfigNodeChanges;
     private transient final HstSite previewHstSite;
     private transient final Channel channel;
@@ -68,7 +69,7 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
         this.hstNodeLoadingCache = hstNodeLoadingCache;
     }
 
-    private void load() {
+    private synchronized void load() {
         if (delegatee != null) {
             return;
         }
@@ -88,11 +89,11 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
         if (hstNodeLoadingCache != null && delegatee.size() > 0) {
             // filter all system users out because they are not manageable through the changed by set of a channel
             try (HstNodeLoadingCache.LazyCloseableSession lazyCloseableSession = hstNodeLoadingCache.createLazyCloseableSession()) {
-                final SecurityService securityService = ((HippoWorkspace)lazyCloseableSession.getSession().getWorkspace()).getSecurityService();
+                final SecurityService securityService = ((HippoWorkspace) lazyCloseableSession.getSession().getWorkspace()).getSecurityService();
 
                 final Iterator<String> iterator = delegatee.iterator();
                 while (iterator.hasNext()) {
-                   String userId = iterator.next();
+                    String userId = iterator.next();
                     try {
                         final User user = securityService.getUser(userId);
                         if (user.isSystemUser()) {
@@ -123,7 +124,7 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
                                                     final Set<String> usersWithLock,
                                                     final String previewConfigurationPath) {
 
-        final boolean inherited = !((CanonicalInfo)item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
+        final boolean inherited = !((CanonicalInfo) item).getCanonicalPath().startsWith(previewConfigurationPath + "/");
         if (inherited) {
             // skip inherited sitemap item changes as that is not supported currently
             return;
@@ -131,7 +132,7 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
         if (!(item instanceof ConfigurationLockInfo)) {
             return;
         }
-        String lockedBy = ((ConfigurationLockInfo)item).getLockedBy();
+        String lockedBy = ((ConfigurationLockInfo) item).getLockedBy();
         if (StringUtils.isNotBlank(lockedBy)) {
             usersWithLock.add(lockedBy);
         }
@@ -157,7 +158,7 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
         if (!(config instanceof ConfigurationLockInfo)) {
             return;
         }
-        String lockedBy = ((ConfigurationLockInfo)config).getLockedBy();
+        String lockedBy = ((ConfigurationLockInfo) config).getLockedBy();
         if (StringUtils.isNotBlank(lockedBy)) {
             usersWithLock.add(lockedBy);
         }
@@ -173,12 +174,12 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
             if (!(config instanceof ConfigurationLockInfo)) {
                 continue;
             }
-            final boolean inherited = !((CanonicalInfo)config).getCanonicalPath().startsWith(previewHstSite.getConfigurationPath() + "/");
+            final boolean inherited = !((CanonicalInfo) config).getCanonicalPath().startsWith(previewHstSite.getConfigurationPath() + "/");
             if (inherited) {
                 // skip inherited sitemenu item changes as that is not supported currently
                 continue;
             }
-            String lockedBy = ((ConfigurationLockInfo)config).getLockedBy();
+            String lockedBy = ((ConfigurationLockInfo) config).getLockedBy();
             addUserWithSiteMenuLock(lockedBy, usersWithLock);
         }
         return usersWithLock;
@@ -224,6 +225,11 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
     public <T> T[] toArray(final T[] a) {
         load();
         return delegatee.toArray(a);
+    }
+
+    @Override
+    public boolean removeIf(final Predicate<? super String> filter) {
+        throw new UnsupportedOperationException("#removeIf not supported in ChannelLazyLoadingChangedBySet");
     }
 
     @Override
