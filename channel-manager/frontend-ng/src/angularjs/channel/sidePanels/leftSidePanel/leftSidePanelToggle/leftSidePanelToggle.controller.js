@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-import template from './leftSidePanelToggle.html';
-
-export class LeftSidePanelToggleCtrl {
-  constructor(SidePanelService, ChannelService) {
+class LeftSidePanelToggleCtrl {
+  constructor($translate, SidePanelService, ChannelService) {
     'ngInject';
 
+    this.$translate = $translate;
     this.SidePanelService = SidePanelService;
     this.ChannelService = ChannelService;
+  }
+
+  $onInit() {
+    this.tooltipTranslations = {
+      open: this.$translate.instant('TOOLBAR_BUTTON_LEFT_SIDE_PANEL_OPEN'),
+      close: this.$translate.instant('TOOLBAR_BUTTON_LEFT_SIDE_PANEL_CLOSE'),
+    };
+  }
+
+  getTooltipTranslation() {
+    return this.isLeftSidePanelOpen() ? this.tooltipTranslations.close : this.tooltipTranslations.open;
   }
 
   toggleLeftSidePanel() {
@@ -33,12 +43,4 @@ export class LeftSidePanelToggleCtrl {
   }
 }
 
-const leftSidePanelToggleComponent = {
-  bindings: {
-    disabled: '=',
-  },
-  controller: LeftSidePanelToggleCtrl,
-  template,
-};
-
-export default leftSidePanelToggleComponent;
+export default LeftSidePanelToggleCtrl;

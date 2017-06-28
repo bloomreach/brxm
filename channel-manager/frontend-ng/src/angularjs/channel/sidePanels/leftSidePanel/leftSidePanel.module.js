@@ -15,7 +15,7 @@
  */
 
 import leftSidePanelComponent from './leftSidePanel.component';
-import leftSidePanelToggleComponent from './leftSidePanelToggle.component';
+import leftSidePanelToggleComponent from './leftSidePanelToggle/leftSidePanelToggle.component';
 import componentCatalogModule from './componentCatalog/componentCatalog.module';
 
 const leftSidePanelModule = angular

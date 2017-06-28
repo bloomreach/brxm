@@ -15,9 +15,9 @@
   -->
 
 <md-button class="md-icon-button md-icon-button-left-side-panel qa-button-sidenav"
-  aria-label="{{ ::'TOOLBAR_BUTTON_LEFT_SIDE_PANEL' | translate }}"
-  ng-disabled="$ctrl.disabled"
-  ng-click="$ctrl.toggleLeftSidePanel()">
-  <md-icon title="{{ ::'TOOLBAR_BUTTON_LEFT_SIDE_PANEL' | translate }}"
-    md-svg-icon="{{ $ctrl.isLeftSidePanelOpen() ? 'left-side-panel-arrow-left' : 'left-side-panel-arrow-right' }}" />
+           aria-label="{{ $ctrl.getTooltipTranslation() }}"
+           ng-disabled="$ctrl.disabled"
+           ng-click="$ctrl.toggleLeftSidePanel()">
+  <md-icon title="{{ $ctrl.getTooltipTranslation() }}"
+           md-svg-icon="{{ $ctrl.isLeftSidePanelOpen() ? 'left-side-panel-arrow-left' : 'left-side-panel-arrow-right' }}" />
 </md-button>
