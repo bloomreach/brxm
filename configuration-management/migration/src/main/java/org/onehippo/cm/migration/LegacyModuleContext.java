@@ -32,7 +32,7 @@ public class LegacyModuleContext extends ModuleContext {
     LegacyModuleContext(ModuleImpl module, Path moduleDescriptorPath) throws IOException {
 
         super(module, moduleDescriptorPath);
-        this.configInputProvider = this.contentInputProvider = new FileResourceInputProvider(moduleDescriptorPath.getParent(), "");
+        this.configInputProvider = this.contentInputProvider = new FileResourceInputProvider(moduleDescriptorPath, "");
     }
 
     @Override
