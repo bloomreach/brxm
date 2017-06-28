@@ -3,3 +3,4 @@ action-lists:
     /hippo:configuration/hippo:update/hippo:registry/UpdatePluginConfig: delete
     /hippo:configuration/hippo:update/hippo:registry/MoveDocumentTypeTranslations: delete
     /hippo:configuration/hippo:update/hippo:registry/MoveTemplateTranslations: delete
+    /hippo:configuration/hippo:update/hippo:registry/HippoTranslationToDisplayName: delete
