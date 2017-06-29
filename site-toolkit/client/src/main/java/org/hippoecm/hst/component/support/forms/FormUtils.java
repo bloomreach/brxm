@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -232,13 +232,24 @@ public class FormUtils {
             session = getWritableSession();
             final Node rootNode = session.getRootNode();
             final Node formData;
-            if (!rootNode.hasNode(DEFAULT_STORED_FORMS_LOCATION)) {
+            if (rootNode.hasNode(DEFAULT_STORED_FORMS_LOCATION)) {
+                formData = rootNode.getNode(DEFAULT_STORED_FORMS_LOCATION);
+                if (formData.getNodes().getSize() < 10) {
+                    synchronized (mutex) {
+                        if (formData.getNodes().getSize() < 10) {
+                            // only some initial structure seems to be there, add what is missing (just checking
+                            // size == 0 is not ok because some downstream project may for example already add '/permanent'
+                            addInitialStructure(formData);
+                            session.save();
+                        }
+                    }
+                }
+            } else {
                 synchronized (mutex) {
                     formData = rootNode.addNode(DEFAULT_STORED_FORMS_LOCATION, DEFAULT_FORMDATA_CONTAINER);
                     addInitialStructure(formData);
+                    session.save();
                 }
-            } else {
-                formData = rootNode.getNode(DEFAULT_STORED_FORMS_LOCATION);
             }
 
             final Node postedFormDataNode;
@@ -310,9 +321,18 @@ public class FormUtils {
     private static void addInitialStructure(Node formData) throws RepositoryException {
         char a = 'a';
         for (int i = 0; i < 26; i++) {
-            Node letter = formData.addNode(Character.toString((char)(a + i)), DEFAULT_FORMDATA_CONTAINER);
+            String firstLevelFolder = Character.toString((char)(a + i));
+            final Node firstLevelFolderNode;
+            if (formData.hasNode(firstLevelFolder)) {
+                firstLevelFolderNode = formData.getNode(firstLevelFolder);
+            } else {
+                firstLevelFolderNode = formData.addNode(firstLevelFolder, DEFAULT_FORMDATA_CONTAINER);
+            }
             for (int j = 0; j < 26; j++) {
-                letter.addNode(Character.toString((char)(a + j)), DEFAULT_FORMDATA_CONTAINER);
+                String secondLevelFolder = Character.toString((char)(a + j));
+                if (!firstLevelFolderNode.hasNode(secondLevelFolder)) {
+                    firstLevelFolderNode.addNode(secondLevelFolder, DEFAULT_FORMDATA_CONTAINER);
+                }
             }
         }
     }
