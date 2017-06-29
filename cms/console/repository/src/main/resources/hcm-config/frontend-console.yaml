@@ -108,10 +108,11 @@ definitions:
           jcr:primaryType: frontend:plugin
           plugin.class: org.hippoecm.frontend.plugins.console.menu.CheckPlugin
           wicket.id: service.menu.system.item
-        /nodereset:
-          jcr:primaryType: frontend:plugin
-          plugin.class: org.hippoecm.frontend.plugins.console.menu.nodereset.NodeResetPlugin
-          wicket.id: service.menu.node.item
+          # TODO: CMS-10812 re-implement and re-enable this menu item after v12 Beta
+#        /nodereset:
+#          jcr:primaryType: frontend:plugin
+#          plugin.class: org.hippoecm.frontend.plugins.console.menu.nodereset.NodeResetPlugin
+#          wicket.id: service.menu.node.item
         /checkinout:
           jcr:primaryType: frontend:plugin
           plugin.class: org.hippoecm.frontend.plugins.console.menu.check.CheckInOutPlugin
