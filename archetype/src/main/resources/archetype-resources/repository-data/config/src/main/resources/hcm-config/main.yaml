@@ -5,7 +5,7 @@
 #set($empty = '')
 definitions:
   namespace:
-    ${rootArtifactId}:
+    ${rootArtifactId.replace($hyphen,$empty)}:
       uri: http://www.onehippo.org/${rootArtifactId.replace($hyphen,$empty)}/nt/1.0
       cnd: namespaces/${rootArtifactId}.cnd  
   config:
