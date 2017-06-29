@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Serializable} representation of a resource from the repository as a html page.
@@ -31,6 +33,8 @@ import org.apache.commons.lang.ArrayUtils;
  * is optionally stored in a byte array. When done so the binary must be able to fit in memory.
  */
 public class BinaryPage implements Serializable {
+
+    private static final Logger log = LoggerFactory.getLogger(BinaryPage.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -189,6 +193,10 @@ public class BinaryPage implements Serializable {
     }
 
     public CacheKey getCacheKey() {
+        if (cacheKey == null) {
+            log.error("Cachekey should never be null! but was for '{}'. Implementation issue", getResourcePath(),
+                    new Throwable("Cachey not allowed to be null"));
+        }
         return cacheKey;
     }
 

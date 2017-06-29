@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -542,6 +542,9 @@ public class BinariesServlet extends HttpServlet {
             return page;
         } catch (RepositoryException e) {
             BinaryPage errorPage = new BinaryPage(resourcePath);
+            // error page requires the same cachekey but is not set through the constructor. Unfortunately....
+            // if we don't set the cache, the blocking cache will never release the lock
+            errorPage.setCacheKey(new CacheKey(session.getUserID(), resourcePath));
             errorPage.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             if (log.isDebugEnabled()) {
                 log.warn("Repository exception while resolving binaries request '" + request.getRequestURI() + "' : " + e, e);
