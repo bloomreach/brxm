@@ -49,7 +49,7 @@ class ChannelActionsService extends MenuService {
     this.SiteMapService = SiteMapService;
     this.ProjectService = ProjectService;
 
-    this.defineMenu('channel', {
+    this.menuService = this.defineMenu('channel', {
       translationKey: 'TOOLBAR_BUTTON_CHANNEL',
       isIconVisible: () => this._hasAnyChanges(),
       iconSvg: 'attention',
@@ -93,6 +93,15 @@ class ChannelActionsService extends MenuService {
       translationKey: 'TOOLBAR_MENU_CHANNEL_CLOSE',
       onClick: () => this._closeChannel(),
     });
+
+    this.ProjectService.registerChangeListener(() => this._setPublicationLabel());
+  }
+
+  _setPublicationLabel() {
+    const findItemByName = this.menuService.menu.findItemByName('publish');
+    if (findItemByName) {
+      findItemByName.setTranslationKey(this._getPublicationLabel());
+    }
   }
 
   _getPublicationLabel() {

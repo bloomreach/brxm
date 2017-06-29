@@ -29,6 +29,10 @@ class MenuItem {
     this.isIconVisible = config.isIconVisible || this.isIconVisible;
   }
 
+  setTranslationKey(key) {
+    this.translationKey = key;
+  }
+
   isVisible() {
     return true;
   }

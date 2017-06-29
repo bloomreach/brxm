@@ -29,6 +29,10 @@ class Menu extends MenuItem {
     this.items.push(item);
   }
 
+  findItemByName(name) {
+    return this.items.find(item => item.name === name);
+  }
+
   hasIcons() {
     return this.items
         .filter(item => item.type === 'action')
