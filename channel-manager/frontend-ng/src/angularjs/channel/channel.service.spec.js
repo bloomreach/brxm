@@ -378,7 +378,6 @@ describe('ChannelService', () => {
 
     expect(ChannelService.getId()).toEqual(channelMock.id);
     expect(ChannelService.getChannel()).toEqual(channelMock);
-    expect(ConfigServiceMock.setContextPathForChannel).not.toHaveBeenCalledWith('/b');
 
     HstService.getChannel.and.callFake(() => $q.resolve(channelB));
     ChannelService.loadChannel(channelB.id);
@@ -387,7 +386,6 @@ describe('ChannelService', () => {
     expect(ChannelService.getId()).toEqual(channelB.id);
     expect(ChannelService.getChannel()).toEqual(channelB);
     expect(SessionService.initialize).toHaveBeenCalledWith(channelB.hostname, channelB.mountId);
-    expect(ConfigServiceMock.setContextPathForChannel).toHaveBeenCalledWith('/b');
   });
 
   // TODO: add a test where the server returns an error upon the ChannelService's request for channel details.
