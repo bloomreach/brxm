@@ -24,6 +24,7 @@ class HippoIframeCtrl {
     $scope,
     $translate,
     ChannelService,
+    ConfigService,
     CmsService,
     DialogService,
     DomService,
@@ -47,6 +48,7 @@ class HippoIframeCtrl {
 
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.ConfigService = ConfigService;
     this.DialogService = DialogService;
     this.DomService = DomService;
     this.DragDropService = DragDropService;
@@ -118,16 +120,22 @@ class HippoIframeCtrl {
   }
 
   _updateChannelIfSwitched() {
-    const projectIdWasProvided = this.ChannelService.selectedProjectId;
     const channelServiceId = this.ChannelService.getId();
     const pageMetaId = this.PageMetaDataService.getChannelId();
+    const isSameChannel = channelServiceId === pageMetaId;
 
-    if (!projectIdWasProvided && channelServiceId !== pageMetaId) {
-      const baseChannelId = this.ProjectService.getBaseChannelId(pageMetaId);
-      this.CmsService.publish('load-channel', baseChannelId);
-    } else if (projectIdWasProvided && channelServiceId !== pageMetaId) {
-      const baseChannelId = this.ProjectService.getBaseChannelId(channelServiceId);
-      this.CmsService.publish('load-channel', baseChannelId);
+    if (this.ConfigService.projectsEnabled) {
+      const projectIdWasProvided = this.ChannelService.selectedProjectId;
+
+      if (!projectIdWasProvided && !isSameChannel) {
+        const baseChannelId = this.ProjectService.getBaseChannelId(pageMetaId);
+        this.CmsService.publish('load-channel', baseChannelId);
+      } else if (projectIdWasProvided && !isSameChannel) {
+        const baseChannelId = this.ProjectService.getBaseChannelId(channelServiceId);
+        this.CmsService.publish('load-channel', baseChannelId);
+      }
+    } else if (!isSameChannel) {
+      this.CmsService.publish('load-channel', pageMetaId);
     }
   }
 

@@ -34,6 +34,7 @@ class ProjectService {
   }
 
   load(mountId, projectId) {
+    this.channels = [];
     this.updateListeners = [];
     this.selectListeners = [];
     this.mountId = mountId;
