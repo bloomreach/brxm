@@ -6,7 +6,6 @@
 definitions:
   config:
     /hst:hst/hst:hosts:
-      .meta:residual-child-node-category: content
       jcr:primaryType: hst:virtualhosts
       hst:defaultcontextpath: /site
       /dev-localhost:
