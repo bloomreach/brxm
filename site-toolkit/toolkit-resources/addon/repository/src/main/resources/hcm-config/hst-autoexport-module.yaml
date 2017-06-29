@@ -3,8 +3,7 @@ definitions:
     /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig:
         autoexport:excluded:
           operation: add
-          value: ['/hst:hst/hst:configurations/*-preview', '/hst:hst/hst:configurations/*-preview/**',
-          '/hst:hst/hst:configurations/*-v*', '/hst:hst/hst:configurations/*-v*/**']
+          value: ['/hst:hst/hst:configurations/*-preview', '/hst:hst/hst:configurations/*-preview/**']
         autoexport:filteruuidpaths:
           operation: add
           value: ['/hst:hst']
