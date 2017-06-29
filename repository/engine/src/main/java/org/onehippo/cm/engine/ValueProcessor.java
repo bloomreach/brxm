@@ -200,7 +200,8 @@ public abstract class ValueProcessor {
             case DOUBLE:
                 return modelValue.getObject().equals(jcrValue.getDouble());
             case DATE:
-                // TODO: is this safe for different calendars, time zones, etc?
+                // don't use Calendar.equals(), because it finds various parameters to be relevant other than time
+                // e.g. (GMT.equals(UTC) == false), which is nonsense from our perspective
                 return ((Calendar)modelValue.getObject()).getTimeInMillis() == jcrValue.getDate().getTimeInMillis();
             case BOOLEAN:
                 return modelValue.getObject().equals(jcrValue.getBoolean());
