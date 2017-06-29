@@ -1,0 +1,6 @@
+/content/documents/another-channel/events:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['hippotranslation:translated', 'mix:versionable']
+  hippostd:foldertype: [new-translated-folder, new-document]
+  hippotranslation:id: b54c7188-3a60-4e47-9b10-b7b59f12eaa4
+  hippotranslation:locale: en

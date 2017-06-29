@@ -1,20 +1,20 @@
 definitions:
   config:
-    /hippo:configuration/hippo:frontend/cms/cms-dashshortcuts/newEventShortcut:
+    /hippo:configuration/hippo:frontend/cms/cms-dashshortcuts/newEventChannelShortcut:
       jcr:primaryType: frontend:plugin
-      baseFolder: /content/documents/dashboarddocumentwizarddemo/events
+      baseFolder: events
       browser.id: service.browse
       classificationType: list
       documentType: dashboarddocumentwizarddemo:eventsdocument
-      plugin.class: org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin
+      plugin.class: org.onehippo.forge.demo.DocumentChannelWizardPlugin
       valueListPath: /content/documents/valuelists/eventtypes
       wicket.id: shortcut
-      workaround: 3
+      workaround: 4
       /nl:
         jcr:primaryType: frontend:pluginconfig
         list-label: Thema
-        shortcut-link-label: Maak een gebeurtenisdocument aan
+        shortcut-link-label: Maak een evenementdocument aan in een site folder (Extended Wizard voorbeeld)
       /en:
         jcr:primaryType: frontend:pluginconfig
         list-label: Theme
-        shortcut-link-label: Create an event document
+        shortcut-link-label: Create an event document in a channel folder (Extended Wizard Demo)

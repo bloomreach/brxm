@@ -18,8 +18,10 @@ package org.onehippo.forge.dashboard.documentwizard;
 
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -41,11 +43,8 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.form.validation.IFormValidator;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -53,7 +52,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -104,7 +102,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
     private static final String DEFAULT_BASE_FOLDER = "/content/documents";
     private static final String DEFAULT_SERVICE_VALUELIST = "service.valuelist.default";
 
-    private enum ClassificationType {DATE, LIST, LISTDATE}
+    protected enum ClassificationType {DATE, LIST, LISTDATE}
 
     /**
      * This class creates a link on the dashboard. The link opens a dialog that allow the user to quickly create a
@@ -183,8 +181,12 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
         @Override
         public void onClick(AjaxRequestTarget target) {
-            parent.getDialogService().show(new Dialog(context, config, parent));
+            parent.getDialogService().show(getDialog(context, config, parent));
         }
+    }
+
+    protected Dialog getDialog(final IPluginContext context, final IPluginConfig config, NewDocumentWizardPlugin parent) {
+        return new Dialog(context, config, parent);
     }
 
     /**
@@ -192,20 +194,23 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
      */
     protected class Dialog extends org.hippoecm.frontend.dialog.Dialog<Object> {
 
-        private static final String DIALOG_NAME_LABEL = "name-label";
-        private static final String DIALOG_LIST_LABEL = "list-label";
-        private static final String DIALOG_DATE_LABEL = "date-label";
+        protected static final String DIALOG_NAME_LABEL = "name-label";
+        protected static final String DIALOG_LIST_LABEL = "list-label";
+        protected static final String DIALOG_DATE_LABEL = "date-label";
 
         private final IPluginContext context;
         private final IPluginConfig config;
         private final String documentType;
         private final String query;
-        private final String baseFolder;
-        private ClassificationType classificationType;
+        protected final String baseFolder;
+        protected ClassificationType classificationType;
 
-        private String documentName;
-        private String list;
-        private Date date;
+        protected static final String ERROR_SNS_NODE_EXISTS = "error-sns-node-exists";
+        protected static final String ERROR_DISPLAY_NAME_EXISTS = "error-display-name-exists";
+
+        protected String documentName;
+        protected String list;
+        protected Date date;
 
         /**
          * @param context plugin context
@@ -225,7 +230,12 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                 throw new IllegalArgumentException("Missing configuration parameter: " + PARAM_DOCUMENT_TYPE);
             }
             query = config.getString(PARAM_QUERY, DEFAULT_QUERY);
-            baseFolder = config.getString(PARAM_BASE_FOLDER, DEFAULT_BASE_FOLDER);
+            final String baseFolderConfig = config.getString(PARAM_BASE_FOLDER, DEFAULT_BASE_FOLDER);
+            if (baseFolderConfig.endsWith("/")) {
+                baseFolder = baseFolderConfig;
+            } else {
+                baseFolder = baseFolderConfig + "/";
+            }
             final String classification = config.getString(PARAM_CLASSIFICATION_TYPE);
             try {
                 classificationType = ClassificationType.valueOf(StringUtils.upperCase(classification));
@@ -301,61 +311,6 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                 dateLabel.setVisible(false);
                 dateField.setVisible(false);
             }
-
-            add(new IFormValidator() {
-
-                private static final String ERROR_SNS_NODE_EXISTS = "error-sns-node-exists";
-                private static final String ERROR_DISPLAY_NAME_EXISTS = "error-display-name-exists";
-                private static final String ERROR_VALIDATION_NAMES = "error-validation-names";
-
-                @Override
-                public FormComponent<?>[] getDependentFormComponents() {
-                    return new FormComponent<?>[]{nameField};
-                }
-
-                @Override
-                public void validate(final Form<?> form) {
-                    try {
-                        // get values from components directly during validation phase
-                        String list = Strings.unescapeMarkup(listField.getValue()).toString();
-                        Date date = dateField.getDate();
-                        HippoNode folder = getFolder(list, date, false);
-                        if (folder == null) {
-                            return;
-                        }
-
-                        String newNodeName = getNodeNameCodec().encode(nameField.getValue());
-                        String newDisplayName = nameField.getValue();
-
-                        if (existingDisplayName(folder, newDisplayName)) {
-                            showError(form, ERROR_DISPLAY_NAME_EXISTS, newDisplayName);
-                        } else if (folder.hasNode(newNodeName)) {
-                            showError(form, ERROR_SNS_NODE_EXISTS, newNodeName);
-                        }
-                    } catch (RepositoryException | RemoteException | WorkflowException e) {
-                        log.error("validation error", e);
-                        showError(form, ERROR_VALIDATION_NAMES);
-                    }
-                }
-
-                private void showError(final Form<?> form, final String messge, final Object... arguments) {
-                    form.error(new StringResourceModel(messge, Dialog.this, null, arguments).getObject());
-                }
-
-                protected boolean existingDisplayName(final Node parentNode, final String displayName) throws RepositoryException {
-                    final NodeIterator children = parentNode.getNodes();
-                    while (children.hasNext()) {
-                        Node child = children.nextNode();
-                        if (child.isNodeType(HippoStdNodeType.NT_FOLDER) || child.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            String childDisplayName = new NodeNameModel(new JcrNodeModel(child)).getObject();
-                            if (StringUtils.equals(childDisplayName, displayName)) {
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                }
-            });
         }
 
         /**
@@ -365,7 +320,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
          * @param config   the config of the plugin
          * @return a wicket Label
          */
-        private Label getLabel(final String labelKey, final IPluginConfig config) {
+        protected Label getLabel(final String labelKey, final IPluginConfig config) {
             final IPluginConfig localeConfig = getLocalizedPluginConfig(config);
             if (localeConfig != null) {
                 final String label = localeConfig.getString(labelKey);
@@ -395,12 +350,23 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
         @Override
         protected void onOk() {
-            Session session = getSession().getJcrSession();
-            HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
             try {
-                // get the folder node
-                HippoNode folder = getFolder(list, date, true);
+                // get or create the folder node
+                HippoNode folder = getFolder();
+                if (folder == null) {
+                    error("Error occurred when trying to find or create the target folder.");
+                    return;
+                }
 
+                // check if the to be created document not already exists
+                final String existenceError = checkDocumentExistence(folder);
+                if (existenceError != null) {
+                    error(existenceError);
+                    return;
+                }
+
+                Session session = getSession().getJcrSession();
+                HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
                 WorkflowManager workflowMgr = workspace.getWorkflowManager();
 
                 // get the folder node's workflow
@@ -446,24 +412,94 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             }
         }
 
-        private HippoNode getFolder(String list, Date date, final boolean create) throws RepositoryException, RemoteException, WorkflowException {
-            Session session = getSession().getJcrSession();
-            HippoNode folder = (HippoNode) session.getItem(baseFolder);
+        protected String checkDocumentExistence(final HippoNode folderNode) throws RepositoryException {
+            final String newNodeName = getNodeNameCodec().encode(documentName);
+            final String newDisplayName = documentName;
 
-            if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(
-                    ClassificationType.LISTDATE)) {
-                folder = getListFolder(folder, list, create);
+            if (existsDisplayName(folderNode, newDisplayName)) {
+                return new StringResourceModel(ERROR_DISPLAY_NAME_EXISTS, this, null, Model.of(newDisplayName)).getObject();
+            } else if (existsNodeName(folderNode, newNodeName)) {
+                return new StringResourceModel(ERROR_SNS_NODE_EXISTS, this, null, Model.of(newNodeName)).getObject();
             }
+            return null;
+        }
 
-            if (folder == null) {
+        protected boolean existsDisplayName(final HippoNode folderNode, final String displayName) throws RepositoryException {
+            final NodeIterator children = folderNode.getNodes();
+            while (children.hasNext()) {
+                Node child = children.nextNode();
+                if (child.isNodeType(HippoStdNodeType.NT_FOLDER) || child.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    String childDisplayName = new NodeNameModel(new JcrNodeModel(child)).getObject();
+                    if (StringUtils.equals(childDisplayName, displayName)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        protected boolean existsNodeName(final HippoNode folderNode, final String nodeName) throws RepositoryException {
+            return folderNode.hasNode(nodeName);
+        }
+
+        protected String getFolderPath() {
+            String folderPath = null;
+            if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(ClassificationType.LISTDATE)) {
+                folderPath = getListFolderPath();
+            }
+            if (classificationType.equals(ClassificationType.DATE)) {
+                folderPath = getDateFolderPath();
+            }
+            return folderPath;
+        }
+
+        protected String getListFolderPath() {
+            if (list == null) {
                 return null;
             }
+            final String listEncoded = getNodeNameCodec().encode(list);
+            return baseFolder + listEncoded;
+        }
 
-            if (classificationType.equals(ClassificationType.DATE) || classificationType.equals(
-                    ClassificationType.LISTDATE)) {
-                folder = getDateFolder(folder, date, create);
+        protected String getDateFolderPath() {
+            if (date == null) {
+                return null;
             }
-            return folder;
+            final String yearMonth = new SimpleDateFormat("yyyy/MM").format(date);
+            return baseFolder + yearMonth;
+        }
+
+        protected HippoNode getFolder() throws RepositoryException, RemoteException, WorkflowException {
+            final String folderPath = getFolderPath();
+            if (folderPath == null) {
+                log.error("Could not create path to target folder.");
+            }
+            return getOrCreateFolder(folderPath);
+        }
+
+        private HippoNode getOrCreateFolder(final String folderPath) throws RepositoryException, RemoteException, WorkflowException {
+            final Session session = getSession().getJcrSession();
+            final List<String> notExistingFolders = new ArrayList<>();
+            String checkPath = folderPath;
+            Node folderNode = null;
+
+            // navigate up the tree to find the lowest already existing node in the path
+            while (folderNode == null && StringUtils.isNotBlank(checkPath)) {
+                if (session.nodeExists(checkPath)) {
+                   folderNode = session.getNode(checkPath);
+                } else {
+                    notExistingFolders.add(StringUtils.substringAfterLast(checkPath, "/"));
+                    checkPath = StringUtils.substringBeforeLast(checkPath, "/");
+                }
+            }
+
+            // add any folder nodes that do not yet exist
+            HippoNode folderHippoNode = (HippoNode) folderNode;
+            for (String newFolder : notExistingFolders) {
+                folderHippoNode = createFolder(folderHippoNode, newFolder);
+            }
+
+            return folderHippoNode;
         }
 
         private IValueListProvider getValueListProvider() {
@@ -499,7 +535,6 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
         return CodecUtils.getNodeNameCodecModel(getPluginContext(), locale).getObject();
     }
 
-
     /**
      * Get or create folder for classificationType.LIST.
      *
@@ -507,10 +542,13 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
      * @param list   list-based name of the folder
      * @param create flag indicating whether the folder should be created if it doesn't exist
      * @return node representing the list-based folder
-     * @throws java.rmi.RemoteException
-     * @throws javax.jcr.RepositoryException
-     * @throws org.hippoecm.repository.api.WorkflowException
+     * @throws java.rmi.RemoteException for unexpected errors
+     * @throws javax.jcr.RepositoryException for unexpected errors
+     * @throws org.hippoecm.repository.api.WorkflowException for unexpected errors
+     *
+     * @deprecated use the getFolderPath and getFolder methods instead.
      */
+    @Deprecated
     protected HippoNode getListFolder(HippoNode parent, String list, boolean create) throws RemoteException, RepositoryException, WorkflowException {
         String listEncoded = getNodeNameCodec().encode(list);
         HippoNode resultParent = parent;
@@ -533,10 +571,13 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
      * @param date   date for which to find/create the folder(s).
      * @param create flag indicating whether the folders should be created if they don't exist
      * @return node representing the date-based folder
-     * @throws java.rmi.RemoteException
-     * @throws javax.jcr.RepositoryException
-     * @throws org.hippoecm.repository.api.WorkflowException
+     * @throws java.rmi.RemoteException for unexpected errors
+     * @throws javax.jcr.RepositoryException for unexpected errors
+     * @throws org.hippoecm.repository.api.WorkflowException for unexpected errors
+     *
+     * @deprecated use the getFolderPath and getFolder methods instead.
      */
+    @Deprecated
     protected HippoNode getDateFolder(HippoNode parent, Date date, boolean create) throws RemoteException, RepositoryException, WorkflowException {
         String year = new SimpleDateFormat("yyyy").format(date);
         HippoNode resultParent = parent;
