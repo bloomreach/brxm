@@ -3,7 +3,7 @@ definitions:
     /hst:hst:
       jcr:primaryType: hst:hst
       /hst:configurations:
-        .meta:residual-child-node-category: runtime
+        .meta:residual-child-node-category: content
         jcr:primaryType: hst:configurations
         /hst:default:
           jcr:primaryType: hst:configuration
