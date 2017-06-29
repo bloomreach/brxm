@@ -1094,7 +1094,17 @@ public class DefinitionMergeService {
             // if LocationMapper tells us we should have a new source file...
             if (shouldPathCreateNewSource(changePath)) {
                 // create a new source file
-                createNewContentSource(changePath, toExport);
+                existingSourcesByPath.put(changePath, createNewContentSource(changePath, toExport));
+
+                // REPO-1715 We have a potential for a race condition where child nodes can be accidentally
+                //           exported to source files for an ancestor node before we process the add events
+                //           for the child nodes. To clean up this state, we also need to re-export any
+                //           source on the direct ancestor path for the change path.
+                for (ContentDefinitionImpl def : existingSourcesByPath.values()) {
+                    if (changePath.startsWith(def.getRootPath())) {
+                        def.getSource().markChanged();
+                    }
+                }
             }
             else {
                 // check if there's an existing file that is an ancestor of the changed path
@@ -1109,9 +1119,16 @@ public class DefinitionMergeService {
                 }
                 else {
                     // otherwise, create a new source file
-                    createNewContentSource(changePath, toExport);
+                    // REPO-1715 We don't have to walk up the tree in this case, since we know there's
+                    //           no source on an ancestor path that might have picked up these changes.
+                    existingSourcesByPath.put(changePath, createNewContentSource(changePath, toExport));
                 }
             }
+        }
+
+        // we've added new defs, so we need to update the modules to reflect that
+        for (ModuleImpl module : toExport.values()) {
+            module.build();
         }
 
         // for all changed content sources, regenerate definitions from JCR
@@ -1205,7 +1222,7 @@ public class DefinitionMergeService {
      * @param changePath the path whose content we want to store in the new source
      * @param toExport the set of modules that are being exported, which may contain the new source
      */
-    protected void createNewContentSource(final String changePath, final HashMap<String, ModuleImpl> toExport) {
+    protected ContentDefinitionImpl createNewContentSource(final String changePath, final HashMap<String, ModuleImpl> toExport) {
         // there's no existing source, so we need to create one
         final ModuleImpl module = getModuleByAutoExportConfig(changePath, toExport);
         final String sourcePath = getFilePathByLocationMapper(changePath);
@@ -1223,7 +1240,7 @@ public class DefinitionMergeService {
                 FilePathUtils.generateUniquePath(sourcePath, sourceExists, 0);
 
         // create a new source and content definition with change path
-        module.addContentSource(uniqueSourcePath).addContentDefinition(changePath);
+        return module.addContentSource(uniqueSourcePath).addContentDefinition(changePath);
     }
 
 }

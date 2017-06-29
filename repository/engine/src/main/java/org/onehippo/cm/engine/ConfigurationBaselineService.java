@@ -43,6 +43,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.Definition;
+import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -52,6 +53,7 @@ import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ModuleDescriptorParser;
@@ -204,6 +206,11 @@ public class ConfigurationBaselineService {
 
                 // do incremental update
                 storeBaselineModule(module, moduleNode, session, true);
+
+                // now that we've saved the baseline, we should clear the dirty flags on all sources
+                for (SourceImpl source : module.getSources()) {
+                    source.markUnchanged();
+                }
 
                 final List<GroupImpl> groups = new ArrayList<>();
                 loadModuleDescriptor(moduleNode, groups);
