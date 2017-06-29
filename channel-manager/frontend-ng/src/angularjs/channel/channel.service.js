@@ -91,6 +91,7 @@ class ChannelService {
     }
 
     return setupPromise
+      .then(() => this.ConfigService.setContextPathForChannel(channel.contextPath))
       .then(() => this.loadChannel(channelId))
       .then(() => {
         const initialRenderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
@@ -104,14 +105,12 @@ class ChannelService {
   loadChannel(channelId) {
     return this.HstService
       .getChannel(channelId)
-      .then((channel) => {
-        this.ConfigService.setContextPathForChannel(channel.contextPath);
-
-        return this.SessionService
+      .then(channel =>
+        this.SessionService
           .initialize(channel.hostname, channel.mountId)
           .then(() => this._ensurePreviewHstConfigExists(channel))
-          .then(previewChannel => this._setChannel(previewChannel));
-      })
+          .then(previewChannel => this._setChannel(previewChannel)),
+      )
       .catch((error) => {
         this.$log.error(`Failed to load channel '${channelId}'.`, error);
         return this.$q.reject();
