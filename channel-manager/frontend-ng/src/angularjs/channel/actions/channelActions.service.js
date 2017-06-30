@@ -50,12 +50,12 @@ class ChannelActionsService extends MenuService {
     this.ProjectService = ProjectService;
 
     this.menuService = this.defineMenu('channel', {
-      translationKey: 'TOOLBAR_BUTTON_CHANNEL',
+      translationKey: () => 'TOOLBAR_BUTTON_CHANNEL',
       isIconVisible: () => this._hasAnyChanges(),
       iconSvg: 'attention',
     })
     .addAction('settings', {
-      translationKey: 'TOOLBAR_MENU_CHANNEL_SETTINGS',
+      translationKey: () => 'TOOLBAR_MENU_CHANNEL_SETTINGS',
       iconName: 'settings',
       isVisible: () => this._isChannelSettingsAvailable(),
       onClick: () => this._showChannelSettings(),
@@ -64,18 +64,18 @@ class ChannelActionsService extends MenuService {
       isVisible: () => this._isChannelSettingsAvailable() && this._hasAnyChanges(),
     })
     .addAction('publish', {
-      translationKey: this._getPublicationLabel(),
+      translationKey: () => this._getPublicationLabel(),
       iconName: 'publish',
       isVisible: () => this._hasOwnChanges(),
       onClick: () => this._publish(),
     })
     .addAction('discard-changes', {
-      translationKey: 'TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES',
+      translationKey: () => 'TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES',
       isVisible: () => this._hasOwnChanges(),
       onClick: () => this._discardChanges(),
     })
     .addAction('manage-changes', {
-      translationKey: 'TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES',
+      translationKey: () => 'TOOLBAR_MENU_CHANNEL_MANAGE_CHANGES',
       isVisible: () => this._hasChangesToManage(),
       isEnabled: () => this._hasChangesToManage() && !this._hasOnlyOwnChanges(),
       onClick: () => this._showManageChanges(),
@@ -84,25 +84,17 @@ class ChannelActionsService extends MenuService {
       isVisible: () => this._isChannelSettingsAvailable() || this._hasAnyChanges(),
     })
     .addAction('delete', {
-      translationKey: 'TOOLBAR_MENU_CHANNEL_DELETE',
+      translationKey: () => 'TOOLBAR_MENU_CHANNEL_DELETE',
       iconName: 'delete',
       isVisible: () => this._isChannelDeletionAvailable(),
       onClick: () => this._deleteChannel(),
     })
     .addAction('close', {
-      translationKey: 'TOOLBAR_MENU_CHANNEL_CLOSE',
+      translationKey: () => 'TOOLBAR_MENU_CHANNEL_CLOSE',
       onClick: () => this._closeChannel(),
     });
-
-    this.ProjectService.registerChangeListener(() => this._setPublicationLabel());
   }
 
-  _setPublicationLabel() {
-    const findItemByName = this.menuService.menu.findItemByName('publish');
-    if (findItemByName) {
-      findItemByName.setTranslationKey(this._getPublicationLabel());
-    }
-  }
 
   _getPublicationLabel() {
     return this.ConfigService.projectsEnabled && this.ProjectService.selectedProject ?

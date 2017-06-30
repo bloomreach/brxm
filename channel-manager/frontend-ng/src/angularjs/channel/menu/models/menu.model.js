@@ -29,8 +29,8 @@ class Menu extends MenuItem {
     this.items.push(item);
   }
 
-  findItemByName(name) {
-    return this.items.find(item => item.name === name);
+  getTranslationKey() {
+    return this.translationKey() || this.name;
   }
 
   hasIcons() {
