@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hippoaddoncrispdemo/hst:catalog:
+      jcr:primaryType: hst:catalog
+      /hippoaddoncrispdemo-catalog:
+        jcr:primaryType: hst:containeritempackage

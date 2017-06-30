@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hippoaddoncrispdemo/hst:workspace/hst:sitemenus:
+      jcr:primaryType: hst:sitemenus
+      /main:
+        jcr:primaryType: hst:sitemenu
+        /home:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: root
+        /events:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: events
+        /news:
+          jcr:primaryType: hst:sitemenuitem
+          hst:referencesitemapitem: news

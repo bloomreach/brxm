@@ -1,0 +1,5 @@
+group: 
+  name: hippo-addon-crisp-demo
+  after: hippo-cms
+project: hippo-addon-crisp-demo
+module: hippo-addon-crisp-demo-repository-data-config

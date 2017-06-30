@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hst:default/hst:templates/eventslist-main-eventslist:
+      jcr:primaryType: hst:template
+      hst:renderpath: webfile:/freemarker/hstdefault/eventslist-main-eventslist.ftl
+    /hst:hst/hst:configurations/hst:default/hst:templates/newslist-main-newslist:
+      jcr:primaryType: hst:template
+      hst:renderpath: webfile:/freemarker/hstdefault/newslist-main-newslist.ftl

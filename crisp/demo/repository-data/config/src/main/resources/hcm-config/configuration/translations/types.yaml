@@ -1,0 +1,90 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippoaddoncrispdemo:eventsdocument:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        hippoaddoncrispdemo:content: Content
+        hippoaddoncrispdemo:date: Start date
+        hippoaddoncrispdemo:enddate: End date
+        hippoaddoncrispdemo:image: Image
+        hippoaddoncrispdemo:introduction: Introduction
+        hippoaddoncrispdemo:location: Location
+        hippoaddoncrispdemo:title: Title
+        jcr:name: Event
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        hippoaddoncrispdemo:content: Inhoud
+        hippoaddoncrispdemo:date: Startdatum
+        hippoaddoncrispdemo:enddate: Einddatum
+        hippoaddoncrispdemo:image: Afbeelding
+        hippoaddoncrispdemo:introduction: Introductie
+        hippoaddoncrispdemo:location: Locatie
+        hippoaddoncrispdemo:title: Titel
+        jcr:name: Evenement
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        hippoaddoncrispdemo:content: Contenu
+        hippoaddoncrispdemo:date: Date de début
+        hippoaddoncrispdemo:enddate: Date de fin
+        hippoaddoncrispdemo:image: Image
+        hippoaddoncrispdemo:introduction: Introduction
+        hippoaddoncrispdemo:location: Lieu
+        hippoaddoncrispdemo:title: Titre
+        jcr:name: Événement
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        hippoaddoncrispdemo:content: Inhalt
+        hippoaddoncrispdemo:date: Startdatum
+        hippoaddoncrispdemo:enddate: Enddatum
+        hippoaddoncrispdemo:image: Abbildung
+        hippoaddoncrispdemo:introduction: Einführung
+        hippoaddoncrispdemo:location: Standort
+        hippoaddoncrispdemo:title: Titel
+        jcr:name: Event
+    /hippo:configuration/hippo:translations/hippo:types/hippoaddoncrispdemo:newsdocument:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        hippoaddoncrispdemo:author: Author
+        hippoaddoncrispdemo:content: Content
+        hippoaddoncrispdemo:date: Date
+        hippoaddoncrispdemo:image: Image
+        hippoaddoncrispdemo:introduction: Introduction
+        hippoaddoncrispdemo:location: Location
+        hippoaddoncrispdemo:source: Source
+        hippoaddoncrispdemo:title: Title
+        jcr:name: News Item
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        hippoaddoncrispdemo:author: Auteur
+        hippoaddoncrispdemo:content: Inhoud
+        hippoaddoncrispdemo:date: Datum
+        hippoaddoncrispdemo:image: Afbeelding
+        hippoaddoncrispdemo:introduction: Introductie
+        hippoaddoncrispdemo:location: Locatie
+        hippoaddoncrispdemo:source: Bron
+        hippoaddoncrispdemo:title: Titel
+        jcr:name: Nieuwsbericht
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        hippoaddoncrispdemo:author: Verfasser
+        hippoaddoncrispdemo:content: Inhalt
+        hippoaddoncrispdemo:date: Datum
+        hippoaddoncrispdemo:image: Abbildung
+        hippoaddoncrispdemo:introduction: Einführung
+        hippoaddoncrispdemo:location: Standort
+        hippoaddoncrispdemo:source: Quelle
+        hippoaddoncrispdemo:title: Titel
+        jcr:name: News
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        hippoaddoncrispdemo:author: Auteur
+        hippoaddoncrispdemo:content: Contenu
+        hippoaddoncrispdemo:date: Date
+        hippoaddoncrispdemo:image: Image
+        hippoaddoncrispdemo:introduction: Introduction
+        hippoaddoncrispdemo:location: Lieu
+        hippoaddoncrispdemo:source: Source
+        hippoaddoncrispdemo:title: Titre
+        jcr:name: Message d'info

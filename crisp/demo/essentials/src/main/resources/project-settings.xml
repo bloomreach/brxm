@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project>
+    <name>project-settings</name>
+    <beansFolder>site/src/main/java</beansFolder>
+    <cmsModule>cms</cmsModule>
+    <confirmParams>false</confirmParams>
+    <enterprise>false</enterprise>
+    <extraTemplates>true</extraTemplates>
+    <projectNamespace>hippoaddoncrispdemo</projectNamespace>
+    <repositoryDataModule>repository-data</repositoryDataModule>
+    <selectedBeansPackage>org.onehippo.cms7.crisp.demo.beans</selectedBeansPackage>
+    <selectedComponentsPackage>org.onehippo.cms7.crisp.demo.components</selectedComponentsPackage>
+    <selectedProjectPackage>org.onehippo.cms7.crisp.demo</selectedProjectPackage>
+    <selectedRestPackage>org.onehippo.cms7.crisp.demo.rest</selectedRestPackage>
+    <setupDone>true</setupDone>
+    <siteModule>site</siteModule>
+    <templateLanguage>freemarker</templateLanguage>
+    <useSamples>true</useSamples>
+    <webfilesSubModule>webfiles</webfilesSubModule>
+</project>

@@ -1,0 +1,81 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hippoaddoncrispdemo/hst:workspace/hst:containers:
+      jcr:primaryType: hst:containercomponentfolder
+      /base:
+        jcr:primaryType: hst:containercomponentfolder
+        /top:
+          jcr:primaryType: hst:containercomponent
+          hst:label: Top
+          hst:xtype: hst.vbox
+        /footer:
+          jcr:primaryType: hst:containercomponent
+          hst:label: Footer
+          hst:xtype: hst.vbox
+      /homepage:
+        jcr:primaryType: hst:containercomponentfolder
+        /main:
+          jcr:primaryType: hst:containercomponent
+          hst:label: Home Page Main
+          hst:xtype: hst.vbox
+      /pagenotfound:
+        jcr:primaryType: hst:containercomponentfolder
+        /main:
+          jcr:primaryType: hst:containercomponent
+          hst:label: Page-Not-Found Main
+          hst:xtype: hst.vbox
+      /eventslist:
+        jcr:primaryType: hst:containercomponentfolder
+        /main:
+          jcr:primaryType: hst:containercomponent
+          hst:label: Event List Main
+          hst:xtype: hst.vbox
+          /eventslist:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentclassname: org.onehippo.cms7.essentials.components.EssentialsEventsComponent
+            hst:label: Events List
+            hst:parameternames: [hidePastEvents, documentTypes, sortField, sortOrder,
+              includeSubtypes, showPagination, path, pageSize, documentDateField]
+            hst:parametervalues: ['on', 'hippoaddoncrispdemo:eventsdocument', '',
+              desc, 'off', 'on', '', '10', 'hippoaddoncrispdemo:enddate']
+            hst:template: eventslist-main-eventslist
+            hst:xtype: hst.item
+      /eventspage:
+        jcr:primaryType: hst:containercomponentfolder
+        /main:
+          jcr:primaryType: hst:containercomponent
+          hst:label: Event Page Main
+          hst:xtype: hst.vbox
+          /content:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentclassname: org.onehippo.cms7.essentials.components.EssentialsContentComponent
+            hst:template: eventspage-main
+            hst:xtype: hst.item
+      /newslist:
+        jcr:primaryType: hst:containercomponentfolder
+        /main:
+          jcr:primaryType: hst:containercomponent
+          hst:label: News List Main
+          hst:xtype: hst.vbox
+          /newslist:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentclassname: org.onehippo.cms7.essentials.components.EssentialsNewsComponent
+            hst:label: News List
+            hst:parameternames: [hidePastEvents, documentTypes, sortField, sortOrder,
+              includeSubtypes, showPagination, path, pageSize, documentDateField,
+              hideFutureItems]
+            hst:parametervalues: ['on', 'hippoaddoncrispdemo:newsdocument', '', desc,
+              'off', 'on', '', '10', 'hippoaddoncrispdemo:date', 'on']
+            hst:template: newslist-main-newslist
+            hst:xtype: hst.item
+      /newspage:
+        jcr:primaryType: hst:containercomponentfolder
+        /main:
+          jcr:primaryType: hst:containercomponent
+          hst:label: News Page Main
+          hst:xtype: hst.vbox
+          /content:
+            jcr:primaryType: hst:containeritemcomponent
+            hst:componentclassname: org.onehippo.cms7.essentials.components.EssentialsContentComponent
+            hst:template: newspage-main
+            hst:xtype: hst.item
