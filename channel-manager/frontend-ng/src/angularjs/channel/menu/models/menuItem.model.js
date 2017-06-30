@@ -34,7 +34,7 @@ class MenuItem {
   }
 
   getTranslationKey() {
-    if (this.translationKey() === undefined) {
+    if (this.translationKey === undefined) {
       return this.name;
     }
     return this.translationKey();
