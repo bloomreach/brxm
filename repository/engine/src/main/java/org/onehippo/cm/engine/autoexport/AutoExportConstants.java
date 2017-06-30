@@ -23,13 +23,13 @@ import java.util.stream.Stream;
 
 import javax.jcr.observation.Event;
 
-public final class Constants {
+public final class AutoExportConstants {
 
-    private Constants() {
+    private AutoExportConstants() {
     }
 
     public static final String SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED = "repo.autoexport.allowed";
-    public static final String SYSTEM_PROPERTy_AUTOEXPORT_ENABLED = "repo.autoexport.enabled";
+    public static final String SYSTEM_PROPERTY_AUTOEXPORT_ENABLED = "repo.autoexport.enabled";
     public static final String SERVICE_CONFIG_PATH = "/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig";
     public static final String CONFIG_ENABLED_PROPERTY_NAME = "autoexport:enabled";
     public static final String CONFIG_MODULES_PROPERTY_NAME = "autoexport:modules";
