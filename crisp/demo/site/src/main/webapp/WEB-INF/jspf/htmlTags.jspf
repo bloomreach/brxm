@@ -1,2 +1,0 @@
-<%@ page contentType="text/html" session="false" %>
-<%@ include file="/WEB-INF/jspf/taglibs.jspf" %>
