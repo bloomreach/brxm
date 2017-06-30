@@ -20,48 +20,69 @@
                  mode="cancel">
 </subpage-toolbar>
 
-<subpage-content flex layout="row" class="qa-page-copy">
+<subpage-content flex
+                 layout="row"
+                 class="qa-page-copy">
   <form name="form"
         flex="initial"
         class="qa-subpage"
         ng-submit="form.$valid && pageCopy.copy()"
         novalidate>
-    <md-input-container ng-if="pageCopy.isCrossChannelCopyAvailable" class="md-block">
+    <md-input-container ng-if="pageCopy.isCrossChannelCopyAvailable"
+                        class="md-block">
       <label>{{ ::'SUBPAGE_PAGE_COPY_LABEL_CHANNEL' | translate }}</label>
-      <md-select required name="channel" class="qa-channel"
+
+      <md-select required
+                 name="channel"
+                 class="qa-channel"
                  focus-if
                  ng-model="pageCopy.channel"
                  ng-change="pageCopy.channelChanged()"
                  ng-model-options="{trackBy: '$value.id'}">
-        <md-option ng-repeat="channel in pageCopy.channels track by channel.id" ng-value="{{::channel}}">
+        <md-option ng-repeat="channel in pageCopy.channels track by channel.id"
+                   ng-value="{{::channel}}">
           {{ ::channel.name }}
         </md-option>
       </md-select>
+
       <div ng-messages="form.channel.$error">
         <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
       </div>
     </md-input-container>
+
     <div layout="row">
-      <md-input-container class="md-block" flex>
+      <md-input-container class="md-block"
+                          flex>
         <label>{{ ::'SUBPAGE_PAGE_COPY_LABEL_URL_STEM' | translate }}</label>
-        <md-select required name="location" class="qa-url-stem"
+
+        <md-select required
+                   name="location"
+                   class="qa-url-stem"
                    focus-if="!pageCopy.isCrossChannelCopyAvailable"
                    ng-model="pageCopy.location"
                    ng-model-options="{trackBy: '$value.location'}">
-          <md-option ng-repeat="location in pageCopy.locations track by location.location" ng-value="{{::location}}">
+          <md-option ng-repeat="location in pageCopy.locations track by location.location"
+                     ng-value="{{::location}}">
             {{ ::location.location }}
           </md-option>
         </md-select>
+
         <div ng-messages="form.location.$error">
           <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
         </div>
       </md-input-container>
-      <md-input-container class="md-block" flex>
+
+      <md-input-container class="md-block"
+                          flex>
         <label class="md-required">{{ ::'SUBPAGE_PAGE_LABEL_LAST_PATHINFO_ELEMENT' | translate }}</label>
-        <input type="text" name="lastPathInfoElement" class="qa-url-leaf"
+
+        <input type="text"
+               name="lastPathInfoElement"
+               class="qa-url-leaf"
                required
                illegal-characters="{{::pageCopy.illegalCharacters}}"
                ng-model="pageCopy.lastPathInfoElement">
+
         <div ng-messages="form.lastPathInfoElement.$error">
           <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
           <div ng-message="illegalCharacters">{{ ::pageMove.illegalCharactersMessage }}</div>
@@ -69,12 +90,14 @@
       </md-input-container>
     </div>
 
-    <div layout="row" layout-align="end center">
+    <div layout="row"
+         layout-align="end center">
       <md-button type="button"
                  class="qa-discard"
                  ng-click="pageCopy.onDone()">
         {{ ::'CANCEL' | translate }}
       </md-button>
+
       <md-button type="submit"
                  class="md-raised md-primary qa-action">
         {{ ::'COPY' | translate }}
