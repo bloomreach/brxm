@@ -30,7 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceCollection;
-import org.onehippo.cms7.crisp.core.resource.jackson.JacksonResource;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,7 +55,7 @@ public class JacksonResourceTest {
 
     @Test
     public void testTraversal() throws Exception {
-        assertEquals("OBJECT", rootResource.gerResourceType());
+        assertEquals("OBJECT", rootResource.getResourceType());
         assertTrue(rootResource.isResourceType("OBJECT"));
         assertNull(rootResource.getName());
         assertEquals("/", rootResource.getPath());
@@ -65,7 +64,7 @@ public class JacksonResourceTest {
 
         Resource widget = rootResource.getValueMap().get("widget", Resource.class);
         assertNotNull(widget);
-        assertEquals("OBJECT", widget.gerResourceType());
+        assertEquals("OBJECT", widget.getResourceType());
         assertTrue(widget.isResourceType("OBJECT"));
         assertEquals("widget", widget.getName());
         assertEquals("/widget", widget.getPath());
@@ -76,7 +75,7 @@ public class JacksonResourceTest {
 
         Resource window = widget.getValueMap().get("window", Resource.class);
         assertNotNull(window);
-        assertEquals("OBJECT", window.gerResourceType());
+        assertEquals("OBJECT", window.getResourceType());
         assertTrue(window.isResourceType("OBJECT"));
         assertEquals("window", window.getName());
         assertEquals("/widget/window", window.getPath());
@@ -90,7 +89,7 @@ public class JacksonResourceTest {
 
         Resource images = widget.getValueMap().get("images", Resource.class);
         assertNotNull(images);
-        assertEquals("ARRAY", images.gerResourceType());
+        assertEquals("ARRAY", images.getResourceType());
         assertTrue(images.isResourceType("ARRAY"));
         assertEquals("images", images.getName());
         assertEquals("/widget/images", images.getPath());
@@ -104,7 +103,7 @@ public class JacksonResourceTest {
 
         Resource image = imageResources.get(0);
         assertNotNull(image);
-        assertEquals("OBJECT", image.gerResourceType());
+        assertEquals("OBJECT", image.getResourceType());
         assertTrue(image.isResourceType("OBJECT"));
         assertEquals("[1]", image.getName());
         assertEquals("/widget/images/[1]", image.getPath());
@@ -119,7 +118,7 @@ public class JacksonResourceTest {
 
         image = imageResources.get(1);
         assertNotNull(image);
-        assertEquals("OBJECT", image.gerResourceType());
+        assertEquals("OBJECT", image.getResourceType());
         assertTrue(image.isResourceType("OBJECT"));
         assertEquals("[2]", image.getName());
         assertEquals("/widget/images/[2]", image.getPath());
@@ -137,7 +136,7 @@ public class JacksonResourceTest {
 
         image = imageResources.get(0);
         assertNotNull(image);
-        assertEquals("OBJECT", image.gerResourceType());
+        assertEquals("OBJECT", image.getResourceType());
         assertTrue(image.isResourceType("OBJECT"));
         assertEquals("[1]", image.getName());
         assertEquals("/widget/images/[1]", image.getPath());
@@ -152,7 +151,7 @@ public class JacksonResourceTest {
 
         image = imageResources.get(1);
         assertNotNull(image);
-        assertEquals("OBJECT", image.gerResourceType());
+        assertEquals("OBJECT", image.getResourceType());
         assertTrue(image.isResourceType("OBJECT"));
         assertEquals("[2]", image.getName());
         assertEquals("/widget/images/[2]", image.getPath());

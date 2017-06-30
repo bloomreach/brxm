@@ -97,7 +97,7 @@ public abstract class AbstractResource implements Resource {
      * {@inheritDoc}
      */
     @Override
-    public String gerResourceType() {
+    public String getResourceType() {
         return resourceType;
     }
 

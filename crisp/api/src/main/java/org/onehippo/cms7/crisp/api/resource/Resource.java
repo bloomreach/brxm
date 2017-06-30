@@ -28,7 +28,7 @@ public interface Resource extends Serializable {
      * a JCR based implementation may simply return <code>javax.jcr.Node#getPrimaryNodeType().getName()</code>.
      * @return the resource type name of this resource representation if there's any
      */
-    String gerResourceType();
+    String getResourceType();
 
     /**
      * Returns true if this resource representation is typed and of the specific {@code resourceType} name.
