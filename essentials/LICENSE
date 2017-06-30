@@ -234,7 +234,7 @@ plugins/skeleton-package/src/main/resources/instructions/js/bootstrap.min.js
 
     The MIT License (MIT)
 
-    Copyright (c) 2011-2014 Twitter, Inc
+    Copyright (c) 2011-2016 Twitter, Inc.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -259,11 +259,11 @@ plugins/skeleton-package/src/main/resources/instructions/js/jquery-2.1.0.min.js
 
     jQuery is released under the MIT License.
 
-    "Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors"
+    "Copyright JS Foundation and other contributors, https://js.foundation/"
 
     This version of jQuery includes Sizzle.js, which is also released under the MIT License.
 
-    "Copyright 2013 jQuery Foundation, Inc. and other contributors"
+    "Copyright JS Foundation and other contributors, https://js.foundation/"
 
     The content of the MIT License is:
 
