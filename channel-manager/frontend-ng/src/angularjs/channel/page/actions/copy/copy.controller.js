@@ -15,35 +15,53 @@
  */
 
 class PageCopyCtrl {
-  constructor($log, $translate, ChannelService, SessionService, SiteMapService, SiteMapItemService, HippoIframeService,
-    FeedbackService) {
+  constructor(
+    $log,
+    $translate,
+    ChannelService,
+    FeedbackService,
+    HippoIframeService,
+    SessionService,
+    SiteMapItemService,
+    SiteMapService,
+  ) {
     'ngInject';
 
     this.$log = $log;
-    this.ChannelService = ChannelService;
-    this.SiteMapService = SiteMapService;
-    this.HippoIframeService = HippoIframeService;
-    this.FeedbackService = FeedbackService;
+    this.$translate = $translate;
 
+    this.ChannelService = ChannelService;
+    this.FeedbackService = FeedbackService;
+    this.HippoIframeService = HippoIframeService;
+    this.SessionService = SessionService;
+    this.SiteMapItemService = SiteMapItemService;
+    this.SiteMapService = SiteMapService;
+  }
+
+  $onInit() {
     this.locations = [];
     this.channels = [];
-    this.siteMapId = ChannelService.getSiteMapId();
-    this.channelId = ChannelService.getId();
+    this.siteMapId = this.ChannelService.getSiteMapId();
+    this.channelId = this.ChannelService.getId();
     this.illegalCharacters = '/ :';
-    this.illegalCharactersMessage = $translate.instant('VALIDATION_ILLEGAL_CHARACTERS',
-      { characters: $translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
+    this.illegalCharactersMessage = this.$translate.instant(
+      'VALIDATION_ILLEGAL_CHARACTERS',
+      {
+        characters: this.$translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT'),
+      },
+    );
     this.errorMap = {
       ITEM_CANNOT_BE_CLONED: 'ERROR_PAGE_COPY_TARGET_EXISTS',
     };
 
     // The PageActionsService has retrieved the page meta-data when opening the page menu.
     // Now, it is available through the SiteMapItemService.
-    this.item = SiteMapItemService.get();
+    this.item = this.SiteMapItemService.get();
     this.lastPathInfoElement = '';
-    this.subpageTitle = $translate.instant('SUBPAGE_PAGE_COPY_TITLE', { pageName: this.item.name });
+    this.subpageTitle = this.$translate.instant('SUBPAGE_PAGE_COPY_TITLE', { pageName: this.item.name });
 
-    if (SessionService.isCrossChannelPageCopySupported()) {
-      this.channels = ChannelService.getPageModifiableChannels();
+    if (this.SessionService.isCrossChannelPageCopySupported()) {
+      this.channels = this.ChannelService.getPageModifiableChannels();
       if (this.channels && (this.channels.length > 1 ||
         (this.channels.length === 1 && this.channels[0].id !== this.channelId))) {
         this.channel = this.channels.find(channel => channel.id === this.channelId) || this.channels[0];
