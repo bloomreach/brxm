@@ -55,17 +55,10 @@ class ChannelCtrl {
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
 
-    CmsService.subscribe('clear-channel', () => this._clear());
-
     this.menus = [
       ChannelActionsService.getMenu(subPage => this.showSubpage(subPage)),
       PageActionsService.getMenu(subPage => this.showSubpage(subPage)),
     ];
-  }
-
-  _clear() {
-    this.hideSubpage();
-    this.ChannelService.clearChannel();
   }
 
   isControlsDisabled() {

@@ -64,7 +64,6 @@
     },
 
     loadChannel: function(channelId, initialPath, branchId) {
-      this._clearChannel();
       this._setChannel(channelId).when(function(channelRecord) {
         this.hostToIFrame.publish('load-channel', channelRecord.json, initialPath, branchId);
       }.bind(this));
@@ -73,11 +72,6 @@
     /**
      * Called by ChannelEditor.java */ killEditor: function(documentId) {
       this.hostToIFrame.publish('kill-editor', documentId);
-    },
-
-    _clearChannel: function() {
-      this.selectedChannel = null;
-      this.hostToIFrame.publish('clear-channel');
     },
 
     _reloadChannels: function() {

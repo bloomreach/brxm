@@ -89,16 +89,6 @@ describe('ChannelCtrl', () => {
     expect(HippoIframeService.load).toHaveBeenCalledWith('/testPath');
   });
 
-  it('closes an open sub-page and clears the channel when it receives a clear-channel message from the CMS', () => {
-    ChannelCtrl.showSubpage('test');
-    expect(ChannelCtrl.isSubpageOpen()).toBe(true);
-
-    window.CMS_TO_APP.publish('clear-channel');
-
-    expect(ChannelCtrl.isSubpageOpen()).toBe(false);
-    expect(ChannelService.clearChannel).toHaveBeenCalled();
-  });
-
   it('checks whether the channel is loaded', () => {
     ChannelService.hasChannel.and.returnValue(false);
     expect(ChannelCtrl.isChannelLoaded()).toBe(false);
