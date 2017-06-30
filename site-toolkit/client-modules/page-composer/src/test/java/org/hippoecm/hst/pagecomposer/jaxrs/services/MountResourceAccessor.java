@@ -19,10 +19,6 @@ import java.util.List;
 
 public class MountResourceAccessor {
 
-    public static String buildXPathQueryToFindContainersForUsers(final String previewConfigurationPath, final List<String> userIds) {
-        return MountResource.buildXPathQueryToFindContainersForUsers(previewConfigurationPath, userIds);
-    }
-
     public static String buildXPathQueryToFindMainfConfigNodesForUsers(final String previewConfigurationPath,
                                                                        final List<String> userIds,
                                                                        final boolean isWorkspace) {

@@ -651,32 +651,6 @@ public class MountResource extends AbstractConfigResource {
         return mainConfigNodeNamesForUsers;
     }
 
-    static String buildXPathQueryToFindContainersForUsers(String previewConfigurationPath, List<String> userIds) {
-        if (userIds.isEmpty()) {
-            throw new IllegalArgumentException("List of user IDs cannot be empty");
-        }
-
-        StringBuilder xpath = new StringBuilder("/jcr:root");
-        xpath.append(ISO9075.encodePath(previewConfigurationPath));
-        xpath.append("//element(*,");
-        xpath.append(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
-        xpath.append(")[");
-
-        String concat = "";
-        for (String userId : userIds) {
-            xpath.append(concat);
-            xpath.append('@');
-            xpath.append(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
-            xpath.append(" = '");
-            xpath.append(userId);
-            xpath.append("'");
-            concat = " or ";
-        }
-        xpath.append("]");
-
-        return xpath.toString();
-    }
-
     /**
      * findChangedMainConfigNodeNamesExceptChannelForUsers is only needed when a main config node gets locked which could only happen
      * through the hst config editor which will be abandoned, hence this method should be possible to remove for CMS 13
