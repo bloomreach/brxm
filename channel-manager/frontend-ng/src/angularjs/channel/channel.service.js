@@ -75,7 +75,7 @@ class ChannelService {
         .when(passedProjectId || this.ProjectService.getCurrentProject(channel.mountId))
         .then((selectedProjectId) => {
           if (selectedProjectId && selectedProjectId !== 'master') {
-            channelId = channelId.replace('-preview', `-${selectedProjectId}-preview`);
+            channelId = channelId.replace(/-preview$/, `-${selectedProjectId}-preview`);
           }
           return selectedProjectId;
         })
