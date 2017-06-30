@@ -32,7 +32,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceCollection;
-import org.onehippo.cms7.crisp.core.resource.jdom.JdomResource;
 
 public class JdomResourceTest {
 
@@ -56,7 +55,7 @@ public class JdomResourceTest {
 
     @Test
     public void testTraversal() throws Exception {
-        assertEquals("Element", rootResource.gerResourceType());
+        assertEquals("Element", rootResource.getResourceType());
         assertTrue(rootResource.isResourceType("Element"));
         assertNull(rootResource.getName());
         assertEquals("/ui", rootResource.getPath());
@@ -65,7 +64,7 @@ public class JdomResourceTest {
 
         Resource widget = (Resource) rootResource.getValue("widget");
         assertNotNull(widget);
-        assertEquals("Element", widget.gerResourceType());
+        assertEquals("Element", widget.getResourceType());
         assertTrue(widget.isResourceType("Element"));
         assertEquals("widget", widget.getName());
         assertEquals("/ui/widget", widget.getPath());
@@ -76,7 +75,7 @@ public class JdomResourceTest {
 
         Resource window = widget.getValueMap().get("window", Resource.class);
         assertNotNull(window);
-        assertEquals("Element", window.gerResourceType());
+        assertEquals("Element", window.getResourceType());
         assertTrue(window.isResourceType("Element"));
         assertEquals("window", window.getName());
         assertEquals("/ui/widget/window", window.getPath());
@@ -90,7 +89,7 @@ public class JdomResourceTest {
 
         Resource images = widget.getValueMap().get("images", Resource.class);
         assertNotNull(images);
-        assertEquals("Element", images.gerResourceType());
+        assertEquals("Element", images.getResourceType());
         assertTrue(images.isResourceType("Element"));
         assertEquals("images", images.getName());
         assertEquals("/ui/widget/images", images.getPath());
@@ -103,7 +102,7 @@ public class JdomResourceTest {
 
         Resource image = imageResources.get(0);
         assertNotNull(image);
-        assertEquals("Element", image.gerResourceType());
+        assertEquals("Element", image.getResourceType());
         assertTrue(image.isResourceType("Element"));
         assertEquals("image", image.getName());
         assertEquals("/ui/widget/images/image[1]", image.getPath());
@@ -118,7 +117,7 @@ public class JdomResourceTest {
 
         image = imageResources.get(1);
         assertNotNull(image);
-        assertEquals("Element", image.gerResourceType());
+        assertEquals("Element", image.getResourceType());
         assertTrue(image.isResourceType("Element"));
         assertEquals("image", image.getName());
         assertEquals("/ui/widget/images/image[2]", image.getPath());
@@ -136,7 +135,7 @@ public class JdomResourceTest {
 
         image = imageResources.get(0);
         assertNotNull(image);
-        assertEquals("Element", image.gerResourceType());
+        assertEquals("Element", image.getResourceType());
         assertTrue(image.isResourceType("Element"));
         assertEquals("image", image.getName());
         assertEquals("/ui/widget/images/image[1]", image.getPath());
@@ -151,7 +150,7 @@ public class JdomResourceTest {
 
         image = imageResources.get(1);
         assertNotNull(image);
-        assertEquals("Element", image.gerResourceType());
+        assertEquals("Element", image.getResourceType());
         assertTrue(image.isResourceType("Element"));
         assertEquals("image", image.getName());
         assertEquals("/ui/widget/images/image[2]", image.getPath());

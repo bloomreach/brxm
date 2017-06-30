@@ -52,6 +52,13 @@
       <br/>
     </section>
     <section name="Release Notes of 0.9.x">
+      <subsection name="0.9.5">
+        <ul>
+          <li>
+            Fixing typo in <code>Resource#getResourceType()</code>.
+          </li>
+        </ul>
+      </subsection>
       <subsection name="0.9.4">
         <ul>
           <li>
