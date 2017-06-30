@@ -26,7 +26,7 @@ public class MountResourceAccessor {
     public static String buildXPathQueryToFindMainfConfigNodesForUsers(final String previewConfigurationPath,
                                                                        final List<String> userIds,
                                                                        final boolean isWorkspace) {
-        return MountResource.buildXPathQueryToFindMainConfigNodesForUsers(previewConfigurationPath, userIds, isWorkspace);
+        return MountResource.buildXPathQueryToFindMainConfigNodesExceptChannelForUsers(previewConfigurationPath, userIds, isWorkspace);
     }
 
 }

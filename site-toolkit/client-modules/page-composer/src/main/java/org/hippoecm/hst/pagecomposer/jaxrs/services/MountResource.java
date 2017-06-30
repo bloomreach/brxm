@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +49,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper;
 import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -85,6 +87,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CHANNEL;
 import static org.hippoecm.hst.configuration.site.HstSiteProvider.HST_SITE_PROVIDER_HTTP_SESSION_KEY;
 
 @Path("/hst:mount/")
@@ -99,6 +102,8 @@ public class MountResource extends AbstractConfigResource {
     private SiteMapHelper siteMapHelper;
     private SiteMenuHelper siteMenuHelper;
     private PagesHelper pagesHelper;
+    private ReorderHelper reorderHelper = new ReorderHelper();
+
     private LockHelper lockHelper = new LockHelper();
 
     public void setSiteMapHelper(final SiteMapHelper siteMapHelper) {
@@ -398,8 +403,8 @@ public class MountResource extends AbstractConfigResource {
             final HstRequestContext requestContext = context.getRequestContext();
             Session session = requestContext.getSession();
 
-            List<String> mainNonWorkspaceConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds, false);
-            List<String> mainWorkspaceConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds, true);
+            List<String> mainNonWorkspaceConfigNodeNamesToPublish = findChangedMainConfigNodeNamesExceptChannelForUsers(session, previewConfigurationPath, userIds, false);
+            List<String> mainWorkspaceConfigNodeNamesToPublish = findChangedMainConfigNodeNamesExceptChannelForUsers(session, previewConfigurationPath, userIds, true);
 
             copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainNonWorkspaceConfigNodeNamesToPublish);
             copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainWorkspaceConfigNodeNamesToPublish);
@@ -580,8 +585,8 @@ public class MountResource extends AbstractConfigResource {
             String previewConfigurationPath = editingPreviewSite.getConfigurationPath();
 
             Session session = requestContext.getSession();
-            List<String> mainNonWorkspaceConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds, false);
-            List<String> mainWorkspaceConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds, true);
+            List<String> mainNonWorkspaceConfigNodeNamesToRevert = findChangedMainConfigNodeNamesExceptChannelForUsers(session, previewConfigurationPath, userIds, false);
+            List<String> mainWorkspaceConfigNodeNamesToRevert = findChangedMainConfigNodeNamesExceptChannelForUsers(session, previewConfigurationPath, userIds, true);
             copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainNonWorkspaceConfigNodeNamesToRevert);
             copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainWorkspaceConfigNodeNamesToRevert);
 
@@ -614,15 +619,21 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-    private List<String> findChangedMainConfigNodeNamesForUsers(final Session session,
-                                                                final String previewConfigurationPath,
-                                                                final List<String> userIds,
-                                                                final boolean isWorkspace) throws RepositoryException {
+    /**
+     * findChangedMainConfigNodeNamesExceptChannelForUsers is only needed when a main config node gets locked which could only happen
+     * through the hst config editor which will be abandoned, hence this method should be possible to remove for CMS 13
+     * @deprecated Since CMS 12
+     */
+    @Deprecated
+    private List<String> findChangedMainConfigNodeNamesExceptChannelForUsers(final Session session,
+                                                                             final String previewConfigurationPath,
+                                                                             final List<String> userIds,
+                                                                             final boolean isWorkspace) throws RepositoryException {
         if (userIds.isEmpty()) {
             return Collections.emptyList();
         }
 
-        final String xpath = buildXPathQueryToFindMainConfigNodesForUsers(previewConfigurationPath, userIds, isWorkspace);
+        final String xpath = buildXPathQueryToFindMainConfigNodesExceptChannelForUsers(previewConfigurationPath, userIds, isWorkspace);
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
 
         final NodeIterable mainConfigNodesForUsers = new NodeIterable(result.getNodes());
@@ -666,8 +677,14 @@ public class MountResource extends AbstractConfigResource {
         return xpath.toString();
     }
 
-    static String buildXPathQueryToFindMainConfigNodesForUsers(final String previewConfigurationPath, final List<String> userIds,
-                                                               final boolean workspace) {
+    /**
+     * findChangedMainConfigNodeNamesExceptChannelForUsers is only needed when a main config node gets locked which could only happen
+     * through the hst config editor which will be abandoned, hence this method should be possible to remove for CMS 13
+     * @deprecated Since CMS 12
+     */
+    @Deprecated
+    static String buildXPathQueryToFindMainConfigNodesExceptChannelForUsers(final String previewConfigurationPath, final List<String> userIds,
+                                                                            final boolean workspace) {
         if (userIds.isEmpty()) {
             throw new IllegalArgumentException("List of user IDs cannot be empty");
         }
@@ -677,7 +694,7 @@ public class MountResource extends AbstractConfigResource {
         if (workspace) {
             xpath.append("/hst:workspace");
         }
-        xpath.append("/*[");
+        xpath.append("/*[@jcr:primaryType != '" + NODETYPE_HST_CHANNEL + "' and (");
 
         String concat = "";
         for (String userId : userIds) {
@@ -689,15 +706,22 @@ public class MountResource extends AbstractConfigResource {
             xpath.append("'");
             concat = " or ";
         }
-        xpath.append("]");
+        xpath.append(")]");
 
         return xpath.toString();
     }
 
+    /**
+     * findChangedMainConfigNodeNamesExceptChannelForUsers is only needed when a main config node gets locked which could only happen
+     * through the hst config editor which will be abandoned, hence this method should be possible to remove for CMS 13
+     * @deprecated Since CMS 12
+     */
+    @Deprecated
     private void copyChangedMainConfigNodes(final Session session,
                                             final String fromConfig,
                                             final String toConfig,
                                             final List<String> mainConfigNodeNames) throws RepositoryException {
+        final Map<Node, Node> checkReorderMap = new IdentityHashMap<>();
         for (String mainConfigNodeName : mainConfigNodeNames) {
             if (mainConfigNodeName.startsWith("hst:workspace/")) {
                 if (StringUtils.substringAfter(mainConfigNodeName, "hst:workspace/").contains("/")) {
@@ -731,6 +755,7 @@ public class MountResource extends AbstractConfigResource {
             Node fromNode = session.getNode(absFromPath);
             lockHelper.unlock(fromNode);
             final Node copy = JcrUtils.copy(session, fromNode.getPath(), absToPath);
+            checkReorderMap.put(fromNode, copy);
             if (copy.getPath().contains("-preview/")) {
                 // it was a discard
                 copy.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
@@ -738,6 +763,9 @@ public class MountResource extends AbstractConfigResource {
                 // it was a publish
                 fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
             }
+        }
+        for (Map.Entry<Node, Node> entry : checkReorderMap.entrySet()) {
+            reorderHelper.reorderCopyIfNeeded(entry.getKey(), entry.getValue());
         }
     }
 
@@ -757,6 +785,23 @@ public class MountResource extends AbstractConfigResource {
             } catch (RepositoryException e) {
                 log.warn("Failed to get the current jcr session ID from request context.", e);
             }
+        }
+    }
+
+    private class ReorderHelper extends AbstractHelper {
+        @Override
+        public <T> T getConfigObject(final String id) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T> T getConfigObject(final String itemId, final Mount mount) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        protected String getNodeType() {
+            throw new UnsupportedOperationException();
         }
     }
 

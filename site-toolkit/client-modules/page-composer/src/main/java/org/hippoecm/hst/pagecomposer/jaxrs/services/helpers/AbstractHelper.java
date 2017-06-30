@@ -171,7 +171,7 @@ public abstract class AbstractHelper {
      * @param copied
      * @throws RepositoryException
      */
-    private void reorderCopyIfNeeded(final Node source, final Node copied) throws RepositoryException {
+    public void reorderCopyIfNeeded(final Node source, final Node copied) throws RepositoryException {
 
         if (!source.getParent().getPrimaryNodeType().hasOrderableChildNodes()) {
             return;

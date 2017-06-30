@@ -189,13 +189,13 @@ public class MountResourceTest extends AbstractMountResourceTest {
         assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview//element(*,hst:containercomponent)[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
                 MountResourceAccessor.buildXPathQueryToFindContainersForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin", "editor"})));
 
-        assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview/*[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
+        assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview/*[@jcr:primaryType != 'hst:channel' and (@hst:lockedby = 'admin' or @hst:lockedby = 'editor')]",
                 MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/myproject-preview", Arrays.asList(new String[]{"admin", "editor"}), false));
-        assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview/*[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
+        assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview/*[@jcr:primaryType != 'hst:channel' and (@hst:lockedby = 'admin' or @hst:lockedby = 'editor')]",
                 MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin", "editor"}), false));
-        assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview/hst:workspace/*[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
+        assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview/hst:workspace/*[@jcr:primaryType != 'hst:channel' and (@hst:lockedby = 'admin' or @hst:lockedby = 'editor')]",
                 MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/myproject-preview", Arrays.asList(new String[]{"admin", "editor"}), true));
-        assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview/hst:workspace/*[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
+        assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview/hst:workspace/*[@jcr:primaryType != 'hst:channel' and (@hst:lockedby = 'admin' or @hst:lockedby = 'editor')]",
                 MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin", "editor"}), true));
     }
 
