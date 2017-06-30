@@ -25,7 +25,6 @@ public final class Constants {
     // Constants used to locate configuration files
 
     public static final String PROJECT_BASEDIR_PROPERTY = "project.basedir";
-    public static final String BOOTSTRAP_MODULES_PROPERTY = "repo.bootstrap.modules";
     public static final String HCM_CONTENT_FOLDER = "hcm-content";
     public static final String HCM_CONFIG_FOLDER = "hcm-config";
 
