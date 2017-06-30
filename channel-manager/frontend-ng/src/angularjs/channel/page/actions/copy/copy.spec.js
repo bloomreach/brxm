@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import angular from 'angular';
-import 'angular-mocks';
-
 describe('PageActionCopy', () => {
   let $element;
   let $q;
@@ -26,6 +23,7 @@ describe('PageActionCopy', () => {
   let $compile;
   let $translate;
   let ChannelService;
+  let CmsService;
   let FeedbackService;
   let HippoIframeService;
   let SessionService;
@@ -53,19 +51,32 @@ describe('PageActionCopy', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$q_, _$log_, _$rootScope_, _$compile_, _$translate_, _ChannelService_, _FeedbackService_,
-            _HippoIframeService_, _SessionService_, _SiteMapService_, _SiteMapItemService_) => {
-      $q = _$q_;
-      $log = _$log_;
-      $rootScope = _$rootScope_;
+    inject((
+      _$compile_,
+      _$log_,
+      _$q_,
+      _$rootScope_,
+      _$translate_,
+      _ChannelService_,
+      _CmsService_,
+      _FeedbackService_,
+      _HippoIframeService_,
+      _SessionService_,
+      _SiteMapItemService_,
+      _SiteMapService_,
+    ) => {
       $compile = _$compile_;
+      $log = _$log_;
+      $q = _$q_;
+      $rootScope = _$rootScope_;
       $translate = _$translate_;
       ChannelService = _ChannelService_;
+      CmsService = _CmsService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       SessionService = _SessionService_;
-      SiteMapService = _SiteMapService_;
       SiteMapItemService = _SiteMapItemService_;
+      SiteMapService = _SiteMapService_;
     });
 
     siteMapItem = {
@@ -97,6 +108,7 @@ describe('PageActionCopy', () => {
     spyOn($translate, 'instant').and.callFake(key => key);
     spyOn($log, 'info');
     spyOn(SessionService, 'isCrossChannelPageCopySupported').and.returnValue(true);
+    spyOn(CmsService, 'publish');
     spyOn(ChannelService, 'getPageModifiableChannels').and.returnValue(channels);
     spyOn(ChannelService, 'loadChannel').and.returnValue($q.when());
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
@@ -290,8 +302,12 @@ describe('PageActionCopy', () => {
 
   it('successfully copies the page into another channel', () => {
     const PageCopyCtrl = compileDirectiveAndGetController();
+    const copyReturn = {
+      renderPathInfo: '/render/path',
+      pathInfo: 'path',
+    };
 
-    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
+    SiteMapService.copy.and.returnValue($q.when(copyReturn));
     PageCopyCtrl.channel = channels[2];
     PageCopyCtrl.location = pageModel.locations[2];
     PageCopyCtrl.lastPathInfoElement = 'test';
@@ -305,25 +321,11 @@ describe('PageActionCopy', () => {
     };
     expect(SiteMapService.copy).toHaveBeenCalledWith('siteMapId', headers);
     $rootScope.$digest();
-    expect(ChannelService.loadChannel).toHaveBeenCalled();
+    expect(CmsService.publish).toHaveBeenCalledWith('load-channel', PageCopyCtrl.channel.id, copyReturn.pathInfo);
     $rootScope.$digest();
-    expect(HippoIframeService.load).toHaveBeenCalledWith('/render/path');
     expect(SiteMapService.load).not.toHaveBeenCalled();
     expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
-    expect($scope.onDone).toHaveBeenCalled();
-  });
-
-  it('successfully copies a page into another channel, but the channel switch fails', () => {
-    const PageCopyCtrl = compileDirectiveAndGetController();
-
-    SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
-    ChannelService.loadChannel.and.returnValue($q.reject());
-    PageCopyCtrl.channel = channels[2];
-    PageCopyCtrl.copy();
-    $rootScope.$digest(); // copy-success
-    $rootScope.$digest(); // channel switch-failure
-    expect($scope.onDone).toHaveBeenCalled();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_SWITCH_FAILED');
+    expect($scope.onDone).not.toHaveBeenCalled();
   });
 
   it('fails to copy a page', () => {

@@ -19,6 +19,7 @@ class PageCopyCtrl {
     $log,
     $translate,
     ChannelService,
+    CmsService,
     FeedbackService,
     HippoIframeService,
     SessionService,
@@ -31,6 +32,7 @@ class PageCopyCtrl {
     this.$translate = $translate;
 
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.SessionService = SessionService;
@@ -85,33 +87,24 @@ class PageCopyCtrl {
     }
     this.SiteMapService.copy(this.siteMapId, headers)
       .then((data) => {
-        this._returnToNewUrl(data.renderPathInfo);
+        this._returnToNewUrl(data.renderPathInfo, data.pathInfo);
       })
       .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_PAGE_COPY_FAILED', this.errorMap));
   }
 
-  _returnToNewUrl(renderPathInfo) {
+  channelChanged() {
+    this._loadLocations(this.channel.mountId);
+  }
+
+  _returnToNewUrl(renderPathInfo, pathInfo) {
     if (this.channel && this.channel.id !== this.channelId) {
-      this.ChannelService.loadChannel(this.channel.id)
-        .then(() => {
-          this.HippoIframeService.load(renderPathInfo);
-          this.onDone();
-        })
-        .catch(() => {
-          this.onDone();
-          // this error message will show on the main page
-          this.FeedbackService.showError('ERROR_CHANNEL_SWITCH_FAILED');
-        });
+      this.CmsService.publish('load-channel', this.channel.id, pathInfo);
     } else {
       this.HippoIframeService.load(renderPathInfo);
       this.SiteMapService.load(this.siteMapId);
       this.ChannelService.recordOwnChange();
       this.onDone();
     }
-  }
-
-  channelChanged() {
-    this._loadLocations(this.channel.mountId);
   }
 
   _loadLocations(mountId) {
