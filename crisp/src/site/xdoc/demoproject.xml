@@ -27,59 +27,17 @@
       <subsection name="Introduction">
 
         <p>
-          You can download the demo project from Hippo Maven 2 Enterprise Repository.
-          For example, you can download the demo project of v1.0.0 from here:
-        </p>
-
-        <ul>
-          <li>
-            <a href="https://maven.onehippo.com/maven2/org/onehippo/cms7/hippo-addon-crisp-demopkg/1.0.0/hippo-addon-crisp-demopkg-1.0.0-src.zip">
-              https://maven.onehippo.com/maven2/org/onehippo/cms7/hippo-addon-crisp-demopkg/1.0.0/hippo-addon-crisp-demopkg-1.0.0-src.zip
-            </a>
-          </li>
-        </ul>
-
-        <p>
-          Alternatively, you can use
-          <a href="https://maven.apache.org/plugins/maven-dependency-plugin/">Apache Maven Dependency Plugin</a>
-          to download the zip artifact into your local Maven repository directory by using a command like the following example:
+          You can check out the <code>master</code> branch to build and run the demo project from the <strong>CRISP</strong> project itself:
         </p>
 
         <div class="brush: bash">
           <source><![CDATA[
-mvn org.apache.maven.plugins:maven-dependency-plugin:3.0.0:get \
-    -DremoteRepositories=hippo-maven2-enterprise \
-    -DgroupId=org.onehippo.cms7 \
-    -DartifactId=hippo-addon-crisp-demopkg \
-    -Dversion=1.0.0 \
-    -Dclassifier=src \
-    -Dpackaging=zip \
-    -Dtransitive=false
-          ]]></source>
-        </div>
-
-        <p>
-          And, you will be able to find the zip file in your local Maven repository directory.
-          e.g, <code>~/.m2/repository/org/onehippo/cms7/hippo-addon-crisp-demopkg/1.0.0/hippo-addon-crisp-demopkg-1.0.0-src.zip</code>.
-        </p>
-
-        <p>
-          <em>Note:</em> you must be authenticated to download the zip file in either case, and please replace the version
-          with a proper released version based on the <a href="release-notes.html">Release Notes</a>.
-        </p>
-
-        <p>
-          In the demo project, you can build and run demo application, which contains all the examples explained
-          in this site documentation.
-        </p>
-
-        <p>To build and run demo project:</p>
-        <div class="brush: bash">
-        <source><![CDATA[
+$ git clone -b master https://code.onehippo.org/cms-community/hippo-addon-crisp.git
+$ cd hippo-addon-crisp
 $ cd demo
 $ mvn clean verify
 $ mvn -P cargo.run
-        ]]></source>
+          ]]></source>
         </div>
 
       </subsection>
