@@ -30,7 +30,10 @@ class Menu extends MenuItem {
   }
 
   getTranslationKey() {
-    return this.translationKey() || this.name;
+    if (this.translationKey() === undefined) {
+      return this.name;
+    }
+    return this.translationKey();
   }
 
   hasIcons() {
