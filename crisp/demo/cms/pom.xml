@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7.demo</groupId>
     <artifactId>hippo-addon-crisp-demo</artifactId>
-    <version>0.9.5</version>
+    <version>0.9.6-SNAPSHOT</version>
   </parent>
   <artifactId>hippo-addon-crisp-demo-cms</artifactId>
   <packaging>war</packaging>
