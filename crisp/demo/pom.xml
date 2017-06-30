@@ -10,7 +10,7 @@
 
   <name>Hippo Addon CRISP Demo</name>
   <description>Hippo Addon CRISP Demo</description>
-  <groupId>org.onehippo.cms7</groupId>
+  <groupId>org.onehippo.cms7.demo</groupId>
   <artifactId>hippo-addon-crisp-demo</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -63,6 +63,12 @@
     <!--***START temporary override of versions*** -->
     <!-- ***END temporary override of versions*** -->
 
+    <forge.exdocpickerbase.version>3.1.1</forge.exdocpickerbase.version>
+
+    <jackson2.version>2.4.5</jackson2.version>
+    <commons-lang.version>2.6</commons-lang.version>
+    <commons-io.version>2.5</commons-io.version>
+
     <essentials.version>4.0.0-SNAPSHOT</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
@@ -85,7 +91,39 @@
   </repositories>
 
   <dependencyManagement>
+
     <dependencies>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-repository</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-hst</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.forge.exdocpickerbase</groupId>
+        <artifactId>exdocpickerbase-field</artifactId>
+        <version>${forge.exdocpickerbase.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
@@ -135,6 +173,37 @@
       </dependency>
 
       <dependency>
+        <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+        <artifactId>hst-spring-dependencies</artifactId>
+        <type>pom</type>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
@@ -149,6 +218,7 @@
       </dependency>
 
     </dependencies>
+
   </dependencyManagement>
 
   <build>
@@ -234,6 +304,7 @@
         <module>cms</module>
         <module>site</module>
         <module>essentials</module>
+        <module>example-commerce</module>
       </modules>
     </profile>
 
@@ -289,6 +360,13 @@
                   <type>war</type>
                   <properties>
                     <context>/essentials</context>
+                  </properties>
+                </deployable>
+                <deployable>
+                  <location>${project.basedir}/example-commerce/target/example-commerce.war</location>
+                  <type>war</type>
+                  <properties>
+                    <context>/example-commerce</context>
                   </properties>
                 </deployable>
               </deployables>

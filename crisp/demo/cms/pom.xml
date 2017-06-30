@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.onehippo.cms7</groupId>
+    <groupId>org.onehippo.cms7.demo</groupId>
     <artifactId>hippo-addon-crisp-demo</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
@@ -11,7 +11,25 @@
   <packaging>war</packaging>
   <name>Hippo Addon CRISP Demo CMS</name>
   <description>Hippo Addon CRISP Demo CMS</description>
+
   <dependencies>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-crisp-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-crisp-repository</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.forge.exdocpickerbase</groupId>
+      <artifactId>exdocpickerbase-field</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-repository-dependencies</artifactId>
@@ -36,12 +54,12 @@
       <artifactId>hippo-addon-channel-manager-repository</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
+      <groupId>org.onehippo.cms7.demo</groupId>
       <artifactId>hippo-addon-crisp-demo-repository-data-config</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
+      <groupId>org.onehippo.cms7.demo</groupId>
       <artifactId>hippo-addon-crisp-demo-repository-data-webfiles</artifactId>
       <version>${project.version}</version>
     </dependency>

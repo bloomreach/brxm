@@ -16,6 +16,7 @@
         <include>org.apache.logging.log4j:log4j-slf4j-impl</include>
         <include>org.apache.logging.log4j:log4j-api</include>
         <include>org.apache.logging.log4j:log4j-core</include>
+        <include>org.onehippo.cms7:hippo-addon-crisp-api</include>
       </includes>
     </dependencySet>
   </dependencySets>

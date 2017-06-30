@@ -11,5 +11,10 @@
       <outputDirectory>webapps</outputDirectory>
       <destName>site.war</destName>
     </file>
+    <file>
+      <source>example-commerce/target/example-commerce.war</source>
+      <outputDirectory>webapps</outputDirectory>
+      <destName>example-commerce.war</destName>
+    </file>
   </files>
 </component>
