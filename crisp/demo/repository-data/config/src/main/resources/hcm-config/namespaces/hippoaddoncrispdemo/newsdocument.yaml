@@ -189,3 +189,16 @@ definitions:
             wicket.id: ${cluster.id}.right.item
             /cluster.options:
               jcr:primaryType: frontend:pluginconfig
+          /relatedproductselector:
+            jcr:primaryType: frontend:plugin
+            caption: Related Products
+            engine: ${engine}
+            external.document.service.facade: org.onehippo.cms7.crisp.demo.cms.plugin.CommerceProductDataServiceFacade
+            mode: ${mode}
+            plugin.class: org.onehippo.forge.exdocpicker.impl.field.ExternalDocumentFieldSelectorPlugin
+            related.products.field.name: hippoaddoncrispdemo:relatedproducts
+            selection.mode: multiple
+            wicket.id: ${cluster.id}.right.item
+            wicket.model: ${wicket.model}
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
