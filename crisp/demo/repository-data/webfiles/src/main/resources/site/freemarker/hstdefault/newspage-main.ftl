@@ -35,4 +35,47 @@
     </#if>
     <@hst.html hippohtml=document.content/>
   </article>
+
+  <#if productCatalogs?? && productCatalogs.anyChildContained>
+    <article class="has-edit-button">
+      <h3>Related Products (from JSON message)</h3>
+      <ul>
+        <#list productCatalogs.children.collection as product>
+          <#assign extendedData=product.valueMap['extendedData'] />
+          <li>
+            <@crisp.link var="productLink" resourceSpace='demoProductCatalogs' resource=product>
+              <@crisp.variable name="preview" value="${hstRequestContext.preview?then('true', 'false')}" />
+              <@crisp.variable name="name" value="${product.valueMap['name']!}" />
+            </@crisp.link>
+            <a href="${productLink}">
+              [${product.valueMap['SKU']!}] ${extendedData.valueMap['title']!}
+            </a>
+            (${product.getValue('extendedData/description')!})
+          </li>
+        </#list>
+      </ul>
+    </article>
+  </#if>
+
+  <#if productCatalogsXml?? && productCatalogsXml.anyChildContained>
+    <article class="has-edit-button">
+      <h3>Related Products (from XML message)</h3>
+      <ul>
+        <#list productCatalogsXml.getValue("products").children.collection as product>
+          <#assign extendedData=product.valueMap['extendedData'] />
+          <li>
+            <@crisp.link var="productXmlLink" resourceSpace='demoProductCatalogsXml' resource=product>
+              <@crisp.variable name="preview" value="${hstRequestContext.preview?then('true', 'false')}" />
+              <@crisp.variable name="name" value="${product.valueMap['name'].defaultValue!}" />
+            </@crisp.link>
+            <a href="${productXmlLink}">
+              [${product.valueMap['sku'].defaultValue!}] ${product.valueMap['name'].defaultValue!}
+            </a>
+            (${extendedData.getValue("entry[key='description']/value").defaultValue!})
+          </li>
+        </#list>
+      </ul>
+    </article>
+  </#if>
+
 </#if>

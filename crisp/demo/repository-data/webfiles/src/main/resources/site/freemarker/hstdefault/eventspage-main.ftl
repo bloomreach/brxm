@@ -3,7 +3,7 @@
 <#-- @ftlvariable name="document" type="org.onehippo.cms7.crisp.demo.beans.EventsDocument" -->
 <#if document??>
     <@hst.link var="link" hippobean=document/>
-<article class="has-edit-button">
+  <article class="has-edit-button">
     <@hst.cmseditlink hippobean=document/>
     <h3><a href="${link}">${document.title?html}</a></h3>
     <#if document.date??>
@@ -28,5 +28,28 @@
         </figure>
     </#if>
     <@hst.html hippohtml=document.content/>
-</article>
+  </article>
+
+  <#if salesForceLeads?? && salesForceLeads.valueMap['totalSize'] gt 0>
+    <article class="has-edit-button">
+      <h3>Related SalesForce Leads</h3>
+      <ul>
+        <#list salesForceLeads.valueMap['records'].children.collection as lead>
+          <li><a href="mailto:${lead.valueMap['Email']}">${lead.valueMap['FirstName']} ${lead.valueMap['LastName']}</a></li>
+        </#list>
+      </ul>
+    </article>
+  </#if>
+
+  <#if marketoLeadChanges??>
+    <article class="has-edit-button">
+      <h3>Related Marketo Lead Changes</h3>
+      <ul>
+        <#list marketoLeadChanges.valueMap['result'].children.collection as leadChange>
+          <li>Updated Lead ID: ${leadChange.valueMap['leadId']?c} (last updated: ${leadChange.valueMap['activityDate']})</a></li>
+        </#list>
+      </ul>
+    </article>
+  </#if>
+
 </#if>
