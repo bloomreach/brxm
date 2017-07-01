@@ -88,6 +88,12 @@
       <name>Hippo maven 2 repository.</name>
       <url>https://maven.onehippo.com/maven2/</url>
     </repository>
+    <repository>
+      <id>hippo-maven2-forge</id>
+      <name>Hippo Maven 2 Forge repository</name>
+      <url>http://maven.onehippo.com/maven2-forge/</url>
+      <snapshots />
+    </repository>
   </repositories>
 
   <dependencyManagement>
@@ -314,6 +320,13 @@
         <!--Already defined in hippo-cms-project POM. Override here for project, if necessary-->
         <!--<repo.bootstrap>true</repo.bootstrap>-->
       </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.onehippo.cms7</groupId>
+          <artifactId>hippo-addon-crisp-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -378,6 +391,13 @@
                   <repo.bootstrap.modules>repository-data/config;repository-data/content</repo.bootstrap.modules>
                   <send.usage.statistics.to.hippo>true</send.usage.statistics.to.hippo>                  
                 </systemProperties>
+                <dependencies>
+                  <dependency>
+                    <groupId>org.onehippo.cms7</groupId>
+                    <artifactId>hippo-addon-crisp-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                </dependencies>
               </container>
             </configuration>
           </plugin>

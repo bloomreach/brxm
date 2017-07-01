@@ -3,7 +3,7 @@ definitions:
     /hippo:configuration/hippo:modules/crispregistry:
       jcr:primaryType: hipposys:module
       hipposys:className: org.onehippo.cms7.crisp.repository.CrispRegistryModule
-      /hippo:moduleconfig
+      /hippo:moduleconfig:
         jcr:primaryType: crisp:moduleconfig
-        /crisp:resourceresolvercontainer
+        /crisp:resourceresolvercontainer:
           jcr:primaryType: crisp:resourceresolvercontainer
