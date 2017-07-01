@@ -47,6 +47,10 @@
           <li>
             Initial release for Hippo CMS 12 compatibility based on 0.9.5.
           </li>
+          <li>
+            Changing the namespace URI of CRISP JSP Tag Libraries to <code>http://www.onehippo.org/jsp/hippo/crisp/tags</code>
+            (from <code>http://www.onehippo.com/jsp/hippo/crisp/tags</code>).
+          </li>
         </ul>
       </subsection>
       <br/>

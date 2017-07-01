@@ -21,7 +21,7 @@
   <description>Hippo Addon CRISP Tag Library</description>
   <tlib-version>1.0</tlib-version>
   <short-name>crisp-tags</short-name>
-  <uri>http://www.onehippo.com/jsp/hippo/crisp/tags</uri>
+  <uri>http://www.onehippo.org/jsp/hippo/crisp/tags</uri>
 
   <tag>
     <description>
