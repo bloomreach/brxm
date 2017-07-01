@@ -120,6 +120,10 @@
       <AppenderRef ref="messages"/>
     </Logger>
 
+    <Logger name="org.apache.http" level="debug" />
+    <Logger name="org.apache.http.wire" level="debug" />
+    <Logger name="org.onehippo.cms7.crisp" level="debug" />
+
     <!-- project logging -->
     <Logger name="org.onehippo.cms7.crisp.demo" level="debug"/>
 
