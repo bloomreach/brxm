@@ -20,7 +20,7 @@
       <StringMatchFilter/>
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
     </Console>
-    <File name="root" fileName="log4j.log">
+    <File name="root" fileName="target/log4j.log">
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C.%M():%L] %m%n"/>
     </File>
   </Appenders>
