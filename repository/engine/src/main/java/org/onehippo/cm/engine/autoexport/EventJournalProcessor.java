@@ -544,13 +544,12 @@ public class EventJournalProcessor {
     }
 
     private void exportChangesModule(ModuleImpl changesModule) throws RepositoryException, IOException, ParserException {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-
         if (changesModule.isEmpty() && pendingChanges.getAddedContent().isEmpty()
                 && pendingChanges.getChangedContent().isEmpty()
                 && pendingChanges.getDeletedContent().isEmpty()) {
             log.info("No changes detected");
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
 
             // save this fact immediately and do nothing else
             configuration.setLastRevision(lastRevision);
@@ -563,6 +562,9 @@ public class EventJournalProcessor {
             final Collection<ModuleImpl> mergedModules =
                     mergeService.mergeChangesToModules(changesModule, pendingChanges, currentModel, eventProcessorSession);
             final List<ModuleImpl> reloadedModules = new ArrayList<>();
+
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
 
             // 1) export result to filesystem
             // convert the project basedir to a Path, so we can resolve modules against it
