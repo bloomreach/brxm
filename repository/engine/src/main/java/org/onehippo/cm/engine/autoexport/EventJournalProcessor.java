@@ -42,6 +42,7 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.util.TraversingItemVisitor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.RevisionEvent;
@@ -68,6 +69,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
+import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
 import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_LAST_REVISION_PROPERTY_NAME;
 import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
@@ -249,20 +251,6 @@ public class EventJournalProcessor {
         }
     }
 
-    private long skipToHeadRevision(RevisionEventJournal eventJournal) throws RepositoryException {
-        RevisionEvent lastEvent = null;
-        while (eventJournal.hasNext()) {
-            lastEvent = eventJournal.nextEvent();
-        }
-        if (lastEvent != null) {
-            log.info("Skipping to initial eventjournal head revision: {} ", lastEvent.getRevision());
-            configuration.setLastRevision(lastEvent.getRevision());
-            configuration.getModuleSession().save();
-            return lastEvent.getRevision();
-        }
-        return -1;
-    }
-
     private boolean processEvents() throws RepositoryException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -274,9 +262,6 @@ public class EventJournalProcessor {
             final ObservationManager observationManager = eventProcessorSession.getWorkspace().getObservationManager();
             eventJournal = (RevisionEventJournal) observationManager.getEventJournal();
             lastRevision = configuration.getLastRevision();
-            if (lastRevision == -1) {
-                lastRevision = skipToHeadRevision(eventJournal);
-            }
         }
         try {
             eventJournal.skipToRevision(lastRevision);
@@ -291,17 +276,26 @@ public class EventJournalProcessor {
                 if (event.getType() == Event.PERSIST) {
                     continue;
                 }
+                if (HCM_ROOT.equals(event.getUserData())) {
+                    continue;
+                }
                 processEvent(event);
             }
             if (count > 0) {
                 AutoExportServiceImpl.log.debug("Read {} events up to {}", count, lastRevision);
             }
-            if (currentChanges != null && !currentChanges.isEmpty()) {
-                if (pendingChanges != null) {
-                    pendingChanges.addCurrentChanges(currentChanges);
-                    AutoExportServiceImpl.log.debug("Adding new changes to pending changes");
-                } else if (isReadyForProcessing(currentChanges)) {
-                    pendingChanges = currentChanges;
+            if (currentChanges != null) {
+                if (!currentChanges.isEmpty()) {
+                    if (pendingChanges != null) {
+                        pendingChanges.addCurrentChanges(currentChanges);
+                        AutoExportServiceImpl.log.debug("Adding new changes to pending changes");
+                    } else if (isReadyForProcessing(currentChanges)) {
+                        pendingChanges = currentChanges;
+                    }
+                } else {
+                    // all events are skipped, bump lastRevision to skip these in the future
+                    configuration.setLastRevision(lastRevision);
+                    configuration.getModuleSession().save();
                 }
             }
             if (count > 0) {
@@ -340,14 +334,18 @@ public class EventJournalProcessor {
 
     private void processEvent(final RevisionEvent event) {
         try {
-            if (event.getPath().equals(lastRevisionPropertyPath)) {
+            final String eventPath = event.getPath();
+            if (eventPath.equals(lastRevisionPropertyPath)) {
                 return;
             }
             switch (event.getType()) {
                 case Event.PROPERTY_ADDED:
                 case Event.PROPERTY_CHANGED:
                 case Event.PROPERTY_REMOVED:
-                    if (nodeTypeRegistryLastModifiedPropertyPath.equals(event.getPath())) {
+                    if (isKnownDerivedPropertyName(StringUtils.substringAfterLast(eventPath, "/"))) {
+                        return;
+                    }
+                    if (nodeTypeRegistryLastModifiedPropertyPath.equals(eventPath)) {
                         if (event.getUserData() != null) {
                             String[] changedNamespacePrefixes = event.getUserData().split("\\|");
                             for (String changedNamespacePrefix : changedNamespacePrefixes) {
@@ -359,23 +357,23 @@ public class EventJournalProcessor {
                             }
                         }
                     } else {
-                        checkAddEventPath(event, event.getPath(), false, false, true);
+                        checkAddEventPath(event, eventPath, false, false, true);
                     }
                     break;
                 case Event.NODE_ADDED:
-                    checkAddEventPath(event, event.getPath(), true, false, false);
+                    checkAddEventPath(event, eventPath, true, false, false);
                     break;
                 case Event.NODE_REMOVED:
-                    checkAddEventPath(event, event.getPath(), false, true, false);
+                    checkAddEventPath(event, eventPath, false, true, false);
                     break;
                 case Event.NODE_MOVED:
                     final String srcAbsPath = (String) event.getInfo().get("srcAbsPath");
                     if (srcAbsPath != null) {
                         // not an order-before
-                        checkAddEventPath(event, event.getPath(), true, false, false);
+                        checkAddEventPath(event, eventPath, true, false, false);
                         checkAddEventPath(event, srcAbsPath, false, true, false);
                     } else {
-                        checkAddEventPath(event, event.getPath(), false, false, false);
+                        checkAddEventPath(event, eventPath, false, false, false);
                     }
                     break;
             }
@@ -546,17 +544,17 @@ public class EventJournalProcessor {
     }
 
     private void exportChangesModule(ModuleImpl changesModule) throws RepositoryException, IOException, ParserException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
         if (changesModule.isEmpty() && pendingChanges.getAddedContent().isEmpty()
                 && pendingChanges.getChangedContent().isEmpty()
                 && pendingChanges.getDeletedContent().isEmpty()) {
-            final StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
-
             log.info("No changes detected");
 
             // save this fact immediately and do nothing else
             configuration.setLastRevision(lastRevision);
-            eventProcessorSession.save();
+            configuration.getModuleSession().save();
 
             stopWatch.stop();
             log.info("Diff export (revision update only) in {}", stopWatch.toString());
@@ -565,9 +563,6 @@ public class EventJournalProcessor {
             final Collection<ModuleImpl> mergedModules =
                     mergeService.mergeChangesToModules(changesModule, pendingChanges, currentModel, eventProcessorSession);
             final List<ModuleImpl> reloadedModules = new ArrayList<>();
-
-            final StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
 
             // 1) export result to filesystem
             // convert the project basedir to a Path, so we can resolve modules against it

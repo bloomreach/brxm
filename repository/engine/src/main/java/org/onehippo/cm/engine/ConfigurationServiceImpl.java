@@ -91,6 +91,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     public ConfigurationServiceImpl start(final Session configurationServiceSession, final StartRepositoryServicesTask startRepositoryServicesTask)
             throws RepositoryException {
         session = configurationServiceSession;
+        session.getWorkspace().getObservationManager().setUserData(Constants.HCM_ROOT);
         log.info("ConfigurationService: start");
         try {
             init(startRepositoryServicesTask);
