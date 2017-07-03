@@ -288,6 +288,7 @@ public class EsvParser extends DefaultHandler {
     }
 
     private void endNode() throws SAXException {
+        getCurrentNode().migrationFixes();
         stack.pop();
     }
 
