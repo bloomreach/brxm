@@ -235,6 +235,8 @@ class ScrollService {
     const targetY = this.iframeHtmlBody;
 
     const win = this.iframeWindow[0];
+    // Firefox exposes scrollMaxX and scrollMaxY which is exactly what we need. If the property is not a number,
+    // we need to calculate it. See https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollMaxX
     let scrollMaxX;
     if (typeof win.scrollMaxX === 'number') {
       scrollMaxX = win.scrollMaxX;
