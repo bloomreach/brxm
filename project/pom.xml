@@ -81,7 +81,8 @@
     <maven.required.version>3.2.3</maven.required.version>
 
     <maven.plugin.antrun.version>1.8</maven.plugin.antrun.version>
-    <maven.plugin.assembly.version>3.0.0</maven.plugin.assembly.version>
+    <!-- maven.plugin.assembly.version kept on 2.6. 3.0.0 shows snapshot download warnings, see CMS-10817 -->
+    <maven.plugin.assembly.version>2.6</maven.plugin.assembly.version>
     <maven.plugin.buildnumber.version>1.4</maven.plugin.buildnumber.version>
     <maven.plugin.cargo.version>1.6.3</maven.plugin.cargo.version>
     <maven.plugin.changes.version>2.12.1</maven.plugin.changes.version>
