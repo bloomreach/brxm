@@ -251,6 +251,20 @@ public class EventJournalProcessor {
         }
     }
 
+    private long skipToHeadRevision(RevisionEventJournal eventJournal) throws RepositoryException {
+        RevisionEvent lastEvent = null;
+        while (eventJournal.hasNext()) {
+            lastEvent = eventJournal.nextEvent();
+        }
+        if (lastEvent != null) {
+            log.info("Skipping to initial eventjournal head revision: {} ", lastEvent.getRevision());
+            configuration.setLastRevision(lastEvent.getRevision());
+            configuration.getModuleSession().save();
+            return lastEvent.getRevision();
+        }
+        return -1;
+    }
+
     private boolean processEvents() throws RepositoryException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -264,7 +278,14 @@ public class EventJournalProcessor {
             lastRevision = configuration.getLastRevision();
         }
         try {
-            eventJournal.skipToRevision(lastRevision);
+            if (lastRevision == -1) {
+                // first skip to only almost now, so we likely can capture the current last revision fast
+                // this is useful when enabling autoexport on an existing (production copy?) repository with a last journal
+                eventJournal.skipTo(System.currentTimeMillis()-1000);
+                skipToHeadRevision(eventJournal);
+            } else {
+                eventJournal.skipToRevision(lastRevision);
+            }
             int count = 0;
             while (eventJournal.hasNext()) {
                 if (currentChanges == null) {
@@ -272,7 +293,13 @@ public class EventJournalProcessor {
                 }
                 count++;
                 RevisionEvent event = eventJournal.nextEvent();
+                boolean storeLastRevision = lastRevision == -1;
                 lastRevision = event.getRevision();
+                if (storeLastRevision) {
+                    // still haven't yet stored the current last revision: do so now
+                    configuration.setLastRevision(lastRevision);
+                    configuration.getModuleSession().save();
+                }
                 if (event.getType() == Event.PERSIST) {
                     continue;
                 }
