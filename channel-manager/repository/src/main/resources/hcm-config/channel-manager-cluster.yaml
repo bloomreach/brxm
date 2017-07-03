@@ -14,7 +14,7 @@ definitions:
           channelRegionIconPath: /content/gallery/channels/${region}.png/${region}.png/hippogallery:original
           channelStore: org.onehippo.cms7.channelmanager.channels.CountryGroupingChannelStore
           channelTypeIconPath: /content/gallery/channels/${type}.png/${type}.png/hippogallery:original
-          columns: [name, url, locale, hstConfigEditor]
+          columns: [name, url, locale]
           sort.column: name
           sort.order: ascending
         /templatecomposer:
