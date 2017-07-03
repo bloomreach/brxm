@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -163,6 +165,7 @@ public class EventJournalProcessor {
 
     private ScheduledFuture<?> future;
     private AtomicBoolean taskFailed = new AtomicBoolean();
+    private boolean runningOnce;
     private final Runnable task = () -> {
         if (!taskFailed.get()) {
             try {
@@ -170,8 +173,8 @@ public class EventJournalProcessor {
             } catch (Exception e) {
                 taskFailed.set(true);
                 AutoExportServiceImpl.log.error(e.getClass().getName() + " : " + e.getMessage(), e);
-                if (future != null && (!future.isCancelled() || !future.isDone())) {
-                    future.cancel(true);
+                if (future != null && !future.isDone()) {
+                    future.cancel(false);
                 }
             }
         }
@@ -200,7 +203,7 @@ public class EventJournalProcessor {
     public void start() {
         synchronized (executor) {
             taskFailed.set(false);
-            if (future == null || future.isCancelled() || future.isDone()) {
+            if (future == null || future.isDone()) {
                 future = executor.scheduleWithFixedDelay(task, 0, minChangeLogAge, TimeUnit.MILLISECONDS);
             }
         }
@@ -208,21 +211,53 @@ public class EventJournalProcessor {
 
     public void stop() {
         stop(false);
+        runOnce();
+        reset();
     }
 
     private void stop(final boolean mayInterruptIfRunning) {
         synchronized (executor) {
-            if (future != null && !future.isCancelled()) {
+            if (future != null && !future.isDone()) {
                 future.cancel(mayInterruptIfRunning);
+                try {
+                    future.get();
+                } catch (InterruptedException|ExecutionException|CancellationException ignore) {
+                }
+            }
+            future = null;
+        }
+    }
+
+    private void runOnce() {
+        synchronized (executor) {
+            if (!taskFailed.get()) {
+                try {
+                    runningOnce = true;
+                    future = executor.schedule(task, 0, TimeUnit.MILLISECONDS);
+                    try {
+                        future.get();
+                    } catch (InterruptedException|ExecutionException|CancellationException ignore) {
+                    }
+                } finally {
+                    runningOnce = false;
+                }
             }
         }
     }
 
-    public void runOnce() {
+    private void reset() {
         synchronized (executor) {
-            if (!taskFailed.get()) {
-                executor.submit(task);
+            if (future != null) {
+                stop(false);
             }
+            eventJournal = null;
+            lastRevision = -1;
+            currentChanges = null;
+            pendingChanges = null;
+            currentModel = null;
+            // force reset lastRevision as well, allowing a actual 'reset' to -1 (or delete) of the property
+            // by a developer, thereby 'skipping' next autoexport when enabled to the then current 'head' revision
+            configuration.resetLastRevision();
         }
     }
 
@@ -288,10 +323,6 @@ public class EventJournalProcessor {
             }
             int count = 0;
             while (eventJournal.hasNext()) {
-                if (currentChanges == null) {
-                    currentChanges = new Changes();
-                }
-                count++;
                 RevisionEvent event = eventJournal.nextEvent();
                 boolean storeLastRevision = lastRevision == -1;
                 lastRevision = event.getRevision();
@@ -303,6 +334,14 @@ public class EventJournalProcessor {
                 if (event.getType() == Event.PERSIST) {
                     continue;
                 }
+                if (event.getPath().equals(lastRevisionPropertyPath)) {
+                    continue;
+                }
+                // any other event can require processing or as a minimum result in updating the lastRevision
+                if (currentChanges == null) {
+                    currentChanges = new Changes();
+                }
+                count++;
                 if (HCM_ROOT.equals(event.getUserData())) {
                     continue;
                 }
@@ -316,11 +355,12 @@ public class EventJournalProcessor {
                     if (pendingChanges != null) {
                         pendingChanges.addCurrentChanges(currentChanges);
                         AutoExportServiceImpl.log.debug("Adding new changes to pending changes");
-                    } else if (isReadyForProcessing(currentChanges)) {
+                    } else if (runningOnce || isReadyForProcessing(currentChanges)) {
                         pendingChanges = currentChanges;
                     }
                 } else {
                     // all events are skipped, bump lastRevision to skip these in the future
+                    currentChanges = null;
                     configuration.setLastRevision(lastRevision);
                     configuration.getModuleSession().save();
                 }
@@ -362,9 +402,6 @@ public class EventJournalProcessor {
     private void processEvent(final RevisionEvent event) {
         try {
             final String eventPath = event.getPath();
-            if (eventPath.equals(lastRevisionPropertyPath)) {
-                return;
-            }
             switch (event.getType()) {
                 case Event.PROPERTY_ADDED:
                 case Event.PROPERTY_CHANGED:
@@ -494,7 +531,7 @@ public class EventJournalProcessor {
     }
 
     private void logEvent(final RevisionEvent event, final String path) throws RepositoryException {
-        if (log.isDebugEnabled()) {
+        if (AutoExportServiceImpl.log.isDebugEnabled()) {
             final String eventPath = event.getPath();
             AutoExportServiceImpl.log.debug(String.format("event %d: %s under parent: [%s] at: [%s] for user: [%s]",
                     event.getRevision(), Constants.getJCREventTypeName(event.getType()), path,

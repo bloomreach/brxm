@@ -216,4 +216,8 @@ public class Configuration {
         node.setProperty(Constants.CONFIG_LAST_REVISION_PROPERTY_NAME, lastRevision);
         this.lastRevision = lastRevision;
     }
+
+    synchronized void resetLastRevision() {
+        lastRevision = null;
+    }
 }

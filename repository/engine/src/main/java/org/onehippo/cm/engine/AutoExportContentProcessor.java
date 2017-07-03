@@ -148,12 +148,23 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
         final ConfigurationNodeImpl configNode = configurationModel.resolveNode(jcrPath);
         if (configNode == null) {
             // this is a brand new node, so we can skip the delta comparisons and just dump the JCR tree into one def
-            log.debug("Creating new node def without delta: \n\t{}", jcrPath);
 
-            final DefinitionNodeImpl definitionNode = configSource.getOrCreateDefinitionFor(jcrPath);
+            String newPath = jcrPath;
+            Node newNode = jcrNode;
+            // determine the actual 'root' of the new node, ensuring we're not skipping intermediate missing parents
+            while (configurationModel.resolveNode(StringUtils.substringBeforeLast(newPath, "/")) == null) {
+                newPath = StringUtils.substringBeforeLast(newPath, "/");
+            }
+            if (!newPath.equals(jcrPath)) {
+                // need to export missing parent(s) as well
+                newNode = session.getNode(newPath);
+            }
+            log.debug("Creating new node def without delta: \n\t{}", newPath);
 
-            exportProperties(jcrNode, definitionNode);
-            for (final Node childNode : new NodeIterable(jcrNode.getNodes())) {
+            final DefinitionNodeImpl definitionNode = configSource.getOrCreateDefinitionFor(newPath);
+
+            exportProperties(newNode, definitionNode);
+            for (final Node childNode : new NodeIterable(newNode.getNodes())) {
                 exportNode(childNode, definitionNode, Collections.emptySet());
             }
         }

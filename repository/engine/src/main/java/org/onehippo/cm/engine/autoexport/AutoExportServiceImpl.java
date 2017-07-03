@@ -110,7 +110,6 @@ public final class AutoExportServiceImpl implements EventListener {
                         } else {
                             log.info("autoexport service disabled, processing remaining changes");
                             eventJournalProcessor.stop();
-                            eventJournalProcessor.runOnce();
                         }
                     }
                 }
