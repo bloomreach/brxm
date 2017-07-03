@@ -18,14 +18,18 @@ package org.onehippo.cm.model;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModelTestUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,10 +41,8 @@ public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
 
     private static final Logger log = LoggerFactory.getLogger(ClasspathConfigurationModelReaderTest.class);
 
-    // Disable tests for now -- needs to be refactored now that ConfigurationServiceImpl loads FS modules
-//    @Test
+    @Test
     public void load_modules_from_classpath() throws IOException, ParserException, URISyntaxException {
-
         Set<ModuleImpl> classpathModules = loadModules();
 
         assertEquals("Classpath should contain correct number of modules", 1,
@@ -57,46 +59,6 @@ public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
         // the test-module loaded from classpath should have a single source with a single definition,
         // since that's what is contained in the files at the root of test-classes
         assertSource(loadedTestModule, "test.yaml", 1);
-    }
-
-//    @Test
-    public void load_modules_from_classpath_and_filesystem() throws IOException, ParserException, URISyntaxException {
-        try {
-            // set system properties to trigger developer mode that loads config from source files
-            System.setProperty("project.basedir", calculateBaseDir() + nativePath("/src/test/resources"));
-
-            Set<ModuleImpl> classpathModules = loadModules();
-
-            assertEquals("Classpath should contain correct number of modules", 1,
-                    classpathModules.size());
-
-            Set<ModuleImpl> expectedModules = new HashSet<>();
-            final ModuleImpl testModule = ModelTestUtils.makeModule("test-module");
-            expectedModules.add(testModule);
-
-            assertTrue("Classpath should contain test-module", classpathModules.containsAll(expectedModules));
-
-            ModuleImpl loadedTestModule = classpathModules.stream().filter(module -> module.equals(testModule)).findFirst().get();
-
-            // the test-module loaded from source files should have a single source with two definitions, not one,
-            // since that's what is contained in the files under TestModuleFileSource
-            assertSource(loadedTestModule, "test.yaml", 2);
-        }
-        finally {
-            // set system properties back to empty strings to make sure developer mode is off again
-            System.setProperty("project.basedir", "");
-        }
-    }
-
-    /**
-     * Utility method to calculate correct path in case when run under Intellij IDEA (Working directory should be set to
-     * module's root, e.g. ../master/engine)
-     * @return base directory
-     */
-    private String calculateBaseDir() {
-        String basedir = System.getProperty("basedir");
-        basedir = basedir != null ? basedir: System.getProperty("user.dir");
-        return basedir;
     }
 
     /**

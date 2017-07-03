@@ -1,9 +1,0 @@
-# This file is used by ClasspathConfigurationModelReaderTest and needs to contain exactly two definitions
-definitions:
-  config:
-    /testnode:
-      jcr:primaryType: nt:unstructured
-      testproperty: testvalue
-    /testnode/testnodefs:
-      jcr:primaryType: nt:unstructured
-      testpropertyfs: testvaluefs
