@@ -161,6 +161,7 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
          *  - step 1: load a basic cnd for a node type that does not allow sibling properties
          *  - step 2: validate that it is not possible to create a sibling property
          *  - step 3: reload the cnd, allowing a sibling property and test it is possible to load some content
+         *  - step 4: reload the identical cnd again, and expect a log message stating that the reload was skipped
          */
 
         // step 1
@@ -219,11 +220,17 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
                 + "        test2:property: value\n"
                 + "";
 
-        applyDefinitions(reregisterConfiguration, baseline);
+        baseline = applyDefinitions(reregisterConfiguration, baseline);
 
         expectNode("/test/node", "[]", "[jcr:primaryType, test2:property]");
         expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test2:type");
         expectProp("/test/node/test2:property", PropertyType.STRING, "value");
+
+        // step 4
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onDebug().trap(ConfigurationConfigService.class).build()) {
+            applyDefinitions(reregisterConfiguration, baseline);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("skipping CND already loaded in baseline: 'test2b.cnd' defined in test-group/test-project/test-module-0 [string].")));
+        }
     }
 
     @Test
