@@ -48,6 +48,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
@@ -273,6 +274,7 @@ public class RootResource extends AbstractConfigResource {
         return ok("Preview-Mode successful", null);
     }
 
+    @IgnoreLock
     @POST
     @Path("/setvariant/{variantId}/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -282,6 +284,7 @@ public class RootResource extends AbstractConfigResource {
         return ok("Variant set");
     }
 
+    @IgnoreLock
     @POST
     @Path("/clearvariant/")
     @Produces(MediaType.APPLICATION_JSON)

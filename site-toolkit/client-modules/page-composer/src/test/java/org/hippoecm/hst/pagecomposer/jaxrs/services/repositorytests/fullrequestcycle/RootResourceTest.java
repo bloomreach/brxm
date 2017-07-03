@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -47,6 +48,8 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURA
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.CHILD_MOUNT_EXISTS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class RootResourceTest extends AbstractFullRequestCycleTest {
@@ -266,6 +269,41 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
             final MockHttpServletResponse response = render(requestResponse, admin);
             assertEquals(SC_INTERNAL_SERVER_ERROR, response.getStatus());
 
+        } finally {
+            session.logout();
+        }
+    }
+
+    @Test
+    public void set_or_clear_variant_succeeds_for_locked_configuration() throws Exception {
+
+        Session session = createSession("admin", "admin");
+        Node configuration = session.getNode("/hst:hst/hst:configurations/unittestsubproject");
+        configuration.setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
+        session.save();
+
+        try {
+            {
+                final RequestResponseMock requestResponse = mockGetRequestResponse(
+                        "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./setvariant/foo", null, "POST");
+
+                SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+                final MockHttpServletResponse response = render(requestResponse, admin);
+                assertEquals("Even for locked configuration setvariant POST should be allowed", SC_OK, response.getStatus());
+
+                Object renderVariant = requestResponse.getRequest().getSession().getAttribute(ContainerConstants.RENDER_VARIANT);
+                assertNotNull(renderVariant);
+                assertEquals("foo", renderVariant);
+            }
+            {
+                final RequestResponseMock requestResponse = mockGetRequestResponse(
+                        "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./clearvariant", null, "POST");
+
+                SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+                final MockHttpServletResponse response = render(requestResponse, admin);
+                assertEquals("Even for locked configuration clearvariant POST should be allowed", SC_OK, response.getStatus());
+                assertNull(requestResponse.getRequest().getSession().getAttribute(ContainerConstants.RENDER_VARIANT));
+            }
         } finally {
             session.logout();
         }
