@@ -20,20 +20,23 @@ const DURATION_MAX = 1500;
 
 class ScrollService {
 
-  constructor(BrowserService) {
+  constructor(BrowserService, DomService) {
     'ngInject';
 
     this.BrowserService = BrowserService;
+    this.DomService = DomService;
   }
 
-  init(iframe, canvas) {
+  init(iframe, canvas, sheet) {
     this.iframe = iframe;
+    this.sheet = sheet;
     this.canvas = canvas;
     this.enabled = false;
 
     this.savedScrollPosition = {
       top: 0,
-      left: 0,
+      canvasLeft: 0,
+      iframeLeft: 0,
     };
   }
 
@@ -71,9 +74,8 @@ class ScrollService {
   _bindMouseEnterMouseLeave() {
     this.iframe
       .on(`mouseenter${EVENT_NAMESPACE}`, () => this._stopScrolling())
-      .on(`mouseleave${EVENT_NAMESPACE}`, (event) => {
-        this._startScrolling(event.pageX, event.pageY);
-      });
+      .on(`mouseleave${EVENT_NAMESPACE}`, event => this._startScrolling(event.pageX, event.pageY),
+    );
   }
 
   _unbindMouseEnterMouseLeave() {
@@ -90,13 +92,15 @@ class ScrollService {
     let iframeX;
     let iframeY;
     let mouseHasLeft = false;
+    let target = null;
 
     const loadCoords = () => {
-      const { top, right, bottom, left } = this._getCoords();
+      const { top, right, bottom, left, targetX } = this._getScrollData();
       iframeY = top;
       iframeX = left;
       iframe.bottom = bottom - top;
       iframe.right = right - left;
+      target = targetX;
     };
 
     loadCoords();
@@ -104,8 +108,10 @@ class ScrollService {
 
     this.iframeDocument.on(`mousemove${EVENT_NAMESPACE}`, (event) => {
       // event pageX&Y coordinates are relative to the iframe, but expected to be relative to the NG app.
-      const pageX = event.pageX - this._getScrollLeft();
-      const pageY = event.pageY - this._getScrollTop();
+      const scrollLeft = target === this.canvas ? this.canvas.scrollLeft() : this.iframeWindow.scrollLeft();
+      const scrollTop = this.iframeWindow.scrollTop();
+      const pageX = event.pageX - scrollLeft;
+      const pageY = event.pageY - scrollTop;
 
       if (mouseHasLeft) {
         if (pageX > iframe.left && pageX < iframe.right && pageY > iframe.top && pageY < iframe.bottom) {
@@ -127,36 +133,46 @@ class ScrollService {
   }
 
   _startScrolling(mouseX, mouseY) {
-    const { scrollWidth, scrollHeight, top, right, bottom, left } = this._getCoords();
-    let target;
-    let to;
-    let distance;
+    const {
+      top,
+      right,
+      bottom,
+      left,
+      scrollLeft,
+      scrollTop,
+      scrollMaxX,
+      scrollMaxY,
+      targetX,
+      targetY,
+    } = this._getScrollData();
+
+    const scroll = (to, distance, target) => {
+      if (distance > 0) {
+        const duration = this._calculateDuration(distance, DURATION_MIN, DURATION_MAX);
+        this._scroll(target, to, duration);
+      }
+    };
+
+    const scrollX = (posX, distance) => {
+      scroll({ scrollLeft: posX }, distance, targetX);
+    };
+
+    const scrollY = (posY, distance) => {
+      scroll({ scrollTop: posY }, distance, targetY);
+    };
 
     if (mouseY <= top) {
-      // scroll to the top
-      target = this.iframeHtmlBody;
-      to = { scrollTop: 0 };
-      distance = this._getScrollTop();
+      // scroll up
+      scrollY(0, scrollTop);
     } else if (mouseY >= bottom) {
-      // scroll to the bottom
-      target = this.iframeHtmlBody;
-      to = { scrollTop: scrollHeight };
-      distance = scrollHeight - this._getScrollTop();
+      // scroll down
+      scrollY(scrollMaxY, scrollMaxY - scrollTop);
     } else if (mouseX <= left) {
-      // scroll to the left
-      target = this.canvas;
-      to = { scrollLeft: 0 };
-      distance = this._getScrollLeft();
+      // scroll left
+      scrollX(0, scrollLeft);
     } else if (mouseX >= right) {
-      // scroll to the right
-      target = this.canvas;
-      to = { scrollLeft: scrollWidth };
-      distance = scrollWidth - this._getScrollLeft();
-    }
-
-    if (distance > 0) {
-      const duration = this._calculateDuration(distance, DURATION_MIN, DURATION_MAX);
-      this._scroll(target, to, duration);
+      // scroll right
+      scrollX(scrollMaxX, scrollMaxX - scrollLeft);
     }
   }
 
@@ -184,50 +200,94 @@ class ScrollService {
     return Math.min(Math.max(min, duration), max);
   }
 
-  _getScrollTop() {
-    return this.iframeWindow.scrollTop();
-  }
-
-  _setScrollTop(scrollTop) {
-    this.iframeHtmlBody.scrollTop(scrollTop);
-  }
-
-  _getScrollLeft() {
-    return this.canvas.scrollLeft();
-  }
-
-  _setScrollLeft(scrollLeft) {
-    this.canvas.scrollLeft(scrollLeft);
-  }
-
-  _getCoords() {
+  _getScrollData() {
     const canvasOffset = this.canvas.offset();
     const canvasWidth = this.canvas.outerWidth();
-    const iframeHeight = this.iframe.outerHeight();
+    const canvasLeft = canvasOffset.left;
+    const canvasRight = canvasOffset.left + canvasWidth;
+
+    const sheetOffset = this.sheet.offset();
+    const sheetWidth = this.sheet.outerWidth();
+    const sheetLeft = sheetOffset.left;
+    const sheetRight = sheetOffset.left + sheetWidth;
+
     const iframeOffset = this.iframe.offset();
     const iframeWidth = this.iframe.outerWidth();
-    const pageHeight = this.iframeBody[0].scrollHeight;
+    const iframeHeight = this.iframe.outerHeight();
+
+    const body = this.iframeBody[0];
+    const bodyScrollWidth = body.scrollWidth;
+    const bodyScrollHeight = body.scrollHeight;
+
+    const top = iframeOffset.top;
+    const right = Math.min(canvasRight, sheetRight);
+    const bottom = iframeOffset.top + iframeHeight;
+    const left = sheetLeft >= 0 ? sheetLeft : canvasLeft;
+
+    const canvasScrollMaxX = iframeWidth - canvasWidth;
+    const iframeScrollMaxX = bodyScrollWidth - iframeWidth;
+    const useCanvas = iframeWidth > canvasWidth;
+
+    const scrollTop = this.iframeWindow.scrollTop();
+    const scrollLeft = useCanvas ? canvasOffset.left - sheetOffset.left : this.iframeWindow.scrollLeft();
+
+    const targetX = useCanvas ? this.canvas : this.iframeHtmlBody;
+    const targetY = this.iframeHtmlBody;
+
+    const win = this.iframeWindow[0];
+    // Firefox exposes scrollMaxX and scrollMaxY which is exactly what we need. If the property is not a number,
+    // we need to calculate it. See https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollMaxX
+    let scrollMaxX;
+    if (typeof win.scrollMaxX === 'number') {
+      scrollMaxX = win.scrollMaxX;
+    } else {
+      scrollMaxX = useCanvas ? canvasScrollMaxX : iframeScrollMaxX;
+    }
+
+    let scrollMaxY;
+    if (typeof win.scrollMaxY === 'number') {
+      scrollMaxY = win.scrollMaxY;
+    } else {
+      scrollMaxY = bodyScrollHeight - iframeHeight;
+      if (bodyScrollWidth > iframeWidth) {
+        // horizontal scrollbar drawn in the site
+        scrollMaxY += this.DomService.getScrollBarWidth();
+      }
+    }
 
     return {
-      scrollWidth: iframeWidth - canvasWidth,
-      scrollHeight: pageHeight - iframeHeight,
-      top: iframeOffset.top,
-      right: canvasOffset.left + canvasWidth,
-      bottom: iframeOffset.top + iframeHeight,
-      left: canvasOffset.left,
+      // boundary coordinates
+      top,
+      right,
+      bottom,
+      left,
+
+      // scroll positions
+      scrollLeft,
+      scrollTop,
+
+      // max scroll positions
+      scrollMaxX,
+      scrollMaxY,
+
+      // target elements
+      targetX,
+      targetY,
     };
   }
 
   saveScrollPosition() {
     this._initIframeElements();
-    this.savedScrollPosition.top = this._getScrollTop();
-    this.savedScrollPosition.left = this._getScrollLeft();
+    this.savedScrollPosition.top = this.iframeWindow.scrollTop();
+    this.savedScrollPosition.iframeLeft = this.iframeWindow.scrollLeft();
+    this.savedScrollPosition.canvasLeft = this.canvas.scrollLeft();
   }
 
   restoreScrollPosition() {
     this._initIframeElements();
-    this._setScrollTop(this.savedScrollPosition.top);
-    this._setScrollLeft(this.savedScrollPosition.left);
+    this.iframeWindow.scrollTop(this.savedScrollPosition.top);
+    this.iframeWindow.scrollLeft(this.savedScrollPosition.iframeLeft);
+    this.canvas.scrollLeft(this.savedScrollPosition.canvasLeft);
   }
 }
 

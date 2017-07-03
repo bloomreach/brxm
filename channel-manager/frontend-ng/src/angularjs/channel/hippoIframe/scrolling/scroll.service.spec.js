@@ -21,6 +21,7 @@ describe('ScrollService', () => {
   let ScrollService;
   let $iframe;
   let $canvas;
+  let $sheet;
   const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/scrolling/scroll.service.iframe.fixture.html`;
 
   const exitOnTop = [10, 40];
@@ -34,10 +35,11 @@ describe('ScrollService', () => {
     jasmine.getFixtures().load('channel/hippoIframe/scrolling/scroll.service.fixture.html');
     $iframe = $('#testIframe');
     $canvas = $('#testCanvas');
+    $sheet = $('#testSheet');
 
     inject((_ScrollService_) => {
       ScrollService = _ScrollService_;
-      ScrollService.init($iframe, $canvas);
+      ScrollService.init($iframe, $canvas, $sheet);
     });
   });
 
@@ -50,7 +52,7 @@ describe('ScrollService', () => {
       }
     });
     $iframe.attr('src', iframeSrc);
-    ScrollService.init($iframe, $canvas);
+    ScrollService.init($iframe, $canvas, $sheet);
   }
 
   it('should start/stop scrolling on mouse enter/leave events', (done) => {
@@ -344,41 +346,91 @@ describe('ScrollService', () => {
     expect(ScrollService._calculateDuration(800, 500, 1500)).toBe(1500);
   });
 
-  it('should save scroll position', (done) => {
+  it('should save scroll position on canvas', (done) => {
     loadIframeFixture(() => {
-      const iframeDocument = $iframe.contents();
-      const iframeHtmlBody = iframeDocument.find('html,body');
+      const iframeWindow = $($iframe[0].contentWindow);
 
-      iframeHtmlBody.scrollTop(50);
-      $canvas.scrollLeft(60);
+      $iframe.width(400);
+      $canvas.width(200);
+      iframeWindow.scrollTop(10);
+      $canvas.scrollLeft(20);
 
       ScrollService.saveScrollPosition();
-
       expect(ScrollService.savedScrollPosition).toEqual({
-        top: 50,
-        left: 60,
+        top: 10,
+        canvasLeft: 20,
+        iframeLeft: 0,
       });
+
       done();
     });
   });
 
-  it('should restore scroll position', (done) => {
+  it('should save scroll position on iframe', (done) => {
     loadIframeFixture(() => {
-      ScrollService.savedScrollPosition = {
-        top: 20,
-        left: 30,
-      };
+      const iframeWindow = $($iframe[0].contentWindow);
 
+      $iframe.width(400);
+      iframeWindow.scrollTop(10);
+      $iframe.contents().find('.channel-iframe-element').width(600);
+      iframeWindow.scrollLeft(30);
+
+      ScrollService.saveScrollPosition();
+      expect(ScrollService.savedScrollPosition).toEqual({
+        top: 10,
+        iframeLeft: 30,
+        canvasLeft: 0,
+      });
+
+      done();
+    });
+  });
+
+  it('should restore scroll position on canvas', (done) => {
+    loadIframeFixture(() => {
+      const iframeWindow = $($iframe[0].contentWindow);
+      $iframe.width(400);
+      $canvas.width(200);
+
+      ScrollService.savedScrollPosition = {
+        top: 30,
+        iframeLeft: 0,
+        canvasLeft: 20,
+      };
       ScrollService.restoreScrollPosition();
 
-      const iframeWindow = $($iframe[0].contentWindow);
-      expect(iframeWindow.scrollTop()).toEqual(20);
-      expect($canvas.scrollLeft()).toEqual(30);
+      expect(iframeWindow.scrollTop()).toEqual(30);
+      expect(iframeWindow.scrollLeft()).toEqual(0);
+      expect($canvas.scrollLeft()).toEqual(20);
+
       done();
     });
   });
 
-  describe('the workaround for Firefox', () => {
+  it('should restore scroll position on iframe', (done) => {
+    loadIframeFixture(() => {
+      const iframeWindow = $($iframe[0].contentWindow);
+
+      $iframe.width(400);
+      $iframe.contents().find('.channel-iframe-element').width(600);
+      iframeWindow.scrollLeft(30);
+
+      ScrollService.savedScrollPosition = {
+        top: 15,
+        iframeLeft: 10,
+        canvasLeft: 0,
+      };
+      ScrollService.restoreScrollPosition();
+
+      expect(iframeWindow.scrollTop()).toEqual(15);
+      expect(iframeWindow.scrollLeft()).toEqual(10);
+      expect($canvas.scrollLeft()).toEqual(0);
+
+      done();
+    });
+  });
+
+  describe('the mousemove workaround for Firefox', () => {
     let BrowserService;
 
     beforeEach(() => {
