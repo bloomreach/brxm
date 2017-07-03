@@ -346,10 +346,8 @@ describe('ScrollService', () => {
     expect(ScrollService._calculateDuration(800, 500, 1500)).toBe(1500);
   });
 
-  it('should save scroll position', (done) => {
+  it('should save scroll position on canvas', (done) => {
     loadIframeFixture(() => {
-      const iframeDocument = $iframe.contents();
-      const iframeHtmlBody = iframeDocument.find('html,body');
       const iframeWindow = $($iframe[0].contentWindow);
 
       $iframe.width(400);
@@ -364,7 +362,16 @@ describe('ScrollService', () => {
         iframeLeft: 0,
       });
 
-      $canvas.width(400);
+      done();
+    });
+  });
+
+  it('should save scroll position on iframe', (done) => {
+    loadIframeFixture(() => {
+      const iframeWindow = $($iframe[0].contentWindow);
+
+      $iframe.width(400);
+      iframeWindow.scrollTop(10);
       $iframe.contents().find('.channel-iframe-element').width(600);
       iframeWindow.scrollLeft(30);
 
@@ -379,7 +386,7 @@ describe('ScrollService', () => {
     });
   });
 
-  it('should restore scroll position', (done) => {
+  it('should restore scroll position on canvas', (done) => {
     loadIframeFixture(() => {
       const iframeWindow = $($iframe[0].contentWindow);
       $iframe.width(400);
@@ -396,7 +403,15 @@ describe('ScrollService', () => {
       expect(iframeWindow.scrollLeft()).toEqual(0);
       expect($canvas.scrollLeft()).toEqual(20);
 
-      $canvas.width(400);
+      done();
+    });
+  });
+
+  it('should restore scroll position on iframe', (done) => {
+    loadIframeFixture(() => {
+      const iframeWindow = $($iframe[0].contentWindow);
+
+      $iframe.width(400);
       $iframe.contents().find('.channel-iframe-element').width(600);
       iframeWindow.scrollLeft(30);
 
@@ -415,7 +430,7 @@ describe('ScrollService', () => {
     });
   });
 
-  describe('the workaround for Firefox', () => {
+  describe('the mousemove workaround for Firefox', () => {
     let BrowserService;
 
     beforeEach(() => {
