@@ -52,11 +52,11 @@ class DragDropService {
     PageStructureService.registerChangeListener(() => this._sync());
   }
 
-  init(iframeJQueryElement, canvasJQueryElement) {
+  init(iframeJQueryElement, canvasJQueryElement, sheetJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
     this.canvasJQueryElement = canvasJQueryElement;
 
-    this.ScrollService.init(iframeJQueryElement, canvasJQueryElement);
+    this.ScrollService.init(iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
     this.iframeJQueryElement.on('load', () => this._onLoad());
   }
 
