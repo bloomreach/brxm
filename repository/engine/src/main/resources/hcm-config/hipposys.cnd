@@ -257,12 +257,6 @@
 - * (undefined)
 + * (hipposys:moduleconfig)
 
-// autoexport nodetype def is deprecated
-[hipposys:autoexport] > nt:base
-- hipposys:enabled (boolean) = 'true' mandatory autocreated
-- hipposys:excluded (string) multiple
-- hipposys:location (string)
-
 [hipposys:updaterinfo] > nt:base
 - hipposys:description (string)
 - hipposys:path (string)

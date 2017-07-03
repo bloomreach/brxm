@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,9 +33,20 @@ public class HippoNodeTypeRegistry extends NodeTypeRegistry {
 
     private final NamespaceRegistry registry;
 
+    private static ThreadLocal<Boolean> ignoreNextConflictingContent = new ThreadLocal<>();
+    private static ThreadLocal<Boolean> ignoreNextCheckReferencesInContent = new ThreadLocal<>();
+
     public HippoNodeTypeRegistry(NamespaceRegistry registry, FileSystem fileSystem) throws RepositoryException {
         super(registry, fileSystem);
         this.registry = registry;
+    }
+
+    public void ignoreNextConflictingContent() {
+        ignoreNextConflictingContent.set(true);
+    }
+
+    public void ignoreNextCheckReferencesInContent() {
+        ignoreNextCheckReferencesInContent.set(true);
     }
 
     /**
@@ -48,6 +59,10 @@ public class HippoNodeTypeRegistry extends NodeTypeRegistry {
      */
     @Override
     protected void checkForConflictingContent(final QNodeTypeDefinition ntd, NodeTypeDefDiff diff) throws RepositoryException {
+        if (ignoreNextConflictingContent.get() != null) {
+            ignoreNextConflictingContent.remove();
+            return;
+        }
         final Name name = ntd.getName();
         final String prefix = registry.getPrefix(name.getNamespaceURI());
         final String[] systemPrefixes = {"hippo", "hipposys", "hipposysedit", "hippofacnav", "hipposched"};
@@ -63,6 +78,16 @@ public class HippoNodeTypeRegistry extends NodeTypeRegistry {
             }
         }
         super.checkForConflictingContent(ntd, diff);
+    }
+
+    @Override
+    protected void checkForReferencesInContent(Name nodeTypeName)
+            throws RepositoryException {
+        if (ignoreNextCheckReferencesInContent.get() != null) {
+            ignoreNextCheckReferencesInContent.remove();
+            return;
+        }
+        super.checkForReferencesInContent(nodeTypeName);
     }
 
     /**
