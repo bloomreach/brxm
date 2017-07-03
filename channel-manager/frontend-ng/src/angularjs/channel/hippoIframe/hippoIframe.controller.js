@@ -120,23 +120,25 @@ class HippoIframeCtrl {
   }
 
   _updateChannelIfSwitched() {
-    const channelServiceId = this.ChannelService.getId();
-    const pageMetaId = this.PageMetaDataService.getChannelId();
-    const isSameChannel = channelServiceId === pageMetaId;
+    const channelToLoad = this._getChannelToLoad();
+    if (channelToLoad !== null) {
+      this.CmsService.publish('load-channel', channelToLoad);
+    }
+  }
+
+  _getChannelToLoad() {
+    const channelIdFromService = this.ChannelService.getId();
+    const channelIdFromPage = this.PageMetaDataService.getChannelId();
+
+    if (channelIdFromService === channelIdFromPage) {
+      return null;
+    }
 
     if (this.ConfigService.projectsEnabled) {
-      const projectIdWasProvided = this.ChannelService.selectedProjectId;
-
-      if (!projectIdWasProvided && !isSameChannel) {
-        const baseChannelId = this.ProjectService.getBaseChannelId(pageMetaId);
-        this.CmsService.publish('load-channel', baseChannelId);
-      } else if (projectIdWasProvided && !isSameChannel) {
-        const baseChannelId = this.ProjectService.getBaseChannelId(channelServiceId);
-        this.CmsService.publish('load-channel', baseChannelId);
-      }
-    } else if (!isSameChannel) {
-      this.CmsService.publish('load-channel', pageMetaId);
+      const projectId = this.ChannelService.selectedProjectId;
+      return this.ProjectService.getBaseChannelId(projectId ? channelIdFromService : channelIdFromPage);
     }
+    return channelIdFromPage;
   }
 
   deleteComponent(componentId) {
