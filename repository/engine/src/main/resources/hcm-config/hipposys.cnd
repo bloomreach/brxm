@@ -255,7 +255,7 @@
 [hipposys:moduleconfig] > nt:base
 - * (undefined) multiple
 - * (undefined)
-+ * (hipposys:moduleconfig) multiple
++ * (hipposys:moduleconfig)
 
 // autoexport nodetype def is deprecated
 [hipposys:autoexport] > nt:base
