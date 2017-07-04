@@ -71,7 +71,9 @@ class MigrateNodeTypesToV12 {
         ntr.ignoreNextCheckReferencesInContent();
         ntm.unregisterNodeType(DEPRECATED_NT_HIPPOSYS_AUTOEXPORT);
         log.info("Migrated");
-        throw new RuntimeException("Migrated to V12.0.0, please restart again.");
+        if (!Boolean.getBoolean("repo.migrateToV12immediately")) {
+            throw new RuntimeException("Migrated to V12.0.0, please restart again.");
+        }
     }
 
     private void checkDeprecatedTypeNotInUse(final String nodeType) throws RepositoryException {
