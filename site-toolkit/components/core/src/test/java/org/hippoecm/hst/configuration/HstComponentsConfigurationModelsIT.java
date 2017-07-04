@@ -437,7 +437,7 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
     }
 
     private void removePagePrototypeFromConfig(final Session session) throws RepositoryException {
-        session.move("/hst:hst/hst:configurations/unittestproject/hst:prototypepages", "/hst:prototypepages");
+        session.getNode("/hst:hst/hst:configurations/unittestproject/hst:prototypepages").remove();
         session.save();
     }
 
