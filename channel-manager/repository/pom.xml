@@ -52,10 +52,6 @@
       <version>${hippo.repository.version}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-hst-configuration-editor-repository</artifactId>
-    </dependency>
   </dependencies>
 
 

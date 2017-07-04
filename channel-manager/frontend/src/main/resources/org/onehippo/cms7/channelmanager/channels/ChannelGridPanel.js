@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -125,12 +125,6 @@
                           'Force-Client-Host': 'true'
                       }
                     );
-                    break;
-                case 'open-hstconfigeditor':
-                    hstMountPoint = record.get('hstMountPoint');
-                    this.selectedChannelId = record.get('id');
-                    e.stopEvent();
-                    this.fireEvent('edit-hst-config', this.selectedChannelId, hstMountPoint);
                     break;
                 case 'show-live':
                     break;
