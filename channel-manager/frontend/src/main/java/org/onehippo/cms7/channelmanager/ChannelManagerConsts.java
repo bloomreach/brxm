@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,9 +20,7 @@ package org.onehippo.cms7.channelmanager;
  * Class to hold constant values used all-over the channel manager code
  */
 public final class ChannelManagerConsts {
-	
+
 	public static final String CONFIG_REST_PROXY_SERVICE_ID = "rest.proxy.service.id";
-    public static final String HST_CONFIG_EDITOR_DISABLED = "hst.config.editor.disabled";
-    public static final String HST_CONFIG_EDITOR_LOCK_INHERITED_NODES = "hst.config.editor.lock.inherited.nodes";
 
 }

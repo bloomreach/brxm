@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import org.onehippo.cms7.channelmanager.channels.BlueprintStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelStoreFactory;
-import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.widgets.ExtLinkPicker;
 import org.wicketstuff.js.ext.ExtPanel;
@@ -43,9 +42,6 @@ import org.wicketstuff.js.ext.layout.BorderLayout;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
-
-import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.HST_CONFIG_EDITOR_DISABLED;
-import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.HST_CONFIG_EDITOR_LOCK_INHERITED_NODES;
 
 @ExtClass("Hippo.ChannelManager.RootPanel")
 public class RootPanel extends ExtPanel {
@@ -56,8 +52,7 @@ public class RootPanel extends ExtPanel {
 
     public enum CardId {
         CHANNEL_MANAGER(0),
-        CHANNEL_EDITOR(1),
-        HST_CONFIG_EDITOR(2);
+        CHANNEL_EDITOR(1);
 
         private final int tabIndex;
 
@@ -131,44 +126,27 @@ public class RootPanel extends ExtPanel {
         add(this.channelStoreFuture);
 
 
-        // card 0: channel manager
+        // channel manager
         final ExtPanel channelManagerCard = new ExtPanel();
         channelManagerCard.setBorder(false);
         channelManagerCard.setTitle(Model.of(getString("channel-manager")));
         channelManagerCard.setHeader(false);
         channelManagerCard.setLayout(new BorderLayout());
 
-        final HstConfigEditor hstConfigEditor = createHstConfigEditor(context, config);
-
         final ChannelOverview channelOverview = new ChannelOverview(channelListConfig, composerRestMountPath,
-                this.channelStoreFuture, !blueprintStore.isEmpty(),
-                hstConfigEditor);
+                this.channelStoreFuture, !blueprintStore.isEmpty());
         channelOverview.setRegion(BorderLayout.Region.CENTER);
         channelManagerCard.add(channelOverview);
 
         channelManagerCard.add(this.blueprintStore);
-
         add(channelManagerCard);
 
+        // channel editor
         channelEditor = new ChannelEditor(context, editorConfig, composerRestMountPath, channelStoreFuture, contextPaths);
         add(channelEditor);
 
-        // card 2: HST config editor
-        if (hstConfigEditor != null) {
-            add(hstConfigEditor);
-        }
-
-        // card 3: folder picker
+        // folder picker
         add(new ExtLinkPicker(context));
-    }
-
-    private HstConfigEditor createHstConfigEditor(final IPluginContext context, final IPluginConfig config) {
-        if (config.getAsBoolean(HST_CONFIG_EDITOR_DISABLED, false)) {
-            return null;
-        } else {
-            final boolean lockInheritedConfig = config.getAsBoolean(HST_CONFIG_EDITOR_LOCK_INHERITED_NODES, true);
-            return new HstConfigEditor(context, lockInheritedConfig);
-        }
     }
 
     public void redraw() {

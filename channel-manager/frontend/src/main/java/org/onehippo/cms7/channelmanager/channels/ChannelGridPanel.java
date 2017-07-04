@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -19,12 +19,8 @@ package org.onehippo.cms7.channelmanager.channels;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.wicket.Localizer;
-import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -34,11 +30,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
-import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
-import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
-import org.wicketstuff.js.ext.util.ExtEventListener;
 import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
@@ -49,7 +42,6 @@ import org.wicketstuff.js.ext.util.JSONIdentifier;
 public class ChannelGridPanel extends ExtPanel {
 
     public static final String CHANNEL_GRID_PANEL_JS = "ChannelGridPanel.js";
-    public static final String EDIT_HST_CONFIG_EVENT = "edit-hst-config";
 
     private ChannelStore store;
     private List<String> visibleFields;
@@ -62,38 +54,7 @@ public class ChannelGridPanel extends ExtPanel {
     @SuppressWarnings("unused")
     private String composerRestMountPath;
 
-    private static class EditHstConfigListener extends ExtEventListener {
-        private final HstConfigEditor hstConfigEditor;
-
-        public EditHstConfigListener(final HstConfigEditor hstConfigEditor) {
-            this.hstConfigEditor = hstConfigEditor;
-        }
-
-        private static Object getValue(final Map<String, JSONArray> parameters, final String key) throws JSONException {
-            JSONArray values = parameters.get(key);
-            if (values == null || values.length() == 0) {
-                return null;
-            }
-            return values.get(0);
-        }
-
-        @Override
-        public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
-            if (this.hstConfigEditor == null) {
-                return;
-            }
-            try {
-                final String paramChannelId = StringEscapeUtils.escapeJavaScript((String)getValue(parameters, "channelId"));
-                final String paramHstMountPoint = (String) getValue(parameters, "hstMountPoint");
-                target.prependJavaScript("Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance').initEditor('" + paramChannelId + "');");
-                this.hstConfigEditor.setMountPoint(target, paramChannelId, paramHstMountPoint);
-            } catch (JSONException e) {
-                throw new WicketRuntimeException("Invalid JSON parameters", e);
-            }
-        }
-    }
-
-    public ChannelGridPanel(IPluginConfig channelListConfig, String composerRestMountPath, ExtStoreFuture storeFuture, final HstConfigEditor hstConfigEditor) {
+    public ChannelGridPanel(IPluginConfig channelListConfig, String composerRestMountPath, ExtStoreFuture storeFuture) {
         this.store = (ChannelStore) storeFuture.getStore();
 
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
@@ -101,16 +62,6 @@ public class ChannelGridPanel extends ExtPanel {
 
         visibleFields = parseChannelFields(channelListConfig);
         visibleFields.removeAll(ChannelStore.INTERNAL_FIELDS);
-
-        addEventListener(EDIT_HST_CONFIG_EVENT, new EditHstConfigListener(hstConfigEditor));
-    }
-
-    @Override
-    protected ExtEventAjaxBehavior newExtEventBehavior(final String event) {
-        if (EDIT_HST_CONFIG_EVENT.equals(event)) {
-            return new ExtEventAjaxBehavior("channelId", "hstMountPoint");
-        }
-        return super.newExtEventBehavior(event);
     }
 
     static List<String> parseChannelFields(IPluginConfig channelListConfig) {

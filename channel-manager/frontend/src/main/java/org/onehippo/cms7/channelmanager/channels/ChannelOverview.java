@@ -1,12 +1,12 @@
 /*
- * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
-import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtPanel;
@@ -46,8 +45,7 @@ public class ChannelOverview extends ExtPanel {
     public ChannelOverview(final IPluginConfig channelListConfig,
                            final String composerRestMountPath,
                            final ExtStoreFuture channelStoreFuture,
-                           boolean blueprintsAvailable,
-                           final HstConfigEditor hstConfigEditor) {
+                           boolean blueprintsAvailable) {
         this.store = (ChannelStore) channelStoreFuture.getStore();
 
         canModifyChannels = store.canModifyChannels();
@@ -61,7 +59,7 @@ public class ChannelOverview extends ExtPanel {
         add(channelIconCard);
 
         final ChannelGridPanel channelListCard = new ChannelGridPanel(channelListConfig, composerRestMountPath,
-                channelStoreFuture, hstConfigEditor);
+                channelStoreFuture);
         channelListCard.setRegion(BorderLayout.Region.CENTER);
         add(channelListCard);
     }

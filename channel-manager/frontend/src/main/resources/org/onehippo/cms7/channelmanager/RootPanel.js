@@ -238,28 +238,6 @@
 
     _isChannelEditorShown: function () {
       return this.layout.activeItem === this.items.get(1);
-    },
-
-    showConfigEditor: function (channelId) {
-      Hippo.ChannelManager.ChannelEditor.Instance.loadChannel(channelId);
-
-      this.toolbar.pushItem({
-        card: this.items.get(1),
-        click: function () {
-          this.layout.setActiveItem(1);
-        },
-        scope: this
-      });
-      this.toolbar.pushItem({
-        card: this.items.get(2),
-        click: function () {
-          this.layout.setActiveItem(2);
-        },
-        scope: this
-      });
-      this.layout.setActiveItem(2);
-
-      Hippo.Events.publish('CMSHstConfigEditor');
     }
   });
 

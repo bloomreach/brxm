@@ -99,10 +99,6 @@ public class ChannelEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
-    private Boolean hideHstConfigEditor;
-
-    @ExtProperty
-    @SuppressWarnings("unused")
     private final String ckeditorUrl;
 
     @ExtProperty
@@ -142,10 +138,6 @@ public class ChannelEditor extends ExtPanel {
                 (c -> getUuid(c.getString("projectsPath"))
                         .ifPresent(uuid -> this.projectsEnabled = true))
         );
-
-        // TODO: decide how to show hide hst-config-editor. Probably a config option in ChannelEditor constructor
-        // and a message from the ng app (a click) to show the hst-config-editor card
-        this.hideHstConfigEditor = true;
 
         addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
         addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context, getMarkupId()));
