@@ -9,6 +9,6 @@ definitions:
         autoexport:excluded: ['/**/hippo:lockExpirationTime', '/**/jcr:lockOwner', '/**/jcr:lockIsDeep']
         autoexport:filteruuidpaths: []
         autoexport:lastrevision:
-          .meta:category: runtime
+          .meta:category: system
         autoexport:ntrlastmodified:
-          .meta:category: runtime
+          .meta:category: system

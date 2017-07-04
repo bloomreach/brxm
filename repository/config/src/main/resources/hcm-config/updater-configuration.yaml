@@ -4,11 +4,11 @@ definitions:
       jcr:primaryType: hipposys:update
       jcr:mixinTypes: ['hippo:lockable']
       hippo:lockExpirationTime:
-        .meta:category: runtime
+        .meta:category: system
       jcr:lockOwner:
-        .meta:category: runtime
+        .meta:category: system
       jcr:lockIsDeep:
-        .meta:category: runtime
+        .meta:category: system
       /hippo:registry:
         .meta:residual-child-node-category: content
         jcr:primaryType: hipposys:updaterfolder
@@ -16,5 +16,5 @@ definitions:
         .meta:residual-child-node-category: content
         jcr:primaryType: hipposys:updaterfolder
       /hippo:history:
-        .meta:residual-child-node-category: runtime
+        .meta:residual-child-node-category: system
         jcr:primaryType: hipposys:updaterfolder

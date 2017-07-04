@@ -1,7 +1,7 @@
 definitions:
   config:
     /hippo:log:
-      .meta:residual-child-node-category: runtime
+      .meta:residual-child-node-category: system
       jcr:primaryType: hippolog:folder
       jcr:mixinTypes: ['mix:referenceable']
       jcr:uuid: ec0d0368-4803-4f19-b7d1-51963b558dab

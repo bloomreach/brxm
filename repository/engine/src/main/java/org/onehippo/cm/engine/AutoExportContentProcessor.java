@@ -214,7 +214,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
                 continue;
             }
             if (configNode.getChildPropertyCategory(propName) != ConfigurationItemCategory.CONFIG) {
-                // skip RUNTIME property
+                // skip SYSTEM property
                 continue;
             }
             // use Configuration.filterUuidPaths during delta computation (suppressing export of jcr:uuid)
