@@ -1088,7 +1088,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
-                + "      .meta:category: [runtime]\n";
+                + "      .meta:category: [system]\n";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node nodeMap = firstConfigTuple(root).getValueNode();
@@ -1116,7 +1116,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /:\n"
-                + "      .meta:category: runtime\n";
+                + "      .meta:category: system\n";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node nodeMap = firstConfigTuple(root).getValueNode();
@@ -1129,13 +1129,13 @@ public class SourceValidationTest extends AbstractBaseTest {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
-                + "      .meta:category: runtime\n"
+                + "      .meta:category: system\n"
                 + "      property: value\n";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node nodeMap = firstConfigTuple(root).getValueNode();
 
-        assertParserException(root, nodeMap, "Nodes that specify '.meta:category: runtime' cannot contain other keys");
+        assertParserException(root, nodeMap, "Nodes that specify '.meta:category: system' cannot contain other keys");
     }
 
     @Test
@@ -1144,7 +1144,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "  config:\n"
                 + "    /path/to/node:\n"
                 + "      property:\n"
-                + "        .meta:category: runtime\n"
+                + "        .meta:category: system\n"
                 + "        value: foo\n";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
@@ -1152,7 +1152,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyMap = firstTuple(nodeMap).getValueNode();
 
         assertParserException(root, propertyMap,
-                "Properties that specify '.meta:category: runtime' cannot contain other keys");
+                "Properties that specify '.meta:category: system' cannot contain other keys");
     }
 
     @Test
@@ -1161,7 +1161,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "  config:\n"
                 + "    /path/to/node:\n"
                 + "      jcr:primaryType:\n"
-                + "        .meta:category: runtime\n";
+                + "        .meta:category: system\n";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node nodeMap = firstConfigTuple(root).getValueNode();
@@ -1177,7 +1177,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "  config:\n"
                 + "    /path/to/node:\n"
                 + "      jcr:mixinTypes:\n"
-                + "        .meta:category: runtime\n";
+                + "        .meta:category: system\n";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node nodeMap = firstConfigTuple(root).getValueNode();
@@ -1208,7 +1208,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "  config:\n"
                 + "    /path/to:\n"
                 + "      /node[1]:\n"
-                + "        .meta:category: runtime\n";
+                + "        .meta:category: system\n";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node pathToMap = firstConfigTuple(root).getValueNode();
@@ -1224,7 +1224,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "  config:\n"
                 + "    /path/to:\n"
                 + "      /node[1]:\n"
-                + "        .meta:residual-child-node-category: runtime\n";
+                + "        .meta:residual-child-node-category: system\n";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node pathToMap = firstConfigTuple(root).getValueNode();

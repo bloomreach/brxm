@@ -18,7 +18,7 @@ package org.onehippo.cm.model;
 public enum ConfigurationItemCategory {
     CONFIG,
     CONTENT,
-    RUNTIME;
+    SYSTEM;
 
     public final String toString() {
         return name().toLowerCase();

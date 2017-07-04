@@ -29,6 +29,7 @@ import javax.jcr.PropertyType;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jackrabbit.JcrConstants;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.Value;
@@ -74,6 +75,74 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         }
         contentRoot = "/" + normalizePath(getPropertyValue("hippo:contentroot", PropertyType.STRING, true));
         setContentPath(contentRoot + "/" + sourceNode.getName());
+        migrationFixes();
+    }
+
+    private void migrationFixes() throws EsvParseException {
+        EsvNode eformsConfig = getContentNode("/hippo:configuration/hippo:modules/eforms/hippo:moduleconfig");
+        if (eformsConfig != null) {
+            // all eforms module config nodes must be of type hipposys:moduleconfig
+            fixPrimaryTypes(eformsConfig, "hipposys:moduleconfig");
+        }
+    }
+
+    private void fixPrimaryTypes(final EsvNode node, final String newType) {
+        fixPrimaryType(node, newType);
+        for (EsvNode child : node.getChildren()) {
+            fixPrimaryTypes(child, newType);
+        }
+    }
+
+    private void fixPrimaryType(final EsvNode node, final String newType) {
+        EsvProperty prop = node.getProperty(JcrConstants.JCR_PRIMARYTYPE);
+        if (prop != null && !newType.equals(prop.getValue())) {
+            EsvValue value;
+            if (prop.getValues().size() > 0) {
+                value = prop.getValues().get(0);
+            } else {
+                value = new EsvValue(prop.getType(), false, node.getSourceLocation());
+                prop.getValues().add(value);
+            }
+            value.setString(newType);
+        }
+    }
+
+    private EsvNode getContentNode(final String path) {
+        String[] elements = path.substring(1).split("/");
+        String nodePath = "/" + elements[0];
+        int index = 0;
+        EsvNode node = null;
+        while (getContentPath().startsWith(nodePath)) {
+            if (elements.length > index+1) {
+                if (getContentPath().startsWith(nodePath+"/"+elements[index+1])) {
+                    index++;
+                    nodePath = nodePath + "/" + elements[index];
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        if (getContentPath().equals(nodePath)) {
+            index++;
+            node = sourceNode;
+            for (; index < elements.length; index++) {
+                boolean found = false;
+                for (EsvNode child : node.getChildren()) {
+                    if (child.getName().equals(elements[index])) {
+                        node = child;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    node = null;
+                    break;
+                }
+            }
+        }
+        return node;
     }
 
     public boolean isDeltaMerge() {

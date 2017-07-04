@@ -1836,14 +1836,14 @@ public class ConfigurationTreeBuilderTest {
                 + "  config:\n"
                 + "    /a:\n"
                 + "      property:\n"
-                + "        .meta:category: runtime\n";
+                + "        .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
         builder.push((ContentDefinitionImpl) definitions2.get(0));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         assertEquals("[jcr:primaryType]", sortedCollectionToString(root.getNode("a[1]").getProperties()));
-        assertEquals(ConfigurationItemCategory.RUNTIME, root.getNode("a[1]").getChildPropertyCategory("property"));
+        assertEquals(ConfigurationItemCategory.SYSTEM, root.getNode("a[1]").getChildPropertyCategory("property"));
     }
 
     @Test
@@ -1853,7 +1853,7 @@ public class ConfigurationTreeBuilderTest {
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
                 + "      property:\n"
-                + "        .meta:category: runtime\n";
+                + "        .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         builder.push((ContentDefinitionImpl) definitions.get(0));
@@ -1872,7 +1872,7 @@ public class ConfigurationTreeBuilderTest {
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
         assertEquals("[jcr:primaryType]", sortedCollectionToString(root.getNode("a[1]").getProperties()));
-        assertEquals(ConfigurationItemCategory.RUNTIME, root.getNode("a[1]").getChildPropertyCategory("property"));
+        assertEquals(ConfigurationItemCategory.SYSTEM, root.getNode("a[1]").getChildPropertyCategory("property"));
     }
 
     @Test
@@ -1882,7 +1882,7 @@ public class ConfigurationTreeBuilderTest {
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
                 + "      property:\n"
-                + "        .meta:category: runtime\n";
+                + "        .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         builder.push((ContentDefinitionImpl) definitions.get(0));
@@ -1925,9 +1925,9 @@ public class ConfigurationTreeBuilderTest {
                 + "  config:\n"
                 + "    /a:\n"
                 + "      /b:\n"
-                + "        .meta:category: runtime\n"
+                + "        .meta:category: system\n"
                 + "    /a/c:\n"
-                + "      .meta:category: runtime\n";
+                + "      .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions2 = ModelTestUtils.parseNoSort(yaml2);
         builder.push((ContentDefinitionImpl) definitions2.get(0));
@@ -1936,8 +1936,8 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[d[1]]", sortedCollectionToString(a.getNodes()));
-        assertEquals(ConfigurationItemCategory.RUNTIME, a.getChildNodeCategory("b[1]"));
-        assertEquals(ConfigurationItemCategory.RUNTIME, a.getChildNodeCategory("c[1]"));
+        assertEquals(ConfigurationItemCategory.SYSTEM, a.getChildNodeCategory("b[1]"));
+        assertEquals(ConfigurationItemCategory.SYSTEM, a.getChildNodeCategory("c[1]"));
     }
 
     @Test
@@ -1957,7 +1957,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      /c[3]:\n"
                 + "        jcr:primaryType: foo\n"
                 + "    /a/c:\n"
-                + "      .meta:category: runtime\n";
+                + "      .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
 
@@ -1967,7 +1967,7 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
         final ConfigurationNodeImpl a = root.getNode("a[1]");
         assertEquals("[b[1], d[1]]", sortedCollectionToString(a.getNodes()));
-        assertEquals(ConfigurationItemCategory.RUNTIME, a.getChildNodeCategory("c[1]"));
+        assertEquals(ConfigurationItemCategory.SYSTEM, a.getChildNodeCategory("c[1]"));
     }
 
     @Test
@@ -1975,11 +1975,11 @@ public class ConfigurationTreeBuilderTest {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
-                + "      .meta:category: runtime\n"
+                + "      .meta:category: system\n"
                 + "    /b:\n"
                 + "      jcr:primaryType: foo\n"
                 + "      /c:\n"
-                + "        .meta:category: runtime\n";
+                + "        .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         builder.push((ContentDefinitionImpl) definitions.get(0));
@@ -2031,9 +2031,9 @@ public class ConfigurationTreeBuilderTest {
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
                 + "      /b:\n"
-                + "        .meta:category: runtime\n"
+                + "        .meta:category: system\n"
                 + "      /c:\n"
-                + "        .meta:category: runtime\n";
+                + "        .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         builder.push((ContentDefinitionImpl) definitions.get(0));
@@ -2069,14 +2069,14 @@ public class ConfigurationTreeBuilderTest {
                 + "        jcr:primaryType: foo\n"
                 + "        .meta:residual-child-node-category: content\n"
                 + "    /a/b:\n"
-                + "      .meta:residual-child-node-category: runtime\n";
+                + "      .meta:residual-child-node-category: system\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         builder.push((ContentDefinitionImpl) definitions.get(0));
         builder.push((ContentDefinitionImpl) definitions.get(1));
 
         final ConfigurationNodeImpl root = builder.finishModule().build();
-        assertEquals(ConfigurationItemCategory.RUNTIME, root.getNode("a[1]").getNode("b[1]").getResidualNodeCategory());
+        assertEquals(ConfigurationItemCategory.SYSTEM, root.getNode("a[1]").getNode("b[1]").getResidualNodeCategory());
     }
 
     @Test
@@ -2086,7 +2086,7 @@ public class ConfigurationTreeBuilderTest {
                 + "    /:\n"
                 + "      default: value\n"
                 + "      override:\n"
-                + "        .meta:category: runtime\n"
+                + "        .meta:category: system\n"
                 + "      /default:\n"
                 + "        jcr:primaryType: foo\n"
                 + "      /override:\n"
@@ -2097,12 +2097,12 @@ public class ConfigurationTreeBuilderTest {
         final ConfigurationNodeImpl root = builder.finishModule().build();
 
         assertEquals(ConfigurationItemCategory.CONFIG,  root.getChildNodeCategory("default[1]"));
-        assertEquals(ConfigurationItemCategory.RUNTIME, root.getChildNodeCategory("non-existing-node[1]"));
+        assertEquals(ConfigurationItemCategory.SYSTEM, root.getChildNodeCategory("non-existing-node[1]"));
         assertEquals(ConfigurationItemCategory.CONTENT, root.getChildNodeCategory("override[1]"));
         assertEquals(ConfigurationItemCategory.CONTENT, root.getChildNodeCategory("override[2]"));
         assertEquals(ConfigurationItemCategory.CONFIG,  root.getChildPropertyCategory("default"));
         assertEquals(ConfigurationItemCategory.CONFIG,  root.getChildPropertyCategory("non-existing-property"));
-        assertEquals(ConfigurationItemCategory.RUNTIME, root.getChildPropertyCategory("override"));
+        assertEquals(ConfigurationItemCategory.SYSTEM, root.getChildPropertyCategory("override"));
     }
 
     @Test
@@ -2113,7 +2113,7 @@ public class ConfigurationTreeBuilderTest {
                 + "      jcr:primaryType: foo\n"
                 + "      default: value\n"
                 + "      override:\n"
-                + "        .meta:category: runtime\n"
+                + "        .meta:category: system\n"
                 + "      /default:\n"
                 + "        jcr:primaryType: foo\n"
                 + "      /override:\n"
@@ -2130,7 +2130,7 @@ public class ConfigurationTreeBuilderTest {
         assertEquals(ConfigurationItemCategory.CONTENT, node.getChildNodeCategory("override[2]"));
         assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildPropertyCategory("default"));
         assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildPropertyCategory("non-existing-property"));
-        assertEquals(ConfigurationItemCategory.RUNTIME, node.getChildPropertyCategory("override"));
+        assertEquals(ConfigurationItemCategory.SYSTEM, node.getChildPropertyCategory("override"));
     }
 
     @Test
@@ -2142,11 +2142,11 @@ public class ConfigurationTreeBuilderTest {
                 + "      .meta:residual-child-node-category: content\n"
                 + "      default: value\n"
                 + "      override:\n"
-                + "        .meta:category: runtime\n"
+                + "        .meta:category: system\n"
                 + "      /default:\n"
                 + "        jcr:primaryType: foo\n"
                 + "      /override:\n"
-                + "        .meta:category: runtime\n";
+                + "        .meta:category: system\n";
 
         final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
         builder.push((ContentDefinitionImpl) definitions.get(0));
@@ -2155,11 +2155,11 @@ public class ConfigurationTreeBuilderTest {
 
         assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildNodeCategory("default[1]"));
         assertEquals(ConfigurationItemCategory.CONTENT, node.getChildNodeCategory("non-existing-node[1]"));
-        assertEquals(ConfigurationItemCategory.RUNTIME, node.getChildNodeCategory("override[1]"));
-        assertEquals(ConfigurationItemCategory.RUNTIME, node.getChildNodeCategory("override[2]"));
+        assertEquals(ConfigurationItemCategory.SYSTEM, node.getChildNodeCategory("override[1]"));
+        assertEquals(ConfigurationItemCategory.SYSTEM, node.getChildNodeCategory("override[2]"));
         assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildPropertyCategory("default"));
         assertEquals(ConfigurationItemCategory.CONFIG,  node.getChildPropertyCategory("non-existing-property"));
-        assertEquals(ConfigurationItemCategory.RUNTIME, node.getChildPropertyCategory("override"));
+        assertEquals(ConfigurationItemCategory.SYSTEM, node.getChildPropertyCategory("override"));
     }
 
     @Test

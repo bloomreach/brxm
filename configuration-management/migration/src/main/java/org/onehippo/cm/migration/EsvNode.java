@@ -20,19 +20,25 @@ import java.util.List;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.onehippo.cm.model.impl.SourceLocationImpl;
+import org.xml.sax.SAXException;
 
 public class EsvNode {
 
-    private final String name;
+    private String name;
     private final int index;
     private final SourceLocationImpl location;
     private EsvMerge merge;
     private String mergeLocation;
     private List<EsvProperty> properties = new ArrayList<>();
     private List<EsvNode> children = new ArrayList<>();
+    private boolean migrationFixed;
 
     private final String AUTH_ROLE_NT = "hipposys:authrole";
     private final String HIPPOSYS_ROLE = "hipposys:role";
+    private final String EFORMS_VALIDATIONRULE = "eforms:validationrule";
+    private final String EFORMS_DATERULE = "eforms:daterule";
+    private final String EFORMS_VALIDATIONRULEID = "eforms:validationruleid";
+    private final String EFORMS_DATERULEID = "eforms:dateruleid";
 
     public EsvNode(final String name, final int index, SourceLocationImpl location) {
         this.name = name;
@@ -40,13 +46,39 @@ public class EsvNode {
         this.location = location;
     }
 
-    public String getName() {
-        if (AUTH_ROLE_NT.equals(getType())) {
-            EsvProperty prop = getProperty(HIPPOSYS_ROLE);
-            if (prop != null && prop.getValue() != null) {
-                return prop.getValue();
+    void migrationFixes() throws SAXException {
+        if (!migrationFixed) {
+            if (AUTH_ROLE_NT.equals(getType())) {
+                EsvProperty prop = getProperty(HIPPOSYS_ROLE);
+                if (prop != null && prop.getValue() != null) {
+                    name = prop.getValue();
+                }
             }
+            else if (EFORMS_VALIDATIONRULE.equals(name)) {
+                EsvProperty prop = getProperty(EFORMS_VALIDATIONRULEID);
+                if (prop != null) {
+                    name = prop.getValue();
+                    properties.remove(prop);
+                } else {
+                    throw new SAXException("Incomplete '"+EFORMS_VALIDATIONRULE+"' node definition: missing required property '"
+                            +EFORMS_VALIDATIONRULEID+"' at "+getSourceLocation());
+                }
+            }
+            else if (EFORMS_DATERULE.equals(name)) {
+                EsvProperty prop = getProperty(EFORMS_DATERULEID);
+                if (prop != null) {
+                    name = prop.getValue();
+                    properties.remove(prop);
+                } else {
+                    throw new SAXException("Incomplete '" + EFORMS_DATERULE + "' node definition: missing required property '"
+                            + EFORMS_DATERULEID + "' at " + getSourceLocation());
+                }
+            }
+            migrationFixed = true;
         }
+    }
+
+    public String getName() {
         return name;
     }
 
