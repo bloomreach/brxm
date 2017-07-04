@@ -230,7 +230,16 @@ public class XmlInstruction extends PluginInstruction {
         return overwrite;
     }
 
-    public void setOverwrite(final boolean overwrite) {
+    /**
+     * Setting overwrite=true is not yet supported!
+     * Invoking this method with value parameter override=true will result in an UnsupportedOperationException been thrown
+     * @throws UnsupportedOperationException when invoked with overwrite=true
+     * @param overwrite
+     */
+    public void setOverwrite(final boolean overwrite) throws UnsupportedOperationException {
+        if (overwrite) {
+            throw new UnsupportedOperationException("Setting override=true for XmlInstruction is currently not supported");
+        }
         this.overwrite = overwrite;
     }
 

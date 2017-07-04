@@ -62,12 +62,13 @@ public class XmlInstructionTest extends BaseRepositoryTest {
         status = executor.execute(set, getContext());
         assertTrue("Expected SKIPPED but got: " + status, status == InstructionStatus.SKIPPED);
         //############################################
-        // OVERRIDE TRUE TEST
+        // OVERRIDE TRUE TEST: NOT SUPPORTED YET
         //############################################
+        /*
         addNodeInstruction.setOverwrite(true);
         status = executor.execute(set, getContext());
         assertTrue("Expected SUCCESS but got: " + status, status == InstructionStatus.SUCCESS);
-
+        */
 
         //############################################
         // DELETE
