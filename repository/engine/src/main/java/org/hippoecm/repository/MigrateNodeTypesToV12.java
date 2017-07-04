@@ -60,7 +60,7 @@ class MigrateNodeTypesToV12 {
 
     public void migrateIfNeeded() throws RepositoryException {
         if (!ntm.hasNodeType(DEPRECATED_NT_HIPPOSYS_AUTOEXPORT)) {
-            log.debug("Already migrated");
+            log.debug("No migration needed");
             return;
         }
 
