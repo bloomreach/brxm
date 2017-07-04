@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,7 +56,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     Node readDomain;
     Node writeDomain;
     Node testUser;
-    
+
     Session userSession;
 
     // nodes that have to be cleaned up
@@ -155,10 +155,10 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         // save content
         session.save();
-        
+
         // refresh session to be sure uuids are refreshed on all nodes
         session.refresh(false);
-        
+
         // create test navigation
         createTestNavigation(testData);
 
@@ -182,54 +182,54 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     private void createDomains(final Node domains) throws RepositoryException {
         // create hippodoc domain
         hipDocDomain = domains.addNode(DOMAIN_DOC_NODE, HippoNodeType.NT_DOMAIN);
-        Node ar = hipDocDomain.addNode("hippo:authrole", HippoNodeType.NT_AUTHROLE);
+        Node ar = hipDocDomain.addNode("readonly", HippoNodeType.NT_AUTHROLE);
         ar.setProperty(HippoNodeType.HIPPO_ROLE, "readonly");
         ar.setProperty(HippoNodeType.HIPPO_USERS, new String[]{TEST_USER_ID});
 
-        Node dr = hipDocDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
-        Node fr = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+        Node dr = hipDocDomain.addNode("testdocument-type", HippoNodeType.NT_DOMAINRULE);
+        Node fr = dr.addNode("testdocument-type-rule", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, "nodetype");
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "hippo:testdocument");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "Name");
 
         // create read domain
         readDomain = domains.addNode(DOMAIN_READ_NODE, HippoNodeType.NT_DOMAIN);
-        ar = readDomain.addNode("hippo:authrole", HippoNodeType.NT_AUTHROLE);
+        ar = readDomain.addNode("readonly", HippoNodeType.NT_AUTHROLE);
         ar.setProperty(HippoNodeType.HIPPO_ROLE, "readonly");
         ar.setProperty(HippoNodeType.HIPPO_USERS, new String[]{TEST_USER_ID});
 
-        dr = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
-        fr = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+        dr = readDomain.addNode("authtest-read", HippoNodeType.NT_DOMAINRULE);
+        fr = dr.addNode("authtest-read-rule", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, "authtest");
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "canread");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "String");
 
-        dr = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
-        fr = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+        dr = readDomain.addNode("user", HippoNodeType.NT_DOMAINRULE);
+        fr = dr.addNode("user-rule", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, "user");
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "__user__");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "String");
 
-        dr = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
-        fr = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+        dr = readDomain.addNode("group", HippoNodeType.NT_DOMAINRULE);
+        fr = dr.addNode("group-rule", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, "group");
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "__group__");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "String");
 
-        dr = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
-        fr = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+        dr = readDomain.addNode("role", HippoNodeType.NT_DOMAINRULE);
+        fr = dr.addNode("role-rule", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, "role");
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "__role__");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "String");
 
         // create write domain
         writeDomain = domains.addNode(DOMAIN_WRITE_NODE, HippoNodeType.NT_DOMAIN);
-        ar = writeDomain.addNode("hippo:authrole", HippoNodeType.NT_AUTHROLE);
+        ar = writeDomain.addNode("readwrite", HippoNodeType.NT_AUTHROLE);
         ar.setProperty(HippoNodeType.HIPPO_ROLE, "readwrite");
         ar.setProperty(HippoNodeType.HIPPO_USERS, new String[]{TEST_USER_ID});
 
-        dr = writeDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
-        fr = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+        dr = writeDomain.addNode("authtest-write", HippoNodeType.NT_DOMAINRULE);
+        fr = dr.addNode("authtest-write-rule", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, "authtest");
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "canwrite");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "String");
@@ -565,11 +565,11 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
             assertEquals("Unexpected count for resultset", count, testNav.getNode("search").getNode("hippo:resultset").getProperty("hippo:count").getLong());
             assertFalse(testNav.getNode("search").getNode("hippo:resultset").hasNode(TEST_USER_ID));
         }
-        
+
         // Add a domain rule with facetrule such that the userSession can now read the node it cannot read above by
         // setting a facetrule that nodes of name __user__ can be read. user is expanded by the userId of the userSession
-        Node dr  = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
-        Node fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+        Node dr  = readDomain.addNode("nodename-user", HippoNodeType.NT_DOMAINRULE);
+        Node fr  = dr.addNode("nodename-user-rule", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, "nodename");
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "__user__");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "Name");
@@ -601,8 +601,8 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
     @Test
     public void testNonDocumentTypeNodesAreAuthorized() throws RepositoryException {
-        Node dr  = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
-        Node fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+        Node dr  = readDomain.addNode("authtestdocument-type", HippoNodeType.NT_DOMAINRULE);
+        Node fr  = dr.addNode("authtestdocument-type-rule", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, "jcr:primaryType");
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "hippo:authtestdocument");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "Name");
@@ -782,7 +782,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
             // expected
             userSession.refresh(false);
         }
-        // FIXME HREPTWO-2126: Should not be allowed to remove nodes on which the 
+        // FIXME HREPTWO-2126: Should not be allowed to remove nodes on which the
         // user only has read permisssions
         try {
             testData.getNode("writedoc0/subread").remove();
@@ -822,7 +822,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
             node = testData.getNode("writedoc0");
             node.addNode("mynode1", "hippo:authtestdocument").setProperty("authtest", "none");
             userSession.save();
-            
+
             // JackRabbit swallows the AccessDeniedException, so check manually for node
             try {
                 userSession.refresh(false);
@@ -839,7 +839,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
             node = testData.getNode("writedoc0");
             node.addNode("mynode2", "hippo:authtestdocument").setProperty("authtest", "canread");
             userSession.save();
-            
+
             // JackRabbit swallows the AccessDeniedException, so check manually for node
             try {
                 userSession.refresh(false);
@@ -872,7 +872,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
                 Node c = ((HippoNode)n).getCanonicalNode();
                 if(c == null) {
                     fail("Item "+n.getPath()+" should not have appeared in the resultset");
-                } 
+                }
             } catch(Exception ex) {
                 fail("Item "+n.getPath()+" should not have appeared in the resultset");
             }
@@ -898,10 +898,10 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         while (directIter.hasNext()) {
             directIter.nextNode().getName();
         }
-        
-        
+
+
         NodeIterator iter = navNode.getNodes();
-        
+
         while (iter.hasNext()) {
             iter.nextNode().getName();
         }
@@ -1086,14 +1086,14 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         testData.getNode("readdoc0").addNode("writable", "hippo:authtestdocument");
         testData.getNode("readdoc0").addNode("invisible", "hippo:authtestdocument");
 
-        Node dr = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
-        Node fr = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+        Node dr = readDomain.addNode("nodename-readable", HippoNodeType.NT_DOMAINRULE);
+        Node fr = dr.addNode("nodename-readable-rule", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, "nodename");
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "readable");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "Name");
 
-        dr  = writeDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
-        fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+        dr  = writeDomain.addNode("nodename-writable", HippoNodeType.NT_DOMAINRULE);
+        fr  = dr.addNode("nodename-writable-rule", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, "nodename");
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "writable");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "Name");
@@ -1140,8 +1140,8 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         otherDoc.setProperty("optionalfacet", "incorrectvalue");
         otherDoc.setProperty("authtest", "canread");
 
-        Node dr = readDomain.getNode("hippo:domainrule");
-        Node fr = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+        Node dr = readDomain.getNode("authtest-read");
+        Node fr = dr.addNode("optional-rule", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, "optionalfacet");
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, optionalFacetValue);
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "String");

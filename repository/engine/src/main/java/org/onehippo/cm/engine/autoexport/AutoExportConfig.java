@@ -236,4 +236,8 @@ public class AutoExportConfig {
         node.setProperty(AutoExportConstants.CONFIG_LAST_REVISION_PROPERTY_NAME, lastRevision);
         this.lastRevision = lastRevision;
     }
+
+    synchronized void resetLastRevision() {
+        lastRevision = null;
+    }
 }

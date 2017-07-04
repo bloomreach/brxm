@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.hippoecm.repository;
 
 import java.security.AccessControlException;
 
-import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -85,7 +84,7 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         // should result in no read access below /test/folder
 
         final Node domainRule = testDomain.addNode("domainrule", "hipposys:domainrule");
-        createFacetRule(domainRule, true, "jcr:path", "Reference", "/test/folder/non/existing");
+        createFacetRule(domainRule, "facetRule", true, "jcr:path", "Reference", "/test/folder/non/existing");
         session.save();
 
         Session testSession = null;
@@ -108,7 +107,7 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         // should result in no read access below /test/folder
 
         final Node domainRule = testDomain.addNode("domainRule", "hipposys:domainrule");
-        createFacetRule(domainRule, false, "jcr:path", "Reference", "/test/folder/non/existing");
+        createFacetRule(domainRule, "facetRule", false, "jcr:path", "Reference", "/test/folder/non/existing");
         session.save();
 
         Session testSession = null;
@@ -131,8 +130,8 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         // non existing reference. Result should be no read access below /test/folder
 
         final Node domainRule = testDomain.addNode("domainRule", "hipposys:domainrule");
-        createFacetRule(domainRule, true, "jcr:path", "Reference", "/test/folder");
-        createFacetRule(domainRule, true, "jcr:path", "Reference", "/test/folder/non/existing");
+        createFacetRule(domainRule, "facetRule1", true, "jcr:path", "Reference", "/test/folder");
+        createFacetRule(domainRule, "facetRule2", true, "jcr:path", "Reference", "/test/folder/non/existing");
         session.save();
 
         Session testSession = null;
@@ -156,8 +155,8 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         // is readable
 
         final Node domainRule = testDomain.addNode("domainRule", "hipposys:domainrule");
-        createFacetRule(domainRule, true, "jcr:path", "Reference", "/test/folder");
-        createFacetRule(domainRule, false, "jcr:path", "Reference", "/test/folder/non/existing");
+        createFacetRule(domainRule, "facetRule1", true, "jcr:path", "Reference", "/test/folder");
+        createFacetRule(domainRule, "facetRule2", false, "jcr:path", "Reference", "/test/folder/non/existing");
         session.save();
 
         Session testSession = null;
@@ -196,8 +195,8 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         // non existing reference. Result should be no read access below /test/folder
 
         final Node domainRule = testDomain.addNode("domainRule", "hipposys:domainrule");
-        createFacetRule(domainRule, true, "jcr:path", "Reference", "/test/folder/non/existing/one");
-        createFacetRule(domainRule, true, "jcr:path", "Reference", "/test/folder/non/existing/two");
+        createFacetRule(domainRule, "facetRule1", true, "jcr:path", "Reference", "/test/folder/non/existing/one");
+        createFacetRule(domainRule, "facetRule2", true, "jcr:path", "Reference", "/test/folder/non/existing/two");
         session.save();
 
         Session testSession = null;
@@ -220,8 +219,8 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         // non existing reference. Result should be no read access below /test/folder
 
         final Node domainRule = testDomain.addNode("domainRule", "hipposys:domainrule");
-        createFacetRule(domainRule, false, "jcr:path", "Reference", "/test/folder/non/existing/one");
-        createFacetRule(domainRule, false, "jcr:path", "Reference", "/test/folder/non/existing/two");
+        createFacetRule(domainRule, "facetRule1", false, "jcr:path", "Reference", "/test/folder/non/existing/one");
+        createFacetRule(domainRule, "facetRule2", false, "jcr:path", "Reference", "/test/folder/non/existing/two");
         session.save();
 
         Session testSession = null;
@@ -245,9 +244,9 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         // is readable
 
         final Node domainRule = testDomain.addNode("domainRule", "hipposys:domainrule");
-        createFacetRule(domainRule, true, "jcr:path", "Reference", "/test/folder");
+        createFacetRule(domainRule, "facetRule1", true, "jcr:path", "Reference", "/test/folder");
         // INSTEAD OF jcr:path now jcr:uuid !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        createFacetRule(domainRule, false, "jcr:uuid", "Reference", "/test/folder/non/existing");
+        createFacetRule(domainRule, "facetRule2", false, "jcr:uuid", "Reference", "/test/folder/non/existing");
         session.save();
 
         Session testSession = null;
@@ -283,8 +282,8 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         return server.login(new SimpleCredentials("testUser", "password".toCharArray()));
     }
 
-    private void createFacetRule(final Node domainRule, boolean equals, String facet, String type, String value) throws RepositoryException {
-        final Node facetRule = domainRule.addNode("hippo:facetrule", "hipposys:facetrule");
+    private void createFacetRule(final Node domainRule, final String ruleName, boolean equals, String facet, String type, String value) throws RepositoryException {
+        final Node facetRule = domainRule.addNode(ruleName, "hipposys:facetrule");
         facetRule.setProperty("hipposys:equals", equals);
         facetRule.setProperty("hipposys:facet", facet);
         facetRule.setProperty("hipposys:type", type);

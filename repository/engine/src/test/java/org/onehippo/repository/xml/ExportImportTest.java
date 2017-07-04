@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import static org.hippoecm.repository.api.ImportReferenceBehavior.IMPORT_REFEREN
 import static org.junit.Assert.assertEquals;
 
 public class ExportImportTest extends RepositoryTestCase {
-    
+
     private final static String[] content = {
         "/test", "nt:unstructured",
         "foo", "bar",
@@ -43,11 +43,12 @@ public class ExportImportTest extends RepositoryTestCase {
         String actual = normalize(new String(out.toByteArray()));
         String expected = normalize(IOUtils.toString(getClass().getClassLoader().getResourceAsStream("export/expected.xml")));
         assertEquals(expected, actual);
+        session.getNode("/test").remove();
         ((HippoSession) session).importEnhancedSystemViewXML("/",
                 getClass().getClassLoader().getResourceAsStream("export/expected.xml"),
                 IMPORT_UUID_COLLISION_THROW, IMPORT_REFERENCE_NOT_FOUND_THROW, null);
         out = new ByteArrayOutputStream();
-        ((HippoSession) session).exportDereferencedView("/test[2]", out, false, false);
+        ((HippoSession) session).exportDereferencedView("/test", out, false, false);
         actual = normalize(out.toString());
         assertEquals(expected, actual);
     }

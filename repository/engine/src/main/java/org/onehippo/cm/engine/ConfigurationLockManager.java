@@ -80,6 +80,7 @@ public class ConfigurationLockManager {
     public ConfigurationLockManager(final Session configurationSession) throws RepositoryException {
         final SimpleCredentials credentials = new SimpleCredentials(configurationSession.getUserID(), new char[]{});
         lockSession = configurationSession.impersonate(credentials);
+        lockSession.getWorkspace().getObservationManager().setUserData(Constants.HCM_ROOT);
         lockOwnerId = getClusterNodeId(lockSession);
         hippoLockManager = (HippoLockManager) lockSession.getWorkspace().getLockManager();
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         // alice can read and write to /test/folder and everything *below* it that is of type 'hippostd:folder' or 'hippo:testdocument'
         // thus not "hippo:authtestdocument"
         final Node pathFacetAndTypeRuleDomain = domains.addNode("pathFacetAndTypeRuleDomain", "hipposys:domain");
-        domainRule = pathFacetAndTypeRuleDomain.addNode("read-folders-in-test-folder-and-below", "hipposys:domainrule");
+        domainRule = pathFacetAndTypeRuleDomain.addNode("read-folders-in-test-folder-and-below-type-hippostd-folder", "hipposys:domainrule");
         facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
         facetRule.setProperty("hipposys:equals", true);
         facetRule.setProperty("hipposys:facet", "jcr:path");
@@ -106,7 +106,7 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         facetRule.setProperty("hipposys:type", "Name");
         facetRule.setProperty("hipposys:value", "hippostd:folder");
 
-        domainRule = pathFacetAndTypeRuleDomain.addNode("read-folders-in-test-folder-and-below", "hipposys:domainrule");
+        domainRule = pathFacetAndTypeRuleDomain.addNode("read-folders-in-test-folder-and-below-type-test-document", "hipposys:domainrule");
         facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
         facetRule.setProperty("hipposys:equals", true);
         facetRule.setProperty("hipposys:facet", "jcr:path");

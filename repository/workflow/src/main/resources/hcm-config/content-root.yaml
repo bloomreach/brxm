@@ -1,7 +1,7 @@
 definitions:
   config:
     /content:
-      .meta:residual-child-node-category: runtime
+      .meta:residual-child-node-category: system
       jcr:primaryType: hippostd:folder
       jcr:mixinTypes: ['mix:referenceable']
       jcr:uuid: ed307dfc-5774-4ac7-9feb-79b57e058bb2
@@ -27,7 +27,7 @@ definitions:
         hippostd:foldertype: [new-file-folder]
         hippostd:gallerytype: ['hippogallery:exampleAssetSet']
       /attic:
-        .meta:residual-child-node-category: runtime
+        .meta:residual-child-node-category: system
         jcr:primaryType: hippostd:folder
         jcr:mixinTypes: ['mix:referenceable']
         jcr:uuid: b576e833-4910-4c42-987c-8eeb8b23e06d
