@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -232,7 +232,7 @@ public class XmlInstruction extends PluginInstruction {
 
     /**
      * Setting overwrite=true is not yet supported!
-     * Invoking this method with value parameter override=true will result in an UnsupportedOperationException been thrown
+     * Invoking this method with value parameter override=true will result in an UnsupportedOperationException being thrown
      * @throws UnsupportedOperationException when invoked with overwrite=true
      * @param overwrite
      */
