@@ -1,12 +1,12 @@
 definitions:
   config:
     /polldata:
-      .meta:residual-child-node-category: runtime
+      .meta:residual-child-node-category: system
       jcr:primaryType: poll:polldata
       jcr:mixinTypes: ['hippo:lockable', 'mix:lockable']
       hippo:lockExpirationTime:
-        .meta:category: runtime
+        .meta:category: system
       jcr:lockOwner:
-        .meta:category: runtime
+        .meta:category: system
       jcr:lockIsDeep:
-        .meta:category: runtime
+        .meta:category: system
