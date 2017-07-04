@@ -18,7 +18,8 @@ class MenuItem {
 
   constructor(name, config = {}) {
     this.name = name;
-    this.translationKey = config.translationKey;
+    this.translationKey = config.translationKey || name;
+    this.translationKeyFunction = config.translationKeyFunction;
 
     this.isVisible = config.isVisible || this.isVisible;
     this.isEnabled = config.isEnabled || this.isEnabled;
@@ -31,13 +32,6 @@ class MenuItem {
 
   isVisible() {
     return true;
-  }
-
-  getTranslationKey() {
-    if (this.translationKey === undefined) {
-      return this.name;
-    }
-    return this.translationKey();
   }
 
   isEnabled() {

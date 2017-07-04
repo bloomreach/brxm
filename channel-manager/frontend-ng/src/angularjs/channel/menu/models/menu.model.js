@@ -29,13 +29,6 @@ class Menu extends MenuItem {
     this.items.push(item);
   }
 
-  getTranslationKey() {
-    if (this.translationKey === undefined) {
-      return this.name;
-    }
-    return this.translationKey();
-  }
-
   hasIcons() {
     return this.items
         .filter(item => item.type === 'action')

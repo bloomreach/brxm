@@ -24,12 +24,12 @@ describe('MenuItem model', () => {
 
   it('uses the name as the default translation key', () => {
     const item = new MenuItem('test-menu-item');
-    expect(item.getTranslationKey()).toBe('test-menu-item');
+    expect(item.translationKey).toBe('test-menu-item');
   });
 
   it('can have a custom translation key', () => {
-    const item = new MenuItem('test-menu-item', { translationKey: () => 'test-translation-key' });
-    expect(item.getTranslationKey()).toBe('test-translation-key');
+    const item = new MenuItem('test-menu-item', { translationKey: 'test-translation-key' });
+    expect(item.translationKey).toBe('test-translation-key');
   });
 
   it('is visible and enabled by default', () => {
