@@ -84,9 +84,9 @@ definitions:
       emptyString: []
     /categories:
       regular-property: value
-      runtime-property:
-        .meta:category: runtime
+      system-property:
+        .meta:category: system
       /category:
-        .meta:category: runtime
+        .meta:category: system
       /residual-child-node-category:
         .meta:residual-child-node-category: content

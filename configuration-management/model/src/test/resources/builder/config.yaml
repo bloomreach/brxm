@@ -8,12 +8,12 @@ definitions:
           jcr:primaryType: foo
           d: configuration
           e:
-            .meta:category: runtime
+            .meta:category: system
         /c-content:
           .meta:category: content
         /c-residual-content:
           .meta:residual-child-node-category: content
           jcr:primaryType: foo
           d: configuration
-        /c-runtime:
-          .meta:category: runtime
+        /c-system:
+          .meta:category: system
