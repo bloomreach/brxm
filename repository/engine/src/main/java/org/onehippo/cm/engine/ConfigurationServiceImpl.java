@@ -122,7 +122,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             final boolean isPojectBaseDirSet = !StringUtils.isBlank(System.getProperty(PROJECT_BASEDIR_PROPERTY));
             final boolean autoExportAllowed = isPojectBaseDirSet && Boolean.getBoolean(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED);
 
-            baselineModel = loadBaselineModel();
+            ConfigurationModelImpl baselineModel = loadBaselineModel();
             ConfigurationModelImpl bootstrapModel = null;
             boolean success;
             if (mustConfigure) {
@@ -149,6 +149,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         // we want to avoid using bootstrap modules directly, because of awkward ZipFileSystems
                         baselineModel = loadBaselineModel();
 
+                        // if we're in a mode that allows auto-export, keep a copy of the baseline for future use
+                        if (autoExportAllowed) {
+                            this.baselineModel = baselineModel;
+                        }
+
                         // also, we prefer using source modules over baseline modules
                         runtimeConfigurationModel = mergeWithSourceModules(bootstrapModel, baselineModel);
                     }
@@ -163,6 +168,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         log.info("ConfigurationService: start autoexport service");
                         startAutoExportService();
                     }
+
                 } finally {
                     if (bootstrapModel != null) {
                         try {
@@ -175,6 +181,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             }
             else {
                 log.info("ConfigurationService: start repository services");
+                // todo: load runtimeConfigurationModel (from baseline?)
                 startRepositoryServicesTask.execute();
             }
         } finally {
@@ -267,6 +274,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     // TODO: confirm that this is the appropriate scope (public, but not exposed on interface)
     public boolean updateBaselineForAutoExport(final Collection<ModuleImpl> updatedModules) {
         try {
+            if (baselineModel == null) {
+                baselineModel = loadBaselineModel();
+            }
+
             baselineModel = baselineService.updateBaselineModules(updatedModules, baselineModel, session);
             runtimeConfigurationModel = mergeWithSourceModules(updatedModules, baselineModel);
             return true;

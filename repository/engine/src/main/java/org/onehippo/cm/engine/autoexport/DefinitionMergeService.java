@@ -320,13 +320,13 @@ public class DefinitionMergeService {
             // todo: handle new order-before!
 
             // handle properties, then child nodes
-            for (final DefinitionPropertyImpl defProperty : incomingDefNode.getModifiableProperties().values()) {
+            for (final DefinitionPropertyImpl defProperty : incomingDefNode.getProperties().values()) {
                 // handle properties on an existing node
                 mergeProperty(defProperty, incomingConfigNode, toExport, model);
             }
 
             // any child node here may or may not be new -- do full recursion
-            for (DefinitionNodeImpl childNodeDef : incomingDefNode.getModifiableNodes().values()) {
+            for (DefinitionNodeImpl childNodeDef : incomingDefNode.getNodes().values()) {
                 mergeConfigDefinitionNode(childNodeDef, toExport, model);
             }
         }
@@ -565,7 +565,7 @@ public class DefinitionMergeService {
         }
 
         // TODO do we need to sort accounting for order-before, or does the diff step order things w/o explicit order-before?
-        for (final DefinitionNodeImpl childNode : from.getModifiableNodes().values()) {
+        for (final DefinitionNodeImpl childNode : from.getNodes().values()) {
             // for each new childNode, we need to check if LocationMapper wants a new source file
             final String incomingPath = childNode.getPath();
             if (shouldPathCreateNewSource(incomingPath)) {
@@ -753,6 +753,7 @@ public class DefinitionMergeService {
         final DefinitionNodeImpl parentNode = definitionItem.getParent();
         if (definitionItem instanceof DefinitionNode) {
             // remove the node from its parent
+            // todo: one of very few remaining uses of getModifiableNodes()
             parentNode.getModifiableNodes().remove(definitionItem.getName());
 
             // remove referenced resources
@@ -760,6 +761,7 @@ public class DefinitionMergeService {
         }
         else {
             // remove the property from its parent
+            // todo: one of very few remaining uses of getModifiableProperties()
             parentNode.getModifiableProperties().remove(definitionItem.getName());
 
             // remove referenced resources
