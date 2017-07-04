@@ -1,5 +1,5 @@
 definitions:
   config:
     /webfiles:
-      .meta:residual-child-node-category: runtime
+      .meta:residual-child-node-category: system
       jcr:primaryType: webfiles:webfiles
