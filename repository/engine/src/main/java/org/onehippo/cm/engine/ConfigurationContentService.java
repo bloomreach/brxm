@@ -58,7 +58,7 @@ public class ConfigurationContentService {
     private final JcrContentProcessor contentProcessingService;
     private final ConfigurationBaselineService configurationBaselineService;
 
-    ConfigurationContentService(final ConfigurationBaselineService configurationBaselineService, JcrContentProcessor contentProcessingService) {
+    ConfigurationContentService(final ConfigurationBaselineService configurationBaselineService, final JcrContentProcessor contentProcessingService) {
         this.configurationBaselineService = configurationBaselineService;
         this.contentProcessingService = contentProcessingService;
     }
