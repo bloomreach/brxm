@@ -120,16 +120,19 @@ public class ConfigurationContentService {
             final Optional<ActionType> optionalAction = findLastActionToApply(baseNodePath, actionsToProcess);
             final boolean nodeAlreadyProcessed = configurationBaselineService.getAppliedContentPaths(session).contains(baseNodePath);
 
-            final Optional<String> failedParentPath = failedPaths.stream().filter(baseNodePath::startsWith).findFirst();
+            if (failedPaths.stream().anyMatch(baseNodePath::startsWith)) {
+                log.info(String.format("Skipping the (re-)loading of content based at '%s', " +
+                        "because the processing of an ancestor node has failed.", baseNodePath));
+                continue;
+            }
 
-            if (!failedParentPath.isPresent() && (optionalAction.isPresent() || !nodeAlreadyProcessed)) {
+            if (optionalAction.isPresent() || !nodeAlreadyProcessed) {
                 final ActionType action = optionalAction.orElse(ActionType.APPEND);
 
                 try {
                     if (ConfigurationModelUtils.getCategoryForNode(baseNodePath, model) == ConfigurationItemCategory.CONTENT) {
                         log.debug("Processing {} action for node: {}", action, baseNodePath);
                         contentProcessingService.apply(contentNode, action, session);
-                        failedPaths.clear();
 
                         if (!nodeAlreadyProcessed) {
                             // will save all the session changes!
@@ -145,9 +148,6 @@ public class ConfigurationContentService {
                     log.error(String.format("Processing '%s' action for node failed: '%s'", action, baseNodePath), ex);
                     failedPaths.add(baseNodePath);
                 }
-            } else if (failedParentPath.isPresent()) {
-                log.debug(String.format("Parent node '%s' processing failed, skipping '%s'", failedParentPath.get(), baseNodePath));
-                failedPaths.add(baseNodePath);
             }
         }
 
