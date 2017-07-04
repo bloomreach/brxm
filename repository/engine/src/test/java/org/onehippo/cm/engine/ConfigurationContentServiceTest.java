@@ -24,7 +24,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ConfigurationItemCategory;
-import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
