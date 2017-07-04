@@ -28,10 +28,6 @@
   <artifactId>hippo-repository-engine</artifactId>
   <packaging>jar</packaging>
 
-  <properties>
-    <easymock.version>3.4</easymock.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>javax.jcr</groupId>
@@ -192,12 +188,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-testutils</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <version>${easymock.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

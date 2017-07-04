@@ -36,6 +36,7 @@ import org.onehippo.cm.model.impl.ProjectImpl;
 
 import com.google.common.collect.ImmutableList;
 
+import junit.framework.AssertionFailedError;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.createNiceMock;
@@ -60,7 +61,7 @@ public class ConfigurationContentServiceTest {
     }
 
     @Test
-    public void apply() throws Exception {
+    public void apply_failed_content() throws Exception {
 
         final Session session = createNiceMock(Session.class);
 
@@ -69,36 +70,36 @@ public class ConfigurationContentServiceTest {
         final ConfigurationNodeImpl configurationNode = new ConfigurationNodeImpl();
         configurationNode.setResidualNodeCategory(ConfigurationItemCategory.CONTENT);
 
-        final ModuleImpl stubModule = createModule();
+        final ModuleImpl stubModule = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
+        final DefinitionNodeImpl defNode4 = addContentDefinition(stubModule, "source4", "/some/sibling/path").getNode();
+        final DefinitionNodeImpl defNode2 = addContentDefinition(stubModule, "source2", "/some/path/child").getNode();
+        final DefinitionNodeImpl defNode1 = addContentDefinition(stubModule, "source1", "/some/path").getNode();
+        final DefinitionNodeImpl defNode3 = addContentDefinition(stubModule, "source3", "/some/sibling").getNode();
 
         expect(model.getConfigurationRootNode()).andReturn(configurationNode).atLeastOnce();
-
         expect(model.getModules()).andReturn(ImmutableList.of(stubModule)).anyTimes();
         replay(model);
 
         expect(baselineService.getAppliedContentPaths(session)).andReturn(new HashSet<>()).times(4);
         baselineService.addAppliedContentPath(anyString(), anyObject());
         expectLastCall().times(2);
-
         replay(baselineService);
-        final DefinitionNode definitionNode = stubModule.getContentDefinitions().get(2).getModifiableNode();
 
-        jcrContentProcessor.apply(definitionNode, ActionType.APPEND, session);
+        jcrContentProcessor.apply(defNode1, ActionType.APPEND, session);
         expectLastCall().andThrow(new ItemExistsException("This is an intentional Exception")).once();
+        jcrContentProcessor.apply(defNode3, ActionType.APPEND, session);
+        expectLastCall().once();
+        jcrContentProcessor.apply(defNode4, ActionType.APPEND, session);
+        expectLastCall().once();
+        jcrContentProcessor.apply(defNode2, ActionType.APPEND, session);
+        expectLastCall().andThrow(new AssertionFailedError("Should not be executed")).anyTimes();
+
         replay(jcrContentProcessor);
 
         configurationContentService.apply(model, session);
 
         verify(baselineService);
-    }
-
-    private ModuleImpl createModule() {
-        final ModuleImpl module = new ModuleImpl("stubModule", new ProjectImpl("stubProject", new GroupImpl("stubGroup")));
-        addContentDefinition(module, "source4", "/some/sibling/path");
-        addContentDefinition(module, "source2", "/some/path/child");
-        addContentDefinition(module, "source1", "/some/path");
-        addContentDefinition(module, "source3", "/some/sibling");
-        return module;
+        verify(jcrContentProcessor);
     }
 
     private ContentDefinitionImpl addContentDefinition(ModuleImpl module, String sourceName, String path) {

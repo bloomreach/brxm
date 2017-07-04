@@ -95,8 +95,8 @@
     <pdfbox.version>1.8.8</pdfbox.version>
     <quartz.version>2.2.1</quartz.version>
     <json-lib.version>2.2.2</json-lib.version>
-    <easymock.version>3.2</easymock.version>
-    <powermock.version>1.6.2</powermock.version>
+    <easymock.version>3.4</easymock.version>
+    <powermock.version>1.6.5</powermock.version>
     <restassured.version>2.5.0</restassured.version>
     <decentxml.version>1.4</decentxml.version>
     <commons-scxml2.version>2.0-M1</commons-scxml2.version>

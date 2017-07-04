@@ -120,10 +120,9 @@ public class ConfigurationContentService {
             final Optional<ActionType> optionalAction = findLastActionToApply(baseNodePath, actionsToProcess);
             final boolean nodeAlreadyProcessed = configurationBaselineService.getAppliedContentPaths(session).contains(baseNodePath);
 
-            final String nodeParentPath = StringUtils.substringBeforeLast(baseNodePath, "/");
-            final boolean canBeProcessed = !failedPaths.contains(nodeParentPath); // no parent import failure
+            final Optional<String> failedParentPath = failedPaths.stream().filter(baseNodePath::startsWith).findFirst();
 
-            if (canBeProcessed && (optionalAction.isPresent() || !nodeAlreadyProcessed)) {
+            if (!failedParentPath.isPresent() && (optionalAction.isPresent() || !nodeAlreadyProcessed)) {
                 final ActionType action = optionalAction.orElse(ActionType.APPEND);
 
                 try {
@@ -146,8 +145,8 @@ public class ConfigurationContentService {
                     log.error(String.format("Processing '%s' action for node failed: '%s'", action, baseNodePath), ex);
                     failedPaths.add(baseNodePath);
                 }
-            } else if (!canBeProcessed) {
-                log.debug(String.format("Parent node '%s' processing failed, skipping '%s'", nodeParentPath, baseNodePath));
+            } else if (failedParentPath.isPresent()) {
+                log.debug(String.format("Parent node '%s' processing failed, skipping '%s'", failedParentPath.get(), baseNodePath));
                 failedPaths.add(baseNodePath);
             }
         }
