@@ -14,11 +14,11 @@ definitions:
           jcr:mixinTypes: ['hippo:lockable', 'mix:lockable']
           hipposched:cronExpression: 0 0 2 * * ?
           hippo:lockExpirationTime:
-            .meta:category: runtime
+            .meta:category: system
           hipposched:nextFireTime:
-            .meta:category: runtime
+            .meta:category: system
           jcr:lockOwner:
-            .meta:category: runtime
+            .meta:category: system
           jcr:lockIsDeep:
-            .meta:category: runtime
+            .meta:category: system
 
