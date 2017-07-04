@@ -41,7 +41,6 @@
     <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
     <hippo.services.htmlprocessor.version>1.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
-    <hippo.addon-hst-configuration-editor.version>4.0.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
 
     <commons-lang.version>2.6</commons-lang.version>
     <lib.json.version>20090211</lib.json.version>
@@ -100,16 +99,6 @@
         <version>${jackson2.version}</version>
       </dependency>
 
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-hst-configuration-editor-frontend</artifactId>
-        <version>${hippo.addon-hst-configuration-editor.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-hst-configuration-editor-repository</artifactId>
-        <version>${hippo.addon-hst-configuration-editor.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-api</artifactId>

@@ -146,11 +146,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-hst-configuration-editor-frontend</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>${commons-lang.version}</version>
