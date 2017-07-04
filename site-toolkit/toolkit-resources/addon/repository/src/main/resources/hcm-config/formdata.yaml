@@ -1,5 +1,5 @@
 definitions:
   config:
     /formdata:
-      .meta:residual-child-node-category: runtime
+      .meta:residual-child-node-category: system
       jcr:primaryType: hst:formdatacontainer
