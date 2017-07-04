@@ -41,8 +41,10 @@ public class CndUtilsTest extends BaseRepositoryTest {
     public void testRegisterNamespaceUri() throws Exception {
 
         Session session = getSession();
-        session.getRootNode().addNode(HippoNodeType.NAMESPACES_PATH);
-        session.save();
+        if (!session.nodeExists("/"+HippoNodeType.NAMESPACES_PATH)) {
+            session.getRootNode().addNode(HippoNodeType.NAMESPACES_PATH);
+            session.save();
+        }
         CndUtils.registerNamespace(getContext(), TEST_PREFIX, TEST_URI);
         assertTrue("CndUtils.registerNamespaceUri", true);
         CndUtils.createHippoNamespace(getContext(), TEST_PREFIX);
