@@ -108,7 +108,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         lockManager = new ConfigurationLockManager(session);
         baselineService = new ConfigurationBaselineService(session, lockManager);
         configService = new ConfigurationConfigService();
-        contentService = new ConfigurationContentService(baselineService);
+        contentService = new ConfigurationContentService(baselineService, new JcrContentProcessor());
 
         ensureInitialized();
         lockManager.lock();
