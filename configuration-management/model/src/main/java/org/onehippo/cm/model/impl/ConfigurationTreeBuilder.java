@@ -603,14 +603,20 @@ public class ConfigurationTreeBuilder {
 
     private void warnIfValuesAreEqual(final DefinitionPropertyImpl definitionProperty,
                                       final ConfigurationPropertyImpl property) {
+        // suppress warning when auto-export is updating a property
+        // TODO reconsider below suppression term as part of HCM-166
+        if (property.getOrigin().equals("[" + definitionProperty.getOrigin() + "]")) {
+            return;
+        }
+
         if (PropertyType.SINGLE == property.getType()) {
             final ValueImpl existingValue = property.getValue();
             if (existingValue != null) {
-                if (definitionProperty.getValue().equals(property.getValue())) {
-                    if (!property.getPath().startsWith("/hippo:configuration/hippo:translations/")) {
-                        logger.warn("Property '{}' defined in '{}' specifies value equivalent to existing property, defined in '{}'.",
-                                definitionProperty.getPath(), definitionProperty.getOrigin(), property.getOrigin());
-                    }
+                if (definitionProperty.getValue().equals(property.getValue())
+                        // suppress warning for translations special case, which would be verbose and difficult to avoid
+                        && !property.getPath().startsWith("/hippo:configuration/hippo:translations/")) {
+                    logger.warn("Property '{}' defined in '{}' specifies value equivalent to existing property, defined in '{}'.",
+                            definitionProperty.getPath(), definitionProperty.getOrigin(), property.getOrigin());
                 }
             }
         } else {
