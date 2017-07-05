@@ -34,6 +34,7 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cm.engine.autoexport.AutoExportConfig;
 import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
@@ -50,6 +51,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
+import static org.onehippo.cm.engine.Constants.PRODUCT_GROUP_NAME;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
 import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
 import static org.onehippo.cm.model.util.ConfigurationModelUtils.getCategoryForNode;
@@ -220,6 +222,13 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
             // use Configuration.filterUuidPaths during delta computation (suppressing export of jcr:uuid)
             if (propName.equals(JCR_UUID) && autoExportConfig.shouldFilterUuid(configNode.getPath())) {
                 continue;
+            }
+
+            if (propName.equals(JCR_UUID) && !configNode.getDefinitions().isEmpty()) {
+                Group group = configNode.getDefinitions().get(0).getDefinition().getSource().getModule().getProject().getGroup();
+                if (PRODUCT_GROUP_NAME.equals(group.getName())) {
+                    continue;
+                }
             }
 
             ConfigurationPropertyImpl configProperty = configNode.getProperty(propName);
