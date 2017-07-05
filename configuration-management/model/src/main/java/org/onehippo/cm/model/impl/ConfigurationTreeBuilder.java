@@ -605,7 +605,7 @@ public class ConfigurationTreeBuilder {
                                       final ConfigurationPropertyImpl property) {
         // suppress warning when auto-export is updating a property
         // TODO reconsider below suppression term as part of HCM-166
-        if (definitionProperty.getOrigin().equals(property.getOrigin())) {
+        if (property.getOrigin().equals("[" + definitionProperty.getOrigin() + "]")) {
             return;
         }
 
