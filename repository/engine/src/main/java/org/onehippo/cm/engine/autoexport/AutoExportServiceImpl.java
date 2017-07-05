@@ -91,10 +91,10 @@ public final class AutoExportServiceImpl implements EventListener {
         if (!exportable.containsAll(configuredMvnPaths)) {
             // interrupt auto-export startup with an exception
             final Sets.SetView<String> missing = Sets.difference(configuredMvnPaths, exportable);
-            log.error("Configured auto-export modules do not all have a source path in repo.bootstrap.modules!");
+            log.error("Configured auto-export modules do not all have a source path!");
             log.error("auto-export: {}, configured sources: {}, missing: {}", configuredMvnPaths, exportable, missing);
             throw new IllegalStateException(
-                    "Cannot auto-export modules without a source path in repo.bootstrap.modules: " + missing);
+                    "Cannot auto-export modules without a source path: " + missing);
         }
     }
 
