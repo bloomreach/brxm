@@ -22,6 +22,7 @@ import java.util.function.Predicate;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.model.AbstractBaseTest;
@@ -35,6 +36,7 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 import static org.junit.Assert.assertTrue;
 import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
+@Ignore
 public class FilesystemModuleTest {
 
     // We need to init some properties before the static setup in RepositoryTestCase, so we have to work around
