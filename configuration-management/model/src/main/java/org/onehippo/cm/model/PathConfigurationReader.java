@@ -150,7 +150,7 @@ public class PathConfigurationReader {
     private List<Pair<Path, String>> getSourceData(final Path basePath) throws IOException {
         final List<Path> paths = new ArrayList<>();
         final BiPredicate<Path, BasicFileAttributes> matcher =
-                (filePath, fileAttr) -> filePath.getFileName().toString().toLowerCase().endsWith(Constants.YAML_EXT) && fileAttr.isRegularFile();
+                (filePath, fileAttr) -> fileAttr.isRegularFile() && filePath.getFileName().toString().toLowerCase().endsWith(Constants.YAML_EXT);
         Files.find(basePath, Integer.MAX_VALUE, matcher).forEachOrdered(paths::add);
         final int modulePathSize = basePath.getNameCount();
 
