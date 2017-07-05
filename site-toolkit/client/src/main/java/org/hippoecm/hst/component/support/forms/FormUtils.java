@@ -81,9 +81,11 @@ public class FormUtils {
     /**
      * Returns a populated FormaMap for some form data node if that node can be found with the u_u_i_d parameter
      * on the <code>request</code>. If no such form data node can be found, an empty {@link FormMap} will be returned
+     *
      * @param request the {@link HttpServletRequest}
      * @return a populated {@link FormMap} for the formdata node belonging to the UUID from request parameter u_u_i_d
-     * If there is no formdata for the UUID or no u_u_i_d parameter, just an empty {@link FormMap} object will be returned
+     * If there is no formdata for the UUID or no u_u_i_d parameter, just an empty {@link FormMap} object will be
+     * returned
      * @see {@link #populate(javax.servlet.http.HttpServletRequest, FormMap)}
      */
     public static FormMap getFormMap(HttpServletRequest request) {
@@ -184,12 +186,13 @@ public class FormUtils {
 
     /**
      * This method tries to repopulate an earlier posted form that was stored in the repository.
-     *
+     * <p>
      * Only when there is a request parameter containing the correct uuid, you can re-populate it.
      *
      * @param request the current hstRequest
      * @param formMap the formMap that will be populated
-     * @see #populate(javax.servlet.http.HttpServletRequest, FormMap) rather use {@link #populate(javax.servlet.http.HttpServletRequest, FormMap)} instead
+     * @see #populate(javax.servlet.http.HttpServletRequest, FormMap) rather use {@link
+     * #populate(javax.servlet.http.HttpServletRequest, FormMap)} instead
      * of this method
      */
     @SuppressWarnings("unused")
@@ -207,17 +210,23 @@ public class FormUtils {
     }
 
     /**
-     * Facility to temporarily store submitted form data which needs to be accessed in the rendering phase again. This method
+     * Facility to temporarily store submitted form data which needs to be accessed in the rendering phase again. This
+     * method
      * add the uuid of the newly created jcr node on the response as a render parameter
-     * @param formDataNodePath form data node path relative to the root form data node {@code FormUtils#DEFAULT_STORED_FORMS_LOCATION}
-     *                         to store the result in. If {@code null}, a random location will be picked
-     * @param formId          optional value for a formId. If {@code null}, no formId will be stored
-     * @param request         the request
-     * @param response        the response
-     * @param formMap         the form names + values to temporarily store
-     * @param storeFormResult an object to store some result of the data persisting, for example the uuid of the created node
-     * @param includeRenderParameter if {@code true}, {@link HstResponse#setRenderParameter(String, String)} will be invoked with
-     *                               param {@link #DEFAULT_UUID_NAME} and with value the identifier of the stored form map
+     *
+     * @param formDataNodePath       form data node path relative to the root form data node {@code
+     *                               FormUtils#DEFAULT_STORED_FORMS_LOCATION}
+     *                               to store the result in. If {@code null}, a random location will be picked
+     * @param formId                 optional value for a formId. If {@code null}, no formId will be stored
+     * @param request                the request
+     * @param response               the response
+     * @param formMap                the form names + values to temporarily store
+     * @param storeFormResult        an object to store some result of the data persisting, for example the uuid of the
+     *                               created node
+     * @param includeRenderParameter if {@code true}, {@link HstResponse#setRenderParameter(String, String)} will be
+     *                               invoked with
+     *                               param {@link #DEFAULT_UUID_NAME} and with value the identifier of the stored form
+     *                               map
      * @throws HstComponentException when the storing of the formdata fails
      */
     public static void persistFormMap(final String formDataNodePath,
@@ -246,9 +255,13 @@ public class FormUtils {
                 }
             } else {
                 synchronized (mutex) {
-                    formData = rootNode.addNode(DEFAULT_STORED_FORMS_LOCATION, DEFAULT_FORMDATA_CONTAINER);
-                    addInitialStructure(formData);
-                    session.save();
+                    if (!rootNode.hasNode(DEFAULT_STORED_FORMS_LOCATION)) {
+                        formData = rootNode.addNode(DEFAULT_STORED_FORMS_LOCATION, DEFAULT_FORMDATA_CONTAINER);
+                        addInitialStructure(formData);
+                        session.save();
+                    } else {
+                        formData = rootNode.getNode(DEFAULT_STORED_FORMS_LOCATION);
+                    }
                 }
             }
 
@@ -417,5 +430,6 @@ public class FormUtils {
 
     }
 
-    public static class MapStringFormField extends LinkedHashMap<String, FormField> {}
+    public static class MapStringFormField extends LinkedHashMap<String, FormField> {
+    }
 }
