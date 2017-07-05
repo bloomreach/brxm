@@ -23,7 +23,10 @@ import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -34,6 +37,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.engine.autoexport.AutoExportConfig;
+import org.onehippo.cm.engine.autoexport.AutoExportConstants;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
 import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.ClasspathConfigurationModelReader;
@@ -46,10 +51,12 @@ import org.onehippo.cm.model.ModuleWriter;
 import org.onehippo.cm.model.PathConfigurationReader;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.onehippo.cm.model.impl.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cm.model.parser.ContentSourceParser;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
@@ -69,10 +76,11 @@ import static org.onehippo.cm.engine.Constants.HIPPO_NAMESPACE;
 import static org.onehippo.cm.engine.Constants.HIPPO_PREFIX;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_BOOTSTRAP;
-import static org.onehippo.cm.engine.autoexport.Constants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
+import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
 import static org.onehippo.cm.model.Constants.PROJECT_BASEDIR_PROPERTY;
 import static org.onehippo.cm.model.impl.ConfigurationModelImpl.mergeWithSourceModules;
+import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
 public class ConfigurationServiceImpl implements InternalConfigurationService {
 
@@ -119,8 +127,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             final boolean configure = fullConfigure || Boolean.getBoolean(SYSTEM_PARAMETER_REPO_BOOTSTRAP);
             final boolean mustConfigure = first || configure;
             final boolean verify = Boolean.getBoolean("repo.bootstrap.verify");
-            final boolean isPojectBaseDirSet = !StringUtils.isBlank(System.getProperty(PROJECT_BASEDIR_PROPERTY));
-            final boolean autoExportAllowed = isPojectBaseDirSet && Boolean.getBoolean(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED);
+            final boolean isProjectBaseDirSet = !StringUtils.isBlank(System.getProperty(PROJECT_BASEDIR_PROPERTY));
+            final boolean autoExportAllowed = isProjectBaseDirSet && Boolean.getBoolean(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED);
+            boolean startAutoExportService = configure && autoExportAllowed;
 
             baselineModel = loadBaselineModel();
             ConfigurationModelImpl bootstrapModel = null;
@@ -130,7 +139,28 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 try {
                     log.info("ConfigurationService: load bootstrap model");
                     bootstrapModel = loadBootstrapModel();
-                    final boolean startAutoExportService = configure && autoExportAllowed; // TODO: && hasSourceModules(baselineModel);
+
+                    // now that we have the deployment-based bootstrap model, we want to find out if the auto-export
+                    // config indicates to us that we should load some modules from the filesystem
+                    if (startAutoExportService) {
+                        try {
+                            // load modules that are specified via auto-export config
+                            final List<ModuleImpl> modulesFromSourceFiles = readModulesFromSourceFiles(bootstrapModel);
+                            // add all of the filesystem modules to a new model as "replacements" that override later additions
+                            bootstrapModel = mergeWithSourceModules(modulesFromSourceFiles, bootstrapModel);
+                        }
+                        catch (Exception e) {
+                            final String errorMsg = "Failed to load modules from filesystem for autoexport: autoexport not available.";
+                            if (e instanceof ConfigurationRuntimeException) {
+                                // no stacktrace needed, the exception message should be informative enough
+                                log.error(errorMsg + "\n" + e.getMessage());
+                            } else {
+                                log.error(errorMsg, e);
+                            }
+                            startAutoExportService = false;
+                        }
+                    }
+
                     log.info("ConfigurationService: apply bootstrap config");
                     success = applyConfig(baselineModel, bootstrapModel, false, verify, fullConfigure, !first);
                     if (success) {
@@ -262,7 +292,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     /**
      * Store the new baseline model as computed by auto-export, and make this the new runtimeConfigurationModel.
      * @param updatedModules modules that have been changed by auto-export and need to be stored in the baseline
-     * @return
+     * @return true if and only if the baseline update was stored successfully
      */
     // TODO: confirm that this is the appropriate scope (public, but not exposed on interface)
     public boolean updateBaselineForAutoExport(final Collection<ModuleImpl> updatedModules) {
@@ -409,13 +439,59 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         }
     }
 
-    private boolean hasSourceModules(final ConfigurationModelImpl model) {
-        for (ModuleImpl m : model.getModules()) {
-            if (m.getMvnPath() != null) {
-                return true;
+    /**
+     * Read modules that were specified using the auto-export config as source files on the native filesystem.
+     * @return a List of newly-loaded filesystem-backed Modules
+     */
+    private List<ModuleImpl> readModulesFromSourceFiles(final ConfigurationModelImpl bootstrapModel) throws IOException, ParserException {
+        final String projectDir = System.getProperty(org.onehippo.cm.model.Constants.PROJECT_BASEDIR_PROPERTY);
+
+        // if project.basedir is defined, and auto-export config mentions a module, load it from the filesystem
+        final ConfigurationPropertyImpl autoExportModulesProp =
+                bootstrapModel.resolveProperty(AutoExportConstants.SERVICE_CONFIG_PATH
+                        + "/" + AutoExportConstants.CONFIG_MODULES_PROPERTY_NAME);
+        final LinkedHashMap<String, Collection<String>> modulesConfig = new LinkedHashMap<>();
+        if (autoExportModulesProp != null) {
+            final ArrayList<String> moduleStrings = new ArrayList<>();
+            for (ValueImpl value : autoExportModulesProp.getValues()) {
+                moduleStrings.add(value.getString());
             }
+            // reuse the auto-export logic to tweak the defined config as necessary
+            AutoExportConfig.processModuleStrings(moduleStrings, modulesConfig, false);
         }
-        return false;
+
+        // convert the project basedir to a Path, so we can resolve modules against it
+        final Path projectPath = Paths.get(projectDir);
+
+        // for each module in autoexport:modules
+        final List<ModuleImpl> modulesFromSourceFiles = new ArrayList<>();
+        for (String mvnModulePath : modulesConfig.keySet()) {
+            // first check module path exists:
+            final Path modulePath = projectPath.resolve(nativePath(mvnModulePath));
+            final File moduleDir = modulePath.toFile();
+            if (!moduleDir.exists() || !moduleDir.isDirectory()) {
+                throw new ConfigurationRuntimeException("Cannot find module source path for module: '" + mvnModulePath + "' in "
+                        + AutoExportConstants.CONFIG_MODULES_PROPERTY_NAME + ", expected directory: " + modulePath);
+            }
+            // use maven conventions to find a module descriptor, then parse it
+            final Path moduleDescriptorPath = projectPath.resolve(nativePath(mvnModulePath + org.onehippo.cm.model.Constants.MAVEN_MODULE_DESCRIPTOR));
+
+            if (!moduleDescriptorPath.toFile().exists()) {
+                throw new ConfigurationRuntimeException("Cannot find module descriptor for module: '" + mvnModulePath + "' in "
+                        + AutoExportConstants.CONFIG_MODULES_PROPERTY_NAME + ", expected: " + moduleDescriptorPath);
+            }
+
+            log.debug("Loading module descriptor from filesystem here: {}", moduleDescriptorPath);
+
+            final PathConfigurationReader.ReadResult result =
+                    new PathConfigurationReader().read(moduleDescriptorPath, true);
+
+            // store mvnSourcePath on each module for later use by auto-export
+            final ModuleImpl module = result.getModuleContext().getModule();
+            module.setMvnPath(mvnModulePath);
+            modulesFromSourceFiles.add(module);
+        }
+        return modulesFromSourceFiles;
     }
 
     private ConfigurationModelImpl loadBaselineModel() throws RepositoryException {
@@ -498,7 +574,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         try {
             autoExportService = new AutoExportServiceImpl(session, this);
         } catch (Exception e) {
-            log.error("Faileed to start autoexport service");
+            log.error("Failed to start autoexport service");
         }
     }
 

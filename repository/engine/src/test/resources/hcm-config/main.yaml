@@ -3,3 +3,11 @@ definitions:
     test:
       uri: http://www.onehippo.org/jcr/hippo/test/nt/1.0
       cnd: repository-test.cnd
+  config:
+    # the following is necessary to setup FilesystemModuleTest
+    /hippo:configuration/hippo:modules/autoexport:
+      /hippo:moduleconfig:
+        autoexport:modules:
+          operation: override
+          type: string
+          value: ['TestModuleFileSource:/']

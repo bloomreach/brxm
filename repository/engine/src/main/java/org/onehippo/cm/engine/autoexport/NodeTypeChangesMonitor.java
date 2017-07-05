@@ -37,7 +37,7 @@ import static com.google.common.collect.Sets.newHashSet;
 class NodeTypeChangesMonitor implements NodeTypeRegistryListener {
 
     private final NodeTypeRegistry ntRegistry;
-    private final Configuration moduleConfig;
+    private final AutoExportConfig moduleConfig;
     private final Session monitorSession;
     // TODO: derive 'protected' namsepacePrefixed from none-sourced ConfigurationModel modules
     private static final Set<String> hippoNamespacePrefixed = newHashSet(
@@ -46,7 +46,7 @@ class NodeTypeChangesMonitor implements NodeTypeRegistryListener {
             "hipposysedit",
             "hippofacnav");
 
-    public NodeTypeChangesMonitor(final Configuration moduleConfig) throws RepositoryException {
+    public NodeTypeChangesMonitor(final AutoExportConfig moduleConfig) throws RepositoryException {
         this.moduleConfig = moduleConfig;
         final Session moduleSession = moduleConfig.getModuleSession();
         monitorSession =
@@ -76,10 +76,10 @@ class NodeTypeChangesMonitor implements NodeTypeRegistryListener {
             ObservationManager observationManager = monitorSession.getWorkspace().getObservationManager();
             observationManager.setUserData(userData);
             try {
-                if (moduleConfigNode.hasProperty(Constants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME)) {
-                    moduleConfigNode.getProperty(Constants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME).remove();
+                if (moduleConfigNode.hasProperty(AutoExportConstants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME)) {
+                    moduleConfigNode.getProperty(AutoExportConstants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME).remove();
                 }
-                moduleConfigNode.setProperty(Constants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME, System.currentTimeMillis());
+                moduleConfigNode.setProperty(AutoExportConstants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME, System.currentTimeMillis());
                 monitorSession.save();
                 AutoExportServiceImpl.log.debug("journal logging changed nodetype prefix(es): [{}]",userData);
             } finally {

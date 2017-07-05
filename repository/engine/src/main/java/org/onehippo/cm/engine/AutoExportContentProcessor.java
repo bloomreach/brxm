@@ -32,7 +32,7 @@ import javax.jcr.nodetype.NodeType;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.cm.engine.autoexport.Configuration;
+import org.onehippo.cm.engine.autoexport.AutoExportConfig;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.ValueType;
@@ -63,14 +63,14 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
     private static final Logger log = LoggerFactory.getLogger(AutoExportContentProcessor.class);
 
     private ConfigurationModelImpl configurationModel;
-    private Configuration autoExportConfig;
+    private AutoExportConfig autoExportConfig;
     private static final Set<String> suppressedDelta = newHashSet(
             // TODO: move these somewhere more permanent
             // facet-related generated property
             "hippo:count"
     );
 
-    public AutoExportContentProcessor(final ConfigurationModelImpl configurationModel, final Configuration autoExportConfig) {
+    public AutoExportContentProcessor(final ConfigurationModelImpl configurationModel, final AutoExportConfig autoExportConfig) {
         this.configurationModel = configurationModel;
         this.autoExportConfig = autoExportConfig;
     }

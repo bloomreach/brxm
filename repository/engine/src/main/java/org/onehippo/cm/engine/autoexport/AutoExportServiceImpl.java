@@ -38,12 +38,12 @@ import com.google.common.collect.Sets;
 import static javax.jcr.observation.Event.PROPERTY_ADDED;
 import static javax.jcr.observation.Event.PROPERTY_CHANGED;
 import static javax.jcr.observation.Event.PROPERTY_REMOVED;
-import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_ENABLED_PROPERTY_NAME;
-import static org.onehippo.cm.engine.autoexport.Constants.SERVICE_CONFIG_PATH;
+import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_ENABLED_PROPERTY_NAME;
+import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SERVICE_CONFIG_PATH;
 
 public final class AutoExportServiceImpl implements EventListener {
 
-    static final Logger log = LoggerFactory.getLogger(Constants.LOGGER_NAME);
+    static final Logger log = LoggerFactory.getLogger(AutoExportConstants.LOGGER_NAME);
 
     private static final int EVENT_TYPES = PROPERTY_ADDED | PROPERTY_CHANGED | PROPERTY_REMOVED;
 
@@ -51,7 +51,7 @@ public final class AutoExportServiceImpl implements EventListener {
     private final ObservationManager manager;
 
     private NodeTypeChangesMonitor nodeTypeChangesMonitor;
-    private Configuration configuration;
+    private AutoExportConfig autoExportConfig;
     private EventJournalProcessor eventJournalProcessor;
 
 
@@ -59,13 +59,13 @@ public final class AutoExportServiceImpl implements EventListener {
             throws RepositoryException {
         final SimpleCredentials credentials = new SimpleCredentials(configurationSession.getUserID(), new char[]{});
         autoExportSession = configurationSession.impersonate(credentials);
-        configuration = new Configuration(configurationSession.getNode(SERVICE_CONFIG_PATH));
+        autoExportConfig = new AutoExportConfig(configurationSession.getNode(SERVICE_CONFIG_PATH));
         manager = autoExportSession.getWorkspace().getObservationManager();
-        nodeTypeChangesMonitor = new NodeTypeChangesMonitor(configuration);
-        eventJournalProcessor = new EventJournalProcessor(configurationService, configuration, Collections.emptySet());
+        nodeTypeChangesMonitor = new NodeTypeChangesMonitor(autoExportConfig);
+        eventJournalProcessor = new EventJournalProcessor(configurationService, autoExportConfig, Collections.emptySet());
         manager.addEventListener(this, EVENT_TYPES, SERVICE_CONFIG_PATH, false, null, null, false);
-        if (configuration.isEnabled()) {
-            checkModules(configuration, configurationService.getRuntimeConfigurationModel());
+        if (autoExportConfig.isEnabled()) {
+            checkModules(autoExportConfig, configurationService.getRuntimeConfigurationModel());
             log.info("autoexport service enabled");
             eventJournalProcessor.start();
         } else {
@@ -76,11 +76,11 @@ public final class AutoExportServiceImpl implements EventListener {
     /**
      * Confirm that all modules that are configured for auto-export have a corresponding source path in
      * repo.bootstrap.modules.
-     * @param configuration
+     * @param autoExportConfig
      * @param baseline
      */
-    private void checkModules(final Configuration configuration, final ConfigurationModelImpl baseline) {
-        final Set<String> configuredMvnPaths = configuration.getModules().keySet();
+    private void checkModules(final AutoExportConfig autoExportConfig, final ConfigurationModelImpl baseline) {
+        final Set<String> configuredMvnPaths = autoExportConfig.getModules().keySet();
         final Set<String> exportable = new HashSet<>();
         for (final ModuleImpl m : baseline.getModules()) {
             if (m.getMvnPath() != null && configuredMvnPaths.contains(m.getMvnPath())) {
@@ -91,10 +91,10 @@ public final class AutoExportServiceImpl implements EventListener {
         if (!exportable.containsAll(configuredMvnPaths)) {
             // interrupt auto-export startup with an exception
             final Sets.SetView<String> missing = Sets.difference(configuredMvnPaths, exportable);
-            log.error("Configured auto-export modules do not all have a source path in repo.bootstrap.modules!");
+            log.error("Configured auto-export modules do not all have a source path!");
             log.error("auto-export: {}, configured sources: {}, missing: {}", configuredMvnPaths, exportable, missing);
             throw new IllegalStateException(
-                    "Cannot auto-export modules without a source path in repo.bootstrap.modules: " + missing);
+                    "Cannot auto-export modules without a source path: " + missing);
         }
     }
 
@@ -103,8 +103,8 @@ public final class AutoExportServiceImpl implements EventListener {
             Event event = iter.nextEvent();
             try {
                 if ((SERVICE_CONFIG_PATH+"/"+CONFIG_ENABLED_PROPERTY_NAME).equals(event.getPath())) {
-                    if (configuration.isEnabled() != configuration.checkEnabled()) {
-                        if (configuration.isEnabled()) {
+                    if (autoExportConfig.isEnabled() != autoExportConfig.checkEnabled()) {
+                        if (autoExportConfig.isEnabled()) {
                             log.info("autoexport service enabled");
                             eventJournalProcessor.start();
                         } else {
