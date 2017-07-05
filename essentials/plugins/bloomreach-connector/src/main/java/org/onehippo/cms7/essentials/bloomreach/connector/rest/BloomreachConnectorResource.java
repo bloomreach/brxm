@@ -53,25 +53,29 @@ import com.google.common.eventbus.EventBus;
 public class BloomreachConnectorResource extends BaseResource {
 
     private static final Logger log = LoggerFactory.getLogger(BloomreachConnectorResource.class);
+    private static final String CRISP_GROUP_ID = "org.onehippo.cms7";
+    private static final String ARTIFACT_ID_REPOSITORY = "hippo-addon-crisp-repository";
+    private static final String ARTIFACT_ID_API = "hippo-addon-crisp-api";
+    private static final String CRISP_NODE = "crisp:resourceresolvercontainer";
+    private static final String CRISP_VERSION = "${hippo.addon-crisp.version}";
     @Inject
     private EventBus eventBus;
 
 
     @GET
     public ResourceData index(@Context ServletContext servletContext) throws Exception {
-        foo();
-        // check if we have crisp namespace registered:
+        // check if we have crisp namespace registered and if not if we at least have dependencies in place::
         final PluginContext context = PluginContextFactory.getContext();
-        final boolean exists = CndUtils.nodeTypeExists(context, "crisp:resourceresolvercontainer");
+        final boolean exists = CndUtils.nodeTypeExists(context, CRISP_NODE);
         final ResourceData resourceData = new ResourceData();
         final DependencyRestful dependency = new DependencyRestful();
         dependency.setTargetPom(TargetPom.CMS.getName());
-        dependency.setArtifactId("hippo-addon-crisp-repository");
-        dependency.setGroupId("com.onehippo.cms7");
+        dependency.setArtifactId(ARTIFACT_ID_REPOSITORY);
+        dependency.setGroupId(CRISP_GROUP_ID);
         final DependencyRestful dependencyApi = new DependencyRestful();
         dependencyApi.setTargetPom(TargetPom.CMS.getName());
-        dependencyApi.setArtifactId("hippo-addon-crisp-api");
-        dependencyApi.setGroupId("com.onehippo.cms7");
+        dependencyApi.setArtifactId(ARTIFACT_ID_API);
+        dependencyApi.setGroupId(CRISP_GROUP_ID);
         final boolean hasDependency = DependencyUtils.hasDependency(context, dependency)
                 && DependencyUtils.hasDependency(context, dependencyApi);
         resourceData.setCrispDependencyExists(hasDependency);
@@ -79,10 +83,6 @@ public class BloomreachConnectorResource extends BaseResource {
         return resourceData;
     }
 
-
-    private void foo() {
-        System.out.println("log = " + log);
-    }
 
     @POST
     @Path("/install")
@@ -93,15 +93,14 @@ public class BloomreachConnectorResource extends BaseResource {
         //TODO read dependency from plugin descriptor
         final DependencyRestful dependency = new DependencyRestful();
         dependency.setTargetPom(TargetPom.CMS.getName());
-        dependency.setArtifactId("hippo-addon-crisp-repository");
-        dependency.setGroupId("com.onehippo.cms7");
+        dependency.setArtifactId(ARTIFACT_ID_REPOSITORY);
+        dependency.setGroupId(CRISP_GROUP_ID);
+        dependency.setVersion(CRISP_VERSION);
         final DependencyRestful dependencyApi = new DependencyRestful();
         dependencyApi.setTargetPom(TargetPom.CMS.getName());
-        dependencyApi.setArtifactId("hippo-addon-crisp-api");
-        dependencyApi.setGroupId("com.onehippo.cms7");
-        //
-        dependency.setVersion("0.9.0");
-        dependencyApi.setVersion("0.9.0");
+        dependencyApi.setArtifactId(ARTIFACT_ID_API);
+        dependencyApi.setGroupId(CRISP_GROUP_ID);
+        dependencyApi.setVersion(CRISP_VERSION);
         boolean added = DependencyUtils.addDependency(context, dependency) &&
                 DependencyUtils.addDependency(context, dependencyApi);
         if (added) {
