@@ -37,11 +37,3 @@ Logs are located in target/tomcat8x/logs
 ```
 
 Open ```target/site/index.html``` after generation succeeds.
-
-You can also generate a PDF document:
-
-```bash
-    $ mvn pdf:pdf
-```
-
-Open ```target/pdf/hippo-addon-crisp.pdf``` after generation succeeds.

@@ -2,11 +2,12 @@
 <project>
     <name>project-settings</name>
     <beansFolder>site/src/main/java</beansFolder>
-    <bootstrapModule>bootstrap</bootstrapModule>
     <cmsModule>cms</cmsModule>
     <confirmParams>false</confirmParams>
+    <enterprise>false</enterprise>
     <extraTemplates>true</extraTemplates>
     <projectNamespace>hippoaddoncrispdemo</projectNamespace>
+    <repositoryDataModule>repository-data</repositoryDataModule>
     <selectedBeansPackage>org.onehippo.cms7.crisp.demo.beans</selectedBeansPackage>
     <selectedComponentsPackage>org.onehippo.cms7.crisp.demo.components</selectedComponentsPackage>
     <selectedProjectPackage>org.onehippo.cms7.crisp.demo</selectedProjectPackage>

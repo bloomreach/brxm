@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:users/editor:
+      jcr:primaryType: hipposys:user
+      hipposys:active: true
+      hipposys:password: editor
+      hipposys:securityprovider: internal

@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/hippoaddoncrispdemo/hst:workspace/hst:channel:
+      jcr:primaryType: hst:channel
+      hst:name: Hippo Addon CRISP Demo
+      hst:type: website
+      /hst:channelinfo:
+        jcr:primaryType: hst:channelinfo

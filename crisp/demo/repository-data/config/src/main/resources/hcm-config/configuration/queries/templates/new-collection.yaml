@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:queries/hippo:templates/new-collection/hippostd:templates/hippostd:directory:
+      jcr:uuid: 3a7cd6da-41c0-44b7-88da-0b4f3b2070d5
+    /hippo:configuration/hippo:queries/hippo:templates/new-collection/hippostd:templates/hippostd:folder:
+      jcr:uuid: e829e7b2-dd49-4511-bbb7-b21cc5847885

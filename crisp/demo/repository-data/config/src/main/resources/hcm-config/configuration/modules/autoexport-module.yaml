@@ -1,0 +1,12 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/autoexport:
+      /hippo:moduleconfig:
+        autoexport:enabled:
+          operation: override
+          type: boolean
+          value: true
+        autoexport:modules:
+          operation: override
+          type: string
+          value: ['repository-data/config:/']

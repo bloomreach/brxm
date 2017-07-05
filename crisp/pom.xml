@@ -24,13 +24,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>28.7</version>
+    <version>29-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Addon CRISP</name>
   <description>Hippo Addon CRISP</description>
   <artifactId>hippo-addon-crisp</artifactId>
-  <version>0.9.5</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://www.onehippo.org/</url>
   <inceptionYear>2017</inceptionYear>
@@ -43,10 +43,11 @@
     <jdom2.version>2.0.6</jdom2.version>
     <jaxen.version>1.1.6</jaxen.version>
 
-    <hippo.commons.version>3.2.0</hippo.commons.version>
-    <hippo.services.version>3.2.0</hippo.services.version>
-    <hippo.repository.version>4.2.0</hippo.repository.version>
-    <hippo.hst.version>4.2.0</hippo.hst.version>
+    <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
+
+    <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>5.0.0-SNAPSHOT</hippo.hst.version>
 
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
@@ -62,10 +63,8 @@
     <spring-security-jwt.version>1.0.4.RELEASE</spring-security-jwt.version>
     <spring-security-oauth2.version>2.1.0.RELEASE</spring-security-oauth2.version>
 
-    <lib.junit.version>4.8.2</lib.junit.version>
-    <lib.easymock.version>3.0</lib.easymock.version>
-    <lib.slf4j.version>1.7.6</lib.slf4j.version>
-    <lib.log4j.version>1.2.17</lib.log4j.version>
+    <junit.version>4.12</junit.version>
+    <easymock.version>3.4</easymock.version>
 
   </properties>
 
@@ -126,7 +125,7 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>${lib.slf4j.version}</version>
+        <version>${slf4j.version}</version>
         <scope>provided</scope>
       </dependency>
 
@@ -342,37 +341,16 @@
       <!-- TEST DEPENDENCIES -->
 
       <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>${lib.slf4j.version}</version>
-        <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl-over-slf4j</artifactId>
-        <version>${lib.slf4j.version}</version>
-        <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>${lib.log4j.version}</version>
-        <scope>test</scope>
-      </dependency>
-
-      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>${lib.junit.version}</version>
+        <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
 
       <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
-        <version>${lib.easymock.version}</version>
+        <version>${easymock.version}</version>
         <scope>test</scope>
       </dependency>
 
@@ -426,7 +404,6 @@
         <module>core</module>
         <module>repository</module>
         <module>hst</module>
-        <module>demopkg</module>
       </modules>
     </profile>
 
