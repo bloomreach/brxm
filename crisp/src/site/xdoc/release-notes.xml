@@ -32,30 +32,44 @@
           </th>
         </tr>
         <tr>
-          <td>1.x</td>
+          <td>2.x</td>
           <td>12.x</td>
         </tr>
         <tr>
-          <td>0.9.x</td>
+          <td>1.x</td>
           <td>11.x</td>
         </tr>
       </table>
     </section>
-    <section name="Release Notes of 1.x">
-      <subsection name="1.0.0">
+    <section name="Release Notes of 2.x">
+      <subsection name="2.0.0">
         <ul>
           <li>
-            Initial release for Hippo CMS 12 compatibility based on 0.9.5.
+            Initial release for Hippo CMS 12 compatibility.
           </li>
           <li>
             Changing the namespace URI of CRISP JSP Tag Libraries to <code>http://www.onehippo.org/jsp/hippo/crisp/tags</code>
             (from <code>http://www.onehippo.com/jsp/hippo/crisp/tags</code>).
           </li>
+          <li>
+            Removing 'multiple' for <code>crisp:resourceresolver</code> child nodes to avoid unexpected same name sibling nodes.
+          </li>
         </ul>
       </subsection>
       <br/>
     </section>
-    <section name="Release Notes of 0.9.x">
+    <section name="Release Notes of 1.x and pre-1.x">
+      <subsection name="1.0.0">
+        <ul>
+          <li>
+            Changing the namespace URI of CRISP JSP Tag Libraries to <code>http://www.onehippo.org/jsp/hippo/crisp/tags</code>
+            (from <code>http://www.onehippo.com/jsp/hippo/crisp/tags</code>).
+          </li>
+          <li>
+            Removing 'multiple' for <code>crisp:resourceresolver</code> child nodes to avoid unexpected same name sibling nodes.
+          </li>
+        </ul>
+      </subsection>
       <subsection name="0.9.5">
         <ul>
           <li>
