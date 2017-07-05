@@ -606,18 +606,22 @@ public class ConfigurationTreeBuilder {
         if (PropertyType.SINGLE == property.getType()) {
             final ValueImpl existingValue = property.getValue();
             if (existingValue != null) {
-                if (definitionProperty.getValue().equals(property.getValue())) {
-                    if (!property.getPath().startsWith("/hippo:configuration/hippo:translations/")) {
-                        logger.warn("Property '{}' defined in '{}' specifies value equivalent to existing property, defined in '{}'.",
-                                definitionProperty.getPath(), definitionProperty.getOrigin(), property.getOrigin());
-                    }
+                if (definitionProperty.getValue().equals(property.getValue())
+                        // suppress warning when auto-export is updating a property
+                        && !definitionProperty.getOrigin().equals(property.getOrigin())
+                        // suppress warning for translations special case, which would be verbose and difficult to avoid
+                        && !property.getPath().startsWith("/hippo:configuration/hippo:translations/")) {
+                    logger.warn("Property '{}' defined in '{}' specifies value equivalent to existing property, defined in '{}'.",
+                            definitionProperty.getPath(), definitionProperty.getOrigin(), property.getOrigin());
                 }
             }
         } else {
             final ValueImpl[] existingValues = property.getValues();
             if (existingValues != null) {
                 final ValueImpl[] definitionValues = definitionProperty.getValues();
-                if (existingValues.length == definitionValues.length) {
+                if (existingValues.length == definitionValues.length
+                        // suppress warning when auto-export is updating a property
+                        && !definitionProperty.getOrigin().equals(property.getOrigin())) {
                     for (int i = 0; i < existingValues.length; i++) {
                         if (!existingValues[i].equals(definitionValues[i])) {
                             return;
