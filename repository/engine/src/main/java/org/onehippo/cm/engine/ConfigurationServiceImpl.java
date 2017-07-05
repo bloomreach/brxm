@@ -129,7 +129,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             final boolean verify = Boolean.getBoolean("repo.bootstrap.verify");
             final boolean isProjectBaseDirSet = !StringUtils.isBlank(System.getProperty(PROJECT_BASEDIR_PROPERTY));
             final boolean autoExportAllowed = isProjectBaseDirSet && Boolean.getBoolean(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED);
-            final boolean startAutoExportService = configure && autoExportAllowed;
+            boolean startAutoExportService = configure && autoExportAllowed;
 
             baselineModel = loadBaselineModel();
             ConfigurationModelImpl bootstrapModel = null;
@@ -143,7 +143,22 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     // now that we have the deployment-based bootstrap model, we want to find out if the auto-export
                     // config indicates to us that we should load some modules from the filesystem
                     if (startAutoExportService) {
-                        bootstrapModel = updateBootstrapModelFromAutoExportConfig(bootstrapModel);
+                        try {
+                            // load modules that are specified via auto-export config
+                            final List<ModuleImpl> modulesFromSourceFiles = readModulesFromSourceFiles(bootstrapModel);
+                            // add all of the filesystem modules to a new model as "replacements" that override later additions
+                            bootstrapModel = mergeWithSourceModules(modulesFromSourceFiles, bootstrapModel);
+                        }
+                        catch (Exception e) {
+                            final String errorMsg = "Failed to load modules from filesystem for autoexport: autoexport not available.";
+                            if (e instanceof ConfigurationRuntimeException) {
+                                // no stacktrace needed, the exception message should be informative enough
+                                log.error(errorMsg + "\n" + e.getMessage());
+                            } else {
+                                log.error(errorMsg, e);
+                            }
+                            startAutoExportService = false;
+                        }
                     }
 
                     log.info("ConfigurationService: apply bootstrap config");
@@ -425,26 +440,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     }
 
     /**
-     * Update the bootstrap ConfigurationModel to include modules loaded from the filesystem, using info from
-     * the auto-export configuration data in the initial (jar-based) bootstrap model.
-     * @param bootstrapModel the initial (jar-based) bootstrap ConfigurationModel
-     * @return an updated ConfigurationModel with some jar-based Modules replaced with filesystem-based ones
-     */
-    private ConfigurationModelImpl updateBootstrapModelFromAutoExportConfig(final ConfigurationModelImpl bootstrapModel) {
-        try {
-            // load modules that are specified via auto-export config
-            final List<ModuleImpl> modulesFromSourceFiles = readModulesFromSourceFiles(bootstrapModel);
-
-            // add all of the filesystem modules to a new model as "replacements" that override later additions
-            return mergeWithSourceModules(modulesFromSourceFiles, bootstrapModel);
-        }
-        catch (Exception e) {
-            log.error("Failed to load modules from filesystem for autoexport", e);
-            return bootstrapModel;
-        }
-    }
-
-    /**
      * Read modules that were specified using the auto-export config as source files on the native filesystem.
      * @return a List of newly-loaded filesystem-backed Modules
      */
@@ -468,14 +463,21 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
         // convert the project basedir to a Path, so we can resolve modules against it
         final Path projectPath = Paths.get(projectDir);
 
-        // for each module in repo.bootstrap.modules
+        // for each module in autoexport:modules
         final List<ModuleImpl> modulesFromSourceFiles = new ArrayList<>();
         for (String mvnModulePath : modulesConfig.keySet()) {
+            // first check module path exists:
+            final Path modulePath = projectPath.resolve(nativePath(mvnModulePath));
+            final File moduleDir = modulePath.toFile();
+            if (!moduleDir.exists() || !moduleDir.isDirectory()) {
+                throw new ConfigurationRuntimeException("Cannot find module source path for module: '" + mvnModulePath + "' in "
+                        + AutoExportConstants.CONFIG_MODULES_PROPERTY_NAME + ", expected directory: " + modulePath);
+            }
             // use maven conventions to find a module descriptor, then parse it
             final Path moduleDescriptorPath = projectPath.resolve(nativePath(mvnModulePath + org.onehippo.cm.model.Constants.MAVEN_MODULE_DESCRIPTOR));
 
             if (!moduleDescriptorPath.toFile().exists()) {
-                throw new IllegalStateException("Cannot find module descriptor for module in "
+                throw new ConfigurationRuntimeException("Cannot find module descriptor for module: '" + mvnModulePath + "' in "
                         + AutoExportConstants.CONFIG_MODULES_PROPERTY_NAME + ", expected: " + moduleDescriptorPath);
             }
 
