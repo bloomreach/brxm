@@ -127,7 +127,7 @@ public abstract class AbstractBaseTest {
         return module;
     }
 
-    protected SourceImpl assertSource(final ModuleImpl parent, final String path, final int definitionCount) {
+    public static SourceImpl assertSource(final ModuleImpl parent, final String path, final int definitionCount) {
         SourceImpl source = findByPath(path, parent.getSources());
         assertNotNull(source);
         assertEquals(path, source.getPath());

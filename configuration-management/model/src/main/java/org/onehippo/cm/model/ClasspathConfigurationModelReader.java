@@ -77,12 +77,6 @@ public class ClasspathConfigurationModelReader {
 
         final ConfigurationModelImpl model = new ConfigurationModelImpl();
 
-        // load modules that are specified via repo.bootstrap.modules system property
-        final List<ModuleImpl> modulesFromSourceFiles = readModulesFromSourceFiles(verifyOnly);
-
-        // add all of the filesystem modules to the builder as "replacements" that override later additions
-        modulesFromSourceFiles.forEach(model::addModule);
-
         // load modules that are packaged on the classpath
         final Pair<Set<FileSystem>, List<GroupImpl>> classpathGroups =
                 readModulesFromClasspath(classLoader, verifyOnly);
@@ -100,49 +94,6 @@ public class ClasspathConfigurationModelReader {
         log.info("ConfigurationModel loaded in {}", stopWatch.toString());
 
         return model;
-    }
-
-    /**
-     * Read modules that were specified using the repo.bootstrap.modules system property as source files on the native
-     * filesystem.
-     * @param verifyOnly TODO
-     * @return a List of results from PathConfigurationReader
-     */
-    protected List<ModuleImpl> readModulesFromSourceFiles(final boolean verifyOnly) throws IOException, ParserException {
-        // if repo.bootstrap.modules and project.basedir are defined, load modules from the filesystem before loading
-        // additional modules from the classpath
-        final String projectDir = System.getProperty(Constants.PROJECT_BASEDIR_PROPERTY);
-        final String sourceModules = System.getProperty(Constants.BOOTSTRAP_MODULES_PROPERTY);
-        final List<ModuleImpl> modulesFromSourceFiles = new ArrayList<>();
-        if (StringUtils.isNotBlank(projectDir) && StringUtils.isNotBlank(sourceModules)) {
-
-            // convert the project basedir to a Path, so we can resolve modules against it
-            final Path projectPath = Paths.get(projectDir);
-
-            // for each module in repo.bootstrap.modules
-            final String[] mvnModulePaths = sourceModules.split(";");
-            for (String mvnModulePath : mvnModulePaths) {
-                // use maven conventions to find a module descriptor, then parse it
-                final Path moduleDescriptorPath = projectPath.resolve(nativePath(mvnModulePath + Constants.MAVEN_MODULE_DESCRIPTOR));
-
-                if (!moduleDescriptorPath.toFile().exists()) {
-                    throw new IllegalStateException("Cannot find module descriptor for module in "
-                            + Constants.BOOTSTRAP_MODULES_PROPERTY + ", expected: " + moduleDescriptorPath);
-                }
-
-                log.debug("Loading module descriptor from filesystem here: {}", moduleDescriptorPath);
-
-                final PathConfigurationReader.ReadResult result =
-                        new PathConfigurationReader().read(moduleDescriptorPath, verifyOnly);
-
-                // store mvnSourcePath on each module for later use by auto-export
-                final ModuleImpl module = result.getModuleContext().getModule();
-                module.setMvnPath(mvnModulePath);
-                modulesFromSourceFiles.add(module);
-            }
-
-        }
-        return modulesFromSourceFiles;
     }
 
     /**

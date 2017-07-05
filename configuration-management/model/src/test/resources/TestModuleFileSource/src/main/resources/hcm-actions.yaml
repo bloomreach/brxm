@@ -1,8 +1,0 @@
-action-lists:
-- 1.0:
-    /content/path1: reload
-    /content/pathX: reload
-- 1.1:
-    /content/path2: reload
-- 1.2:
-    /content/path3: delete
