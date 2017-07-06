@@ -57,7 +57,7 @@
     <hippo.services.version>4.0.0</hippo.services.version>
     <hippo.services.autoreload.version>4.0.0-SNAPSHOT</hippo.services.autoreload.version>
     <hippo.services.contenttype.version>4.0.0-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.services.eventbus.version>4.0.0-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.services.eventbus.version>4.0.0</hippo.services.eventbus.version>
     <hippo.services.webfiles.version>4.0.0-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.services.htmlprocessor.version>1.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.utilities.version>4.0.0-SNAPSHOT</hippo.utilities.version>
