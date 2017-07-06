@@ -60,7 +60,7 @@
     <hippo.services.eventbus.version>4.0.0</hippo.services.eventbus.version>
     <hippo.services.webfiles.version>4.0.0-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.services.htmlprocessor.version>1.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
-    <hippo.utilities.version>4.0.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.utilities.version>4.0.0</hippo.utilities.version>
     <hippo.testutils.version>1.0.0</hippo.testutils.version>
 
     <!-- Hippo standard plugin versions -->
