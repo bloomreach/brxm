@@ -53,7 +53,7 @@
     <hippo.frontend.theme.version>4.0.0</hippo.frontend.theme.version>
     <hippo.hst.version>5.0.0-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>5.0.0-SNAPSHOT</hippo.packages.version>
-    <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>5.0.0</hippo.repository.version>
     <hippo.services.version>4.0.0</hippo.services.version>
     <hippo.services.autoreload.version>4.0.0-SNAPSHOT</hippo.services.autoreload.version>
     <hippo.services.contenttype.version>4.0.0-SNAPSHOT</hippo.services.contenttype.version>
