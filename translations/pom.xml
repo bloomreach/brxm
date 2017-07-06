@@ -26,13 +26,13 @@
 
   <name>Hippo Community Translations</name>
   <artifactId>hippo-community-translations</artifactId>
-  <version>12.0.0</version>
+  <version>12.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2016</inceptionYear>
 
   <properties>
-    <hippo.l10n-tooling.version>2.0.0</hippo.l10n-tooling.version>
+    <hippo.l10n-tooling.version>2.0.1-SNAPSHOT</hippo.l10n-tooling.version>
     <locales>fr,nl,de,zh,es</locales>
     <locale/>
     <format>excel</format>

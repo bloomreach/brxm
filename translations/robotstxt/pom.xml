@@ -20,15 +20,15 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-community-translations</artifactId>
-    <version>12.0.0</version>
+    <version>12.0.1-SNAPSHOT</version>
   </parent>
   
   <name>Hippo Plugin Robots.txt Translations</name>
   <artifactId>hippo-plugin-robotstxt-l10n</artifactId>
-  <version>4.0.0</version>
+  <version>4.0.1-SNAPSHOT</version>
   
   <properties>
-    <hippo.plugin.robotstxt.version>4.0.0</hippo.plugin.robotstxt.version>
+    <hippo.plugin.robotstxt.version>4.0.1-SNAPSHOT</hippo.plugin.robotstxt.version>
   </properties>
   
   <dependencies>

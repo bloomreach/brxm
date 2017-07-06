@@ -20,15 +20,15 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-community-translations</artifactId>
-    <version>12.0.0</version>
+    <version>12.0.1-SNAPSHOT</version>
   </parent>
   
   <name>Hippo Plugin Content Blocks Translations</name>
   <artifactId>hippo-plugin-content-blocks-l10n</artifactId>
-  <version>4.0.0</version>
+  <version>4.0.1-SNAPSHOT</version>
   
   <properties>
-    <hippo.plugin.content-blocks.version>4.0.0</hippo.plugin.content-blocks.version>
+    <hippo.plugin.content-blocks.version>4.0.1-SNAPSHOT</hippo.plugin.content-blocks.version>
   </properties>
   
   <dependencies>
