@@ -32,6 +32,7 @@ class DragDropService {
     HstService,
     PageStructureService,
     ScrollService,
+    HippoIframeService,
     ) {
     'ngInject';
 
@@ -45,6 +46,7 @@ class DragDropService {
     this.HstService = HstService;
     this.PageStructureService = PageStructureService;
     this.ScrollService = ScrollService;
+    this.HippoIframeService = HippoIframeService;
 
     this.draggingOrClicking = false;
     this.dropping = false;
@@ -133,9 +135,20 @@ class DragDropService {
 
   _injectDragula(iframe) {
     const appRootUrl = this.DomService.getAppRootUrl();
-
     const dragulaJs = `${appRootUrl}scripts/dragula.min.js?antiCache=${this.ConfigService.antiCache}`;
-    return this.DomService.addScript(iframe, dragulaJs);
+    this.requirejs = iframe.frameElement.contentWindow.require;
+
+    if (!angular.isDefined(this.requirejs)) {
+      return this.DomService.addScript(iframe, dragulaJs);
+    }
+
+    const d = this.$q.defer();
+    this.requirejs([dragulaJs], (dragula) => {
+      iframe.dragula = dragula;
+      d.resolve();
+    });
+
+    return d.promise;
   }
 
   _isContainerEnabled(containerElement) {
