@@ -20,15 +20,15 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-community-translations</artifactId>
-    <version>12.0.0-SNAPSHOT</version>
+    <version>12.0.0</version>
   </parent>
   
   <name>Hippo Plugin Gallery Picker Translations</name>
   <artifactId>hippo-plugin-gallerypicker-l10n</artifactId>
-  <version>4.0.0-SNAPSHOT</version>
+  <version>4.0.0</version>
   
   <properties>
-    <hippo.plugin.gallerypicker.version>4.0.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.gallerypicker.version>4.0.0</hippo.plugin.gallerypicker.version>
   </properties>
   
   <dependencies>

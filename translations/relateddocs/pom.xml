@@ -20,15 +20,15 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-community-translations</artifactId>
-    <version>12.0.0-SNAPSHOT</version>
+    <version>12.0.0</version>
   </parent>
   
   <name>Hippo Plugin Related Documents Translations</name>
   <artifactId>hippo-plugin-relateddocs-l10n</artifactId>
-  <version>5.0.0-SNAPSHOT</version>
+  <version>5.0.0</version>
   
   <properties>
-    <hippo.plugin.relateddocs.version>5.0.0-SNAPSHOT</hippo.plugin.relateddocs.version>
+    <hippo.plugin.relateddocs.version>5.0.0</hippo.plugin.relateddocs.version>
   </properties>
   
   <dependencies>
