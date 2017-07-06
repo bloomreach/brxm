@@ -76,7 +76,7 @@
     <hippo.plugin.selections.version>5.0.0</hippo.plugin.selections.version>
     <hippo.plugin.seo-support.version>4.0.0-SNAPSHOT</hippo.plugin.seo-support.version>
     <hippo.plugin.sitemap.version>4.0.0-SNAPSHOT</hippo.plugin.sitemap.version>
-    <hippo.plugin.taxonomy.version>4.0.0-SNAPSHOT</hippo.plugin.taxonomy.version>
+    <hippo.plugin.taxonomy.version>4.0.0</hippo.plugin.taxonomy.version>
     <hippo.addon-crisp.version>2.0.0-SNAPSHOT</hippo.addon-crisp.version>
     <hippo.maven.plugin.l10n>2.0.0-SNAPSHOT</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
