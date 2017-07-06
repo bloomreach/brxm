@@ -6,8 +6,8 @@ Hippo Addon CRISP (Common Resource Interface and Service Provider).
 
 | Plugin Version | CMS Version  |
 |:--------------:|:------------:|
-| 0.9.x          | 11.x         |
-| 1.x            | 12.x         |
+| 2.x            | 12.x         |
+| 1.x            | 11.x         |
 
 Release notes are maintained in SITE Documentation Source: [release-notes.xml](src/site/xdoc/release-notes.xml) for release notes.
 
