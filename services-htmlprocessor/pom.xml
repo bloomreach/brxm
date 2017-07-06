@@ -26,7 +26,7 @@
 
   <name>Hippo CMS7 Services - htmlprocessor</name>
   <artifactId>hippo-services-htmlprocessor</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
 
   <inceptionYear>2017</inceptionYear>
 
