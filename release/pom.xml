@@ -61,7 +61,7 @@
     <hippo.services.webfiles.version>4.0.0-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.services.htmlprocessor.version>1.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.utilities.version>4.0.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.testutils.version>1.0.0-SNAPSHOT</hippo.testutils.version>
+    <hippo.testutils.version>1.0.0</hippo.testutils.version>
 
     <!-- Hippo standard plugin versions -->
     <hippo.essentials-components.version>4.0.0-SNAPSHOT</hippo.essentials-components.version>
