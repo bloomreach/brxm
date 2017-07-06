@@ -46,7 +46,7 @@
     <hippo.configuration-management.version>1.0.0</hippo.configuration-management.version>
     <hippo.addon-channel-manager.version>5.0.0</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>4.0.0</hippo.addon-search-service.version>
-    <hippo.ckeditor.version>4.7.0-h1-SNAPSHOT</hippo.ckeditor.version>
+    <hippo.ckeditor.version>4.7.0-h1</hippo.ckeditor.version>
     <hippo.commons.version>4.0.0</hippo.commons.version>
     <hippo.cms.version>5.0.0</hippo.cms.version>
     <hippo.frontend.plugins.version>4.0.0</hippo.frontend.plugins.version>
