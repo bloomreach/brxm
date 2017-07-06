@@ -27,7 +27,7 @@
   <description>Hippo Plugin Taxonomy</description>
 
   <artifactId>hippo-plugin-taxonomy</artifactId>
-  <version>4.0.0</version>
+  <version>4.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
