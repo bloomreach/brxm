@@ -26,7 +26,7 @@
 
   <name>Hippo CMS7 Services - autoreload</name>
   <artifactId>hippo-services-autoreload</artifactId>
-  <version>4.0.0</version>
+  <version>4.0.1-SNAPSHOT</version>
 
   <inceptionYear>2014</inceptionYear>
 
