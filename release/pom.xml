@@ -51,7 +51,7 @@
     <hippo.cms.version>5.0.0</hippo.cms.version>
     <hippo.frontend.plugins.version>4.0.0</hippo.frontend.plugins.version>
     <hippo.frontend.theme.version>4.0.0</hippo.frontend.theme.version>
-    <hippo.hst.version>5.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.hst.version>5.0.0</hippo.hst.version>
     <hippo.packages.version>5.0.0-SNAPSHOT</hippo.packages.version>
     <hippo.repository.version>5.0.0</hippo.repository.version>
     <hippo.services.version>4.0.0</hippo.services.version>
