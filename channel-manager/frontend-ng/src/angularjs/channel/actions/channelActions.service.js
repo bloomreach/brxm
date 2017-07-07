@@ -73,7 +73,7 @@ class ChannelActionsService extends MenuService {
        translationKey: 'TOOLBAR_MENU_CHANNEL_CONFIRM',
        iconName: 'publish',
        isVisible: () => this._hasOwnChanges() && this._isBranch(),
-       onClick: () => this._confirm(),
+       onClick: () => this._publish(),
      })
     .addAction('discard-changes', {
       translationKey: 'TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES',
