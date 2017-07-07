@@ -13,28 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model;
+package org.onehippo.cm.model.impl;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.model.NodePath;
+import org.onehippo.cm.model.NodePathSegment;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 
-import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
 
-/**
- * Represents a multi-segment JCR node path.
- */
-public class NodePath implements Comparable<NodePath>, Iterable<NodeName> {
+public class NodePathImpl implements NodePath {
 
-    public static final NodePath ROOT = new NodePath(ImmutableList.of(), false);
+    public static final NodePath ROOT = new NodePathImpl(ImmutableList.of(), false);
 
     public static final NodePath getRoot() {
         return ROOT;
@@ -54,7 +53,7 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodeName> {
 
         // collapse "more" into a single path, so that this will work: get("/", "  ", "/parent/child", "/grandchild/");
         if (ArrayUtils.isNotEmpty(more)) {
-            path += stream(more).map(StringUtils::stripToEmpty).map(s -> StringUtils.stripEnd(s, "/"))
+            path += Arrays.stream(more).map(StringUtils::stripToEmpty).map(s -> StringUtils.stripEnd(s, "/"))
                     .filter(StringUtils::isNotBlank).collect(joining("/", "/", ""));
         }
 
@@ -71,145 +70,165 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodeName> {
         final boolean relative = !path.startsWith("/");
         final String[] segments = StringUtils.strip(path, "/").split("/");
 
-        final ImmutableList<NodeName> names =
-                stream(segments).map(NodeName::new).collect(ImmutableList.toImmutableList());
+        final ImmutableList<NodePathSegment> names =
+                Arrays.stream(segments).map(NodePathSegmentImpl::new).collect(ImmutableList.toImmutableList());
 
-        return new NodePath(names, relative);
+        return new NodePathImpl(names, relative);
     }
 
-    public final ImmutableList<NodeName> names;
+    public final ImmutableList<NodePathSegment> segments;
     public final boolean absolute;
 
-    private NodePath(final ImmutableList<NodeName> names, final boolean absolute) {
-        this.names = names;
+    private NodePathImpl(final ImmutableList<NodePathSegment> segments, final boolean absolute) {
+        this.segments = segments;
         this.absolute = absolute;
     }
 
+    @Override
     public boolean isAbsolute() {
         return absolute;
     }
 
-    public NodeName getLastName() {
+    @Override
+    public NodePathSegment getLastSegment() {
         if (this == ROOT) {
-            // todo: should this return a constant NodeName instead?
-            throw new IllegalStateException("Root path has no node names");
+            // todo: should this return a constant NodePathSegment instead?
+            throw new IllegalStateException("Root path has no path segments!");
         }
 
-        return names.get(names.size()-1);
+        return segments.get(segments.size()-1);
     }
 
+    @Override
     public NodePath getParent() {
         // todo: implement this in a more memory-efficient way with Lisp-style list objects
-        return new NodePath(names.subList(0, names.size()-1), absolute);
+        return new NodePathImpl(segments.subList(0, segments.size()-1), absolute);
     }
 
-    public int getNameCount() {
-        return names.size();
+    @Override
+    public int getSegmentCount() {
+        return segments.size();
     }
 
-    public NodeName getName(final int index) {
-        return names.get(index);
+    @Override
+    public NodePathSegment getSegment(final int index) {
+        return segments.get(index);
     }
 
+    @Override
     public NodePath subpath(final int beginIndex, final int endIndex) {
-        return new NodePath(names.subList(beginIndex, endIndex), beginIndex == 0);
+        return new NodePathImpl(segments.subList(beginIndex, endIndex), beginIndex == 0);
     }
 
+    @Override
     public boolean startsWith(final String other) {
         return startsWith(get(other));
     }
 
+    @Override
     public boolean startsWith(final NodePath other) {
-        if (other.getNameCount() > names.size()) {
-            return false;
-        }
-
-        return names.subList(0, other.getNameCount()).equals(other.names);
+        return (other.getSegmentCount() <= segments.size())
+                && Iterables.elementsEqual(this, other);
     }
 
+    @Override
+    public boolean endsWith(final String other) {
+        return endsWith(get(other));
+    }
+
+    @Override
     public boolean endsWith(final NodePath other) {
-        if (other.getNameCount() > names.size()) {
-            return false;
-        }
-
-        return names.subList(names.size()-other.getNameCount(), names.size()).equals(other.names);
+        return (other.getSegmentCount() <= segments.size())
+                && Iterables.elementsEqual(
+                        segments.subList(segments.size() - other.getSegmentCount(), segments.size()),
+                        other);
     }
 
+    @Override
     public NodePath resolve(final String other) {
         return resolve(get(other));
     }
 
+    @Override
     public NodePath resolve(final NodePath other) {
-        return new NodePath(ImmutableList.copyOf(Iterables.concat(names, other.names)), absolute);
+        return new NodePathImpl(ImmutableList.copyOf(Iterables.concat(segments, other)), absolute);
     }
 
+    @Override
     public NodePath resolveSibling(final String other) {
         // todo: reduce memory churn
         return getParent().resolve(other);
     }
 
+    @Override
     public NodePath resolveSibling(final NodePath other) {
         // todo: reduce memory churn
         return getParent().resolve(other);
     }
 
-    // todo: normalize
-
+    @Override
     public NodePath relativize(final NodePath other) {
         if (other == ROOT) {
-            return new NodePath(names, false);
+            return new NodePathImpl(segments, false);
         }
 
         if (other.startsWith(this)) {
-            return other.subpath(names.size(), other.getNameCount());
+            return other.subpath(segments.size(), other.getSegmentCount());
         }
 
         // generate relative paths up to the root and then work down again
         // todo: remove common ancestors
-        return get(Streams.concat(Stream.generate(() -> "..").limit(names.size()),
-                    other.names.stream().map(NodeName::toString)).collect(joining("/")));
+        return get(Streams.concat(Stream.generate(() -> "..").limit(segments.size()),
+                    other.stream().map(NodePathSegment::toString)).collect(joining("/")));
     }
 
+    @Override
     public NodePath toAbsolutePath() {
         if (absolute) {
             return this;
         }
 
-        return new NodePath(names, true);
+        return new NodePathImpl(segments, true);
     }
 
-    public Iterator<NodeName> iterator() {
-        return names.iterator();
+    @Override
+    public Iterator<NodePathSegment> iterator() {
+        return segments.iterator();
+    }
+
+    @Override
+    public Stream<NodePathSegment> stream() {
+        return segments.stream();
     }
 
     /**
-     * Compare paths by name segment, with unindexed names considered to be identical to name with index 1.
+     * Compare paths by name segment, with unindexed segments considered to be identical to name with index 1.
      */
     @Override
     public int compareTo(final NodePath o) {
-        final int shorterLength = (names.size() <= o.names.size())? names.size(): o.names.size();
+        final int shorterLength = (segments.size() <= o.getSegmentCount())? segments.size(): o.getSegmentCount();
 
         for (int i = 0; i < shorterLength; i++) {
-            final int curComp = names.get(i).compareTo(o.names.get(i));
+            final int curComp = segments.get(i).compareTo(o.getSegment(i));
 
             if (curComp != 0) {
                 return curComp;
             }
         }
 
-        // if all existing names are equal, the shorter path is less than the longer path
-        int sizeComp = Integer.compare(names.size(), o.names.size());
+        // if all existing segments are equal, the shorter path is less than the longer path
+        int sizeComp = Integer.compare(segments.size(), o.getSegmentCount());
 
         // ultimate tie-breaker is that relative paths are less-than absolute paths
         if (sizeComp == 0) {
-            return Boolean.compare(absolute, o.absolute);
+            return Boolean.compare(absolute, o.isAbsolute());
         }
 
         return sizeComp;
     }
 
     /**
-     * @return true iff all name segments are equal, according to {@link NodeName#equals(Object)}.
+     * @return true iff all name segments are equal, according to {@link NodePathSegment#equals(Object)}.
      */
     @Override
     public boolean equals(final Object obj) {
@@ -222,16 +241,16 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodeName> {
         }
 
         final NodePath other = (NodePath) obj;
-        return names.equals(other.names) && (absolute == other.absolute);
+        return Iterables.elementsEqual(segments, other) && (absolute == other.isAbsolute());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(names, absolute);
+        return Objects.hash(segments, absolute);
     }
 
     @Override
     public String toString() {
-        return names.stream().map(NodeName::toString).collect(joining("/", absolute?"/":"", ""));
+        return segments.stream().map(NodePathSegment::toString).collect(joining("/", absolute?"/":"", ""));
     }
 }

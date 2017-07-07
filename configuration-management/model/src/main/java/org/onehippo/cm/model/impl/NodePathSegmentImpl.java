@@ -13,24 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model;
+package org.onehippo.cm.model.impl;
 
-import java.util.Comparator;
 import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.onehippo.cm.model.NodePathSegment;
 import org.onehippo.cm.model.util.SnsUtils;
 
-// TODO: move this to API -- do we really need to keep SnsUtils out of API?
-public class NodeName implements Comparable<NodeName> {
-
-    /**
-     * Comparator that treats unindexed names as distinct (and less-than) the same name with index 1.
-     */
-    public static final Comparator<NodeName> UNINDEXED_FIRST_ORDER =
-            Comparator.comparing(NodeName::getUnindexedName).thenComparingInt(NodeName::getIndex);
+public class NodePathSegmentImpl implements NodePathSegment {
 
     // todo: split prefix? no obvious use case in HCM right now
+    /**
+     * Implementation note: Node name is interned for optimized memory usage.
+     */
     private final String name;
     private final int index;
 
@@ -39,53 +35,50 @@ public class NodeName implements Comparable<NodeName> {
      * @param name an unindexed node name
      * @param index the desired new index
      */
-    public NodeName(final String name, final int index) {
-        this.name = name;
+    public NodePathSegmentImpl(final String name, final int index) {
+        this.name = name.intern();
         this.index = index;
-
-        if (name.contains("[")) {
-            throw new IllegalArgumentException("Name should not already contain an index when adding an explicit index!");
-        }
+        checkArgs();
     }
 
     /**
      * Create a new instance by splitting a possibly-indexed name.
      * @param fullName a JCR node name with or without an index
      */
-    public NodeName(final String fullName) {
+    public NodePathSegmentImpl(final String fullName) {
         final Pair<String, Integer> split = SnsUtils.splitIndexedName(fullName);
-        this.name = split.getLeft();
+        this.name = split.getLeft().intern();
         this.index = split.getRight();
+        checkArgs();
+    }
+
+    private void checkArgs() {
+        if (name.contains("[")) {
+            throw new IllegalArgumentException("Name should not already contain an index when adding an explicit index!");
+        }
 
         if (index < 0) {
             throw new IllegalArgumentException("JCR Node index cannot be less than zero!");
         }
     }
 
-    public String getUnindexedName() {
+    @Override public String getName() {
         return name;
     }
 
-    public int getIndex() {
+    @Override public int getIndex() {
         return index;
     }
 
-    public boolean hasIndex() {
+    @Override public boolean hasIndex() {
         return index != 0;
     }
 
-    /**
-     * @param newIndex the index for the new instance of JcrNodeName
-     * @return a new JcrNodeName instance with the same name as this instance and the given index
-     */
-    public NodeName withIndex(final int newIndex) {
-        return new NodeName(name, newIndex);
+    @Override public NodePathSegment withIndex(final int newIndex) {
+        return new NodePathSegmentImpl(name, newIndex);
     }
 
-    /**
-     * @return if this name is unindexed, a variant with index 1; otherwise, this
-     */
-    public NodeName forceIndex() {
+    @Override public NodePathSegment forceIndex() {
         if (hasIndex()) {
             return this;
         }
@@ -94,19 +87,16 @@ public class NodeName implements Comparable<NodeName> {
         }
     }
 
-    /**
-     * Treats unindexed name as equivalent to index of 1.
-     */
     @Override
-    public int compareTo(final NodeName o) {
-        final int sVal = name.compareTo(o.getUnindexedName());
+    public int compareTo(final NodePathSegment o) {
+        final int sVal = name.compareTo(o.getName());
         if (sVal != 0) {
             return sVal;
         }
 
         // if both have zero-or-one index, they are treated as equal
         if ((index == 1 || index == 0)
-                && (o.index == 1 || o.index == 0)) {
+                && (o.getIndex() == 1 || o.getIndex() == 0)) {
             return 0;
         }
 
@@ -116,75 +106,65 @@ public class NodeName implements Comparable<NodeName> {
     /**
      * Compare using {@link #UNINDEXED_FIRST_ORDER}.
      */
-    public int compareUnindexedFirst(final NodeName o) {
+    @Override public int compareUnindexedFirst(final NodePathSegment o) {
         return UNINDEXED_FIRST_ORDER.compare(this, o);
     }
 
-    /**
-     * Treats unindexed name as equivalent to index of 1.
-     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
 
-        final NodeName other;
+        final NodePathSegment other;
         if (o instanceof String) {
             // allows for nodeName.equals("/other/path") and nodes.contains("/other/path"), etc.
-            other = new NodeName((String) o);
+            other = new NodePathSegmentImpl((String) o);
         }
-        else if (!(o instanceof NodeName)) {
+        else if (!(o instanceof NodePathSegment)) {
             return false;
         }
         else {
-            other = (NodeName) o;
+            other = (NodePathSegment) o;
         }
 
-        if (!name.equals(other.name)) {
+        if (!name.equals(other.getName())) {
             return false;
         }
 
-        if (index == other.index) {
+        if (index == other.getIndex()) {
             return true;
         }
 
         // zero and one are functionally the same
         return (index == 1 || index == 0)
-                && (other.index == 1 || other.index == 0);
+                && (other.getIndex() == 1 || other.getIndex() == 0);
     }
 
-    /**
-     * Equals comparison consistent with {@link #UNINDEXED_FIRST_ORDER}.
-     */
-    public boolean equalsUnindexedSignificant(final Object o) {
+    @Override public boolean equalsUnindexedSignificant(final Object o) {
         if (this == o) {
             return true;
         }
 
-        final NodeName other;
+        final NodePathSegment other;
         if (o instanceof String) {
             // allows for nodeName.equals("/other/path") and nodes.contains("/other/path"), etc.
-            other = new NodeName((String) o);
+            other = new NodePathSegmentImpl((String) o);
         }
-        else if (!(o instanceof NodeName)) {
+        else if (!(o instanceof NodePathSegment)) {
             return false;
         }
         else {
-            other = (NodeName) o;
+            other = (NodePathSegment) o;
         }
 
-        if (!name.equals(other.name)) {
+        if (!name.equals(other.getName())) {
             return false;
         }
 
-        return (index == other.index);
+        return (index == other.getIndex());
     }
 
-    /**
-     * Treats unindexed name as equivalent to index of 1 (matching equals() and compareTo()).
-     * @return
-     */
     @Override
     public int hashCode() {
         return Objects.hash(name, (index == 0? 1: index));
