@@ -125,6 +125,14 @@ public class AbstractFieldTypeTest {
     }
 
     @Test
+    public void isMultiple() {
+        assertFalse(fieldType.isMultiple());
+        fieldType.setMaxValues(2);
+        assertTrue(fieldType.isMultiple());
+    }
+
+
+    @Test
     public void checkCardinalityMoreThanAllowed() throws Exception {
         final List<FieldValue> list = new ArrayList<>();
         list.add(new FieldValue("one"));

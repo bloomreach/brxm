@@ -157,14 +157,22 @@ public class StringFieldType extends AbstractFieldType {
                     }
                 }
 
-                if (getMaxValues() > 1) {
+                // make sure we can set the new property value
+                if (node.hasProperty(propertyName)) {
+                    final Property property = node.getProperty(propertyName);
+                    if (isMultiple() != property.isMultiple()) {
+                        property.remove();
+                    }
+                }
+
+                if (isMultiple()) {
                     node.setProperty(propertyName, strings);
                 } else {
                     node.setProperty(propertyName, strings[0]);
                 }
             }
         } catch (final RepositoryException e) {
-            log.warn("Failed to write singular String value to property {}", propertyName, e);
+            log.warn("Failed to write String value(s) to property {}", propertyName, e);
             throw new InternalServerErrorException();
         }
     }

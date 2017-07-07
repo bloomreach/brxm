@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.JcrUtils;
@@ -487,6 +488,7 @@ public class StringFieldTypeTest {
         final Node node = createMock(Node.class);
 
         fieldType.setId(PROPERTY);
+        expect(node.hasProperty(PROPERTY)).andReturn(false);
         expect(node.setProperty(PROPERTY, "New Value")).andThrow(new RepositoryException());
         replay(node);
 
@@ -517,6 +519,33 @@ public class StringFieldTypeTest {
             assertNull(e.getPayload());
         }
         verify(node);
+    }
+
+    @Test
+    public void writeSingleOnExistingMultipleProperty() throws Exception {
+        final StringFieldType fieldType = new StringFieldType();
+        final Node node = MockNode.root();
+        final Property propertyThatWillBeReplaced = node.setProperty(PROPERTY, new String[]{"Value1", "Value2"});
+
+        fieldType.setId(PROPERTY);
+        fieldType.writeTo(node, Optional.of(listOf(valueOf("New Value"))));
+
+        assertFalse(node.getProperty(PROPERTY).isSame(propertyThatWillBeReplaced));
+        assertFalse(node.getProperty(PROPERTY).isMultiple());
+    }
+
+    @Test
+    public void writeMultipleOnExistingSingleProperty() throws Exception {
+        final StringFieldType fieldType = new StringFieldType();
+        final Node node = MockNode.root();
+        final Property propertyThatWillBeReplaced = node.setProperty(PROPERTY, "Value");
+
+        fieldType.setMaxValues(2);
+        fieldType.setId(PROPERTY);
+        fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("New Value1"), valueOf("New Value2"))));
+
+        assertFalse(node.getProperty(PROPERTY).isSame(propertyThatWillBeReplaced));
+        assertTrue(node.getProperty(PROPERTY).isMultiple());
     }
 
     @Test

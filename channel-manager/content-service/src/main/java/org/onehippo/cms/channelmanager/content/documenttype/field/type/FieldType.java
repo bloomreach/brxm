@@ -83,6 +83,8 @@ public interface FieldType {
 
     boolean isValid();
 
+    boolean isMultiple();
+
     void init(FieldTypeContext fieldContext);
 
     /**
