@@ -72,7 +72,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Repository</notice.project.name>
 
-    <hippo.jackrabbit.version>2.14.0-h1</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.14.0-h2-SNAPSHOT</hippo.jackrabbit.version>
     <hippo.hcm.version>1.0.0</hippo.hcm.version>
     <hippo.commons.version>4.0.0</hippo.commons.version>
     <hippo.services.version>4.0.0</hippo.services.version>
