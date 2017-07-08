@@ -65,7 +65,7 @@
     <hippo.addon-crisp.version>${project.version}</hippo.addon-crisp.version>
     <!-- ***END temporary override of versions*** -->
 
-    <forge.exdocpickerbase.version>3.1.1</forge.exdocpickerbase.version>
+    <forge.exdocpickerbase.version>5.0.0</forge.exdocpickerbase.version>
 
     <jackson2.version>2.4.5</jackson2.version>
     <commons-lang.version>2.6</commons-lang.version>
