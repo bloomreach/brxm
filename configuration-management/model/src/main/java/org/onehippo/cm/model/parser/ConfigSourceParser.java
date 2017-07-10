@@ -188,7 +188,7 @@ public class ConfigSourceParser extends SourceParser {
         }
         for (Node node : nodes) {
             final String name = asStringScalar(node);
-            for (Definition definition : source.getModifiableDefinitions()) {
+            for (Definition definition : source.getDefinitions()) {
                 if (definition instanceof WebFileBundleDefinitionImpl) {
                     final WebFileBundleDefinitionImpl existingDefinition = (WebFileBundleDefinitionImpl) definition;
                     if (existingDefinition.getName().equals(name)) {

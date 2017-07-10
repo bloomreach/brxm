@@ -23,9 +23,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.onehippo.cm.model.DefinitionType;
+import org.onehippo.cm.model.NodePath;
 import org.onehippo.cm.model.SourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cm.model.DefinitionType.CONFIG;
 
 public class ConfigSourceImpl extends SourceImpl {
 
@@ -65,80 +68,43 @@ public class ConfigSourceImpl extends SourceImpl {
 
     public void cleanEmptyDefinitions() {
         Set<AbstractDefinitionImpl> toRemove = new HashSet<>();
-        for (AbstractDefinitionImpl def : getModifiableDefinitions()) {
-            if (DefinitionType.CONFIG.isOfType(def)
-                    && ((ConfigDefinitionImpl)def).getModifiableNode().isEmpty()) {
+        for (AbstractDefinitionImpl def : getDefinitions()) {
+            if (CONFIG.isOfType(def)
+                    && ((ConfigDefinitionImpl)def).getNode().isEmpty()) {
                 toRemove.add(def);
             }
         }
         toRemove.forEach(this::removeDefinition);
     }
 
-
     /**
-     * Get or create a definition in configSource to contain data for jcrPath. This may need to create a definition
-     * for an ancestor of jcrPath in order to comply with the requirement that indexed paths may not be used as a
-     * definition root.
+     * Get or create a definition in configSource to contain data for jcrPath.
      * @param jcrPath the path for which we want a definition
      * @return a DefinitionNodeImpl corresponding to the jcrPath, which may or may not be a root
      */
     public DefinitionNodeImpl getOrCreateDefinitionFor(final String jcrPath) {
-        final String[] pathSegments = jcrPath.substring(1).split("/");
+        return getOrCreateDefinitionFor(NodePathImpl.get(jcrPath));
+    }
 
-        // default to the full path, unless we find a SNS index that we need to deal with
-        String defRoot = jcrPath;
-        List<String> remainder = Collections.emptyList();
-
-        // scan the path segments for a SNS index
-        for (int idx = 0; idx < pathSegments.length; idx++) {
-            final String name = pathSegments[idx];
-
-            if (name.contains("[")) {
-                // if we find one, back up to the parent and use that as the def root
-                defRoot = "/" + String.join("/", Arrays.asList(pathSegments).subList(0, idx));
-                remainder = Arrays.asList(pathSegments).subList(idx, pathSegments.length);
-                break;
-            }
-        }
-
+    /**
+     * Get or create a definition in configSource to contain data for jcrPath.
+     * @param jcrPath the path for which we want a definition
+     * @return a DefinitionNodeImpl corresponding to the jcrPath, which may or may not be a root
+     */
+    public DefinitionNodeImpl getOrCreateDefinitionFor(final NodePath jcrPath) {
         // try to find an existing definition for defRoot
-        for (AbstractDefinitionImpl def : getModifiableDefinitions()) {
-            if (def.getType().equals(DefinitionType.CONFIG)) {
+        for (AbstractDefinitionImpl def : getDefinitions()) {
+            if (def.getType().equals(CONFIG)) {
                 final ConfigDefinitionImpl configDef = (ConfigDefinitionImpl) def;
-                if (configDef.getModifiableNode().getPath().equals(defRoot)) {
-                    // if we find one, then walk down the remainder to the node we really want
-                    return buildRemainderNodes(jcrPath, configDef.getModifiableNode(), remainder);
+                if (configDef.getNode().getPath().equals(jcrPath)) {
+                    return configDef.getNode();
                 }
             }
         }
 
-        // if we haven't returned yet, we didn't find a matching def for defRoot
-        // build a new def and any required descendant nodes
-        final DefinitionNodeImpl defNode = addConfigDefinition().withRoot(defRoot);
-        return buildRemainderNodes(jcrPath, defNode, remainder);
-    }
-
-    /**
-     * Helper for {@link #getOrCreateDefinitionFor(String)} -- builds out nodes under configDef as
-     * necessary.
-     * @param jcrPath
-     * @param node starting node (typically a configDef root)
-     * @param remainder possibly-empty list of path segments needed below node
-     * @return
-     */
-    private DefinitionNodeImpl buildRemainderNodes(final String jcrPath, DefinitionNodeImpl node, final List<String> remainder) {
-        for (final String segment : remainder) {
-            if (node.getNodes().containsKey(segment)) {
-                node = node.getNode(segment);
-            }
-            else {
-                node = node.addNode(segment);
-            }
-        }
-        if (node == null) {
-            log.error("Produced a null result for path: {}!", jcrPath, new IllegalStateException());
-        }
-        return node;
+        // if we haven't returned yet, we didn't find a matching def
+        // build a new def
+        return addConfigDefinition().withRoot(jcrPath.toString());
     }
 
 }

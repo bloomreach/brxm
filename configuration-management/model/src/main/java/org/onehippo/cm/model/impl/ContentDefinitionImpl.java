@@ -39,10 +39,6 @@ public class ContentDefinitionImpl extends AbstractDefinitionImpl
         return node;
     }
 
-    public DefinitionNodeImpl getModifiableNode() {
-        return node;
-    }
-
     public void setNode(final DefinitionNodeImpl node) {
         this.node = node;
     }

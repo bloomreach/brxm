@@ -75,7 +75,7 @@ public abstract class SourceImpl implements Source {
     }
 
     public void removeDefinition(AbstractDefinitionImpl definition) {
-        if (getModifiableDefinitions().remove(definition)) {
+        if (modifiableDefinitions.remove(definition)) {
             markChanged();
         }
     }

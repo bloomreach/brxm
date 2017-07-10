@@ -126,7 +126,7 @@ public class ConfigurationTreeBuilder {
         final ConfigurationNodeImpl rootForDefinition = getOrCreateRootForDefinition(definition);
 
         if (rootForDefinition != null) {
-            mergeNode(rootForDefinition, definition.getModifiableNode());
+            mergeNode(rootForDefinition, definition.getNode());
         }
         return this;
     }
@@ -331,7 +331,7 @@ public class ConfigurationTreeBuilder {
     }
 
     public ConfigurationNodeImpl getOrCreateRootForDefinition(final ContentDefinitionImpl definition) {
-        final DefinitionNodeImpl definitionNode = definition.getModifiableNode();
+        final DefinitionNodeImpl definitionNode = definition.getNode();
         final NodePath definitionRootPath = definitionNode.getPath();
         final NodePathSegment[] pathSegments = definitionRootPath.stream().toArray(NodePathSegment[]::new);
         int segmentsConsumed = 0;
@@ -365,7 +365,7 @@ public class ConfigurationTreeBuilder {
                 return null;
             }
             rootForDefinition =
-                    createChildNode(rootForDefinition, nodeName.toString(), definition.getModifiableNode());
+                    createChildNode(rootForDefinition, nodeName.toString(), definition.getNode());
         } else {
             if (rootForDefinition == root && definitionNode.isDelete()) {
                 throw new IllegalArgumentException("Deleting the root node is not supported.");
