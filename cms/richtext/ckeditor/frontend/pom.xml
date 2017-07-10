@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms-richtext-ckeditor</artifactId>
-    <version>5.0.0-SNAPSHOT</version>
+    <version>5.0.1-SNAPSHOT</version>
   </parent>
 
   <name>CMS Rich Text CKEditor Frontend</name>
@@ -112,7 +112,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>always</forkMode>
+          <reuseForks>false</reuseForks>
         </configuration>
       </plugin>
       <plugin>

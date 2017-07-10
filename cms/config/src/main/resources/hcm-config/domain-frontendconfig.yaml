@@ -1,0 +1,90 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/frontendconfig:
+      jcr:primaryType: hipposys:domain
+      /frontend-cluster:
+        jcr:primaryType: hipposys:domainrule
+        /type-frontend-cluster:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: frontend:clusterfolder
+      /frontend-plugincluster:
+        jcr:primaryType: hipposys:domainrule
+        /type-frontend-plugincluster:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: frontend:plugincluster
+      /frontend-plugins:
+        jcr:primaryType: hipposys:domainrule
+        /type-frontend-plugin:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: frontend:plugin
+        /exclude-admin:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: plugin.class
+          hipposys:filter: false
+          hipposys:type: String
+          hipposys:value: org.hippoecm.frontend.plugins.cms.admin.AdminPerspective
+        /exclude-dev-perspective:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: cluster.name
+          hipposys:filter: true
+          hipposys:type: String
+          hipposys:value: cms-dev
+        /exclude-publishall:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: plugin.class
+          hipposys:filter: false
+          hipposys:type: String
+          hipposys:value: org.hippoecm.frontend.plugins.reviewedactions.PublishAllShortcutPlugin
+        /exclude-configuration-in-cms-tree:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: cluster.name
+          hipposys:filter: true
+          hipposys:type: String
+          hipposys:value: cms-tree-views/configuration
+      /frontend-pluginconfig:
+        jcr:primaryType: hipposys:domainrule
+        /type-frontend-pluginconfig:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: frontend:pluginconfig
+      /frontend-listener:
+        jcr:primaryType: hipposys:domainrule
+        /type-frontend-listener:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: frontend:listener
+      /frontend-application:
+        jcr:primaryType: hipposys:domainrule
+        /type-frontend-application:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: frontend:application
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [everybody]
+        hipposys:role: readonly

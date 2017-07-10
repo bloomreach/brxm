@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/translation/default:
+      jcr:primaryType:
+        operation: override
+        type: name
+        value: frontend:workflow
+      /frontend:renderer:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.translation.workflow.TranslationWorkflowPlugin

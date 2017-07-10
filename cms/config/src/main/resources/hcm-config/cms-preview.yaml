@@ -1,0 +1,27 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-preview:
+      jcr:primaryType: frontend:plugincluster
+      frontend:properties: [mode]
+      frontend:references: [editor.id, browser.id, wicket.model, model.compareTo,
+        wicket.behavior]
+      frontend:services: [wicket.id]
+      /previewPerspective:
+        jcr:primaryType: frontend:plugin
+        extension.editor: ${cluster.id}.viewer
+        extension.workflow: ${cluster.id}.workflows
+        plugin.class: org.hippoecm.frontend.plugins.cms.edit.EditPerspective
+        wicket.extensions: [extension.editor, extension.workflow]
+      /viewerPlugin:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.editor.viewer.ComparePlugin
+        template: ${cluster.id}.template
+        wicket.id: ${cluster.id}.viewer
+      /workflowPlugin:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.addon.workflow.DocumentWorkflowManagerPlugin
+        wicket.id: ${cluster.id}.workflows
+        wicket.model: ${model.compareTo}
+        workflow.categories: [default, translation, committype]
+        workflow.menuorder: [publication, request, document, miscellaneous]
+        workflow.version.categories: versioning

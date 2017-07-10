@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    cmstest:
+      uri: http://www.hippoecm.org/cms/test/nt/1.0
+      cnd: cmstest.cnd

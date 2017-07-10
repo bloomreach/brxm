@@ -1,0 +1,22 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-admin:
+      jcr:primaryType: frontend:plugincluster
+      /users:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.users.ListUsersPlugin
+      /groups:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.groups.ListGroupsPlugin
+      /permissions:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionsPlugin
+      /systeminfo:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.system.SystemInfoPlugin
+      /systemprops:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.system.SystemPropertiesPlugin
+      /updater:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.updater.UpdaterPanelPlugin

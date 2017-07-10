@@ -30,5 +30,5 @@ import org.junit.runners.Suite;
     EventLabelTest.class,
     BrowseLinkTargetTest.class
 })
-class TestSuite {
+public class TestSuite {
 }

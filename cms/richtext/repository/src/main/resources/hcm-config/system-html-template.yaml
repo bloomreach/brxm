@@ -1,0 +1,32 @@
+definitions:
+  config:
+    /hippo:namespaces/system/Html:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['hipposysedit:remodel']
+          hipposysedit:node: false
+          hipposysedit:type: String
+          hipposysedit:uri: internal
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          ckeditor.config.appended.json: ''
+          ckeditor.config.overlayed.json: ''
+          frontend:properties: [mode, ckeditor.config.appended.json, ckeditor.config.overlayed.json,
+            htmlprocessor.id]
+          frontend:references: [wicket.model, model.compareTo, engine]
+          frontend:services: [wicket.id]
+          htmlprocessor.id: formatted
+          /root:
+            jcr:primaryType: frontend:plugin
+            ckeditor.config.appended.json: ${ckeditor.config.appended.json}
+            ckeditor.config.overlayed.json: ${ckeditor.config.overlayed.json}
+            diffservice.id: html.diffservice.id
+            htmlprocessor.id: ${htmlprocessor.id}
+            plugin.class: org.hippoecm.frontend.plugins.ckeditor.CKEditorPropertyPlugin

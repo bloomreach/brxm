@@ -52,6 +52,8 @@ import org.hippoecm.frontend.plugins.console.NodeModelReference;
 import org.hippoecm.frontend.plugins.console.icons.FontAwesomeIcon;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
+import org.hippoecm.frontend.plugins.console.menu.content.YamlExportDialog;
+import org.hippoecm.frontend.plugins.console.menu.content.YamlImportDialog;
 import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.move.MoveDialog;
@@ -399,6 +401,40 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             iconXmlImport.add(CssClass.append(FontAwesomeIcon.UPLOAD.cssClass()));
             iconXmlImport.add(CssClass.append("xml-import-icon"));
             menuContainer.add(iconXmlImport);
+
+//
+            // yaml export
+            dialogFactory = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+
+                public IDialogService.Dialog createDialog() {
+                    return new YamlExportDialog(new NodeModelReference(BrowserPlugin.this, model));
+                }
+            };
+            menuContainer.add(
+                    new DialogLink("yaml-export", new Model<>(getString("yaml.export")), dialogFactory, getDialogService()));
+            // yaml export icon
+            Label iconYamlExport = new Label("icon-yaml-export", StringUtils.EMPTY);
+            iconYamlExport.add(CssClass.append(new Model<>(FontAwesomeIcon.DOWNLOAD.cssClass())));
+            iconYamlExport.add(CssClass.append(new Model<>("xml-export-icon")));
+            menuContainer.add(iconYamlExport);
+
+            // yaml import
+            dialogFactory = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+
+                public IDialogService.Dialog createDialog() {
+                    return new YamlImportDialog(new NodeModelReference(BrowserPlugin.this, model));
+                }
+            };
+            menuContainer.add(
+                    new DialogLink("yaml-import", new Model<>(getString("yaml.import")), dialogFactory, getDialogService()));
+            // yaml import icon
+            Label iconYamlImport = new Label("icon-yaml-import", StringUtils.EMPTY);
+            iconYamlImport.add(CssClass.append(FontAwesomeIcon.UPLOAD.cssClass()));
+            iconYamlImport.add(CssClass.append("xml-import-icon"));
+            menuContainer.add(iconYamlImport);
+
 
             // generate t9ids
             dialogFactory = new IDialogFactory() {

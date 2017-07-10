@@ -1,0 +1,413 @@
+definitions:
+  config:
+    /hippo:namespaces/test:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      /test:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype[1]:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.0
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:title
+              hipposysedit:type: String
+          /hipposysedit:nodetype[2]:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:title
+              hipposysedit:type: String
+            /child:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:child
+              hipposysedit:type: nt:unstructured
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [engine, wicket.model]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+            /title:
+              jcr:primaryType: frontend:plugin
+              caption: Title
+              field: title
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              wicket.css: hippo-template-default-title
+              wicket.id: ${cluster.id}.field
+            /child:
+              jcr:primaryType: frontend:plugin
+              caption: Child
+              field: child
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              wicket.css: hippo-template-default-title
+              wicket.id: ${cluster.id}.field
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: test:test
+            test:title: title
+      /pseudo:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            hipposysedit:type: test:test
+      /inheriting:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype[1]:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['test:test']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /extra:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:extra
+              hipposysedit:type: String
+          /hipposysedit:nodetype[2]:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['test:test']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.0
+            /extra:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:extra
+              hipposysedit:type: String
+      /mixinTest:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: test:mixinTest
+            jcr:mixinTypes: ['test:mixin']
+      /superMixinTest:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['test:mixinTest', 'test:mixin']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: test:superMixinTest
+      /validator:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /optional:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:optional
+              hipposysedit:type: String
+            /nonempty:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:nonempty
+              hipposysedit:type: String
+              hipposysedit:validators: [nonempty]
+            /escaped:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:escaped
+              hipposysedit:type: String
+              hipposysedit:validators: [escaped]
+            /email:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:email
+              hipposysedit:type: String
+              hipposysedit:validators: [email]
+            /mandatory:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:mandatory
+              hipposysedit:type: String
+              hipposysedit:validators: [required]
+            /multiple:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:multiple: true
+              hipposysedit:path: test:multiple
+              hipposysedit:type: String
+              hipposysedit:validators: [required]
+            /autocreated:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:autocreated: true
+              hipposysedit:path: test:autocreated
+              hipposysedit:type: String
+              hipposysedit:validators: [required]
+            /protected:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:protected
+              hipposysedit:protected: true
+              hipposysedit:type: String
+              hipposysedit:validators: [required]
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+      /container:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /base:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:base
+              hipposysedit:type: test:validator
+            /single:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:single
+              hipposysedit:type: test:validator
+              hipposysedit:validators: [required]
+            /multiple:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:multiple: true
+              hipposysedit:path: test:multiple
+              hipposysedit:type: test:validator
+              hipposysedit:validators: [required]
+            /any-validator:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: '*'
+              hipposysedit:type: test:validator
+              hipposysedit:validators: [required]
+            /uncascaded:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:uncascaded
+              hipposysedit:type: test:uncascaded
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+      /uncascaded:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:cascadevalidation: false
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /property:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:property
+              hipposysedit:type: String
+              hipposysedit:validators: [required, non-empty]
+      /legacy:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /a:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:a
+              hipposysedit:type: String
+            /b:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:b
+              hipposysedit:type: String
+      /new:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+      /edited:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            /title:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:title
+              hipposysedit:type: String
+            /child:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:child
+              hipposysedit:type: nt:unstructured
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [engine, wicket.model]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+            /title:
+              jcr:primaryType: frontend:plugin
+              caption: Title
+              field: title
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              wicket.css: hippo-template-default-title
+              wicket.id: ${cluster.id}.field
+            /child:
+              jcr:primaryType: frontend:plugin
+              caption: Child
+              field: child
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              wicket.css: hippo-template-default-title
+              wicket.id: ${cluster.id}.field
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: test:edited
+            test:title: title
+      /document:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['hippo:document', 'hippostd:relaxed']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [engine, wicket.model]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: test:document
+            jcr:mixinTypes: ['mix:referenceable']
+      /inheritingfromedited:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['test:edited']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /extra:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: test:extra
+              hipposysedit:type: String
+      /mandatorybase:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /base:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: test:base
+              hipposysedit:type: String
+      /mandatory:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:supertype: ['test:mandatorybase']
+            hipposysedit:uri: http://www.hippoecm.org/editor/test/nt/0.1
+            /mandatory:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: test:mandatory
+              hipposysedit:type: String
+            /withdefaults:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: test:withdefaults
+              hipposysedit:type: String
+            /autocreated:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:autocreated: true
+              hipposysedit:mandatory: true
+              hipposysedit:path: test:autocreated
+              hipposysedit:type: String
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: nt:unstructured
+      /comparable:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [engine, wicket.model, model.compareTo]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+        /hipposysedit:prototypes:
+          jcr:primaryType: hipposysedit:prototypeset
+          /hipposysedit:prototype:
+            jcr:primaryType: nt:unstructured

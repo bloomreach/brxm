@@ -201,9 +201,8 @@ public class PluginUserSession extends UserSession {
                 main.resetConnection();
                 throw new RepositoryUnavailableException("Repository is not available.");
             }
-        } else if (fallbackSession != null) {
-            fallbackSession.logout();
-            fallbackSession = null;
+        } else {
+            resetFallbackSession();
         }
         return session;
     }
@@ -448,10 +447,7 @@ public class PluginUserSession extends UserSession {
 
     @Override
     public void detach() {
-        if (fallbackSession != null) {
-            fallbackSession.logout();
-            fallbackSession = null;
-        }
+        resetFallbackSession();
         super.detach();
     }
 
@@ -478,11 +474,7 @@ public class PluginUserSession extends UserSession {
 
     @Override
     public void onInvalidate() {
-
-        if (fallbackSession != null) {
-            fallbackSession.logout();
-            fallbackSession = null;
-        }
+        resetFallbackSession();
         releaseJcrSession();
         JcrObservationManager.getInstance().cleanupListeners(this);
 
@@ -566,5 +558,13 @@ public class PluginUserSession extends UserSession {
         }
     }
 
+    private void resetFallbackSession() {
+        if (fallbackSession != null) {
+            if (fallbackSession.isLive()) {
+                fallbackSession.logout();
+            }
+            fallbackSession = null;
+        }
+    }
 
 }

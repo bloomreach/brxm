@@ -1,0 +1,395 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-folder-views:
+      jcr:primaryType: frontend:clusterlist
+      /hippogallery:stdImageGallery:
+        jcr:primaryType: frontend:plugincluster
+        frontend:properties: [list.page.size, list.view.size, gallery.thumbnail.size,
+          gallery.thumbnail.box.size]
+        frontend:references: [model.folder, model.document]
+        frontend:services: [wicket.id]
+        gallery.thumbnail.box.size: '32'
+        gallery.thumbnail.size: '60'
+        list.page.size: '50'
+        list.view.size: '5'
+        /root:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          expand.collapse.supported: true
+          plugin.class: org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin
+          wicket.model: ${model.folder}
+          /yui.config:
+            jcr:primaryType: frontend:pluginconfig
+          /filters:
+            jcr:primaryType: frontend:pluginconfig
+            /hideAttic:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /content/attic
+            /showGalleryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:gallery
+              display: true
+            /showHandleType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:handle
+              display: true
+            /hideFacetSearchType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:facetsearch
+              display: false
+            /hideFolderType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:folder
+              display: false
+            /hideDirectoryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:directory
+              display: false
+            /hideUnstructuredType:
+              jcr:primaryType: frontend:pluginconfig
+              child: nt:unstructured
+              display: false
+            /hideFacNavType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippofacnav:facetnavigation
+              display: false
+      /hippogallery:stdAssetGallery:
+        jcr:primaryType: frontend:plugincluster
+        frontend:properties: [list.page.size, list.view.size]
+        frontend:references: [model.folder, model.document]
+        frontend:services: [wicket.id]
+        list.page.size: '50'
+        list.view.size: '5'
+        /root:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          expand.collapse.supported: true
+          plugin.class: org.hippoecm.frontend.plugins.gallery.AssetGalleryPlugin
+          wicket.model: ${model.folder}
+          /yui.config:
+            jcr:primaryType: frontend:pluginconfig
+          /filters:
+            jcr:primaryType: frontend:pluginconfig
+            /showGalleryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:gallery
+              display: true
+            /showHandleType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:handle
+              display: true
+            /hideFacetSearchType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:facetsearch
+              display: false
+            /hideFolderType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:folder
+              display: false
+            /hideDirectoryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:directory
+              display: false
+            /hideUnstructuredType:
+              jcr:primaryType: frontend:pluginconfig
+              child: nt:unstructured
+              display: false
+            /hideFacNavType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippofacnav:facetnavigation
+              display: false
+      /hipposysedit:namespace:
+        jcr:primaryType: frontend:plugincluster
+        frontend:references: [model.folder, model.document]
+        frontend:services: [wicket.id]
+        /root:
+          jcr:primaryType: frontend:plugin
+          expand.collapse.supported: true
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.TypesListingPlugin
+          wicket.model: ${model.folder}
+      /hipposysedit:namespacefolder:
+        jcr:primaryType: frontend:plugincluster
+        frontend:references: [model.folder, model.document]
+        frontend:services: [wicket.id]
+        /root:
+          jcr:primaryType: frontend:plugin
+          expand.collapse.supported: true
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.NamespaceListingPlugin
+          wicket.model: ${model.folder}
+          /filters:
+            jcr:primaryType: frontend:pluginconfig
+            /hideHippoNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/hippo
+            /hideGalleryNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/hippogallery
+            /hideHippostdNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/hippostd
+            /hideHippostdpubwfNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/hippostdpubwf
+            /hideSystemNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/system
+            /hideFrontendNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/frontend
+            /hideHipposyseditNamespace:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /hippo:namespaces/hipposysedit
+            /showOtherNamespaces:
+              jcr:primaryType: frontend:pluginconfig
+              child: hipposysedit:namespace
+              display: true
+            /hideFolderType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:folder
+              display: false
+            /hideHandleType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:handle
+              display: false
+            /hideUnstructuredType:
+              jcr:primaryType: frontend:pluginconfig
+              child: nt:unstructured
+              display: false
+      /hippostd:directory:
+        jcr:primaryType: frontend:plugincluster
+        frontend:properties: [list.page.size, list.view.size]
+        frontend:references: [model.folder, model.document]
+        frontend:services: [wicket.id]
+        list.page.size: '50'
+        list.view.size: '5'
+        /root:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          expand.collapse.supported: true
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.FolderViewPlugin
+          wicket.model: ${model.folder}
+          /filters:
+            jcr:primaryType: frontend:pluginconfig
+            /hideAttic:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /content/attic
+            /hideGalleryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:gallery
+              display: false
+            /showFolderType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:folder
+              display: true
+            /showDirectoryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:directory
+              display: true
+            /showHandleType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:handle
+              display: true
+            /hideFacetSearchType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:facetsearch
+              display: false
+            /hideUnstructuredType:
+              jcr:primaryType: frontend:pluginconfig
+              child: nt:unstructured
+              display: false
+            /hideTranslation:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:translation
+              display: false
+            /hideFacNavType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippofacnav:facetnavigation
+              display: false
+        /defaultColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          documentTypeIconRenderer: resourceIconRenderer
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.DefaultListColumnProviderPlugin
+        /reviewedActionColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          plugin.class: org.hippoecm.frontend.plugins.reviewedactions.list.ReviewedActionsListColumnProviderPlugin
+      /hippostd:folder:
+        jcr:primaryType: frontend:plugincluster
+        frontend:properties: [list.page.size, list.view.size]
+        frontend:references: [model.folder, model.document]
+        frontend:services: [wicket.id]
+        list.page.size: '50'
+        list.view.size: '5'
+        /root:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          expand.collapse.supported: true
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.FolderViewPlugin
+          wicket.model: ${model.folder}
+          /filters:
+            jcr:primaryType: frontend:pluginconfig
+            /hideAttic:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /content/attic
+            /hideGalleryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:gallery
+              display: false
+            /showFolderType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:folder
+              display: true
+            /showDirectoryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:directory
+              display: true
+            /showHandleType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:handle
+              display: true
+            /hideFacetSearchType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:facetsearch
+              display: false
+            /hideUnstructuredType:
+              jcr:primaryType: frontend:pluginconfig
+              child: nt:unstructured
+              display: false
+            /hideTranslation:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:translation
+              display: false
+            /hideFacNavType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippofacnav:facetnavigation
+              display: false
+        /defaultColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          documentTypeIconRenderer: resourceIconRenderer
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.DefaultListColumnProviderPlugin
+        /reviewedActionColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          plugin.class: org.hippoecm.frontend.plugins.reviewedactions.list.ReviewedActionsListColumnProviderPlugin
+      /hippo:facetsearch:
+        jcr:primaryType: frontend:plugincluster
+        frontend:properties: [list.page.size, list.view.size]
+        frontend:references: [model.folder, model.document]
+        frontend:services: [wicket.id]
+        list.page.size: '50'
+        list.view.size: '5'
+        /root:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          expand.collapse.supported: true
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.FolderViewPlugin
+          wicket.model: ${model.folder}
+          /yui.config:
+            jcr:primaryType: frontend:pluginconfig
+          /filters:
+            jcr:primaryType: frontend:pluginconfig
+            /showSubsearchType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:facetsubsearch
+              display: true
+            /hideResultset:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:facetresult
+              display: false
+        /defaultColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          documentTypeIconRenderer: resourceIconRenderer
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.DefaultListColumnProviderPlugin
+      /hipposys:facetsubsearch:
+        jcr:primaryType: frontend:plugincluster
+        frontend:properties: [list.page.size, list.view.size]
+        frontend:references: [model.folder, model.document]
+        frontend:services: [wicket.id]
+        list.page.size: '50'
+        list.view.size: '5'
+        /root:
+          jcr:primaryType: frontend:plugin
+          expand.collapse.supported: true
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.FacetSearchListingPlugin
+          wicket.model: ${model.folder}
+          /filters:
+            jcr:primaryType: frontend:pluginconfig
+      /hippo:facetselect:
+        jcr:primaryType: frontend:plugincluster
+        frontend:properties: [list.page.size, list.view.size]
+        frontend:references: [model.folder, model.document]
+        frontend:services: [wicket.id]
+        list.page.size: '50'
+        list.view.size: '5'
+        /root:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          expand.collapse.supported: true
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.FolderViewPlugin
+          wicket.model: ${model.folder}
+          /filters:
+            jcr:primaryType: frontend:pluginconfig
+            /hideAttic:
+              jcr:primaryType: frontend:pluginconfig
+              display: false
+              path: /content/attic
+            /hideGalleryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:gallery
+              display: false
+            /showFolderType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:folder
+              display: true
+            /showDirectoryType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippostd:directory
+              display: true
+            /showHandleType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:handle
+              display: true
+            /hideFacetSearchType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:facetsearch
+              display: false
+            /hideUnstructuredType:
+              jcr:primaryType: frontend:pluginconfig
+              child: nt:unstructured
+              display: false
+            /hideTranslation:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippo:translation
+              display: false
+            /hideFacNavType:
+              jcr:primaryType: frontend:pluginconfig
+              child: hippofacnav:facetnavigation
+              display: false
+        /defaultColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          documentTypeIconRenderer: resourceIconRenderer
+          plugin.class: org.hippoecm.frontend.plugins.cms.browse.list.DefaultListColumnProviderPlugin
+        /reviewedActionColumns:
+          jcr:primaryType: frontend:plugin
+          column.id: ${cluster.id}.columns
+          plugin.class: org.hippoecm.frontend.plugins.reviewedactions.list.ReviewedActionsListColumnProviderPlugin
+      /rep:root:
+        jcr:primaryType: frontend:plugincluster
+        frontend:services: [wicket.id]
+        /root:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.plugin.empty.EmptyPlugin

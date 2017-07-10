@@ -1,0 +1,49 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-browser:
+      jcr:primaryType: frontend:plugincluster
+      /documentsTreeLoader:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-tree-views/documents
+        plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
+        /cluster.config:
+          jcr:primaryType: frontend:pluginconfig
+          bind.to.layout.unit: true
+          browser.id: service.browse
+          editor.id: service.edit
+          wicket.id: service.browse.tree.content
+          wicket.model: model.browse.collection
+          workflow.enabled: true
+      /imagesTreeLoader:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-tree-views/images
+        plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
+        /cluster.config:
+          jcr:primaryType: frontend:pluginconfig
+          bind.to.layout.unit: true
+          browser.id: service.browse
+          editor.id: service.edit
+          wicket.id: service.browse.tree.images
+          workflow.enabled: true
+      /assetsTreeLoader:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-tree-views/assets
+        plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
+        /cluster.config:
+          jcr:primaryType: frontend:pluginconfig
+          bind.to.layout.unit: true
+          browser.id: service.browse
+          editor.id: service.edit
+          wicket.id: service.browse.tree.files
+          workflow.enabled: true
+      /configurationTreeLoader:
+        jcr:primaryType: frontend:plugin
+        cluster.name: cms-tree-views/configuration
+        plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
+        /cluster.config:
+          jcr:primaryType: frontend:pluginconfig
+          bind.to.layout.unit: true
+          browser.id: service.browse
+          editor.id: service.edit
+          wicket.id: service.browse.tree.configuration
+          workflow.enabled: true

@@ -36,7 +36,7 @@ public final class UnpublishedReferenceNodeProvider implements ISortableDataProv
 
     private static final Logger log = LoggerFactory.getLogger(UnpublishedReferenceNodeProvider.class);
     
-    private Map<String, Node> referenced;
+    private transient Map<String, Node> referenced;
     private ISortState state = new SortState();
 
     public UnpublishedReferenceNodeProvider(Map<String, Node> referenced) {

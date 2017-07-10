@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        email: Field doesn't match an email address
+        escaped: Invalid character present
+        non-empty: A mandatory string input field is empty
+        resource-required: You must upload a file

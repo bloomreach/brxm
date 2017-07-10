@@ -1,0 +1,17 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/brokenlinks:
+      jcr:primaryType: hipposys:domain
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [editor, author]
+        hipposys:role: readonly
+      /brokenlink:
+        jcr:primaryType: hipposys:domainrule
+        /nodetype-hippo-request:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: brokenlinks:link

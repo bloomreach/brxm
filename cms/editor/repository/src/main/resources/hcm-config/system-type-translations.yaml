@@ -1,0 +1,42 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Date:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Date
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:CalendarDate:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: CalendarDate
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Boolean:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Boolean
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Long:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Integer Number
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Text:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Text
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:String:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: String
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Label:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Label
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Double:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Decimal Number
