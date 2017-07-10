@@ -20,10 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableSet;
-
-import org.junit.Ignore;
 import org.junit.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -370,7 +369,6 @@ public class ConfigurationModelImplTest {
         assertEquals("[/a, /a/a, /a/b, /a/b/a, /a/b/c, /a/b/c/b, /a/b/c/d, /a/b/c/d/e, /b]", roots);
     }
 
-    @Ignore
     @Test
     public void sort_definitions_with_sns() throws Exception {
         final GroupImpl c1 = new GroupImpl("c1");
@@ -382,9 +380,24 @@ public class ConfigurationModelImplTest {
 
         final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
 
-        assertEquals(12, definitions.size());
+        assertEquals(11, definitions.size());
         String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
-        assertEquals("[/a, /a/sns, /a/sns[1], /a/sns[2], /a/sns[3], /a/sns[4], /a/sns[5], /a/sns[6], /a/sns[7], /a/sns[8], /a/sns[9], /a/sns[10]]", roots);
+        assertEquals("[/a, /a/sns, /a/sns[2], /a/sns[3], /a/sns[4], /a/sns[5], /a/sns[6], /a/sns[7], /a/sns[8], /a/sns[9], /a/sns[10]]", roots);
+    }
+
+    @Test
+    public void reject_duplicate_sns_definition() throws Exception {
+        final GroupImpl c1 = new GroupImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter-sns-dup.yaml", m1);
+
+        try {
+            new ConfigurationModelImpl().addGroup(c1).build();
+            fail("Should have thrown exception");
+        } catch (IllegalStateException e) {
+            assertEquals("Duplicate definition root paths '/a/sns' in module 'm1' in source files 'c1/p1/m1 [builder/definition-sorter-sns-dup.yaml]' and 'c1/p1/m1 [builder/definition-sorter-sns-dup.yaml]'.", e.getMessage());
+        }
     }
 
     @Test
@@ -406,7 +419,7 @@ public class ConfigurationModelImplTest {
             model.addGroup(c1);
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
-            assertEquals("Duplicate content root paths '/a/b' in module 'm1' in source files 'c1/p1/m1 [string]' and 'c1/p1/m1 [builder/definition-sorter.yaml]'.", e.getMessage());
+            assertEquals("Duplicate definition root paths '/a/b' in module 'm1' in source files 'c1/p1/m1 [string]' and 'c1/p1/m1 [builder/definition-sorter.yaml]'.", e.getMessage());
         }
     }
 

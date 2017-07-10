@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationProperty;
@@ -48,7 +47,7 @@ public class ConfigurationTreeBuilderTest {
         return property.getValue().getString();
     }
 
-    private String sortedCollectionToString(final Map<String, ? extends Object> map) {
+    private String sortedCollectionToString(final Map<String, ?> map) {
         return new ArrayList<>(map.keySet()).toString();
     }
 
@@ -1863,30 +1862,6 @@ public class ConfigurationTreeBuilderTest {
         }
     }
 
-    @Ignore
-    @Test
-    public void reject_duplicate_sns_definition() throws Exception {
-        final String yaml = "definitions:\n"
-                + "  config:\n"
-                + "    /a:\n"
-                + "      jcr:primaryType: foo\n"
-                + "    /a/sns:\n"
-                + "      jcr:primaryType: foo\n"
-                + "    /a/sns[1]:\n"
-                + "      jcr:primaryType: foo\n";
-
-        final List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
-
-        builder.push((ContentDefinitionImpl) definitions.get(0));
-        builder.push((ContentDefinitionImpl) definitions.get(1));
-        try {
-            builder.push((ContentDefinitionImpl) definitions.get(2));
-            fail("Should have thrown exception");
-        } catch (IllegalStateException e) {
-            assertEquals("test-group/test-project/test-module [string] ...", e.getMessage());
-        }
-    }
-
     @Test
     public void property_meta_category_override_to_runtime() throws Exception {
         final String yaml = "definitions:\n"
@@ -2280,6 +2255,6 @@ public class ConfigurationTreeBuilderTest {
                 + "        jcr:primaryType: foo\n";
         definitions = ModelTestUtils.parseNoSort(yaml);
         builder.push((ContentDefinitionImpl) definitions.get(0));
-        final ConfigurationNodeImpl root = builder.finishModule().build();
+        builder.finishModule().build();
     }
 }

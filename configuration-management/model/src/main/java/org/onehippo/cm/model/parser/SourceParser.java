@@ -28,6 +28,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.NodePathSegment;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.Source;
@@ -37,6 +38,7 @@ import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.NodePathSegmentImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
 import org.yaml.snakeyaml.constructor.Construct;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -119,6 +121,13 @@ public abstract class SourceParser extends AbstractBaseParser {
     protected abstract void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node node) throws ParserException;
 
     protected void constructDefinitionNode(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
+        try {
+            NodePathSegment segment = NodePathSegmentImpl.get(name);
+        }
+        catch (IllegalArgumentException e) {
+            throw new ParserException("JCR node index cannot be less than 1", value, e);
+        }
+
         final DefinitionNodeImpl node = parent.addNode(name);
         populateDefinitionNode(node, value);
     }

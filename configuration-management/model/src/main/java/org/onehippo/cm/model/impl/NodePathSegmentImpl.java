@@ -27,6 +27,7 @@ public class NodePathSegmentImpl implements NodePathSegment {
 
     public static final NodePathSegment ROOT_NAME = new NodePathSegmentImpl("", 0);
 
+    // todo: is it true that node indices cannot have leading zeros?
     private static Pattern pattern = Pattern.compile("^([^\\[\\]]+)(\\[([1-9][0-9]*)])?$");
 
     public static NodePathSegment get(final String fullName) {
@@ -107,7 +108,7 @@ public class NodePathSegmentImpl implements NodePathSegment {
         }
 
         if (index < 0) {
-            throw new IllegalArgumentException("JCR Node index cannot be less than zero!");
+            throw new IllegalArgumentException("Segment index cannot be less than zero!");
         }
     }
 

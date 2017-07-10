@@ -2,13 +2,11 @@ definitions:
   config:
     /a:
       jcr:primaryType: foo
-    /a/sns[1]:
-      jcr:primaryType: foo
-    /a/sns:
-      jcr:primaryType: foo
     /a/sns[10]:
       jcr:primaryType: foo
     /a/sns[2]:
+      jcr:primaryType: foo
+    /a/sns:
       jcr:primaryType: foo
     /a/sns[3]:
       jcr:primaryType: foo

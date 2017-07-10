@@ -635,7 +635,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
 
             if (def1 != def2 && rootPath1.equals(rootPath2)) {
                 final String msg = String.format(
-                        "Duplicate content root paths '%s' in module '%s' in source files '%s' and '%s'.",
+                        "Duplicate definition root paths '%s' in module '%s' in source files '%s' and '%s'.",
                         rootPath1, getName(), def1.getOrigin(), def2.getOrigin());
                 throw new IllegalStateException(msg);
             }

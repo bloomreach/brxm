@@ -1223,7 +1223,6 @@ public class SourceValidationTest extends AbstractBaseTest {
                 "'.meta:residual-child-node-category' cannot be configured for explicitly indexed same-name siblings");
     }
 
-    @Ignore
     @Test
     public void snsIndex0NotAllowed() {
         final String yaml = "definitions:\n"
@@ -1236,7 +1235,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node pathToMap = firstConfigTuple(root).getValueNode();
         final Node snsNodeValue = firstTuple(pathToMap).getValueNode();
 
-        assertParserException(root, snsNodeValue, "...");
+        assertParserException(root, snsNodeValue, "JCR node index cannot be less than 1");
     }
 
     // start set for "explicit sequencing"
