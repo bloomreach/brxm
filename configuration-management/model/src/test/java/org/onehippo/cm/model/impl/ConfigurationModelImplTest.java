@@ -20,9 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
-
 import com.google.common.collect.ImmutableSet;
+
+import org.junit.Ignore;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -367,6 +368,23 @@ public class ConfigurationModelImplTest {
         assertEquals(9, definitions.size());
         String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
         assertEquals("[/a, /a/a, /a/b, /a/b/a, /a/b/c, /a/b/c/b, /a/b/c/d, /a/b/c/d/e, /b]", roots);
+    }
+
+    @Ignore
+    @Test
+    public void sort_definitions_with_sns() throws Exception {
+        final GroupImpl c1 = new GroupImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter-sns.yaml", m1);
+
+        ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).build();
+
+        final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
+
+        assertEquals(12, definitions.size());
+        String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
+        assertEquals("[/a, /a/sns, /a/sns[1], /a/sns[2], /a/sns[3], /a/sns[4], /a/sns[5], /a/sns[6], /a/sns[7], /a/sns[8], /a/sns[9], /a/sns[10]]", roots);
     }
 
     @Test

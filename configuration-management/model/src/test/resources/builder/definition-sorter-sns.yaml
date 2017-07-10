@@ -1,0 +1,26 @@
+definitions:
+  config:
+    /a:
+      jcr:primaryType: foo
+    /a/sns[1]:
+      jcr:primaryType: foo
+    /a/sns:
+      jcr:primaryType: foo
+    /a/sns[10]:
+      jcr:primaryType: foo
+    /a/sns[2]:
+      jcr:primaryType: foo
+    /a/sns[3]:
+      jcr:primaryType: foo
+    /a/sns[4]:
+      jcr:primaryType: foo
+    /a/sns[5]:
+      jcr:primaryType: foo
+    /a/sns[6]:
+      jcr:primaryType: foo
+    /a/sns[7]:
+      jcr:primaryType: foo
+    /a/sns[9]:
+      jcr:primaryType: foo
+    /a/sns[8]:
+      jcr:primaryType: foo

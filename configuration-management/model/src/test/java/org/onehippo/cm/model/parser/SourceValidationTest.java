@@ -18,6 +18,7 @@ package org.onehippo.cm.model.parser;
 
 import java.io.StringReader;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.impl.GroupImpl;
@@ -1072,18 +1073,6 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void snsNotAllowedInRootPath() {
-        final String yaml = "definitions:\n"
-                + "  config:\n"
-                + "    /path/to[1]/node:\n"
-                + "      property: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-
-        assertParserException(root, firstConfigTuple(root).getKeyNode(), "Path must not contain name indices");
-    }
-
-    @Test
     public void metaCategoryMustBeScalar() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
@@ -1232,6 +1221,22 @@ public class SourceValidationTest extends AbstractBaseTest {
 
         assertParserException(root, snsNodeValue,
                 "'.meta:residual-child-node-category' cannot be configured for explicitly indexed same-name siblings");
+    }
+
+    @Ignore
+    @Test
+    public void snsIndex0NotAllowed() {
+        final String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /path/to:\n"
+                + "      /node[0]:\n"
+                + "        property: value\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node pathToMap = firstConfigTuple(root).getValueNode();
+        final Node snsNodeValue = firstTuple(pathToMap).getValueNode();
+
+        assertParserException(root, snsNodeValue, "...");
     }
 
     // start set for "explicit sequencing"
