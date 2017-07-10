@@ -18,6 +18,7 @@ package org.onehippo.cm.model.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.DefinitionItem;
 import org.onehippo.cm.model.NodePath;
+import org.onehippo.cm.model.NodePathSegment;
 
 public abstract class DefinitionItemImpl extends ModelItemImpl implements DefinitionItem {
 
@@ -25,6 +26,18 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
     private DefinitionNodeImpl parent;
     private ContentDefinitionImpl definition;
     private SourceLocationImpl sourceLocation;
+
+    public DefinitionItemImpl(final NodePath path, final NodePathSegment name, final ContentDefinitionImpl definition) {
+        if (path == null) {
+            throw new IllegalArgumentException("Item path must not be null!");
+        }
+
+        setName(name);
+        this.path = path;
+        this.parent = null;
+        this.definition = definition;
+        this.sourceLocation = new SourceLocationImpl();
+    }
 
     public DefinitionItemImpl(final String path, final String name, final ContentDefinitionImpl definition) {
         if (StringUtils.isBlank(path)) {

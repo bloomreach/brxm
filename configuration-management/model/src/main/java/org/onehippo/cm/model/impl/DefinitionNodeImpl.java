@@ -29,6 +29,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.ModelItem;
+import org.onehippo.cm.model.NodePath;
+import org.onehippo.cm.model.NodePathSegment;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.ValueType;
 
@@ -47,6 +49,10 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     private String orderBefore = null;
     private Boolean ignoreReorderedChildren;
     private ConfigurationItemCategory residualChildNodeCategory = null;
+
+    public DefinitionNodeImpl(final NodePath path, final NodePathSegment name, final ContentDefinitionImpl definition) {
+        super(path, name, definition);
+    }
 
     public DefinitionNodeImpl(final String path, final String name, final ContentDefinitionImpl definition) {
         super(path, name, definition);

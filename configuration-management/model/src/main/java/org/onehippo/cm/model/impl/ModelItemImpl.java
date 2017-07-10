@@ -32,6 +32,9 @@ public abstract class ModelItemImpl implements ModelItem {
     }
 
     public void setName(final NodePathSegment name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Item name must not be null!");
+        }
         this.name = name;
     }
 

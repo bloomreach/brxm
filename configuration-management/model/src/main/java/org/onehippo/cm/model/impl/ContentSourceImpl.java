@@ -16,6 +16,7 @@
 package org.onehippo.cm.model.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.model.NodePath;
 import org.onehippo.cm.model.SourceType;
 
 public class ContentSourceImpl extends SourceImpl {
@@ -26,6 +27,10 @@ public class ContentSourceImpl extends SourceImpl {
 
     public final SourceType getType() {
         return SourceType.CONTENT;
+    }
+
+    public ContentDefinitionImpl getDefinition() {
+        return (ContentDefinitionImpl) getDefinitions().get(0);
     }
 
     public ContentDefinitionImpl addContentDefinition() {
@@ -39,10 +44,13 @@ public class ContentSourceImpl extends SourceImpl {
     }
 
     public ContentDefinitionImpl addContentDefinition(final String contentPath) {
+        return addContentDefinition(NodePathImpl.get(contentPath));
+    }
+
+    public ContentDefinitionImpl addContentDefinition(final NodePath contentPath) {
         final ContentDefinitionImpl cd = addContentDefinition();
 
-        final String name = StringUtils.substringAfterLast(contentPath, "/");
-        DefinitionNodeImpl defNode = new DefinitionNodeImpl(contentPath, name, cd);
+        DefinitionNodeImpl defNode = new DefinitionNodeImpl(contentPath, contentPath.getLastSegment(), cd);
         cd.setNode(defNode);
 
         return cd;
