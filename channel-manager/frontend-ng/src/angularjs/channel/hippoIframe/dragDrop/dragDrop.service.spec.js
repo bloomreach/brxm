@@ -24,6 +24,8 @@ describe('DragDropService', () => {
   let HstService;
   let ChannelService;
   let FeedbackService;
+  let DomService;
+  let ConfigService;
 
   let iframe;
   let canvas;
@@ -42,13 +44,17 @@ describe('DragDropService', () => {
             _PageStructureService_,
             _HstService_,
             _ChannelService_,
-            _FeedbackService_) => {
+            _FeedbackService_,
+            _DomService_,
+            _ConfigService_) => {
       $q = _$q_;
       DragDropService = _DragDropService_;
       PageStructureService = _PageStructureService_;
       HstService = _HstService_;
       ChannelService = _ChannelService_;
       FeedbackService = _FeedbackService_;
+      DomService = _DomService_;
+      ConfigService = _ConfigService_;
     });
 
     spyOn(ChannelService, 'recordOwnChange');
@@ -428,6 +434,49 @@ describe('DragDropService', () => {
       expect(DragDropService.dragulaOptions.direction).toEqual('horizontal');
 
       done();
+    });
+  });
+
+  describe('DragulaJS injection', () => {
+    const mockIframe = {
+      frameElement: {
+        contentWindow: {}, // "require" attribtue is undefined
+      },
+    };
+
+    it('inject DragulaJS when RequireJS is not available using DomService', (done) => {
+      loadIframeFixture(() => {
+        spyOn(DomService, 'getAppRootUrl').and.returnValue('http://localhost:8080/cms/');
+        ConfigService.antiCache = '123';
+        const DragulaJSPath = `${DomService.getAppRootUrl()}scripts/dragula.min.js?antiCache=${ConfigService.antiCache}`;
+
+        spyOn(DomService, 'addScript').and.returnValue($q.resolve());
+
+        DragDropService._injectDragula(mockIframe);
+        expect(DomService.addScript).toHaveBeenCalledWith(mockIframe, DragulaJSPath);
+
+        done();
+      });
+    });
+
+    it('inject DragulaJS when RequireJS is available', (done) => {
+      loadIframeFixture(() => {
+        mockIframe.frameElement.contentWindow = {
+          require: (modules, callback) => { callback('dragulaLoaded'); },
+        };
+
+        spyOn(DomService, 'getAppRootUrl').and.returnValue('http://localhost:8080/cms/');
+        ConfigService.antiCache = '123';
+
+        spyOn(DomService, 'addScript');
+
+        DragDropService._injectDragula(mockIframe);
+        expect(DomService.addScript).not.toHaveBeenCalled();
+        expect(DragDropService.requirejs).toEqual(mockIframe.frameElement.contentWindow.require);
+
+        expect(mockIframe.dragula).toBe('dragulaLoaded');
+        done();
+      });
     });
   });
 });
