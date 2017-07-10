@@ -200,7 +200,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         LinkedHashMap<String, DefinitionNodeImpl> newView = new LinkedHashMap<>();
         for (Map.Entry<String, DefinitionNodeImpl> entry : modifiableNodes.entrySet()) {
             if (entry.getValue() == beforeThis) {
-                newView.put(name, childNode);
+                newView.put(getName(), childNode);
             }
             newView.put(entry.getKey(), entry.getValue());
         }

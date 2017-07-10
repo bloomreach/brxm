@@ -49,6 +49,7 @@ import org.onehippo.cm.model.ActionItem;
 import org.onehippo.cm.model.FileResourceInputProvider;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.NamespaceDefinition;
+import org.onehippo.cm.model.NodePath;
 import org.onehippo.cm.model.SourceType;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
@@ -417,7 +418,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             ContentDefinitionImpl firstDef = (ContentDefinitionImpl) source.getDefinitions().get(0);
 
             // add the first definition path to manifest
-            items.put("/" + HCM_CONTENT_FOLDER + "/" + source.getPath(), firstDef.getNode().getPath());
+            items.put("/" + HCM_CONTENT_FOLDER + "/" + source.getPath(), firstDef.getNode().getPath().toString());
         }
 
         // for each config source
@@ -629,8 +630,8 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     // TODO why is this defined here and not as natural order of ContentDefinitionImpl?
     private class ContentDefinitionComparator implements Comparator<ContentDefinitionImpl> {
         public int compare(final ContentDefinitionImpl def1, final ContentDefinitionImpl def2) {
-            final String rootPath1 = def1.getNode().getPath();
-            final String rootPath2 = def2.getNode().getPath();
+            final NodePath rootPath1 = def1.getNode().getPath();
+            final NodePath rootPath2 = def2.getNode().getPath();
 
             if (def1 != def2 && rootPath1.equals(rootPath2)) {
                 final String msg = String.format(

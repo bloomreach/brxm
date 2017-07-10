@@ -187,6 +187,7 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
         }
 
         final String oName = o.getName();
+        final String name = getName();
         if (name.startsWith(META_KEY_PREFIX) && !oName.startsWith(META_KEY_PREFIX)) {
             return -1;
         }

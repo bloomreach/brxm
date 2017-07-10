@@ -17,7 +17,7 @@ package org.onehippo.cm.model;
 
 public interface ModelItem {
     String getName();
-    String getPath();
+    NodePath getPath();
     String getOrigin();
     ModelNode getParent();
     boolean isRoot();

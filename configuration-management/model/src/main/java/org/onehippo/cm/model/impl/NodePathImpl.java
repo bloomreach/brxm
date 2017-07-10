@@ -18,6 +18,7 @@ package org.onehippo.cm.model.impl;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -33,11 +34,7 @@ import static java.util.stream.Collectors.joining;
 
 public class NodePathImpl implements NodePath {
 
-    public static final NodePath ROOT = new NodePathImpl(ImmutableList.of(), false);
-
-    public static final NodePath getRoot() {
-        return ROOT;
-    }
+    public static final NodePath ROOT = new NodePathImpl(ImmutableList.of(), false, true);
 
     public static NodePath get(String path, final String... more) {
 
@@ -71,7 +68,7 @@ public class NodePathImpl implements NodePath {
         final String[] segments = StringUtils.strip(path, "/").split("/");
 
         final ImmutableList<NodePathSegment> names =
-                Arrays.stream(segments).map(NodePathSegmentImpl::new).collect(ImmutableList.toImmutableList());
+                Arrays.stream(segments).map(NodePathSegmentImpl::get).collect(ImmutableList.toImmutableList());
 
         return new NodePathImpl(names, relative);
     }
@@ -80,8 +77,29 @@ public class NodePathImpl implements NodePath {
     public final boolean absolute;
 
     private NodePathImpl(final ImmutableList<NodePathSegment> segments, final boolean absolute) {
+        this(segments, absolute, false);
+    }
+
+    private NodePathImpl(final ImmutableList<NodePathSegment> segments, final boolean absolute, final boolean isRoot) {
+        // this check is mainly for internal purposes, to make sure we're not accidentally failing to return ROOT
+        if (!isRoot && segments.size() == 0) {
+            throw new IllegalArgumentException("Should use ROOT instead of constructing new NodePath with no segments!");
+        }
+
         this.segments = segments;
-        this.absolute = absolute;
+
+        // todo: debug this -- for now, assume a leading slash (i.e. an absolute path)
+        this.absolute = true;
+    }
+
+    @Override
+    public NodePath getRoot() {
+        return ROOT;
+    }
+
+    @Override
+    public boolean isRoot() {
+        return this == ROOT;
     }
 
     @Override
@@ -101,6 +119,14 @@ public class NodePathImpl implements NodePath {
 
     @Override
     public NodePath getParent() {
+        if (this == ROOT) {
+            throw new IllegalStateException("Cannot get the parent of ROOT!");
+        }
+
+        if (segments.size() == 1) {
+            return ROOT;
+        }
+
         // todo: implement this in a more memory-efficient way with Lisp-style list objects
         return new NodePathImpl(segments.subList(0, segments.size()-1), absolute);
     }
@@ -117,12 +143,25 @@ public class NodePathImpl implements NodePath {
 
     @Override
     public NodePath subpath(final int beginIndex, final int endIndex) {
+        if (beginIndex == 0 && endIndex == 0) {
+            return ROOT;
+        }
+
         return new NodePathImpl(segments.subList(beginIndex, endIndex), beginIndex == 0);
     }
 
     @Override
     public boolean startsWith(final String other) {
         return startsWith(get(other));
+    }
+
+    @Override
+    public boolean startsWith(final NodePathSegment other) {
+        if (other.isRoot()) {
+            return true;
+        }
+
+        return startsWith(new NodePathImpl(ImmutableList.of(other), false));
     }
 
     @Override
@@ -134,6 +173,15 @@ public class NodePathImpl implements NodePath {
     @Override
     public boolean endsWith(final String other) {
         return endsWith(get(other));
+    }
+
+    @Override
+    public boolean endsWith(final NodePathSegment other) {
+        if (other.isRoot()) {
+            return true;
+        }
+
+        return endsWith(new NodePathImpl(ImmutableList.of(other), false));
     }
 
     @Override
@@ -150,7 +198,23 @@ public class NodePathImpl implements NodePath {
     }
 
     @Override
+    public NodePath resolve(final NodePathSegment other) {
+        if (other.isRoot()) {
+            return this;
+        }
+
+        return resolve(new NodePathImpl(ImmutableList.of(other), false));
+    }
+
+    @Override
     public NodePath resolve(final NodePath other) {
+        if (other == ROOT) {
+            return this;
+        }
+        if (this == ROOT && other.isAbsolute()) {
+            return other;
+        }
+
         return new NodePathImpl(ImmutableList.copyOf(Iterables.concat(segments, other)), absolute);
     }
 
@@ -158,6 +222,15 @@ public class NodePathImpl implements NodePath {
     public NodePath resolveSibling(final String other) {
         // todo: reduce memory churn
         return getParent().resolve(other);
+    }
+
+    @Override
+    public NodePath resolveSibling(final NodePathSegment other) {
+        if (other.isRoot()) {
+            return getParent();
+        }
+
+        return resolveSibling(new NodePathImpl(ImmutableList.of(other), false));
     }
 
     @Override
@@ -183,8 +256,30 @@ public class NodePathImpl implements NodePath {
     }
 
     @Override
+    public NodePath toFullyIndexedPath() {
+        if (this == ROOT) {
+            return this;
+        }
+
+        ImmutableList<NodePathSegment> indexedSegments =
+                segments.stream().map(NodePathSegment::forceIndex).collect(ImmutableList.toImmutableList());
+        return new NodePathImpl(indexedSegments, absolute);
+    }
+
+    @Override
+    public NodePath toMinimallyIndexedPath() {
+        if (this == ROOT) {
+            return this;
+        }
+
+        ImmutableList<NodePathSegment> indexedSegments =
+                segments.stream().map(NodePathSegment::suppressIndex).collect(ImmutableList.toImmutableList());
+        return new NodePathImpl(indexedSegments, absolute);
+    }
+
+    @Override
     public NodePath toAbsolutePath() {
-        if (absolute) {
+        if (absolute || this == ROOT) {
             return this;
         }
 
@@ -236,11 +331,19 @@ public class NodePathImpl implements NodePath {
             return true;
         }
 
-        if (!(obj instanceof NodePath)) {
+        final NodePath other;
+        if (obj instanceof String) {
+            other = get((String) obj);
+        }
+        else if (obj instanceof NodePathSegment) {
+            other = new NodePathImpl(ImmutableList.of((NodePathSegment) obj), true);
+        }
+        else if (!(obj instanceof NodePath)) {
             return false;
         }
-
-        final NodePath other = (NodePath) obj;
+        else {
+            other = (NodePath) obj;
+        }
         return Iterables.elementsEqual(segments, other) && (absolute == other.isAbsolute());
     }
 

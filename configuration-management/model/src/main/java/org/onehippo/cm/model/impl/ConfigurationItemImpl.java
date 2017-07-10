@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ConfigurationItem;
+import org.onehippo.cm.model.NodePath;
 import org.onehippo.cm.model.util.SnsUtils;
 
 public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extends ModelItemImpl
@@ -33,15 +34,15 @@ public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extend
     private boolean deleted;
 
     @Override
-    public String getPath() {
+    public NodePath getPath() {
+        // todo: store path instead of recreating it on each call
         if (isRoot()) {
-            return "/";
+            return NodePathImpl.ROOT;
         } else {
-            final String base = StringUtils.appendIfMissing(parent.getPath(), "/");
-            if (SnsUtils.hasSns(name, parent.getNodes().keySet())) {
-                return base + name;
+            if (SnsUtils.hasSns(getName(), parent.getNodes().keySet())) {
+                return parent.getPath().resolve(name);
             } else {
-                return base + SnsUtils.getUnindexedName(name);
+                return parent.getPath().resolve(name.withIndex(0));
             }
         }
     }

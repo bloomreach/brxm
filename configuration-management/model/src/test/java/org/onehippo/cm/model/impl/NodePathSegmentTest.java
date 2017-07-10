@@ -13,48 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cm.model.util;
+package org.onehippo.cm.model.impl;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
+import org.onehippo.cm.model.impl.NodePathSegmentImpl;
 
 import static org.junit.Assert.assertEquals;
 
-public class SnsUtilsTest {
+public class NodePathSegmentTest {
 
     @Test
     public void test_canonical_sns() {
-        assertEquals(Pair.of("sns", 1), SnsUtils.splitIndexedName("sns[1]"));
+        assertEquals(NodePathSegmentImpl.get("sns", 1), NodePathSegmentImpl.get("sns[1]"));
     }
 
     @Test
     public void test_sns_without_index() {
-        assertEquals(Pair.of("sns", 0), SnsUtils.splitIndexedName("sns"));
+        assertEquals(NodePathSegmentImpl.get("sns", 0), NodePathSegmentImpl.get("sns"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_with_negative_index() {
-        SnsUtils.splitIndexedName("sns[-1]");
+        NodePathSegmentImpl.get("sns[-1]");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_with_zero_index() {
-        SnsUtils.splitIndexedName("sns[0]");
+        NodePathSegmentImpl.get("sns[0]");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_with_non_numeric_index() {
-        SnsUtils.splitIndexedName("sns[foo]");
+        NodePathSegmentImpl.get("sns[foo]");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_with_trailing_chars() {
-        SnsUtils.splitIndexedName("sns[1]sns");
+        NodePathSegmentImpl.get("sns[1]sns");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_without_name() {
-        SnsUtils.splitIndexedName("[1]");
+        NodePathSegmentImpl.get("[1]");
     }
 
 }

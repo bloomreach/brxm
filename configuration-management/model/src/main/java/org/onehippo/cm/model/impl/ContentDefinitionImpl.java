@@ -17,6 +17,7 @@ package org.onehippo.cm.model.impl;
 
 import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.DefinitionType;
+import org.onehippo.cm.model.NodePath;
 
 public class ContentDefinitionImpl extends AbstractDefinitionImpl
         implements ContentDefinition {
@@ -46,13 +47,14 @@ public class ContentDefinitionImpl extends AbstractDefinitionImpl
         this.node = node;
     }
 
-    public DefinitionNodeImpl setRoot(final String path) {
+    // todo: convert to NodePath param
+    public DefinitionNodeImpl withRoot(final String path) {
         return node = new DefinitionNodeImpl(path, this);
     }
 
     @Override
     public String getRootPath() {
-        return rootPath != null ? rootPath : node.getPath();
+        return rootPath != null ? rootPath : node.getPath().toString();
     }
 
     public void setRootPath(String rootPath) {

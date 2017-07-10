@@ -16,17 +16,22 @@
 package org.onehippo.cm.model.impl;
 
 import org.onehippo.cm.model.ModelItem;
+import org.onehippo.cm.model.NodePathSegment;
 
 public abstract class ModelItemImpl implements ModelItem {
 
-    protected String name;
+    protected NodePathSegment name;
 
     @Override
     public String getName() {
-        return name;
+        return name.toString();
     }
 
     public void setName(final String name) {
+        this.name = NodePathSegmentImpl.get(name);
+    }
+
+    public void setName(final NodePathSegment name) {
         this.name = name;
     }
 

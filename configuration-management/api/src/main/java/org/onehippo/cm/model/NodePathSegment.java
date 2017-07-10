@@ -54,6 +54,16 @@ public interface NodePathSegment extends Comparable<NodePathSegment> {
     NodePathSegment forceIndex();
 
     /**
+     * @return if this name has index 1, a variant with no index (i.e. index 0); otherwise, this
+     */
+    NodePathSegment suppressIndex();
+
+    /**
+     * @return true iff this NodePathSegment is the singleton instance representing a root node
+     */
+    boolean isRoot();
+
+    /**
      * Treats unindexed name as equivalent to index of 1.
      */
     @Override

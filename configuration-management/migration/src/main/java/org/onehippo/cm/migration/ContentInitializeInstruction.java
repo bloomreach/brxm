@@ -25,6 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.NodePath;
+import org.onehippo.cm.model.NodePathSegment;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.ValueType;
@@ -33,6 +35,7 @@ import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.NodePathImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
 
@@ -97,7 +100,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                 DefinitionNodeImpl parentNode = node.getParent();
                                 while (parentNode.isEmpty()) {
                                     // empty (delta) parent: remove as well
-                                    nodeDefinitions.remove(new MinimallyIndexedPath(parentNode.getPath()));
+                                    nodeDefinitions.remove(new MinimallyIndexedPath(parentNode.getPath().toString()));
                                     deltaNodes.remove(parentNode);
                                     if (parentNode.isRoot()) {
                                         // can remove whole of delta definition
@@ -345,11 +348,11 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                                       final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions,
                                                       final Set<DefinitionNode> deltaNodes) {
         DefinitionNodeImpl node = parentNode;
-        String[] parentsToAdd = nodePath.substring(parentNode.getPath().length() + 1).split("/");
-        for (String parent : parentsToAdd) {
-            node = node.addNode(parent);
+        NodePath parentPath = NodePathImpl.get(nodePath);
+        for (NodePathSegment parent : parentPath.relativize(parentNode.getPath())) {
+            node = node.addNode(parent.toString());
             node.getSourceLocation().copy(getInstructionNode().getSourceLocation());
-            nodeDefinitions.put(new MinimallyIndexedPath(node.getPath()), node);
+            nodeDefinitions.put(new MinimallyIndexedPath(node.getPath().toString()), node);
             deltaNodes.add(node);
         }
         return node;

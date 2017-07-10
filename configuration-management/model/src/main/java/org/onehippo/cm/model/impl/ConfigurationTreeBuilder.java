@@ -23,9 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.NodePath;
+import org.onehippo.cm.model.NodePathSegment;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.ValueType;
@@ -51,11 +52,11 @@ public class ConfigurationTreeBuilder {
 
     private final ConfigurationNodeImpl root;
 
-    private final Map<String, DefinitionNodeImpl> delayedOrdering = new LinkedHashMap<>();
+    private final Map<NodePath, DefinitionNodeImpl> delayedOrdering = new LinkedHashMap<>();
 
     ConfigurationTreeBuilder() {
         root = new ConfigurationNodeImpl();
-        root.setName("");
+        root.setName(NodePathSegmentImpl.ROOT_NAME);
         root.setResidualNodeCategory(ConfigurationItemCategory.SYSTEM);
         root.setIgnoreReorderedChildren(true);
 
@@ -197,14 +198,15 @@ public class ConfigurationTreeBuilder {
                 }
                 if (parent.getNode(orderBeforeIndexedName) == null) {
                     // delay reporting an error for a missing sibling until after the module is done processing
-                    final String parentPath = StringUtils.substringBeforeLast(definitionNode.getPath(), "/");
-                    delayedOrdering.put(parentPath + "/" + orderBeforeIndexedName, definitionNode);
+                    delayedOrdering.put(definitionNode.getPath().resolveSibling(orderBeforeIndexedName).toFullyIndexedPath(),
+                            definitionNode);
                 }
             }
             applyNodeOrdering(node, definitionNode, parent, orderBefore, orderFirst, orderBeforeIndexedName);
         }
 
-        final String indexedPath = createIndexedName(definitionNode.getPath());
+        // todo: use NodePath here
+        final NodePath indexedPath = definitionNode.getPath().toFullyIndexedPath();
         if (delayedOrdering.containsKey(indexedPath)) {
             // this node was referenced in a delayed ordering, so we need to apply that ordering now
             // apply node ordering from the perspective of the other, saved node
@@ -282,11 +284,11 @@ public class ConfigurationTreeBuilder {
 
     private void keepOnlyFirstSns(final ConfigurationNodeImpl node, final String indexedName) {
         if (SnsUtils.hasSns(indexedName, node.getNodes().keySet())) {
-            final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(indexedName);
+            final NodePathSegment nameAndIndex = NodePathSegmentImpl.get(indexedName);
             final List<String> namesToDelete = new ArrayList<>();
             for (String siblingIndexedName : node.getNodes().keySet()) {
-                final Pair<String, Integer> siblingNameAndIndex = SnsUtils.splitIndexedName(siblingIndexedName);
-                if (siblingNameAndIndex.getLeft().equals(nameAndIndex.getLeft()) && siblingNameAndIndex.getRight() > 1) {
+                final NodePathSegment siblingNameAndIndex = NodePathSegmentImpl.get(siblingIndexedName);
+                if (siblingNameAndIndex.getName().equals(nameAndIndex.getName()) && siblingNameAndIndex.getIndex() > 1) {
                     namesToDelete.add(siblingIndexedName);
                 }
             }
@@ -330,8 +332,8 @@ public class ConfigurationTreeBuilder {
 
     public ConfigurationNodeImpl getOrCreateRootForDefinition(final ContentDefinitionImpl definition) {
         final DefinitionNodeImpl definitionNode = definition.getModifiableNode();
-        final String definitionRootPath = definitionNode.getPath();
-        final String[] pathSegments = getPathSegments(definitionRootPath);
+        final NodePath definitionRootPath = definitionNode.getPath();
+        final NodePathSegment[] pathSegments = definitionRootPath.stream().toArray(NodePathSegment[]::new);
         int segmentsConsumed = 0;
 
         ConfigurationNodeImpl rootForDefinition = root;
@@ -357,13 +359,13 @@ public class ConfigurationTreeBuilder {
         }
 
         if (pathSegments.length > segmentsConsumed) {
-            final String nodeName = pathSegments[segmentsConsumed];
-            if (isAndRemainsNonConfigurationNode(rootForDefinition, nodeName, definition.getNode().getCategory())) {
+            final NodePathSegment nodeName = pathSegments[segmentsConsumed];
+            if (isAndRemainsNonConfigurationNode(rootForDefinition, nodeName.toString(), definition.getNode().getCategory())) {
                 logger.warn("Trying to modify non-configuration node '{}', skipping.", definition.getNode().getPath());
                 return null;
             }
             rootForDefinition =
-                    createChildNode(rootForDefinition, nodeName, definition.getModifiableNode());
+                    createChildNode(rootForDefinition, nodeName.toString(), definition.getModifiableNode());
         } else {
             if (rootForDefinition == root && definitionNode.isDelete()) {
                 throw new IllegalArgumentException("Deleting the root node is not supported.");
@@ -398,9 +400,9 @@ public class ConfigurationTreeBuilder {
             }
         }
 
-        final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(name);
-        if (nameAndIndex.getRight() > 1) {
-            final String expectedSibling = createIndexedName(nameAndIndex.getLeft(), nameAndIndex.getRight() - 1);
+        final NodePathSegment nameAndIndex = NodePathSegmentImpl.get(name);
+        if (nameAndIndex.getIndex() > 1) {
+            final String expectedSibling = createIndexedName(nameAndIndex.getName(), nameAndIndex.getIndex() - 1);
             if (parent.getNode(expectedSibling) == null) {
                 final String msg = String.format("%s defines node '%s', but no sibling named '%s' was found",
                         definitionNode.getOrigin(), definitionNode.getPath(), expectedSibling);

@@ -21,6 +21,11 @@ import java.util.stream.Stream;
  * Represents a multi-segment JCR node path with possible same-named-sibling indices on each segment.
  */
 public interface NodePath extends Comparable<NodePath>, Iterable<NodePathSegment> {
+
+    NodePath getRoot();
+
+    boolean isRoot();
+
     boolean isAbsolute();
 
     NodePathSegment getLastSegment();
@@ -35,23 +40,41 @@ public interface NodePath extends Comparable<NodePath>, Iterable<NodePathSegment
 
     boolean startsWith(String other);
 
+    boolean startsWith(NodePathSegment other);
+
     boolean startsWith(NodePath other);
 
     boolean endsWith(String other);
+
+    boolean endsWith(NodePathSegment other);
 
     boolean endsWith(NodePath other);
 
     NodePath resolve(String other);
 
+    NodePath resolve(NodePathSegment other);
+
     NodePath resolve(NodePath other);
 
     NodePath resolveSibling(String other);
+
+    NodePath resolveSibling(NodePathSegment other);
 
     NodePath resolveSibling(NodePath other);
 
     NodePath relativize(NodePath other);
 
     // todo: normalize
+
+    /**
+     * @return a NodePath equivalent to this one, except that each segment has had forceIndex() applied to it
+     */
+    NodePath toFullyIndexedPath();
+
+    /**
+     * @return a NodePath equivalent to this one, except that each segment has had suppressIndex() applied to it
+     */
+    NodePath toMinimallyIndexedPath();
 
     NodePath toAbsolutePath();
 

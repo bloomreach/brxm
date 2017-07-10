@@ -219,7 +219,7 @@ public abstract class AbstractBaseTest {
                               final AbstractDefinitionImpl definition)
     {
         assertNotNull(item);
-        assertEquals(path, item.getPath());
+        assertEquals(path, item.getPath().toString());
         assertEquals(name, item.getName());
         if (isRoot) {
             try {

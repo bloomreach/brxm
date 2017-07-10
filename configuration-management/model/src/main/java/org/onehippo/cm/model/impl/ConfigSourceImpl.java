@@ -114,7 +114,7 @@ public class ConfigSourceImpl extends SourceImpl {
 
         // if we haven't returned yet, we didn't find a matching def for defRoot
         // build a new def and any required descendant nodes
-        final DefinitionNodeImpl defNode = addConfigDefinition().setRoot(defRoot);
+        final DefinitionNodeImpl defNode = addConfigDefinition().withRoot(defRoot);
         return buildRemainderNodes(jcrPath, defNode, remainder);
     }
 

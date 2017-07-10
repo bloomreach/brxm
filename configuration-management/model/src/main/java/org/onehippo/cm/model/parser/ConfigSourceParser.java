@@ -25,11 +25,13 @@ import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.Definition;
 import org.onehippo.cm.model.DefinitionType;
+import org.onehippo.cm.model.NodePathSegment;
 import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.NodePathSegmentImpl;
 import org.onehippo.cm.model.impl.ValueImpl;
 import org.onehippo.cm.model.impl.WebFileBundleDefinitionImpl;
 import org.onehippo.cm.model.util.SnsUtils;
@@ -131,15 +133,15 @@ public class ConfigSourceParser extends SourceParser {
                     throw new ParserException("Nodes that specify '" + META_CATEGORY_KEY + ": " + category
                             + "' cannot contain other keys", node);
                 }
-                final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(definitionNode.getName());
-                if (nameAndIndex.getRight() > 0) {
+                final NodePathSegment nameAndIndex = NodePathSegmentImpl.get(definitionNode.getName());
+                if (nameAndIndex.getIndex() > 0) {
                     throw new ParserException("'" + META_CATEGORY_KEY
                             + "' cannot be configured for explicitly indexed same-name siblings", node);
                 }
                 definitionNode.setCategory(category);
             } else if (key.equals(META_RESIDUAL_CHILD_NODE_CATEGORY_KEY)) {
-                final Pair<String, Integer> parsedName = SnsUtils.splitIndexedName(definitionNode.getName());
-                if (parsedName.getRight() > 0) {
+                final NodePathSegment parsedName = NodePathSegmentImpl.get(definitionNode.getName());
+                if (parsedName.getIndex() > 0) {
                     throw new ParserException("'" + META_RESIDUAL_CHILD_NODE_CATEGORY_KEY
                             + "' cannot be configured for explicitly indexed same-name siblings", node);
                 }

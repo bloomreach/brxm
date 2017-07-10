@@ -17,10 +17,11 @@ package org.onehippo.cm.model.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.DefinitionItem;
+import org.onehippo.cm.model.NodePath;
 
 public abstract class DefinitionItemImpl extends ModelItemImpl implements DefinitionItem {
 
-    private String path;
+    private NodePath path;
     private DefinitionNodeImpl parent;
     private ContentDefinitionImpl definition;
     private SourceLocationImpl sourceLocation;
@@ -35,8 +36,8 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
             throw new IllegalArgumentException("Item name must not be blank! path="+path);
         }
 
-        this.path = path;
-        this.name = name;
+        setName(name);
+        this.path = NodePathImpl.get(path);
         this.parent = null;
         this.definition = definition;
         this.sourceLocation = new SourceLocationImpl();
@@ -55,13 +56,12 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
             throw new IllegalArgumentException("Item parent can be null only if a Definition is provided!");
         }
 
-        this.name = name;
+        setName(name);
         this.parent = parent;
         this.definition = parent.getDefinition();
         this.sourceLocation = new SourceLocationImpl();
 
-        final String parentPath = parent.getPath();
-        path = parentPath + (parentPath.endsWith("/") ? "" : "/") + name;
+        path = parent.getPath().resolve(name);
     }
 
     @Override
@@ -70,7 +70,7 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
     }
 
     @Override
-    public String getPath() {
+    public NodePath getPath() {
         return path;
     }
 

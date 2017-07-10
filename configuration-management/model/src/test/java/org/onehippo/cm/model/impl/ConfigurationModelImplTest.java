@@ -39,7 +39,7 @@ public class ConfigurationModelImplTest {
         assertEquals(0, model.getNamespaceDefinitions().size());
 
         final ConfigurationNodeImpl root = model.getConfigurationRootNode();
-        assertEquals("/", root.getPath());
+        assertEquals("/", root.getPath().toString());
         assertEquals("", root.getName());
         assertNull(root.getParent());
         assertEquals(0, root.getNodes().size());

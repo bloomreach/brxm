@@ -157,7 +157,8 @@ public class SourceSerializer extends AbstractBaseSerializer {
             children.add(representDefinitionNode(childNode, resourceConsumer));
         }
 
-        final String name = node.isRoot() ? node.getPath() : "/" + node.getName();
+        // root defs get a full path, but nested defs just get one relative path segment
+        final String name = node.isRoot() ? node.getPath().toString() : "/" + node.getName();
         return createStrOptionalSequenceTuple(name, children);
     }
 

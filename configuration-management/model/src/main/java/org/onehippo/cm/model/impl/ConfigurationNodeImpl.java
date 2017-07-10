@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationNode;
+import org.onehippo.cm.model.NodePathSegment;
 import org.onehippo.cm.model.util.SnsUtils;
 
 public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeImpl>
@@ -59,8 +60,22 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
         return modifiableNodes.get(name);
     }
 
+    public ConfigurationNodeImpl getNode(final NodePathSegment name) {
+        return modifiableNodes.get(name.forceIndex().toString());
+    }
+
+    @Override
+    public void setName(final String name) {
+        super.setName(NodePathSegmentImpl.get(name).forceIndex());
+    }
+
+    @Override
+    public void setName(final NodePathSegment name) {
+        super.setName(name.forceIndex());
+    }
+
     public void addNode(final String name, final ConfigurationNodeImpl node) {
-        modifiableNodes.put(name, node);
+        modifiableNodes.put(NodePathSegmentImpl.get(name).forceIndex().toString(), node);
     }
 
     public void orderBefore(final String srcChildName, final String destChildName) {
