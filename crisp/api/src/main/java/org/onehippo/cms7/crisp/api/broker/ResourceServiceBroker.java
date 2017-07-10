@@ -18,6 +18,7 @@ package org.onehippo.cms7.crisp.api.broker;
 import java.util.Map;
 
 import org.onehippo.cms7.crisp.api.resource.Resource;
+import org.onehippo.cms7.crisp.api.resource.ResourceCacheResolvable;
 import org.onehippo.cms7.crisp.api.resource.ResourceDataCache;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceLink;
@@ -147,10 +148,12 @@ public interface ResourceServiceBroker {
 
     /**
      * Returns a proper resource cache store representation ({@link ResourceDataCache}) for the specified
-     * {@code resourceSpace}.
+     * {@code resourceSpace}, or null if caching is disabled.
      * <p>An implementation may return a default resource cache store representation ({@link ResourceDataCache})
      * as a fallback if the resolved {@link ResourceResolver} doesn't have its own {@link ResourceDataCache} instance
-     * (in other words, if the resolved {@link ResourceResolver#getResourceDataCache()} return null).
+     * (in other words, if the resolved {@link ResourceResolver#getResourceDataCache()} return null).</p>
+     * <p>If an underlying resource resolver is explicitly disabled on caching (in other words, if the resolved
+     * {@link ResourceCacheResolvable#isCacheEnabled()} returns false), it should return null.</p>
      * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
      * @return a proper resource cache store representation ({@link ResourceDataCache}) for the specified
      *         {@code resourceSpace}, or a fallback {@link ResourceDataCache} if the resolved {@link ResourceResolver}

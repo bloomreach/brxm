@@ -212,14 +212,16 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
      */
     @Override
     public ResourceDataCache getResourceDataCache(String resourceSpace) {
-        ResourceDataCache resourceDataCache = null;
-
         ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
 
-        if (resourceResolver != null) {
-            resourceDataCache = resourceResolver.getResourceDataCache();
+        // If a resourceResolver is explicitly disabled on caching, return null.
+        if (!resourceResolver.isCacheEnabled()) {
+            return null;
         }
 
+        ResourceDataCache resourceDataCache = resourceResolver.getResourceDataCache();
+
+        // If a resourceResolver doesn't have its own cache, return the default cache.
         if (resourceDataCache == null) {
             resourceDataCache = getDefaultResourceDataCache();
         }
