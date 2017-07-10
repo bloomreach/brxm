@@ -510,7 +510,7 @@ public class DefinitionMergeService {
         // we know that this is the only place that mentions this node, because it's new
         // -- put all descendent properties and nodes in this def
         //... but when we create the def, make sure to walk up until we don't have an indexed node in the def root
-        final DefinitionNodeImpl newRootNode = destSource.getOrCreateDefinitionFor(incomingDefNode.getPath().toString());
+        final DefinitionNodeImpl newRootNode = destSource.getOrCreateDefinitionFor(incomingDefNode.getPath());
 
         if (copyContents) {
             recursiveCopy(incomingDefNode, newRootNode, toExport);
@@ -812,7 +812,7 @@ public class DefinitionMergeService {
         removeResources(definition.getNode());
 
         // if the definition was the last one from its source
-        if (source.getModifiableDefinitions().size() == 0) {
+        if (source.getDefinitions().size() == 0) {
             log.debug("Removing source: {}", source.getPath());
 
             // remove the source from its module

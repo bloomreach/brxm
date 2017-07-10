@@ -9,8 +9,8 @@ definitions:
         jcr:primaryType: nt:unstructured
         /newAsChild0:
           jcr:primaryType: nt:unstructured
-      #/newWithNoExistingDef[2]:
-      #  jcr:primaryType: nt:unstructured
+      /newWithNoExistingDef[2]:
+        jcr:primaryType: nt:unstructured
     /topmost/upstream/exportFirst:
       /newAsChild1:
         jcr:primaryType: nt:unstructured

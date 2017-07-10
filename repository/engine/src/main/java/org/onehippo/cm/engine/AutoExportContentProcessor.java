@@ -385,7 +385,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
         for (final String childConfigNode : configNode.getNodes().keySet()) {
             if (!jcrNode.hasNode(childConfigNode)) {
                 final DefinitionNodeImpl childNode = configSource
-                        .getOrCreateDefinitionFor(configNode.getPath().resolve(childConfigNode).toString());
+                        .getOrCreateDefinitionFor(configNode.getPath().resolve(childConfigNode));
                 if (childNode == null) {
                     log.error("Produced a null result for path: {}!",
                             jcrNode.getPath()+"/"+childConfigNode,
@@ -465,7 +465,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
     private void setOrderBefore(final ConfigurationNodeImpl configNode, final String childName, final String beforeName,
                                 final ConfigSourceImpl configSource) {
         final DefinitionNodeImpl childNode = configSource
-                .getOrCreateDefinitionFor(configNode.getPath().resolve(childName).toString());
+                .getOrCreateDefinitionFor(configNode.getPath().resolve(childName));
         childNode.setOrderBefore(beforeName);
     }
 
