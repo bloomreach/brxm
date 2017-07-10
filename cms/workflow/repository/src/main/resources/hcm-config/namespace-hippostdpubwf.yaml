@@ -1,0 +1,41 @@
+definitions:
+  config:
+    /hippo:namespaces/hippostdpubwf:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      /document:
+        jcr:primaryType: hipposysedit:templatetype
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          /hipposysedit:nodetype:
+            jcr:primaryType: hipposysedit:nodetype
+            jcr:mixinTypes: ['hipposysedit:remodel']
+            hipposysedit:mixin: true
+            hipposysedit:supertype: ['hippostd:publishable']
+            hipposysedit:uri: http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0
+            /CreatedBy:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippostdpubwf:createdBy
+              hipposysedit:type: String
+            /CreationDate:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippostdpubwf:creationDate
+              hipposysedit:type: Date
+            /LastModifiedBy:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippostdpubwf:lastModifiedBy
+              hipposysedit:type: String
+            /LastModificationDate:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:mandatory: true
+              hipposysedit:path: hippostdpubwf:lastModificationDate
+              hipposysedit:type: Date
+            /PublicationDate:
+              jcr:primaryType: hipposysedit:field
+              hipposysedit:path: hippostdpubwf:publicationDate
+              hipposysedit:type: Date

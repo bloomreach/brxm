@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/imageValidationService:
+      jcr:primaryType: frontend:plugin
+      extensions.allowed: ['*.jpg', '*.jpeg', '*.gif', '*.png', '*.svg']
+      max.file.size: 4M
+      max.height: 1280
+      max.width: 1920
+      plugin.class: org.hippoecm.frontend.plugins.yui.upload.validation.ImageUploadValidationPlugin
+      validator.id: service.gallery.image.validation

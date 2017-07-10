@@ -1,0 +1,7 @@
+group: hippo-cms
+project:
+    name: hippo-cms
+    after: hippo-repository
+module:
+    name: hippo-cms-editor-repository
+    after: hippo-cms-config

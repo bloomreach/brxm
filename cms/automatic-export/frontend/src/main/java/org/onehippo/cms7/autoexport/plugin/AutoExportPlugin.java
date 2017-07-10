@@ -38,13 +38,14 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.onehippo.cm.ConfigurationService;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cms7.autoexport.plugin.Constants.CONFIG_ENABLED_PROPERTY_NAME;
 import static org.onehippo.cms7.autoexport.plugin.Constants.CONFIG_NODE_PATH;
 import static org.onehippo.cms7.autoexport.plugin.Constants.LOGGER_NAME;
-import static org.onehippo.cms7.autoexport.plugin.Constants.PROJECT_BASEDIR_PROPERTY;
 
 public class AutoExportPlugin extends RenderPlugin<Node> {
     private static final long serialVersionUID = 1L;
@@ -126,8 +127,8 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
     }
 
     protected boolean isExportAvailable() {
-        String configDir = System.getProperty(PROJECT_BASEDIR_PROPERTY);
-        return configDir != null && !configDir.isEmpty();
+        ConfigurationService configurationService = HippoServiceRegistry.getService(ConfigurationService.class);
+        return configurationService != null ? configurationService.isAutoExportAvailable() : false;
     }
 
     private boolean isExportEnabled() {

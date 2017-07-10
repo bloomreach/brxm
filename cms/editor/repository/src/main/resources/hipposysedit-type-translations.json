@@ -1,9 +1,0 @@
-{
-  "hippo:types": {
-    "hipposysedit:templatetype": {
-      "en": {
-        "jcr:name": "Template"
-      }
-    }
-  }
-}

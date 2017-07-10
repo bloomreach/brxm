@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:workflows/en:
+      document: Document
+      miscellaneous: Miscellaneous
+      publication: Publication
+      request: Requests

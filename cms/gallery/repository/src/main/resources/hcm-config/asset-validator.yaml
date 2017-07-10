@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/assetValidationService:
+      jcr:primaryType: frontend:plugin
+      max.file.size: 10M
+      plugin.class: org.hippoecm.frontend.plugins.yui.upload.validation.AssetUploadValidationPlugin
+      validator.id: service.gallery.asset.validation

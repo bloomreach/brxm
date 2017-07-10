@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services:
+      jcr:primaryType: frontend:plugincluster
+      /preferencesStoreService:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.service.preferences.PreferencesStorePlugin
+      /settingsService:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.service.settings.SettingsStorePlugin
+        /codecs:
+          jcr:primaryType: frontend:pluginconfig
+          encoding.display: org.hippoecm.repository.api.StringCodecFactory$IdentEncoding
+          encoding.node: org.hippoecm.repository.api.StringCodecFactory$UriEncoding
+      /ajaxPopupService:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.service.popup.AjaxPopupService
+      /hstRestProxyService:
+        jcr:primaryType: frontend:plugin
+        context.path: /site
+        ping.service.uri: /sites/_isAlive
+        plugin.class: org.hippoecm.frontend.service.restproxy.RestProxyServicePlugin
+        rest.uri: http://127.0.0.1/site/_cmsrest
+        service.id: hst.rest.proxy.service

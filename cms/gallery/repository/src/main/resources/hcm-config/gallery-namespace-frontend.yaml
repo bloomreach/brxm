@@ -1,0 +1,132 @@
+definitions:
+  config:
+    /hippo:namespaces/hippogallery:
+      /image:
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [wicket.model, model.compareTo]
+            frontend:services: [wicket.id]
+            /root:
+              jcr:primaryType: frontend:plugin
+              extension.crop: ${cluster.id}.crop
+              extension.display: ${cluster.id}.display
+              extension.regenerate: ${cluster.id}.regenerate
+              extension.upload: ${cluster.id}.upload
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.plugins.gallery.editor.ThumbnailEditorButtons
+              wicket.extensions: [extension.display, extension.upload, extension.crop,
+                extension.regenerate]
+            /display:
+              jcr:primaryType: frontend:plugin
+              display.max.height: 1000
+              display.max.width: 1000
+              plugin.class: org.hippoecm.frontend.plugins.gallery.editor.ImageDisplayPlugin
+              wicket.id: ${cluster.id}.display
+            /upload:
+              jcr:primaryType: frontend:plugin
+              gallery.processor.id: service.gallery.processor
+              plugin.class: org.hippoecm.frontend.plugins.gallery.editor.ImageUploadPlugin
+              validator.id: service.gallery.image.validation
+              wicket.id: ${cluster.id}.upload
+            /crop:
+              jcr:primaryType: frontend:plugin
+              gallery.processor.id: service.gallery.processor
+              plugin.class: org.hippoecm.frontend.plugins.gallery.editor.ImageCropPlugin
+              wicket.id: ${cluster.id}.crop
+            /regenerate:
+              jcr:primaryType: frontend:plugin
+              gallery.processor.id: service.gallery.processor
+              plugin.class: org.hippoecm.frontend.plugins.gallery.editor.ImageRegeneratePlugin
+              wicket.id: ${cluster.id}.regenerate
+      /imageset:
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [model.compareTo, wicket.model, engine]
+            frontend:services: [wicket.id]
+            mode: edit
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+            /filename:
+              jcr:primaryType: frontend:plugin
+              caption: file name
+              field: filename
+              plugin.class: org.hippoecm.frontend.plugins.gallery.editor.FileNameDisplayPlugin
+              wicket.id: ${cluster.id}.field
+              /cluster.options:
+                jcr:primaryType: frontend:pluginconfig
+            /description:
+              jcr:primaryType: frontend:plugin
+              caption: description
+              field: description
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+              wicket.id: ${cluster.id}.field
+              /cluster.options:
+                jcr:primaryType: frontend:pluginconfig
+            /thumbnail:
+              jcr:primaryType: frontend:plugin
+              caption: thumbnail
+              field: thumbnail
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              wicket.id: ${cluster.id}.field
+            /original:
+              jcr:primaryType: frontend:plugin
+              caption: original
+              field: original
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              wicket.id: ${cluster.id}.field
+      /exampleImageSet:
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [model.compareTo, wicket.model, engine]
+            frontend:services: [wicket.id]
+            mode: edit
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+            /thumbnail:
+              jcr:primaryType: frontend:plugin
+              caption: thumbnail
+              field: thumbnail
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              wicket.id: ${cluster.id}.field
+            /picture:
+              jcr:primaryType: frontend:plugin
+              caption: picture
+              field: picture
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              wicket.id: ${cluster.id}.field
+      /exampleAssetSet:
+        jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+        /editor:templates:
+          jcr:primaryType: editor:templateset
+          /_default_:
+            jcr:primaryType: frontend:plugincluster
+            frontend:properties: [mode]
+            frontend:references: [model.compareTo, wicket.model, engine]
+            frontend:services: [wicket.id]
+            mode: edit
+            /root:
+              jcr:primaryType: frontend:plugin
+              item: ${cluster.id}.field
+              plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+            /asset:
+              jcr:primaryType: frontend:plugin
+              caption: asset
+              field: asset
+              plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+              wicket.id: ${cluster.id}.field

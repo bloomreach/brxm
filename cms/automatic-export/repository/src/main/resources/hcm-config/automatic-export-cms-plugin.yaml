@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-header-bar/autoexport:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.onehippo.cms7.autoexport.plugin.CmsAutoExportPlugin
+      wicket.id: header.bar.right
+      wicket.model: service.model

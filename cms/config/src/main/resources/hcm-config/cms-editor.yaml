@@ -1,0 +1,29 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-editor:
+      jcr:primaryType: frontend:plugincluster
+      frontend:references: [editor.id, browser.id, wicket.behavior, wicket.model]
+      frontend:services: [wicket.id, validator.id]
+      service.form: ${cluster.id}.form
+      validator.id: ${cluster.id}.validator
+      /editPerspective:
+        jcr:primaryType: frontend:plugin
+        extension.editor: ${cluster.id}.editor
+        extension.workflow: ${cluster.id}.workflows
+        plugin.class: org.hippoecm.frontend.plugins.cms.edit.EditPerspective
+        wicket.extensions: [extension.editor, extension.workflow]
+        wicket.feedback: ${cluster.id}.feedback
+      /editorPlugin:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.editor.editor.EditorPlugin
+        wicket.feedback: ${cluster.id}.feedback
+        wicket.id: ${cluster.id}.editor
+        /cluster.options:
+          jcr:primaryType: frontend:pluginconfig
+      /workflowPlugin:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.addon.workflow.DocumentWorkflowManagerPlugin
+        wicket.feedback: ${cluster.id}.feedback
+        wicket.id: ${cluster.id}.workflows
+        workflow.categories: editing
+        workflow.observation: false

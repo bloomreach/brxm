@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/internal:
+      /folder:
+        /hipposys:config:
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+      /directory:
+        /hipposys:config:
+          modify-on-copy: ['./hippotranslation:id', $uuid]

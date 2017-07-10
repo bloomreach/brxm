@@ -18,7 +18,7 @@
   <parent>
     <artifactId>hippo-cms</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>5.0.0-SNAPSHOT</version>
+    <version>5.0.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -142,7 +142,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>always</forkMode>
+          <reuseForks>false</reuseForks>
           <excludes>
             <exclude>**/EditorManagerTest.java</exclude>
             <exclude>**/BrowseServiceTest.java</exclude>

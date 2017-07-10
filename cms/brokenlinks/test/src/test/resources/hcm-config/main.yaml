@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    brokenlinks-test:
+      uri: http://www.onehippo.org/brokenlinks-test-unused
+      cnd: brokenlinks-test.cnd

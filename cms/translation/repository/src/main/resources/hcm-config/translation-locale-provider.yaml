@@ -1,0 +1,21 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/localeProviderService:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.hippoecm.frontend.translation.LocaleProviderPlugin
+      /en:
+        jcr:primaryType: frontend:pluginconfig
+        country: us
+        language: en
+      /nl:
+        jcr:primaryType: frontend:pluginconfig
+        country: nl
+        language: nl
+      /de:
+        jcr:primaryType: frontend:pluginconfig
+        country: de
+        language: de
+      /fr:
+        jcr:primaryType: frontend:pluginconfig
+        country: fr
+        language: fr

@@ -1,0 +1,31 @@
+<!--
+    * Copyright 2007-2017 Hippo B.V. (http://www.onehippo.com)
+    *
+    * Licensed under the Apache License, Version 2.0 (the  "License");
+    * you may not use this file except in compliance with the License.
+    * You may obtain a copy of the License at
+    *
+    * http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:extend>
+    <div wicket:id="message" class="message"/>
+    <ul>
+      <li style="padding: 1px">
+        Download as <a wicket:id="download-zip-link" style="color: #0000FF">ZIP</a> (or right-click and choose &quot;Save as...&quot;)
+      </li>
+      <li style="padding: 1px">
+        <a wicket:id="view-link" style="color: #0000FF">Show export in this window</a>
+      </li>
+    </ul>
+    <div class="xml-dump">
+      <textarea readonly="true" style="width: 820px; height: 280px;" wicket:id="dump"/>
+    </div>
+  </wicket:extend>
+</html>

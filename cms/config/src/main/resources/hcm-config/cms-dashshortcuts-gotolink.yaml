@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-dashshortcuts/gotoShortcut:
+      jcr:primaryType: frontend:plugin
+      browser.id: service.browse
+      option.location: /content/documents
+      plugin.class: org.hippoecm.frontend.plugins.gotolink.GotolinkDocumentsShortcutPlugin
+      wicket.id: shortcut
+      wicket.model: model.browse.folder
+      workaround: 1

@@ -1,0 +1,5 @@
+definitions:
+  namespace:
+    hipporeport:
+      uri: http://www.onehippo.com/jcr/hipporeport/nt/1.0
+      cnd: hipporeport.cnd

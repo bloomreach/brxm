@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates/en:
+      new-file-folder: new file folder
+      new-image: New Image
+      new-image-folder: new folder

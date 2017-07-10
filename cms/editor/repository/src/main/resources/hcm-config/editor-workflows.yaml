@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/editor:
+      jcr:primaryType: hipposys:workflowcategory
+      /template-editor-namespace:
+        jcr:primaryType: frontend:workflow
+        hipposys:classname: org.hippoecm.editor.repository.impl.NamespaceWorkflowImpl
+        hipposys:display: Template engine workflow to create a type
+        hipposys:nodetype: hipposysedit:namespace
+        /hipposys:types:
+          jcr:primaryType: hipposys:types
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin
+      /template-editor-namespaces:
+        jcr:primaryType: frontend:workflow
+        hipposys:classname: org.hippoecm.editor.repository.impl.TemplateEditorWorkflowImpl
+        hipposys:display: Template engine workflow to create a namespace
+        hipposys:nodetype: hipposysedit:namespacefolder
+        /hipposys:types:
+          jcr:primaryType: hipposys:types
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          plugin.class: org.hippoecm.frontend.editor.workflow.TemplateEditorWorkflowPlugin

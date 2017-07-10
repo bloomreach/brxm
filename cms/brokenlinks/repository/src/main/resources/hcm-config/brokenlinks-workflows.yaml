@@ -1,0 +1,11 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/brokenlinks:
+      jcr:primaryType: hipposys:workflowcategory
+      /reportbrokenlinks:
+        jcr:primaryType: hipposys:workflow
+        hipposys:classname: org.onehippo.cms7.brokenlinks.ReportBrokenLinksWorkflowImpl
+        hipposys:display: Checks broken external links
+        hipposys:nodetype: hippo:document
+        /hipposys:types:
+          jcr:primaryType: hipposys:types

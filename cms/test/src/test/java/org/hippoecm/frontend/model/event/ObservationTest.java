@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -226,13 +226,17 @@ public class ObservationTest extends PluginTest {
 
         // after unregistering, no events should be received
 
-        root.addNode("test", "nt:unstructured");
+        root.addNode("test2", "nt:unstructured");
         session.save();
 
         Thread.sleep(1000);
         home.processEvents();
 
         assertEquals(1, events.size());
+
+        // cleanup
+        root.getNode("test2").remove();
+        session.save();
     }
 
     @Test

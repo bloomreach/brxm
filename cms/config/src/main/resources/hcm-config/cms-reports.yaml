@@ -1,0 +1,55 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-reports:
+      jcr:primaryType: nt:unstructured
+      /currentActivityReport:
+        jcr:primaryType: reporting:report
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 426c67c6-4591-4cdf-92c8-19b7dd0b1c39
+        reporting:limit: 100
+        reporting:parameternames: []
+        reporting:parametervalues: []
+        /reporting:listener:
+          jcr:primaryType: frontend:listener
+          frontend:deep: true
+          frontend:events: 3
+          frontend:nodetypes: ['hippolog:folder']
+          frontend:path: /hippo:log
+        /reporting:plugin:
+          jcr:primaryType: frontend:plugin
+          browser.id: service.browse
+          limit: 15
+          plugin.class: org.hippoecm.frontend.plugins.cms.dashboard.current.CurrentActivityPlugin
+          wicket.id: service.dashboard.current
+          wicket.model: model.report.current
+        /reporting:query:
+          jcr:primaryType: hippo:query
+          jcr:language: sql
+          jcr:statement: SELECT * FROM hippolog:item WHERE (hippolog:application =
+            'cms' OR hippolog:application='repository') ORDER BY hippolog:timestamp
+            DESC
+      /todoReport:
+        jcr:primaryType: reporting:report
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: f2e7cb32-081a-4679-8bed-0fec3ef9a132
+        reporting:limit: 16
+        reporting:parameternames: []
+        reporting:parametervalues: []
+        /reporting:listener:
+          jcr:primaryType: frontend:listener
+          frontend:deep: true
+          frontend:events: 3
+          frontend:nodetypes: ['hippo:handle']
+          frontend:path: /
+        /reporting:plugin:
+          jcr:primaryType: frontend:plugin
+          browser.id: service.browse
+          plugin.class: org.hippoecm.frontend.plugins.cms.dashboard.todo.TodoPlugin
+          wicket.id: service.dashboard.todo
+          wicket.model: model.report.todo
+        /reporting:query:
+          jcr:primaryType: hippo:query
+          jcr:language: sql
+          jcr:statement: SELECT * FROM hippostdpubwf:request WHERE NOT hippostdpubwf:type
+            = 'rejected' OR hippostdpubwf:username='__USER__' ORDER BY hippostdpubwf:creationDate
+            DESC

@@ -1,0 +1,171 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:workflows/threepane:
+      /image-gallery:
+        .meta:order-before: generic-gallery
+        jcr:primaryType: frontend:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
+        hipposys:display: Workflow on gallery image folders
+        hipposys:nodetype: hippogallery:stdImageGallery
+        hipposys:privileges: ['hippo:author']
+        /hipposys:types:
+          jcr:primaryType: hipposys:types
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          browser.id: ${browser.id}
+          editor.id: ${editor.id}
+          plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          attic:
+            type: path
+            value: /content/attic
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+      /asset-gallery:
+        .meta:order-before: generic-gallery
+        jcr:primaryType: frontend:workflow
+        hipposys:classname: org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
+        hipposys:display: Workflow on asset gallery folders
+        hipposys:nodetype: hippogallery:stdAssetGallery
+        hipposys:privileges: ['hippo:author']
+        /hipposys:types:
+          jcr:primaryType: hipposys:types
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          browser.id: ${browser.id}
+          editor.id: ${editor.id}
+          plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin
+        /hipposys:config:
+          jcr:primaryType: nt:unstructured
+          attic:
+            type: path
+            value: /content/attic
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+      /generic-gallery:
+        jcr:primaryType:
+          operation: override
+          type: name
+          value: frontend:workflow
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugin
+          browser.id: ${browser.id}
+          editor.id: ${editor.id}
+          plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin
+        /hipposys:config:
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+      /folder-extended:
+        jcr:primaryType:
+          operation: override
+          type: name
+          value: frontend:workflow
+        /hipposys:config:
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugincluster
+          frontend:references: [browser.id, editor.id, wicket.model]
+          frontend:services: [wicket.id]
+          item: ${cluster.id}.item
+          workflow.translated: new-translated-folder
+          /root:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+          /standard:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin
+            wicket.id: ${item}
+            /filters:
+              jcr:primaryType: frontend:pluginconfig
+              /hideTranslation:
+                jcr:primaryType: frontend:pluginconfig
+                child: hippo:translation
+                display: false
+              /hideTranslationsType:
+                jcr:primaryType: frontend:pluginconfig
+                child: hippotranslation:translations
+                display: false
+              /hideFacnavType:
+                jcr:primaryType: frontend:pluginconfig
+                child: hippofacnav:facetnavigation
+                display: false
+          /extended:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.reviewedactions.ExtendedFolderWorkflowPlugin
+            wicket.id: ${item}
+      /folder:
+        jcr:primaryType:
+          operation: override
+          type: name
+          value: frontend:workflow
+        /hipposys:config:
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugincluster
+          frontend:references: [browser.id, editor.id, wicket.model]
+          frontend:services: [wicket.id]
+          item: ${cluster.id}.item
+          workflow.translated: new-translated-folder
+          /root:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+          /standard:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin
+            wicket.id: ${item}
+            /filters:
+              jcr:primaryType: frontend:pluginconfig
+              /hideTranslation:
+                jcr:primaryType: frontend:pluginconfig
+                child: hippo:translation
+                display: false
+              /hideTranslationsType:
+                jcr:primaryType: frontend:pluginconfig
+                child: hippotranslation:translations
+                display: false
+              /hideFacnavType:
+                jcr:primaryType: frontend:pluginconfig
+                child: hippofacnav:facetnavigation
+                display: false
+      /directory-extended:
+        jcr:primaryType:
+          operation: override
+          type: name
+          value: frontend:workflow
+        /hipposys:config:
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugincluster
+          frontend:references: [browser.id, editor.id, wicket.model]
+          frontend:services: [wicket.id]
+          item: ${cluster.id}.item
+          workflow.translated: new-translated-folder
+          /root:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+          /standard:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin
+            wicket.id: ${item}
+          /extended:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.reviewedactions.ExtendedFolderWorkflowPlugin
+            wicket.id: ${item}
+      /directory:
+        jcr:primaryType:
+          operation: override
+          type: name
+          value: frontend:workflow
+        /hipposys:config:
+          modify-on-copy: ['./hippotranslation:id', $uuid]
+        /frontend:renderer:
+          jcr:primaryType: frontend:plugincluster
+          frontend:references: [browser.id, editor.id, wicket.model]
+          frontend:services: [wicket.id]
+          item: ${cluster.id}.item
+          workflow.translated: new-translated-folder
+          /root:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+          /standard:
+            jcr:primaryType: frontend:plugin
+            plugin.class: org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin
+            wicket.id: ${item}

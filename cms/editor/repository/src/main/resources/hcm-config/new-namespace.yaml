@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:queries/hippo:templates/new-namespace:
+      jcr:primaryType: hippostd:templatequery
+      hippostd:modify: [./_name, $name]
+      jcr:language: xpath
+      jcr:statement: /jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-namespace/hippostd:templates/namespace
+      /hippostd:templates:
+        jcr:primaryType: hippostd:templates
+        /namespace:
+          jcr:primaryType: hipposysedit:namespace
+          jcr:mixinTypes: ['mix:referenceable']
+          /basedocument:
+            jcr:primaryType: hipposysedit:templatetype
+            jcr:mixinTypes: ['mix:referenceable']
+            /hipposysedit:nodetype:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /hipposysedit:nodetype:
+                jcr:primaryType: hipposysedit:nodetype
+                jcr:mixinTypes: ['hipposysedit:remodel']
+                hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document',
+                  'hippostd:publishableSummary']
+                hipposysedit:uri: uri
