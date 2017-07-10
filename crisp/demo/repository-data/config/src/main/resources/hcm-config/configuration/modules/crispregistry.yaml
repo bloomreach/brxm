@@ -2,117 +2,117 @@ definitions:
   config:
     /hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer/demoProductCatalogs:
       jcr:primaryType: crisp:resourceresolver
-      crisp:beandefinition: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<beans\
-        \ xmlns=\"http://www.springframework.org/schema/beans\"\r\n       xmlns:xsi=\"\
-        http://www.w3.org/2001/XMLSchema-instance\"\r\n       xsi:schemaLocation=\"\
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd\"\
+      crisp:beandefinition: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<beans xmlns=\"\
+        http://www.springframework.org/schema/beans\"\r\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\
+        \r\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd\"\
         >\r\n\r\n  <bean parent=\"abstractCrispSimpleJacksonRestTemplateResourceResolver\"\
         \r\n        class=\"org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver\"\
-        >\r\n    <property name=\"baseUri\" value=\"${example.commerce.api.base.uri}\"\
-        \ />\r\n    <property name=\"restTemplate\">\r\n      <bean class=\"org.springframework.web.client.RestTemplate\"\
+        >\r\n    <property name=\"cacheEnabled\" value=\"${cache.enabled}\" />\r\n   \
+        \ <property name=\"baseUri\" value=\"${example.commerce.api.base.uri}\" />\r\n\
+        \    <property name=\"restTemplate\">\r\n      <bean class=\"org.springframework.web.client.RestTemplate\"\
         >\r\n        <property name=\"requestFactory\" ref=\"org.springframework.http.client.ClientHttpRequestFactory\"\
         \ />\r\n      </bean>\r\n    </property>\r\n    <property name=\"resourceLinkResolver\"\
         >\r\n      <bean class=\"org.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver\"\
         >\r\n        <property name=\"templateSource\">\r\n          <value>http://www.example.com/products/${(preview\
         \ == \"true\")?then(\"staging\", \"current\")}/sku/${resource.valueMap['SKU']!\"\
-        unknown\"}/overview.html</value>\r\n        </property>\r\n      </bean>\r\
-        \n    </property>\r\n    <property name=\"resourceDataCache\">\r\n      <bean\
-        \ class=\"org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache\"\
-        >\r\n        <constructor-arg>\r\n          <bean class=\"org.springframework.cache.ehcache.EhCacheCache\"\
-        >\r\n            <constructor-arg>\r\n              <bean parent=\"abstractCrispResourceEhCache\"\
+        unknown\"}/overview.html</value>\r\n        </property>\r\n      </bean>\r\n \
+        \   </property>\r\n    <property name=\"resourceDataCache\">\r\n      <bean class=\"\
+        org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache\">\r\n        <constructor-arg>\r\
+        \n          <bean class=\"org.springframework.cache.ehcache.EhCacheCache\">\r\n\
+        \            <constructor-arg>\r\n              <bean parent=\"abstractCrispResourceEhCache\"\
         >\r\n                <property name=\"cacheName\" value=\"demoProductCatalogsCache\"\
         \ />\r\n                <property name=\"maxEntriesLocalHeap\" value=\"1000\"\
-        \ />\r\n                <property name=\"maxEntriesLocalDisk\" value=\"0\"\
-        \ />\r\n                <property name=\"timeToLiveSeconds\" value=\"60\"\
-        \ />\r\n                <property name=\"timeToIdleSeconds\" value=\"60\"\
-        \ />\r\n              </bean>\r\n            </constructor-arg>\r\n      \
-        \    </bean>\r\n        </constructor-arg>\r\n      </bean>\r\n    </property>\r\
-        \n  </bean>\r\n\r\n</beans>"
-      crisp:propnames: [example.commerce.api.base.uri]
-      crisp:propvalues: ['http://localhost:8080/example-commerce/api/v1']
+        \ />\r\n                <property name=\"maxEntriesLocalDisk\" value=\"0\" />\r\
+        \n                <property name=\"timeToLiveSeconds\" value=\"60\" />\r\n   \
+        \             <property name=\"timeToIdleSeconds\" value=\"60\" />\r\n       \
+        \       </bean>\r\n            </constructor-arg>\r\n          </bean>\r\n   \
+        \     </constructor-arg>\r\n      </bean>\r\n    </property>\r\n  </bean>\r\n\r\
+        \n</beans>"
+      crisp:propnames: [cache.enabled, example.commerce.api.base.uri]
+      crisp:propvalues: ['true', 'http://localhost:8080/example-commerce/api/v1']
     /hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer/demoProductCatalogsXml:
       jcr:primaryType: crisp:resourceresolver
-      crisp:beandefinition: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<beans\
-        \ xmlns=\"http://www.springframework.org/schema/beans\"\r\n       xmlns:xsi=\"\
-        http://www.w3.org/2001/XMLSchema-instance\"\r\n       xsi:schemaLocation=\"\
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd\"\
-        >\r\n\r\n  <bean parent=\"abstractCrispSimpleRestTemplateResourceResolver\"\
-        \r\n        class=\"org.onehippo.cms7.crisp.core.resource.jdom.SimpleJdomRestTemplateResourceResolver\"\
-        >\r\n    <property name=\"baseUri\" value=\"${example.commerce.api.base.uri}\"\
-        \ />\r\n    <property name=\"restTemplate\">\r\n      <bean class=\"org.springframework.web.client.RestTemplate\"\
+      crisp:beandefinition: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<beans xmlns=\"\
+        http://www.springframework.org/schema/beans\"\r\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\
+        \r\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd\"\
+        >\r\n\r\n  <bean parent=\"abstractCrispSimpleRestTemplateResourceResolver\"\r\n\
+        \        class=\"org.onehippo.cms7.crisp.core.resource.jdom.SimpleJdomRestTemplateResourceResolver\"\
+        >\r\n    <property name=\"cacheEnabled\" value=\"${cache.enabled}\" />\r\n   \
+        \ <property name=\"baseUri\" value=\"${example.commerce.api.base.uri}\" />\r\n\
+        \    <property name=\"restTemplate\">\r\n      <bean class=\"org.springframework.web.client.RestTemplate\"\
         >\r\n        <property name=\"requestFactory\" ref=\"org.springframework.http.client.ClientHttpRequestFactory\"\
         \ />\r\n      </bean>\r\n    </property>\r\n    <property name=\"resourceLinkResolver\"\
         >\r\n      <bean class=\"org.onehippo.cms7.crisp.core.resource.FreemarkerTemplateResourceLinkResolver\"\
         >\r\n        <property name=\"templateSource\">\r\n          <value>http://www.example.com/products/${(preview\
         \ == \"true\")?then(\"staging\", \"current\")}/sku/${resource.valueMap['sku'].defaultValue!\"\
-        unknown\"}/overview.html</value>\r\n        </property>\r\n      </bean>\r\
-        \n    </property>\r\n    <property name=\"resourceDataCache\">\r\n      <bean\
-        \ class=\"org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache\"\
-        >\r\n        <constructor-arg>\r\n          <bean class=\"org.springframework.cache.ehcache.EhCacheCache\"\
-        >\r\n            <constructor-arg>\r\n              <bean parent=\"abstractCrispResourceEhCache\"\
+        unknown\"}/overview.html</value>\r\n        </property>\r\n      </bean>\r\n \
+        \   </property>\r\n    <property name=\"resourceDataCache\">\r\n      <bean class=\"\
+        org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache\">\r\n        <constructor-arg>\r\
+        \n          <bean class=\"org.springframework.cache.ehcache.EhCacheCache\">\r\n\
+        \            <constructor-arg>\r\n              <bean parent=\"abstractCrispResourceEhCache\"\
         >\r\n                <property name=\"cacheName\" value=\"demoProductCatalogsXmlCache\"\
         \ />\r\n                <property name=\"maxEntriesLocalHeap\" value=\"1000\"\
-        \ />\r\n                <property name=\"maxEntriesLocalDisk\" value=\"0\"\
-        \ />\r\n                <property name=\"timeToLiveSeconds\" value=\"60\"\
-        \ />\r\n                <property name=\"timeToIdleSeconds\" value=\"60\"\
-        \ />\r\n              </bean>\r\n            </constructor-arg>\r\n      \
-        \    </bean>\r\n        </constructor-arg>\r\n      </bean>\r\n    </property>\r\
-        \n  </bean>\r\n\r\n</beans>"
-      crisp:propnames: [example.commerce.api.base.uri]
-      crisp:propvalues: ['http://localhost:8080/example-commerce/api/v1']
+        \ />\r\n                <property name=\"maxEntriesLocalDisk\" value=\"0\" />\r\
+        \n                <property name=\"timeToLiveSeconds\" value=\"60\" />\r\n   \
+        \             <property name=\"timeToIdleSeconds\" value=\"60\" />\r\n       \
+        \       </bean>\r\n            </constructor-arg>\r\n          </bean>\r\n   \
+        \     </constructor-arg>\r\n      </bean>\r\n    </property>\r\n  </bean>\r\n\r\
+        \n</beans>"
+      crisp:propnames: [cache.enabled, example.commerce.api.base.uri]
+      crisp:propvalues: ['true', 'http://localhost:8080/example-commerce/api/v1']
     /hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer/demoSalesForce:
       jcr:primaryType: crisp:resourceresolver
-      crisp:beandefinition: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<beans\
-        \ xmlns=\"http://www.springframework.org/schema/beans\"\r\n       xmlns:xsi=\"\
-        http://www.w3.org/2001/XMLSchema-instance\"\r\n       xsi:schemaLocation=\"\
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd\"\
+      crisp:beandefinition: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<beans xmlns=\"\
+        http://www.springframework.org/schema/beans\"\r\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\
+        \r\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd\"\
         >\r\n\r\n  <bean parent=\"abstractCrispSimpleJacksonRestTemplateResourceResolver\"\
         \r\n        class=\"org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver\"\
-        >\r\n    <property name=\"baseUri\" value=\"${salesforce.baseUrl}/services/data/v20.0\"\
+        >\r\n    <property name=\"cacheEnabled\" value=\"${cache.enabled}\" />\r\n   \
+        \ <property name=\"baseUri\" value=\"${salesforce.baseUrl}/services/data/v20.0\"\
         \ />\r\n    <property name=\"restTemplate\">\r\n      <bean class=\"org.springframework.security.oauth2.client.OAuth2RestTemplate\"\
         >\r\n        <constructor-arg>\r\n          <bean class=\"org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails\"\
         >\r\n            <property name=\"clientAuthenticationScheme\" value=\"form\"\
         \ />\r\n            <property name=\"accessTokenUri\" value=\"${salesforce.baseUrl}/services/oauth2/token\"\
         \ />\r\n            <property name=\"clientId\" value=\"${salesforce.clientId}\"\
         \ />\r\n            <property name=\"clientSecret\" value=\"${salesforce.clientSecret}\"\
-        \ />\r\n            <property name=\"grantType\" value=\"password\" />\r\n\
-        \            <!-- NOTE: SalesForce doesn't support scope parameter!\r\n  \
-        \          <property name=\"scope\">\r\n              <list>\r\n         \
-        \       <value>read</value>\r\n              </list>\r\n            </property>\r\
-        \n            -->\r\n            <property name=\"username\" value=\"${salesforce.username}\"\
-        \ />\r\n            <property name=\"password\" value=\"${salesforce.password}${salesforce.securityToken}\"\
+        \ />\r\n            <property name=\"grantType\" value=\"password\" />\r\n   \
+        \         <!-- NOTE: SalesForce doesn't support scope parameter!\r\n         \
+        \   <property name=\"scope\">\r\n              <list>\r\n                <value>read</value>\r\
+        \n              </list>\r\n            </property>\r\n            -->\r\n    \
+        \        <property name=\"username\" value=\"${salesforce.username}\" />\r\n \
+        \           <property name=\"password\" value=\"${salesforce.password}${salesforce.securityToken}\"\
         \ />\r\n          </bean>\r\n        </constructor-arg>\r\n        <constructor-arg>\r\
         \n          <bean class=\"org.springframework.security.oauth2.client.DefaultOAuth2ClientContext\"\
         >\r\n            <constructor-arg>\r\n              <bean class=\"org.springframework.security.oauth2.client.token.DefaultAccessTokenRequest\"\
-        >\r\n              </bean>\r\n            </constructor-arg>\r\n         \
-        \ </bean>\r\n        </constructor-arg>\r\n        <property name=\"requestFactory\"\
-        \ ref=\"org.springframework.http.client.ClientHttpRequestFactory\" />\r\n\
-        \      </bean>\r\n    </property>\r\n    <property name=\"resourceDataCache\"\
-        >\r\n      <bean class=\"org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache\"\
-        >\r\n        <constructor-arg>\r\n          <bean class=\"org.springframework.cache.ehcache.EhCacheCache\"\
+        >\r\n              </bean>\r\n            </constructor-arg>\r\n          </bean>\r\
+        \n        </constructor-arg>\r\n        <property name=\"requestFactory\" ref=\"\
+        org.springframework.http.client.ClientHttpRequestFactory\" />\r\n      </bean>\r\
+        \n    </property>\r\n    <property name=\"resourceDataCache\">\r\n      <bean\
+        \ class=\"org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache\">\r\n\
+        \        <constructor-arg>\r\n          <bean class=\"org.springframework.cache.ehcache.EhCacheCache\"\
         >\r\n            <constructor-arg>\r\n              <bean parent=\"abstractCrispResourceEhCache\"\
         >\r\n                <property name=\"cacheName\" value=\"demoSalesForceCache\"\
         \ />\r\n                <property name=\"maxEntriesLocalHeap\" value=\"1000\"\
-        \ />\r\n                <property name=\"maxEntriesLocalDisk\" value=\"0\"\
-        \ />\r\n                <property name=\"timeToLiveSeconds\" value=\"60\"\
-        \ />\r\n                <property name=\"timeToIdleSeconds\" value=\"60\"\
-        \ />\r\n              </bean>\r\n            </constructor-arg>\r\n      \
-        \    </bean>\r\n        </constructor-arg>\r\n      </bean>\r\n    </property>\r\
-        \n  </bean>\r\n\r\n</beans>"
-      crisp:propnames: [salesforce.clientId, salesforce.clientSecret, salesforce.username,
+        \ />\r\n                <property name=\"maxEntriesLocalDisk\" value=\"0\" />\r\
+        \n                <property name=\"timeToLiveSeconds\" value=\"60\" />\r\n   \
+        \             <property name=\"timeToIdleSeconds\" value=\"60\" />\r\n       \
+        \       </bean>\r\n            </constructor-arg>\r\n          </bean>\r\n   \
+        \     </constructor-arg>\r\n      </bean>\r\n    </property>\r\n  </bean>\r\n\r\
+        \n</beans>"
+      crisp:propnames: [cache.enabled, salesforce.clientId, salesforce.clientSecret, salesforce.username,
         salesforce.password, salesforce.securityToken, salesforce.baseUrl]
-      crisp:propvalues: [someClientId, someClientSecret, john.doe@example.com, somePassword,
-        someSecurityToken, 'https://na1.salesforce.example.com']
+      crisp:propvalues: ['true', someClientId, someClientSecret, john.doe@example.com,
+        somePassword, someSecurityToken, 'https://na1.salesforce.example.com']
     /hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig/crisp:resourceresolvercontainer/demoMarketo:
       jcr:primaryType: crisp:resourceresolver
-      crisp:beandefinition: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<beans\
-        \ xmlns=\"http://www.springframework.org/schema/beans\"\r\n       xmlns:xsi=\"\
-        http://www.w3.org/2001/XMLSchema-instance\"\r\n       xsi:schemaLocation=\"\
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd\"\
+      crisp:beandefinition: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<beans xmlns=\"\
+        http://www.springframework.org/schema/beans\"\r\n       xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\
+        \r\n       xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd\"\
         >\r\n\r\n  <bean parent=\"abstractCrispSimpleJacksonRestTemplateResourceResolver\"\
         \r\n        class=\"org.onehippo.cms7.crisp.core.resource.jackson.SimpleJacksonRestTemplateResourceResolver\"\
-        >\r\n    <property name=\"baseUri\" value=\"${marketo.baseUrl}/rest/v1\" />\r\
-        \n    <property name=\"restTemplate\">\r\n      <bean class=\"org.springframework.security.oauth2.client.OAuth2RestTemplate\"\
+        >\r\n    <property name=\"cacheEnabled\" value=\"${cache.enabled}\" />\r\n   \
+        \ <property name=\"baseUri\" value=\"${marketo.baseUrl}/rest/v1\" />\r\n    <property\
+        \ name=\"restTemplate\">\r\n      <bean class=\"org.springframework.security.oauth2.client.OAuth2RestTemplate\"\
         >\r\n        <constructor-arg>\r\n          <bean class=\"org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails\"\
         >\r\n            <property name=\"accessTokenUri\" value=\"${marketo.baseUrl}/identity/oauth/token\"\
         \ />\r\n            <property name=\"clientId\" value=\"${marketo.clientId}\"\
@@ -121,20 +121,20 @@ definitions:
         \ />\r\n          </bean>\r\n        </constructor-arg>\r\n        <constructor-arg>\r\
         \n          <bean class=\"org.springframework.security.oauth2.client.DefaultOAuth2ClientContext\"\
         >\r\n            <constructor-arg>\r\n              <bean class=\"org.springframework.security.oauth2.client.token.DefaultAccessTokenRequest\"\
-        >\r\n              </bean>\r\n            </constructor-arg>\r\n         \
-        \ </bean>\r\n        </constructor-arg>\r\n        <property name=\"requestFactory\"\
-        \ ref=\"org.springframework.http.client.ClientHttpRequestFactory\" />\r\n\
-        \      </bean>\r\n    </property>\r\n    <property name=\"resourceDataCache\"\
-        >\r\n      <bean class=\"org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache\"\
-        >\r\n        <constructor-arg>\r\n          <bean class=\"org.springframework.cache.ehcache.EhCacheCache\"\
+        >\r\n              </bean>\r\n            </constructor-arg>\r\n          </bean>\r\
+        \n        </constructor-arg>\r\n        <property name=\"requestFactory\" ref=\"\
+        org.springframework.http.client.ClientHttpRequestFactory\" />\r\n      </bean>\r\
+        \n    </property>\r\n    <property name=\"resourceDataCache\">\r\n      <bean\
+        \ class=\"org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache\">\r\n\
+        \        <constructor-arg>\r\n          <bean class=\"org.springframework.cache.ehcache.EhCacheCache\"\
         >\r\n            <constructor-arg>\r\n              <bean parent=\"abstractCrispResourceEhCache\"\
-        >\r\n                <property name=\"cacheName\" value=\"demomarketoCache\"\
-        \ />\r\n                <property name=\"maxEntriesLocalHeap\" value=\"1000\"\
-        \ />\r\n                <property name=\"maxEntriesLocalDisk\" value=\"0\"\
-        \ />\r\n                <property name=\"timeToLiveSeconds\" value=\"60\"\
-        \ />\r\n                <property name=\"timeToIdleSeconds\" value=\"60\"\
-        \ />\r\n              </bean>\r\n            </constructor-arg>\r\n      \
-        \    </bean>\r\n        </constructor-arg>\r\n      </bean>\r\n    </property>\r\
-        \n  </bean>\r\n\r\n</beans>"
-      crisp:propnames: [marketo.clientId, marketo.clientSecret, marketo.baseUrl]
-      crisp:propvalues: [someClientId, someClientSecret, 'https://302-gjy-034.mktorest.example.com']
+        >\r\n                <property name=\"cacheName\" value=\"demomarketoCache\" />\r\
+        \n                <property name=\"maxEntriesLocalHeap\" value=\"1000\" />\r\n\
+        \                <property name=\"maxEntriesLocalDisk\" value=\"0\" />\r\n   \
+        \             <property name=\"timeToLiveSeconds\" value=\"60\" />\r\n       \
+        \         <property name=\"timeToIdleSeconds\" value=\"60\" />\r\n           \
+        \   </bean>\r\n            </constructor-arg>\r\n          </bean>\r\n       \
+        \ </constructor-arg>\r\n      </bean>\r\n    </property>\r\n  </bean>\r\n\r\n\
+        </beans>"
+      crisp:propnames: [cache.enabled, marketo.clientId, marketo.clientSecret, marketo.baseUrl]
+      crisp:propvalues: ['true', someClientId, someClientSecret, 'https://302-gjy-034.mktorest.example.com']
