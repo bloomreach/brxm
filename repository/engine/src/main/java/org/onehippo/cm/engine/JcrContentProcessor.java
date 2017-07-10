@@ -37,6 +37,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cm.model.ActionType;
 import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.DefinitionProperty;
+import org.onehippo.cm.model.NodePath;
 import org.onehippo.cm.model.PropertyType;
 import org.onehippo.cm.model.Value;
 import org.onehippo.cm.model.impl.DefinitionNodeImpl;
@@ -128,11 +129,11 @@ public class JcrContentProcessor {
         }
 
         try {
-            if (!validateAppendAction(definitionNode.getPath(), actionType, session, true)) {
+            if (!validateAppendAction(definitionNode.getPath().toString(), actionType, session, true)) {
                 // node exists and actionType is APPEND but ignore content conflict system parameter == true: ignore
                 return;
             }
-            if (actionType == DELETE && !session.nodeExists(definitionNode.getPath())) {
+            if (actionType == DELETE && !session.nodeExists(definitionNode.getPath().toString())) {
                 return;
             }
 
@@ -151,11 +152,11 @@ public class JcrContentProcessor {
     }
 
     private Node calculateParentNode(DefinitionNode definitionNode, final Session session) throws RepositoryException {
-        final String parentPath = StringUtils.substringBeforeLast(definitionNode.getPath(), "/");
-        if (parentPath.isEmpty()) {
+        final NodePath parentPath = definitionNode.getPath().getParent();
+        if (parentPath.isRoot()) {
             return session.getRootNode();
         } else {
-            return session.getNode(parentPath);
+            return session.getNode(parentPath.toString());
         }
     }
 

@@ -220,7 +220,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
                 continue;
             }
             // use Configuration.filterUuidPaths during delta computation (suppressing export of jcr:uuid)
-            if (propName.equals(JCR_UUID) && autoExportConfig.shouldFilterUuid(configNode.getPath())) {
+            if (propName.equals(JCR_UUID) && autoExportConfig.shouldFilterUuid(configNode.getPath().toMinimallyIndexedPath().toString())) {
                 continue;
             }
 
@@ -385,7 +385,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
         for (final String childConfigNode : configNode.getNodes().keySet()) {
             if (!jcrNode.hasNode(childConfigNode)) {
                 final DefinitionNodeImpl childNode = configSource
-                        .getOrCreateDefinitionFor(String.join("/", configNode.getPath(), childConfigNode));
+                        .getOrCreateDefinitionFor(configNode.getPath().resolve(childConfigNode).toString());
                 if (childNode == null) {
                     log.error("Produced a null result for path: {}!",
                             jcrNode.getPath()+"/"+childConfigNode,
@@ -465,7 +465,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
     private void setOrderBefore(final ConfigurationNodeImpl configNode, final String childName, final String beforeName,
                                 final ConfigSourceImpl configSource) {
         final DefinitionNodeImpl childNode = configSource
-                .getOrCreateDefinitionFor(String.join("/", configNode.getPath(), childName));
+                .getOrCreateDefinitionFor(configNode.getPath().resolve(childName).toString());
         childNode.setOrderBefore(beforeName);
     }
 

@@ -49,6 +49,7 @@ public class ZipCompressor {
     public static FileSystem createZipFileSystem(final String zipFilename, final boolean create) throws IOException {
 
         final Path path = Paths.get(zipFilename);
+        // todo: is this the right thing to do on Windows?
         final URI uri = URI.create("jar:file:" + path.toUri().getPath());
 
         final Map<String, String> env = new HashMap<>();
