@@ -25,11 +25,11 @@ import org.onehippo.cms7.crisp.api.resource.ValueMap;
  */
 class NullResource extends AbstractResource {
 
+    private static final long serialVersionUID = 1L;
+
     public NullResource() {
         super("null");
     }
-
-    private static final long serialVersionUID = 1L;
 
     @Override
     public ValueMap getMetadata() {
