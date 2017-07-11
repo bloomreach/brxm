@@ -72,6 +72,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import sun.security.pkcs11.wrapper.Functions;
 import static java.nio.charset.StandardCharsets.*;
@@ -195,41 +197,48 @@ public class ConfigurationConfigService {
     private void applyNodeTypes(final List<? extends NamespaceDefinition> baselineDefs,
                                 final List<? extends NamespaceDefinition> nsDefinitions,
                                 final Session session) throws RepositoryException, IOException {
-        for (NamespaceDefinition nsDefinition : nsDefinitions) {
-            if (nsDefinition.getCndPath() != null) {
-                final String cndPath = nsDefinition.getCndPath().getString();
-                if (log.isDebugEnabled()) {
-                    log.debug(String.format("processing CND '%s' defined in %s.", cndPath, nsDefinition.getOrigin()));
-                }
+        // index baseline defs by prefix for faster lookups later
+        final ImmutableMap<String, ? extends NamespaceDefinition> baselineDefsByPrefix =
+                Maps.uniqueIndex(baselineDefs, NamespaceDefinition::getPrefix);
 
-                // find baseline version of this namespace def, if one exists
-                final String prefix = nsDefinition.getPrefix();
-                final Optional<? extends NamespaceDefinition> baselineDef =
-                        baselineDefs.stream().filter(def -> def.getPrefix().equals(prefix)).findFirst();
+        for (NamespaceDefinition nsDefinition : nsDefinitions) {
+            // skip namespace defs with no CND
+            if (nsDefinition.getCndPath() == null) {
+                continue;
+            }
+
+            final String cndPath = nsDefinition.getCndPath().getString();
+
+            // find baseline version of this namespace def, if one exists
+            final NamespaceDefinition baselineDef = baselineDefsByPrefix.get(nsDefinition.getPrefix());
+
+            final boolean reloadCND;
+            if (baselineDef != null && baselineDef.getCndPath() != null) {
 
                 // check if the baseline version of the CND is exactly bytewise equal to the new CND
                 // CNDs are small enough to just do the full bytewise compare instead of hashing
-                final boolean equalCNDs;
-                if (baselineDef.isPresent() && baselineDef.get().getCndPath() != null) {
-                    try (final InputStream baselineCND = baselineDef.get().getCndPath().getResourceInputStream();
-                        final InputStream newCND = nsDefinition.getCndPath().getResourceInputStream()) {
-                        equalCNDs = IOUtils.contentEquals(baselineCND, newCND);
-                    }
-                }
-                else {
-                    equalCNDs = false;
-                }
+                try (final InputStream baselineCND = baselineDef.getCndPath().getResourceInputStream();
+                    final InputStream newCND = nsDefinition.getCndPath().getResourceInputStream()) {
 
-                if (equalCNDs) {
-                    if (log.isDebugEnabled()) {
-                        log.debug(String.format("skipping CND already loaded in baseline: '%s' defined in %s.", cndPath, nsDefinition.getOrigin()));
-                    }
+                    // don't reload if the new CND exactly matches the old one
+                    reloadCND = !IOUtils.contentEquals(baselineCND, newCND);
                 }
-                else {
-                    final String cndPathOrigin = String.format("'%s' (%s)", cndPath, nsDefinition.getOrigin());
-                    try (final InputStream nodeTypeStream = nsDefinition.getCndPath().getResourceInputStream()) {
-                        BootstrapUtils.initializeNodetypes(session, nodeTypeStream, cndPathOrigin);
-                    }
+                if (!reloadCND && log.isDebugEnabled()) {
+                    log.debug(String.format("skipping CND already loaded in baseline: '%s' defined in %s.", cndPath, nsDefinition.getOrigin()));
+                }
+            }
+            else {
+                // no matching baseline also means we should reload the CND
+                reloadCND = true;
+            }
+
+            if (reloadCND) {
+                if (log.isDebugEnabled()) {
+                    log.debug(String.format("processing CND '%s' defined in %s.", cndPath, nsDefinition.getOrigin()));
+                }
+                final String cndPathOrigin = String.format("'%s' (%s)", cndPath, nsDefinition.getOrigin());
+                try (final InputStream nodeTypeStream = nsDefinition.getCndPath().getResourceInputStream()) {
+                    BootstrapUtils.initializeNodetypes(session, nodeTypeStream, cndPathOrigin);
                 }
             }
         }
