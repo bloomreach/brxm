@@ -30,12 +30,12 @@ class FieldService {
   }
 
   shouldUnsetFocus(relatedTarget) {
-    const validUnsetSelectors = [
+    const validSelectors = [
       '.btn-fullwidth',
       '.btn-normalwidth',
     ];
 
-    return validUnsetSelectors.some(selector => relatedTarget.is(selector));
+    return validSelectors.some(selector => relatedTarget.is(selector));
   }
 
   setFocusedInput(element, customFocusCallback = null) {
@@ -48,11 +48,12 @@ class FieldService {
     this._customFocusCallback = null;
   }
 
-  getFocusedInput() {
-    return {
-      target: this._focusedInput,
-      customFocusCallback: this._customFocusCallback,
-    };
+  triggerInputFocus() {
+    if (this._customFocusCallback) {
+      this._customFocusCallback();
+    } else {
+      this._focusedInput.focus();
+    }
   }
 
   setDocumentId(documentId) {

@@ -441,14 +441,7 @@ class RightSidePanelCtrl {
     }
     this.isFullWidth = state;
 
-    const focusedInput = this.FieldService.getFocusedInput();
-    if (focusedInput.target) {
-      if (focusedInput.customFocusCallback) {
-        focusedInput.customFocusCallback();
-      } else {
-        focusedInput.target.focus();
-      }
-    }
+    this.FieldService.triggerInputFocus();
   }
 }
 
