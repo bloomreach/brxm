@@ -18,8 +18,6 @@ package org.onehippo.cm.model;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.onehippo.cm.model.Source;
-
 /**
  * Abstracts access to configuration module content from various storage formats, e.g. classpath, the native FileSystem,
  * or the JCR.

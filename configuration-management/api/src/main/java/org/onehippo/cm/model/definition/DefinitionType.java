@@ -15,10 +15,10 @@
  */
 package org.onehippo.cm.model.definition;
 
-import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.SourceType;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 
 /**
  * Describes the type of data that a {@link Definition} contains, and therefore its textual syntax in YAML. The

@@ -24,14 +24,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.model.tree.ConfigurationItemCategory;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.path.NodePathSegmentImpl;
 import org.onehippo.cm.model.path.NodePath;
 import org.onehippo.cm.model.path.NodePathSegment;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.PropertyType;
 import org.onehippo.cm.model.tree.ValueType;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.path.NodePathSegmentImpl;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -16,7 +16,6 @@
 package org.onehippo.cm.model.impl.path;
 
 import org.junit.Test;
-import org.onehippo.cm.model.impl.path.NodePathSegmentImpl;
 
 import static org.junit.Assert.assertEquals;
 

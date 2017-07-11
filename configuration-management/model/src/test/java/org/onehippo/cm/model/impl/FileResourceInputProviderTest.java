@@ -18,12 +18,6 @@ package org.onehippo.cm.model.impl;
 import java.nio.file.Paths;
 
 import org.junit.Test;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
-import org.onehippo.cm.model.impl.FileResourceInputProvider;
-import org.onehippo.cm.model.impl.GroupImpl;
-import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.ProjectImpl;
-import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.util.FilePathUtils;
 
 import static org.junit.Assert.assertEquals;

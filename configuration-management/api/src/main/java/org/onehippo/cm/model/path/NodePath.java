@@ -15,8 +15,8 @@
  */
 package org.onehippo.cm.model.path;
 
-import java.util.stream.Stream;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 /**
  * Represents a multi-segment JCR node path with possible same-named-sibling indices on each segment.

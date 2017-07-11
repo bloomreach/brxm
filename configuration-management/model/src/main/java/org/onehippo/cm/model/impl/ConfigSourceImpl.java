@@ -19,7 +19,6 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.onehippo.cm.model.path.NodePath;
 import org.onehippo.cm.model.SourceType;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
@@ -28,6 +27,7 @@ import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
 import org.onehippo.cm.model.impl.path.NodePathImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.path.NodePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

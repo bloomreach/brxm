@@ -25,13 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.onehippo.cm.model.ResourceInputProvider;
 import org.onehippo.cm.model.Constants;
-import org.onehippo.cm.model.impl.FileResourceInputProvider;
-import org.onehippo.cm.model.impl.tree.JcrBinaryValueImpl;
 import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.ResourceInputProvider;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.SourceType;
+import org.onehippo.cm.model.impl.FileResourceInputProvider;
+import org.onehippo.cm.model.impl.tree.JcrBinaryValueImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

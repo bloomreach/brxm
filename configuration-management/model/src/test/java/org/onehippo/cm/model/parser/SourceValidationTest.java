@@ -18,7 +18,6 @@ package org.onehippo.cm.model.parser;
 
 import java.io.StringReader;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.impl.GroupImpl;

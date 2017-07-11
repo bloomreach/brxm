@@ -18,8 +18,6 @@ package org.onehippo.cm.model.serializer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cm.model.serializer.ResourceNameResolver;
-import org.onehippo.cm.model.serializer.ResourceNameResolverImpl;
 
 
 public class ResourceNameResolverImplTest {

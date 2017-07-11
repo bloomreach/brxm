@@ -26,11 +26,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
-import org.onehippo.cm.model.ResourceInputProvider;
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.OrderableByName;
 import org.onehippo.cm.model.Project;
+import org.onehippo.cm.model.ResourceInputProvider;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;

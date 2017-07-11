@@ -24,16 +24,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.onehippo.cm.model.tree.ConfigurationItemCategory;
-import org.onehippo.cm.model.tree.ConfigurationProperty;
-import org.onehippo.cm.model.tree.PropertyType;
-import org.onehippo.cm.model.tree.Value;
-import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
+import org.onehippo.cm.model.tree.ConfigurationProperty;
+import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.Value;
+import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;

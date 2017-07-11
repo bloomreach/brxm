@@ -23,11 +23,11 @@ import java.util.Calendar;
 
 import org.onehippo.cm.model.ResourceInputProvider;
 import org.onehippo.cm.model.definition.DefinitionType;
-import org.onehippo.cm.model.tree.Value;
-import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.tree.Value;
+import org.onehippo.cm.model.tree.ValueType;
 
 public class ValueImpl implements Value, Cloneable {
 

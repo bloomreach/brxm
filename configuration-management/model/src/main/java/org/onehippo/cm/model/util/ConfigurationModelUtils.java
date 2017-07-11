@@ -16,8 +16,8 @@
 
 package org.onehippo.cm.model.util;
 
-import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationModel;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

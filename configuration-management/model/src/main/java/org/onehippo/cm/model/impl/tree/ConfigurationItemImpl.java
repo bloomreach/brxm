@@ -20,9 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.onehippo.cm.model.tree.ConfigurationItem;
-import org.onehippo.cm.model.path.NodePath;
 import org.onehippo.cm.model.impl.path.NodePathImpl;
+import org.onehippo.cm.model.path.NodePath;
+import org.onehippo.cm.model.tree.ConfigurationItem;
 import org.onehippo.cm.model.util.SnsUtils;
 
 public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extends ModelItemImpl

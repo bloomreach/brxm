@@ -26,14 +26,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.path.NodePath;
+import org.onehippo.cm.model.path.NodePathSegment;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.ModelItem;
-import org.onehippo.cm.model.path.NodePath;
-import org.onehippo.cm.model.path.NodePathSegment;
 import org.onehippo.cm.model.tree.PropertyType;
 import org.onehippo.cm.model.tree.ValueType;
-import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 
 import com.google.common.collect.Maps;
 

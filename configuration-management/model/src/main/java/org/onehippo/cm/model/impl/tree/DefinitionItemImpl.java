@@ -16,12 +16,12 @@
 package org.onehippo.cm.model.impl.tree;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.tree.ConfigurationItemCategory;
-import org.onehippo.cm.model.tree.DefinitionItem;
-import org.onehippo.cm.model.path.NodePath;
-import org.onehippo.cm.model.path.NodePathSegment;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.path.NodePathImpl;
+import org.onehippo.cm.model.path.NodePath;
+import org.onehippo.cm.model.path.NodePathSegment;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
+import org.onehippo.cm.model.tree.DefinitionItem;
 
 public abstract class DefinitionItemImpl extends ModelItemImpl implements DefinitionItem {
 

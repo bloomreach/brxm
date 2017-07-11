@@ -23,8 +23,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.Constants;
-import org.onehippo.cm.model.parser.PathConfigurationReader;
 import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.parser.PathConfigurationReader;
 
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 

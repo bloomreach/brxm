@@ -22,9 +22,9 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.path.NodePath;
 import org.onehippo.cm.model.path.NodePathSegment;
+import org.onehippo.cm.model.tree.DefinitionNode;
 
 public abstract class AbstractFileMapper implements ValueFileMapper {
 

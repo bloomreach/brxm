@@ -23,21 +23,21 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.definition.Definition;
-import org.onehippo.cm.model.tree.DefinitionNode;
-import org.onehippo.cm.model.tree.DefinitionProperty;
+import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.path.NodePathImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.path.NodePath;
 import org.onehippo.cm.model.path.NodePathSegment;
+import org.onehippo.cm.model.tree.DefinitionNode;
+import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
-import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
-import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
-import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
-import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
-import org.onehippo.cm.model.impl.path.NodePathImpl;
-import org.onehippo.cm.model.impl.SourceImpl;
-import org.onehippo.cm.model.impl.tree.ValueImpl;
 
 import static org.onehippo.cm.model.tree.PropertyType.SINGLE;
 

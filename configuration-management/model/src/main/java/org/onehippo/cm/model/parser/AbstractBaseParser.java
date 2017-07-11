@@ -30,9 +30,9 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.onehippo.cm.model.ResourceInputProvider;
-import org.onehippo.cm.model.path.NodePathSegment;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.impl.path.NodePathSegmentImpl;
+import org.onehippo.cm.model.path.NodePathSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;

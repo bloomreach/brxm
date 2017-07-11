@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.onehippo.cm.model.impl.path.NodePathSegmentImpl;
+import org.onehippo.cm.model.path.NodePathSegment;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationNode;
-import org.onehippo.cm.model.path.NodePathSegment;
-import org.onehippo.cm.model.impl.path.NodePathSegmentImpl;
 import org.onehippo.cm.model.util.SnsUtils;
 
 public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeImpl>

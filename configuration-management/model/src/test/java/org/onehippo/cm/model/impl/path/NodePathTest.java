@@ -22,8 +22,6 @@ import java.util.TreeSet;
 import org.junit.Test;
 import org.onehippo.cm.model.path.NodePath;
 import org.onehippo.cm.model.path.NodePathSegment;
-import org.onehippo.cm.model.impl.path.NodePathImpl;
-import org.onehippo.cm.model.impl.path.NodePathSegmentImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

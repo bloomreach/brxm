@@ -15,9 +15,9 @@
  */
 package org.onehippo.cm.model.impl.tree;
 
-import org.onehippo.cm.model.tree.ModelItem;
-import org.onehippo.cm.model.path.NodePathSegment;
 import org.onehippo.cm.model.impl.path.NodePathSegmentImpl;
+import org.onehippo.cm.model.path.NodePathSegment;
+import org.onehippo.cm.model.tree.ModelItem;
 
 public abstract class ModelItemImpl implements ModelItem {
 

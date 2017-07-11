@@ -20,8 +20,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.onehippo.cm.model.ResourceInputProvider;
 import org.onehippo.cm.model.Module;
+import org.onehippo.cm.model.ResourceInputProvider;
 import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;

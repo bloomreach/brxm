@@ -17,11 +17,11 @@
 package org.onehippo.cm.model.util;
 
 import org.junit.Test;
-import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModelTestUtils;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 
 import static org.junit.Assert.assertEquals;
 

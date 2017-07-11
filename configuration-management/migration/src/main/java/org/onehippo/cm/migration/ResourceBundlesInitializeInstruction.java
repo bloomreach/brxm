@@ -26,11 +26,11 @@ import java.util.Stack;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.json.JSONObject;
-import org.onehippo.cm.model.tree.ValueType;
-import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.tree.ValueType;
 
 public class ResourceBundlesInitializeInstruction extends InitializeInstruction {
 
