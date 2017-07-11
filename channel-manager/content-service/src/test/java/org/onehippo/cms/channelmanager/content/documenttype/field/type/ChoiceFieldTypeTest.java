@@ -579,7 +579,7 @@ public class ChoiceFieldTypeTest {
         expect(pc.getDocumentType()).andReturn(null);
         expect(item.getName()).andReturn("choiceId");
         expect(item.getValidators()).andReturn(Collections.emptyList()).anyTimes();
-        expect(item.isMultiple()).andReturn(true);
+        expect(item.isMultiple()).andReturn(true).anyTimes();
         expect(LocalizationUtils.determineFieldDisplayName("choiceId", Optional.empty(), Optional.ofNullable(node)))
                 .andReturn(Optional.empty());
         expect(LocalizationUtils.determineFieldHint("choiceId", Optional.empty(), Optional.ofNullable(node)))

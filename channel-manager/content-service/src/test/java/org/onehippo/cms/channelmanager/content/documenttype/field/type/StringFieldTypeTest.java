@@ -329,6 +329,7 @@ public class StringFieldTypeTest {
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
+        fieldType.setMultiple(true);
         node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
 
         fieldType.writeTo(node, Optional.empty());
@@ -360,6 +361,7 @@ public class StringFieldTypeTest {
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
+        fieldType.setMultiple(true);
 
         fieldType.writeTo(node, Optional.empty());
         assertFalse(node.hasProperty(PROPERTY));
@@ -383,6 +385,8 @@ public class StringFieldTypeTest {
         fieldType.setId(PROPERTY);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
+        fieldType.setMultiple(true);
+
         node.setProperty(PROPERTY, "Old Value"); // singular property in spite of multiple type
 
         fieldType.writeTo(node, Optional.empty());
@@ -453,6 +457,7 @@ public class StringFieldTypeTest {
         fieldType.setMaxValues(Integer.MAX_VALUE);
         fieldType.setMinValues(0);
         fieldType.setMaxLength("10");
+        fieldType.setMultiple(true);
 
         try {
             fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("okay"), valueOf("Too longggg"))));
@@ -527,6 +532,7 @@ public class StringFieldTypeTest {
         final Node node = MockNode.root();
         final Property propertyThatWillBeReplaced = node.setProperty(PROPERTY, new String[]{"Value1", "Value2"});
 
+        fieldType.setMultiple(false);
         fieldType.setId(PROPERTY);
         fieldType.writeTo(node, Optional.of(listOf(valueOf("New Value"))));
 
@@ -541,6 +547,7 @@ public class StringFieldTypeTest {
         final Property propertyThatWillBeReplaced = node.setProperty(PROPERTY, "Value");
 
         fieldType.setMaxValues(2);
+        fieldType.setMultiple(true);
         fieldType.setId(PROPERTY);
         fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("New Value1"), valueOf("New Value2"))));
 

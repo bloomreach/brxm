@@ -60,6 +60,8 @@ public abstract class AbstractFieldType implements FieldType {
     private int minValues = 1;
     @JsonIgnore
     private int maxValues = 1;
+    @JsonIgnore
+    private boolean isMultiple;
 
     // private boolean orderable; // future improvement
     // private boolean readOnly;  // future improvement
@@ -130,7 +132,12 @@ public abstract class AbstractFieldType implements FieldType {
 
     @Override
     public boolean isMultiple() {
-        return maxValues > 1;
+        return isMultiple;
+    }
+
+    @Override
+    public void setMultiple(final boolean isMultiple) {
+        this.isMultiple = isMultiple;
     }
 
     @Override
@@ -189,10 +196,13 @@ public abstract class AbstractFieldType implements FieldType {
             setMinValues(0);
             setMaxValues(1);
         }
+
         if (item.isMultiple()) {
             setMinValues(0);
             setMaxValues(Integer.MAX_VALUE);
         }
+
+        setMultiple(item.isMultiple());
     }
 
     protected void setLocalizedLabels(final Optional<ResourceBundle> resourceBundle, final Optional<Node> editorFieldConfig) {
