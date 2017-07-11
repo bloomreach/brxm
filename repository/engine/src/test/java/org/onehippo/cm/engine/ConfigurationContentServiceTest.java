@@ -32,6 +32,7 @@ import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import com.google.common.collect.ImmutableList;
 
@@ -43,6 +44,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertTrue;
 
 public class ConfigurationContentServiceTest {
 
@@ -82,20 +84,27 @@ public class ConfigurationContentServiceTest {
         expect(baselineService.getAppliedContentPaths(session)).andReturn(new HashSet<>()).times(4);
         baselineService.addAppliedContentPath(anyString(), anyObject());
         expectLastCall().times(2);
+        expect(baselineService.contentNodeExists(session)).andReturn(true);
         replay(baselineService);
 
-        jcrContentProcessor.apply(defNode1, ActionType.APPEND, session);
+        expect(session.nodeExists("/content-upgrade-to-12-marker")).andReturn(false);
+        replay(session);
+
+        jcrContentProcessor.apply(defNode1, ActionType.APPEND, session, false);
         expectLastCall().andThrow(new ItemExistsException("This is an intentional Exception")).once();
-        jcrContentProcessor.apply(defNode3, ActionType.APPEND, session);
+        jcrContentProcessor.apply(defNode3, ActionType.APPEND, session, false);
         expectLastCall().once();
-        jcrContentProcessor.apply(defNode4, ActionType.APPEND, session);
+        jcrContentProcessor.apply(defNode4, ActionType.APPEND, session, false);
         expectLastCall().once();
-        jcrContentProcessor.apply(defNode2, ActionType.APPEND, session);
+        jcrContentProcessor.apply(defNode2, ActionType.APPEND, session, false);
         expectLastCall().andThrow(new AssertionFailedError("Should not be executed")).anyTimes();
 
         replay(jcrContentProcessor);
 
-        configurationContentService.apply(model, session);
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ConfigurationContentService.class).build()) {
+            configurationContentService.apply(model, session);
+            assertTrue(interceptor.messages().anyMatch(m -> m.equals("Processing 'APPEND' action for node failed: '/some/path'")));
+        }
 
         verify(baselineService);
         verify(jcrContentProcessor);

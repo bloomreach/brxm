@@ -24,6 +24,7 @@ import java.util.List;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -34,7 +35,9 @@ import org.onehippo.cm.model.parser.ActionListParser;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_NODE_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_PATHS_APPLIED;
 import static org.onehippo.cm.engine.Constants.HCM_MODULE_SEQUENCE;
@@ -148,14 +151,19 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
     }
 
     @Test
-    public void expect_baseline_nodes_to_be_created_when_addeing_applied_path() throws Exception {
-        baselineService.addAppliedContentPath("/c", session);
-        final List<String> appliedPaths = new ArrayList<>(baselineService.getAppliedContentPaths(session));
-
-        assertEquals(1, appliedPaths.size());
-        assertEquals("/c", appliedPaths.get(0));
-
-        assertTrue(session.nodeExists(HCM_CONTENT_NODE_PATH));
+    public void expect_content_node_handling_to_work() throws Exception {
+        assertFalse(baselineService.contentNodeExists(session));
+        try {
+            baselineService.createContentNode(session);
+            fail("Should have thrown exception because /hcm:hcm doesn't exist.");
+        } catch (RepositoryException e) {
+            // ignore
+        }
+        session.getRootNode().addNode(HCM_ROOT, NT_HCM_ROOT);
+        session.save();
+        assertFalse(baselineService.contentNodeExists(session));
+        baselineService.createContentNode(session);
+        assertTrue(baselineService.contentNodeExists(session));
     }
 
     @Test
