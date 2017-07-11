@@ -36,7 +36,7 @@ public class EditorPlugin extends RenderPlugin<Node> {
     public EditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        message = new Label("message", "This node is checked in. You must check it out before you can edit it.");
+        message = new Label("message", getString("node.checked.in.info"));
         add(message);
 
         editor = new NodeEditor("editor", getModel());
@@ -63,6 +63,7 @@ public class EditorPlugin extends RenderPlugin<Node> {
                     add(new AttributeModifier("style", "background-color:#ddd;"));
                 }
                 message.setVisible(!node.isCheckedOut());
+                editor.setEnabled(node.isCheckedOut());
                 redraw();
             }
 
