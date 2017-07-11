@@ -91,7 +91,13 @@ class CKEditorController {
   onEditorFocus() {
     this.$scope.$apply(() => {
       this.textAreaElement.addClass('focused');
-      this.onFocus();
+
+      this.onFocus({
+        $event: {
+          target: this.$element.find('.cke_contents'),
+          customFocus: () => this.editor.focus(),
+        },
+      });
     });
 
     this.SharedSpaceToolbarService.showToolbar({
@@ -102,7 +108,6 @@ class CKEditorController {
   onEditorBlur() {
     this.$scope.$apply(() => {
       this.textAreaElement.removeClass('focused');
-      this.onBlur();
     });
 
     this.SharedSpaceToolbarService.hideToolbar();

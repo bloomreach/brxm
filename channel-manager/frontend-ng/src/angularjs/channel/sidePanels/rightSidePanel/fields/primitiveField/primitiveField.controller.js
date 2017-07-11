@@ -15,10 +15,11 @@
  */
 
 class PrimitiveFieldCtrl {
-  constructor(FieldService) {
+  constructor(FieldService, $element) {
     'ngInject';
 
     this.FieldService = FieldService;
+    this.$element = $element;
   }
 
   getFieldName(index) {
@@ -46,11 +47,24 @@ class PrimitiveFieldCtrl {
     });
   }
 
-  focusPrimitive() {
+  focusPrimitive($event) {
     this.hasFocus = true;
     this.onFieldFocus();
 
     this.oldValues = angular.copy(this.fieldValues);
+
+    const element = angular.element($event.target);
+    this.FieldService.setFocusedInput(element, $event.customFocus);
+
+    element.on('blur.focusedInputBlurHandler', (e) => {
+      const relatedTarget = angular.element(e.relatedTarget);
+
+      if (!this.FieldService.shouldUnsetFocus(relatedTarget)) {
+        this.FieldService.unsetFocusedInput();
+      }
+
+      element.off('.focusedInputBlurHandler'); // Unbind self
+    });
   }
 
   blurPrimitive() {
