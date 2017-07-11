@@ -27,9 +27,10 @@ Failed to retrieve content type 'type'
 Failed to read property 'caption'
 Failed to retrieve draft node
 Failed to read string field 'test:id' from 'bla'
-Failed to write singular String value to property test:id
+Failed to write String value(s) to property test:id
 Failed to read nodes for compound type 'node:name'
 Failed to write compound value to node node:name
+Failed to write value of field 'node:name/string:field1' to node '/test'
 Failed to write value of compound field 'node:name/string:field1' to node '/test'
 Failed reading hints from workflow
 Failed to determine if field is of type CHOICE

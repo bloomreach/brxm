@@ -125,6 +125,13 @@ public class AbstractFieldTypeTest {
     }
 
     @Test
+    public void isMultiple() {
+        assertFalse(fieldType.isMultiple());
+        fieldType.setMultiple(true);
+        assertTrue(fieldType.isMultiple());
+    }
+
+    @Test
     public void checkCardinalityMoreThanAllowed() throws Exception {
         final List<FieldValue> list = new ArrayList<>();
         list.add(new FieldValue("one"));
@@ -263,7 +270,7 @@ public class AbstractFieldTypeTest {
         expect(parentContext.getDocumentType()).andReturn(docType);
         expect(item.getName()).andReturn("field:id");
         expect(item.getValidators()).andReturn(validators).anyTimes();
-        expect(item.isMultiple()).andReturn(false);
+        expect(item.isMultiple()).andReturn(false).anyTimes();
 
         PowerMock.replayAll();
         replay(fieldContext, parentContext, item);
@@ -305,7 +312,7 @@ public class AbstractFieldTypeTest {
         expect(parentContext.getDocumentType()).andReturn(docType);
         expect(item.getName()).andReturn("field:id");
         expect(item.getValidators()).andReturn(validators).anyTimes();
-        expect(item.isMultiple()).andReturn(true);
+        expect(item.isMultiple()).andReturn(true).anyTimes();
 
         PowerMock.replayAll();
         replay(fieldContext, parentContext, item);
@@ -347,7 +354,7 @@ public class AbstractFieldTypeTest {
         expect(parentContext.getDocumentType()).andReturn(docType);
         expect(item.getName()).andReturn("field:id");
         expect(item.getValidators()).andReturn(validators).anyTimes();
-        expect(item.isMultiple()).andReturn(false);
+        expect(item.isMultiple()).andReturn(false).anyTimes();
 
         PowerMock.replayAll();
         replay(fieldContext, parentContext, item);

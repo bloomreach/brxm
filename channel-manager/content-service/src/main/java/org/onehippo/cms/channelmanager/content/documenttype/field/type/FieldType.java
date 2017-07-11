@@ -73,6 +73,10 @@ public interface FieldType {
 
     void setMaxValues(int maxValues);
 
+    boolean isMultiple();
+
+    void setMultiple(boolean isMultiple);
+
     Set<AbstractFieldType.Validator> getValidators();
 
     void addValidator(AbstractFieldType.Validator validator);

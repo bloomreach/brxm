@@ -25,21 +25,21 @@ import java.util.function.Supplier;
 
 import javax.jcr.Node;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
+import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.repository.l10n.ResourceBundle;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * This bean represents a field type, used for the fields of a {@link DocumentType}.
@@ -60,6 +60,8 @@ public abstract class AbstractFieldType implements FieldType {
     private int minValues = 1;
     @JsonIgnore
     private int maxValues = 1;
+    @JsonIgnore
+    private boolean isMultiple;
 
     // private boolean orderable; // future improvement
     // private boolean readOnly;  // future improvement
@@ -129,6 +131,16 @@ public abstract class AbstractFieldType implements FieldType {
     }
 
     @Override
+    public boolean isMultiple() {
+        return isMultiple;
+    }
+
+    @Override
+    public void setMultiple(final boolean isMultiple) {
+        this.isMultiple = isMultiple;
+    }
+
+    @Override
     public Set<Validator> getValidators() {
         return validators;
     }
@@ -184,10 +196,13 @@ public abstract class AbstractFieldType implements FieldType {
             setMinValues(0);
             setMaxValues(1);
         }
+
         if (item.isMultiple()) {
             setMinValues(0);
             setMaxValues(Integer.MAX_VALUE);
         }
+
+        setMultiple(item.isMultiple());
     }
 
     protected void setLocalizedLabels(final Optional<ResourceBundle> resourceBundle, final Optional<Node> editorFieldConfig) {

@@ -90,7 +90,7 @@ public class RichTextFieldTypeTest {
         final ContentTypeItem contentTypeItem = EasyMock.createMock(ContentTypeItem.class);
         expect(contentTypeItem.getName()).andReturn(FIELD_NAME);
         expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList()).anyTimes();
-        expect(contentTypeItem.isMultiple()).andReturn(false);
+        expect(contentTypeItem.isMultiple()).andReturn(false).anyTimes();
 
         final FieldTypeContext fieldContext = EasyMock.createMock(FieldTypeContext.class);
         expect(fieldContext.getContentTypeItem()).andReturn(contentTypeItem).anyTimes();
