@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 
 public abstract class SourceImpl implements Source {
 

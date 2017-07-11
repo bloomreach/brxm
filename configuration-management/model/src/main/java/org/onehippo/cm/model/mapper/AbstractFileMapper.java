@@ -16,16 +16,15 @@
 package org.onehippo.cm.model.mapper;
 
 import java.util.AbstractMap;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.onehippo.cm.model.DefinitionNode;
-import org.onehippo.cm.model.NodePath;
-import org.onehippo.cm.model.NodePathSegment;
+import org.onehippo.cm.model.tree.DefinitionNode;
+import org.onehippo.cm.model.path.NodePath;
+import org.onehippo.cm.model.path.NodePathSegment;
 
 public abstract class AbstractFileMapper implements ValueFileMapper {
 

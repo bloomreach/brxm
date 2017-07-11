@@ -18,8 +18,15 @@ package org.onehippo.cm.model;
 import java.io.Closeable;
 import java.util.List;
 
+import org.onehippo.cm.model.definition.ContentDefinition;
+import org.onehippo.cm.model.definition.NamespaceDefinition;
+import org.onehippo.cm.model.definition.WebFileBundleDefinition;
+import org.onehippo.cm.model.path.NodePath;
+import org.onehippo.cm.model.tree.ConfigurationNode;
+import org.onehippo.cm.model.tree.ConfigurationProperty;
+
 /**
- * Represents a combined representation of configuration from multiple groups, projects, modules, and sources.
+ * Represents a combined representation of configuration data from multiple groups, projects, modules, and sources.
  */
 public interface ConfigurationModel extends Closeable {
 
@@ -34,17 +41,19 @@ public interface ConfigurationModel extends Closeable {
     List<? extends NamespaceDefinition> getNamespaceDefinitions();
 
     /**
-     * TODO: explain this
-     * @return
+     * @return a List of all content definitions found anywhere in the merged configuration
      */
-    ConfigurationNode getConfigurationRootNode();
-
     List<? extends ContentDefinition> getContentDefinitions();
 
     /**
      * @return a List of all webfile bundle definitions found anywhere in the merged configuration
      */
     List<? extends WebFileBundleDefinition> getWebFileBundleDefinitions();
+
+    /**
+     * @return the root node of the ConfigurationItem tree representing the merged state of nodes of category CONFIG
+     */
+    ConfigurationNode getConfigurationRootNode();
 
     /**
      * Compile cryptographic digest of contents including all referenced Modules, Sources, and resource files.

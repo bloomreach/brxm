@@ -30,18 +30,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 
-import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
-import org.onehippo.cm.model.impl.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.DefinitionItemImpl;
-import org.onehippo.cm.model.impl.DefinitionNodeImpl;
-import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionItemImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.SourceImpl;
-import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.parser.PathConfigurationReader;
+import org.onehippo.cm.model.tree.PropertyOperation;
+import org.onehippo.cm.model.tree.ValueFormatException;
+import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.FilePathUtils;
 
 import static java.util.stream.Collectors.toList;
@@ -328,7 +331,7 @@ public abstract class AbstractBaseTest {
     }
 
     protected void assertValue(final ValueType valueType, final Object expected, final boolean isResource, final boolean isPath,
-                     final DefinitionPropertyImpl parent, final ValueImpl actual) {
+                               final DefinitionPropertyImpl parent, final ValueImpl actual) {
         if (expected instanceof byte[]) {
             assertArrayEquals((byte[]) expected, (byte[]) actual.getObject());
         } else {

@@ -17,6 +17,8 @@ package org.onehippo.cm.model;
 
 import java.util.List;
 
+import org.onehippo.cm.model.definition.Definition;
+
 public interface Source {
 
     /**

@@ -16,22 +16,22 @@
 package org.onehippo.cm.model;
 
 /**
- * Action type
+ * Describes the behavior to be applied to a content source at bootstrap.
  */
 public enum ActionType {
 
     /**
-     * Append new nodes only, Internal use only
+     * Only create new node if path does not yet exist; default behavior for content sources.
      */
     APPEND,
 
     /**
-     * Delete existing nodes with children and append
+     * Delete existing node and descendants, and then append.
      */
     RELOAD,
 
     /**
-     * Delete nodes with children
+     * Delete node and descendants, with no replacement.
      */
     DELETE
 }

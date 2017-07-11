@@ -19,9 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.onehippo.cm.model.ContentDefinition;
-import org.onehippo.cm.model.ModuleContext;
-import org.onehippo.cm.model.PostProcessItem;
+import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.Source;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;

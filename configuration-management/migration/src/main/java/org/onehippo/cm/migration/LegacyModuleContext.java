@@ -19,9 +19,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import org.onehippo.cm.model.Constants;
-import org.onehippo.cm.model.FileResourceInputProvider;
-import org.onehippo.cm.model.FileResourceOutputProvider;
-import org.onehippo.cm.model.ModuleContext;
+import org.onehippo.cm.model.impl.FileResourceInputProvider;
+import org.onehippo.cm.model.serializer.FileResourceOutputProvider;
+import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.impl.ModuleImpl;
 
 /**

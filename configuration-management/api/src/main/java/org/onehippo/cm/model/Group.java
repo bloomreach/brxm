@@ -17,6 +17,11 @@ package org.onehippo.cm.model;
 
 import java.util.List;
 
+/**
+ * Represents the first level of a three-level hierarchy used for managing dependency relationships between
+ * {@link Module}s. This is intended to equate conceptually to the level of Maven group IDs in that dependency
+ * management system.
+ */
 public interface Group extends OrderableByName {
     /**
      * @return The immutable list of {@link Project}s currently in this Group.

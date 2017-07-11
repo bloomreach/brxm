@@ -15,51 +15,18 @@
  */
 package org.onehippo.cm.model;
 
-import java.util.Objects;
-
 /**
- * Represents action item
+ * Represents an action item, which describes a bootstrap behavior {@link ActionType} for a specific path.
  */
-public class ActionItem {
+public interface ActionItem {
+    /**
+     * @return the JCR node path to which this action applies
+     */
+    // todo: use NodePath API
+    String getPath();
 
-    private final String path;
-    private final ActionType type;
-
-    public ActionItem(final String path, final ActionType type) {
-        this.path = path;
-        this.type = type;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public ActionType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ActionItem)) {
-            return false;
-        }
-        final ActionItem that = (ActionItem) o;
-        return Objects.equals(path, that.path);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(path);
-    }
-
-    @Override
-    public String toString() {
-        return "ActionItem{" +
-                "path='" + path + '\'' +
-                ", type=" + type +
-                '}';
-    }
+    /**
+     * @return the {@link ActionType} that should be applied to the node at {@link #getPath()}
+     */
+    ActionType getType();
 }

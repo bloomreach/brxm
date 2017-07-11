@@ -21,16 +21,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.onehippo.cm.model.CircularDependencyException;
-import org.onehippo.cm.model.DuplicateNameException;
-import org.onehippo.cm.model.MissingDependencyException;
+import org.onehippo.cm.model.impl.exceptions.CircularDependencyException;
+import org.onehippo.cm.model.impl.exceptions.DuplicateNameException;
+import org.onehippo.cm.model.impl.exceptions.MissingDependencyException;
 import org.onehippo.cm.model.OrderableByName;
 
 import static org.junit.Assert.assertEquals;
 
 public class OrderableByNameListSorterTest {
 
-    private static final OrderableByNameListSorter<OrderableByNameImpl> orderableSorter = new OrderableByNameListSorter<>(OrderableByName.class.getSimpleName());
+    private static final OrderableByNameListSorter<OrderableByName> orderableSorter = new OrderableByNameListSorter<>(OrderableByName.class);
 
     /*
      * test duplicate name detection

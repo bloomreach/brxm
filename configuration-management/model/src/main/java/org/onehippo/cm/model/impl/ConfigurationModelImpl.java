@@ -32,26 +32,31 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
-import javax.security.auth.login.Configuration;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Group;
-import org.onehippo.cm.model.NodePath;
-import org.onehippo.cm.model.NodePathSegment;
+import org.onehippo.cm.model.path.NodePath;
+import org.onehippo.cm.model.path.NodePathSegment;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
+import org.onehippo.cm.model.impl.path.NodePathImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.model.Constants.DEFAULT_DIGEST;
-import static org.onehippo.cm.model.impl.NodePathImpl.ROOT;
+import static org.onehippo.cm.model.impl.path.NodePathImpl.ROOT;
 import static org.onehippo.cm.model.util.SnsUtils.createIndexedName;
 
 public class ConfigurationModelImpl implements ConfigurationModel {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationModelImpl.class);
 
-    private static final OrderableByNameListSorter<GroupImpl> groupSorter = new OrderableByNameListSorter<>(Group.class.getSimpleName());
+    private static final OrderableByNameListSorter<Group> groupSorter = new OrderableByNameListSorter<>(Group.class);
 
     private final Map<String, GroupImpl> groupMap = new HashMap<>();
     private final List<GroupImpl> groups = new ArrayList<>();

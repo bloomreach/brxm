@@ -18,12 +18,12 @@ package org.onehippo.cm.model.parser;
 import java.util.List;
 import java.util.Map;
 
-import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.model.ValueType;
-import org.onehippo.cm.model.impl.ContentDefinitionImpl;
+import org.onehippo.cm.model.ResourceInputProvider;
+import org.onehippo.cm.model.tree.ValueType;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.ContentSourceImpl;
-import org.onehippo.cm.model.impl.DefinitionNodeImpl;
-import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;

@@ -15,8 +15,8 @@
  */
 package org.onehippo.cm.model.mapper;
 
-import org.onehippo.cm.model.DefinitionProperty;
-import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.tree.DefinitionProperty;
+import org.onehippo.cm.model.tree.Value;
 
 /**
  * Default (fallback) file mapper. Uses property name as filename

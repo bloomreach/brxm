@@ -17,7 +17,7 @@
 package org.onehippo.cm.model.util;
 
 import org.junit.Test;
-import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModelTestUtils;

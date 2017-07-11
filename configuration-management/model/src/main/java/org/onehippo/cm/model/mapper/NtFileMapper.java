@@ -15,9 +15,9 @@
  */
 package org.onehippo.cm.model.mapper;
 
-import org.onehippo.cm.model.DefinitionNode;
-import org.onehippo.cm.model.DefinitionProperty;
-import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.tree.DefinitionNode;
+import org.onehippo.cm.model.tree.DefinitionProperty;
+import org.onehippo.cm.model.tree.Value;
 
 import static org.apache.jackrabbit.JcrConstants.NT_FILE;
 

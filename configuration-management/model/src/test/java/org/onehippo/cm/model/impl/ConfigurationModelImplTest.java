@@ -21,6 +21,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 
 import com.google.common.collect.ImmutableSet;
 

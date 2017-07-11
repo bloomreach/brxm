@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.ActionItem;
 import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.impl.ActionItemImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
@@ -83,6 +84,6 @@ public class ActionListParser extends AbstractBaseParser {
         if (type == ActionType.APPEND) {
             throw new RuntimeException("APPEND action type can't be specified in action lists file");
         }
-        return new ActionItem(path, type);
+        return new ActionItemImpl(path, type);
     }
 }

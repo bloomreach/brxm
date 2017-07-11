@@ -19,10 +19,10 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.DefinitionNode;
-import org.onehippo.cm.model.DefinitionProperty;
-import org.onehippo.cm.model.PropertyType;
-import org.onehippo.cm.model.Value;
+import org.onehippo.cm.model.tree.DefinitionNode;
+import org.onehippo.cm.model.tree.DefinitionProperty;
+import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

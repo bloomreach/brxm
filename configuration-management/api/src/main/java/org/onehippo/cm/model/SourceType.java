@@ -15,14 +15,29 @@
  */
 package org.onehippo.cm.model;
 
+import org.onehippo.cm.model.definition.Definition;
+import org.onehippo.cm.model.definition.DefinitionType;
+
 /**
- * Source type
+ * Describes whether this is a content source (containing only {@link DefinitionType#CONTENT} definitions) or a config
+ * source (containing any of the other {@link DefinitionType}s.
  */
 public enum SourceType {
 
+    /**
+     * Describes a Source (potentially) containing any {@link DefinitionType} other than {@link DefinitionType#CONTENT}.
+     */
     CONFIG,
+
+    /**
+     * Describes a Source that may contain exactly one {@link Definition} of {@link DefinitionType#CONTENT}.
+     */
     CONTENT;
 
+    /**
+     * @param source a Source whose type we want to check
+     * @return true iff {@link Source#getType()} == this
+     */
     public final boolean isOfType(final Source source) {
         return this == source.getType();
     }

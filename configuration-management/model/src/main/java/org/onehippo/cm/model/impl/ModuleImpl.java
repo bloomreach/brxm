@@ -44,13 +44,20 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.ResourceInputProvider;
 import org.onehippo.cm.model.ActionItem;
-import org.onehippo.cm.model.FileResourceInputProvider;
 import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.NamespaceDefinition;
-import org.onehippo.cm.model.NodePath;
+import org.onehippo.cm.model.definition.NamespaceDefinition;
+import org.onehippo.cm.model.path.NodePath;
 import org.onehippo.cm.model.SourceType;
+import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
 import org.onehippo.cm.model.parser.ParserException;
@@ -328,10 +335,16 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
         removedContentResources.add(resourcePath);
     }
 
+    /**
+     * @return a set of config resource paths that should be removed when serializing this module
+     */
     public Set<String> getRemovedConfigResources() {
         return removedConfigResources;
     }
 
+    /**
+     * @return a set of content resource paths that should be removed when serializing this module
+     */
     public Set<String> getRemovedContentResources() {
         return removedContentResources;
     }
@@ -597,7 +610,6 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
     /**
      * Compile a dummy YAML descriptor file to stand in for special case where demo project uses an aggregated
      * descriptor for a set of modules.
-     * TODO remove when demo project is restructured to get rid of aggregated module structure
      * @return a YAML string representing the group->project->module hierarchy and known dependencies for this Module
      */
     public String compileDummyDescriptor() {

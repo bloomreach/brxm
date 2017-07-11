@@ -65,7 +65,4 @@ public final class Constants {
     public static final String META_RESIDUAL_CHILD_NODE_CATEGORY_KEY = META_KEY_PREFIX + "residual-child-node-category";
 
     public static final String DEFAULT_DIGEST = "MD5";
-
-    // Path within a Maven module where we expect the module descriptor to be
-    public static final String MAVEN_MODULE_DESCRIPTOR = "/src/main/resources/" + HCM_MODULE_YAML;
 }

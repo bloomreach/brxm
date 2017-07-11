@@ -26,12 +26,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
-import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.ResourceInputProvider;
 import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.OrderableByName;
 import org.onehippo.cm.model.Project;
 import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ContentSourceParser;
 
@@ -86,7 +87,7 @@ public class ModelTestUtils {
         return parseNoSort(yaml, "test-module", verifyOnly, true);
     }
 
-    public static List<AbstractDefinitionImpl> parseNoSort(final String yaml, final boolean verifyOnly,final boolean config) throws Exception {
+    public static List<AbstractDefinitionImpl> parseNoSort(final String yaml, final boolean verifyOnly, final boolean config) throws Exception {
         return parseNoSort(yaml, "test-module", verifyOnly, config);
     }
 
