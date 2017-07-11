@@ -109,6 +109,7 @@ class CKEditorController {
     this.$scope.$apply(() => {
       this.textAreaElement.removeClass('focused');
     });
+    this.onBlur();
 
     this.SharedSpaceToolbarService.hideToolbar();
   }

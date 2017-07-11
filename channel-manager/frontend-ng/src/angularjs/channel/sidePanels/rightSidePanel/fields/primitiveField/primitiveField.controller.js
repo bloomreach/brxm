@@ -15,11 +15,10 @@
  */
 
 class PrimitiveFieldCtrl {
-  constructor(FieldService, $element) {
+  constructor(FieldService) {
     'ngInject';
 
     this.FieldService = FieldService;
-    this.$element = $element;
   }
 
   getFieldName(index) {
