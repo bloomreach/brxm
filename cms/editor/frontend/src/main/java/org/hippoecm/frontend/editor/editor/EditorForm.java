@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -115,7 +115,7 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
     }
 
     @Override
-    protected void onValidateModelObjects() {
+    public void onValidateModelObjects() {
         // HippoForm#process() has cleared old feedbacks, but in case
         // the validation is invoked from Ajax, they should be cleared again
         clearFeedbackMessages();
