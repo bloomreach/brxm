@@ -10,4 +10,4 @@ definitions:
       hst:name: ${projectName}
       hst:type: website
       /hst:channelinfo:
-        jcr:primaryType: hst:channelinfo
+        .meta:category: content
