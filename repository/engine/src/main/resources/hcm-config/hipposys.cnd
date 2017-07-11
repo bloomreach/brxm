@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2016 Hippo
+ * Copyright 2007-2017 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -142,7 +142,7 @@
 // REPOSITORY: SECURITY
 
 [hipposys:accessmanager] > nt:base
-- hipposys:permissioncachesize (long) = '20000' mandatory autocreated 
+- hipposys:permissioncachesize (long) = '20000' mandatory autocreated
 
 [hipposys:user] > nt:base
 - hipposys:securityprovider (string) = 'internal' mandatory autocreated
@@ -189,20 +189,20 @@
 - hipposys:description (string)
 
 [hipposys:facetrule] > nt:base
-- hipposys:facet (string) mandatory 
-- hipposys:value (string) mandatory 
+- hipposys:facet (string) mandatory
+- hipposys:value (string) mandatory
 - hipposys:type (string) = 'String' mandatory < 'String', 'Name', 'Reference'
 - hipposys:equals (boolean) = 'true' mandatory autocreated
 - hipposys:filter (boolean) = 'false' mandatory autocreated
 - hipposys:description (string)
 
 [hipposys:domainrule] > nt:base
-+ * (hipposys:facetrule) = hipposys:facetrule multiple
++ * (hipposys:facetrule) = hipposys:facetrule
 - hipposys:description (string)
 
 [hipposys:domain] > nt:base
-+ * (hipposys:domainrule) = hipposys:domainrule multiple 
-+ * (hipposys:authrole) = hipposys:authrole multiple
++ * (hipposys:domainrule) = hipposys:domainrule
++ * (hipposys:authrole) = hipposys:authrole
 - hipposys:description (string)
 
 [hipposys:userprovider] >  nt:base
@@ -255,13 +255,7 @@
 [hipposys:moduleconfig] > nt:base
 - * (undefined) multiple
 - * (undefined)
-+ * (hipposys:moduleconfig) multiple
-
-// autoexport nodetype def is deprecated
-[hipposys:autoexport] > nt:base
-- hipposys:enabled (boolean) = 'true' mandatory autocreated
-- hipposys:excluded (string) multiple
-- hipposys:location (string)
++ * (hipposys:moduleconfig)
 
 [hipposys:updaterinfo] > nt:base
 - hipposys:description (string)

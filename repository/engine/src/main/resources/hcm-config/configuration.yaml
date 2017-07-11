@@ -20,7 +20,7 @@ definitions:
               jcr:primaryType: hipposys:relativepropertyreference
               hipposys:relPath: hippo:paths
       /hippo:temporary:
-        .meta:category: runtime
+        .meta:category: system
       /hippo:queries:
         jcr:primaryType: hipposys:queryfolder
       /hippo:workflows:
@@ -63,7 +63,7 @@ definitions:
           hipposys:permissioncachesize: 20000
       /hippo:users:
         jcr:primaryType: hipposys:userfolder
-        .meta:residual-child-node-category: runtime
+        .meta:residual-child-node-category: system
         /admin:
           jcr:primaryType: hipposys:user
           hipposys:active: true
@@ -77,14 +77,14 @@ definitions:
           hipposys:securityprovider: internal
       /hippo:groups:
         jcr:primaryType: hipposys:groupfolder
-        .meta:residual-child-node-category: runtime
+        .meta:residual-child-node-category: system
         /admin:
           jcr:primaryType: hipposys:group
           hipposys:members: [admin, workflowuser]
           hipposys:securityprovider: internal
       /hippo:roles:
         jcr:primaryType: hipposys:rolefolder
-        .meta:residual-child-node-category: runtime
+        .meta:residual-child-node-category: system
         /admin:
           jcr:primaryType: hipposys:role
           hipposys:privileges: ['jcr:all', 'hippo:admin']
@@ -99,8 +99,8 @@ definitions:
       /hippo:modules:
         jcr:primaryType: hipposys:modulefolder
         hippo:lockExpirationTime:
-          .meta:category: runtime
+          .meta:category: system
         jcr:lockOwner:
-          .meta:category: runtime
+          .meta:category: system
         jcr:lockIsDeep:
-          .meta:category: runtime
+          .meta:category: system

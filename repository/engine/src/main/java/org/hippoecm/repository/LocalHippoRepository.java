@@ -39,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.fs.FileSystemException;
+import org.hippoecm.repository.jackrabbit.HippoNodeTypeRegistry;
 import org.hippoecm.repository.nodetypes.NodeTypesChangeTracker;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
@@ -275,6 +276,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
         Session bootstrapSession = null, lockSession = null;
         boolean locked = false;
+
+        new MigrateNodeTypesToV12(rootSession,(HippoNodeTypeRegistry)jackrabbitRepository.getNodeTypeRegistry()).migrateIfNeeded();
 
         try {
             ensureRootIsReferenceable(rootSession);

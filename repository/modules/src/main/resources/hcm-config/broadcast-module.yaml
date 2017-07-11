@@ -1,7 +1,7 @@
 definitions:
   config:
     /hippo:configuration/hippo:modules/broadcast:
-      .meta:residual-child-node-category: runtime
+      .meta:residual-child-node-category: system
       jcr:primaryType: hipposys:module
       hipposys:className: org.hippoecm.repository.events.BroadcastModule
       /hippo:moduleconfig:

@@ -16,6 +16,8 @@
 package org.onehippo.cm.engine;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -53,11 +55,12 @@ public class ConfigurationContentService {
     private static final Logger log = LoggerFactory.getLogger(ConfigurationContentService.class);
     public static final String SEPARATOR = "/";
 
-    private final JcrContentProcessor contentProcessingService = new JcrContentProcessor();
+    private final JcrContentProcessor contentProcessingService;
     private final ConfigurationBaselineService configurationBaselineService;
 
-    ConfigurationContentService(final ConfigurationBaselineService configurationBaselineService) {
+    ConfigurationContentService(final ConfigurationBaselineService configurationBaselineService, final JcrContentProcessor contentProcessingService) {
         this.configurationBaselineService = configurationBaselineService;
+        this.contentProcessingService = contentProcessingService;
     }
 
     /**
@@ -109,28 +112,41 @@ public class ConfigurationContentService {
         session.save();
 
         sortContentDefinitions(module);
+        final Collection<String> failedPaths = new ArrayList<>();
+
         for (final ContentDefinitionImpl contentDefinition : module.getContentDefinitions()) {
             final DefinitionNode contentNode = contentDefinition.getNode();
             final String baseNodePath = contentNode.getPath();
             final Optional<ActionType> optionalAction = findLastActionToApply(baseNodePath, actionsToProcess);
             final boolean nodeAlreadyProcessed = configurationBaselineService.getAppliedContentPaths(session).contains(baseNodePath);
 
+            if (failedPaths.stream().anyMatch(baseNodePath::startsWith)) {
+                log.info(String.format("Skipping the (re-)loading of content based at '%s', " +
+                        "because the processing of an ancestor node has failed.", baseNodePath));
+                continue;
+            }
+
             if (optionalAction.isPresent() || !nodeAlreadyProcessed) {
                 final ActionType action = optionalAction.orElse(ActionType.APPEND);
 
-                if (ConfigurationModelUtils.getCategoryForNode(baseNodePath, model) == ConfigurationItemCategory.CONTENT) {
-                    log.debug("Processing {} action for node: {}", action, baseNodePath);
-                    contentProcessingService.apply(contentNode, action, session);
+                try {
+                    if (ConfigurationModelUtils.getCategoryForNode(baseNodePath, model) == ConfigurationItemCategory.CONTENT) {
+                        log.debug("Processing {} action for node: {}", action, baseNodePath);
+                        contentProcessingService.apply(contentNode, action, session);
 
-                    if (!nodeAlreadyProcessed) {
-                        // will save all the session changes!
-                        configurationBaselineService.addAppliedContentPath(baseNodePath, session);
+                        if (!nodeAlreadyProcessed) {
+                            // will save all the session changes!
+                            configurationBaselineService.addAppliedContentPath(baseNodePath, session);
+                        } else {
+                            session.save();
+                        }
                     } else {
-                        session.save();
+                        log.error(String.format("Base node '%s' in '%s' is not categorized as content, skipping action '%s'.",
+                                baseNodePath, contentDefinition.getOrigin(), action));
                     }
-                } else {
-                    log.error(String.format("Base node '%s' in '%s' is not categorized as content, skipping action '%s'.",
-                            baseNodePath, contentDefinition.getOrigin(), action));
+                } catch (RepositoryException ex) {
+                    log.error(String.format("Processing '%s' action for node failed: '%s'", action, baseNodePath), ex);
+                    failedPaths.add(baseNodePath);
                 }
             }
         }

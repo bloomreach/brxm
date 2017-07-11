@@ -32,8 +32,9 @@ import javax.jcr.nodetype.NodeType;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.cm.engine.autoexport.Configuration;
+import org.onehippo.cm.engine.autoexport.AutoExportConfig;
 import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.Group;
 import org.onehippo.cm.model.PropertyOperation;
 import org.onehippo.cm.model.ValueType;
 import org.onehippo.cm.model.impl.ConfigSourceImpl;
@@ -50,6 +51,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
+import static org.onehippo.cm.engine.Constants.PRODUCT_GROUP_NAME;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
 import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
 import static org.onehippo.cm.model.util.ConfigurationModelUtils.getCategoryForNode;
@@ -63,14 +65,14 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
     private static final Logger log = LoggerFactory.getLogger(AutoExportContentProcessor.class);
 
     private ConfigurationModelImpl configurationModel;
-    private Configuration autoExportConfig;
+    private AutoExportConfig autoExportConfig;
     private static final Set<String> suppressedDelta = newHashSet(
             // TODO: move these somewhere more permanent
             // facet-related generated property
             "hippo:count"
     );
 
-    public AutoExportContentProcessor(final ConfigurationModelImpl configurationModel, final Configuration autoExportConfig) {
+    public AutoExportContentProcessor(final ConfigurationModelImpl configurationModel, final AutoExportConfig autoExportConfig) {
         this.configurationModel = configurationModel;
         this.autoExportConfig = autoExportConfig;
     }
@@ -148,12 +150,23 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
         final ConfigurationNodeImpl configNode = configurationModel.resolveNode(jcrPath);
         if (configNode == null) {
             // this is a brand new node, so we can skip the delta comparisons and just dump the JCR tree into one def
-            log.debug("Creating new node def without delta: \n\t{}", jcrPath);
 
-            final DefinitionNodeImpl definitionNode = configSource.getOrCreateDefinitionFor(jcrPath);
+            String newPath = jcrPath;
+            Node newNode = jcrNode;
+            // determine the actual 'root' of the new node, ensuring we're not skipping intermediate missing parents
+            while (configurationModel.resolveNode(StringUtils.substringBeforeLast(newPath, "/")) == null) {
+                newPath = StringUtils.substringBeforeLast(newPath, "/");
+            }
+            if (!newPath.equals(jcrPath)) {
+                // need to export missing parent(s) as well
+                newNode = session.getNode(newPath);
+            }
+            log.debug("Creating new node def without delta: \n\t{}", newPath);
 
-            exportProperties(jcrNode, definitionNode);
-            for (final Node childNode : new NodeIterable(jcrNode.getNodes())) {
+            final DefinitionNodeImpl definitionNode = configSource.getOrCreateDefinitionFor(newPath);
+
+            exportProperties(newNode, definitionNode);
+            for (final Node childNode : new NodeIterable(newNode.getNodes())) {
                 exportNode(childNode, definitionNode, Collections.emptySet());
             }
         }
@@ -203,12 +216,19 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
                 continue;
             }
             if (configNode.getChildPropertyCategory(propName) != ConfigurationItemCategory.CONFIG) {
-                // skip RUNTIME property
+                // skip SYSTEM property
                 continue;
             }
             // use Configuration.filterUuidPaths during delta computation (suppressing export of jcr:uuid)
             if (propName.equals(JCR_UUID) && autoExportConfig.shouldFilterUuid(configNode.getPath())) {
                 continue;
+            }
+
+            if (propName.equals(JCR_UUID) && !configNode.getDefinitions().isEmpty()) {
+                Group group = configNode.getDefinitions().get(0).getDefinition().getSource().getModule().getProject().getGroup();
+                if (PRODUCT_GROUP_NAME.equals(group.getName())) {
+                    continue;
+                }
             }
 
             ConfigurationPropertyImpl configProperty = configNode.getProperty(propName);

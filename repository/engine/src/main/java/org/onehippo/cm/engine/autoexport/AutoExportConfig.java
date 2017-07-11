@@ -31,11 +31,11 @@ import javax.jcr.Value;
 import org.hippoecm.repository.util.JcrUtils;
 
 import static org.onehippo.cm.engine.autoexport.AutoExportServiceImpl.log;
-import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_EXCLUDED_PROPERTY_NAME;
-import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME;
-import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_MODULES_PROPERTY_NAME;
+import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_EXCLUDED_PROPERTY_NAME;
+import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME;
+import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_MODULES_PROPERTY_NAME;
 
-public class Configuration {
+public class AutoExportConfig {
 
     private final Node node;
     private final String nodePath;
@@ -47,7 +47,7 @@ public class Configuration {
     private PathsMap ignoredPaths = new PathsMap();
 
     // constructor for testing purposes only
-    Configuration(Boolean enabled, Map<String, Collection<String>> modules, PatternSet exclusionContext, PathsMap filterUuidPaths) {
+    AutoExportConfig(Boolean enabled, Map<String, Collection<String>> modules, PatternSet exclusionContext, PathsMap filterUuidPaths) {
         this.node = null;
         this.nodePath = null;
         this.enabled = enabled;
@@ -56,7 +56,7 @@ public class Configuration {
         this.filterUuidPaths = filterUuidPaths;
     }
 
-    public Configuration(final Node node) throws RepositoryException {
+    public AutoExportConfig(final Node node) throws RepositoryException {
         this.node = node;
         this.nodePath = node.getPath();
     }
@@ -103,51 +103,71 @@ public class Configuration {
     Map<String, Collection<String>> getModules() {
         if (modules == null) {
             modules = new LinkedHashMap<>();
-            try {
-                if (node.hasProperty(CONFIG_MODULES_PROPERTY_NAME)) {
-                    boolean rootRepositoryPathIsConfigured = false;
-                    Collection<String> allRepositoryPaths = new HashSet<>();
-                    Value[] values = node.getProperty(CONFIG_MODULES_PROPERTY_NAME).getValues();
-                    for (Value value : values) {
-                        String module = value.getString();
-                        int offset = module.indexOf(":/");
-                        if (offset == -1) {
-                            log.error("Misconfiguration of " + CONFIG_MODULES_PROPERTY_NAME + " property: expected ':/'");
-                            continue;
-                        }
-                        String modulePath = module.substring(0, offset);
-                        String repositoryPath = module.substring(offset+1);
-                        if (!allRepositoryPaths.contains(repositoryPath)) {
-                            addRepositoryPath(modulePath, repositoryPath);
-                            allRepositoryPaths.add(repositoryPath);
-                            if (repositoryPath.equals("/")) {
-                                rootRepositoryPathIsConfigured = true;
-                            }
-                        } else {
-                            log.error("Misconfiguration of " + CONFIG_MODULES_PROPERTY_NAME + " property: the same repository path may not be mapped to multiple modules");
-                        }
-                    }
-                    if (!rootRepositoryPathIsConfigured) {
-                        log.warn("Misconfiguration of " + CONFIG_MODULES_PROPERTY_NAME + " property: there must be a module that maps to /");
-                        addRepositoryPath("content", "/");
-                    }
-                } else {
-                    addRepositoryPath("content", "/");
-                }
-            } catch (RepositoryException e) {
-                log.error("Failed to get modules configuration from repository", e);
-            }
+            final ArrayList<String> moduleStrings = getModuleStringsFromNode();
+            processModuleStrings(moduleStrings, modules, isEnabled());
         }
         return modules;
     }
 
-    private void addRepositoryPath(String modulePath, String repositoryPath) {
+    private ArrayList<String> getModuleStringsFromNode() {
+        final ArrayList<String> moduleStrings = new ArrayList<>();
+        try {
+            if (node.hasProperty(CONFIG_MODULES_PROPERTY_NAME)) {
+                Value[] values = node.getProperty(CONFIG_MODULES_PROPERTY_NAME).getValues();
+                for (Value value : values) {
+                    moduleStrings.add(value.getString());
+                }
+            } else {
+                addRepositoryPath("content", "/", modules, isEnabled());
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to get modules configuration from repository", e);
+        }
+        return moduleStrings;
+    }
+
+    public static void processModuleStrings(final ArrayList<String> moduleStrings,
+                                   final Map<String, Collection<String>> modules, final boolean logChanges) {
+        boolean rootRepositoryPathIsConfigured = false;
+        Collection<String> allRepositoryPaths = new HashSet<>();
+        for (String module : moduleStrings) {
+            int offset = module.indexOf(":/");
+            if (offset == -1) {
+                if (logChanges) {
+                    log.error("Misconfiguration of " + CONFIG_MODULES_PROPERTY_NAME + " property: expected ':/'");
+                }
+                continue;
+            }
+            String modulePath = module.substring(0, offset);
+            String repositoryPath = module.substring(offset+1);
+            if (!allRepositoryPaths.contains(repositoryPath)) {
+                addRepositoryPath(modulePath, repositoryPath, modules, logChanges);
+                allRepositoryPaths.add(repositoryPath);
+                if (repositoryPath.equals("/")) {
+                    rootRepositoryPathIsConfigured = true;
+                }
+            } else {
+                if (logChanges) {
+                    log.error("Misconfiguration of " + CONFIG_MODULES_PROPERTY_NAME + " property: the same repository path may not be mapped to multiple modules");
+                }
+            }
+        }
+        if (!rootRepositoryPathIsConfigured) {
+            if (logChanges) {
+                log.warn("Misconfiguration of " + CONFIG_MODULES_PROPERTY_NAME + " property: there must be a module that maps to /");
+            }
+            addRepositoryPath("content", "/", modules, logChanges);
+        }
+    }
+
+    private static void addRepositoryPath(final String modulePath, final String repositoryPath,
+                                   final Map<String, Collection<String>> modules, final boolean logChanges) {
         Collection<String> repositoryPaths = modules.get(modulePath);
         if (repositoryPaths == null) {
             repositoryPaths = new ArrayList<>();
             modules.put(modulePath, repositoryPaths);
         }
-        if (isEnabled()) {
+        if (logChanges) {
             log.info("Changes to repository path '{}' will be exported to directory '{}'", repositoryPath, modulePath);
         }
         repositoryPaths.add(repositoryPath);
@@ -186,11 +206,11 @@ public class Configuration {
 
     public synchronized boolean isEnabled() {
         if (enabled == null) {
-            if ("false".equals(System.getProperty(Constants.SYSTEM_PROPERTy_AUTOEXPORT_ENABLED))) {
+            if ("false".equals(System.getProperty(AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ENABLED))) {
                 enabled = false;
             } else {
                 try {
-                    enabled = JcrUtils.getBooleanProperty(node, Constants.CONFIG_ENABLED_PROPERTY_NAME, false);
+                    enabled = JcrUtils.getBooleanProperty(node, AutoExportConstants.CONFIG_ENABLED_PROPERTY_NAME, false);
                 } catch (RepositoryException e) {
                     AutoExportServiceImpl.log.error("Failed to read AutoExport configuration", e);
                     enabled = false;
@@ -202,7 +222,7 @@ public class Configuration {
 
     long getLastRevision() throws RepositoryException {
         if (lastRevision == null) {
-            lastRevision = JcrUtils.getLongProperty(node, Constants.CONFIG_LAST_REVISION_PROPERTY_NAME, -1l);
+            lastRevision = JcrUtils.getLongProperty(node, AutoExportConstants.CONFIG_LAST_REVISION_PROPERTY_NAME, -1l);
         }
         return lastRevision;
     }
@@ -213,7 +233,11 @@ public class Configuration {
      * @throws RepositoryException
      */
     void setLastRevision(final long lastRevision) throws RepositoryException {
-        node.setProperty(Constants.CONFIG_LAST_REVISION_PROPERTY_NAME, lastRevision);
+        node.setProperty(AutoExportConstants.CONFIG_LAST_REVISION_PROPERTY_NAME, lastRevision);
         this.lastRevision = lastRevision;
+    }
+
+    synchronized void resetLastRevision() {
+        lastRevision = null;
     }
 }
