@@ -18,16 +18,21 @@ package org.onehippo.cms7.crisp.core.broker;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.servlet.ServletRequest;
+
 import org.onehippo.cms7.crisp.api.broker.AbstractResourceServiceBroker;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
+import org.onehippo.cms7.crisp.api.broker.ResourceServiceBrokerRequestContext;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceDataCache;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.onehippo.cms7.crisp.api.resource.ValueMap;
 import org.onehippo.cms7.crisp.core.resource.DefaultValueMap;
+import org.onehippo.cms7.crisp.core.resource.SpringResourceDataCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
 
 /**
  * {@link ResourceServiceBroker} implementation enabling resource data caching in a generic way.
@@ -71,6 +76,17 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
             + ".findResources";
 
     /**
+     * Servlet request attribute name for the attribute in which the request level ResourceDataCache is stored.
+     */
+    private static final String REQUEST_LEVEL_RESOURCE_DATA_CACHE_ATTR_NAME = CacheableResourceServiceBroker.class
+            .getName() + ".requestLevelResourceDataCache";
+
+    /**
+     * Resource instance representing NULL in cache.
+     */
+    private static final Resource NULL_RESOURCE_INSTANCE = new NullResource();
+
+    /**
      * Default global {@link ResourceDataCache} instance shared by all the {@link ResourceResolver}s.
      * If a {@link ResourceResolver} doesn't have its own {@link ResourceDataCache} property, this default global
      * {@link ResourceDataCache} instance when caching the result resources after operation invocations.
@@ -81,6 +97,11 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
      * Flag whether or not resource caching is enabled. True by default.
      */
     private boolean cacheEnabled = true;
+
+    /**
+     * Flag whether or not resource caching in request level is enabled. True by default.
+     */
+    private boolean cacheInRequestEnabled = true;
 
     /**
      * Default constructor.
@@ -122,18 +143,49 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
     }
 
     /**
+     * Return true if resource caching in request level is enabled.
+     * @return true if resource caching in request level is enabled
+     */
+    public boolean isCacheInRequestEnabled() {
+        return cacheInRequestEnabled;
+    }
+
+    /**
+     * Set the flag whether or not resource caching in request level is enabled.
+     * @param cacheInRequestEnabled the flag whether or not resource caching in request level is enabled
+     */
+    public void setCacheInRequestEnabled(boolean cacheInRequestEnabled) {
+        this.cacheInRequestEnabled = cacheInRequestEnabled;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public Resource resolve(String resourceSpace, String absResourcePath, Map<String, Object> pathVariables)
             throws ResourceException {
         Resource resource = null;
-        ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
         ValueMap cacheKey = null;
+
+        if (isCacheInRequestEnabled()) {
+            cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, pathVariables);
+            resource = getResourceCacheInRequestLevelCache(cacheKey);
+
+            if (resource == NULL_RESOURCE_INSTANCE) {
+                return null;
+            } else if (resource != null) {
+                return resource;
+            }
+        }
+
+        ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
         ResourceDataCache resourceDataCache = getResourceDataCache(resourceSpace);
 
         if (isCacheEnabled() && resourceDataCache != null) {
-            cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, pathVariables);
+            if (cacheKey == null) {
+                cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, absResourcePath, pathVariables);
+            }
+
             Object cacheData = resourceDataCache.getData(cacheKey);
 
             if (cacheData != null) {
@@ -161,6 +213,10 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
             }
         }
 
+        if (isCacheInRequestEnabled()) {
+            putResourceCacheInRequestLevelCache(cacheKey, resource);
+        }
+
         return resource;
     }
 
@@ -173,10 +229,25 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         Resource resource = null;
         ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
         ValueMap cacheKey = null;
+
+        if (isCacheInRequestEnabled()) {
+            cacheKey = createCacheKey(OPERATION_KEY_RESOLVE, resourceSpace, baseAbsPath, pathVariables);
+            resource = getResourceCacheInRequestLevelCache(cacheKey);
+
+            if (resource == NULL_RESOURCE_INSTANCE) {
+                return null;
+            } else if (resource != null) {
+                return resource;
+            }
+        }
+
         ResourceDataCache resourceDataCache = getResourceDataCache(resourceSpace);
 
         if (isCacheEnabled() && resourceDataCache != null) {
-            cacheKey = createCacheKey(OPERATION_KEY_FIND_RESOURCES, resourceSpace, baseAbsPath, pathVariables);
+            if (cacheKey == null) {
+                cacheKey = createCacheKey(OPERATION_KEY_FIND_RESOURCES, resourceSpace, baseAbsPath, pathVariables);
+            }
+
             Object cacheData = resourceDataCache.getData(cacheKey);
 
             if (cacheData != null) {
@@ -202,6 +273,10 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
                     log.error("Failed to convert resource to cache data.", e);
                 }
             }
+        }
+
+        if (isCacheInRequestEnabled()) {
+            putResourceCacheInRequestLevelCache(cacheKey, resource);
         }
 
         return resource;
@@ -258,5 +333,41 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         }
 
         return cacheKey;
+    }
+
+    private Resource getResourceCacheInRequestLevelCache(final ValueMap cacheKey) {
+        ResourceDataCache requestLevelResourceDataCache = getRequestLevelResourceDataCache();
+        return (Resource) requestLevelResourceDataCache.getData(cacheKey);
+    }
+
+    private void putResourceCacheInRequestLevelCache(final ValueMap cacheKey, final Resource resource) {
+        ResourceDataCache requestLevelResourceDataCache = getRequestLevelResourceDataCache();
+        requestLevelResourceDataCache.putData(cacheKey, (resource != null) ? resource : NULL_RESOURCE_INSTANCE);
+    }
+
+    private ResourceDataCache getRequestLevelResourceDataCache() {
+        ResourceDataCache requestLevelResourceDataCache = null;
+        final ServletRequest request = ResourceServiceBrokerRequestContext.getCurrentServletRequest();
+
+        if (request != null) {
+            requestLevelResourceDataCache = (ResourceDataCache) request
+                    .getAttribute(REQUEST_LEVEL_RESOURCE_DATA_CACHE_ATTR_NAME);
+
+            if (requestLevelResourceDataCache == null) {
+                synchronized (request) {
+                    requestLevelResourceDataCache = (ResourceDataCache) request
+                            .getAttribute(REQUEST_LEVEL_RESOURCE_DATA_CACHE_ATTR_NAME);
+
+                    if (requestLevelResourceDataCache == null) {
+                        requestLevelResourceDataCache = new SpringResourceDataCache(
+                                new ConcurrentMapCache(REQUEST_LEVEL_RESOURCE_DATA_CACHE_ATTR_NAME));
+                        request.setAttribute(REQUEST_LEVEL_RESOURCE_DATA_CACHE_ATTR_NAME,
+                                requestLevelResourceDataCache);
+                    }
+                }
+            }
+        }
+
+        return requestLevelResourceDataCache;
     }
 }

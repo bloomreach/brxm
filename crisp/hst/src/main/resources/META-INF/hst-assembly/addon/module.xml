@@ -19,6 +19,7 @@
   <config-locations>
     <config-location>classpath*:META-INF/spring-assembly/addon/crisp/crisp-addon.xml</config-location>
     <config-location>classpath*:META-INF/spring-assembly/addon/crisp/crisp-addon-*.xml</config-location>
+    <config-location>classpath*:META-INF/hst-assembly/addon/crisp/hst-crisp-addon-*.xml</config-location>
     <config-location>classpath*:META-INF/hst-assembly/addon/crisp/overrides/*.xml</config-location>
   </config-locations>
 </module>
