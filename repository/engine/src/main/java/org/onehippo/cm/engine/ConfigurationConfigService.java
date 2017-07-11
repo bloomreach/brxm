@@ -25,7 +25,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.logging.Filter;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -38,6 +41,7 @@ import javax.jcr.lock.LockManager;
 import javax.jcr.nodetype.ItemDefinition;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
@@ -67,6 +71,12 @@ import org.onehippo.repository.bootstrap.util.PartialZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
+import sun.security.pkcs11.wrapper.Functions;
+import static java.nio.charset.StandardCharsets.*;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
@@ -148,7 +158,7 @@ public class ConfigurationConfigService {
         //       to the handling of namespaces. The same applies to node types, at least, as far as
         //       BootstrapUtils#initializeNodetypes offers support.
         applyNamespaces(update.getNamespaceDefinitions(), session);
-        applyNodeTypes(update.getNamespaceDefinitions(), session);
+        applyNodeTypes(baseline.getNamespaceDefinitions(), update.getNamespaceDefinitions(), session);
 
         final ConfigurationNode baselineRoot = baseline.getConfigurationRootNode();
         final Node targetNode = session.getNode(baselineRoot.getPath());
@@ -184,19 +194,52 @@ public class ConfigurationConfigService {
         }
     }
 
-    private void applyNodeTypes(final List<? extends NamespaceDefinition> nsDefinitions, final Session session)
-            throws RepositoryException, IOException {
+    private void applyNodeTypes(final List<? extends NamespaceDefinition> baselineDefs,
+                                final List<? extends NamespaceDefinition> nsDefinitions,
+                                final Session session) throws RepositoryException, IOException {
+        // index baseline defs by prefix for faster lookups later
+        final ImmutableMap<String, ? extends NamespaceDefinition> baselineDefsByPrefix =
+                Maps.uniqueIndex(baselineDefs, NamespaceDefinition::getPrefix);
+
         for (NamespaceDefinition nsDefinition : nsDefinitions) {
-            if (nsDefinition.getCndPath() != null) {
-                final String cndPath = nsDefinition.getCndPath().getString();
+            // skip namespace defs with no CND
+            if (nsDefinition.getCndPath() == null) {
+                continue;
+            }
+
+            final String cndPath = nsDefinition.getCndPath().getString();
+
+            // find baseline version of this namespace def, if one exists
+            final NamespaceDefinition baselineDef = baselineDefsByPrefix.get(nsDefinition.getPrefix());
+
+            final boolean reloadCND;
+            if (baselineDef != null && baselineDef.getCndPath() != null) {
+
+                // check if the baseline version of the CND is exactly bytewise equal to the new CND
+                // CNDs are small enough to just do the full bytewise compare instead of hashing
+                try (final InputStream baselineCND = baselineDef.getCndPath().getResourceInputStream();
+                    final InputStream newCND = nsDefinition.getCndPath().getResourceInputStream()) {
+
+                    // don't reload if the new CND exactly matches the old one
+                    reloadCND = !IOUtils.contentEquals(baselineCND, newCND);
+                }
+                if (!reloadCND && log.isDebugEnabled()) {
+                    log.debug(String.format("skipping CND already loaded in baseline: '%s' defined in %s.", cndPath, nsDefinition.getOrigin()));
+                }
+            }
+            else {
+                // no matching baseline also means we should reload the CND
+                reloadCND = true;
+            }
+
+            if (reloadCND) {
                 if (log.isDebugEnabled()) {
                     log.debug(String.format("processing CND '%s' defined in %s.", cndPath, nsDefinition.getOrigin()));
                 }
-
-                // TODO: nodeTypeStream should be closed, right?
-                final InputStream nodeTypeStream = getResourceInputStream(nsDefinition.getSource(), cndPath);
                 final String cndPathOrigin = String.format("'%s' (%s)", cndPath, nsDefinition.getOrigin());
-                BootstrapUtils.initializeNodetypes(session, nodeTypeStream, cndPathOrigin);
+                try (final InputStream nodeTypeStream = nsDefinition.getCndPath().getResourceInputStream()) {
+                    BootstrapUtils.initializeNodetypes(session, nodeTypeStream, cndPathOrigin);
+                }
             }
         }
     }
@@ -684,10 +727,6 @@ public class ConfigurationConfigService {
         }
 
         jcrProperty.remove();
-    }
-
-    private InputStream getResourceInputStream(final Source source, final String resourceName) throws IOException {
-        return source.getModule().getConfigResourceInputProvider().getResourceInputStream(source, resourceName);
     }
 
     private void postProcessReferences(final List<UnprocessedReference> references)
