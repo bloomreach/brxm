@@ -17,8 +17,8 @@ package org.onehippo.cm.model;
 
 import java.nio.file.Path;
 
-import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.serializer.ModuleContext;
 
 public class ImportModuleContext extends ModuleContext {
 

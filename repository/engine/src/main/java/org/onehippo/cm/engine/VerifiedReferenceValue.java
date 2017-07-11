@@ -18,11 +18,11 @@ package org.onehippo.cm.engine;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.onehippo.cm.ResourceInputProvider;
-import org.onehippo.cm.model.Definition;
-import org.onehippo.cm.model.DefinitionProperty;
-import org.onehippo.cm.model.Value;
-import org.onehippo.cm.model.ValueType;
+import org.onehippo.cm.model.ResourceInputProvider;
+import org.onehippo.cm.model.definition.Definition;
+import org.onehippo.cm.model.tree.DefinitionProperty;
+import org.onehippo.cm.model.tree.Value;
+import org.onehippo.cm.model.tree.ValueType;
 
 /**
  * VerifiedReferenceValue is a placeholder implementation/decorator for resolved and validated {@link ValueType#REFERENCE}

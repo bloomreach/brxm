@@ -27,7 +27,7 @@ import javax.jcr.Value;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
-import org.onehippo.cm.ResourceInputProvider;
+import org.onehippo.cm.model.ResourceInputProvider;
 import org.onehippo.cm.model.Source;
 
 public class JcrResourceInputProvider implements ResourceInputProvider {

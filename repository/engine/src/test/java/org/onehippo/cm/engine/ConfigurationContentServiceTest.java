@@ -23,15 +23,15 @@ import javax.jcr.Session;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.model.ActionType;
-import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
-import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.ContentSourceImpl;
-import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 
 import com.google.common.collect.ImmutableList;
 
