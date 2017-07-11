@@ -71,7 +71,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
-import static org.onehippo.cm.engine.autoexport.Constants.DEFAULT_MAIN_CONFIG_FILE;
+import static org.onehippo.cm.engine.autoexport.AutoExportConstants.DEFAULT_MAIN_CONFIG_FILE;
 import static org.onehippo.cm.model.Constants.YAML_EXT;
 import static org.onehippo.cm.model.DefinitionType.NAMESPACE;
 import static org.onehippo.cm.model.PropertyOperation.OVERRIDE;
@@ -109,7 +109,7 @@ public class DefinitionMergeService {
     /**
      * @param autoExportConfig the current auto-export module config, which includes module:path mappings and exclusions
      */
-    public DefinitionMergeService(final Configuration autoExportConfig) {
+    public DefinitionMergeService(final AutoExportConfig autoExportConfig) {
         // preprocess config mapping paths to moduleMapping objects
         // note: this is very similar to the old auto-export EventProcessor init
         for (Map.Entry<String, Collection<String>> entry : autoExportConfig.getModules().entrySet()) {

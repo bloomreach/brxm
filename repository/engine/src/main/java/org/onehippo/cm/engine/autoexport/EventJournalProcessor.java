@@ -72,7 +72,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.engine.Constants.HCM_ROOT;
 import static org.onehippo.cm.engine.ValueProcessor.isKnownDerivedPropertyName;
-import static org.onehippo.cm.engine.autoexport.Constants.CONFIG_LAST_REVISION_PROPERTY_NAME;
 import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 
 public class EventJournalProcessor {
@@ -150,7 +149,7 @@ public class EventJournalProcessor {
         }
     }
 
-    private final Configuration configuration;
+    private final AutoExportConfig autoExportConfig;
     private final ConfigurationServiceImpl configurationService;
     private final Session eventProcessorSession;
     private final String nodeTypeRegistryLastModifiedPropertyPath;
@@ -181,21 +180,21 @@ public class EventJournalProcessor {
     };
 
     public EventJournalProcessor(final ConfigurationServiceImpl configurationService,
-                                 final Configuration configuration, final Set<String> extraIgnoredEventPaths)
+                                 final AutoExportConfig autoExportConfig, final Set<String> extraIgnoredEventPaths)
             throws RepositoryException {
         this.configurationService = configurationService;
-        this.configuration = configuration;
-        nodeTypeRegistryLastModifiedPropertyPath = configuration.getModuleConfigPath()
-                + "/" + Constants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME;
-        lastRevisionPropertyPath = configuration.getModuleConfigPath()
-                + "/" + CONFIG_LAST_REVISION_PROPERTY_NAME;
+        this.autoExportConfig = autoExportConfig;
+        nodeTypeRegistryLastModifiedPropertyPath = autoExportConfig.getModuleConfigPath()
+                + "/" + AutoExportConstants.CONFIG_NTR_LAST_MODIFIED_PROPERTY_NAME;
+        lastRevisionPropertyPath = autoExportConfig.getModuleConfigPath()
+                + "/" + AutoExportConstants.CONFIG_LAST_REVISION_PROPERTY_NAME;
         PathsMap ignoredEventPaths = new PathsMap(builtinIgnoredEventPaths);
         ignoredEventPaths.addAll(extraIgnoredEventPaths);
         ignoredEventPaths.add(nodeTypeRegistryLastModifiedPropertyPath);
         ignoredEventPaths.add(lastRevisionPropertyPath);
-        configuration.addIgnoredPaths(ignoredEventPaths);
+        autoExportConfig.addIgnoredPaths(ignoredEventPaths);
 
-        final Session moduleSession = configuration.getModuleSession();
+        final Session moduleSession = autoExportConfig.getModuleSession();
         eventProcessorSession =
                 moduleSession.impersonate(new SimpleCredentials(moduleSession.getUserID(), "".toCharArray()));
     }
@@ -257,7 +256,7 @@ public class EventJournalProcessor {
             currentModel = null;
             // force reset lastRevision as well, allowing a actual 'reset' to -1 (or delete) of the property
             // by a developer, thereby 'skipping' next autoexport when enabled to the then current 'head' revision
-            configuration.resetLastRevision();
+            autoExportConfig.resetLastRevision();
         }
     }
 
@@ -293,8 +292,8 @@ public class EventJournalProcessor {
         }
         if (lastEvent != null) {
             log.info("Skipping to initial eventjournal head revision: {} ", lastEvent.getRevision());
-            configuration.setLastRevision(lastEvent.getRevision());
-            configuration.getModuleSession().save();
+            autoExportConfig.setLastRevision(lastEvent.getRevision());
+            autoExportConfig.getModuleSession().save();
             return lastEvent.getRevision();
         }
         return -1;
@@ -310,7 +309,7 @@ public class EventJournalProcessor {
         if (eventJournal == null) {
             final ObservationManager observationManager = eventProcessorSession.getWorkspace().getObservationManager();
             eventJournal = (RevisionEventJournal) observationManager.getEventJournal();
-            lastRevision = configuration.getLastRevision();
+            lastRevision = autoExportConfig.getLastRevision();
         }
         try {
             if (lastRevision == -1) {
@@ -328,8 +327,8 @@ public class EventJournalProcessor {
                 lastRevision = event.getRevision();
                 if (storeLastRevision) {
                     // still haven't yet stored the current last revision: do so now
-                    configuration.setLastRevision(lastRevision);
-                    configuration.getModuleSession().save();
+                    autoExportConfig.setLastRevision(lastRevision);
+                    autoExportConfig.getModuleSession().save();
                 }
                 if (event.getType() == Event.PERSIST) {
                     continue;
@@ -361,8 +360,8 @@ public class EventJournalProcessor {
                 } else {
                     // all events are skipped, bump lastRevision to skip these in the future
                     currentChanges = null;
-                    configuration.setLastRevision(lastRevision);
-                    configuration.getModuleSession().save();
+                    autoExportConfig.setLastRevision(lastRevision);
+                    autoExportConfig.getModuleSession().save();
                 }
             }
             if (count > 0) {
@@ -448,7 +447,7 @@ public class EventJournalProcessor {
 
     private void checkAddEventPath(final RevisionEvent event, final String eventPath, final boolean addedNode,
                                    final boolean deletedNode, final boolean propertyPath) throws RepositoryException {
-        if (!configuration.isExcludedPath(eventPath)) {
+        if (!autoExportConfig.isExcludedPath(eventPath)) {
 
             final ConfigurationItemCategory category =
                     ConfigurationModelUtils.getCategoryForItem(eventPath, propertyPath,
@@ -493,7 +492,7 @@ public class EventJournalProcessor {
                             @Override
                             protected void entering(final Node node, final int level) throws RepositoryException {
                                 final String path = node.getPath();
-                                if (!configuration.isExcludedPath(path)) {
+                                if (!autoExportConfig.isExcludedPath(path)) {
                                     currentChanges.getAddedContent().add(path);
                                 }
                             }
@@ -534,7 +533,7 @@ public class EventJournalProcessor {
         if (AutoExportServiceImpl.log.isDebugEnabled()) {
             final String eventPath = event.getPath();
             AutoExportServiceImpl.log.debug(String.format("event %d: %s under parent: [%s] at: [%s] for user: [%s]",
-                    event.getRevision(), Constants.getJCREventTypeName(event.getType()), path,
+                    event.getRevision(), AutoExportConstants.getJCREventTypeName(event.getType()), path,
                     eventPath.startsWith(path) ? eventPath.substring(path.length()) : eventPath,
                     event.getUserID()));
         }
@@ -580,7 +579,7 @@ public class EventJournalProcessor {
             }
         }
 
-        final AutoExportContentProcessor autoExportContentProcessor = new AutoExportContentProcessor(currentModel, configuration);
+        final AutoExportContentProcessor autoExportContentProcessor = new AutoExportContentProcessor(currentModel, autoExportConfig);
         for (String path : pendingChanges.getChangedConfig()) {
             log.info("Computing diff for path: \n\t{}", path);
             autoExportContentProcessor.exportConfigNode(eventProcessorSession, path, configSource);
@@ -616,13 +615,13 @@ public class EventJournalProcessor {
             stopWatch.start();
 
             // save this fact immediately and do nothing else
-            configuration.setLastRevision(lastRevision);
-            configuration.getModuleSession().save();
+            autoExportConfig.setLastRevision(lastRevision);
+            autoExportConfig.getModuleSession().save();
 
             stopWatch.stop();
             log.info("Diff export (revision update only) in {}", stopWatch.toString());
         } else {
-            final DefinitionMergeService mergeService = new DefinitionMergeService(configuration);
+            final DefinitionMergeService mergeService = new DefinitionMergeService(autoExportConfig);
             final Collection<ModuleImpl> mergedModules =
                     mergeService.mergeChangesToModules(changesModule, pendingChanges, currentModel, eventProcessorSession);
             final List<ModuleImpl> reloadedModules = new ArrayList<>();
@@ -678,7 +677,7 @@ public class EventJournalProcessor {
             }
 
             // 2) configuration.setLastRevision(lastRevision) (should NOT save the JCR session!)
-            configuration.setLastRevision(lastRevision);
+            autoExportConfig.setLastRevision(lastRevision);
 
             stopWatch.stop();
             log.info("Diff export (writing modules) in {}", stopWatch.toString());

@@ -90,7 +90,7 @@ public class DefinitionMergeTest {
         String testName;
         String[] base = {"topmost", "upstream"};
         String[] toExport = {"exportFirst", "exportSecond"};
-        Configuration autoExportConfig;
+        AutoExportConfig autoExportConfig;
 
         public MergeFixture(final String testName) {
             this.testName = testName;
@@ -98,7 +98,7 @@ public class DefinitionMergeTest {
             Map<String, Collection<String>> modules = new HashMap<>();
             modules.put("exportFirst", Arrays.asList("/topmost", "/exportFirstExistingRoot", "/hippo:namespaces"));
             modules.put("exportSecond", singletonList("/"));
-            autoExportConfig = new Configuration(true, modules, null, null);
+            autoExportConfig = new AutoExportConfig(true, modules, null, null);
         }
 
         public MergeFixture base(final String... base) {
@@ -111,7 +111,7 @@ public class DefinitionMergeTest {
             return this;
         }
 
-        public MergeFixture config(final Configuration config) {
+        public MergeFixture config(final AutoExportConfig config) {
             this.autoExportConfig = config;
             return this;
         }
