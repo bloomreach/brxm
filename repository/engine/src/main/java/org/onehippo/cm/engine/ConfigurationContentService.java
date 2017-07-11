@@ -257,7 +257,7 @@ public class ConfigurationContentService {
                     .addNode(UPGRADE_TO_12_MARKER_NODE_NAME, NodeType.NT_UNSTRUCTURED)
                     .setProperty("description", "This node is used by the bootstrapping mechanism " +
                             "to track the upgrade of repository content to CMS 12. Please don't remove " +
-                            "it manually, it will be removed automatically.");
+                            "it manually; it will be removed automatically.");
             session.save();
         }
 

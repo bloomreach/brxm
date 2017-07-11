@@ -155,7 +155,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
         assertFalse(baselineService.contentNodeExists(session));
         try {
             baselineService.createContentNode(session);
-            fail("Should have thorn exception because /hcm:hcm doesn't exist.");
+            fail("Should have thrown exception because /hcm:hcm doesn't exist.");
         } catch (RepositoryException e) {
             // ignore
         }
