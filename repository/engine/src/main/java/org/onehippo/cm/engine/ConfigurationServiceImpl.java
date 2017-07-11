@@ -142,10 +142,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             boolean startAutoExportService = configure && autoExportAllowed;
 
             ConfigurationModelImpl baselineModel = loadBaselineModel();
-
-            // set runtimeConfigurationModel from baseline for use later -- this is a reasonable default in case of exception
-            runtimeConfigurationModel = baselineModel;
-
             ConfigurationModelImpl bootstrapModel = null;
             boolean success;
             if (mustConfigure) {
@@ -178,6 +174,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     log.info("ConfigurationService: apply bootstrap config");
                     success = applyConfig(baselineModel, bootstrapModel, false, verify, fullConfigure, !first);
                     if (success) {
+                        // set runtimeConfigurationModel from bootstrapModel -- this is a reasonable default in case of exception
+                        runtimeConfigurationModel = bootstrapModel;
+
                         log.info("ConfigurationService: store bootstrap config");
                         success = storeBaselineModel(bootstrapModel);
                     }
@@ -223,6 +222,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 }
             }
             else {
+                // if we're not doing any bootstrap, use the baseline model as our runtime model
+                runtimeConfigurationModel = baselineModel;
+
                 log.info("ConfigurationService: start repository services");
                 startRepositoryServicesTask.execute();
             }
