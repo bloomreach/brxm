@@ -93,12 +93,21 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
     private ConfigurationContentService contentService;
     private AutoExportServiceImpl autoExportService;
 
+    /**
+     * Note: this will typically be null, but will store a reference copy of the baseline when autoexport is allowed
+     */
     private ConfigurationModelImpl baselineModel;
+
+    /**
+     * This should be non-null on any successful startup.
+     */
     private ConfigurationModelImpl runtimeConfigurationModel;
 
     public ConfigurationServiceImpl start(final Session configurationServiceSession, final StartRepositoryServicesTask startRepositoryServicesTask)
             throws RepositoryException {
         session = configurationServiceSession;
+
+        // set event userData to identify events coming from this HCM session
         session.getWorkspace().getObservationManager().setUserData(Constants.HCM_ROOT);
         log.info("ConfigurationService: start");
         try {
@@ -127,11 +136,16 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             final boolean configure = fullConfigure || Boolean.getBoolean(SYSTEM_PARAMETER_REPO_BOOTSTRAP);
             final boolean mustConfigure = first || configure;
             final boolean verify = Boolean.getBoolean("repo.bootstrap.verify");
+
             final boolean isProjectBaseDirSet = !StringUtils.isBlank(System.getProperty(PROJECT_BASEDIR_PROPERTY));
             final boolean autoExportAllowed = isProjectBaseDirSet && Boolean.getBoolean(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED);
             boolean startAutoExportService = configure && autoExportAllowed;
 
             ConfigurationModelImpl baselineModel = loadBaselineModel();
+
+            // set runtimeConfigurationModel from baseline for use later -- this is a reasonable default in case of exception
+            runtimeConfigurationModel = baselineModel;
+
             ConfigurationModelImpl bootstrapModel = null;
             boolean success;
             if (mustConfigure) {
@@ -164,8 +178,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                     log.info("ConfigurationService: apply bootstrap config");
                     success = applyConfig(baselineModel, bootstrapModel, false, verify, fullConfigure, !first);
                     if (success) {
-                        // set the runtime model to bootstrap here just in case storing the baseline fails
-                        runtimeConfigurationModel = bootstrapModel;
                         log.info("ConfigurationService: store bootstrap config");
                         success = storeBaselineModel(bootstrapModel);
                     }
@@ -202,6 +214,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                 } finally {
                     if (bootstrapModel != null) {
                         try {
+                            // we need to close the bootstrap model because it's backed by ZipFileSystem(s)
                             bootstrapModel.close();
                         } catch (Exception e) {
                             log.error("Error closing bootstrap configuration", e);
@@ -211,7 +224,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             }
             else {
                 log.info("ConfigurationService: start repository services");
-                // todo: load runtimeConfigurationModel (from baseline?)
                 startRepositoryServicesTask.execute();
             }
         } finally {
@@ -301,7 +313,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
      * @param updatedModules modules that have been changed by auto-export and need to be stored in the baseline
      * @return true if and only if the baseline update was stored successfully
      */
-    // TODO: confirm that this is the appropriate scope (public, but not exposed on interface)
     public boolean updateBaselineForAutoExport(final Collection<ModuleImpl> updatedModules) {
         try {
             if (baselineModel == null) {
