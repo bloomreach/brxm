@@ -49,10 +49,12 @@ class FieldService {
   }
 
   triggerInputFocus() {
-    if (this._customFocusCallback) {
-      this._customFocusCallback();
-    } else {
-      this._focusedInput.focus();
+    if (this._focusedInput) {
+      if (this._customFocusCallback) {
+        this._customFocusCallback();
+      } else {
+        this._focusedInput.focus();
+      }
     }
   }
 
