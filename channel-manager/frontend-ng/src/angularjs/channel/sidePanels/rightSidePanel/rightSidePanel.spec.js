@@ -27,6 +27,7 @@ describe('RightSidePanel', () => {
   let HippoIframeService;
   let FeedbackService;
   let ChannelService;
+  let FieldService;
 
   let $ctrl;
   let $scope;
@@ -82,13 +83,14 @@ describe('RightSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_, _$translate_, _ChannelService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_, _$translate_, _ChannelService_, _FieldService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $timeout = _$timeout_;
       $translate = _$translate_;
       ChannelService = _ChannelService_;
+      FieldService = _FieldService_;
     });
 
     SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close']);
@@ -125,10 +127,13 @@ describe('RightSidePanel', () => {
   });
 
   it('should set full width mode on and off', () => {
+    spyOn(FieldService, 'triggerInputFocus');
+
     $ctrl.setFullWidth(true);
     expect($ctrl.$element.hasClass('fullwidth')).toBe(true);
     expect($ctrl.isFullWidth).toBe(true);
     expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsFullScreen');
+    expect(FieldService.triggerInputFocus).toHaveBeenCalled();
 
     CmsService.reportUsageStatistic.calls.reset();
 
@@ -136,6 +141,7 @@ describe('RightSidePanel', () => {
     expect($ctrl.$element.hasClass('fullwidth')).toBe(false);
     expect($ctrl.isFullWidth).toBe(false);
     expect(CmsService.reportUsageStatistic).not.toHaveBeenCalled();
+    expect(FieldService.triggerInputFocus).toHaveBeenCalled();
   });
 
   it('should update local storage on resize', () => {
