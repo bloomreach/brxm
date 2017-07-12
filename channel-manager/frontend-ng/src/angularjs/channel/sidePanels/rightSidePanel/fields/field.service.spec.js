@@ -85,4 +85,68 @@ describe('field service', () => {
     FieldService.setDocumentId('mockDocumentId');
     expect(FieldService.getDocumentId()).toEqual('mockDocumentId');
   });
+
+  describe('input focus preserve feature', () => {
+    it('shouldUnsetFocus should return true when selector is valid and false when invalid', () => {
+      const relatedTarget = $('<button></button>');
+      relatedTarget.addClass('btn-fullwidth'); // selector is now valid (.btn-fullwidth)
+      expect(FieldService.shouldUnsetFocus(relatedTarget)).toEqual(true);
+      relatedTarget.removeClass('btn-fullwidth'); // remove valid selector
+      expect(FieldService.shouldUnsetFocus(relatedTarget)).toEqual(false);
+    });
+
+    it('should set focused input', () => {
+      expect(FieldService._focusedInput).toEqual(null);
+      expect(FieldService._customFocusCallback).toEqual(null);
+
+      const mockElement = $('<button></button>');
+      const mockCustomCallback = () => { angular.noop('mock'); };
+
+      FieldService.setFocusedInput(mockElement, mockCustomCallback);
+      expect(FieldService._focusedInput).toEqual(mockElement);
+      expect(FieldService._customFocusCallback).toEqual(mockCustomCallback);
+
+      FieldService.setFocusedInput(mockElement);
+      expect(FieldService._focusedInput).toEqual(mockElement);
+      expect(FieldService._customFocusCallback).toEqual(null);
+    });
+
+    it('should unset focused input', () => {
+      FieldService._focusedInput = 'someFocusedInput';
+      FieldService._customFocusCallback = 'someCustomCallback';
+
+      FieldService.unsetFocusedInput();
+      expect(FieldService._focusedInput).toEqual(null);
+      expect(FieldService._customFocusCallback).toEqual(null);
+    });
+
+    describe('triggetInputFocus', () => {
+      it('should not do anything if there is no focused input', () => {
+        spyOn(FieldService, '_customFocusCallback');
+
+        FieldService._focusedInput = null;
+        FieldService.triggerInputFocus();
+        expect(FieldService._customFocusCallback).not.toHaveBeenCalled();
+      });
+
+      it('should call the element native focus method if there is no custom focus callback', () => {
+        const mockInputElement = $('<input type="text">');
+        FieldService.setFocusedInput(mockInputElement);
+        spyOn(FieldService._focusedInput, 'focus');
+
+        FieldService.triggerInputFocus();
+        expect(FieldService._focusedInput.focus).toHaveBeenCalled();
+      });
+
+      it('should call the custom focus callback if one was specified', () => {
+        const mockInputElement = $('<input type="text">');
+        const mockCustomCallback = () => { angular.noop('custom callback'); };
+        FieldService.setFocusedInput(mockInputElement, mockCustomCallback);
+        spyOn(FieldService, '_customFocusCallback');
+
+        FieldService.triggerInputFocus();
+        expect(FieldService._customFocusCallback).toHaveBeenCalled();
+      });
+    });
+  });
 });
