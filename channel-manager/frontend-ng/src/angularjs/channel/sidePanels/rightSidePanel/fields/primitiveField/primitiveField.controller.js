@@ -53,18 +53,18 @@ class PrimitiveFieldCtrl {
     this.oldValues = angular.copy(this.fieldValues);
 
     if ($event) {
-      const element = angular.element($event.target);
+      $event.target = angular.element($event.target);
 
-      this.FieldService.setFocusedInput(element, $event.customFocus);
+      this.FieldService.setFocusedInput($event.target, $event.customFocus);
 
-      element.on('blur.focusedInputBlurHandler', (e) => {
+      $event.target.on('blur.focusedInputBlurHandler', (e) => {
         const relatedTarget = angular.element(e.relatedTarget);
 
         if (!this.FieldService.shouldUnsetFocus(relatedTarget)) {
           this.FieldService.unsetFocusedInput();
         }
 
-        element.off('.focusedInputBlurHandler'); // Unbind self
+        $event.target.off('.focusedInputBlurHandler'); // Unbind self
       });
     }
   }

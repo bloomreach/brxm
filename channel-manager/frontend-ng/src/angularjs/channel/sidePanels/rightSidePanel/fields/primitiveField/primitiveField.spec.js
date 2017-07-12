@@ -16,7 +16,6 @@
 
 describe('PrimitiveField', () => {
   let $componentController;
-
   let $ctrl;
   let FieldService;
   let onFieldFocus;
@@ -32,7 +31,7 @@ describe('PrimitiveField', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _FieldService_) => {
+    inject((_$componentController_, _$rootScope_, _FieldService_) => {
       $componentController = _$componentController_;
       FieldService = _FieldService_;
     });
@@ -164,6 +163,25 @@ describe('PrimitiveField', () => {
   it('assumes that a field without any value is valid', () => {
     $ctrl.fieldValues = [];
     expect($ctrl.isValid()).toBe(true);
+  });
+
+  it('handles $event object if supplied upon focus', () => {
+    const mockTargetElement = $('<input type="text">');
+    const $event = {
+      target: mockTargetElement,
+      customFocus: null,
+    };
+
+    spyOn(FieldService, 'setFocusedInput');
+    spyOn(FieldService, 'shouldUnsetFocus').and.returnValue(false);
+    spyOn(FieldService, 'unsetFocusedInput');
+
+    $ctrl.focusPrimitive($event);
+
+    $event.target.triggerHandler('blur.focusedInputBlurHandler');
+    expect(FieldService.setFocusedInput).toHaveBeenCalledWith($event.target, $event.customFocus);
+    expect(FieldService.shouldUnsetFocus).toHaveBeenCalled();
+    expect(FieldService.unsetFocusedInput).toHaveBeenCalled();
   });
 
   it('keeps track of the focused state', () => {
