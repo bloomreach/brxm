@@ -35,9 +35,11 @@ $doclist-icon-shift-right: 2px;
     &.doclisting-date {
       @include fixed-width(140px);
     }
+
     &.doclisting-height {
       @include fixed-width(75px);
     }
+
     &.doclisting-icon {
       @include fixed-width(32px);
 
@@ -64,25 +66,34 @@ $doclist-icon-shift-right: 2px;
         }
       }
     }
+
     &.doclisting-lastmodified-by {
       @include fixed-width(120px);
       &:last-child {
         @include fixed-width(200px);
       }
     }
+
     &.doclisting-mimetype {
       @include fixed-width(130px);
       span {
         @include truncate();
       }
     }
+
     &.doclisting-name {
       width: 100%;
-      min-width: 60px;
+      min-width: 90px;
     }
+
+    .yui-layout-collapsed &.doclisting-name {
+      min-width: 10px;
+    }
+
     &.doclisting-path {
       @include fixed-width(400px);
     }
+
     &.doclisting-selector {
       @include fixed-width(19px);
       span {
@@ -91,9 +102,11 @@ $doclist-icon-shift-right: 2px;
         align-content: center;
       }
     }
+
     &.doclisting-size {
       @include fixed-width(80px);
     }
+
     &.doclisting-state {
       @include fixed-width(51px);
 
@@ -113,6 +126,7 @@ $doclist-icon-shift-right: 2px;
       }
 
     }
+
     &.doclisting-translations {
       @include fixed-width(120px);
       padding-top: 0;
@@ -130,9 +144,11 @@ $doclist-icon-shift-right: 2px;
         height: 16px;
       }
     }
+
     &.doclisting-type {
       @include fixed-width(110px);
     }
+
     &.doclisting-width {
       @include fixed-width(75px);
     }
@@ -158,6 +174,7 @@ $doclist-icon-shift-right: 2px;
         &:hover {
           color: $primary;
         }
+
         // align the background image of the icon column header with the icons in the body
         &.doclisting-icon {
           background-position: top ($doclist-padding-icon + 1) left ($doclist-padding-icon + $doclist-icon-shift-right + 8);
@@ -194,15 +211,18 @@ $doclist-icon-shift-right: 2px;
         > span {
           background: none;
         }
+
         &.hippo-list-order-none {
           background-image: url("#{$images}/icons/stateorder-none.svg");
           &:hover {
             background-image: url("#{$images}/icons/stateorder-hover.svg");
           }
         }
+
         &.hippo-list-order-ascending {
           background-image: url("#{$images}/icons/stateorder-down.svg");
         }
+
         &.hippo-list-order-descending {
           background-image: url("#{$images}/icons/stateorder-up.svg");
         }

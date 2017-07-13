@@ -30,13 +30,12 @@
 
 .navigator-center-body .hippo-list-documents {
 
-  border-left: 1px solid $doclist-body-border-color;
-
   > thead {
     border-left: 1px solid $doclist-head-border-color;
   }
 
   > tbody {
+    border-left: 1px solid $doclist-body-border-color;
     width: auto !important;
   }
 }
