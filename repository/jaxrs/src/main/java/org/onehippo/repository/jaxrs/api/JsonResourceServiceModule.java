@@ -15,16 +15,24 @@
  */
 package org.onehippo.repository.jaxrs.api;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.repository.jaxrs.CXFRepositoryJaxrsEndpoint;
-import org.onehippo.repository.jaxrs.RepositoryJaxrsEndpoint;
-import org.onehippo.repository.jaxrs.RepositoryJaxrsService;
-import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.observation.ObservationManager;
+
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.jaxrs.CXFRepositoryJaxrsEndpoint;
+import org.onehippo.repository.jaxrs.RepositoryJaxrsEndpoint;
+import org.onehippo.repository.jaxrs.RepositoryJaxrsService;
+import org.onehippo.repository.jaxrs.event.JcrEventListener;
+import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 /**
  * Registers a JsonResource with as endpoint the value of the {@link #ENDPOINT_ADDRESS} property.
@@ -33,16 +41,22 @@ import javax.jcr.Session;
  * Resource.
  */
 public abstract class JsonResourceServiceModule extends AbstractReconfigurableDaemonModule {
+
+    private static final Logger log = LoggerFactory.getLogger(JsonResourceServiceModule.class);
+
     private static final String ENDPOINT_ADDRESS = "jaxrs.endpoint.address";
+
     private String endpointAddress;
     private RepositoryJaxrsEndpoint jaxrsEndpoint;
 
+    private final List<JcrEventListener> listeners = new ArrayList<>();
+
     @Override
-    protected final synchronized void doConfigure(final Node moduleConfig) throws RepositoryException {
+    protected final void doConfigure(final Node moduleConfig) throws RepositoryException {
         endpointAddress = RepositoryJaxrsEndpoint.qualifiedAddress(
                 JcrUtils.getStringProperty(moduleConfig, ENDPOINT_ADDRESS, moduleConfig.getParent().getName()));
         if (jaxrsEndpoint != null) {
-            String currentAddress = jaxrsEndpoint.getAddress();
+            final String currentAddress = jaxrsEndpoint.getAddress();
             if (!endpointAddress.equals(currentAddress)) {
                 RepositoryJaxrsService.removeEndpoint(currentAddress);
                 jaxrsEndpoint.address(endpointAddress);
@@ -52,7 +66,7 @@ public abstract class JsonResourceServiceModule extends AbstractReconfigurableDa
     }
 
     @Override
-    protected final void doInitialize(final Session session) throws RepositoryException {
+    protected void doInitialize(final Session session) throws RepositoryException {
         if (endpointAddress == null) {
             throw new IllegalStateException(String.format("%s requires a hippo:moduleconfig",getClass().getSimpleName()));
         }
@@ -62,15 +76,29 @@ public abstract class JsonResourceServiceModule extends AbstractReconfigurableDa
                 .singleton(getRestResource(managedUserSessionInvoker))
                 .singleton(new JacksonJsonProvider());
         RepositoryJaxrsService.addEndpoint(jaxrsEndpoint);
+
+        final ObservationManager observationManager = session.getWorkspace().getObservationManager();
+        listeners.forEach(listener -> listener.attach(observationManager));
     }
 
-    protected abstract Object getRestResource(ManagedUserSessionInvoker managedUserSessionInvoker);
+    protected abstract Object getRestResource(final ManagedUserSessionInvoker sessionInvoker);
 
     @Override
-    protected final void doShutdown() {
+    protected void doShutdown() {
+        try {
+            final ObservationManager observationManager = session.getWorkspace().getObservationManager();
+            listeners.forEach(listener -> listener.detach(observationManager));
+        } catch (final RepositoryException ignore) {
+            log.info("Failed to retrieve observation manager, can not detach event listeners.");
+        }
+
         if (jaxrsEndpoint != null) {
             RepositoryJaxrsService.removeEndpoint(jaxrsEndpoint.getAddress());
         }
         jaxrsEndpoint = null;
+    }
+
+    protected void addEventListener(final JcrEventListener listener) {
+        listeners.add(listener);
     }
 }
