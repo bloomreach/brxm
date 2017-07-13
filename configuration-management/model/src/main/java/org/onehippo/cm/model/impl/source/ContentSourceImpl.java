@@ -15,7 +15,7 @@
  */
 package org.onehippo.cm.model.impl;
 
-import org.onehippo.cm.model.SourceType;
+import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.path.NodePathImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;

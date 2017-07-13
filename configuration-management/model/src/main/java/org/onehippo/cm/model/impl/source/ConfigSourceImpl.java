@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.onehippo.cm.model.SourceType;
+import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;

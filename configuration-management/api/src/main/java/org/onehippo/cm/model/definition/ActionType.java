@@ -13,20 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model;
+package org.onehippo.cm.model.action;
 
 /**
- * Represents an action item, which describes a bootstrap behavior {@link ActionType} for a specific path.
+ * Describes the behavior to be applied to a content source at bootstrap.
  */
-public interface ActionItem {
-    /**
-     * @return the JCR node path to which this action applies
-     */
-    // todo: use NodePath API
-    String getPath();
+public enum ActionType {
 
     /**
-     * @return the {@link ActionType} that should be applied to the node at {@link #getPath()}
+     * Only create new node if path does not yet exist; default behavior for content sources.
      */
-    ActionType getType();
+    APPEND,
+
+    /**
+     * Delete existing node and descendants, and then append.
+     */
+    RELOAD,
+
+    /**
+     * Delete node and descendants, with no replacement.
+     */
+    DELETE
 }

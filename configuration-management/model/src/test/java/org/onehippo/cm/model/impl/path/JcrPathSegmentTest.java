@@ -23,37 +23,37 @@ public class NodePathSegmentTest {
 
     @Test
     public void test_canonical_sns() {
-        assertEquals(NodePathSegmentImpl.get("sns", 1), NodePathSegmentImpl.get("sns[1]"));
+        assertEquals(NodePathSegment.get("sns", 1), NodePathSegment.get("sns[1]"));
     }
 
     @Test
     public void test_sns_without_index() {
-        assertEquals(NodePathSegmentImpl.get("sns", 0), NodePathSegmentImpl.get("sns"));
+        assertEquals(NodePathSegment.get("sns", 0), NodePathSegment.get("sns"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_with_negative_index() {
-        NodePathSegmentImpl.get("sns[-1]");
+        NodePathSegment.get("sns[-1]");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_with_zero_index() {
-        NodePathSegmentImpl.get("sns[0]");
+        NodePathSegment.get("sns[0]");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_with_non_numeric_index() {
-        NodePathSegmentImpl.get("sns[foo]");
+        NodePathSegment.get("sns[foo]");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_with_trailing_chars() {
-        NodePathSegmentImpl.get("sns[1]sns");
+        NodePathSegment.get("sns[1]sns");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_illegal_sns_without_name() {
-        NodePathSegmentImpl.get("[1]");
+        NodePathSegment.get("[1]");
     }
 
 }

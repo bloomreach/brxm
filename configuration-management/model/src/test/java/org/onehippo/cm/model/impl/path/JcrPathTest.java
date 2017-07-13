@@ -25,27 +25,27 @@ import org.onehippo.cm.model.path.NodePathSegment;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.cm.model.impl.path.NodePathImpl.ROOT;
-import static org.onehippo.cm.model.impl.path.NodePathSegmentImpl.ROOT_NAME;
+import static org.onehippo.cm.model.impl.path.NodePath.ROOT;
+import static org.onehippo.cm.model.impl.path.NodePathSegment.ROOT_NAME;
 
 public class NodePathTest {
 
     @Test
     public void root_is_constant() {
-        NodePathSegment rootName = NodePathSegmentImpl.get("/");
+        NodePathSegment rootName = NodePathSegment.get("/");
         assertTrue("Parsing '/' should always produce constants ROOT_NAME or ROOT", rootName == ROOT_NAME);
 
-        NodePath root = NodePathImpl.get("/");
+        NodePath root = NodePath.get("/");
         assertTrue("Parsing '/' should always produce constants ROOT_NAME or ROOT", root == ROOT);
 
-        root = NodePathImpl.get("/name").getParent();
+        root = NodePath.get("/name").getParent();
         assertTrue("Getting parent of top-level node should always produce constant ROOT", root == ROOT);
     }
 
     @Test
     public void name_index_zero_equals_one() {
-        NodePathSegment zero = NodePathSegmentImpl.get("name", 0);
-        NodePathSegment one = NodePathSegmentImpl.get("name", 1);
+        NodePathSegment zero = NodePathSegment.get("name", 0);
+        NodePathSegment one = NodePathSegment.get("name", 1);
 
         assertTrue("name and name[1] should be considered equal", zero.equals(one));
 
@@ -84,8 +84,8 @@ public class NodePathTest {
 
     @Test
     public void minimally_indexed_path_equals_fully_indexed_path() {
-        NodePath minimal = NodePathImpl.get("/one/two/three/four");
-        NodePath full = NodePathImpl.get("/one[1]/two[1]/three[1]/four[1]");
+        NodePath minimal = NodePath.get("/one/two/three/four");
+        NodePath full = NodePath.get("/one[1]/two[1]/three[1]/four[1]");
 
         assertTrue("minimally-indexed path and fully-indexed path should be considered equal",
                 minimal.equals(full));

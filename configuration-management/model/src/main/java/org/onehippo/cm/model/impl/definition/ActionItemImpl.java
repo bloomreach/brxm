@@ -17,8 +17,8 @@ package org.onehippo.cm.model.impl;
 
 import java.util.Objects;
 
-import org.onehippo.cm.model.ActionItem;
-import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.action.ActionItem;
+import org.onehippo.cm.model.action.ActionType;
 
 public class ActionItemImpl implements ActionItem {
 

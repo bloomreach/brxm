@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 
 public abstract class SourceImpl implements Source {
@@ -62,7 +62,7 @@ public abstract class SourceImpl implements Source {
      * Should be used only when cloning a module via {@link ModuleImpl#ModuleImpl(ModuleImpl, ProjectImpl)}.
      * @param module
      */
-    void setModule(final ModuleImpl module) {
+    public void setModule(final ModuleImpl module) {
         this.module = module;
     }
 

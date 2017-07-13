@@ -15,20 +15,39 @@
  */
 package org.onehippo.cm.model.impl.path;
 
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.model.path.NodePathSegment;
 
-public class NodePathSegmentImpl implements NodePathSegment {
+/**
+ * Represents a segment of a {@link NodePath}, which includes a node name String and possibly a same-named-sibling index.
+ * Note that implementations of this class should implement a non-standard natural ordering and definitions of
+ * {@link #equals(Object)} and {@link #hashCode()} which treat the index value 0 (representing unindexed names) and 1
+ * (representing the first indexed same-named-sibling) as strictly equivalent. Client code that wishes to treat these
+ * states as distinct must use the {@link #compareUnindexedFirst(NodePathSegment)} and
+ * {@link #equalsUnindexedSignificant(Object)} methods or the {@link #UNINDEXED_FIRST_ORDER} comparator.
+ */
+public class NodePathSegment implements Comparable<NodePathSegment> {
+    /**
+     * Comparator that treats unindexed segments as distinct (and less-than) the same name with index 1.
+     */
+    public static final Comparator<NodePathSegment> UNINDEXED_FIRST_ORDER =
+            Comparator.comparing(NodePathSegment::getName).thenComparingInt(NodePathSegment::getIndex);
 
-    public static final NodePathSegment ROOT_NAME = new NodePathSegmentImpl("", 0);
+    /**
+     * A constant value representing the name of the JCR root node, which typically does not appear explicitly in a {@link NodePath}.
+     */
+    public static final NodePathSegment ROOT_NAME = new NodePathSegment("", 0);
 
     // todo: is it true that node indices cannot have leading zeros?
     private static Pattern pattern = Pattern.compile("^([^\\[\\]]+)(\\[([1-9][0-9]*)])?$");
 
+    /**
+     * Static factory for NodePathSegment instances; parses the index from the input String.
+     */
     public static NodePathSegment get(final String fullName) {
         if (fullName == null) {
             throw new IllegalArgumentException("Name must not be null!");
@@ -38,10 +57,13 @@ public class NodePathSegmentImpl implements NodePathSegment {
             return ROOT_NAME;
         }
         else {
-            return new NodePathSegmentImpl(fullName);
+            return new NodePathSegment(fullName);
         }
     }
 
+    /**
+     * Static factory for NodePathSegment instances with separate index param.
+     */
     public static NodePathSegment get(final String name, final int index) {
         if (name == null) {
             throw new IllegalArgumentException("Name must not be null!");
@@ -51,7 +73,7 @@ public class NodePathSegmentImpl implements NodePathSegment {
             return ROOT_NAME;
         }
         else {
-            return new NodePathSegmentImpl(name, index);
+            return new NodePathSegment(name, index);
         }
     }
 
@@ -67,7 +89,7 @@ public class NodePathSegmentImpl implements NodePathSegment {
      * @param name an unindexed node name
      * @param index the desired new index
      */
-    private NodePathSegmentImpl(final String name, final int index) {
+    private NodePathSegment(final String name, final int index) {
         this.name = name.intern();
         this.index = index;
         checkArgs();
@@ -77,7 +99,7 @@ public class NodePathSegmentImpl implements NodePathSegment {
      * Create a new instance by splitting a possibly-indexed name.
      * @param fullName a JCR node name with or without an index
      */
-    private NodePathSegmentImpl(final String fullName) {
+    private NodePathSegment(final String fullName) {
         final Pair<String, Integer> split = splitIndexedName(fullName);
         this.name = split.getLeft().intern();
         this.index = split.getRight();
@@ -111,22 +133,38 @@ public class NodePathSegmentImpl implements NodePathSegment {
         }
     }
 
-    @Override
+    /**
+     * @return true iff this NodePathSegment is the singleton instance representing a root node
+     */
+    public boolean isRoot() {
+        return this == ROOT_NAME;
+    }
+
+    /**
+     * @return the String value of the full node name, without possible same-named-sibling index
+     */
     public String getName() {
         return name;
     }
 
-    @Override
+    /**
+     * @return the int value of the same-named-sibling index, or 0 if !{@link #hasIndex()}
+     */
     public int getIndex() {
         return index;
     }
 
-    @Override
+    /**
+     * @return does this name have a same-named-sibling index?
+     */
     public boolean hasIndex() {
         return index != 0;
     }
 
-    @Override
+    /**
+     * @param newIndex the index for the new instance of {@link NodePathSegment}
+     * @return a new {@link NodePathSegment} instance with the same name as this instance and the given index
+     */
     public NodePathSegment withIndex(final int newIndex) {
         if (isRoot()) {
             throw new IllegalStateException("Root name cannot have an index!");
@@ -136,11 +174,13 @@ public class NodePathSegmentImpl implements NodePathSegment {
             return this;
         }
         else {
-            return new NodePathSegmentImpl(name, newIndex);
+            return new NodePathSegment(name, newIndex);
         }
     }
 
-    @Override
+    /**
+     * @return if this name is unindexed, a variant with index 1; otherwise, this
+     */
     public NodePathSegment forceIndex() {
         if (hasIndex() || isRoot()) {
             return this;
@@ -150,7 +190,9 @@ public class NodePathSegmentImpl implements NodePathSegment {
         }
     }
 
-    @Override
+    /**
+     * @return if this name has index 1, a variant with no index (i.e. index 0); otherwise, this
+     */
     public NodePathSegment suppressIndex() {
         if (index == 1) {
             return withIndex(0);
@@ -160,11 +202,9 @@ public class NodePathSegmentImpl implements NodePathSegment {
         }
     }
 
-    @Override
-    public boolean isRoot() {
-        return this == ROOT_NAME;
-    }
-
+    /**
+     * Treats unindexed name as equivalent to index of 1.
+     */
     @Override
     public int compareTo(final NodePathSegment o) {
         final int sVal = name.compareTo(o.getName());
@@ -184,11 +224,13 @@ public class NodePathSegmentImpl implements NodePathSegment {
     /**
      * Compare using {@link #UNINDEXED_FIRST_ORDER}.
      */
-    @Override
     public int compareUnindexedFirst(final NodePathSegment o) {
         return UNINDEXED_FIRST_ORDER.compare(this, o);
     }
 
+    /**
+     * Treats unindexed name as equivalent to index of 1.
+     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -198,7 +240,7 @@ public class NodePathSegmentImpl implements NodePathSegment {
         final NodePathSegment other;
         if (o instanceof String) {
             // allows for nodeName.equals("/other/path") and nodes.contains("/other/path"), etc.
-            other = NodePathSegmentImpl.get((String) o);
+            other = NodePathSegment.get((String) o);
         }
         else if (!(o instanceof NodePathSegment)) {
             return false;
@@ -220,7 +262,9 @@ public class NodePathSegmentImpl implements NodePathSegment {
                 && (other.getIndex() == 1 || other.getIndex() == 0);
     }
 
-    @Override
+    /**
+     * Equals comparison consistent with {@link #UNINDEXED_FIRST_ORDER}.
+     */
     public boolean equalsUnindexedSignificant(final Object o) {
         if (this == o) {
             return true;
@@ -229,7 +273,7 @@ public class NodePathSegmentImpl implements NodePathSegment {
         final NodePathSegment other;
         if (o instanceof String) {
             // allows for nodeName.equals("/other/path") and nodes.contains("/other/path"), etc.
-            other = NodePathSegmentImpl.get((String) o);
+            other = NodePathSegment.get((String) o);
         } else if (!(o instanceof NodePathSegment)) {
             return false;
         } else {
@@ -239,6 +283,9 @@ public class NodePathSegmentImpl implements NodePathSegment {
         return name.equals(other.getName()) && (index == other.getIndex());
     }
 
+    /**
+     * Treats unindexed name as equivalent to index of 1 (matching equals() and compareTo()).
+     */
     @Override
     public int hashCode() {
         return Objects.hash(name, (index == 0? 1: index));
