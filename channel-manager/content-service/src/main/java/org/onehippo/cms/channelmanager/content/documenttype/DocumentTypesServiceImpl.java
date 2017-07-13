@@ -25,6 +25,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,14 +45,18 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
         return INSTANCE;
     }
 
+    private DocumentTypesServiceImpl() {
+
+    }
+
     @Override
     public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)
             throws ErrorWithPayloadException {
-
+        System.out.println("get doctype " + id);
         try {
-            return DOCUMENT_TYPES.get(id, () -> getDocType(id, userSession, locale));
-        } catch (final ExecutionException e) {
-            throw new NotFoundException();
+            return DOCUMENT_TYPES.get(id, () -> createDocumentType(id, userSession, locale));
+        } catch (final ExecutionException ignore) {
+            throw new InternalServerErrorException();
         }
     }
 
@@ -60,7 +65,7 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
         DOCUMENT_TYPES.invalidateAll();
     }
 
-    private DocumentType getDocType(final String id, final Session userSession, final Locale locale) throws NotFoundException {
+    private DocumentType createDocumentType(final String id, final Session userSession, final Locale locale) throws NotFoundException {
         final DocumentType docType = new DocumentType();
         final ContentTypeContext context = ContentTypeContext.createForDocumentType(id, userSession, locale, docType)
                 .orElseThrow(NotFoundException::new);
