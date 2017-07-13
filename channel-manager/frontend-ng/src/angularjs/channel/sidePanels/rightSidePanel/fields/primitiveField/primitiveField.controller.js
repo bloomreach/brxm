@@ -46,11 +46,27 @@ class PrimitiveFieldCtrl {
     });
   }
 
-  focusPrimitive() {
+  focusPrimitive($event = null) {
     this.hasFocus = true;
     this.onFieldFocus();
 
     this.oldValues = angular.copy(this.fieldValues);
+
+    if ($event) {
+      $event.target = angular.element($event.target);
+
+      this.FieldService.setFocusedInput($event.target, $event.customFocus);
+
+      $event.target.on('blur.focusedInputBlurHandler', (e) => {
+        const relatedTarget = angular.element(e.relatedTarget);
+
+        if (!this.FieldService.shouldUnsetFocus(relatedTarget)) {
+          this.FieldService.unsetFocusedInput();
+        }
+
+        $event.target.off('.focusedInputBlurHandler'); // Unbind self
+      });
+    }
   }
 
   blurPrimitive() {

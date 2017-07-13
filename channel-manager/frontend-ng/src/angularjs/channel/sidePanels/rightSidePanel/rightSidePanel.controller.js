@@ -440,6 +440,8 @@ class RightSidePanelCtrl {
       this.ChannelService.setToolbarDisplayed(true);
     }
     this.isFullWidth = state;
+
+    this.FieldService.triggerInputFocus();
   }
 }
 

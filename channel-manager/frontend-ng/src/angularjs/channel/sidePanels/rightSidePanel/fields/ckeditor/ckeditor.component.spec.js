@@ -179,7 +179,12 @@ describe('CKEditor Component', () => {
     init();
     const onEditorFocus = getEventListener('focus');
     onEditorFocus();
-    expect($ctrl.onFocus).toHaveBeenCalled();
+    expect($ctrl.onFocus).toHaveBeenCalledWith({
+      $event: {
+        target: jasmine.any(Object),
+        customFocus: jasmine.any(Function),
+      },
+    });
   });
 
   it('calls the onBlur handler when blurred', () => {

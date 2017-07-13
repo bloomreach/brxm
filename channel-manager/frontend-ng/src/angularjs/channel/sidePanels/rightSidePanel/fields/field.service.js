@@ -23,8 +23,39 @@ class FieldService {
 
     this.documentId = null;
     this.activeDraftTimers = {};
-
     this.AUTODRAFT_DELAY = 2000;
+
+    this._focusedInput = null;
+    this._customFocusCallback = null;
+  }
+
+  shouldUnsetFocus(relatedTarget) {
+    const validSelectors = [
+      '.btn-fullwidth',
+      '.btn-normalwidth',
+    ];
+
+    return validSelectors.some(selector => relatedTarget.is(selector));
+  }
+
+  setFocusedInput(element, customFocusCallback = null) {
+    this._focusedInput = element;
+    this._customFocusCallback = customFocusCallback;
+  }
+
+  unsetFocusedInput() {
+    this._focusedInput = null;
+    this._customFocusCallback = null;
+  }
+
+  triggerInputFocus() {
+    if (this._focusedInput) {
+      if (this._customFocusCallback) {
+        this._customFocusCallback();
+      } else {
+        this._focusedInput.focus();
+      }
+    }
   }
 
   setDocumentId(documentId) {

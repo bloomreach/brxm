@@ -50,8 +50,8 @@
            ng-attr-maxlength="{{::$ctrl.fieldType.maxLength}}"
            aria-label="{{::$ctrl.fieldType.displayName}}"
            ng-required="::$ctrl.fieldType.required"
-           ng-focus="$ctrl.focusPrimitive()"
-           ng-blur="$ctrl.blurPrimitive()">
+           ng-focus="$ctrl.focusPrimitive($event)"
+           ng-blur="$ctrl.blurPrimitive($event)">
 
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
@@ -61,8 +61,8 @@
               aria-label="::$ctrl.fieldType.displayName"
               ng-required="::$ctrl.fieldType.required"
               md-no-resize
-              ng-focus="$ctrl.focusPrimitive()"
-              ng-blur="$ctrl.blurPrimitive()">
+              ng-focus="$ctrl.focusPrimitive($event)"
+              ng-blur="$ctrl.blurPrimitive($event)">
     </textarea>
 
     <ckeditor ng-switch-when="HTML"
@@ -73,8 +73,8 @@
               aria-label="::$ctrl.fieldType.displayName"
               config="::$ctrl.fieldType.config"
               is-required="::$ctrl.fieldType.required"
-              on-focus="$ctrl.focusPrimitive()"
-              on-blur="$ctrl.blurPrimitive()">
+              on-focus="$ctrl.focusPrimitive($event)"
+              on-blur="$ctrl.blurPrimitive($event)">
     </ckeditor>
 
     <div ng-if="::$last"
