@@ -120,7 +120,7 @@ describe('field service', () => {
       expect(FieldService._customFocusCallback).toEqual(null);
     });
 
-    describe('triggetInputFocus', () => {
+    describe('triggerInputFocus', () => {
       it('should not do anything if there is no focused input', () => {
         spyOn(FieldService, '_customFocusCallback');
 
