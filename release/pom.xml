@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>29</version>
+    <version>29.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
@@ -58,7 +58,7 @@
     <hippo.services.autoreload.version>4.0.0</hippo.services.autoreload.version>
     <hippo.services.contenttype.version>4.0.0</hippo.services.contenttype.version>
     <hippo.services.eventbus.version>4.0.0</hippo.services.eventbus.version>
-    <hippo.services.webfiles.version>4.0.0</hippo.services.webfiles.version>
+    <hippo.services.webfiles.version>4.0.1-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.services.htmlprocessor.version>1.0.0</hippo.services.htmlprocessor.version>
     <hippo.utilities.version>4.0.0</hippo.utilities.version>
     <hippo.testutils.version>1.0.0</hippo.testutils.version>
