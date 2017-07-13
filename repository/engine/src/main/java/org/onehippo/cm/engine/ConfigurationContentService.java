@@ -29,8 +29,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cm.model.ActionItem;
-import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.definition.ActionItem;
+import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -173,7 +173,7 @@ public class ConfigurationContentService {
      * @param module target module
      */
     private void sortContentDefinitions(final ModuleImpl module) {
-        module.getContentDefinitions().sort(Comparator.comparing(o -> o.getNode().getPath()));
+        module.getContentDefinitions().sort(Comparator.comparing(o -> o.getNode().getJcrPath()));
     }
 
     /**

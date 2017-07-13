@@ -22,9 +22,9 @@ import javax.jcr.Session;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.ContentSourceImpl;
+import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;

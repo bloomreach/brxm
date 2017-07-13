@@ -27,8 +27,8 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.NodeIterable;
-import org.onehippo.cm.model.ResourceInputProvider;
-import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

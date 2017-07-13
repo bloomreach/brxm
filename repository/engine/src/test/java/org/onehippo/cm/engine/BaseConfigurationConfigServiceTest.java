@@ -28,8 +28,8 @@ import javax.jcr.Value;
 
 import org.junit.Before;
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.ResourceInputProvider;
-import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;

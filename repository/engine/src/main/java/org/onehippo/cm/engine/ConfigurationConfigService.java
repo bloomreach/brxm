@@ -45,15 +45,14 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.definition.WebFileBundleDefinition;
-import org.onehippo.cm.model.impl.FileResourceInputProvider;
-import org.onehippo.cm.model.impl.path.NodePathSegmentImpl;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
-import org.onehippo.cm.model.path.NodePathSegment;
+import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.tree.ConfigurationProperty;
@@ -412,7 +411,7 @@ public class ConfigurationConfigService {
         for (String indexedChildName : updateChildren.keySet()) {
             ConfigurationNode baselineChild = baselineChildren.get(indexedChildName);
             final ConfigurationNode updateChild = updateChildren.get(indexedChildName);
-            final NodePathSegment nameAndIndex = NodePathSegmentImpl.get(indexedChildName);
+            final JcrPathSegment nameAndIndex = JcrPathSegment.get(indexedChildName);
             final Node existingChildNode = getChildWithIndex(targetNode, nameAndIndex.getName(), nameAndIndex.getIndex());
             final Node childNode;
 
@@ -480,7 +479,7 @@ public class ConfigurationConfigService {
         }
 
         for (String indexedChildName : indexedNamesOfToBeRemovedChildren) {
-            final NodePathSegment nameAndIndex = NodePathSegmentImpl.get(indexedChildName);
+            final JcrPathSegment nameAndIndex = JcrPathSegment.get(indexedChildName);
             final Node childNode = getChildWithIndex(targetNode, nameAndIndex.getName(), nameAndIndex.getIndex());
             if (childNode != null) {
                 if (!baselineChildren.containsKey(indexedChildName)) {

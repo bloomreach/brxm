@@ -34,7 +34,7 @@ import javax.jcr.ValueFactory;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ExportModuleContext;
 import org.onehippo.cm.model.definition.ContentDefinition;

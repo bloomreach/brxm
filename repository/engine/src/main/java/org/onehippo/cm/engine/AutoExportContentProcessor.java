@@ -34,7 +34,7 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cm.engine.autoexport.AutoExportConfig;
 import org.onehippo.cm.model.Group;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
@@ -220,7 +220,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
                 continue;
             }
             // use Configuration.filterUuidPaths during delta computation (suppressing export of jcr:uuid)
-            if (propName.equals(JCR_UUID) && autoExportConfig.shouldFilterUuid(configNode.getPath().toMinimallyIndexedPath().toString())) {
+            if (propName.equals(JCR_UUID) && autoExportConfig.shouldFilterUuid(configNode.getJcrPath().toMinimallyIndexedPath().toString())) {
                 continue;
             }
 
@@ -385,7 +385,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
         for (final String childConfigNode : configNode.getNodes().keySet()) {
             if (!jcrNode.hasNode(childConfigNode)) {
                 final DefinitionNodeImpl childNode = configSource
-                        .getOrCreateDefinitionFor(configNode.getPath().resolve(childConfigNode));
+                        .getOrCreateDefinitionFor(configNode.getJcrPath().resolve(childConfigNode));
                 if (childNode == null) {
                     log.error("Produced a null result for path: {}!",
                             jcrNode.getPath()+"/"+childConfigNode,
@@ -465,7 +465,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
     private void setOrderBefore(final ConfigurationNodeImpl configNode, final String childName, final String beforeName,
                                 final ConfigSourceImpl configSource) {
         final DefinitionNodeImpl childNode = configSource
-                .getOrCreateDefinitionFor(configNode.getPath().resolve(childName));
+                .getOrCreateDefinitionFor(configNode.getJcrPath().resolve(childName));
         childNode.setOrderBefore(beforeName);
     }
 

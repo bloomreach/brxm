@@ -33,9 +33,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cm.model.ActionType;
+import org.onehippo.cm.model.definition.ActionType;
+import org.onehippo.cm.model.impl.path.JcrPath;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
-import org.onehippo.cm.model.path.NodePath;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.PropertyType;
@@ -54,8 +54,8 @@ import static org.onehippo.cm.engine.ValueProcessor.isReferenceTypeProperty;
 import static org.onehippo.cm.engine.ValueProcessor.isUuidInUse;
 import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
 import static org.onehippo.cm.engine.ValueProcessor.valuesFrom;
-import static org.onehippo.cm.model.ActionType.APPEND;
-import static org.onehippo.cm.model.ActionType.DELETE;
+import static org.onehippo.cm.model.definition.ActionType.APPEND;
+import static org.onehippo.cm.model.definition.ActionType.DELETE;
 
 /**
  * Applies definition nodes to JCR
@@ -151,7 +151,7 @@ public class JcrContentProcessor {
     }
 
     private Node calculateParentNode(DefinitionNode definitionNode, final Session session) throws RepositoryException {
-        final NodePath parentPath = definitionNode.getPath().getParent();
+        final JcrPath parentPath = JcrPath.get(definitionNode.getPath()).getParent();
         if (parentPath.isRoot()) {
             return session.getRootNode();
         } else {

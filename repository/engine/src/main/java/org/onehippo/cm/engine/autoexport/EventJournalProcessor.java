@@ -52,7 +52,7 @@ import org.hippoecm.repository.api.RevisionEventJournal;
 import org.onehippo.cm.engine.AutoExportContentProcessor;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.JcrResourceInputProvider;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;

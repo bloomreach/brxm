@@ -30,7 +30,7 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.cm.model.impl.ContentSourceImpl;
+import org.onehippo.cm.model.impl.source.ContentSourceImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
