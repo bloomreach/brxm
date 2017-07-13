@@ -549,6 +549,16 @@ li.hippo-console-menu-actions-save.session-changes a {
   padding: 20px;
 }
 
+.hippo-console-editor .panel-message {
+  background-image: url("dialog-information-16.png");
+  background-repeat: no-repeat;
+  background-position: 10px 10px;
+  background-color: #fff8d5;
+  padding: 10px 10px 10px 35px;
+  border: 1px solid #69849f;
+  margin-bottom: 15px;
+}
+
 .hippo-console-editor h3 {
   font-size: 14px;
   color: #32629b;
