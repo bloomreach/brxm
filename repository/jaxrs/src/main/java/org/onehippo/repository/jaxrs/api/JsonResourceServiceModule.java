@@ -52,11 +52,11 @@ public abstract class JsonResourceServiceModule extends AbstractReconfigurableDa
     private final List<JcrEventListener> listeners = new ArrayList<>();
 
     @Override
-    protected final synchronized void doConfigure(final Node moduleConfig) throws RepositoryException {
+    protected final void doConfigure(final Node moduleConfig) throws RepositoryException {
         endpointAddress = RepositoryJaxrsEndpoint.qualifiedAddress(
                 JcrUtils.getStringProperty(moduleConfig, ENDPOINT_ADDRESS, moduleConfig.getParent().getName()));
         if (jaxrsEndpoint != null) {
-            String currentAddress = jaxrsEndpoint.getAddress();
+            final String currentAddress = jaxrsEndpoint.getAddress();
             if (!endpointAddress.equals(currentAddress)) {
                 RepositoryJaxrsService.removeEndpoint(currentAddress);
                 jaxrsEndpoint.address(endpointAddress);
@@ -81,14 +81,14 @@ public abstract class JsonResourceServiceModule extends AbstractReconfigurableDa
         listeners.forEach(listener -> listener.attach(observationManager));
     }
 
-    protected abstract Object getRestResource(ManagedUserSessionInvoker managedUserSessionInvoker);
+    protected abstract Object getRestResource(final ManagedUserSessionInvoker sessionInvoker);
 
     @Override
     protected void doShutdown() {
         try {
             final ObservationManager observationManager = session.getWorkspace().getObservationManager();
             listeners.forEach(listener -> listener.detach(observationManager));
-        } catch (final RepositoryException e) {
+        } catch (final RepositoryException ignore) {
             log.info("Failed to retrieve observation manager, can not detach event listeners.");
         }
 
