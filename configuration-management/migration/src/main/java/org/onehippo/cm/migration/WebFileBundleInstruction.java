@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 import org.onehippo.cm.model.Constants;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 
 public class WebFileBundleInstruction extends InitializeInstruction {
 

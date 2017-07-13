@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model;
+package org.onehippo.cm.model.source;
 
 import org.onehippo.cm.model.definition.Definition;
 import org.onehippo.cm.model.definition.DefinitionType;

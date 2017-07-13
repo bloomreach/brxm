@@ -13,13 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model.impl;
+package org.onehippo.cm.model.impl.source;
 
-import org.onehippo.cm.model.source.SourceType;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.path.NodePathImpl;
+import org.onehippo.cm.model.impl.path.JcrPath;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
-import org.onehippo.cm.model.path.NodePath;
+import org.onehippo.cm.model.source.SourceType;
 
 public class ContentSourceImpl extends SourceImpl {
 
@@ -46,10 +46,10 @@ public class ContentSourceImpl extends SourceImpl {
     }
 
     public ContentDefinitionImpl addContentDefinition(final String contentPath) {
-        return addContentDefinition(NodePathImpl.get(contentPath));
+        return addContentDefinition(JcrPath.get(contentPath));
     }
 
-    public ContentDefinitionImpl addContentDefinition(final NodePath contentPath) {
+    public ContentDefinitionImpl addContentDefinition(final JcrPath contentPath) {
         final ContentDefinitionImpl cd = addContentDefinition();
 
         DefinitionNodeImpl defNode = new DefinitionNodeImpl(contentPath, contentPath.getLastSegment(), cd);

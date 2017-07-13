@@ -13,12 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model.impl;
+package org.onehippo.cm.model.impl.definition;
 
 import java.util.Objects;
 
-import org.onehippo.cm.model.action.ActionItem;
-import org.onehippo.cm.model.action.ActionType;
+import org.onehippo.cm.model.definition.ActionItem;
+import org.onehippo.cm.model.definition.ActionType;
 
 public class ActionItemImpl implements ActionItem {
 

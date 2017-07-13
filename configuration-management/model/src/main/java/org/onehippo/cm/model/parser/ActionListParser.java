@@ -21,10 +21,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.ActionItem;
-import org.onehippo.cm.model.ActionType;
-import org.onehippo.cm.model.impl.ActionItemImpl;
+import org.onehippo.cm.model.definition.ActionItem;
+import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.definition.ActionItemImpl;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;

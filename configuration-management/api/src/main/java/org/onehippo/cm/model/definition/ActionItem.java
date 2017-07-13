@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model.action;
+package org.onehippo.cm.model.definition;
 
 /**
  * Represents an action item, which describes a bootstrap behavior {@link ActionType} for a specific path.

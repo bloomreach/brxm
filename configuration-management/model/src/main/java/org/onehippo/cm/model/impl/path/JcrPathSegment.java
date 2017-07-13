@@ -23,24 +23,24 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
- * Represents a segment of a {@link NodePath}, which includes a node name String and possibly a same-named-sibling index.
+ * Represents a segment of a {@link JcrPath}, which includes a node name String and possibly a same-named-sibling index.
  * Note that implementations of this class should implement a non-standard natural ordering and definitions of
  * {@link #equals(Object)} and {@link #hashCode()} which treat the index value 0 (representing unindexed names) and 1
  * (representing the first indexed same-named-sibling) as strictly equivalent. Client code that wishes to treat these
- * states as distinct must use the {@link #compareUnindexedFirst(NodePathSegment)} and
+ * states as distinct must use the {@link #compareUnindexedFirst(JcrPathSegment)} and
  * {@link #equalsUnindexedSignificant(Object)} methods or the {@link #UNINDEXED_FIRST_ORDER} comparator.
  */
-public class NodePathSegment implements Comparable<NodePathSegment> {
+public class JcrPathSegment implements Comparable<JcrPathSegment> {
     /**
      * Comparator that treats unindexed segments as distinct (and less-than) the same name with index 1.
      */
-    public static final Comparator<NodePathSegment> UNINDEXED_FIRST_ORDER =
-            Comparator.comparing(NodePathSegment::getName).thenComparingInt(NodePathSegment::getIndex);
+    public static final Comparator<JcrPathSegment> UNINDEXED_FIRST_ORDER =
+            Comparator.comparing(JcrPathSegment::getName).thenComparingInt(JcrPathSegment::getIndex);
 
     /**
-     * A constant value representing the name of the JCR root node, which typically does not appear explicitly in a {@link NodePath}.
+     * A constant value representing the name of the JCR root node, which typically does not appear explicitly in a {@link JcrPath}.
      */
-    public static final NodePathSegment ROOT_NAME = new NodePathSegment("", 0);
+    public static final JcrPathSegment ROOT_NAME = new JcrPathSegment("", 0);
 
     // todo: is it true that node indices cannot have leading zeros?
     private static Pattern pattern = Pattern.compile("^([^\\[\\]]+)(\\[([1-9][0-9]*)])?$");
@@ -48,7 +48,7 @@ public class NodePathSegment implements Comparable<NodePathSegment> {
     /**
      * Static factory for NodePathSegment instances; parses the index from the input String.
      */
-    public static NodePathSegment get(final String fullName) {
+    public static JcrPathSegment get(final String fullName) {
         if (fullName == null) {
             throw new IllegalArgumentException("Name must not be null!");
         }
@@ -57,14 +57,14 @@ public class NodePathSegment implements Comparable<NodePathSegment> {
             return ROOT_NAME;
         }
         else {
-            return new NodePathSegment(fullName);
+            return new JcrPathSegment(fullName);
         }
     }
 
     /**
      * Static factory for NodePathSegment instances with separate index param.
      */
-    public static NodePathSegment get(final String name, final int index) {
+    public static JcrPathSegment get(final String name, final int index) {
         if (name == null) {
             throw new IllegalArgumentException("Name must not be null!");
         }
@@ -73,7 +73,7 @@ public class NodePathSegment implements Comparable<NodePathSegment> {
             return ROOT_NAME;
         }
         else {
-            return new NodePathSegment(name, index);
+            return new JcrPathSegment(name, index);
         }
     }
 
@@ -89,7 +89,7 @@ public class NodePathSegment implements Comparable<NodePathSegment> {
      * @param name an unindexed node name
      * @param index the desired new index
      */
-    private NodePathSegment(final String name, final int index) {
+    private JcrPathSegment(final String name, final int index) {
         this.name = name.intern();
         this.index = index;
         checkArgs();
@@ -99,7 +99,7 @@ public class NodePathSegment implements Comparable<NodePathSegment> {
      * Create a new instance by splitting a possibly-indexed name.
      * @param fullName a JCR node name with or without an index
      */
-    private NodePathSegment(final String fullName) {
+    private JcrPathSegment(final String fullName) {
         final Pair<String, Integer> split = splitIndexedName(fullName);
         this.name = split.getLeft().intern();
         this.index = split.getRight();
@@ -162,10 +162,10 @@ public class NodePathSegment implements Comparable<NodePathSegment> {
     }
 
     /**
-     * @param newIndex the index for the new instance of {@link NodePathSegment}
-     * @return a new {@link NodePathSegment} instance with the same name as this instance and the given index
+     * @param newIndex the index for the new instance of {@link JcrPathSegment}
+     * @return a new {@link JcrPathSegment} instance with the same name as this instance and the given index
      */
-    public NodePathSegment withIndex(final int newIndex) {
+    public JcrPathSegment withIndex(final int newIndex) {
         if (isRoot()) {
             throw new IllegalStateException("Root name cannot have an index!");
         }
@@ -174,14 +174,14 @@ public class NodePathSegment implements Comparable<NodePathSegment> {
             return this;
         }
         else {
-            return new NodePathSegment(name, newIndex);
+            return new JcrPathSegment(name, newIndex);
         }
     }
 
     /**
      * @return if this name is unindexed, a variant with index 1; otherwise, this
      */
-    public NodePathSegment forceIndex() {
+    public JcrPathSegment forceIndex() {
         if (hasIndex() || isRoot()) {
             return this;
         }
@@ -193,7 +193,7 @@ public class NodePathSegment implements Comparable<NodePathSegment> {
     /**
      * @return if this name has index 1, a variant with no index (i.e. index 0); otherwise, this
      */
-    public NodePathSegment suppressIndex() {
+    public JcrPathSegment suppressIndex() {
         if (index == 1) {
             return withIndex(0);
         }
@@ -206,7 +206,7 @@ public class NodePathSegment implements Comparable<NodePathSegment> {
      * Treats unindexed name as equivalent to index of 1.
      */
     @Override
-    public int compareTo(final NodePathSegment o) {
+    public int compareTo(final JcrPathSegment o) {
         final int sVal = name.compareTo(o.getName());
         if (sVal != 0) {
             return sVal;
@@ -224,7 +224,7 @@ public class NodePathSegment implements Comparable<NodePathSegment> {
     /**
      * Compare using {@link #UNINDEXED_FIRST_ORDER}.
      */
-    public int compareUnindexedFirst(final NodePathSegment o) {
+    public int compareUnindexedFirst(final JcrPathSegment o) {
         return UNINDEXED_FIRST_ORDER.compare(this, o);
     }
 
@@ -237,16 +237,16 @@ public class NodePathSegment implements Comparable<NodePathSegment> {
             return true;
         }
 
-        final NodePathSegment other;
+        final JcrPathSegment other;
         if (o instanceof String) {
             // allows for nodeName.equals("/other/path") and nodes.contains("/other/path"), etc.
-            other = NodePathSegment.get((String) o);
+            other = JcrPathSegment.get((String) o);
         }
-        else if (!(o instanceof NodePathSegment)) {
+        else if (!(o instanceof JcrPathSegment)) {
             return false;
         }
         else {
-            other = (NodePathSegment) o;
+            other = (JcrPathSegment) o;
         }
 
         if (!name.equals(other.getName())) {
@@ -270,14 +270,14 @@ public class NodePathSegment implements Comparable<NodePathSegment> {
             return true;
         }
 
-        final NodePathSegment other;
+        final JcrPathSegment other;
         if (o instanceof String) {
             // allows for nodeName.equals("/other/path") and nodes.contains("/other/path"), etc.
-            other = NodePathSegment.get((String) o);
-        } else if (!(o instanceof NodePathSegment)) {
+            other = JcrPathSegment.get((String) o);
+        } else if (!(o instanceof JcrPathSegment)) {
             return false;
         } else {
-            other = (NodePathSegment) o;
+            other = (JcrPathSegment) o;
         }
 
         return name.equals(other.getName()) && (index == other.getIndex());

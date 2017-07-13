@@ -15,7 +15,7 @@
  */
 package org.onehippo.cm.model.definition;
 
-import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.source.Source;
 
 /**
  * Represents a definition as found in a Source.

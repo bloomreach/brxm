@@ -25,9 +25,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.path.NodePathSegmentImpl;
-import org.onehippo.cm.model.path.NodePath;
-import org.onehippo.cm.model.path.NodePathSegment;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.PropertyType;
@@ -54,11 +53,11 @@ public class ConfigurationTreeBuilder {
 
     private final ConfigurationNodeImpl root;
 
-    private final Map<NodePath, DefinitionNodeImpl> delayedOrdering = new LinkedHashMap<>();
+    private final Map<JcrPath, DefinitionNodeImpl> delayedOrdering = new LinkedHashMap<>();
 
     public ConfigurationTreeBuilder() {
         root = new ConfigurationNodeImpl();
-        root.setName(NodePathSegmentImpl.ROOT_NAME);
+        root.setName(JcrPathSegment.ROOT_NAME);
         root.setResidualNodeCategory(ConfigurationItemCategory.SYSTEM);
         root.setIgnoreReorderedChildren(true);
 
@@ -110,7 +109,7 @@ public class ConfigurationTreeBuilder {
             List<String> msgs = new ArrayList<>();
             for (final DefinitionNodeImpl definitionNode : delayedOrdering.values()) {
                 msgs.add(String.format("Invalid orderBefore: '%s' for node '%s' defined in '%s': no sibling named '%s'.",
-                        definitionNode.getOrderBefore(), definitionNode.getPath(), definitionNode.getOrigin(), definitionNode.getOrderBefore()));
+                        definitionNode.getOrderBefore(), definitionNode.getJcrPath(), definitionNode.getOrigin(), definitionNode.getOrderBefore()));
             }
             throw new IllegalArgumentException(String.join("\n", msgs));
         }
@@ -148,7 +147,7 @@ public class ConfigurationTreeBuilder {
             return;
         } else if (definitionNode.isDelete() && !node.isNew()) {
             String msg = String.format("%s: Trying to delete AND merge node %s defined before by %s.",
-                    definitionNode.getOrigin(), definitionNode.getPath(), node.getOrigin());
+                    definitionNode.getOrigin(), definitionNode.getJcrPath(), node.getOrigin());
             throw new IllegalArgumentException(msg);
         }
 
@@ -172,10 +171,10 @@ public class ConfigurationTreeBuilder {
             if (node.getIgnoreReorderedChildren() != null || definitionNode.getIgnoreReorderedChildren() == node.getIgnoreReorderedChildren()) {
                 if (definitionNode.getIgnoreReorderedChildren() == node.getIgnoreReorderedChildren()) {
                     logger.warn("Redundant '{}: {}' for node '{}' defined in '{}'", META_IGNORE_REORDERED_CHILDREN,
-                            node.getIgnoreReorderedChildren(), node.getPath(), definitionNode.getOrigin());
+                            node.getIgnoreReorderedChildren(), node.getJcrPath(), definitionNode.getOrigin());
                 } else {
                     logger.warn("Overriding '{}' for node '{}' defined in '{}' which was {} before.",
-                            META_IGNORE_REORDERED_CHILDREN, node.getPath(), definitionNode.getOrigin(),
+                            META_IGNORE_REORDERED_CHILDREN, node.getJcrPath(), definitionNode.getOrigin(),
                             node.getIgnoreReorderedChildren());
                 }
             }
@@ -188,19 +187,19 @@ public class ConfigurationTreeBuilder {
             final String orderBefore = definitionNode.getOrderBefore();
             if (parent.getIgnoreReorderedChildren() != null && parent.getIgnoreReorderedChildren()) {
                 logger.warn("Potential unnecessary orderBefore: '{}' for node '{}' defined in '{}': parent '{}' already configured with '{}: true'",
-                        orderBefore, node.getPath(), definitionNode.getOrigin(), parent.getPath(), META_IGNORE_REORDERED_CHILDREN);
+                        orderBefore, node.getJcrPath(), definitionNode.getOrigin(), parent.getJcrPath(), META_IGNORE_REORDERED_CHILDREN);
             }
             final boolean orderFirst = "".equals(orderBefore);
             final String orderBeforeIndexedName = createIndexedName(orderBefore);
             if (!orderFirst) {
                 if (node.getName().equals(orderBeforeIndexedName)) {
                     final String msg = String.format("Invalid orderBefore: '%s' for node '%s' defined in '%s': targeting this node itself.",
-                            orderBeforeIndexedName, node.getPath(), definitionNode.getOrigin());
+                            orderBeforeIndexedName, node.getJcrPath(), definitionNode.getOrigin());
                     throw new IllegalArgumentException(msg);
                 }
                 if (parent.getNode(orderBeforeIndexedName) == null) {
                     // delay reporting an error for a missing sibling until after the module is done processing
-                    delayedOrdering.put(definitionNode.getPath().resolveSibling(orderBeforeIndexedName).toFullyIndexedPath(),
+                    delayedOrdering.put(definitionNode.getJcrPath().resolveSibling(orderBeforeIndexedName).toFullyIndexedPath(),
                             definitionNode);
                 }
             }
@@ -208,7 +207,7 @@ public class ConfigurationTreeBuilder {
         }
 
         // todo: use NodePath here
-        final NodePath indexedPath = definitionNode.getPath().toFullyIndexedPath();
+        final JcrPath indexedPath = definitionNode.getJcrPath().toFullyIndexedPath();
         if (delayedOrdering.containsKey(indexedPath)) {
             // this node was referenced in a delayed ordering, so we need to apply that ordering now
             // apply node ordering from the perspective of the other, saved node
@@ -231,12 +230,12 @@ public class ConfigurationTreeBuilder {
             if (children.containsKey(indexedName)) {
                 child = children.get(indexedName);
                 if (child.isDeleted()) {
-                    logger.warn("Trying to modify already deleted node '{}', skipping.", child.getPath());
+                    logger.warn("Trying to modify already deleted node '{}', skipping.", child.getJcrPath());
                     continue;
                 }
             } else {
                 if (isAndRemainsNonConfigurationNode(node, indexedName, definitionChild.getCategory())) {
-                    logger.warn("Trying to modify non-configuration node '{}', skipping.", definitionChild.getPath());
+                    logger.warn("Trying to modify non-configuration node '{}', skipping.", definitionChild.getJcrPath());
                     continue;
                 }
                 child = createChildNode(node, indexedName, definitionChild);
@@ -257,7 +256,7 @@ public class ConfigurationTreeBuilder {
                 if (first && orderFirst) {
                     // src already first
                     logger.warn("Unnecessary orderBefore: '' (first) for node '{}' defined in '{}': already first child of '{}'.",
-                            node.getPath(), definitionNode.getOrigin(), parent.getPath());
+                            node.getJcrPath(), definitionNode.getOrigin(), parent.getJcrPath());
                     break;
                 }
                 // track src for next loop, once
@@ -271,7 +270,7 @@ public class ConfigurationTreeBuilder {
                 if (prevIsSrc) {
                     // previous was src, current is dest: already is right order
                     logger.warn("Unnecessary orderBefore: '{}' for node '{}' defined in '{}': already ordered before sibling '{}'.",
-                            orderBefore, node.getPath(), definitionNode.getOrigin(), orderBeforeIndexedName);
+                            orderBefore, node.getJcrPath(), definitionNode.getOrigin(), orderBeforeIndexedName);
                 } else {
                     // dest < src: reorder
                     parent.orderBefore(node.getName(), orderBeforeIndexedName);
@@ -286,10 +285,10 @@ public class ConfigurationTreeBuilder {
 
     private void keepOnlyFirstSns(final ConfigurationNodeImpl node, final String indexedName) {
         if (SnsUtils.hasSns(indexedName, node.getNodes().keySet())) {
-            final NodePathSegment nameAndIndex = NodePathSegmentImpl.get(indexedName);
+            final JcrPathSegment nameAndIndex = JcrPathSegment.get(indexedName);
             final List<String> namesToDelete = new ArrayList<>();
             for (String siblingIndexedName : node.getNodes().keySet()) {
-                final NodePathSegment siblingNameAndIndex = NodePathSegmentImpl.get(siblingIndexedName);
+                final JcrPathSegment siblingNameAndIndex = JcrPathSegment.get(siblingIndexedName);
                 if (siblingNameAndIndex.getName().equals(nameAndIndex.getName()) && siblingNameAndIndex.getIndex() > 1) {
                     namesToDelete.add(siblingIndexedName);
                 }
@@ -334,8 +333,8 @@ public class ConfigurationTreeBuilder {
 
     private ConfigurationNodeImpl getOrCreateRootForDefinition(final ContentDefinitionImpl definition) {
         final DefinitionNodeImpl definitionNode = definition.getNode();
-        final NodePath definitionRootPath = definitionNode.getPath();
-        final NodePathSegment[] pathSegments = definitionRootPath.stream().toArray(NodePathSegment[]::new);
+        final JcrPath definitionRootPath = definitionNode.getJcrPath();
+        final JcrPathSegment[] pathSegments = definitionRootPath.stream().toArray(JcrPathSegment[]::new);
         int segmentsConsumed = 0;
 
         ConfigurationNodeImpl rootForDefinition = root;
@@ -347,7 +346,7 @@ public class ConfigurationTreeBuilder {
 
         if (rootForDefinition.isDeleted()) {
             logger.warn("Content definition rooted at '{}' conflicts with deleted node at '{}', skipping.",
-                    definitionNode.getPath(), rootForDefinition.getPath());
+                    definitionNode.getJcrPath(), rootForDefinition.getJcrPath());
             return null;
         }
 
@@ -356,14 +355,14 @@ public class ConfigurationTreeBuilder {
             // that's unsupported, because it is likely to create models that cannot be persisted to JCR.
             String msg = String.format("%s contains definition rooted at unreachable node '%s'. "
                             + "Closest ancestor is at '%s'.", definition.getOrigin(), definitionRootPath,
-                    rootForDefinition.getPath());
+                    rootForDefinition.getJcrPath());
             throw new IllegalStateException(msg);
         }
 
         if (pathSegments.length > segmentsConsumed) {
-            final NodePathSegment nodeName = pathSegments[segmentsConsumed];
+            final JcrPathSegment nodeName = pathSegments[segmentsConsumed];
             if (isAndRemainsNonConfigurationNode(rootForDefinition, nodeName.toString(), definition.getNode().getCategory())) {
-                logger.warn("Trying to modify non-configuration node '{}', skipping.", definition.getNode().getPath());
+                logger.warn("Trying to modify non-configuration node '{}', skipping.", definition.getNode().getJcrPath());
                 return null;
             }
             rootForDefinition =
@@ -383,7 +382,7 @@ public class ConfigurationTreeBuilder {
 
         if (definitionNode.isDelete()) {
             final String msg = String.format("%s: Trying to %sdelete node %s that does not exist.",
-                    definitionNode.getOrigin(), definitionNode.isDeleted() ? "" : "merge ", definitionNode.getPath());
+                    definitionNode.getOrigin(), definitionNode.isDeleted() ? "" : "merge ", definitionNode.getJcrPath());
             logger.warn(msg);
             if (definitionNode.isDeleted()) {
                 return null;
@@ -402,12 +401,12 @@ public class ConfigurationTreeBuilder {
             }
         }
 
-        final NodePathSegment nameAndIndex = NodePathSegmentImpl.get(name);
+        final JcrPathSegment nameAndIndex = JcrPathSegment.get(name);
         if (nameAndIndex.getIndex() > 1) {
             final String expectedSibling = createIndexedName(nameAndIndex.getName(), nameAndIndex.getIndex() - 1);
             if (parent.getNode(expectedSibling) == null) {
                 final String msg = String.format("%s defines node '%s', but no sibling named '%s' was found",
-                        definitionNode.getOrigin(), definitionNode.getPath(), expectedSibling);
+                        definitionNode.getOrigin(), definitionNode.getJcrPath(), expectedSibling);
                 throw new IllegalStateException(msg);
             }
         }
@@ -436,7 +435,7 @@ public class ConfigurationTreeBuilder {
 
             if (property.isDeleted()) {
                 logger.warn("Property '{}' defined in '{}' has already been deleted. This property is not re-created.",
-                        property.getPath(), definitionProperty.getOrigin());
+                        property.getJcrPath(), definitionProperty.getOrigin());
             }
 
             // property already exists, so its parent has this property registered as configuration
@@ -469,7 +468,7 @@ public class ConfigurationTreeBuilder {
             final ConfigurationItemCategory category = definitionProperty.getCategory();
             if (isAndRemainsNonConfigurationProperty(parent, definitionProperty.getName(), category)) {
                 logger.warn("Trying to modify non-configuration property '{}', defined in '{}'. Skipping.",
-                        definitionProperty.getPath(), definitionProperty.getOrigin());
+                        definitionProperty.getJcrPath(), definitionProperty.getOrigin());
                 return this;
             }
             if (category != null) {
@@ -483,7 +482,7 @@ public class ConfigurationTreeBuilder {
 
             if (op == DELETE) {
                 final String msg = String.format("%s: Trying to delete property %s that does not exist.",
-                        definitionProperty.getOrigin(), definitionProperty.getPath());
+                        definitionProperty.getOrigin(), definitionProperty.getJcrPath());
                 logger.warn(msg);
                 return this;
             }
@@ -526,7 +525,7 @@ public class ConfigurationTreeBuilder {
         } else {
             final String msg = String.format("Property %s already exists with type '%s', as determined by %s, "
                             + "but type '%s' is requested in %s.",
-                    property.getPath(), property.getType(), property.getOrigin(), definitionProperty.getType(),
+                    property.getJcrPath(), property.getType(), property.getOrigin(), definitionProperty.getType(),
                     definitionProperty.getOrigin());
             throw new IllegalStateException(msg);
         }
@@ -541,7 +540,7 @@ public class ConfigurationTreeBuilder {
         } else {
             final String msg = String.format("Property %s already exists with value type '%s', "
                             + "as determined by %s, but value type '%s' is requested in %s.",
-                    property.getPath(), property.getValueType(), property.getOrigin(),
+                    property.getJcrPath(), property.getValueType(), property.getOrigin(),
                     definitionProperty.getValueType(), definitionProperty.getOrigin());
             throw new IllegalStateException(msg);
         }
@@ -555,7 +554,7 @@ public class ConfigurationTreeBuilder {
                 && !isOverride) {
             final String msg = String.format("Property %s is already defined on node %s as determined by %s, but change is requested in %s. "
                             + "Use 'operation: override' if you really intend to change the value of this property.",
-                    JCR_PRIMARYTYPE, property.getParent().getPath(), property.getOrigin(), definitionProperty.getOrigin());
+                    JCR_PRIMARYTYPE, property.getParent().getJcrPath(), property.getOrigin(), definitionProperty.getOrigin());
             throw new IllegalStateException(msg);
         }
     }
@@ -576,7 +575,7 @@ public class ConfigurationTreeBuilder {
                 final String msg = String.format("Property %s is already defined on node %s, and replace operation of "
                                 + "%s would remove values %s. Use 'operation: override' if you really intend to remove "
                                 + "these values.",
-                        JCR_MIXINTYPES, property.getParent().getPath(), definitionProperty.getOrigin(), missingMixins.toString());
+                        JCR_MIXINTYPES, property.getParent().getJcrPath(), definitionProperty.getOrigin(), missingMixins.toString());
                 throw new IllegalStateException(msg);
             }
         }
@@ -585,7 +584,7 @@ public class ConfigurationTreeBuilder {
     private void requirePrimaryType(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
         if (node.getProperty(JCR_PRIMARYTYPE) == null) {
             final String msg = String.format("Node '%s' defined at '%s' is missing the required %s property.",
-                    definitionNode.getPath(), definitionNode.getOrigin(), JCR_PRIMARYTYPE);
+                    definitionNode.getJcrPath(), definitionNode.getOrigin(), JCR_PRIMARYTYPE);
             throw new IllegalStateException(msg);
         }
     }
@@ -596,7 +595,7 @@ public class ConfigurationTreeBuilder {
         final ValueImpl[] existingValues = property.getValues();
         if (existingValues == null) {
             logger.warn("Property '{}' defined in '{}' claims to ADD values, but property doesn't exist yet. Applying default behaviour.",
-                    definitionProperty.getPath(), definitionProperty.getOrigin());
+                    definitionProperty.getJcrPath(), definitionProperty.getOrigin());
             property.setValues(definitionProperty.getValues());
         } else {
             List<ValueImpl> values = Arrays.stream(existingValues).collect(Collectors.toList());
@@ -618,9 +617,9 @@ public class ConfigurationTreeBuilder {
             if (existingValue != null) {
                 if (definitionProperty.getValue().equals(property.getValue())
                         // suppress warning for translations special case, which would be verbose and difficult to avoid
-                        && !property.getPath().startsWith("/hippo:configuration/hippo:translations/")) {
+                        && !property.getJcrPath().startsWith("/hippo:configuration/hippo:translations/")) {
                     logger.warn("Property '{}' defined in '{}' specifies value equivalent to existing property, defined in '{}'.",
-                            definitionProperty.getPath(), definitionProperty.getOrigin(), property.getOrigin());
+                            definitionProperty.getJcrPath(), definitionProperty.getOrigin(), property.getOrigin());
                 }
             }
         } else {
@@ -634,7 +633,7 @@ public class ConfigurationTreeBuilder {
                         }
                     }
                     logger.warn("Property '{}' defined in '{}' specifies values equivalent to existing property, defined in '{}'.",
-                            definitionProperty.getPath(), definitionProperty.getOrigin(), property.getOrigin());
+                            definitionProperty.getJcrPath(), definitionProperty.getOrigin(), property.getOrigin());
                 }
             }
         }

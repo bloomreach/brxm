@@ -21,10 +21,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.ResourceInputProvider;
-import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

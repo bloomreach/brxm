@@ -22,9 +22,9 @@ import java.nio.file.Path;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.migration.ResourceProcessor;
 import org.onehippo.cm.model.MigrationMode;
-import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.SourceType;
-import org.onehippo.cm.model.impl.FileResourceInputProvider;
+import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
+import org.onehippo.cm.model.source.SourceType;
 
 import static org.onehippo.cm.migration.ResourceProcessor.deleteEmptyDirectory;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;

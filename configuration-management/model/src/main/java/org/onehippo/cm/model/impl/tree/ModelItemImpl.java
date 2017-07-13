@@ -15,13 +15,13 @@
  */
 package org.onehippo.cm.model.impl.tree;
 
-import org.onehippo.cm.model.impl.path.NodePathSegmentImpl;
-import org.onehippo.cm.model.path.NodePathSegment;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
 import org.onehippo.cm.model.tree.ModelItem;
 
 public abstract class ModelItemImpl implements ModelItem {
 
-    protected NodePathSegment name;
+    protected JcrPathSegment name;
 
     @Override
     public String getName() {
@@ -29,17 +29,19 @@ public abstract class ModelItemImpl implements ModelItem {
     }
 
     public void setName(final String name) {
-        this.name = NodePathSegmentImpl.get(name);
+        this.name = JcrPathSegment.get(name);
     }
 
-    public void setName(final NodePathSegment name) {
+    public void setName(final JcrPathSegment name) {
         if (name == null) {
             throw new IllegalArgumentException("Item name must not be null!");
         }
         this.name = name;
     }
 
+    public abstract JcrPath getJcrPath();
+
     public String toString() {
-        return getClass().getSimpleName()+"{path='"+getPath()+"'}";
+        return getClass().getSimpleName()+"{path='"+ getPath()+"'}";
     }
 }

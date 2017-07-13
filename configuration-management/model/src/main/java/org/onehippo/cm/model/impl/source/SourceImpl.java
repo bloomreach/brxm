@@ -13,15 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model.impl;
+package org.onehippo.cm.model.impl.source;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.onehippo.cm.model.source.Source;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
+import org.onehippo.cm.model.source.Source;
 
 public abstract class SourceImpl implements Source {
 

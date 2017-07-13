@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.onehippo.cm.model.Source;
 import org.onehippo.cm.model.definition.ConfigDefinition;
 import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.definition.Definition;
@@ -28,6 +27,7 @@ import org.onehippo.cm.model.definition.DefinitionType;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.definition.WebFileBundleDefinition;
 import org.onehippo.cm.model.mapper.ValueFileMapperProvider;
+import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
@@ -154,7 +154,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         }
 
         // root defs get a full path, but nested defs just get one relative path segment
-        final String name = node.isRoot() ? node.getPath().toString() : "/" + node.getName();
+        final String name = node.isRoot() ? node.getPath() : "/" + node.getName();
         return createStrOptionalSequenceTuple(name, children);
     }
 

@@ -20,8 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.onehippo.cm.model.impl.path.NodePathImpl;
-import org.onehippo.cm.model.path.NodePath;
+import org.onehippo.cm.model.impl.path.JcrPath;
 import org.onehippo.cm.model.tree.ConfigurationItem;
 import org.onehippo.cm.model.util.SnsUtils;
 
@@ -34,15 +33,20 @@ public abstract class ConfigurationItemImpl<D extends DefinitionItemImpl> extend
     private boolean deleted;
 
     @Override
-    public NodePath getPath() {
+    public String getPath() {
+        return getJcrPath().toString();
+    }
+
+    @Override
+    public JcrPath getJcrPath() {
         // todo: store path instead of recreating it on each call
         if (isRoot()) {
-            return NodePathImpl.ROOT;
+            return JcrPath.ROOT;
         } else {
             if (SnsUtils.hasSns(getName(), parent.getNodes().keySet())) {
-                return parent.getPath().resolve(name);
+                return parent.getJcrPath().resolve(name);
             } else {
-                return parent.getPath().resolve(name.withIndex(0));
+                return parent.getJcrPath().resolve(name.withIndex(0));
             }
         }
     }

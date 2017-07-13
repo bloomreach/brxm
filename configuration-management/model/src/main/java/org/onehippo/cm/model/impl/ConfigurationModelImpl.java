@@ -39,17 +39,16 @@ import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
-import org.onehippo.cm.model.impl.path.NodePathImpl;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
-import org.onehippo.cm.model.path.NodePath;
-import org.onehippo.cm.model.path.NodePathSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cm.model.Constants.DEFAULT_DIGEST;
-import static org.onehippo.cm.model.impl.path.NodePathImpl.ROOT;
+import static org.onehippo.cm.model.impl.path.JcrPath.ROOT;
 
 public class ConfigurationModelImpl implements ConfigurationModel {
 
@@ -354,18 +353,22 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     @Override
     public ConfigurationNodeImpl resolveNode(String path) {
-        return resolveNode(NodePathImpl.get(path));
+        return resolveNode(JcrPath.get(path));
     }
 
-    @Override
-    public ConfigurationNodeImpl resolveNode(NodePath path) {
+    /**
+     * Find a ConfigurationNode by its absolute path.
+     * @param path the path of a node
+     * @return a ConfigurationNode or null, if no node exists with this path
+     */
+    public ConfigurationNodeImpl resolveNode(JcrPath path) {
         // special handling for root node
         if (path == ROOT) {
             return getConfigurationRootNode();
         }
 
         ConfigurationNodeImpl currentNode = getConfigurationRootNode();
-        for (NodePathSegment segment : path) {
+        for (JcrPathSegment segment : path) {
             currentNode = currentNode.getNode(segment.forceIndex());
             if (currentNode == null) {
                 return null;
@@ -376,11 +379,15 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     @Override
     public ConfigurationPropertyImpl resolveProperty(String path) {
-        return resolveProperty(NodePathImpl.get(path));
+        return resolveProperty(JcrPath.get(path));
     }
 
-    @Override
-    public ConfigurationPropertyImpl resolveProperty(NodePath path) {
+    /**
+     * Find a ConfigurationProperty by its absolute path.
+     * @param path the path of a property
+     * @return a ConfigurationProperty or null, if no property exists with this path
+     */
+    public ConfigurationPropertyImpl resolveProperty(JcrPath path) {
         ConfigurationNodeImpl node = resolveNode(path.getParent());
         if (node == null) {
             return null;

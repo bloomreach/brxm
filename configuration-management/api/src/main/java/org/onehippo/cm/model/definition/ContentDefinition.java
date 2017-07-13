@@ -15,8 +15,8 @@
  */
 package org.onehippo.cm.model.definition;
 
-import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.SourceType;
+import org.onehippo.cm.model.source.Source;
+import org.onehippo.cm.model.source.SourceType;
 import org.onehippo.cm.model.tree.DefinitionNode;
 
 /**

@@ -22,7 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.source.Source;
 
 import static org.onehippo.cm.model.util.FilePathUtils.nativePath;
 

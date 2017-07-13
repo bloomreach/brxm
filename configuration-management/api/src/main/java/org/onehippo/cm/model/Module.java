@@ -19,6 +19,10 @@ import java.io.File;
 import java.util.Map;
 import java.util.Set;
 
+import org.onehippo.cm.model.definition.ActionItem;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
+
 /**
  * Represents the atomic deployable unit in the Hippo Configuration Management (HCM) system. This is intended to equate
  * conceptually to the level of Maven modules and artifact IDs in that dependency management system.

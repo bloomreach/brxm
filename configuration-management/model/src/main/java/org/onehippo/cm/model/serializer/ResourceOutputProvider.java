@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
 
-import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.source.Source;
 
 // TODO: perhaps this interface should be removed, and the FileROP should be used directly
 public interface ResourceOutputProvider {

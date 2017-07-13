@@ -13,21 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model.impl;
+package org.onehippo.cm.model.impl.source;
 
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.onehippo.cm.model.source.SourceType;
+import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
-import org.onehippo.cm.model.impl.path.NodePathImpl;
+import org.onehippo.cm.model.impl.path.JcrPath;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
-import org.onehippo.cm.model.path.NodePath;
+import org.onehippo.cm.model.source.SourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +86,7 @@ public class ConfigSourceImpl extends SourceImpl {
      * @return a DefinitionNodeImpl corresponding to the jcrPath, which may or may not be a root
      */
     public DefinitionNodeImpl getOrCreateDefinitionFor(final String jcrPath) {
-        return getOrCreateDefinitionFor(NodePathImpl.get(jcrPath));
+        return getOrCreateDefinitionFor(JcrPath.get(jcrPath));
     }
 
     /**
@@ -94,12 +94,12 @@ public class ConfigSourceImpl extends SourceImpl {
      * @param jcrPath the path for which we want a definition
      * @return a DefinitionNodeImpl corresponding to the jcrPath, which may or may not be a root
      */
-    public DefinitionNodeImpl getOrCreateDefinitionFor(final NodePath jcrPath) {
+    public DefinitionNodeImpl getOrCreateDefinitionFor(final JcrPath jcrPath) {
         // try to find an existing definition for defRoot
         for (AbstractDefinitionImpl def : getDefinitions()) {
             if (def.getType().equals(CONFIG)) {
                 final ConfigDefinitionImpl configDef = (ConfigDefinitionImpl) def;
-                if (configDef.getNode().getPath().equals(jcrPath)) {
+                if (configDef.getNode().getJcrPath().equals(jcrPath)) {
                     return configDef.getNode();
                 }
             }

@@ -21,7 +21,6 @@ import java.util.List;
 import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.definition.NamespaceDefinition;
 import org.onehippo.cm.model.definition.WebFileBundleDefinition;
-import org.onehippo.cm.model.path.NodePath;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.tree.ConfigurationProperty;
 
@@ -77,23 +76,10 @@ public interface ConfigurationModel extends Closeable {
     ConfigurationNode resolveNode(String path);
 
     /**
-     * Find a ConfigurationNode by its absolute path.
-     * @param path the path of a node
-     * @return a ConfigurationNode or null, if no node exists with this path
-     */
-    ConfigurationNode resolveNode(NodePath path);
-
-    /**
      * Find a ConfigurationProperty by its absolute path.
      * @param path the path of a property
      * @return a ConfigurationProperty or null, if no property exists with this path
      */
     ConfigurationProperty resolveProperty(String path);
 
-    /**
-     * Find a ConfigurationProperty by its absolute path.
-     * @param path the path of a property
-     * @return a ConfigurationProperty or null, if no property exists with this path
-     */
-    ConfigurationProperty resolveProperty(NodePath path);
 }

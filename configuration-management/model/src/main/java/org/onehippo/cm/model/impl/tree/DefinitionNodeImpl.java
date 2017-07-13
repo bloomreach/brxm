@@ -27,8 +27,8 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.path.NodePath;
-import org.onehippo.cm.model.path.NodePathSegment;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.ModelItem;
@@ -50,7 +50,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     private Boolean ignoreReorderedChildren;
     private ConfigurationItemCategory residualChildNodeCategory = null;
 
-    public DefinitionNodeImpl(final NodePath path, final NodePathSegment name, final ContentDefinitionImpl definition) {
+    public DefinitionNodeImpl(final JcrPath path, final JcrPathSegment name, final ContentDefinitionImpl definition) {
         super(path, name, definition);
     }
 

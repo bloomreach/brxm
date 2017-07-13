@@ -33,15 +33,17 @@ import java.util.function.BiPredicate;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
-import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionItemImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.parser.PathConfigurationReader;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.ValueFormatException;
 import org.onehippo.cm.model.tree.ValueType;
@@ -222,7 +224,7 @@ public abstract class AbstractBaseTest {
                               final AbstractDefinitionImpl definition)
     {
         assertNotNull(item);
-        assertEquals(path, item.getPath().toString());
+        assertEquals(path, item.getJcrPath().toString());
         assertEquals(name, item.getName());
         if (isRoot) {
             try {

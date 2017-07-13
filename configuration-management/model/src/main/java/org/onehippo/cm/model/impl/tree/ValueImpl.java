@@ -21,11 +21,11 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Calendar;
 
-import org.onehippo.cm.model.ResourceInputProvider;
 import org.onehippo.cm.model.definition.DefinitionType;
-import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
+import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
 

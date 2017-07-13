@@ -17,7 +17,8 @@ package org.onehippo.cm.model.impl.definition;
 
 import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.definition.DefinitionType;
-import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 
 public class ContentDefinitionImpl extends AbstractDefinitionImpl
@@ -51,7 +52,7 @@ public class ContentDefinitionImpl extends AbstractDefinitionImpl
 
     @Override
     public String getRootPath() {
-        return rootPath != null ? rootPath : node.getPath().toString();
+        return rootPath != null ? rootPath : node.getJcrPath().toString();
     }
 
     public void setRootPath(String rootPath) {
@@ -63,10 +64,10 @@ public class ContentDefinitionImpl extends AbstractDefinitionImpl
      */
     @Override
     public int compareTo(final ContentDefinition o) {
-        return this.getNode().getPath().compareTo(o.getNode().getPath());
+        return this.getNode().getJcrPath().compareTo(JcrPath.get(o.getNode().getPath()));
     }
 
     public String toString() {
-        return getClass().getSimpleName()+"{node.path='"+node.getPath()+", origin="+getOrigin()+"'}";
+        return getClass().getSimpleName()+"{node.path='"+node.getJcrPath()+", origin="+getOrigin()+"'}";
     }
 }

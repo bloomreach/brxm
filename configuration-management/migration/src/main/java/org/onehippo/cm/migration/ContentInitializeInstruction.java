@@ -23,16 +23,15 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.definition.Definition;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
-import org.onehippo.cm.model.impl.SourceImpl;
 import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
-import org.onehippo.cm.model.impl.path.NodePathImpl;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
-import org.onehippo.cm.model.path.NodePath;
-import org.onehippo.cm.model.path.NodePathSegment;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.PropertyOperation;
@@ -100,7 +99,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                 DefinitionNodeImpl parentNode = node.getParent();
                                 while (parentNode.isEmpty()) {
                                     // empty (delta) parent: remove as well
-                                    nodeDefinitions.remove(new MinimallyIndexedPath(parentNode.getPath().toString()));
+                                    nodeDefinitions.remove(new MinimallyIndexedPath(parentNode.getJcrPath().toString()));
                                     deltaNodes.remove(parentNode);
                                     if (parentNode.isRoot()) {
                                         // can remove whole of delta definition
@@ -240,12 +239,12 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                 // check same type and valueType
                                 if (prop.getValueType().ordinal() != property.getType()) {
                                     throw new EsvParseException("Unsupported " + getType().getPropertyName() +
-                                            " " + prop.getPath() + " type change to " + ValueType.fromJcrType(property.getType()).name() +
+                                            " " + prop.getJcrPath() + " type change to " + ValueType.fromJcrType(property.getType()).name() +
                                             " at " + property.getSourceLocation() + " (from " + prop.getValueType().toString() +
                                             " at " + prop.getSourceLocation() + ")");
                                 }
                                 if ((prop.getType() == SINGLE && property.isMultiple()) || (prop.getType() != SINGLE && !property.isMultiple())) {
-                                    throw new EsvParseException("Unsupported " + getType().getPropertyName() + " " + prop.getPath() +
+                                    throw new EsvParseException("Unsupported " + getType().getPropertyName() + " " + prop.getJcrPath() +
                                             " multiplicity change to " + property.isMultiple() + " at " + property.getSourceLocation() +
                                             " (from " + !property.isMultiple() + " at " + prop.getSourceLocation() + ")");
                                 }
@@ -348,11 +347,11 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                                       final Map<MinimallyIndexedPath, DefinitionNodeImpl> nodeDefinitions,
                                                       final Set<DefinitionNode> deltaNodes) {
         DefinitionNodeImpl node = parentNode;
-        NodePath parentPath = NodePathImpl.get(nodePath);
-        for (NodePathSegment parent : parentPath.relativize(parentNode.getPath())) {
+        JcrPath parentPath = JcrPath.get(nodePath);
+        for (JcrPathSegment parent : parentPath.relativize(parentNode.getJcrPath())) {
             node = node.addNode(parent.toString());
             node.getSourceLocation().copy(getInstructionNode().getSourceLocation());
-            nodeDefinitions.put(new MinimallyIndexedPath(node.getPath().toString()), node);
+            nodeDefinitions.put(new MinimallyIndexedPath(node.getJcrPath().toString()), node);
             deltaNodes.add(node);
         }
         return node;

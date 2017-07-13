@@ -18,8 +18,8 @@ package org.onehippo.cm.model.tree;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.onehippo.cm.model.ResourceInputProvider;
 import org.onehippo.cm.model.definition.Definition;
+import org.onehippo.cm.model.source.ResourceInputProvider;
 
 /**
  * Represents a (potential) single JCR Value.

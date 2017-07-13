@@ -13,10 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model;
+package org.onehippo.cm.model.source;
 
 import java.util.List;
 
+import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.definition.Definition;
 
 public interface Source {

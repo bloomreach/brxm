@@ -42,7 +42,7 @@ public class ConfigurationModelImplTest {
         assertEquals(0, model.getNamespaceDefinitions().size());
 
         final ConfigurationNodeImpl root = model.getConfigurationRootNode();
-        assertEquals("/", root.getPath().toString());
+        assertEquals("/", root.getJcrPath().toString());
         assertEquals("", root.getName());
         assertNull(root.getParent());
         assertEquals(0, root.getNodes().size());
@@ -324,7 +324,7 @@ public class ConfigurationModelImplTest {
         final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
 
         assertEquals(5, definitions.size());
-        String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
+        String roots = definitions.stream().map(d -> d.getNode().getJcrPath()).collect(Collectors.toList()).toString();
         assertEquals("[/a, /a/b, /a/b/a, /a/b/c, /a/b/c/d]", roots);
     }
 
@@ -349,7 +349,7 @@ public class ConfigurationModelImplTest {
         final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
 
         assertEquals(9, definitions.size());
-        String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
+        String roots = definitions.stream().map(d -> d.getNode().getJcrPath()).collect(Collectors.toList()).toString();
         assertEquals("[/a, /a/a, /a/b, /a/b/a, /a/b/c, /a/b/c/b, /a/b/c/d, /a/b/c/d/e, /b]", roots);
     }
 
@@ -369,7 +369,7 @@ public class ConfigurationModelImplTest {
         final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
 
         assertEquals(9, definitions.size());
-        String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
+        String roots = definitions.stream().map(d -> d.getNode().getJcrPath()).collect(Collectors.toList()).toString();
         assertEquals("[/a, /a/a, /a/b, /a/b/a, /a/b/c, /a/b/c/b, /a/b/c/d, /a/b/c/d/e, /b]", roots);
     }
 
@@ -385,7 +385,7 @@ public class ConfigurationModelImplTest {
         final List<ConfigDefinitionImpl> definitions = getConfigDefinitionsFromFirstModule(model);
 
         assertEquals(11, definitions.size());
-        String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
+        String roots = definitions.stream().map(d -> d.getNode().getJcrPath()).collect(Collectors.toList()).toString();
         assertEquals("[/a, /a/sns, /a/sns[2], /a/sns[3], /a/sns[4], /a/sns[5], /a/sns[6], /a/sns[7], /a/sns[8], /a/sns[9], /a/sns[10]]", roots);
     }
 

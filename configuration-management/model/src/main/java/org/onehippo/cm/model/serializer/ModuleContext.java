@@ -24,15 +24,15 @@ import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.Constants;
-import org.onehippo.cm.model.ResourceInputProvider;
-import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.SourceType;
-import org.onehippo.cm.model.impl.FileResourceInputProvider;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
+import org.onehippo.cm.model.impl.source.SourceImpl;
 import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.mapper.ValueFileMapperProvider;
 import org.onehippo.cm.model.parser.SourceResourceCrawler;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
+import org.onehippo.cm.model.source.SourceType;
 
 import static org.onehippo.cm.model.util.FilePathUtils.getParentOrFsRoot;
 

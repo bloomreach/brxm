@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.model.action;
+package org.onehippo.cm.model.definition;
 
 /**
  * Describes the behavior to be applied to a content source at bootstrap.

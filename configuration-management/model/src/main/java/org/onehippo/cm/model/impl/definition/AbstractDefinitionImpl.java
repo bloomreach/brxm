@@ -16,7 +16,7 @@
 package org.onehippo.cm.model.impl.definition;
 
 import org.onehippo.cm.model.definition.Definition;
-import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
 
 public abstract class AbstractDefinitionImpl implements Definition {
 

@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.model.path.NodePathSegment;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -36,18 +35,18 @@ import static java.util.stream.Collectors.joining;
  * Note that this is essentially an analogy to the {@link java.nio.file.Path} API, and instances can be used in a way
  * familiar to users of that class.
  */
-public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment> {
+public class JcrPath implements Comparable<JcrPath>, Iterable<JcrPathSegment> {
 
     /**
      * A constant value representing the path of the JCR root node.
      */
-    public static final NodePath ROOT = new NodePath(ImmutableList.of(), false, true);
+    public static final JcrPath ROOT = new JcrPath(ImmutableList.of(), false, true);
 
     /**
      * Static factory for NodePath instances.
      * @see java.nio.file.Paths#get(String, String...)
      */
-    public static NodePath get(String path, final String... more) {
+    public static JcrPath get(String path, final String... more) {
 
         // do this check now to check for null or pure whitespace
         if (StringUtils.isBlank(path)) {
@@ -78,22 +77,22 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
         final boolean relative = !path.startsWith("/");
         final String[] segments = StringUtils.strip(path, "/").split("/");
 
-        final ImmutableList<NodePathSegment> names =
-                Arrays.stream(segments).map(NodePathSegment::get).collect(ImmutableList.toImmutableList());
+        final ImmutableList<JcrPathSegment> names =
+                Arrays.stream(segments).map(JcrPathSegment::get).collect(ImmutableList.toImmutableList());
 
-        return new NodePath(names, relative);
+        return new JcrPath(names, relative);
     }
 
-    public final ImmutableList<NodePathSegment> segments;
-    public final boolean absolute;
+    private final ImmutableList<JcrPathSegment> segments;
+    private final boolean absolute;
 
     // private to guarantee ROOT is a constant
-    private NodePath(final ImmutableList<NodePathSegment> segments, final boolean absolute) {
+    private JcrPath(final ImmutableList<JcrPathSegment> segments, final boolean absolute) {
         this(segments, absolute, false);
     }
 
     // private to guarantee ROOT is a constant
-    private NodePath(final ImmutableList<NodePathSegment> segments, final boolean absolute, final boolean isRoot) {
+    private JcrPath(final ImmutableList<JcrPathSegment> segments, final boolean absolute, final boolean isRoot) {
         // this check is mainly for internal purposes, to make sure we're not accidentally failing to return ROOT
         if (!isRoot && segments.size() == 0) {
             throw new IllegalArgumentException("Should use ROOT instead of constructing new NodePath with no segments!");
@@ -108,7 +107,7 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
     /**
      * @return a constant value representing the path of the JCR root node
      */
-    public NodePath getRoot() {
+    public JcrPath getRoot() {
         return ROOT;
     }
 
@@ -127,9 +126,9 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
     }
 
     /**
-     * @return the final segment of this {@link NodePath}, which may represent a JCR Node or Property
+     * @return the final segment of this {@link JcrPath}, which may represent a JCR Node or Property
      */
-    public NodePathSegment getLastSegment() {
+    public JcrPathSegment getLastSegment() {
         if (this == ROOT) {
             // todo: should this return a constant NodePathSegment instead?
             throw new IllegalStateException("Root path has no path segments!");
@@ -142,7 +141,7 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
      * @return a path representing the parent node of this path
      * @throws IllegalStateException iff {@link #isRoot()}
      */
-    public NodePath getParent() {
+    public JcrPath getParent() {
         if (this == ROOT) {
             throw new IllegalStateException("Cannot get the parent of ROOT!");
         }
@@ -152,7 +151,7 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
         }
 
         // todo: implement this in a more memory-efficient way with Lisp-style list objects
-        return new NodePath(segments.subList(0, segments.size()-1), absolute);
+        return new JcrPath(segments.subList(0, segments.size()-1), absolute);
     }
 
     /**
@@ -164,9 +163,9 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
 
     /**
      * @param index the zero-based index of the desired path segment
-     * @return a {@link NodePathSegment} representing the segment of this path at the index position
+     * @return a {@link JcrPathSegment} representing the segment of this path at the index position
      */
-    public NodePathSegment getSegment(final int index) {
+    public JcrPathSegment getSegment(final int index) {
         return segments.get(index);
     }
 
@@ -175,12 +174,12 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
      * @param endIndex the zero-based index (exclusive) of the ending segment of the desired subpath
      * @return a path representing a specific portion of this path
      */
-    public NodePath subpath(final int beginIndex, final int endIndex) {
+    public JcrPath subpath(final int beginIndex, final int endIndex) {
         if (beginIndex == 0 && endIndex == 0) {
             return ROOT;
         }
 
-        return new NodePath(segments.subList(beginIndex, endIndex), beginIndex == 0);
+        return new JcrPath(segments.subList(beginIndex, endIndex), beginIndex == 0);
     }
 
     /**
@@ -193,18 +192,18 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
     /**
      * @see Path#startsWith(String)
      */
-    public boolean startsWith(final NodePathSegment other) {
+    public boolean startsWith(final JcrPathSegment other) {
         if (other.isRoot()) {
             return true;
         }
 
-        return startsWith(new NodePath(ImmutableList.of(other), false));
+        return startsWith(new JcrPath(ImmutableList.of(other), false));
     }
 
     /**
      * @see Path#startsWith(Path)
      */
-    public boolean startsWith(final NodePath other) {
+    public boolean startsWith(final JcrPath other) {
         return (other.getSegmentCount() <= segments.size())
                 && Iterables.elementsEqual(this, other);
     }
@@ -219,18 +218,18 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
     /**
      * @see Path#endsWith(String)
      */
-    public boolean endsWith(final NodePathSegment other) {
+    public boolean endsWith(final JcrPathSegment other) {
         if (other.isRoot()) {
             return true;
         }
 
-        return endsWith(new NodePath(ImmutableList.of(other), false));
+        return endsWith(new JcrPath(ImmutableList.of(other), false));
     }
 
     /**
      * @see Path#endsWith(Path)
      */
-    public boolean endsWith(final NodePath other) {
+    public boolean endsWith(final JcrPath other) {
         return (other.getSegmentCount() <= segments.size())
                 && Iterables.elementsEqual(
                         segments.subList(segments.size() - other.getSegmentCount(), segments.size()),
@@ -240,25 +239,25 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
     /**
      * @see Path#resolve(String)
      */
-    public NodePath resolve(final String other) {
+    public JcrPath resolve(final String other) {
         return resolve(get(other));
     }
 
     /**
      * @see Path#resolve(String)
      */
-    public NodePath resolve(final NodePathSegment other) {
+    public JcrPath resolve(final JcrPathSegment other) {
         if (other.isRoot()) {
             return this;
         }
 
-        return resolve(new NodePath(ImmutableList.of(other), false));
+        return resolve(new JcrPath(ImmutableList.of(other), false));
     }
 
     /**
      * @see Path#resolve(Path)
      */
-    public NodePath resolve(final NodePath other) {
+    public JcrPath resolve(final JcrPath other) {
         if (other == ROOT) {
             return this;
         }
@@ -266,13 +265,13 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
             return other;
         }
 
-        return new NodePath(ImmutableList.copyOf(Iterables.concat(segments, other)), absolute);
+        return new JcrPath(ImmutableList.copyOf(Iterables.concat(segments, other)), absolute);
     }
 
     /**
      * @see Path#resolveSibling(String)
      */
-    public NodePath resolveSibling(final String other) {
+    public JcrPath resolveSibling(final String other) {
         // todo: reduce memory churn
         return getParent().resolve(other);
     }
@@ -280,18 +279,18 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
     /**
      * @see Path#resolveSibling(String)
      */
-    public NodePath resolveSibling(final NodePathSegment other) {
+    public JcrPath resolveSibling(final JcrPathSegment other) {
         if (other.isRoot()) {
             return getParent();
         }
 
-        return resolveSibling(new NodePath(ImmutableList.of(other), false));
+        return resolveSibling(new JcrPath(ImmutableList.of(other), false));
     }
 
     /**
      * @see Path#resolveSibling(Path)
      */
-    public NodePath resolveSibling(final NodePath other) {
+    public JcrPath resolveSibling(final JcrPath other) {
         // todo: reduce memory churn
         return getParent().resolve(other);
     }
@@ -299,9 +298,9 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
     /**
      * @see Path#relativize(Path)
      */
-    public NodePath relativize(final NodePath other) {
+    public JcrPath relativize(final JcrPath other) {
         if (other == ROOT) {
-            return new NodePath(segments, false);
+            return new JcrPath(segments, false);
         }
 
         if (other.startsWith(this)) {
@@ -311,7 +310,7 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
         // generate relative paths up to the root and then work down again
         // todo: remove common ancestors
         return get(Streams.concat(Stream.generate(() -> "..").limit(segments.size()),
-                    other.stream().map(NodePathSegment::toString)).collect(joining("/")));
+                    other.stream().map(JcrPathSegment::toString)).collect(joining("/")));
     }
 
     // todo: normalize
@@ -320,49 +319,49 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
      * @return if {@link #isRoot()} or {@link #isAbsolute()}, this; otherwise, a new variant of this path for which
      * {@link #isAbsolute()} == true
      */
-    public NodePath toAbsolutePath() {
+    public JcrPath toAbsolutePath() {
         if (absolute || this == ROOT) {
             return this;
         }
 
-        return new NodePath(segments, true);
+        return new JcrPath(segments, true);
     }
 
     /**
      * @return a NodePath equivalent to this one, except that each segment has had forceIndex() applied to it
      */
-    public NodePath toFullyIndexedPath() {
+    public JcrPath toFullyIndexedPath() {
         if (this == ROOT) {
             return this;
         }
 
-        ImmutableList<NodePathSegment> indexedSegments =
-                segments.stream().map(NodePathSegment::forceIndex).collect(ImmutableList.toImmutableList());
-        return new NodePath(indexedSegments, absolute);
+        ImmutableList<JcrPathSegment> indexedSegments =
+                segments.stream().map(JcrPathSegment::forceIndex).collect(ImmutableList.toImmutableList());
+        return new JcrPath(indexedSegments, absolute);
     }
 
     /**
      * @return a NodePath equivalent to this one, except that each segment has had suppressIndex() applied to it
      */
-    public NodePath toMinimallyIndexedPath() {
+    public JcrPath toMinimallyIndexedPath() {
         if (this == ROOT) {
             return this;
         }
 
-        ImmutableList<NodePathSegment> indexedSegments =
-                segments.stream().map(NodePathSegment::suppressIndex).collect(ImmutableList.toImmutableList());
-        return new NodePath(indexedSegments, absolute);
+        ImmutableList<JcrPathSegment> indexedSegments =
+                segments.stream().map(JcrPathSegment::suppressIndex).collect(ImmutableList.toImmutableList());
+        return new JcrPath(indexedSegments, absolute);
     }
 
     /**
      * @return an ordered, serial stream of NodePathSegments in the same order used by {@link #getSegment(int)}
      */
-    public Stream<NodePathSegment> stream() {
+    public Stream<JcrPathSegment> stream() {
         return segments.stream();
     }
 
     @Override
-    public Iterator<NodePathSegment> iterator() {
+    public Iterator<JcrPathSegment> iterator() {
         return segments.iterator();
     }
 
@@ -370,7 +369,7 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
      * Compare paths by name segment, with unindexed segments considered to be identical to name with index 1.
      */
     @Override
-    public int compareTo(final NodePath o) {
+    public int compareTo(final JcrPath o) {
         final int shorterLength = (segments.size() <= o.getSegmentCount())? segments.size(): o.getSegmentCount();
 
         for (int i = 0; i < shorterLength; i++) {
@@ -393,7 +392,7 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
     }
 
     /**
-     * @return true iff all name segments are equal, according to {@link NodePathSegment#equals(Object)}.
+     * @return true iff all name segments are equal, according to {@link JcrPathSegment#equals(Object)}.
      */
     @Override
     public boolean equals(final Object obj) {
@@ -401,18 +400,18 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
             return true;
         }
 
-        final NodePath other;
+        final JcrPath other;
         if (obj instanceof String) {
             other = get((String) obj);
         }
-        else if (obj instanceof NodePathSegment) {
-            other = new NodePath(ImmutableList.of((NodePathSegment) obj), true);
+        else if (obj instanceof JcrPathSegment) {
+            other = new JcrPath(ImmutableList.of((JcrPathSegment) obj), true);
         }
-        else if (!(obj instanceof NodePath)) {
+        else if (!(obj instanceof JcrPath)) {
             return false;
         }
         else {
-            other = (NodePath) obj;
+            other = (JcrPath) obj;
         }
         return Iterables.elementsEqual(segments, other) && (absolute == other.isAbsolute());
     }
@@ -424,6 +423,6 @@ public class NodePath implements Comparable<NodePath>, Iterable<NodePathSegment>
 
     @Override
     public String toString() {
-        return segments.stream().map(NodePathSegment::toString).collect(joining("/", absolute?"/":"", ""));
+        return segments.stream().map(JcrPathSegment::toString).collect(joining("/", absolute?"/":"", ""));
     }
 }

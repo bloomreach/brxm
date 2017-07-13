@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.onehippo.cm.model.impl.path.NodePathSegmentImpl;
-import org.onehippo.cm.model.path.NodePathSegment;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.ConfigurationNode;
 import org.onehippo.cm.model.util.SnsUtils;
@@ -61,31 +60,31 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl<DefinitionNodeI
         return modifiableNodes.get(name);
     }
 
-    public ConfigurationNodeImpl getNode(final NodePathSegment name) {
+    public ConfigurationNodeImpl getNode(final JcrPathSegment name) {
         return modifiableNodes.get(name.forceIndex().toString());
     }
 
     @Override
     public void setName(final String name) {
-        super.setName(NodePathSegmentImpl.get(name).forceIndex());
+        super.setName(JcrPathSegment.get(name).forceIndex());
     }
 
     @Override
-    public void setName(final NodePathSegment name) {
+    public void setName(final JcrPathSegment name) {
         super.setName(name.forceIndex());
     }
 
     public void addNode(final String name, final ConfigurationNodeImpl node) {
-        modifiableNodes.put(NodePathSegmentImpl.get(name).forceIndex().toString(), node);
+        modifiableNodes.put(JcrPathSegment.get(name).forceIndex().toString(), node);
     }
 
     public void orderBefore(final String srcChildName, final String destChildName) {
         if (!modifiableNodes.containsKey(srcChildName)) {
-            final String msg = String.format("Node '%s' has no child named '%s'.", getPath(), srcChildName);
+            final String msg = String.format("Node '%s' has no child named '%s'.", getJcrPath(), srcChildName);
             throw new IllegalArgumentException(msg);
         }
         if (!modifiableNodes.containsKey(destChildName)) {
-            final String msg = String.format("Node '%s' has no child named '%s'.", getPath(), destChildName);
+            final String msg = String.format("Node '%s' has no child named '%s'.", getJcrPath(), destChildName);
             throw new IllegalArgumentException(msg);
         }
 

@@ -17,21 +17,20 @@ package org.onehippo.cm.model.impl.tree;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.path.NodePathImpl;
-import org.onehippo.cm.model.path.NodePath;
-import org.onehippo.cm.model.path.NodePathSegment;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionItem;
 
 public abstract class DefinitionItemImpl extends ModelItemImpl implements DefinitionItem {
 
-    private NodePath path;
+    private JcrPath path;
     private DefinitionNodeImpl parent;
     private ContentDefinitionImpl definition;
     private SourceLocationImpl sourceLocation;
     private ConfigurationItemCategory category;
 
-    public DefinitionItemImpl(final NodePath path, final NodePathSegment name, final ContentDefinitionImpl definition) {
+    public DefinitionItemImpl(final JcrPath path, final JcrPathSegment name, final ContentDefinitionImpl definition) {
         if (path == null) {
             throw new IllegalArgumentException("Item path must not be null!");
         }
@@ -54,7 +53,7 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
         }
 
         setName(name);
-        this.path = NodePathImpl.get(path);
+        this.path = JcrPath.get(path);
         this.parent = null;
         this.definition = definition;
         this.sourceLocation = new SourceLocationImpl();
@@ -78,7 +77,7 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
         this.definition = parent.getDefinition();
         this.sourceLocation = new SourceLocationImpl();
 
-        path = parent.getPath().resolve(name);
+        path = parent.getJcrPath().resolve(name);
     }
 
     @Override
@@ -87,7 +86,12 @@ public abstract class DefinitionItemImpl extends ModelItemImpl implements Defini
     }
 
     @Override
-    public NodePath getPath() {
+    public String getPath() {
+        return path.toString();
+    }
+
+    @Override
+    public JcrPath getJcrPath() {
         return path;
     }
 

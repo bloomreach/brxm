@@ -17,8 +17,8 @@ package org.onehippo.cm.model.impl.definition;
 
 import org.onehippo.cm.model.definition.ConfigDefinition;
 import org.onehippo.cm.model.definition.DefinitionType;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
-import org.onehippo.cm.model.impl.SourceImpl;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
 
 public class ConfigDefinitionImpl extends ContentDefinitionImpl implements ConfigDefinition {
 
