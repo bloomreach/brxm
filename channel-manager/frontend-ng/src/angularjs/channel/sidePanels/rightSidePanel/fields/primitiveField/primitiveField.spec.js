@@ -177,9 +177,9 @@ describe('PrimitiveField', () => {
     spyOn(FieldService, 'unsetFocusedInput');
 
     $ctrl.focusPrimitive($event);
+    expect(FieldService.setFocusedInput).toHaveBeenCalledWith($event.target, $event.customFocus);
 
     $event.target.triggerHandler('blur.focusedInputBlurHandler');
-    expect(FieldService.setFocusedInput).toHaveBeenCalledWith($event.target, $event.customFocus);
     expect(FieldService.shouldUnsetFocus).toHaveBeenCalled();
     expect(FieldService.unsetFocusedInput).toHaveBeenCalled();
   });
