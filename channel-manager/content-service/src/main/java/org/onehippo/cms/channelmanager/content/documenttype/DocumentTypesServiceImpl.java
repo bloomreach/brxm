@@ -52,7 +52,6 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     @Override
     public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)
             throws ErrorWithPayloadException {
-        System.out.println("get doctype " + id);
         try {
             return DOCUMENT_TYPES.get(id, () -> createDocumentType(id, userSession, locale));
         } catch (final ExecutionException ignore) {
