@@ -29,13 +29,13 @@ class FieldService {
     this._customFocusCallback = null;
   }
 
-  shouldUnsetFocus(relatedTarget) {
-    const validSelectors = [
-      '.btn-fullwidth',
-      '.btn-normalwidth',
+  shouldPreserveFocus(relatedTarget) {
+    const validExpressions = [
+      () => relatedTarget.is('.btn-fullwidth'),
+      () => relatedTarget.is('.btn-normalwidth'),
     ];
 
-    return validSelectors.some(selector => relatedTarget.is(selector));
+    return validExpressions.some(expression => expression());
   }
 
   setFocusedInput(element, customFocusCallback = null) {

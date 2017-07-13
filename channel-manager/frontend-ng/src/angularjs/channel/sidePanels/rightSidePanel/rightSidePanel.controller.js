@@ -441,7 +441,7 @@ class RightSidePanelCtrl {
     }
     this.isFullWidth = state;
 
-    this.FieldService.triggerInputFocus();
+    // this.FieldService.triggerInputFocus();
   }
 }
 

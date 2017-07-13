@@ -19,6 +19,7 @@ class SharedSpaceToolbarService {
     'ngInject';
 
     this.triggerCallback = angular.noop;
+    this.isToolbarPinned = false;
   }
 
   registerTriggerCallback(fn) {
@@ -32,6 +33,7 @@ class SharedSpaceToolbarService {
   }
 
   hideToolbar() {
+    if (this.isToolbarPinned) return;
     this.triggerCallback(false);
   }
 }

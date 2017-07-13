@@ -60,10 +60,16 @@ class CKEditorController {
         }
       });
 
-      this.editor.on('focus', () => this.onEditorFocus());
-      this.editor.on('blur', () => this.onEditorBlur());
-      this.editor.on('openLinkPicker', event => this._openLinkPicker(event.data));
-      this.editor.on('openImagePicker', event => this._openImagePicker(event.data));
+      // CKEditor has been replaced
+      this.editor.on('instanceReady', () => {
+        this.editor.on('focus', $event => this.onEditorFocus($event));
+        // this.editor.on('blur', $event => this.onEditorBlur($event));
+        this.editor.on('openLinkPicker', event => this._openLinkPicker(event.data));
+        this.editor.on('openImagePicker', event => this._openImagePicker(event.data));
+
+        const editableElement = this.$element.find('.cke_editable');
+        editableElement.on('blur', $event => this.onEditorBlur($event));
+      });
     });
   }
 
@@ -94,8 +100,9 @@ class CKEditorController {
 
       this.onFocus({
         $event: {
-          target: this.$element.find('.cke_contents'),
+          target: this.$element.find('.cke_editable'),
           customFocus: () => this.editor.focus(),
+          isCKEditor: true,
         },
       });
     });
@@ -105,31 +112,35 @@ class CKEditorController {
     });
   }
 
-  onEditorBlur() {
+  onEditorBlur($event) {
     this.$scope.$apply(() => {
       this.textAreaElement.removeClass('focused');
     });
-    this.onBlur();
 
+    $event.isCKEditor = true;
+    this.onBlur({ $event });
     this.SharedSpaceToolbarService.hideToolbar();
   }
 
   _openLinkPicker(selectedLink) {
+    this.SharedSpaceToolbarService.pinToolbar = true;
     const linkPickerConfig = this.config.hippopicker.internalLink;
     this.CmsService.publish('show-link-picker', this.id, linkPickerConfig, selectedLink, (link) => {
       this.editor.execCommand('insertInternalLink', link);
+      this.SharedSpaceToolbarService.pinToolbar = false;
     });
   }
 
   _openImagePicker(selectedImage) {
     const imagePickerConfig = this.config.hippopicker.image;
+    this.SharedSpaceToolbarService.pinToolbar = true;
     this.CmsService.publish('show-image-picker', this.id, imagePickerConfig, selectedImage, (image) => {
       // Images are rendered with a relative path, pointing to the binaries servlet. The binaries servlet always
       // runs at the same level; two directories up from the angular app. Because of this we need to prepend
       // all internal images with a prefix as shown below.
       image.f_url = `../../${image.f_url}`;
-
       this.editor.execCommand('insertImage', image);
+      this.SharedSpaceToolbarService.pinToolbar = false;
     });
   }
 }
