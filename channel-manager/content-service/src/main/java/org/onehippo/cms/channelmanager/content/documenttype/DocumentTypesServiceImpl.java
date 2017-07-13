@@ -17,30 +17,54 @@
 package org.onehippo.cms.channelmanager.content.documenttype;
 
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import javax.jcr.Session;
 
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 class DocumentTypesServiceImpl implements DocumentTypesService {
     private static final Logger log = LoggerFactory.getLogger(DocumentTypesServiceImpl.class);
+
     private static final DocumentTypesServiceImpl INSTANCE = new DocumentTypesServiceImpl();
+    private static final Cache<String, DocumentType> DOCUMENT_TYPES = CacheBuilder.newBuilder()
+            .maximumSize(100)
+            .build();
 
     public static DocumentTypesServiceImpl getInstance() {
         return INSTANCE;
     }
 
-    private DocumentTypesServiceImpl() { }
+    private DocumentTypesServiceImpl() {
+
+    }
 
     @Override
     public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)
             throws ErrorWithPayloadException {
+        try {
+            return DOCUMENT_TYPES.get(id, () -> createDocumentType(id, userSession, locale));
+        } catch (final ExecutionException ignore) {
+            throw new InternalServerErrorException();
+        }
+    }
+
+    @Override
+    public void invalidateCache() {
+        DOCUMENT_TYPES.invalidateAll();
+    }
+
+    private DocumentType createDocumentType(final String id, final Session userSession, final Locale locale) throws NotFoundException {
         final DocumentType docType = new DocumentType();
         final ContentTypeContext context = ContentTypeContext.createForDocumentType(id, userSession, locale, docType)
                 .orElseThrow(NotFoundException::new);

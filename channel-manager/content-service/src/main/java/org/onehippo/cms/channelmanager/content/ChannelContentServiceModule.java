@@ -16,8 +16,14 @@
 
 package org.onehippo.cms.channelmanager.content;
 
+import javax.jcr.observation.EventIterator;
+
+import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.repository.jaxrs.api.JsonResourceServiceModule;
 import org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker;
+import org.onehippo.repository.jaxrs.event.JcrEventListener;
+
+import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
 
 /**
  * ChannelContentServiceModule registers and manages a JAX-RS endpoint of the repository module.
@@ -28,9 +34,26 @@ import org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker;
  */
 public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
+    public ChannelContentServiceModule() {
+        addEventListener(new HippoNamespacesEventListener() {
+            @Override
+            public void onEvent(final EventIterator events) {
+                DocumentTypesService.get().invalidateCache();
+            }
+        });
+    }
+
     @Override
-    protected Object getRestResource(ManagedUserSessionInvoker managedUserSessionInvoker) {
+    protected Object getRestResource(final ManagedUserSessionInvoker managedUserSessionInvoker) {
         return new ContentResource(managedUserSessionInvoker);
     }
 
+    private abstract static class HippoNamespacesEventListener extends JcrEventListener {
+
+        static final String HIPPO_NAMESPACES = "/hippo:namespaces";
+
+        HippoNamespacesEventListener() {
+            super(ALL_EVENTS, HIPPO_NAMESPACES, true, null, null);
+        }
+    }
 }

@@ -44,4 +44,9 @@ public interface DocumentTypesService {
      */
     DocumentType getDocumentType(String id, Session userSession, Locale locale)
             throws ErrorWithPayloadException;
+
+    /**
+     * Invalidate the document type cache
+     */
+    void invalidateCache();
 }
