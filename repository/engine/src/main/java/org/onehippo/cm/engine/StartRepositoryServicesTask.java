@@ -20,11 +20,12 @@ import javax.jcr.RepositoryException;
 /**
  * Task that needs to be executed during repository initialization to start the internal repository services
  */
+@FunctionalInterface
 public interface StartRepositoryServicesTask {
 
     /**
      * Executes this task.
      */
-    public void execute() throws RepositoryException;
+    void execute() throws RepositoryException;
 
 }
