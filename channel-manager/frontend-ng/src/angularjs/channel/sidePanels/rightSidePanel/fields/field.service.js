@@ -30,6 +30,9 @@ class FieldService {
   }
 
   shouldPreserveFocus(relatedTarget) {
+    // validExpressions is an array containing functions.
+    // The functions will be evaluated, and if at least one of them is true,
+    // "true" will be returned, therefore input focus will be preserved. Otherwise, false.
     const validExpressions = [
       () => relatedTarget.is('.btn-fullwidth') || relatedTarget.is('.btn-normalwidth'),
       () => relatedTarget.is('.btn-overlay-toggle'),
