@@ -31,8 +31,7 @@ class FieldService {
 
   shouldPreserveFocus(relatedTarget) {
     const validExpressions = [
-      () => relatedTarget.is('.btn-fullwidth'),
-      () => relatedTarget.is('.btn-normalwidth'),
+      () => relatedTarget.is('.btn-fullwidth') || relatedTarget.is('.btn-normalwidth'),
     ];
 
     return validExpressions.some(expression => expression());

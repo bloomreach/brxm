@@ -63,8 +63,6 @@ class PrimitiveFieldCtrl {
     const relatedTarget = angular.element($event.relatedTarget);
 
     if (this.FieldService.shouldPreserveFocus(relatedTarget)) {
-      if ($event.isCKEditor) this.SharedSpaceToolbarService.isToolbarPinned = true;
-
       $event.target.focus();
       this.FieldService.triggerInputFocus();
       return;
@@ -73,14 +71,17 @@ class PrimitiveFieldCtrl {
 
     delete this.hasFocus;
     this.onFieldBlur();
-
-    if (!angular.equals(this.oldValues, this.fieldValues)) {
-      this.FieldService.draftField(this.getFieldName(), this.fieldValues);
-    }
+    this._draftField();
   }
 
   valueChanged() {
     this.FieldService.startDraftTimer(this.getFieldName(), this.fieldValues);
+  }
+
+  _draftField() {
+    if (!angular.equals(this.oldValues, this.fieldValues)) {
+      this.FieldService.draftField(this.getFieldName(), this.fieldValues);
+    }
   }
 }
 
