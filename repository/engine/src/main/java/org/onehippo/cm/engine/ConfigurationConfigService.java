@@ -151,7 +151,7 @@ public class ConfigurationConfigService {
         applyNodeTypes(update.getNamespaceDefinitions(), session);
 
         final ConfigurationNode baselineRoot = baseline.getConfigurationRootNode();
-        final Node targetNode = session.getNode(baselineRoot.getPath().toString());
+        final Node targetNode = session.getNode(baselineRoot.getPath());
         final List<UnprocessedReference> unprocessedReferences = new ArrayList<>();
 
         computeAndWriteNodeDelta(baselineRoot, update.getConfigurationRootNode(), targetNode, forceApply, unprocessedReferences);

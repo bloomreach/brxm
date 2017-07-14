@@ -116,7 +116,7 @@ public class ConfigurationContentService {
 
         for (final ContentDefinitionImpl contentDefinition : module.getContentDefinitions()) {
             final DefinitionNode contentNode = contentDefinition.getNode();
-            final String baseNodePath = contentNode.getPath().toString();
+            final String baseNodePath = contentNode.getPath();
             final Optional<ActionType> optionalAction = findLastActionToApply(baseNodePath, actionsToProcess);
             final boolean nodeAlreadyProcessed = configurationBaselineService.getAppliedContentPaths(session).contains(baseNodePath);
 

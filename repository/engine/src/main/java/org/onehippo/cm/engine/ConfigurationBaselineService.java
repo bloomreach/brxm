@@ -334,10 +334,10 @@ public class ConfigurationBaselineService {
             ContentDefinitionImpl firstDef = (ContentDefinitionImpl) source.getDefinitions().get(0);
 
             // set content path property
-            sourceNode.setProperty(HCM_CONTENT_PATH, firstDef.getNode().getPath().toString());
+            sourceNode.setProperty(HCM_CONTENT_PATH, firstDef.getNode().getPath());
 
             if (incremental) {
-                final String contentNodePath = firstDef.getNode().getPath().toString();
+                final String contentNodePath = firstDef.getNode().getPath();
                 final boolean nodeAlreadyProcessed = getAppliedContentPaths(session).contains(contentNodePath);
                 if (!nodeAlreadyProcessed) {
                     addAppliedContentPath(contentNodePath, session);
