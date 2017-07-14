@@ -71,6 +71,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         cmsEventNamesList.add("search");
         cmsEventNamesList.add("login");
         cmsEventNamesList.add("logout");
+        cmsEventNamesList.add("projects");
     }
 
     private final String eventId;
