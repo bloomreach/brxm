@@ -45,8 +45,13 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.powermock.api.easymock.PowerMock.createPartialMock;
+import static org.powermock.api.easymock.PowerMock.expectPrivate;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 
 @RunWith(PowerMockRunner.class)
@@ -62,6 +67,9 @@ public class DocumentTypesServiceImplTest {
         PowerMock.mockStatic(ContentTypeContext.class);
         PowerMock.mockStatic(FieldTypeUtils.class);
         PowerMock.mockStatic(LocalizationUtils.class);
+
+        // clear document type cache
+        documentTypesService.invalidateCache();
     }
 
     @Test
@@ -74,7 +82,7 @@ public class DocumentTypesServiceImplTest {
         expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
                 .andReturn(Optional.empty());
 
-        PowerMock.replayAll();
+        replayAll();
 
         try {
             documentTypesService.getDocumentType(id, session, locale);
@@ -83,7 +91,7 @@ public class DocumentTypesServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -101,7 +109,7 @@ public class DocumentTypesServiceImplTest {
         expect(context.getContentType()).andReturn(contentType);
         expect(contentType.isDocumentType()).andReturn(false);
 
-        PowerMock.replayAll();
+        replayAll();
         replay(context, contentType);
 
         try {
@@ -112,7 +120,7 @@ public class DocumentTypesServiceImplTest {
         }
 
         verify(context, contentType);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -140,13 +148,13 @@ public class DocumentTypesServiceImplTest {
         docType.setAllFieldsIncluded(true);
         expectLastCall();
 
-        PowerMock.replayAll();
+        replayAll();
         replay(context, contentType);
 
         assertThat(documentTypesService.getDocumentType(id, session, locale), equalTo(docType));
 
         verify(context, contentType);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -179,13 +187,13 @@ public class DocumentTypesServiceImplTest {
         expect(context.getResourceBundle()).andReturn(Optional.of(resourceBundle));
         expect(contentType.isDocumentType()).andReturn(true);
 
-        PowerMock.replayAll();
+        replayAll();
         replay(context, contentType);
 
         assertThat(documentTypesService.getDocumentType(id, session, locale), equalTo(docType));
 
         verify(context, contentType);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -213,12 +221,51 @@ public class DocumentTypesServiceImplTest {
         docType.setAllFieldsIncluded(false);
         expectLastCall();
 
-        PowerMock.replayAll();
+        replayAll();
         replay(context, contentType);
 
-        assertThat(documentTypesService.getDocumentType(id, session, locale), equalTo(docType));
+        assertThat(documentTypesService.getDocumentType(id, session, locale), is(equalTo(docType)));
 
         verify(context, contentType);
-        PowerMock.verifyAll();
+        verifyAll();
+    }
+
+    @Test
+    public void documentTypeIsCached() throws Exception {
+        final String id = "document:type";
+        final Session session = createMock(Session.class);
+        final Locale locale = new Locale("en");
+        final DocumentType docType = PowerMock.createMock(DocumentType.class);
+        final String method = "createDocumentType";
+
+        final DocumentTypesService docTypesServiceMock = createPartialMock(DocumentTypesServiceImpl.class, method);
+        expectPrivate(docTypesServiceMock, method, id, session, locale).andReturn(docType);
+
+        replayAll();
+
+        final DocumentType documentType1 = docTypesServiceMock.getDocumentType(id, session, locale);
+        final DocumentType documentType2 = docTypesServiceMock.getDocumentType(id, session, locale);
+        assertThat(documentType1, is(equalTo(documentType2)));
+
+        verifyAll();
+    }
+
+    @Test
+    public void documentTypeCacheCanBeInvalidated() throws Exception {
+        final String id = "document:type";
+        final Session session = createMock(Session.class);
+        final Locale locale = new Locale("en");
+        final DocumentType docType = PowerMock.createMock(DocumentType.class);
+        final String method = "createDocumentType";
+
+        final DocumentTypesService docTypesServiceMock = createPartialMock(DocumentTypesServiceImpl.class, method);
+        expectPrivate(docTypesServiceMock, method, id, session, locale).andReturn(docType).times(2);
+
+        replayAll();
+
+        docTypesServiceMock.getDocumentType(id, session, locale);
+        docTypesServiceMock.invalidateCache();
+        docTypesServiceMock.getDocumentType(id, session, locale);
+        verifyAll();
     }
 }

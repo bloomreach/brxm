@@ -25,7 +25,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +54,7 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
         try {
             return DOCUMENT_TYPES.get(id, () -> createDocumentType(id, userSession, locale));
         } catch (final ExecutionException ignore) {
-            throw new InternalServerErrorException();
+            throw new NotFoundException();
         }
     }
 
