@@ -39,6 +39,5 @@ public interface ContentDefinition extends Definition, Comparable<ContentDefinit
      * </p>
      * @return the effective root path of this definition.
      */
-    // todo: change this to return NodePath
     String getRootPath();
 }

@@ -22,7 +22,6 @@ public interface ActionItem {
     /**
      * @return the JCR node path to which this action applies
      */
-    // todo: use NodePath API
     String getPath();
 
     /**

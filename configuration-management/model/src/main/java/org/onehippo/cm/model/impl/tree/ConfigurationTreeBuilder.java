@@ -206,7 +206,6 @@ public class ConfigurationTreeBuilder {
             applyNodeOrdering(node, definitionNode, parent, orderBefore, orderFirst, orderBeforeIndexedName);
         }
 
-        // todo: use NodePath here
         final JcrPath indexedPath = definitionNode.getJcrPath().toFullyIndexedPath();
         if (delayedOrdering.containsKey(indexedPath)) {
             // this node was referenced in a delayed ordering, so we need to apply that ordering now
