@@ -21,6 +21,7 @@ class ProjectToggleController {
     $translate,
     HippoIframeService,
     ProjectService,
+    CmsService,
   ) {
     'ngInject';
 
@@ -28,6 +29,7 @@ class ProjectToggleController {
     this.$translate = $translate;
     this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
+    this.CmsService = CmsService;
   }
 
   $onInit() {
@@ -45,6 +47,7 @@ class ProjectToggleController {
   }
 
   set selectedProject(selectedProject) {
+    this.CmsService.reportUsageStatistic('CMSChannelsProjectSwitch');
     this.ProjectService.updateSelectedProject(selectedProject.id);
   }
 }
