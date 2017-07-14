@@ -48,6 +48,7 @@ class LinkPickerManager extends PickerManager {
         final RichTextEditorLinkService linkService = new RichTextEditorLinkService(linkFactory);
         behavior = new StatelessLinkPickerBehavior(context, getPickerConfig(), linkService);
         behavior.setCloseAction(new PickedAction<>(channelEditorId, "onLinkPicked", fieldNodeModel));
+        behavior.setCancelAction(richTextEditorDocumentLink -> String.format("Ext.getCmp('%s').%s();", channelEditorId, "onLinkPickCancelled"));
     }
 
     LinkPickerBehavior getBehavior() {

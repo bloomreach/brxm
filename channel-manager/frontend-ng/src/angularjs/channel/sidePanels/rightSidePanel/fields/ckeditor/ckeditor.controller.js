@@ -127,6 +127,10 @@ class CKEditorController {
     this.CmsService.publish('show-link-picker', this.id, linkPickerConfig, selectedLink, (link) => {
       this.editor.execCommand('insertInternalLink', link);
       this.SharedSpaceToolbarService.isToolbarPinned = false;
+    }, () => {
+      // Cancel callback
+      this.SharedSpaceToolbarService.isToolbarPinned = false;
+      this.editor.focus();
     });
   }
 
@@ -140,6 +144,10 @@ class CKEditorController {
       image.f_url = `../../${image.f_url}`;
       this.editor.execCommand('insertImage', image);
       this.SharedSpaceToolbarService.isToolbarPinned = false;
+    }, () => {
+      // Cancel callback
+      this.SharedSpaceToolbarService.isToolbarPinned = false;
+      this.editor.focus();
     });
   }
 }
