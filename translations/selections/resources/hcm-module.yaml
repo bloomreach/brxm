@@ -1,5 +1,5 @@
 group: hippo-cms
 project:
     name: hippo-cms-translations
-    after: hippo-cms
+    after: hippo-plugin-selections
 module: hippo-plugin-selections-l10n-${locale}

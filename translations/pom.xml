@@ -185,10 +185,17 @@
       </plugin>
     </plugins>
     <resources>
-      <resource>
-        <directory>resources/extensions</directory>
-      </resource>
+      <!--<resource>-->
+        <!--<directory>resources/extensions</directory>-->
+      <!--</resource>-->
       <!-- nl resources -->
+      <resource>
+        <directory>resources</directory>
+        <targetPath>nl/hcm-config</targetPath>
+        <includes>
+          <include>**/*_nl.yaml</include>
+        </includes>
+      </resource>
       <resource>
         <directory>resources</directory>
         <targetPath>nl</targetPath>
@@ -196,6 +203,9 @@
           <include>**/*_nl.*</include>
           <include>**/nl.json</include>
         </includes>
+        <excludes>
+          <exclude>**/*_nl.yaml</exclude>
+        </excludes>
       </resource>
       <resource>
         <directory>${project.build.directory}/maven-shared-archive-resources</directory>
@@ -204,11 +214,21 @@
       <!-- fr resources -->
       <resource>
         <directory>resources</directory>
+        <targetPath>fr/hcm-config</targetPath>
+        <includes>
+          <include>**/*_fr.yaml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>resources</directory>
         <targetPath>fr</targetPath>
         <includes>
           <include>**/*_fr.*</include>
           <include>**/fr.json</include>
         </includes>
+        <excludes>
+          <exclude>**/*_fr.yaml</exclude>
+        </excludes>
       </resource>
       <resource>
         <directory>${project.build.directory}/maven-shared-archive-resources</directory>
@@ -217,11 +237,21 @@
       <!-- de resources -->
       <resource>
         <directory>resources</directory>
+        <targetPath>de/hcm-config</targetPath>
+        <includes>
+          <include>**/*_de.yaml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>resources</directory>
         <targetPath>de</targetPath>
         <includes>
           <include>**/*_de.*</include>
           <include>**/de.json</include>
         </includes>
+        <excludes>
+          <exclude>**/*_de.yaml</exclude>
+        </excludes>
       </resource>
       <resource>
         <directory>${project.build.directory}/maven-shared-archive-resources</directory>
@@ -230,11 +260,21 @@
       <!-- zh resources -->
       <resource>
         <directory>resources</directory>
+        <targetPath>zh/hcm-config</targetPath>
+        <includes>
+          <include>**/*_zh.yaml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>resources</directory>
         <targetPath>zh</targetPath>
         <includes>
           <include>**/*_zh.*</include>
           <include>**/zh.json</include>
         </includes>
+        <excludes>
+          <exclude>**/*_zh.yaml</exclude>
+        </excludes>
       </resource>
       <resource>
         <directory>${project.build.directory}/maven-shared-archive-resources</directory>
@@ -243,11 +283,21 @@
       <!-- es resources -->
       <resource>
         <directory>resources</directory>
+        <targetPath>es/hcm-config</targetPath>
+        <includes>
+          <include>**/*_es.yaml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>resources</directory>
         <targetPath>es</targetPath>
         <includes>
           <include>**/*_es.*</include>
           <include>**/es.json</include>
         </includes>
+        <excludes>
+          <exclude>**/*_es.yaml</exclude>
+        </excludes>
       </resource>
       <resource>
         <directory>${project.build.directory}/maven-shared-archive-resources</directory>

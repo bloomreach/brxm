@@ -1,5 +1,5 @@
 group: hippo-cms
 project:
     name: hippo-cms-translations
-    after: hippo-cms
+    after: hippo-plugin-resourcebundle-editor
 module: hippo-plugin-resourcebundle-editor-l10n-${locale}
