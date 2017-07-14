@@ -1,4 +1,7 @@
-{"hippo:templates": {"es": {
-  "new-namespace": "Nuevo espacio de nombre",
-  "new-type": "Nuevo tipo"
-}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /es:
+        new-namespace: Nuevo espacio de nombre
+        jcr:primaryType: hipposys:resourcebundle
+        new-type: Nuevo tipo

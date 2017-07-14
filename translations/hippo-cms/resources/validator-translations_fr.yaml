@@ -1,6 +1,9 @@
-{"hippo:cms": {"validators": {"fr": {
-  "escaped": "Un caractère invalide est présent",
-  "resource-required": "Vous devez télécharger un fichier en amont.",
-  "non-empty": "Une chaîne de caractère est vide",
-  "email": "Le champ ne correspond pas à une adresse e-mail"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      /fr:
+        escaped: Un caractère invalide est présent
+        resource-required: Vous devez télécharger un fichier en amont.
+        non-empty: Une chaîne de caractère est vide
+        jcr:primaryType: hipposys:resourcebundle
+        email: Le champ ne correspond pas à une adresse e-mail

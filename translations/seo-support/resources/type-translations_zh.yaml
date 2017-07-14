@@ -1,7 +1,10 @@
-{"hippo:types": {"seosupport:seo": {"zh": {
-  "seosupport:seodescription#hint": "meta description 标签中将使用的文本",
-  "seosupport:seotitle": "搜索引擎优化标题",
-  "jcr:name": "搜索引擎优化",
-  "seosupport:seotitle#hint": "标题标签中将使用的文本",
-  "seosupport:seodescription": "搜索引擎优化描述"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/seosupport:seo:
+      /zh:
+        seosupport:seodescription#hint: meta description 标签中将使用的文本
+        jcr:primaryType: hipposys:resourcebundle
+        seosupport:seotitle: 搜索引擎优化标题
+        jcr:name: 搜索引擎优化
+        seosupport:seotitle#hint: 标题标签中将使用的文本
+        seosupport:seodescription: 搜索引擎优化描述

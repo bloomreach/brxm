@@ -1,17 +1,20 @@
-{"hippo:types": {
-  "poll:option": {"fr":   {
-    "poll:value": "Valeur",
-    "jcr:name": "Option",
-    "poll:label": "Étiquette"
-  }},
-  "poll:poll": {"fr":   {
-    "poll:introduction": "Introduction (facultatif)",
-    "poll:options": "Options",
-    "jcr:name": "Composé de sondage",
-    "poll:text": "Texte"
-  }},
-  "poll:polldocument": {"fr":   {
-    "jcr:name": "Sondage",
-    "poll:poll": "Sondage"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/poll:option:
+      /fr:
+        poll:value: Valeur
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Option
+        poll:label: Étiquette
+    /hippo:configuration/hippo:translations/hippo:types/poll:polldocument:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Sondage
+        poll:poll: Sondage
+    /hippo:configuration/hippo:translations/hippo:types/poll:poll:
+      /fr:
+        poll:introduction: Introduction (facultatif)
+        poll:options: Options
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Composé de sondage
+        poll:text: Texte

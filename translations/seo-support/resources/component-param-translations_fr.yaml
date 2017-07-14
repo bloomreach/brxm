@@ -1,18 +1,21 @@
-{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"forge": {"seo": {"support": {"SEOHelperComponentParamsInfo": {"fr": {
-  "menu-name": "Nom du menu",
-  "group.titlesettings": "Paramètres pour la balise 'title'",
-  "site-dc-copyright-link": "Lien 'DC.rights copyright'",
-  "template-page-title": "Modèle pour la balise 'title'",
-  "dc-language": "Contenu de la méta-balise 'DC.language'",
-  "document-title-bean-props": "Champ(s) de titre dans les documents",
-  "dc-schema-link": "Lien 'schema.DC'",
-  "group.descriptionsettings": "Paramètres pour la balise 'meta-description'",
-  "site-title-in-template": "La balise 'title' est déterminée par le modèle",
-  "menu-item-allow-expanded": "Utiliser l'élément de menu le mieux adapté",
-  "site-title": "Titre du site",
-  "default-meta-description": "Valeur 'meta-description' par défaut",
-  "document-description-bean-props": "Champ(s) 'meta-description' dans les documents",
-  "dc-terms-link": "Lien 'schema.DCTERMS'",
-  "group.dcsettings": "Paramètres des balises 'Dublin Core'",
-  "enable-dc-language": "Créer la méta-balise 'DC.language'"
-}}}}}}}}}}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo
+    : /fr:
+        menu-name: Nom du menu
+        group.titlesettings: Paramètres pour la balise 'title'
+        site-dc-copyright-link: Lien 'DC.rights copyright'
+        template-page-title: Modèle pour la balise 'title'
+        dc-language: Contenu de la méta-balise 'DC.language'
+        document-title-bean-props: Champ(s) de titre dans les documents
+        dc-schema-link: Lien 'schema.DC'
+        group.descriptionsettings: Paramètres pour la balise 'meta-description'
+        site-title-in-template: La balise 'title' est déterminée par le modèle
+        menu-item-allow-expanded: Utiliser l'élément de menu le mieux adapté
+        site-title: Titre du site
+        jcr:primaryType: hipposys:resourcebundle
+        default-meta-description: Valeur 'meta-description' par défaut
+        document-description-bean-props: Champ(s) 'meta-description' dans les documents
+        dc-terms-link: Lien 'schema.DCTERMS'
+        group.dcsettings: Paramètres des balises 'Dublin Core'
+        enable-dc-language: Créer la méta-balise 'DC.language'

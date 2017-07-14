@@ -1,21 +1,32 @@
-{"hippo:types": {
-  "hippostd:folder": {"zh": {"jcr:name": "文件夹"}},
-  "hippostd:directory": {"zh": {"jcr:name": "无序文件夹"}},
-  "hippostd:publishable": {"zh":   {
-    "hippostd:state=unpublished": "离线",
-    "jcr:name": "可发布",
-    "hippostd:state=published": "执行中",
-    "hippostd:state=draft": "草稿"
-  }},
-  "hippostd:taggable": {"zh": {"jcr:name": "可标记"}},
-  "hippostd:date": {"zh":   {
-    "hippostd:dayofweek=1": "星期一",
-    "hippostd:dayofweek=2": "星期二",
-    "hippostd:dayofweek=5": "星期五",
-    "hippostd:dayofweek=6": "星期六",
-    "hippostd:dayofweek=3": "星期三",
-    "hippostd:dayofweek=4": "星期四",
-    "jcr:name": "组合日期",
-    "hippostd:dayofweek=7": "星期天"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:taggable:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 可标记
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:date:
+      /zh:
+        hippostd:dayofweek=1: 星期一
+        hippostd:dayofweek=2: 星期二
+        hippostd:dayofweek=5: 星期五
+        hippostd:dayofweek=6: 星期六
+        jcr:primaryType: hipposys:resourcebundle
+        hippostd:dayofweek=3: 星期三
+        hippostd:dayofweek=4: 星期四
+        jcr:name: 组合日期
+        hippostd:dayofweek=7: 星期天
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:directory:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 无序文件夹
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:folder:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 文件夹
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:publishable:
+      /zh:
+        hippostd:state=unpublished: 离线
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 可发布
+        hippostd:state=published: 执行中
+        hippostd:state=draft: 草稿

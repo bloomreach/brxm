@@ -1,6 +1,9 @@
-{"hippo:types": {"hippostd:publishableSummary": {"zh": {
-  "hippostd:stateSummary=review": "审查中",
-  "hippostd:stateSummary=changed": "前一版本执行中",
-  "hippostd:stateSummary=new": "离线",
-  "hippostd:stateSummary=live": "执行中"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:publishableSummary:
+      /zh:
+        hippostd:stateSummary=review: 审查中
+        hippostd:stateSummary=changed: 前一版本执行中
+        jcr:primaryType: hipposys:resourcebundle
+        hippostd:stateSummary=new: 离线
+        hippostd:stateSummary=live: 执行中

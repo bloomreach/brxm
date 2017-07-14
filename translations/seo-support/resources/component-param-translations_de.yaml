@@ -1,18 +1,21 @@
-{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"forge": {"seo": {"support": {"SEOHelperComponentParamsInfo": {"de": {
-  "menu-name": "Menüname",
-  "group.titlesettings": "Einstellungen für den Tag 'title'",
-  "site-dc-copyright-link": "Link 'DC.rights copyright'",
-  "template-page-title": "Template für Tag 'title'",
-  "dc-language": "Inhalt Meta-Tag 'DC.language'",
-  "document-title-bean-props": "Titelfeld(er) in Dokumenten",
-  "dc-schema-link": "Link 'schema.DC'",
-  "group.descriptionsettings": "Einstellungen für den Tag 'meta-description'",
-  "site-title-in-template": "Tag 'title' wird von Template bestimmt",
-  "menu-item-allow-expanded": "Passendsten Menüpunkt verwenden",
-  "site-title": "Titel der Site",
-  "default-meta-description": "Standardwert 'meta-description'",
-  "document-description-bean-props": "'meta-description' Feld(er) in Dokumenten",
-  "dc-terms-link": "Link 'schema.DCTERMS'",
-  "group.dcsettings": "Einstellungen für 'Dublin Core'",
-  "enable-dc-language": "Meta-Tag 'DC.language' erstellen"
-}}}}}}}}}}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo
+    : /de:
+        menu-name: Menüname
+        group.titlesettings: Einstellungen für den Tag 'title'
+        site-dc-copyright-link: Link 'DC.rights copyright'
+        template-page-title: Template für Tag 'title'
+        dc-language: Inhalt Meta-Tag 'DC.language'
+        document-title-bean-props: Titelfeld(er) in Dokumenten
+        dc-schema-link: Link 'schema.DC'
+        group.descriptionsettings: Einstellungen für den Tag 'meta-description'
+        site-title-in-template: Tag 'title' wird von Template bestimmt
+        menu-item-allow-expanded: Passendsten Menüpunkt verwenden
+        site-title: Titel der Site
+        jcr:primaryType: hipposys:resourcebundle
+        default-meta-description: Standardwert 'meta-description'
+        document-description-bean-props: '''meta-description'' Feld(er) in Dokumenten'
+        dc-terms-link: Link 'schema.DCTERMS'
+        group.dcsettings: Einstellungen für 'Dublin Core'
+        enable-dc-language: Meta-Tag 'DC.language' erstellen

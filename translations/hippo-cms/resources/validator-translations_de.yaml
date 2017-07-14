@@ -1,6 +1,9 @@
-{"hippo:cms": {"validators": {"de": {
-  "escaped": "Ungültiges Zeichen verwendet",
-  "resource-required": "Sie müssen eine Datei hochladen",
-  "non-empty": "Ein String Feld ist leer",
-  "email": "Keine gültige E-Mail-Adresse in Feld eingegeben"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      /de:
+        escaped: Ungültiges Zeichen verwendet
+        resource-required: Sie müssen eine Datei hochladen
+        non-empty: Ein String Feld ist leer
+        jcr:primaryType: hipposys:resourcebundle
+        email: Keine gültige E-Mail-Adresse in Feld eingegeben

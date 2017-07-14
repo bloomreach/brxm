@@ -1,13 +1,16 @@
-{"hippo:types": {
-  "robotstxt:robotstxt": {"nl":   {
-    "robotstxt:sitemap#hint": "Eén of meer volledige URL's die verwijzen naar een XML sitemap",
-    "robotstxt:sitemap": "Sitemap",
-    "jcr:name": "Robots.txt configuratie",
-    "robotstxt:section": "Sectie"
-  }},
-  "robotstxt:section": {"nl":   {
-    "robotstxt:useragent": "User-agent",
-    "robotstxt:disallow": "Niet toestaan",
-    "jcr:name": "Sectie"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/robotstxt:robotstxt:
+      /nl:
+        robotstxt:sitemap#hint: Eén of meer volledige URL's die verwijzen naar een
+          XML sitemap
+        jcr:primaryType: hipposys:resourcebundle
+        robotstxt:sitemap: Sitemap
+        jcr:name: Robots.txt configuratie
+        robotstxt:section: Sectie
+    /hippo:configuration/hippo:translations/hippo:types/robotstxt:section:
+      /nl:
+        robotstxt:useragent: User-agent
+        robotstxt:disallow: Niet toestaan
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Sectie

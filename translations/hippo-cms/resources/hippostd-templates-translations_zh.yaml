@@ -1,7 +1,10 @@
-{"hippo:templates": {"zh": {
-  "new-collection": "新文件夹",
-  "new-folder": "新文件夹",
-  "new-translated-folder": "新的已翻译文件夹",
-  "simple": "简单",
-  "new-document": "新文档"
-}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /zh:
+        new-collection: 新文件夹
+        new-folder: 新文件夹
+        new-translated-folder: 新的已翻译文件夹
+        jcr:primaryType: hipposys:resourcebundle
+        simple: 简单
+        new-document: 新文档

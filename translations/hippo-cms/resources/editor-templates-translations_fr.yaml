@@ -1,4 +1,7 @@
-{"hippo:templates": {"fr": {
-  "new-namespace": "Espace de noms de l'éditeur de modèle",
-  "new-type": "Nouveau type"
-}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /fr:
+        new-namespace: Espace de noms de l'éditeur de modèle
+        jcr:primaryType: hipposys:resourcebundle
+        new-type: Nouveau type

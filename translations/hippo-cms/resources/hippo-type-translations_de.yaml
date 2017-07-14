@@ -1,6 +1,18 @@
-{"hippo:types": {
-  "hippo:query": {"de": {"jcr:name": "Suche"}},
-  "hippo:resource": {"de": {"jcr:name": "Datei"}},
-  "hippo:facetselect": {"de": {"jcr:name": "Faceted Link"}},
-  "hippo:mirror": {"de": {"jcr:name": "Referenz"}}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippo:resource:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Datei
+    /hippo:configuration/hippo:translations/hippo:types/hippo:facetselect:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Faceted Link
+    /hippo:configuration/hippo:translations/hippo:types/hippo:mirror:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Referenz
+    /hippo:configuration/hippo:translations/hippo:types/hippo:query:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Suche

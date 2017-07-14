@@ -1,1 +1,6 @@
-{"hippo:types": {"hipposysedit:templatetype": {"de": {"jcr:name": "Schablone"}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposysedit:templatetype:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Schablone

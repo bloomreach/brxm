@@ -1,1 +1,6 @@
-{"hippo:cms": {"sections": {"en": {"section-tagcloud": "Tag Cloud"}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/sections:
+      /en:
+        section-tagcloud: Tag Cloud
+        jcr:primaryType: hipposys:resourcebundle

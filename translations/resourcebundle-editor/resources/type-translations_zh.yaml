@@ -1,1 +1,6 @@
-{"hippo:types": {"resourcebundle:resourcebundle": {"zh": {"jcr:name": "资源包"}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/resourcebundle:resourcebundle:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 资源包

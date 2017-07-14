@@ -1,6 +1,9 @@
-{"hippo:workflows": {"fr": {
-  "request": "Requête",
-  "miscellaneous": "Divers",
-  "document": "Document",
-  "publication": "Publication"
-}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:workflows:
+      /fr:
+        request: Requête
+        miscellaneous: Divers
+        document: Document
+        publication: Publication
+        jcr:primaryType: hipposys:resourcebundle

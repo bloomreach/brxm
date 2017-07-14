@@ -1,1 +1,6 @@
-{"hippo:cms": {"sections": {"es": {"section-taxonomies": "Taxonomías"}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/sections:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        section-taxonomies: Taxonomías

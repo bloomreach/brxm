@@ -1,18 +1,21 @@
-{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"forge": {"seo": {"support": {"SEOHelperComponentParamsInfo": {"nl": {
-  "menu-name": "Menu Naam",
-  "group.titlesettings": "Instellingen voor de 'title' tag",
-  "site-dc-copyright-link": "'DC.rights copyright' link",
-  "template-page-title": "Sjabloon voor 'title' tag",
-  "dc-language": "'DC.language' meta-tag content",
-  "document-title-bean-props": "Titel veld(en) in documenten",
-  "dc-schema-link": "'schema.DC' link",
-  "group.descriptionsettings": "Instellingen voor de 'meta-description' tag",
-  "site-title-in-template": "'title' tag wordt door template bepaald",
-  "menu-item-allow-expanded": "Gebruik best passend menu item",
-  "site-title": "Titel van deze site",
-  "default-meta-description": "Standaard waarde voor 'meta-description'",
-  "document-description-bean-props": "'meta-description' veld(en) in documenten",
-  "dc-terms-link": "'schema.DCTERMS' link",
-  "group.dcsettings": "Instellingen voor de 'Dublin Core' tags",
-  "enable-dc-language": "Maak 'DC.language' meta-tag aan"
-}}}}}}}}}}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo
+    : /nl:
+        menu-name: Menu Naam
+        group.titlesettings: Instellingen voor de 'title' tag
+        site-dc-copyright-link: '''DC.rights copyright'' link'
+        template-page-title: Sjabloon voor 'title' tag
+        dc-language: '''DC.language'' meta-tag content'
+        document-title-bean-props: Titel veld(en) in documenten
+        dc-schema-link: '''schema.DC'' link'
+        group.descriptionsettings: Instellingen voor de 'meta-description' tag
+        site-title-in-template: '''title'' tag wordt door template bepaald'
+        menu-item-allow-expanded: Gebruik best passend menu item
+        site-title: Titel van deze site
+        jcr:primaryType: hipposys:resourcebundle
+        default-meta-description: Standaard waarde voor 'meta-description'
+        document-description-bean-props: '''meta-description'' veld(en) in documenten'
+        dc-terms-link: '''schema.DCTERMS'' link'
+        group.dcsettings: Instellingen voor de 'Dublin Core' tags
+        enable-dc-language: Maak 'DC.language' meta-tag aan

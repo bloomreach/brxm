@@ -1,6 +1,9 @@
-{"hippo:cms": {"sections": {"zh": {
-  "section-documents": "文档",
-  "section-images": "图片",
-  "section-files": "资产",
-  "section-configuration": "文档类型"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/sections:
+      /zh:
+        section-documents: 文档
+        section-images: 图片
+        jcr:primaryType: hipposys:resourcebundle
+        section-files: 资产
+        section-configuration: 文档类型

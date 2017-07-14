@@ -1,96 +1,120 @@
-{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"cms7": {"essentials": {"components": {"info": {
-  "EssentialsBlogAuthorPostsComponentInfo": {"zh":   {
-    "postScope": "博客帖子的位置",
-    "sortField": "排序字段",
-    "pageSize": "要展示的帖子的数量"
-  }},
-  "EssentialsCarouselComponentInfo": {"zh":   {
-    "group.documents": "旋转木马文档",
-    "group.settings": "旋转木马设置",
-    "document4": "旋转木马项目4",
-    "document3": "旋转木马项目3",
-    "document6": "旋转木马项目6",
-    "document5": "旋转木马项目5",
-    "document2": "旋转木马项目2",
-    "document1": "旋转木马项目1",
-    "cycle": "旋转木马持续循环",
-    "pause": "通过鼠标进入来暂停木马",
-    "carouselWidth": "旋转木马宽度",
-    "carouselHeight": "旋转木马高度",
-    "carouselBackgroundColor": "旋转木马背景颜色",
-    "showNavigation": "显示旋转木马导航",
-    "interval": "旋转木马间隔（毫秒）"
-  }},
-  "EssentialsDocumentComponentInfo": {"zh": {"document": "文档"}},
-  "EssentialsEventsComponentInfo": {"zh":   {
-    "hidePastEvents": "隐藏过去事件",
-    "documentDateField": "包含文档日期的字段（供隐藏）",
-    "documentTypes": "事件文档类型（逗号分隔）"
-  }},
-  "EssentialsFacetsComponentInfo": {"zh": {"facetPath": "平面路径"}},
-  "EssentialsGoogleMapsComponentInfo": {"zh":   {
-    "mapType#TERRAIN": "地形信息",
-    "mapType.help": "要显示的地图的类型",
-    "address": "位置/地址",
-    "apiKey": "谷歌地图 API 秘钥",
-    "latitude": "纬度",
-    "mapType": "地图类型",
-    "location.help": "关于您可以提供地址或使用经度和维度的位置",
-    "zoomFactor": "缩放系数",
-    "map.options": "地图选项",
-    "mapType#SATELLITE": "谷歌地图卫星",
-    "width": "宽度（单位为像素）",
-    "mapType#ROADMAP": "路线图",
-    "mapType#HYBRID": "普通地图和卫星地图的混合",
-    "location": "位置信息",
-    "longitude": "经度",
-    "height": "高度（单位为像素）"
-  }},
-  "EssentialsImageComponentInfo": {"zh": {"document": "图像"}},
-  "EssentialsListComponentInfo": {"zh":   {
-    "path": "文档路径",
-    "documentTypes": "文档类型（逗号分隔）",
-    "includeSubtypes": "包括文档子类型"
-  }},
-  "EssentialsListPickerComponentInfo": {"zh":   {
-    "document8": "文档项8",
-    "document7": "文档项7",
-    "document9": "文档项9",
-    "document4": "文档项4",
-    "document3": "文档项3",
-    "document6": "文档项6",
-    "document10": "文档项10",
-    "document5": "文档项5",
-    "document2": "文档项2",
-    "document1": "文档项1"
-  }},
-  "EssentialsMenuComponentInfo": {"zh": {"menu": "菜单名称"}},
-  "EssentialsNewsComponentInfo": {"zh":   {
-    "hideFutureItems": "隐藏未来文档",
-    "documentDateField": "包含文档日期的字段（供隐藏）",
-    "documentTypes": "新文档类型（逗号分隔）"
-  }},
-  "EssentialsPageable": {"zh":   {
-    "pageSize": "页面大小",
-    "showPagination": "显示分页"
-  }},
-  "EssentialsRepositoryMenuComponentInfo": {"zh":   {
-    "folderLinks": "文件夹也是链接",
-    "depth": "深度",
-    "root": "根文件夹"
-  }},
-  "EssentialsSearchComponentInfo": {"zh":   {
-    "documentTypes": "文档类型（逗号分隔）",
-    "showPagination": "显示分页"
-  }},
-  "EssentialsSortable": {"zh":   {
-    "sortOrder#desc": "降序",
-    "sortOrder": "排序顺序",
-    "sortField": "排序字段",
-    "sortOrder#asc": "升序"
-  }},
-  "EssentialsVideoComponentInfo": {"zh":   {
-    "width": "视频宽度",
-    "height": "视频高度"
-  }}
-}}}}}}}}}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo
+    : /zh:
+        postScope: 博客帖子的位置
+        sortField: 排序字段
+        pageSize: 要展示的帖子的数量
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsDocumentComponentInfo
+    : /zh:
+        document: 文档
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsGoogleMapsComponentInfo
+    : /zh:
+        mapType#TERRAIN: 地形信息
+        mapType.help: 要显示的地图的类型
+        address: 位置/地址
+        apiKey: 谷歌地图 API 秘钥
+        latitude: 纬度
+        mapType: 地图类型
+        location.help: 关于您可以提供地址或使用经度和维度的位置
+        zoomFactor: 缩放系数
+        map.options: 地图选项
+        mapType#SATELLITE: 谷歌地图卫星
+        width: 宽度（单位为像素）
+        mapType#ROADMAP: 路线图
+        mapType#HYBRID: 普通地图和卫星地图的混合
+        jcr:primaryType: hipposys:resourcebundle
+        location: 位置信息
+        longitude: 经度
+        height: 高度（单位为像素）
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo
+    : /zh:
+        group.documents: 旋转木马文档
+        group.settings: 旋转木马设置
+        document4: 旋转木马项目4
+        document3: 旋转木马项目3
+        document6: 旋转木马项目6
+        document5: 旋转木马项目5
+        document2: 旋转木马项目2
+        document1: 旋转木马项目1
+        cycle: 旋转木马持续循环
+        pause: 通过鼠标进入来暂停木马
+        carouselWidth: 旋转木马宽度
+        carouselHeight: 旋转木马高度
+        carouselBackgroundColor: 旋转木马背景颜色
+        showNavigation: 显示旋转木马导航
+        jcr:primaryType: hipposys:resourcebundle
+        interval: 旋转木马间隔（毫秒）
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSearchComponentInfo
+    : /zh:
+        documentTypes: 文档类型（逗号分隔）
+        jcr:primaryType: hipposys:resourcebundle
+        showPagination: 显示分页
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo
+    : /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        facetPath: 平面路径
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo
+    : /zh:
+        hidePastEvents: 隐藏过去事件
+        documentDateField: 包含文档日期的字段（供隐藏）
+        documentTypes: 事件文档类型（逗号分隔）
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsMenuComponentInfo
+    : /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        menu: 菜单名称
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsRepositoryMenuComponentInfo
+    : /zh:
+        folderLinks: 文件夹也是链接
+        depth: 深度
+        root: 根文件夹
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSortable
+    : /zh:
+        sortOrder#desc: 降序
+        sortOrder: 排序顺序
+        sortField: 排序字段
+        sortOrder#asc: 升序
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsVideoComponentInfo
+    : /zh:
+        width: 视频宽度
+        jcr:primaryType: hipposys:resourcebundle
+        height: 视频高度
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsPageable
+    : /zh:
+        pageSize: 页面大小
+        jcr:primaryType: hipposys:resourcebundle
+        showPagination: 显示分页
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListPickerComponentInfo
+    : /zh:
+        document8: 文档项8
+        document7: 文档项7
+        document9: 文档项9
+        document4: 文档项4
+        document3: 文档项3
+        document6: 文档项6
+        document10: 文档项10
+        document5: 文档项5
+        jcr:primaryType: hipposys:resourcebundle
+        document2: 文档项2
+        document1: 文档项1
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListComponentInfo
+    : /zh:
+        path: 文档路径
+        documentTypes: 文档类型（逗号分隔）
+        jcr:primaryType: hipposys:resourcebundle
+        includeSubtypes: 包括文档子类型
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsNewsComponentInfo
+    : /zh:
+        hideFutureItems: 隐藏未来文档
+        documentDateField: 包含文档日期的字段（供隐藏）
+        documentTypes: 新文档类型（逗号分隔）
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsImageComponentInfo
+    : /zh:
+        document: 图像
+        jcr:primaryType: hipposys:resourcebundle

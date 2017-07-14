@@ -1,17 +1,20 @@
-{"hippo:types": {
-  "poll:option": {"en":   {
-    "poll:value": "Value",
-    "jcr:name": "Option",
-    "poll:label": "Label"
-  }},
-  "poll:poll": {"en":   {
-    "poll:introduction": "Introduction (optional)",
-    "poll:options": "Options",
-    "jcr:name": "Poll Compound",
-    "poll:text": "Text"
-  }},
-  "poll:polldocument": {"en":   {
-    "jcr:name": "Poll",
-    "poll:poll": "Poll"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/poll:option:
+      /en:
+        poll:value: Value
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Option
+        poll:label: Label
+    /hippo:configuration/hippo:translations/hippo:types/poll:polldocument:
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Poll
+        poll:poll: Poll
+    /hippo:configuration/hippo:translations/hippo:types/poll:poll:
+      /en:
+        poll:introduction: Introduction (optional)
+        poll:options: Options
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Poll Compound
+        poll:text: Text

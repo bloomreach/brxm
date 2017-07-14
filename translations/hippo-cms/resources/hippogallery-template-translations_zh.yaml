@@ -1,5 +1,8 @@
-{"hippo:templates": {"zh": {
-  "new-file-folder": "新文件夹",
-  "new-image": "新图片",
-  "new-image-folder": "新文件夹"
-}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /zh:
+        new-file-folder: 新文件夹
+        new-image: 新图片
+        new-image-folder: 新文件夹
+        jcr:primaryType: hipposys:resourcebundle

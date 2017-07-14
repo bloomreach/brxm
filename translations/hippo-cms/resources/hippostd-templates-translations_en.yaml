@@ -1,7 +1,10 @@
-{"hippo:templates": {"en": {
-  "new-collection": "new folder",
-  "new-folder": "new folder",
-  "new-translated-folder": "new translated folder",
-  "simple": "simple",
-  "new-document": "new document"
-}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /en:
+        new-collection: new folder
+        new-folder: new folder
+        new-translated-folder: new translated folder
+        jcr:primaryType: hipposys:resourcebundle
+        simple: simple
+        new-document: new document

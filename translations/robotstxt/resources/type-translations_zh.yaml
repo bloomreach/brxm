@@ -1,13 +1,15 @@
-{"hippo:types": {
-  "robotstxt:robotstxt": {"zh":   {
-    "robotstxt:sitemap#hint": "一个或多个完全限定URL纸箱同一个XML地址",
-    "robotstxt:sitemap": "网站地图",
-    "jcr:name": "Robots.txt配置",
-    "robotstxt:section": "章节"
-  }},
-  "robotstxt:section": {"zh":   {
-    "robotstxt:useragent": "用户代理",
-    "robotstxt:disallow": "不允许",
-    "jcr:name": "章节"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/robotstxt:robotstxt:
+      /zh:
+        robotstxt:sitemap#hint: 一个或多个完全限定URL纸箱同一个XML地址
+        jcr:primaryType: hipposys:resourcebundle
+        robotstxt:sitemap: 网站地图
+        jcr:name: Robots.txt配置
+        robotstxt:section: 章节
+    /hippo:configuration/hippo:translations/hippo:types/robotstxt:section:
+      /zh:
+        robotstxt:useragent: 用户代理
+        robotstxt:disallow: 不允许
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 章节

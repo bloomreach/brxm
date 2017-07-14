@@ -1,9 +1,13 @@
-{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"forge": {"poll": {"component": {
-  "PollComponentInfo": {"zh":   {
-    "poll-pollCompoundName": "轮询复合的名称",
-    "poll-dataPath": "存储轮询数据的路径",
-    "poll-docsPath": "轮询文档的路径（相对于站点内容根）",
-    "poll-docsClass": "轮询文档类别"
-  }},
-  "PollDocumentComponentInfo": {"zh": {"poll-docsPath": "轮询文档"}}
-}}}}}}}}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/poll/component/PollDocumentComponentInfo
+    : /zh:
+        poll-docsPath: 轮询文档
+        jcr:primaryType: hipposys:resourcebundle
+    /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/poll/component/PollComponentInfo:
+      /zh:
+        poll-pollCompoundName: 轮询复合的名称
+        poll-dataPath: 存储轮询数据的路径
+        poll-docsPath: 轮询文档的路径（相对于站点内容根）
+        jcr:primaryType: hipposys:resourcebundle
+        poll-docsClass: 轮询文档类别

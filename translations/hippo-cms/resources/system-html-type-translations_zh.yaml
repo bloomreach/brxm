@@ -1,1 +1,6 @@
-{"hippo:types": {"hipposys:html": {"zh": {"jcr:name": "格式化文本"}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:html:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 格式化文本

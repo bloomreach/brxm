@@ -1,5 +1,8 @@
-{"hippo:templates": {"nl": {
-  "new-file-folder": "nieuwe bestands map",
-  "new-image": "Nieuwe Afbeelding",
-  "new-image-folder": "nieuwe map"
-}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /nl:
+        new-file-folder: nieuwe bestands map
+        new-image: Nieuwe Afbeelding
+        new-image-folder: nieuwe map
+        jcr:primaryType: hipposys:resourcebundle

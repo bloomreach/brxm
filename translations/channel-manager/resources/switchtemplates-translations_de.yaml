@@ -1,5 +1,8 @@
-{"hippo:channelmanager": {"switch-template": {"de": {
-  "choose.template": "Wählen Sie ein Template",
-  "switch.template": "Template",
-  "missing.template": "Fehlendes Template ''{0}''"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:channelmanager/switch-template:
+      /de:
+        choose.template: Wählen Sie ein Template
+        switch.template: Template
+        jcr:primaryType: hipposys:resourcebundle
+        missing.template: Fehlendes Template ''{0}''

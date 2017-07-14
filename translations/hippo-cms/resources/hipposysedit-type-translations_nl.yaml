@@ -1,1 +1,6 @@
-{"hippo:types": {"hipposysedit:templatetype": {"nl": {"jcr:name": "Sjabloon"}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposysedit:templatetype:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Sjabloon

@@ -1,18 +1,22 @@
-{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"forge": {"seo": {"support": {"SEOHelperComponentParamsInfo": {"es": {
-  "menu-name": "Nombre del menú",
-  "group.titlesettings": "Ajustes del título para la etiqueta del título",
-  "site-dc-copyright-link": "Enlace al Copyright del sitio DC",
-  "template-page-title": "Plantilla del título de la página",
-  "dc-language": "Lenguaje DC",
-  "dc-schema-link": "Enlace al esquema de DC",
-  "document-title-bean-props": "Campos de título en los documentos",
-  "group.descriptionsettings": "Ajustes de la descripción para la etiqueta de metadescripción",
-  "site-title-in-template": "Usar etiqueta de título proporcionada por las plantillas de página",
-  "menu-item-allow-expanded": "Usar elemento del menú expandido",
-  "site-title": "Título del sitio",
-  "default-meta-description": "Metadescripción predeterminada",
-  "document-description-bean-props": "Campos de descripción en los documentos",
-  "group.dcsettings": "Ajustes de Dublin Core",
-  "dc-terms-link": "Enlace a las condiciones de DC",
-  "enable-dc-language": "Permitir lenguaje DC"
-}}}}}}}}}}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo
+    : /es:
+        menu-name: Nombre del menú
+        group.titlesettings: Ajustes del título para la etiqueta del título
+        site-dc-copyright-link: Enlace al Copyright del sitio DC
+        template-page-title: Plantilla del título de la página
+        dc-language: Lenguaje DC
+        dc-schema-link: Enlace al esquema de DC
+        document-title-bean-props: Campos de título en los documentos
+        group.descriptionsettings: Ajustes de la descripción para la etiqueta de metadescripción
+        site-title-in-template: Usar etiqueta de título proporcionada por las plantillas
+          de página
+        menu-item-allow-expanded: Usar elemento del menú expandido
+        site-title: Título del sitio
+        jcr:primaryType: hipposys:resourcebundle
+        default-meta-description: Metadescripción predeterminada
+        document-description-bean-props: Campos de descripción en los documentos
+        group.dcsettings: Ajustes de Dublin Core
+        dc-terms-link: Enlace a las condiciones de DC
+        enable-dc-language: Permitir lenguaje DC

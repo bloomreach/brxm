@@ -1,7 +1,10 @@
-{"hippo:templates": {"nl": {
-  "new-collection": "nieuwe map",
-  "new-folder": "nieuwe map",
-  "new-translated-folder": "nieuwe vertaalde map",
-  "simple": "simpel",
-  "new-document": "nieuw document"
-}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /nl:
+        new-collection: nieuwe map
+        new-folder: nieuwe map
+        new-translated-folder: nieuwe vertaalde map
+        jcr:primaryType: hipposys:resourcebundle
+        simple: simpel
+        new-document: nieuw document

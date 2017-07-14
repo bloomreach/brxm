@@ -1,13 +1,16 @@
-{"hippo:types": {
-  "robotstxt:robotstxt": {"es":   {
-    "robotstxt:sitemap#hint": "Una o más URL completas señalan hacia un mapa de sitio XML",
-    "robotstxt:sitemap": "Mapa del sitio",
-    "jcr:name": "Configuración robots.txt",
-    "robotstxt:section": "Sección"
-  }},
-  "robotstxt:section": {"es":   {
-    "robotstxt:useragent": "Agente de usuario",
-    "robotstxt:disallow": "No permitir",
-    "jcr:name": "Sección"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/robotstxt:robotstxt:
+      /es:
+        robotstxt:sitemap#hint: Una o más URL completas señalan hacia un mapa de sitio
+          XML
+        jcr:primaryType: hipposys:resourcebundle
+        robotstxt:sitemap: Mapa del sitio
+        jcr:name: Configuración robots.txt
+        robotstxt:section: Sección
+    /hippo:configuration/hippo:translations/hippo:types/robotstxt:section:
+      /es:
+        robotstxt:useragent: Agente de usuario
+        robotstxt:disallow: No permitir
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Sección

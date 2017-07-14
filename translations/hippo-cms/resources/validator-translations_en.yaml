@@ -1,6 +1,9 @@
-{"hippo:cms": {"validators": {"en": {
-  "escaped": "Invalid character present",
-  "resource-required": "You must upload a file",
-  "non-empty": "A mandatory string input field is empty",
-  "email": "Field doesn't match an email address"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      /en:
+        escaped: Invalid character present
+        resource-required: You must upload a file
+        non-empty: A mandatory string input field is empty
+        jcr:primaryType: hipposys:resourcebundle
+        email: Field doesn't match an email address

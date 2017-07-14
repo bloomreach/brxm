@@ -1,6 +1,9 @@
-{"hippo:cms": {"validators": {"nl": {
-  "escaped": "Ongeldig karakter aanwezig",
-  "resource-required": "U moet een bestand uploaden",
-  "non-empty": "Een verplicht tekstveld is leeg",
-  "email": "Veld komt niet overeen met een e-mail adres"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      /nl:
+        escaped: Ongeldig karakter aanwezig
+        resource-required: U moet een bestand uploaden
+        non-empty: Een verplicht tekstveld is leeg
+        jcr:primaryType: hipposys:resourcebundle
+        email: Veld komt niet overeen met een e-mail adres

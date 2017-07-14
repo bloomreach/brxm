@@ -1,5 +1,8 @@
-{"hippo:channelmanager": {"switch-template": {"zh": {
-  "choose.template": "选择一个模板",
-  "switch.template": "模板",
-  "missing.template": "缺少模板''{0}''"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:channelmanager/switch-template:
+      /zh:
+        choose.template: 选择一个模板
+        switch.template: 模板
+        jcr:primaryType: hipposys:resourcebundle
+        missing.template: 缺少模板''{0}''

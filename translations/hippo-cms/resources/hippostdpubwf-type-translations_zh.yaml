@@ -1,6 +1,9 @@
-{"hippo:types": {"hippostdpubwf:document": {"zh": {
-  "hippostd:state=unpublished": "离线",
-  "jcr:name": "可发布",
-  "hippostd:state=published": "执行中",
-  "hippostd:state=draft": "草稿"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostdpubwf:document:
+      /zh:
+        hippostd:state=unpublished: 离线
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 可发布
+        hippostd:state=published: 执行中
+        hippostd:state=draft: 草稿

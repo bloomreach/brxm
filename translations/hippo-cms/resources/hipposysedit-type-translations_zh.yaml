@@ -1,1 +1,6 @@
-{"hippo:types": {"hipposysedit:templatetype": {"zh": {"jcr:name": "模板"}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposysedit:templatetype:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 模板

@@ -1,9 +1,13 @@
-{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"forge": {"poll": {"component": {
-  "PollComponentInfo": {"en":   {
-    "poll-pollCompoundName": "Name of poll compound",
-    "poll-dataPath": "Path to store poll data",
-    "poll-docsPath": "Path to poll documents relative to site content root",
-    "poll-docsClass": "Poll documents class"
-  }},
-  "PollDocumentComponentInfo": {"en": {"poll-docsPath": "Poll document"}}
-}}}}}}}}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/poll/component/PollDocumentComponentInfo
+    : /en:
+        poll-docsPath: Poll document
+        jcr:primaryType: hipposys:resourcebundle
+    /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/poll/component/PollComponentInfo:
+      /en:
+        poll-pollCompoundName: Name of poll compound
+        poll-dataPath: Path to store poll data
+        poll-docsPath: Path to poll documents relative to site content root
+        jcr:primaryType: hipposys:resourcebundle
+        poll-docsClass: Poll documents class

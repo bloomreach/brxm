@@ -1,6 +1,9 @@
-{"hippo:workflows": {"zh": {
-  "request": "请求",
-  "miscellaneous": "杂项",
-  "publication": "发布",
-  "document": "文档"
-}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:workflows:
+      /zh:
+        request: 请求
+        miscellaneous: 杂项
+        publication: 发布
+        document: 文档
+        jcr:primaryType: hipposys:resourcebundle

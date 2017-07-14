@@ -1,6 +1,9 @@
-{"hippo:types": {"hippostd:publishableSummary": {"fr": {
-  "hippostd:stateSummary=review": "En attente d'approbation",
-  "hippostd:stateSummary=changed": "Une ancienne version est publiée",
-  "hippostd:stateSummary=new": "Non publié",
-  "hippostd:stateSummary=live": "Publié"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:publishableSummary:
+      /fr:
+        hippostd:stateSummary=review: En attente d'approbation
+        hippostd:stateSummary=changed: Une ancienne version est publiée
+        jcr:primaryType: hipposys:resourcebundle
+        hippostd:stateSummary=new: Non publié
+        hippostd:stateSummary=live: Publié

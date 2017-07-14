@@ -1,21 +1,32 @@
-{"hippo:types": {
-  "hippostd:folder": {"fr": {"jcr:name": "dossier"}},
-  "hippostd:directory": {"fr": {"jcr:name": "dossier non ordonné"}},
-  "hippostd:publishable": {"fr":   {
-    "hippostd:state=unpublished": "Non publié",
-    "jcr:name": "Publiable",
-    "hippostd:state=published": "Publié",
-    "hippostd:state=draft": "Brouillon"
-  }},
-  "hippostd:taggable": {"fr": {"jcr:name": "Tags autorisés"}},
-  "hippostd:date": {"fr":   {
-    "hippostd:dayofweek=1": "lundi",
-    "hippostd:dayofweek=2": "mardi",
-    "hippostd:dayofweek=5": "vendredi",
-    "hippostd:dayofweek=6": "samedi",
-    "hippostd:dayofweek=3": "mercredi",
-    "hippostd:dayofweek=4": "jeudi",
-    "jcr:name": "Date composée",
-    "hippostd:dayofweek=7": "dimanche"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:taggable:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Tags autorisés
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:date:
+      /fr:
+        hippostd:dayofweek=1: lundi
+        hippostd:dayofweek=2: mardi
+        hippostd:dayofweek=5: vendredi
+        hippostd:dayofweek=6: samedi
+        jcr:primaryType: hipposys:resourcebundle
+        hippostd:dayofweek=3: mercredi
+        hippostd:dayofweek=4: jeudi
+        jcr:name: Date composée
+        hippostd:dayofweek=7: dimanche
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:directory:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: dossier non ordonné
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:folder:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: dossier
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:publishable:
+      /fr:
+        hippostd:state=unpublished: Non publié
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Publiable
+        hippostd:state=published: Publié
+        hippostd:state=draft: Brouillon

@@ -1,9 +1,33 @@
-{"hippo:types": {
-  "hipposys:String": {"es": {"jcr:name": "Cadena"}},
-  "hipposys:Text": {"es": {"jcr:name": "Texto"}},
-  "hipposys:Label": {"es": {"jcr:name": "Etiqueta"}},
-  "hipposys:Boolean": {"es": {"jcr:name": "Booleana"}},
-  "hipposys:Date": {"es": {"jcr:name": "Fecha"}},
-  "hipposys:Long": {"es": {"jcr:name": "Número entero"}},
-  "hipposys:Double": {"es": {"jcr:name": "Número decimal"}}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:String:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Cadena
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Date:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Fecha
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:CalendarDate:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Long:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Número entero
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Label:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Etiqueta
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Text:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Texto
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Boolean:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Booleana
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Double:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Número decimal

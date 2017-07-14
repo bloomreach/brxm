@@ -1,6 +1,9 @@
-{"hippo:cms": {"validators": {"es": {
-  "escaped": "Carácter no válido presente",
-  "resource-required": "Debe cargar un archivo",
-  "non-empty": "Un campo de entrada de cadena obligatorio está vacío",
-  "email": "El campo no coincide con una dirección de correo electrónico"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      /es:
+        escaped: Carácter no válido presente
+        resource-required: Debe cargar un archivo
+        non-empty: Un campo de entrada de cadena obligatorio está vacío
+        jcr:primaryType: hipposys:resourcebundle
+        email: El campo no coincide con una dirección de correo electrónico

@@ -1,5 +1,14 @@
-{"hippo:types": {
-  "hippotaxonomy:taxonomy": {"en": {"jcr:name": "Taxonomy"}},
-  "hippotaxonomy:canonised": {"en": {"jcr:name": "Canonised"}},
-  "hippotaxonomy:classifiable": {"en": {"jcr:name": "Classifiable"}}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippotaxonomy:taxonomy:
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Taxonomy
+    /hippo:configuration/hippo:translations/hippo:types/hippotaxonomy:classifiable:
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Classifiable
+    /hippo:configuration/hippo:translations/hippo:types/hippotaxonomy:canonised:
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Canonised

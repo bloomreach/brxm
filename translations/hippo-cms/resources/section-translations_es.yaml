@@ -1,6 +1,9 @@
-{"hippo:cms": {"sections": {"es": {
-  "section-documents": "Documentos",
-  "section-images": "Imágenes",
-  "section-files": "Activos",
-  "section-configuration": "Tipos de documentos"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/sections:
+      /es:
+        section-documents: Documentos
+        section-images: Imágenes
+        jcr:primaryType: hipposys:resourcebundle
+        section-files: Activos
+        section-configuration: Tipos de documentos

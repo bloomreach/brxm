@@ -1,6 +1,18 @@
-{"hippo:types": {
-  "hippo:query": {"es": {"jcr:name": "Consulta"}},
-  "hippo:resource": {"es": {"jcr:name": "Recurso"}},
-  "hippo:facetselect": {"es": {"jcr:name": "Enlace "}},
-  "hippo:mirror": {"es": {"jcr:name": "Enlace"}}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippo:resource:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Recurso
+    /hippo:configuration/hippo:translations/hippo:types/hippo:facetselect:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 'Enlace '
+    /hippo:configuration/hippo:translations/hippo:types/hippo:mirror:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Enlace
+    /hippo:configuration/hippo:translations/hippo:types/hippo:query:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Consulta

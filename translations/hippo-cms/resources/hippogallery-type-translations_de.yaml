@@ -1,10 +1,20 @@
-{"hippo:types": {
-  "hippogallery:exampleAssetSet": {"de": {"jcr:name": "Datei"}},
-  "hippogallery:exampleImageSet": {"de": {"jcr:name": "Bild"}},
-  "hippogallery:image": {"de": {"jcr:name": "Bild"}},
-  "hippogallery:imageset": {"de":   {
-    "hippogallery:thumbnail": "Thumbnail",
-    "hippogallery:original": "Original",
-    "jcr:name": "Bild"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippogallery:image:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Bild
+    /hippo:configuration/hippo:translations/hippo:types/hippogallery:exampleAssetSet:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Datei
+    /hippo:configuration/hippo:translations/hippo:types/hippogallery:imageset:
+      /de:
+        hippogallery:thumbnail: Thumbnail
+        jcr:primaryType: hipposys:resourcebundle
+        hippogallery:original: Original
+        jcr:name: Bild
+    /hippo:configuration/hippo:translations/hippo:types/hippogallery:exampleImageSet:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Bild

@@ -1,1 +1,6 @@
-{"hippo:cms": {"sections": {"zh": {"section-taxonomies": "分类法"}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/sections:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        section-taxonomies: 分类法

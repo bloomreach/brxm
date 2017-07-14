@@ -1,4 +1,7 @@
-{"hippo:workflows": {"en": {
-  "committype": "Type actions",
-  "admin": "Administration"
-}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:workflows:
+      /en:
+        committype: Type actions
+        admin: Administration
+        jcr:primaryType: hipposys:resourcebundle

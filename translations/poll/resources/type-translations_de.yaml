@@ -1,17 +1,20 @@
-{"hippo:types": {
-  "poll:option": {"de":   {
-    "poll:value": "Wert",
-    "jcr:name": "Option",
-    "poll:label": "Label"
-  }},
-  "poll:poll": {"de":   {
-    "poll:introduction": "Einleitung (optional)",
-    "poll:options": "Optionen",
-    "jcr:name": "Umfrage-Kompositum",
-    "poll:text": "Text"
-  }},
-  "poll:polldocument": {"de":   {
-    "jcr:name": "Umfrage",
-    "poll:poll": "Umfrage"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/poll:option:
+      /de:
+        poll:value: Wert
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Option
+        poll:label: Label
+    /hippo:configuration/hippo:translations/hippo:types/poll:polldocument:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Umfrage
+        poll:poll: Umfrage
+    /hippo:configuration/hippo:translations/hippo:types/poll:poll:
+      /de:
+        poll:introduction: Einleitung (optional)
+        poll:options: Optionen
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Umfrage-Kompositum
+        poll:text: Text

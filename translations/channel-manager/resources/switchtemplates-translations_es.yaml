@@ -1,5 +1,8 @@
-{"hippo:channelmanager": {"switch-template": {"es": {
-  "choose.template": "Elegir una plantilla",
-  "switch.template": "Plantilla",
-  "missing.template": "Falta la plantilla ''{0}''"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:channelmanager/switch-template:
+      /es:
+        choose.template: Elegir una plantilla
+        switch.template: Plantilla
+        jcr:primaryType: hipposys:resourcebundle
+        missing.template: Falta la plantilla ''{0}''

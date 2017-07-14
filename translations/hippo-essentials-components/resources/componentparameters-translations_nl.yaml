@@ -1,96 +1,121 @@
-{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"cms7": {"essentials": {"components": {"info": {
-  "EssentialsCarouselComponentInfo": {"nl":   {
-    "group.documents": "Carousel documenten",
-    "group.settings": "Carousel instellingen",
-    "document4": "Carousel element 4",
-    "document3": "Carousel element 3",
-    "document6": "Carousel element 6",
-    "document5": "Carousel element 5",
-    "document2": "Carousel element 2",
-    "document1": "Carousel element 1",
-    "cycle": "Draai carousel continu",
-    "pause": "Pauzeer carousel als muis er over",
-    "carouselWidth": "Carousel breedte",
-    "carouselHeight": "Carousel hoogte",
-    "carouselBackgroundColor": "Carousel achtergrondkleur",
-    "showNavigation": "Toon carousel navigatie",
-    "interval": "Carousel interval (millisecondes)"
-  }},
-  "EssentialsGoogleMapsComponentInfo": {"nl":   {
-    "mapType#TERRAIN": "Terrein informatie",
-    "mapType.help": "Het type kaart die getoond moet worden",
-    "address": "Locatie / adres",
-    "apiKey": "Google Maps API sleutel",
-    "latitude": "Latitude",
-    "mapType": "Kaart type",
-    "location.help": "Om de plaats aan te geven, geef of een adres of specificeer de lengte- en breedtegraad",
-    "zoomFactor": "Vergroot factor",
-    "map.options": "Kaart opties",
-    "mapType#SATELLITE": "Google Earth satelliet",
-    "mapType#ROADMAP": "Wegenkaart",
-    "mapType#HYBRID": "Mengsel van normaal en satelliet",
-    "width": "Breedte (in pixels)",
-    "location": "Locatie informatie",
-    "longitude": "Longitude",
-    "height": "Hoogte (in pixels)"
-  }},
-  "EssentialsBlogAuthorPostsComponentInfo": {"nl":   {
-    "postScope": "Blog post locatie",
-    "sortField": "Veld voor sortering",
-    "pageSize": "Aantal posts om te laten zien"
-  }},
-  "EssentialsDocumentComponentInfo": {"nl": {"document": "Document"}},
-  "EssentialsEventsComponentInfo": {"nl":   {
-    "hidePastEvents": "Verberg afgelopen evenementen",
-    "documentDateField": "Veld met document datum (voor verbergen)",
-    "documentTypes": "Evenement document types (komma gescheiden)"
-  }},
-  "EssentialsFacetsComponentInfo": {"nl": {"facetPath": "Zoek facet pad"}},
-  "EssentialsImageComponentInfo": {"nl": {"document": "Afbeelding"}},
-  "EssentialsListComponentInfo": {"nl":   {
-    "path": "Document pad",
-    "documentTypes": "Document types (komma gescheiden)",
-    "includeSubtypes": "Inclusief document sub-types"
-  }},
-  "EssentialsListPickerComponentInfo": {"nl":   {
-    "document8": "Document element 8",
-    "document7": "Document element 7",
-    "document9": "Document element 9",
-    "document4": "Document element 4",
-    "document3": "Document element 3",
-    "document6": "Document element 6",
-    "document10": "Document element 10",
-    "document5": "Document element 5",
-    "document2": "Document element 2",
-    "document1": "Document element 1"
-  }},
-  "EssentialsMenuComponentInfo": {"nl": {"menu": "Menu naam"}},
-  "EssentialsNewsComponentInfo": {"nl":   {
-    "hideFutureItems": "Verberg toekomstige documenten",
-    "documentDateField": "Veld met document datum (voor verbergen)",
-    "documentTypes": "Nieuws document types (komma gescheiden)"
-  }},
-  "EssentialsPageable": {"nl":   {
-    "pageSize": "Pagina grootte",
-    "showPagination": "Toon paginering"
-  }},
-  "EssentialsRepositoryMenuComponentInfo": {"nl":   {
-    "folderLinks": "Folders zijn ook links",
-    "depth": "Diepte",
-    "root": "Hoofd map"
-  }},
-  "EssentialsSearchComponentInfo": {"nl":   {
-    "documentTypes": "Document types (komma gescheiden)",
-    "showPagination": "Toon paginering"
-  }},
-  "EssentialsSortable": {"nl":   {
-    "sortOrder#desc": "Aflopend",
-    "sortOrder": "Sorteer volgorde",
-    "sortField": "Veld voor sortering",
-    "sortOrder#asc": "Oplopend"
-  }},
-  "EssentialsVideoComponentInfo": {"nl":   {
-    "width": "Video breedte",
-    "height": "Video hoogte"
-  }}
-}}}}}}}}}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo
+    : /nl:
+        postScope: Blog post locatie
+        sortField: Veld voor sortering
+        pageSize: Aantal posts om te laten zien
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsDocumentComponentInfo
+    : /nl:
+        document: Document
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsGoogleMapsComponentInfo
+    : /nl:
+        mapType#TERRAIN: Terrein informatie
+        mapType.help: Het type kaart die getoond moet worden
+        address: Locatie / adres
+        apiKey: Google Maps API sleutel
+        latitude: Latitude
+        mapType: Kaart type
+        location.help: Om de plaats aan te geven, geef of een adres of specificeer
+          de lengte- en breedtegraad
+        zoomFactor: Vergroot factor
+        map.options: Kaart opties
+        mapType#SATELLITE: Google Earth satelliet
+        mapType#ROADMAP: Wegenkaart
+        mapType#HYBRID: Mengsel van normaal en satelliet
+        width: Breedte (in pixels)
+        jcr:primaryType: hipposys:resourcebundle
+        location: Locatie informatie
+        longitude: Longitude
+        height: Hoogte (in pixels)
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo
+    : /nl:
+        group.documents: Carousel documenten
+        group.settings: Carousel instellingen
+        document4: Carousel element 4
+        document3: Carousel element 3
+        document6: Carousel element 6
+        document5: Carousel element 5
+        document2: Carousel element 2
+        document1: Carousel element 1
+        cycle: Draai carousel continu
+        pause: Pauzeer carousel als muis er over
+        carouselWidth: Carousel breedte
+        carouselHeight: Carousel hoogte
+        carouselBackgroundColor: Carousel achtergrondkleur
+        showNavigation: Toon carousel navigatie
+        jcr:primaryType: hipposys:resourcebundle
+        interval: Carousel interval (millisecondes)
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSearchComponentInfo
+    : /nl:
+        documentTypes: Document types (komma gescheiden)
+        jcr:primaryType: hipposys:resourcebundle
+        showPagination: Toon paginering
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo
+    : /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        facetPath: Zoek facet pad
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo
+    : /nl:
+        hidePastEvents: Verberg afgelopen evenementen
+        documentDateField: Veld met document datum (voor verbergen)
+        documentTypes: Evenement document types (komma gescheiden)
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsMenuComponentInfo
+    : /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        menu: Menu naam
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsRepositoryMenuComponentInfo
+    : /nl:
+        folderLinks: Folders zijn ook links
+        depth: Diepte
+        root: Hoofd map
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSortable
+    : /nl:
+        sortOrder#desc: Aflopend
+        sortOrder: Sorteer volgorde
+        sortField: Veld voor sortering
+        sortOrder#asc: Oplopend
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsVideoComponentInfo
+    : /nl:
+        width: Video breedte
+        jcr:primaryType: hipposys:resourcebundle
+        height: Video hoogte
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsPageable
+    : /nl:
+        pageSize: Pagina grootte
+        jcr:primaryType: hipposys:resourcebundle
+        showPagination: Toon paginering
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListPickerComponentInfo
+    : /nl:
+        document8: Document element 8
+        document7: Document element 7
+        document9: Document element 9
+        document4: Document element 4
+        document3: Document element 3
+        document6: Document element 6
+        document10: Document element 10
+        document5: Document element 5
+        jcr:primaryType: hipposys:resourcebundle
+        document2: Document element 2
+        document1: Document element 1
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListComponentInfo
+    : /nl:
+        path: Document pad
+        documentTypes: Document types (komma gescheiden)
+        jcr:primaryType: hipposys:resourcebundle
+        includeSubtypes: Inclusief document sub-types
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsNewsComponentInfo
+    : /nl:
+        hideFutureItems: Verberg toekomstige documenten
+        documentDateField: Veld met document datum (voor verbergen)
+        documentTypes: Nieuws document types (komma gescheiden)
+        jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsImageComponentInfo
+    : /nl:
+        document: Afbeelding
+        jcr:primaryType: hipposys:resourcebundle

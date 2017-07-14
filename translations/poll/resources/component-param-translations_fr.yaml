@@ -1,9 +1,14 @@
-{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"forge": {"poll": {"component": {
-  "PollComponentInfo": {"fr":   {
-    "poll-pollCompoundName": "Nom du composé de sondage",
-    "poll-dataPath": "Chemin pour stocker les données de sondage ",
-    "poll-docsPath": "Chemin pour des documents de sondage relatif aux racines du contenu du site",
-    "poll-docsClass": "Classe de documents de sondage"
-  }},
-  "PollDocumentComponentInfo": {"fr": {"poll-docsPath": "Document de sondage"}}
-}}}}}}}}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/poll/component/PollDocumentComponentInfo
+    : /fr:
+        poll-docsPath: Document de sondage
+        jcr:primaryType: hipposys:resourcebundle
+    /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/poll/component/PollComponentInfo:
+      /fr:
+        poll-pollCompoundName: Nom du composé de sondage
+        poll-dataPath: 'Chemin pour stocker les données de sondage '
+        poll-docsPath: Chemin pour des documents de sondage relatif aux racines du
+          contenu du site
+        jcr:primaryType: hipposys:resourcebundle
+        poll-docsClass: Classe de documents de sondage

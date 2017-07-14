@@ -1,18 +1,21 @@
-{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"forge": {"seo": {"support": {"SEOHelperComponentParamsInfo": {"zh": {
-  "menu-name": "菜单名称",
-  "group.titlesettings": "标题标记的标题设置",
-  "site-dc-copyright-link": "站点 DC 版权链接",
-  "template-page-title": "模板页面标题",
-  "dc-language": "DC 语言",
-  "dc-schema-link": "DC 方案链接",
-  "document-title-bean-props": "文档中的标题字段",
-  "group.descriptionsettings": "元说明标记的说明设置",
-  "site-title-in-template": "使用页面模板提供的标题标记",
-  "menu-item-allow-expanded": "使用扩展菜单项目",
-  "site-title": "站点标题",
-  "default-meta-description": "默认元说明",
-  "document-description-bean-props": "文档中的说明字段",
-  "group.dcsettings": "都柏林核心设置",
-  "dc-terms-link": "DC 项链接",
-  "enable-dc-language": "启用 DC 语言"
-}}}}}}}}}}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo
+    : /zh:
+        menu-name: 菜单名称
+        group.titlesettings: 标题标记的标题设置
+        site-dc-copyright-link: 站点 DC 版权链接
+        template-page-title: 模板页面标题
+        dc-language: DC 语言
+        dc-schema-link: DC 方案链接
+        document-title-bean-props: 文档中的标题字段
+        group.descriptionsettings: 元说明标记的说明设置
+        site-title-in-template: 使用页面模板提供的标题标记
+        menu-item-allow-expanded: 使用扩展菜单项目
+        site-title: 站点标题
+        jcr:primaryType: hipposys:resourcebundle
+        default-meta-description: 默认元说明
+        document-description-bean-props: 文档中的说明字段
+        group.dcsettings: 都柏林核心设置
+        dc-terms-link: DC 项链接
+        enable-dc-language: 启用 DC 语言

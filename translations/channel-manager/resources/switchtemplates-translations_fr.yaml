@@ -1,5 +1,8 @@
-{"hippo:channelmanager": {"switch-template": {"fr": {
-  "choose.template": "Choisissez un modèle",
-  "switch.template": "Modèle",
-  "missing.template": "Modèle manquant ''{0}''"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:channelmanager/switch-template:
+      /fr:
+        choose.template: Choisissez un modèle
+        switch.template: Modèle
+        jcr:primaryType: hipposys:resourcebundle
+        missing.template: Modèle manquant ''{0}''

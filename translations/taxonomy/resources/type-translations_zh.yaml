@@ -1,5 +1,14 @@
-{"hippo:types": {
-  "hippotaxonomy:taxonomy": {"zh": {"jcr:name": "分类"}},
-  "hippotaxonomy:canonised": {"zh": {"jcr:name": "已作范围"}},
-  "hippotaxonomy:classifiable": {"zh": {"jcr:name": "可分类的"}}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippotaxonomy:taxonomy:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 分类
+    /hippo:configuration/hippo:translations/hippo:types/hippotaxonomy:classifiable:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 可分类的
+    /hippo:configuration/hippo:translations/hippo:types/hippotaxonomy:canonised:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 已作范围

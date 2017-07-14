@@ -1,6 +1,9 @@
-{"hippo:types": {"hippostdpubwf:document": {"nl": {
-  "hippostd:state=unpublished": "Niet gepubliceerd",
-  "jcr:name": "Publiceerbaar",
-  "hippostd:state=published": "Gepubliceerd",
-  "hippostd:state=draft": "Klad"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostdpubwf:document:
+      /nl:
+        hippostd:state=unpublished: Niet gepubliceerd
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Publiceerbaar
+        hippostd:state=published: Gepubliceerd
+        hippostd:state=draft: Klad

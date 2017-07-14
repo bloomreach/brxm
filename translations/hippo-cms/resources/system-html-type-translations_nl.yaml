@@ -1,1 +1,6 @@
-{"hippo:types": {"hipposys:html": {"nl": {"jcr:name": "Geformatteerde tekst"}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:html:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Geformatteerde tekst

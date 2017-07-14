@@ -1,17 +1,20 @@
-{"hippo:types": {
-  "poll:option": {"nl":   {
-    "poll:value": "Waarde",
-    "jcr:name": "Optie",
-    "poll:label": "Label"
-  }},
-  "poll:poll": {"nl":   {
-    "poll:introduction": "Introductie (optioneel)",
-    "poll:options": "Opties",
-    "jcr:name": "Stelling samengesteld veld",
-    "poll:text": "Tekst"
-  }},
-  "poll:polldocument": {"nl":   {
-    "jcr:name": "Stelling",
-    "poll:poll": "Stelling"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/poll:option:
+      /nl:
+        poll:value: Waarde
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Optie
+        poll:label: Label
+    /hippo:configuration/hippo:translations/hippo:types/poll:polldocument:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Stelling
+        poll:poll: Stelling
+    /hippo:configuration/hippo:translations/hippo:types/poll:poll:
+      /nl:
+        poll:introduction: Introductie (optioneel)
+        poll:options: Opties
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Stelling samengesteld veld
+        poll:text: Tekst

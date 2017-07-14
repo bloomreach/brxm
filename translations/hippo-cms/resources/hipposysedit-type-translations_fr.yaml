@@ -1,1 +1,6 @@
-{"hippo:types": {"hipposysedit:templatetype": {"fr": {"jcr:name": "Modèle"}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposysedit:templatetype:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Modèle

@@ -1,1 +1,6 @@
-{"hippo:types": {"hippostd:html": {"nl": {"jcr:name": "Uitgebreide Editor"}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:html:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Uitgebreide Editor

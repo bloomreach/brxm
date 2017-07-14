@@ -1,5 +1,8 @@
-{"hippo:templates": {"de": {
-  "new-file-folder": "Neuer Dateiordner",
-  "new-image": "Neues Bild",
-  "new-image-folder": "Neuer Ordner"
-}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /de:
+        new-file-folder: Neuer Dateiordner
+        new-image: Neues Bild
+        new-image-folder: Neuer Ordner
+        jcr:primaryType: hipposys:resourcebundle

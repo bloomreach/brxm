@@ -1,9 +1,13 @@
-{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"forge": {"poll": {"component": {
-  "PollComponentInfo": {"nl":   {
-    "poll-pollCompoundName": "Naam van stelling samengesteld veld",
-    "poll-dataPath": "Pad om stelling resultaten op te slaan",
-    "poll-docsPath": "Pad naar stelling document relatief aan contentlocatie",
-    "poll-docsClass": "Stelling document class"
-  }},
-  "PollDocumentComponentInfo": {"nl": {"poll-docsPath": "Stelling document"}}
-}}}}}}}}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/poll/component/PollDocumentComponentInfo
+    : /nl:
+        poll-docsPath: Stelling document
+        jcr:primaryType: hipposys:resourcebundle
+    /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/poll/component/PollComponentInfo:
+      /nl:
+        poll-pollCompoundName: Naam van stelling samengesteld veld
+        poll-dataPath: Pad om stelling resultaten op te slaan
+        poll-docsPath: Pad naar stelling document relatief aan contentlocatie
+        jcr:primaryType: hipposys:resourcebundle
+        poll-docsClass: Stelling document class

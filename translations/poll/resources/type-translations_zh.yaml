@@ -1,17 +1,20 @@
-{"hippo:types": {
-  "poll:option": {"zh":   {
-    "poll:value": "数值",
-    "jcr:name": "选项",
-    "poll:label": "标签"
-  }},
-  "poll:poll": {"zh":   {
-    "poll:introduction": "介绍(可选)",
-    "poll:options": "选项",
-    "jcr:name": "调查结果",
-    "poll:text": "文本"
-  }},
-  "poll:polldocument": {"zh":   {
-    "jcr:name": "调查",
-    "poll:poll": "调查"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/poll:option:
+      /zh:
+        poll:value: 数值
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 选项
+        poll:label: 标签
+    /hippo:configuration/hippo:translations/hippo:types/poll:polldocument:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 调查
+        poll:poll: 调查
+    /hippo:configuration/hippo:translations/hippo:types/poll:poll:
+      /zh:
+        poll:introduction: 介绍(可选)
+        poll:options: 选项
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 调查结果
+        poll:text: 文本

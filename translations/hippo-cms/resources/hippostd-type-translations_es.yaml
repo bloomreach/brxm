@@ -1,21 +1,32 @@
-{"hippo:types": {
-  "hippostd:folder": {"es": {"jcr:name": "carpeta"}},
-  "hippostd:directory": {"es": {"jcr:name": "carpeta sin ordenar"}},
-  "hippostd:publishable": {"es":   {
-    "hippostd:state=unpublished": "No publicado",
-    "jcr:name": "Publicable",
-    "hippostd:state=published": "Publicado",
-    "hippostd:state=draft": "Borrador"
-  }},
-  "hippostd:taggable": {"es": {"jcr:name": "Etiquetable"}},
-  "hippostd:date": {"es":   {
-    "hippostd:dayofweek=1": "lunes",
-    "hippostd:dayofweek=2": "martes",
-    "hippostd:dayofweek=5": "viernes",
-    "hippostd:dayofweek=6": "sábado",
-    "hippostd:dayofweek=3": "miércoles",
-    "hippostd:dayofweek=4": "jueves",
-    "jcr:name": "Fecha compuesta",
-    "hippostd:dayofweek=7": "domingo"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:taggable:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Etiquetable
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:date:
+      /es:
+        hippostd:dayofweek=1: lunes
+        hippostd:dayofweek=2: martes
+        hippostd:dayofweek=5: viernes
+        hippostd:dayofweek=6: sábado
+        jcr:primaryType: hipposys:resourcebundle
+        hippostd:dayofweek=3: miércoles
+        hippostd:dayofweek=4: jueves
+        jcr:name: Fecha compuesta
+        hippostd:dayofweek=7: domingo
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:directory:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: carpeta sin ordenar
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:folder:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: carpeta
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:publishable:
+      /es:
+        hippostd:state=unpublished: No publicado
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Publicable
+        hippostd:state=published: Publicado
+        hippostd:state=draft: Borrador

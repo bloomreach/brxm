@@ -1,10 +1,20 @@
-{"hippo:types": {
-  "hippogallery:exampleAssetSet": {"zh": {"jcr:name": "文件"}},
-  "hippogallery:exampleImageSet": {"zh": {"jcr:name": "图片"}},
-  "hippogallery:image": {"zh": {"jcr:name": "图片"}},
-  "hippogallery:imageset": {"zh":   {
-    "hippogallery:thumbnail": "缩略图",
-    "hippogallery:original": "原图",
-    "jcr:name": "图片"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippogallery:image:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 图片
+    /hippo:configuration/hippo:translations/hippo:types/hippogallery:exampleAssetSet:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 文件
+    /hippo:configuration/hippo:translations/hippo:types/hippogallery:imageset:
+      /zh:
+        hippogallery:thumbnail: 缩略图
+        jcr:primaryType: hipposys:resourcebundle
+        hippogallery:original: 原图
+        jcr:name: 图片
+    /hippo:configuration/hippo:translations/hippo:types/hippogallery:exampleImageSet:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 图片

@@ -1,4 +1,7 @@
-{"hippo:templates": {"nl": {
-  "new-namespace": "Nieuw namespace",
-  "new-type": "Nieuw Type"
-}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /nl:
+        new-namespace: Nieuw namespace
+        jcr:primaryType: hipposys:resourcebundle
+        new-type: Nieuw Type

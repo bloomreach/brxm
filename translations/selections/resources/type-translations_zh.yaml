@@ -1,8 +1,26 @@
-{"hippo:types": {
-  "selection:BooleanRadioGroup": {"zh": {"jcr:name": "布尔广播集团"}},
-  "selection:DynamicDropdown": {"zh": {"jcr:name": "动态下拉菜单"}},
-  "selection:listitem": {"zh": {"jcr:name": "值列表项"}},
-  "selection:RadioGroup": {"zh": {"jcr:name": "广播组"}},
-  "selection:StaticDropdown": {"zh": {"jcr:name": "静态下拉菜单"}},
-  "selection:valuelist": {"zh": {"jcr:name": "数值列表"}}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/selection:DynamicDropdown:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 动态下拉菜单
+    /hippo:configuration/hippo:translations/hippo:types/selection:listitem:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 值列表项
+    /hippo:configuration/hippo:translations/hippo:types/selection:StaticDropdown:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 静态下拉菜单
+    /hippo:configuration/hippo:translations/hippo:types/selection:RadioGroup:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 广播组
+    /hippo:configuration/hippo:translations/hippo:types/selection:valuelist:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 数值列表
+    /hippo:configuration/hippo:translations/hippo:types/selection:BooleanRadioGroup:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 布尔广播集团

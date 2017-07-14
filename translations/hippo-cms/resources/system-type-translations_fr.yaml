@@ -1,10 +1,34 @@
-{"hippo:types": {
-  "hipposys:String": {"fr": {"jcr:name": "Texte court"}},
-  "hipposys:Text": {"fr": {"jcr:name": "Texte court"}},
-  "hipposys:Label": {"fr": {"jcr:name": "Étiquette"}},
-  "hipposys:Boolean": {"fr": {"jcr:name": "Booléen"}},
-  "hipposys:Date": {"fr": {"jcr:name": "Date"}},
-  "hipposys:Long": {"fr": {"jcr:name": "Nombre entier"}},
-  "hipposys:Double": {"fr": {"jcr:name": "Nombre décimal"}},
-  "hipposys:CalendarDate": {"fr": {"jcr:name": "Date de calendrier"}}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:String:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Texte court
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Date:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Date
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:CalendarDate:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Date de calendrier
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Long:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Nombre entier
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Label:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Étiquette
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Text:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Texte court
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Boolean:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Booléen
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:Double:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Nombre décimal

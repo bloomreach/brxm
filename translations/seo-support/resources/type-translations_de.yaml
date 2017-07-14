@@ -1,7 +1,10 @@
-{"hippo:types": {"seosupport:seo": {"de": {
-  "seosupport:seodescription#hint": "Im Meta-Description-Tag zu verwendender Text",
-  "seosupport:seotitle": "SEO-Titel",
-  "jcr:name": "SEO",
-  "seosupport:seotitle#hint": "Im Titel-Tag zu verwendender Text",
-  "seosupport:seodescription": "SEO-Beschreibung"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/seosupport:seo:
+      /de:
+        seosupport:seodescription#hint: Im Meta-Description-Tag zu verwendender Text
+        jcr:primaryType: hipposys:resourcebundle
+        seosupport:seotitle: SEO-Titel
+        jcr:name: SEO
+        seosupport:seotitle#hint: Im Titel-Tag zu verwendender Text
+        seosupport:seodescription: SEO-Beschreibung

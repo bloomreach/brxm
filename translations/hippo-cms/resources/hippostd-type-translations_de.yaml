@@ -1,21 +1,32 @@
-{"hippo:types": {
-  "hippostd:folder": {"de": {"jcr:name": "Ordner"}},
-  "hippostd:directory": {"de": {"jcr:name": "ungeordneter Ordner"}},
-  "hippostd:publishable": {"de":   {
-    "hippostd:state=unpublished": "Nicht veröffentlicht",
-    "jcr:name": "Veröffentlichbar",
-    "hippostd:state=published": "Veröffentlicht",
-    "hippostd:state=draft": "Entwurf"
-  }},
-  "hippostd:taggable": {"de": {"jcr:name": "Tags erlaubt"}},
-  "hippostd:date": {"de":   {
-    "hippostd:dayofweek=1": "Montag",
-    "hippostd:dayofweek=2": "Dienstag",
-    "hippostd:dayofweek=5": "Freitag",
-    "hippostd:dayofweek=6": "Samstag",
-    "hippostd:dayofweek=3": "Mittwoch",
-    "hippostd:dayofweek=4": "Donnerstag",
-    "jcr:name": "Zusammengesetzte Datum",
-    "hippostd:dayofweek=7": "Sonntag"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:taggable:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Tags erlaubt
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:date:
+      /de:
+        hippostd:dayofweek=1: Montag
+        hippostd:dayofweek=2: Dienstag
+        hippostd:dayofweek=5: Freitag
+        hippostd:dayofweek=6: Samstag
+        jcr:primaryType: hipposys:resourcebundle
+        hippostd:dayofweek=3: Mittwoch
+        hippostd:dayofweek=4: Donnerstag
+        jcr:name: Zusammengesetzte Datum
+        hippostd:dayofweek=7: Sonntag
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:directory:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: ungeordneter Ordner
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:folder:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Ordner
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:publishable:
+      /de:
+        hippostd:state=unpublished: Nicht veröffentlicht
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Veröffentlichbar
+        hippostd:state=published: Veröffentlicht
+        hippostd:state=draft: Entwurf

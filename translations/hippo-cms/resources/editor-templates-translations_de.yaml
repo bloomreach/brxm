@@ -1,4 +1,7 @@
-{"hippo:templates": {"de": {
-  "new-namespace": "Neuer Namensraum",
-  "new-type": "Neuer Typ"
-}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:templates:
+      /de:
+        new-namespace: Neuer Namensraum
+        jcr:primaryType: hipposys:resourcebundle
+        new-type: Neuer Typ

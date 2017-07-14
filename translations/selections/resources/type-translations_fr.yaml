@@ -1,8 +1,26 @@
-{"hippo:types": {
-  "selection:BooleanRadioGroup": {"fr": {"jcr:name": "Groupe de boutons radio booléen"}},
-  "selection:DynamicDropdown": {"fr": {"jcr:name": "Liste déroulante dynamique"}},
-  "selection:listitem": {"fr": {"jcr:name": "Item de la liste de valeurs"}},
-  "selection:RadioGroup": {"fr": {"jcr:name": "Groupe de boutons radios"}},
-  "selection:StaticDropdown": {"fr": {"jcr:name": "Liste déroulante statique"}},
-  "selection:valuelist": {"fr": {"jcr:name": "Liste de valeurs"}}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/selection:DynamicDropdown:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Liste déroulante dynamique
+    /hippo:configuration/hippo:translations/hippo:types/selection:listitem:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Item de la liste de valeurs
+    /hippo:configuration/hippo:translations/hippo:types/selection:StaticDropdown:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Liste déroulante statique
+    /hippo:configuration/hippo:translations/hippo:types/selection:RadioGroup:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Groupe de boutons radios
+    /hippo:configuration/hippo:translations/hippo:types/selection:valuelist:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Liste de valeurs
+    /hippo:configuration/hippo:translations/hippo:types/selection:BooleanRadioGroup:
+      /fr:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Groupe de boutons radio booléen

@@ -1,6 +1,18 @@
-{"hippo:types": {
-  "hippo:query": {"nl": {"jcr:name": "Zoekopdracht"}},
-  "hippo:resource": {"nl": {"jcr:name": "Bestand"}},
-  "hippo:facetselect": {"nl": {"jcr:name": "Facet verwijzing"}},
-  "hippo:mirror": {"nl": {"jcr:name": "Verwijzing"}}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippo:resource:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Bestand
+    /hippo:configuration/hippo:translations/hippo:types/hippo:facetselect:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Facet verwijzing
+    /hippo:configuration/hippo:translations/hippo:types/hippo:mirror:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Verwijzing
+    /hippo:configuration/hippo:translations/hippo:types/hippo:query:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Zoekopdracht

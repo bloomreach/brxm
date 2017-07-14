@@ -1,1 +1,6 @@
-{"hippo:cms": {"sections": {"de": {"section-tagcloud": "Schlagwortwolke"}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/sections:
+      /de:
+        section-tagcloud: Schlagwortwolke
+        jcr:primaryType: hipposys:resourcebundle

@@ -1,13 +1,16 @@
-{"hippo:types": {
-  "robotstxt:robotstxt": {"de":   {
-    "robotstxt:sitemap#hint": "Eine oder mehrere vollqualifizierte URLs, die auf eine XML-Sitemap verweisen",
-    "robotstxt:sitemap": "Sitemap",
-    "jcr:name": "Robots.txt Konfiguration",
-    "robotstxt:section": "Sektion"
-  }},
-  "robotstxt:section": {"de":   {
-    "robotstxt:useragent": "User-agent",
-    "robotstxt:disallow": "Nicht zulassen",
-    "jcr:name": "Sektion"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/robotstxt:robotstxt:
+      /de:
+        robotstxt:sitemap#hint: Eine oder mehrere vollqualifizierte URLs, die auf
+          eine XML-Sitemap verweisen
+        jcr:primaryType: hipposys:resourcebundle
+        robotstxt:sitemap: Sitemap
+        jcr:name: Robots.txt Konfiguration
+        robotstxt:section: Sektion
+    /hippo:configuration/hippo:translations/hippo:types/robotstxt:section:
+      /de:
+        robotstxt:useragent: User-agent
+        robotstxt:disallow: Nicht zulassen
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Sektion

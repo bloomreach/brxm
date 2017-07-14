@@ -1,18 +1,21 @@
-{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"forge": {"seo": {"support": {"SEOHelperComponentParamsInfo": {"en": {
-  "menu-name": "Menu Name",
-  "group.titlesettings": "Title settings for the title-tag",
-  "site-dc-copyright-link": "Site DC Copyright Link",
-  "template-page-title": "Template Page Title",
-  "dc-language": "DC-language",
-  "document-title-bean-props": "Title field(s) in the documents",
-  "dc-schema-link": "DC Schema Link",
-  "group.descriptionsettings": "Description settings for the meta-description tag",
-  "site-title-in-template": "Use title-tag provided by page templates",
-  "menu-item-allow-expanded": "Use Expanded Menu Item",
-  "site-title": "Site Title",
-  "default-meta-description": "Default Meta Description",
-  "document-description-bean-props": "Description Field(s) in the documents",
-  "dc-terms-link": "DC Terms Link",
-  "group.dcsettings": "Dublin Core settings",
-  "enable-dc-language": "Enable DC Language"
-}}}}}}}}}}
+definitions:
+  config:
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo
+    : /en:
+        menu-name: Menu Name
+        group.titlesettings: Title settings for the title-tag
+        site-dc-copyright-link: Site DC Copyright Link
+        template-page-title: Template Page Title
+        dc-language: DC-language
+        document-title-bean-props: Title field(s) in the documents
+        dc-schema-link: DC Schema Link
+        group.descriptionsettings: Description settings for the meta-description tag
+        site-title-in-template: Use title-tag provided by page templates
+        menu-item-allow-expanded: Use Expanded Menu Item
+        site-title: Site Title
+        jcr:primaryType: hipposys:resourcebundle
+        default-meta-description: Default Meta Description
+        document-description-bean-props: Description Field(s) in the documents
+        dc-terms-link: DC Terms Link
+        group.dcsettings: Dublin Core settings
+        enable-dc-language: Enable DC Language

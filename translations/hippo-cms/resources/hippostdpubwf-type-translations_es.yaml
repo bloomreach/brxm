@@ -1,6 +1,9 @@
-{"hippo:types": {"hippostdpubwf:document": {"es": {
-  "hippostd:state=unpublished": "No publicado",
-  "jcr:name": "Publicable",
-  "hippostd:state=published": "Publicado",
-  "hippostd:state=draft": "Borrador"
-}}}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostdpubwf:document:
+      /es:
+        hippostd:state=unpublished: No publicado
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Publicable
+        hippostd:state=published: Publicado
+        hippostd:state=draft: Borrador

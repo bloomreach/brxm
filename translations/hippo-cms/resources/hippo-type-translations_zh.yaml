@@ -1,6 +1,18 @@
-{"hippo:types": {
-  "hippo:query": {"zh": {"jcr:name": "查询"}},
-  "hippo:resource": {"zh": {"jcr:name": "资源"}},
-  "hippo:facetselect": {"zh": {"jcr:name": "组合链接"}},
-  "hippo:mirror": {"zh": {"jcr:name": "链接"}}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippo:resource:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 资源
+    /hippo:configuration/hippo:translations/hippo:types/hippo:facetselect:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 组合链接
+    /hippo:configuration/hippo:translations/hippo:types/hippo:mirror:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 链接
+    /hippo:configuration/hippo:translations/hippo:types/hippo:query:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 查询

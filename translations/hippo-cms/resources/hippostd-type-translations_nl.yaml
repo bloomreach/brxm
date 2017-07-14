@@ -1,21 +1,32 @@
-{"hippo:types": {
-  "hippostd:folder": {"nl": {"jcr:name": "map"}},
-  "hippostd:directory": {"nl": {"jcr:name": "ongeordende map"}},
-  "hippostd:publishable": {"nl":   {
-    "hippostd:state=unpublished": "Niet gepubliceerd",
-    "jcr:name": "Publiceerbaar",
-    "hippostd:state=published": "Gepubliceerd",
-    "hippostd:state=draft": "Klad"
-  }},
-  "hippostd:taggable": {"nl": {"jcr:name": "Tags toestaan"}},
-  "hippostd:date": {"nl":   {
-    "hippostd:dayofweek=1": "maandag",
-    "hippostd:dayofweek=2": "dinsdag",
-    "hippostd:dayofweek=5": "vrijdag",
-    "hippostd:dayofweek=6": "zaterdag",
-    "hippostd:dayofweek=3": "woensdag",
-    "hippostd:dayofweek=4": "donderdag",
-    "jcr:name": "Samengestelde Datum",
-    "hippostd:dayofweek=7": "zondag"
-  }}
-}}
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:taggable:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Tags toestaan
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:date:
+      /nl:
+        hippostd:dayofweek=1: maandag
+        hippostd:dayofweek=2: dinsdag
+        hippostd:dayofweek=5: vrijdag
+        hippostd:dayofweek=6: zaterdag
+        jcr:primaryType: hipposys:resourcebundle
+        hippostd:dayofweek=3: woensdag
+        hippostd:dayofweek=4: donderdag
+        jcr:name: Samengestelde Datum
+        hippostd:dayofweek=7: zondag
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:directory:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: ongeordende map
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:folder:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: map
+    /hippo:configuration/hippo:translations/hippo:types/hippostd:publishable:
+      /nl:
+        hippostd:state=unpublished: Niet gepubliceerd
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Publiceerbaar
+        hippostd:state=published: Gepubliceerd
+        hippostd:state=draft: Klad
