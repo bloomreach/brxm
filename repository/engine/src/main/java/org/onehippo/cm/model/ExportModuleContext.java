@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.serializer.FileResourceOutputProvider;
+import org.onehippo.cm.model.serializer.ModuleContext;
 
 /**
  * Module Context export implementation. Omits generating hcm-content folder.

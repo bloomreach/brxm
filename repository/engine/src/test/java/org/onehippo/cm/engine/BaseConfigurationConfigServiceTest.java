@@ -18,7 +18,6 @@ package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +27,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.junit.Before;
-import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.testutils.jcr.event.EventCollector;
 import org.onehippo.testutils.jcr.event.EventPojo;

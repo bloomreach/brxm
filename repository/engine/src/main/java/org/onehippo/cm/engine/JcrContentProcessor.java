@@ -29,17 +29,17 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cm.model.ActionType;
-import org.onehippo.cm.model.DefinitionNode;
-import org.onehippo.cm.model.DefinitionProperty;
-import org.onehippo.cm.model.PropertyType;
-import org.onehippo.cm.model.Value;
-import org.onehippo.cm.model.impl.DefinitionNodeImpl;
+import org.onehippo.cm.model.definition.ActionType;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.tree.DefinitionNode;
+import org.onehippo.cm.model.tree.DefinitionProperty;
+import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,8 +53,8 @@ import static org.onehippo.cm.engine.ValueProcessor.isReferenceTypeProperty;
 import static org.onehippo.cm.engine.ValueProcessor.isUuidInUse;
 import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
 import static org.onehippo.cm.engine.ValueProcessor.valuesFrom;
-import static org.onehippo.cm.model.ActionType.APPEND;
-import static org.onehippo.cm.model.ActionType.DELETE;
+import static org.onehippo.cm.model.definition.ActionType.APPEND;
+import static org.onehippo.cm.model.definition.ActionType.DELETE;
 
 /**
  * Applies definition nodes to JCR
@@ -129,11 +129,11 @@ public class JcrContentProcessor {
         }
 
         try {
-            if (!validateAppendAction(definitionNode.getPath(), actionType, session, isUpgradeTo12)) {
+            if (!validateAppendAction(definitionNode.getPath().toString(), actionType, session, isUpgradeTo12)) {
                 // node exists and actionType is APPEND but ignore content conflict system parameter == true: ignore
                 return;
             }
-            if (actionType == DELETE && !session.nodeExists(definitionNode.getPath())) {
+            if (actionType == DELETE && !session.nodeExists(definitionNode.getPath().toString())) {
                 return;
             }
 
@@ -152,11 +152,11 @@ public class JcrContentProcessor {
     }
 
     private Node calculateParentNode(DefinitionNode definitionNode, final Session session) throws RepositoryException {
-        final String parentPath = StringUtils.substringBeforeLast(definitionNode.getPath(), "/");
-        if (parentPath.isEmpty()) {
+        final JcrPath parentPath = JcrPath.get(definitionNode.getPath()).getParent();
+        if (parentPath.isRoot()) {
             return session.getRootNode();
         } else {
-            return session.getNode(parentPath);
+            return session.getNode(parentPath.toString());
         }
     }
 

@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.apache.commons.collections4.trie.PatriciaTrie;
 
+// todo: rewrite this to use NodePath API
 public class PathsMap implements Iterable<String> {
 
     // use a PATRICIA Trie, which stores strings efficiently when there are common prefixes

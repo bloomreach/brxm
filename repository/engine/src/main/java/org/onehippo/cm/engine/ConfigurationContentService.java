@@ -30,16 +30,16 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cm.model.ActionItem;
-import org.onehippo.cm.model.ActionType;
-import org.onehippo.cm.model.ConfigurationItemCategory;
+import org.onehippo.cm.model.definition.ActionItem;
+import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.DefinitionNode;
 import org.onehippo.cm.model.Module;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.DefinitionNodeImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
+import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.util.ConfigurationModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,7 +186,7 @@ public class ConfigurationContentService {
      * @param module target module
      */
     private void sortContentDefinitions(final ModuleImpl module) {
-        module.getContentDefinitions().sort(Comparator.comparing(o -> o.getNode().getPath()));
+        module.getContentDefinitions().sort(Comparator.comparing(o -> o.getNode().getJcrPath()));
     }
 
     /**

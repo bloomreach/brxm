@@ -27,11 +27,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.Constants;
-import org.onehippo.cm.model.ModuleContext;
-import org.onehippo.cm.model.ModuleWriter;
-import org.onehippo.cm.model.PathConfigurationReader;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.parser.PathConfigurationReader;
+import org.onehippo.cm.model.serializer.ModuleContext;
+import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

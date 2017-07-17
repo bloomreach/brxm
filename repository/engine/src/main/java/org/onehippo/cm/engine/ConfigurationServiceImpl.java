@@ -36,30 +36,30 @@ import javax.jcr.Session;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.onehippo.cm.ResourceInputProvider;
 import org.onehippo.cm.engine.autoexport.AutoExportConfig;
 import org.onehippo.cm.engine.autoexport.AutoExportConstants;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
-import org.onehippo.cm.model.ActionType;
-import org.onehippo.cm.model.ClasspathConfigurationModelReader;
+import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.ContentDefinition;
 import org.onehippo.cm.model.ExportModuleContext;
 import org.onehippo.cm.model.ImportModuleContext;
-import org.onehippo.cm.model.ModuleContext;
-import org.onehippo.cm.model.ModuleWriter;
-import org.onehippo.cm.model.PathConfigurationReader;
-import org.onehippo.cm.model.Source;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
+import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.ConfigurationPropertyImpl;
-import org.onehippo.cm.model.impl.ContentDefinitionImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
-import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
+import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.parser.ClasspathConfigurationModelReader;
 import org.onehippo.cm.model.parser.ContentSourceParser;
 import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.parser.PathConfigurationReader;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
+import org.onehippo.cm.model.serializer.ModuleContext;
+import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -498,7 +498,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
                         + AutoExportConstants.CONFIG_MODULES_PROPERTY_NAME + ", expected directory: " + modulePath);
             }
             // use maven conventions to find a module descriptor, then parse it
-            final Path moduleDescriptorPath = projectPath.resolve(nativePath(mvnModulePath + org.onehippo.cm.model.Constants.MAVEN_MODULE_DESCRIPTOR));
+            final Path moduleDescriptorPath = projectPath.resolve(nativePath(mvnModulePath + org.onehippo.cm.engine.Constants.MAVEN_MODULE_DESCRIPTOR));
 
             if (!moduleDescriptorPath.toFile().exists()) {
                 throw new ConfigurationRuntimeException("Cannot find module descriptor for module: '" + mvnModulePath + "' in "

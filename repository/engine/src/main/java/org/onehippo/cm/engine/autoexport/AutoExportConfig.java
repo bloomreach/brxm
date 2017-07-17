@@ -30,10 +30,10 @@ import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
 
-import static org.onehippo.cm.engine.autoexport.AutoExportServiceImpl.log;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_EXCLUDED_PROPERTY_NAME;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_MODULES_PROPERTY_NAME;
+import static org.onehippo.cm.engine.autoexport.AutoExportServiceImpl.log;
 
 public class AutoExportConfig {
 

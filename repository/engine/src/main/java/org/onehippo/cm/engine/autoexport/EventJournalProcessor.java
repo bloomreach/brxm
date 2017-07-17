@@ -52,20 +52,20 @@ import org.hippoecm.repository.api.RevisionEventJournal;
 import org.onehippo.cm.engine.AutoExportContentProcessor;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.JcrResourceInputProvider;
-import org.onehippo.cm.model.AutoExportModuleWriter;
-import org.onehippo.cm.model.ConfigurationItemCategory;
-import org.onehippo.cm.model.ModuleContext;
-import org.onehippo.cm.model.PathConfigurationReader;
-import org.onehippo.cm.model.ValueType;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
 import org.onehippo.cm.model.impl.ProjectImpl;
-import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.parser.PathConfigurationReader;
+import org.onehippo.cm.model.serializer.AutoExportModuleWriter;
+import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.SourceSerializer;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
+import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.ConfigurationModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -637,7 +637,7 @@ public class EventJournalProcessor {
             // write each module to the file system
             final AutoExportModuleWriter writer = new AutoExportModuleWriter(new JcrResourceInputProvider(eventProcessorSession));
             for (ModuleImpl module : mergedModules) {
-                final Path moduleDescriptorPath = projectPath.resolve(nativePath(module.getMvnPath()+org.onehippo.cm.model.Constants.MAVEN_MODULE_DESCRIPTOR));
+                final Path moduleDescriptorPath = projectPath.resolve(nativePath(module.getMvnPath()+org.onehippo.cm.engine.Constants.MAVEN_MODULE_DESCRIPTOR));
                 final ModuleContext ctx = new ModuleContext(module, moduleDescriptorPath);
                 ctx.createOutputProviders(moduleDescriptorPath);
 

@@ -40,29 +40,30 @@ import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.engine.ExportContentProcessor;
-import org.onehippo.cm.model.Definition;
-import org.onehippo.cm.model.DefinitionItem;
-import org.onehippo.cm.model.DefinitionNode;
-import org.onehippo.cm.model.NamespaceDefinition;
-import org.onehippo.cm.model.PropertyOperation;
-import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.SourceType;
-import org.onehippo.cm.model.impl.AbstractDefinitionImpl;
-import org.onehippo.cm.model.impl.ConfigDefinitionImpl;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
-import org.onehippo.cm.model.impl.ConfigurationItemImpl;
+import org.onehippo.cm.model.impl.path.JcrPath;
+import org.onehippo.cm.model.source.Source;
+import org.onehippo.cm.model.source.SourceType;
+import org.onehippo.cm.model.definition.Definition;
+import org.onehippo.cm.model.definition.NamespaceDefinition;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
-import org.onehippo.cm.model.impl.ConfigurationPropertyImpl;
-import org.onehippo.cm.model.impl.ConfigurationTreeBuilder;
-import org.onehippo.cm.model.impl.ContentDefinitionImpl;
-import org.onehippo.cm.model.impl.DefinitionItemImpl;
-import org.onehippo.cm.model.impl.DefinitionNodeImpl;
-import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
-import org.onehippo.cm.model.impl.NamespaceDefinitionImpl;
-import org.onehippo.cm.model.impl.SourceImpl;
-import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.impl.source.SourceImpl;
+import org.onehippo.cm.model.impl.definition.AbstractDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ConfigDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.impl.definition.NamespaceDefinitionImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationItemImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
+import org.onehippo.cm.model.impl.tree.DefinitionItemImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.tree.DefinitionItem;
+import org.onehippo.cm.model.tree.DefinitionNode;
+import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.util.FilePathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,11 +71,13 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static java.util.function.Predicate.isEqual;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.DEFAULT_MAIN_CONFIG_FILE;
 import static org.onehippo.cm.model.Constants.YAML_EXT;
-import static org.onehippo.cm.model.DefinitionType.NAMESPACE;
-import static org.onehippo.cm.model.PropertyOperation.OVERRIDE;
+import static org.onehippo.cm.model.definition.DefinitionType.NAMESPACE;
+import static org.onehippo.cm.model.tree.PropertyOperation.OVERRIDE;
 
 public class DefinitionMergeService {
 
@@ -98,8 +101,8 @@ public class DefinitionMergeService {
             pathPatterns = new PatternSet(patterns);
         }
 
-        boolean matchesPath(String path) {
-            return pathPatterns.matches(path);
+        boolean matchesPath(JcrPath path) {
+            return pathPatterns.matches(path.toString());
         }
     }
 
@@ -237,7 +240,7 @@ public class DefinitionMergeService {
         }
         else {
             // this is a new namespace def -- pretend that it is a node under /hippo:namespaces for sake of file mapping
-            final String incomingPath = "/hippo:namespaces/" + nsd.getPrefix();
+            final JcrPath incomingPath = JcrPath.get("/hippo:namespaces", nsd.getPrefix());
 
             // what module should we put it in?
             final ModuleImpl newModule = getModuleByAutoExportConfig(incomingPath, toExport);
@@ -287,7 +290,7 @@ public class DefinitionMergeService {
     protected void mergeConfigDefinitionNode(final DefinitionNodeImpl incomingDefNode,
                                                                final HashMap<String, ModuleImpl> toExport,
                                                                ConfigurationModelImpl model) {
-        log.debug("Merging config change for path: {}", incomingDefNode.getPath());
+        log.debug("Merging config change for path: {}", incomingDefNode.getJcrPath());
 
         final boolean nodeIsNew = isNewNodeDefinition(incomingDefNode);
         if (nodeIsNew) {
@@ -295,7 +298,7 @@ public class DefinitionMergeService {
         }
         else {
             // if the incoming node is not new, we should expect its path to exist -- find it
-            final String incomingDefPath = incomingDefNode.getPath();
+            final JcrPath incomingDefPath = incomingDefNode.getJcrPath();
             final ConfigurationNodeImpl incomingConfigNode = model.resolveNode(incomingDefPath);
 
             if (incomingConfigNode == null) {
@@ -353,8 +356,8 @@ public class DefinitionMergeService {
     protected void createNewNode(final DefinitionNodeImpl incomingDefNode, final HashMap<String, ModuleImpl> toExport,
                                  final ConfigurationModelImpl model) {
         // if the incoming node path is new, we should expect its parent to exist -- find it
-        final String incomingPath = incomingDefNode.getPath();
-        final String parentPath = StringUtils.substringBeforeLast(incomingPath, "/");
+        final JcrPath incomingPath = incomingDefNode.getJcrPath();
+        final JcrPath parentPath = incomingPath.getParent();
         final ConfigurationNodeImpl existingParent = model.resolveNode(parentPath);
 
         if (existingParent == null) {
@@ -414,7 +417,7 @@ public class DefinitionMergeService {
      * @param toExport the set of Modules being merged here and eventually to be exported
      * @return a single Module that represents the best match for this path
      */
-    protected ModuleImpl getModuleByAutoExportConfig(final String path, final HashMap<String, ModuleImpl> toExport) {
+    protected ModuleImpl getModuleByAutoExportConfig(final JcrPath path, final HashMap<String, ModuleImpl> toExport) {
         // TODO extra logic from EventProcessor.getModuleForPath() and getModuleForNSPrefix()
         return moduleMappings.values().stream()
                 .filter(mapping -> mapping.matchesPath(path))
@@ -429,7 +432,7 @@ public class DefinitionMergeService {
      * @param module the module where we want this definition to live
      * @return a new or existing ConfigSourceImpl
      */
-    protected ConfigSourceImpl getSourceForNewConfig(final String path, final ModuleImpl module) {
+    protected ConfigSourceImpl getSourceForNewConfig(final JcrPath path, final ModuleImpl module) {
         // what does LocationMapper say?
         final String sourcePath = getFilePathByLocationMapper(path);
         return createConfigSourceIfNecessary(sourcePath, module);
@@ -453,8 +456,12 @@ public class DefinitionMergeService {
      * @param incomingPath the JCR node path to test
      * @return true iff this path should go in a new file, different than its parent node
      */
-    protected static boolean shouldPathCreateNewSource(final String incomingPath) {
-        return LocationMapper.contextNodeForPath(incomingPath, true).equals(incomingPath);
+    protected static boolean shouldPathCreateNewSource(final JcrPath incomingPath) {
+        // for the sake of creating new source files, we always want to use the minimally-indexed path
+        // to avoid annoying and unnecessary "[1]" tags on filenames
+        final String minimallyIndexedPath = incomingPath.toMinimallyIndexedPath().toString();
+        return JcrPath.get(LocationMapper.contextNodeForPath(minimallyIndexedPath, true))
+                .equals(incomingPath);
     }
 
     /**
@@ -463,8 +470,8 @@ public class DefinitionMergeService {
      * @param path the JCR path for which we want to generate a new source file
      * @return a module-base-relative path with no leading slash for a potentially new yaml source file
      */
-    protected String getFilePathByLocationMapper(String path) {
-        String xmlFile = LocationMapper.fileForPath(path, true);
+    protected String getFilePathByLocationMapper(JcrPath path) {
+        String xmlFile = LocationMapper.fileForPath(path.toMinimallyIndexedPath().toString(), true);
         if (xmlFile == null) {
             return "main.yaml";
         }
@@ -474,13 +481,13 @@ public class DefinitionMergeService {
     /**
      * Create a new ConfigDefinition to contain the contents of the given DefinitionNode, which may be copied here.
      * When copying, this will also create new definitions in new source files for descendant nodes as determined via
-     * {@link #shouldPathCreateNewSource(String)}.
+     * {@link #shouldPathCreateNewSource(JcrPath)}.
      * @param incomingDefNode a DefinitionNode that will be copied to form the content of the new ConfigDefinition
      * @param copyContents should the contents of the incomingDefNode be recursively copied into the new def?
      */
     protected DefinitionNodeImpl createNewDef(final DefinitionNodeImpl incomingDefNode, final boolean copyContents,
                                 final HashMap<String, ModuleImpl> toExport) {
-        final String incomingPath = incomingDefNode.getPath();
+        final JcrPath incomingPath = incomingDefNode.getJcrPath();
 
         log.debug("Creating new top-level definition for path: {} ...", incomingPath);
 
@@ -497,7 +504,7 @@ public class DefinitionMergeService {
         // we know that this is the only place that mentions this node, because it's new
         // -- put all descendent properties and nodes in this def
         //... but when we create the def, make sure to walk up until we don't have an indexed node in the def root
-        final DefinitionNodeImpl newRootNode = destSource.getOrCreateDefinitionFor(incomingDefNode.getPath());
+        final DefinitionNodeImpl newRootNode = destSource.getOrCreateDefinitionFor(incomingDefNode.getJcrPath());
 
         if (copyContents) {
             recursiveCopy(incomingDefNode, newRootNode, toExport);
@@ -508,14 +515,14 @@ public class DefinitionMergeService {
     /**
      * Recursively copy the new def as a child-plus-descendants of this node.
      * This will also create new definitions in new source files for descendant nodes as determined via
-     * {@link #shouldPathCreateNewSource(String)}.
+     * {@link #shouldPathCreateNewSource(JcrPath)}.
      * @param from the definition we want to copy as a child of toParent
      * @param toParent the parent of the desired new definition node
      * @return the newly created child node, already populated with properties and descendants
      */
     protected DefinitionNodeImpl recursiveAdd(final DefinitionNodeImpl from, final DefinitionNodeImpl toParent,
                                            final HashMap<String, ModuleImpl> toExport) {
-        log.debug("Adding new node definition to existing definition: {}", from.getPath());
+        log.debug("Adding new node definition to existing definition: {}", from.getJcrPath());
 
         // mark source changed
         toParent.getDefinition().getSource().markChanged();
@@ -567,7 +574,7 @@ public class DefinitionMergeService {
         // TODO do we need to sort accounting for order-before, or does the diff step order things w/o explicit order-before?
         for (final DefinitionNodeImpl childNode : from.getNodes().values()) {
             // for each new childNode, we need to check if LocationMapper wants a new source file
-            final String incomingPath = childNode.getPath();
+            final JcrPath incomingPath = childNode.getJcrPath();
             if (shouldPathCreateNewSource(incomingPath)) {
                 // yes, we need a new definition in a new source file
                 // TODO should this take into account the modules where siblings are defined, to handle ordering properly?
@@ -586,14 +593,14 @@ public class DefinitionMergeService {
      */
     protected DefinitionNodeImpl deleteNode(final DefinitionNodeImpl defNode, final ConfigurationNodeImpl configNode,
                               final HashMap<String, ModuleImpl> toExport) {
-        log.debug("Deleting node: {}", defNode.getPath());
+        log.debug("Deleting node: {}", defNode.getJcrPath());
 
         final List<DefinitionNodeImpl> defsForConfigNode = configNode.getDefinitions();
 
         // if last existing node def is upstream,
         final boolean lastDefIsUpstream = !isLastDefLocal(defsForConfigNode, toExport);
         if (lastDefIsUpstream) {
-            log.debug("Last def for node is upstream of export: {}", defNode.getPath());
+            log.debug("Last def for node is upstream of export: {}", defNode.getJcrPath());
 
             // create new defnode w/ delete
             final DefinitionNodeImpl newDef = createNewDef(defNode, true, toExport);
@@ -610,7 +617,7 @@ public class DefinitionMergeService {
             final List<DefinitionNodeImpl> localDefs = getLocalDefs(defsForConfigNode, toExport);
             final boolean onlyLocalDefs = (localDefs.size() == defsForConfigNode.size());
             if (onlyLocalDefs) {
-                log.debug("Only local defs for node: {}", defNode.getPath());
+                log.debug("Only local defs for node: {}", defNode.getJcrPath());
 
                 // since there's only local defs, we want this node to disappear from the record completely
                 // i.e. "some" = "all" defs, in this case
@@ -619,7 +626,7 @@ public class DefinitionMergeService {
                 return defNode;
             }
             else {
-                log.debug("Both local and upstream defs for node: {}", defNode.getPath());
+                log.debug("Both local and upstream defs for node: {}", defNode.getJcrPath());
 
                 // since there's also an upstream def, we want to collapse all local references to a single delete def
                 // if exists, change one local def to delete and remove other properties and subnodes
@@ -628,8 +635,8 @@ public class DefinitionMergeService {
                 // mark chosen node as a delete
                 final ConfigDefinitionImpl defToKeepDefinition = (ConfigDefinitionImpl) defToKeep.getDefinition();
                 log.debug("Marking delete on node: {} from definition of: {} in source: {}",
-                        defToKeep.getPath(),
-                        defToKeepDefinition.getNode().getPath(),
+                        defToKeep.getJcrPath(),
+                        defToKeepDefinition.getNode().getJcrPath(),
                         defToKeepDefinition.getSource().getPath());
                 defToKeep.delete();
                 defToKeepDefinition.getSource().markChanged();
@@ -657,7 +664,7 @@ public class DefinitionMergeService {
                                                 final List<? extends DefinitionItemImpl> defsToRemove,
                                                 final List<AbstractDefinitionImpl> alreadyRemoved,
                                                 final HashMap<String, ModuleImpl> toExport) {
-        log.debug("Removing defs and children for node: {} with exceptions: {}", configNode.getPath(), alreadyRemoved);
+        log.debug("Removing defs and children for node: {} with exceptions: {}", configNode.getJcrPath(), alreadyRemoved);
 
         for (final DefinitionItemImpl definitionItem : defsToRemove) {
             removeOneDefinitionItem(definitionItem, alreadyRemoved, toExport);
@@ -681,7 +688,7 @@ public class DefinitionMergeService {
     protected void removeDescendantDefinitions(final ConfigurationNodeImpl configNode,
                                                final List<AbstractDefinitionImpl> alreadyRemoved,
                                                final HashMap<String, ModuleImpl> toExport) {
-        log.debug("Removing child defs for node: {} with exceptions: {}", configNode.getPath(), alreadyRemoved);
+        log.debug("Removing child defs for node: {} with exceptions: {}", configNode.getJcrPath(), alreadyRemoved);
 
         for (final ConfigurationNodeImpl childConfigNode : configNode.getNodes().values()) {
             for (final DefinitionNodeImpl childDefItem : childConfigNode.getDefinitions()) {
@@ -708,7 +715,7 @@ public class DefinitionMergeService {
                                            final List<AbstractDefinitionImpl> alreadyRemoved,
                                            final HashMap<String, ModuleImpl> toExport) {
 
-        log.debug("Removing one def item for node: {} with exceptions: {}", definitionItem.getPath(), alreadyRemoved);
+        log.debug("Removing one def item for node: {} with exceptions: {}", definitionItem.getJcrPath(), alreadyRemoved);
 
         // remove the node itself
         // if this node is the root
@@ -744,11 +751,11 @@ public class DefinitionMergeService {
         if (!toExport.containsValue(module)) {
             throw new IllegalStateException
                     ("Cannot change a definition from module that is not being merged: " + module.getFullName()
-                            + " for node: " + definitionItem.getPath());
+                            + " for node: " + definitionItem.getJcrPath());
         }
         log.debug("Removing definition item for: {} from definition of: {} in source: {}",
-                definitionItem.getPath(),
-                definition.getNode().getPath(), source.getPath());
+                definitionItem.getJcrPath(),
+                definition.getNode().getJcrPath(), source.getPath());
 
         final DefinitionNodeImpl parentNode = definitionItem.getParent();
         if (definitionItem instanceof DefinitionNode) {
@@ -790,9 +797,9 @@ public class DefinitionMergeService {
         if (!toExport.containsValue(module)) {
             throw new IllegalStateException
                     ("Cannot remove a definition from module that is not being merged: " + module.getFullName()
-                            + " for node: " + definition.getNode().getPath());
+                            + " for node: " + definition.getNode().getJcrPath());
         }
-        log.debug("Removing definition for node: {} from source: {}", definition.getNode().getPath(), source.getPath());
+        log.debug("Removing definition for node: {} from source: {}", definition.getNode().getJcrPath(), source.getPath());
 
         source.removeDefinition(definition);
         module.getConfigDefinitions().remove(definition);
@@ -801,7 +808,7 @@ public class DefinitionMergeService {
         removeResources(definition.getNode());
 
         // if the definition was the last one from its source
-        if (source.getModifiableDefinitions().size() == 0) {
+        if (source.getDefinitions().size() == 0) {
             log.debug("Removing source: {}", source.getPath());
 
             // remove the source from its module
@@ -821,7 +828,7 @@ public class DefinitionMergeService {
                                                    final ConfigurationNodeImpl configNode,
                                                    final HashMap<String, ModuleImpl> toExport, final ConfigurationModelImpl model) {
 
-        log.debug("Merging property: {} with operation: {}", defProperty.getPath(), defProperty.getOperation());
+        log.debug("Merging property: {} with operation: {}", defProperty.getJcrPath(), defProperty.getOperation());
 
         final ConfigurationPropertyImpl configProperty = configNode.getProperty(defProperty.getName());
 
@@ -846,7 +853,7 @@ public class DefinitionMergeService {
         final boolean propertyExists = (configProperty != null);
         if (propertyExists) {
             // this is an existing property being replaced
-            log.debug(".. which already exists", defProperty.getPath());
+            log.debug(".. which already exists", defProperty.getJcrPath());
 
             // is there a local def for this specific property?
             final Optional<DefinitionPropertyImpl> maybeLocalPropertyDef = getLastLocalDef(configProperty, toExport);
@@ -855,7 +862,7 @@ public class DefinitionMergeService {
                 final DefinitionPropertyImpl localPropDef = maybeLocalPropertyDef.get();
 
                 log.debug(".. and already has a local property def in: {} from source: {}",
-                        localPropDef.getDefinition().getNode().getPath(),
+                        localPropDef.getDefinition().getNode().getJcrPath(),
                         localPropDef.getDefinition().getSource().getPath());
 
                 final List<DefinitionPropertyImpl> defsForConfigProperty = configProperty.getDefinitions();
@@ -920,7 +927,7 @@ public class DefinitionMergeService {
         else {
             // this is a totally new property
             // note: this is effectively unreachable for case: OVERRIDE
-            log.debug(".. which is totally new", defProperty.getPath());
+            log.debug(".. which is totally new", defProperty.getJcrPath());
 
             addLocalProperty(defProperty, configNode, toExport, model);
         }
@@ -988,8 +995,8 @@ public class DefinitionMergeService {
             final DefinitionNodeImpl definitionNode = maybeLocalNodeDef.get();
 
             log.debug("Adding new local property: {} in existing def: {} from source: {}",
-                    defProperty.getPath(),
-                    definitionNode.getDefinition().getNode().getPath(),
+                    defProperty.getJcrPath(),
+                    definitionNode.getDefinition().getNode().getJcrPath(),
                     definitionNode.getDefinition().getSource().getPath());
 
             final DefinitionPropertyImpl newProperty = definitionNode.addProperty(defProperty);
@@ -1005,7 +1012,7 @@ public class DefinitionMergeService {
             final DefinitionNodeImpl newDefNode =
                     createNewDef(defProperty.getParent(), false, toExport);
 
-            log.debug("Adding new local def for property: {} in source: {}", defProperty.getPath(),
+            log.debug("Adding new local def for property: {} in source: {}", defProperty.getJcrPath(),
                     newDefNode.getDefinition().getSource().getPath());
 
             newDefNode.addProperty(defProperty);
@@ -1055,15 +1062,16 @@ public class DefinitionMergeService {
 
         // set of existing sources in reverse lexical order, so that longer paths come first
         // note: we can use an ordinary TreeMap here, because we don't expect as many sources as raw paths
-        final SortedMap<String, ContentDefinitionImpl> existingSourcesByPath = collectContentSourcesByPath(toExport);
+        final SortedMap<JcrPath, ContentDefinitionImpl> existingSourcesByNodePath =
+                collectContentSourcesByNodePath(toExport);
 
         // process deletes, including resource removal
         for (final String deletePath : contentChanges.getDeletedContent()) {
             // if a delete path is -above- a content root path, we need to delete one or more entire sources
-            final Set<String> toRemove = new HashSet<>();
-            for (final String sourcePath : existingSourcesByPath.keySet()) {
-                if (sourcePath.startsWith(deletePath)) {
-                    final ContentDefinitionImpl contentDef = existingSourcesByPath.get(sourcePath);
+            final Set<JcrPath> toRemoveByNodePath = new HashSet<>();
+            for (final JcrPath sourceNodePath : existingSourcesByNodePath.keySet()) {
+                if (sourceNodePath.startsWith(deletePath)) {
+                    final ContentDefinitionImpl contentDef = existingSourcesByNodePath.get(sourceNodePath);
                     final SourceImpl source = contentDef.getSource();
                     final ModuleImpl module = source.getModule();
 
@@ -1073,12 +1081,12 @@ public class DefinitionMergeService {
                     // remove the source from its module
                     module.getModifiableSources().remove(source);
                     module.addContentResourceToRemove("/" + source.getPath());
-                    toRemove.add(source.getPath());
+                    toRemoveByNodePath.add(contentDef.getNode().getJcrPath());
                 }
             }
             // if a delete path is -below- one of the sources that remains, treat it as a change
-            for (final String sourcePath : Sets.difference(existingSourcesByPath.keySet(), toRemove)) {
-                if (deletePath.startsWith(sourcePath)) {
+            for (final JcrPath sourceNodePath : Sets.difference(existingSourcesByNodePath.keySet(), toRemoveByNodePath)) {
+                if (deletePath.startsWith(sourceNodePath.toMinimallyIndexedPath().toString())) {
                     contentChangesByPath.add(deletePath);
                 }
             }
@@ -1086,24 +1094,25 @@ public class DefinitionMergeService {
 
         for (final String changePath : contentChangesByPath) {
             // is there an existing source for this exact path? if so, use that
-            if (existingSourcesByPath.containsKey(changePath)) {
+            final JcrPath changeNodePath = JcrPath.get(changePath);
+            if (existingSourcesByNodePath.containsKey(changeNodePath)) {
                 // mark it changed for later re-export, and then we're done with this path
-                existingSourcesByPath.get(changePath).getSource().markChanged();
+                existingSourcesByNodePath.get(changeNodePath).getSource().markChanged();
                 continue;
             }
 
             // there was no exactly-matching source, so we need to decide whether to reuse or create new
             // if LocationMapper tells us we should have a new source file...
-            if (shouldPathCreateNewSource(changePath)) {
+            if (shouldPathCreateNewSource(changeNodePath)) {
                 // create a new source file
-                existingSourcesByPath.put(changePath, createNewContentSource(changePath, toExport));
+                existingSourcesByNodePath.put(changeNodePath, createNewContentSource(changeNodePath, toExport));
 
                 // REPO-1715 We have a potential for a race condition where child nodes can be accidentally
                 //           exported to source files for an ancestor node before we process the add events
                 //           for the child nodes. To clean up this state, we also need to re-export any
                 //           source on the direct ancestor path for the change path.
-                for (ContentDefinitionImpl def : existingSourcesByPath.values()) {
-                    if (changePath.startsWith(def.getRootPath())) {
+                for (ContentDefinitionImpl def : existingSourcesByNodePath.values()) {
+                    if (changeNodePath.startsWith(def.getNode().getJcrPath())) {
                         def.getSource().markChanged();
                     }
                 }
@@ -1111,8 +1120,8 @@ public class DefinitionMergeService {
             else {
                 // check if there's an existing file that is an ancestor of the changed path
                 // find the source with the longest matching substring of the changed path
-                final Optional<ContentDefinitionImpl> maybeDef = existingSourcesByPath.entrySet().stream()
-                        .filter(e -> changePath.startsWith(e.getKey()))
+                final Optional<ContentDefinitionImpl> maybeDef = existingSourcesByNodePath.entrySet().stream()
+                        .filter(e -> changeNodePath.startsWith(e.getKey()))
                         .map(Map.Entry::getValue)
                         .findFirst();
                 if (maybeDef.isPresent()) {
@@ -1123,7 +1132,7 @@ public class DefinitionMergeService {
                     // otherwise, create a new source file
                     // REPO-1715 We don't have to walk up the tree in this case, since we know there's
                     //           no source on an ancestor path that might have picked up these changes.
-                    existingSourcesByPath.put(changePath, createNewContentSource(changePath, toExport));
+                    existingSourcesByNodePath.put(changeNodePath, createNewContentSource(changeNodePath, toExport));
                 }
             }
         }
@@ -1135,20 +1144,26 @@ public class DefinitionMergeService {
 
         // for all changed content sources, regenerate definitions from JCR
         // todo: move this to serialization stage instead of merge stage
-        final Set<String> newSourcePaths = collectContentSourcesByPath(toExport).keySet();
+        final Set<JcrPath> newSourcePaths = collectContentSourcesByNodePath(toExport).keySet();
         toExport.values().stream().flatMap(m -> m.getContentSources().stream())
                 .filter(SourceImpl::hasChangedSinceLoad)
                 .forEach(source -> {
-                    final ContentDefinitionImpl def = (ContentDefinitionImpl) source.getDefinitions().get(0);
-                    final String rootPath = def.getNode().getPath();
+                    final ContentDefinitionImpl def = source.getDefinition();
+                    final JcrPath defPath = def.getNode().getJcrPath();
+
+                    // exclude all paths that have their own sources
+                    final Set<String> excludedPaths = newSourcePaths.stream()
+                            // (but don't exclude what we're exporting!)
+                            .filter(isEqual(defPath).negate())
+                            .map(JcrPath::toString).collect(toImmutableSet());
+
                     try {
-                        new ExportContentProcessor().exportNode(jcrSession.getNode(rootPath), def, true,
-                                // exclude all paths that have their own sources
-                                Sets.difference(newSourcePaths, Sets.newTreeSet(Collections.singleton(rootPath))));
+                        new ExportContentProcessor().exportNode(jcrSession.getNode(defPath.toString()), def,
+                                true, excludedPaths);
                     }
                     catch (RepositoryException e) {
                         throw new RuntimeException(
-                                "Exception while regenerating changed content source file for " + rootPath, e);
+                                "Exception while regenerating changed content source file for " + defPath, e);
                     }
                 });
     }
@@ -1157,10 +1172,10 @@ public class DefinitionMergeService {
      * Helper to collect all content sources of given modules by root path in reverse lexical order of root paths.
      * @param toExport modules in whose sources we're interested
      */
-    protected SortedMap<String, ContentDefinitionImpl> collectContentSourcesByPath(final HashMap<String, ModuleImpl> toExport) {
-        final Function<ContentDefinitionImpl, String> cdPath = cd -> cd.getModifiableNode().getPath();
+    protected SortedMap<JcrPath, ContentDefinitionImpl> collectContentSourcesByNodePath(final HashMap<String, ModuleImpl> toExport) {
+        final Function<ContentDefinitionImpl, JcrPath> cdPath = cd -> cd.getNode().getJcrPath();
         final BinaryOperator<ContentDefinitionImpl> pickOne = (l, r) -> l;
-        final Supplier<TreeMap<String, ContentDefinitionImpl>> reverseTreeMapper =
+        final Supplier<TreeMap<JcrPath, ContentDefinitionImpl>> reverseTreeMapper =
                 () -> new TreeMap<>(Comparator.reverseOrder());
         return toExport.values().stream()
                 .flatMap(m -> Lists.reverse(m.getContentDefinitions()).stream())
@@ -1224,7 +1239,7 @@ public class DefinitionMergeService {
      * @param changePath the path whose content we want to store in the new source
      * @param toExport the set of modules that are being exported, which may contain the new source
      */
-    protected ContentDefinitionImpl createNewContentSource(final String changePath, final HashMap<String, ModuleImpl> toExport) {
+    protected ContentDefinitionImpl createNewContentSource(final JcrPath changePath, final HashMap<String, ModuleImpl> toExport) {
         // there's no existing source, so we need to create one
         final ModuleImpl module = getModuleByAutoExportConfig(changePath, toExport);
         final String sourcePath = getFilePathByLocationMapper(changePath);

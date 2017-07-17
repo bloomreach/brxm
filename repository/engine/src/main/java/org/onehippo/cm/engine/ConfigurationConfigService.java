@@ -25,10 +25,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.logging.Filter;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -42,27 +39,26 @@ import javax.jcr.nodetype.ItemDefinition;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.ConfigurationModel;
-import org.onehippo.cm.model.ConfigurationNode;
-import org.onehippo.cm.model.ConfigurationProperty;
-import org.onehippo.cm.model.FileResourceInputProvider;
 import org.onehippo.cm.model.Module;
-import org.onehippo.cm.model.NamespaceDefinition;
-import org.onehippo.cm.model.PropertyType;
-import org.onehippo.cm.model.Source;
-import org.onehippo.cm.model.Value;
-import org.onehippo.cm.model.ValueType;
-import org.onehippo.cm.model.WebFileBundleDefinition;
-import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
-import org.onehippo.cm.model.impl.ConfigurationPropertyImpl;
-import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.definition.NamespaceDefinition;
+import org.onehippo.cm.model.definition.WebFileBundleDefinition;
+import org.onehippo.cm.model.impl.path.JcrPathSegment;
+import org.onehippo.cm.model.impl.source.FileResourceInputProvider;
+import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
+import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
+import org.onehippo.cm.model.tree.ConfigurationNode;
+import org.onehippo.cm.model.tree.ConfigurationProperty;
+import org.onehippo.cm.model.tree.PropertyType;
+import org.onehippo.cm.model.tree.Value;
+import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.cm.model.util.SnsUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
@@ -71,12 +67,9 @@ import org.onehippo.repository.bootstrap.util.PartialZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import sun.security.pkcs11.wrapper.Functions;
-import static java.nio.charset.StandardCharsets.*;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
@@ -454,14 +447,14 @@ public class ConfigurationConfigService {
         for (String indexedChildName : updateChildren.keySet()) {
             ConfigurationNode baselineChild = baselineChildren.get(indexedChildName);
             final ConfigurationNode updateChild = updateChildren.get(indexedChildName);
-            final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(indexedChildName);
-            final Node existingChildNode = getChildWithIndex(targetNode, nameAndIndex.getLeft(), nameAndIndex.getRight());
+            final JcrPathSegment nameAndIndex = JcrPathSegment.get(indexedChildName);
+            final Node existingChildNode = getChildWithIndex(targetNode, nameAndIndex.getName(), nameAndIndex.getIndex());
             final Node childNode;
 
             if (existingChildNode == null) {
                 // need to add node
                 final String childPrimaryType = updateChild.getProperty(JCR_PRIMARYTYPE).getValue().getString();
-                final String childName = nameAndIndex.getLeft();
+                final String childName = nameAndIndex.getName();
 
                 if (baselineChild == null) {
                     baselineChild = newChildOfType(childPrimaryType);
@@ -522,8 +515,8 @@ public class ConfigurationConfigService {
         }
 
         for (String indexedChildName : indexedNamesOfToBeRemovedChildren) {
-            final Pair<String, Integer> nameAndIndex = SnsUtils.splitIndexedName(indexedChildName);
-            final Node childNode = getChildWithIndex(targetNode, nameAndIndex.getLeft(), nameAndIndex.getRight());
+            final JcrPathSegment nameAndIndex = JcrPathSegment.get(indexedChildName);
+            final Node childNode = getChildWithIndex(targetNode, nameAndIndex.getName(), nameAndIndex.getIndex());
             if (childNode != null) {
                 if (!baselineChildren.containsKey(indexedChildName)) {
                     final String msg = String.format("[OVERRIDE] Child node '%s' exists, " +

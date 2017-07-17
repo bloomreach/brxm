@@ -33,17 +33,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cm.engine.autoexport.AutoExportConfig;
-import org.onehippo.cm.model.ConfigurationItemCategory;
 import org.onehippo.cm.model.Group;
-import org.onehippo.cm.model.PropertyOperation;
-import org.onehippo.cm.model.ValueType;
-import org.onehippo.cm.model.impl.ConfigSourceImpl;
+import org.onehippo.cm.model.impl.source.ConfigSourceImpl;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.ConfigurationNodeImpl;
-import org.onehippo.cm.model.impl.ConfigurationPropertyImpl;
-import org.onehippo.cm.model.impl.DefinitionNodeImpl;
-import org.onehippo.cm.model.impl.DefinitionPropertyImpl;
-import org.onehippo.cm.model.impl.ValueImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
+import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.impl.tree.DefinitionPropertyImpl;
+import org.onehippo.cm.model.impl.tree.ValueImpl;
+import org.onehippo.cm.model.tree.ConfigurationItemCategory;
+import org.onehippo.cm.model.tree.PropertyOperation;
+import org.onehippo.cm.model.tree.ValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -220,7 +220,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
                 continue;
             }
             // use Configuration.filterUuidPaths during delta computation (suppressing export of jcr:uuid)
-            if (propName.equals(JCR_UUID) && autoExportConfig.shouldFilterUuid(configNode.getPath())) {
+            if (propName.equals(JCR_UUID) && autoExportConfig.shouldFilterUuid(configNode.getJcrPath().toMinimallyIndexedPath().toString())) {
                 continue;
             }
 
@@ -385,7 +385,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
         for (final String childConfigNode : configNode.getNodes().keySet()) {
             if (!jcrNode.hasNode(childConfigNode)) {
                 final DefinitionNodeImpl childNode = configSource
-                        .getOrCreateDefinitionFor(String.join("/", configNode.getPath(), childConfigNode));
+                        .getOrCreateDefinitionFor(configNode.getJcrPath().resolve(childConfigNode));
                 if (childNode == null) {
                     log.error("Produced a null result for path: {}!",
                             jcrNode.getPath()+"/"+childConfigNode,
@@ -465,7 +465,7 @@ public class AutoExportContentProcessor extends ExportContentProcessor {
     private void setOrderBefore(final ConfigurationNodeImpl configNode, final String childName, final String beforeName,
                                 final ConfigSourceImpl configSource) {
         final DefinitionNodeImpl childNode = configSource
-                .getOrCreateDefinitionFor(String.join("/", configNode.getPath(), childName));
+                .getOrCreateDefinitionFor(configNode.getJcrPath().resolve(childName));
         childNode.setOrderBefore(beforeName);
     }
 
