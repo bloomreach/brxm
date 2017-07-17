@@ -33,18 +33,20 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.io.Files;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.onehippo.cm.engine.autoexport.AutoExportConfig;
 import org.onehippo.cm.engine.autoexport.AutoExportConstants;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
-import org.onehippo.cm.model.definition.ActionType;
+import org.onehippo.cm.migrators.HstChannelMigrator;
+import org.onehippo.cm.migrators.PreCmContentApplyMigrator;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ExportModuleContext;
 import org.onehippo.cm.model.ImportModuleContext;
-import org.onehippo.cm.model.source.ResourceInputProvider;
-import org.onehippo.cm.model.source.Source;
+import org.onehippo.cm.model.definition.ActionType;
 import org.onehippo.cm.model.definition.ContentDefinition;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.GroupImpl;
@@ -60,12 +62,13 @@ import org.onehippo.cm.model.parser.PathConfigurationReader;
 import org.onehippo.cm.model.serializer.ContentSourceSerializer;
 import org.onehippo.cm.model.serializer.ModuleContext;
 import org.onehippo.cm.model.serializer.ModuleWriter;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
 import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.Files;
-
+import static java.util.Collections.singletonList;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LOCK;
 import static org.onehippo.cm.engine.Constants.HCM_BASELINE_PATH;
 import static org.onehippo.cm.engine.Constants.HCM_NAMESPACE;
@@ -102,6 +105,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
      * This should be non-null on any successful startup.
      */
     private ConfigurationModelImpl runtimeConfigurationModel;
+
+
+    private List<PreCmContentApplyMigrator> migrators = singletonList(new HstChannelMigrator());
+
 
     public ConfigurationServiceImpl start(final Session configurationServiceSession, final StartRepositoryServicesTask startRepositoryServicesTask)
             throws RepositoryException {
@@ -179,6 +186,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
 
                         log.info("ConfigurationService: store bootstrap config");
                         success = storeBaselineModel(bootstrapModel);
+                    }
+                    if (success && migrators != null &&  migrators.size() > 0) {
+                        log.info("Running migrators {}", migrators);
+                        success = runMigrators(bootstrapModel, migrators);
                     }
                     if (success) {
                         log.info("ConfigurationService: apply bootstrap content");
@@ -580,6 +591,27 @@ public class ConfigurationServiceImpl implements InternalConfigurationService {
             return true;
         } catch (Exception e) {
             log.error("Failed to store the Configuration baseline", e);
+            return false;
+        }
+    }
+
+    /**
+     * TODO Should we short-circuit if the first migrator fails and return with an exception or continue with the next?
+     * TODO At this moment a failed migrator short-circuits all others
+     * @return {@code true} if all migrators ran without Exception. If one migrator
+     * fails during their {@link PreCmContentApplyMigrator#migrate(Session, ConfigurationModel)}, {@code false} is returned.
+     */
+    private boolean runMigrators(final ConfigurationModelImpl model, final List<PreCmContentApplyMigrator> migrators) {
+        try {
+            for (PreCmContentApplyMigrator migrator : migrators) {
+                if (migrator.migrate(session, model)) {
+                    // TODO should we save per migrator just like applyContent does per module?
+                    session.save();
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to migrate ", e);
             return false;
         }
     }
