@@ -70,8 +70,6 @@ import org.onehippo.cm.model.source.SourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.javafx.sg.prism.NodePath;
-
 import static org.onehippo.cm.model.Constants.ACTIONS_YAML;
 import static org.onehippo.cm.model.Constants.DEFAULT_DIGEST;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
@@ -651,7 +649,7 @@ public class ModuleImpl implements Module, Comparable<Module>, Cloneable {
             final JcrPath rootPath1 = def1.getNode().getJcrPath();
             final JcrPath rootPath2 = def2.getNode().getJcrPath();
 
-            if (def1 != def2 && rootPath1.equals(rootPath2)) {
+            if (def1 != def2 && rootPath1.equals(rootPath2) && !rootPath1.startsWith("/hippo:configuration/hippo:translations")) {
                 final String msg = String.format(
                         "Duplicate definition root paths '%s' in module '%s' in source files '%s' and '%s'.",
                         rootPath1, getName(), def1.getOrigin(), def2.getOrigin());
